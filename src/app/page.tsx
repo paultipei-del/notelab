@@ -4,8 +4,11 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { DECKS } from '@/lib/decks'
 import { Deck, DeckTag } from '@/lib/types'
-import { getUserDecks, createDeck, saveUserDecks } from '@/lib/userDecks'
+import { getUserDecks, createDeck } from '@/lib/userDecks'
 import DeckEditor from '@/components/DeckEditor'
+import AuthModal from '@/components/AuthModal'
+import { useAuth } from '@/hooks/useAuth'
+import { signOut } from '@/lib/auth'
 
 const TAG_COLORS: Record<DeckTag, { bg: string; color: string }> = {
   free: { bg: '#E1F5EE', color: '#0F6E56' },
@@ -15,16 +18,18 @@ const TAG_COLORS: Record<DeckTag, { bg: string; color: string }> = {
 }
 
 export default function Home() {
+  const { user, loading } = useAuth()
   const [userDecks, setUserDecks] = useState<Deck[]>([])
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null)
   const [showNewDeck, setShowNewDeck] = useState(false)
+  const [showAuth, setShowAuth] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newDesc, setNewDesc] = useState('')
   const [newTag, setNewTag] = useState<DeckTag>('free')
 
   useEffect(() => {
     setUserDecks(getUserDecks())
-  }, [])
+  }, [user])
 
   function handleCreateDeck() {
     if (!newTitle.trim()) return
@@ -47,6 +52,11 @@ export default function Home() {
     setEditingDeck(null)
   }
 
+  async function handleSignOut() {
+    await signOut()
+    setUserDecks([])
+  }
+
   const allDecks = [...DECKS, ...userDecks]
 
   return (
@@ -57,12 +67,47 @@ export default function Home() {
         <div style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
           Note<span style={{ fontWeight: 400 }}>Lab</span>
         </div>
-        <button
-          onClick={() => setShowNewDeck(true)}
-          style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#1A1A18', background: 'none', cursor: 'pointer' }}
-        >
-          + New Deck
-        </button>
+
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          {!loading && (
+            <>
+              {user ? (
+                <>
+                  <span style={{ fontSize: '13px', fontWeight: 300, color: '#888780', letterSpacing: '0.02em' }}>
+                    {user.email}
+                  </span>
+                  <button
+                    onClick={() => setShowNewDeck(true)}
+                    style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#1A1A18', background: 'none', cursor: 'pointer' }}
+                  >
+                    + New Deck
+                  </button>
+                  <button
+                    onClick={handleSignOut}
+                    style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', fontSize: '13px', fontWeight: 300, color: '#888780', background: 'none', cursor: 'pointer' }}
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowNewDeck(true)}
+                    style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#888780', background: 'none', cursor: 'pointer' }}
+                  >
+                    + New Deck
+                  </button>
+                  <button
+                    onClick={() => setShowAuth(true)}
+                    style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#1A1A18', background: 'none', cursor: 'pointer' }}
+                  >
+                    Sign In
+                  </button>
+                </>
+              )}
+            </>
+          )}
+        </div>
       </header>
 
       {/* Hero */}
@@ -116,11 +161,10 @@ export default function Home() {
                 </div>
               </Link>
 
-              {/* Edit button for user decks */}
               {isUser && (
                 <button
                   onClick={e => { e.preventDefault(); setEditingDeck(deck) }}
-                  style={{ position: 'absolute', top: '12px', right: '12px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer', letterSpacing: '0.05em' }}
+                  style={{ position: 'absolute', top: '12px', right: '12px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}
                 >
                   Edit
                 </button>
@@ -132,12 +176,12 @@ export default function Home() {
 
       {/* New deck modal */}
       {showNewDeck && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,24,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={e => e.target === e.currentTarget && setShowNewDeck(false)}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,24,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          onClick={e => e.target === e.currentTarget && setShowNewDeck(false)}>
           <div style={{ background: '#F5F2EC', borderRadius: '16px', padding: '36px', width: '100%', maxWidth: '480px', boxShadow: '0 8px 48px rgba(26,26,24,0.2)' }}>
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', marginBottom: '24px', color: '#1A1A18' }}>
               New Collection
             </h2>
-
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '6px' }}>Title</label>
               <input
@@ -149,7 +193,6 @@ export default function Home() {
                 onKeyDown={e => e.key === 'Enter' && handleCreateDeck()}
               />
             </div>
-
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '6px' }}>Description</label>
               <input
@@ -159,34 +202,24 @@ export default function Home() {
                 placeholder="Brief description…"
               />
             </div>
-
             <div style={{ marginBottom: '28px' }}>
               <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '6px' }}>Category</label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 {(['free', 'cm', 'theory', 'repertoire'] as DeckTag[]).map(tag => (
-                  <button
-                    key={tag}
-                    onClick={() => setNewTag(tag)}
-                    style={{ padding: '6px 14px', borderRadius: '20px', border: `1px solid ${newTag === tag ? '#1A1A18' : '#D3D1C7'}`, background: newTag === tag ? '#1A1A18' : 'transparent', color: newTag === tag ? 'white' : '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer', textTransform: 'capitalize' }}
-                  >
+                  <button key={tag} onClick={() => setNewTag(tag)}
+                    style={{ padding: '6px 14px', borderRadius: '20px', border: `1px solid ${newTag === tag ? '#1A1A18' : '#D3D1C7'}`, background: newTag === tag ? '#1A1A18' : 'transparent', color: newTag === tag ? 'white' : '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer', textTransform: 'capitalize' }}>
                     {tag}
                   </button>
                 ))}
               </div>
             </div>
-
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                onClick={handleCreateDeck}
-                disabled={!newTitle.trim()}
-                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.06em', cursor: newTitle.trim() ? 'pointer' : 'default', opacity: newTitle.trim() ? 1 : 0.4 }}
-              >
+              <button onClick={handleCreateDeck} disabled={!newTitle.trim()}
+                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.06em', cursor: newTitle.trim() ? 'pointer' : 'default', opacity: newTitle.trim() ? 1 : 0.4 }}>
                 Create & Add Cards
               </button>
-              <button
-                onClick={() => setShowNewDeck(false)}
-                style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '12px 20px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}
-              >
+              <button onClick={() => setShowNewDeck(false)}
+                style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '12px 20px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
                 Cancel
               </button>
             </div>
@@ -194,7 +227,15 @@ export default function Home() {
         </div>
       )}
 
-      {/* Deck editor drawer */}
+      {/* Auth modal */}
+      {showAuth && (
+        <AuthModal
+          onClose={() => setShowAuth(false)}
+          onSuccess={() => setShowAuth(false)}
+        />
+      )}
+
+      {/* Deck editor */}
       {editingDeck && (
         <DeckEditor
           deck={editingDeck}
