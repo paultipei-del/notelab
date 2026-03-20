@@ -11,15 +11,17 @@ export function useAuth() {
   useEffect(() => {
     const supabase = getSupabaseClient()
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Listen for auth changes FIRST before getting session
+    // This ensures we never miss a state change
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Then get current session to handle the initial load
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
+      setLoading(false)
     })
 
     return () => subscription.unsubscribe()

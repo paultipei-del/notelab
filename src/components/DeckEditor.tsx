@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { Deck, Card, DeckTag } from '@/lib/types'
-import { addCard, updateCard, deleteCard, updateDeck, deleteDeck } from '@/lib/userDecks'
+import { addCard, updateCard, deleteCard, updateDeck, deleteDeck } from "@/lib/userDecks"
 
 interface DeckEditorProps {
+  userId: string | null
   deck: Deck
   onUpdate: (deck: Deck) => void
   onDelete: (deckId: string) => void
@@ -90,7 +91,7 @@ const s = {
   }),
 }
 
-export default function DeckEditor({ deck, onUpdate, onDelete, onClose }: DeckEditorProps) {
+export default function DeckEditor({ deck, onUpdate, onDelete, onClose, userId }: DeckEditorProps) {
   const [localDeck, setLocalDeck] = useState<Deck>(deck)
   const [entryMode, setEntryMode] = useState<EntryMode>('list')
   const [editingCard, setEditingCard] = useState<number | null>(null)
@@ -110,46 +111,45 @@ export default function DeckEditor({ deck, onUpdate, onDelete, onClose }: DeckEd
   // ── Deck metadata ──
   function saveMeta() {
     const updates = { title: titleVal, description: descVal }
-    updateDeck(localDeck.id, updates)
+    updateDeck(localDeck.id, updates, userId)
     syncDeck({ ...localDeck, ...updates })
     setEditingTitle(false)
   }
 
   function handleTagChange(tag: DeckTag) {
-    updateDeck(localDeck.id, { tag })
+    updateDeck(localDeck.id, { tag }, userId)
     syncDeck({ ...localDeck, tag })
   }
 
   // ── Add card (one at a time) ──
-  function handleAddOne() {
-    if (!newFront.trim() || !newBack.trim()) return
-    const card = addCard(localDeck.id, { front: newFront.trim(), back: newBack.trim(), type: 'text' })
-    syncDeck({ ...localDeck, cards: [...localDeck.cards, card] })
-    setNewFront('')
-    setNewBack('')
-  }
-
+async function handleAddOne() {
+  if (!newFront.trim() || !newBack.trim()) return
+  const card = await addCard(localDeck.id, { front: newFront.trim(), back: newBack.trim(), type: 'text' }, userId)
+  syncDeck({ ...localDeck, cards: [...localDeck.cards, card] })
+  setNewFront('')
+  setNewBack('')
+}
   // ── Bulk add ──
-  function handleBulkAdd() {
-    const lines = bulkText.trim().split('\n').filter(l => l.includes('|'))
-    const newCards: Card[] = []
-    const updatedDeck = { ...localDeck }
+async function handleBulkAdd() {
+  const lines = bulkText.trim().split('\n').filter(l => l.includes('|'))
+  const newCards: Card[] = []
+  const updatedDeck = { ...localDeck }
 
-    lines.forEach(line => {
-      const [front, back] = line.split('|').map(s => s.trim())
-      if (front && back) {
-        const card = addCard(localDeck.id, { front, back, type: 'text' })
-        newCards.push(card)
-      }
-    })
-
-    syncDeck({ ...updatedDeck, cards: [...updatedDeck.cards, ...newCards] })
-    setBulkText('')
+  for (const line of lines) {
+    const [front, back] = line.split('|').map(s => s.trim())
+    if (front && back) {
+      const card = await addCard(localDeck.id, { front, back, type: 'text' }, userId)
+      newCards.push(card)
+    }
   }
+
+  syncDeck({ ...updatedDeck, cards: [...updatedDeck.cards, ...newCards] })
+  setBulkText('')
+}
 
   // ── Edit card ──
   function handleUpdateCard(cardId: number, front: string, back: string) {
-    updateCard(localDeck.id, cardId, { front, back })
+    updateCard(localDeck.id, cardId, { front, back }, userId)
     syncDeck({
       ...localDeck,
       cards: localDeck.cards.map(c => c.id === cardId ? { ...c, front, back } : c)
@@ -159,13 +159,13 @@ export default function DeckEditor({ deck, onUpdate, onDelete, onClose }: DeckEd
 
   // ── Delete card ──
   function handleDeleteCard(cardId: number) {
-    deleteCard(localDeck.id, cardId)
+    deleteCard(localDeck.id, cardId, userId)
     syncDeck({ ...localDeck, cards: localDeck.cards.filter(c => c.id !== cardId) })
   }
 
   // ── Delete deck ──
   function handleDeleteDeck() {
-    deleteDeck(localDeck.id)
+    deleteDeck(localDeck.id, userId)
     onDelete(localDeck.id)
     onClose()
   }
@@ -209,7 +209,7 @@ export default function DeckEditor({ deck, onUpdate, onDelete, onClose }: DeckEd
                 style={{ ...s.input, marginTop: '6px', fontSize: '13px', color: '#888780' }}
                 value={descVal}
                 onChange={e => setDescVal(e.target.value)}
-                onBlur={() => { updateDeck(localDeck.id, { description: descVal }); syncDeck({ ...localDeck, description: descVal }) }}
+                onBlur={() => { updateDeck(localDeck.id, { description: descVal }, userId); syncDeck({ ...localDeck, description: descVal }) }}
                 placeholder="Description…"
               />
             )}

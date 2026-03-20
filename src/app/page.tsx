@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { DECKS } from '@/lib/decks'
 import { Deck, DeckTag } from '@/lib/types'
-import { getUserDecks, createDeck } from '@/lib/userDecks'
+import { loadUserDecks, createDeck } from '@/lib/userDecks'
 import DeckEditor from '@/components/DeckEditor'
 import AuthModal from '@/components/AuthModal'
 import { useAuth } from '@/hooks/useAuth'
@@ -20,6 +20,7 @@ const TAG_COLORS: Record<DeckTag, { bg: string; color: string }> = {
 export default function Home() {
   const { user, loading } = useAuth()
   const [userDecks, setUserDecks] = useState<Deck[]>([])
+  const [decksLoading, setDecksLoading] = useState(true)
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null)
   const [showNewDeck, setShowNewDeck] = useState(false)
   const [showAuth, setShowAuth] = useState(false)
@@ -28,12 +29,23 @@ export default function Home() {
   const [newTag, setNewTag] = useState<DeckTag>('free')
 
   useEffect(() => {
-    setUserDecks(getUserDecks())
-  }, [user])
+    if (loading) return
+    setDecksLoading(true)
 
-  function handleCreateDeck() {
+    // Clear local decks when user signs in so Supabase data takes over
+    if (user) {
+      localStorage.removeItem('notelab-user-decks')
+    }
+
+    loadUserDecks(user?.id ?? null).then(decks => {
+      setUserDecks(decks)
+      setDecksLoading(false)
+    })
+  }, [user, loading])
+
+  async function handleCreateDeck() {
     if (!newTitle.trim()) return
-    const deck = createDeck(newTitle.trim(), newDesc.trim(), newTag)
+    const deck = await createDeck(newTitle.trim(), newDesc.trim(), newTag, user?.id ?? null)
     setUserDecks(prev => [...prev, deck])
     setNewTitle('')
     setNewDesc('')
@@ -67,7 +79,6 @@ export default function Home() {
         <div style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
           Note<span style={{ fontWeight: 400 }}>Lab</span>
         </div>
-
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {!loading && (
             <>
@@ -76,31 +87,19 @@ export default function Home() {
                   <span style={{ fontSize: '13px', fontWeight: 300, color: '#888780', letterSpacing: '0.02em' }}>
                     {user.email}
                   </span>
-                  <button
-                    onClick={() => setShowNewDeck(true)}
-                    style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#1A1A18', background: 'none', cursor: 'pointer' }}
-                  >
+                  <button onClick={() => setShowNewDeck(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#1A1A18', background: 'none', cursor: 'pointer' }}>
                     + New Deck
                   </button>
-                  <button
-                    onClick={handleSignOut}
-                    style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', fontSize: '13px', fontWeight: 300, color: '#888780', background: 'none', cursor: 'pointer' }}
-                  >
+                  <button onClick={handleSignOut} style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', fontSize: '13px', fontWeight: 300, color: '#888780', background: 'none', cursor: 'pointer' }}>
                     Sign Out
                   </button>
                 </>
               ) : (
                 <>
-                  <button
-                    onClick={() => setShowNewDeck(true)}
-                    style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#888780', background: 'none', cursor: 'pointer' }}
-                  >
+                  <button onClick={() => setShowNewDeck(true)} style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, color: '#888780', background: 'none', cursor: 'pointer' }}>
                     + New Deck
                   </button>
-                  <button
-                    onClick={() => setShowAuth(true)}
-                    style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', color: '#1A1A18', background: 'none', cursor: 'pointer' }}
-                  >
+                  <button onClick={() => setShowAuth(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, color: '#1A1A18', background: 'none', cursor: 'pointer' }}>
                     Sign In
                   </button>
                 </>
@@ -172,6 +171,12 @@ export default function Home() {
             </div>
           )
         })}
+
+        {decksLoading && (
+          <div style={{ padding: '40px', textAlign: 'center', color: '#888780', fontSize: '13px', fontWeight: 300 }}>
+            Loading your decks…
+          </div>
+        )}
       </div>
 
       {/* New deck modal */}
@@ -242,6 +247,7 @@ export default function Home() {
           onUpdate={handleDeckUpdate}
           onDelete={handleDeckDelete}
           onClose={() => setEditingDeck(null)}
+          userId={user?.id ?? null}
         />
       )}
     </div>
