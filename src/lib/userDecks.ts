@@ -17,10 +17,8 @@ function saveLocalDecks(decks: Deck[]): void {
 }
 
 export async function loadUserDecks(userId: string | null): Promise<Deck[]> {
-  console.log('loadUserDecks called with userId:', userId)
 
   if (!userId) {
-    console.log('No userId — returning localStorage decks')
     return getLocalDecks()
   }
 
@@ -31,14 +29,11 @@ export async function loadUserDecks(userId: string | null): Promise<Deck[]> {
     .eq('user_id', userId)
     
 
-  console.log('Supabase query result — data:', data, 'error:', error)
 
   if (error || !data) {
-    console.log('Error or no data — falling back to localStorage')
     return getLocalDecks()
   }
 
-  console.log('Returning', data.length, 'decks from Supabase')
 
   return data.map((row: any) => ({
     id: row.id,
@@ -67,7 +62,6 @@ export async function createDeck(
   saveLocalDecks([...local, deck])
 
   if (userId) {
-    console.log('Creating deck in Supabase, userId:', userId)
     const supabase = getSupabaseClient()
     const { data, error } = await supabase.from('user_decks').insert({
       id: deck.id,
@@ -77,7 +71,6 @@ export async function createDeck(
       tag: deck.tag,
       cards: deck.cards,
     }).select()
-    console.log('Create deck result — data:', data, 'error:', error)
   }
 
   return deck
@@ -98,7 +91,6 @@ export async function updateDeck(
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .eq('user_id', userId)
-    if (error) console.log('updateDeck error:', error)
   }
 }
 
@@ -113,7 +105,6 @@ export async function deleteDeck(id: string, userId: string | null): Promise<voi
       .delete()
       .eq('id', id)
       .eq('user_id', userId)
-    if (error) console.log('deleteDeck error:', error)
   }
 }
 
@@ -137,7 +128,6 @@ export async function addCard(
         .update({ cards: deck.cards, updated_at: new Date().toISOString() })
         .eq('id', deckId)
         .eq('user_id', userId)
-      if (error) console.log('addCard error:', error)
     }
   }
 
@@ -163,7 +153,6 @@ export async function updateCard(
         .update({ cards: deck.cards, updated_at: new Date().toISOString() })
         .eq('id', deckId)
         .eq('user_id', userId)
-      if (error) console.log('updateCard error:', error)
     }
   }
 }
@@ -186,7 +175,6 @@ export async function deleteCard(
         .update({ cards: deck.cards, updated_at: new Date().toISOString() })
         .eq('id', deckId)
         .eq('user_id', userId)
-      if (error) console.log('deleteCard error:', error)
     }
   }
 }
