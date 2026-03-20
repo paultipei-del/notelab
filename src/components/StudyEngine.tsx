@@ -14,10 +14,11 @@ const MODES: { id: StudyMode; label: string }[] = [
 ]
 
 interface StudyEngineProps {
+  userId: string | null
   deck: Deck
 }
 
-export default function StudyEngine({ deck }: StudyEngineProps) {
+export default function StudyEngine({ deck, userId }: StudyEngineProps) {
   const router = useRouter()
   const {
     currentCard,
@@ -33,7 +34,7 @@ export default function StudyEngine({ deck }: StudyEngineProps) {
     recordAnswer,
     setMode,
     getMCOptions,
-  } = useStudySession(deck)
+  } = useStudySession(deck, userId)
 
   // ── COMPLETE SCREEN ──
   if (isComplete) {
