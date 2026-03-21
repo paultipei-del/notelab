@@ -1,6 +1,14 @@
 import { Deck } from './types'
 import { CM_LEVEL1_CARDS } from './cm-content/level1'
 import { CM_LEVEL2_CARDS } from './cm-content/level2'
+import { CM_LEVEL3_CARDS } from './cm-content/level3'
+import { CM_LEVEL4_CARDS } from './cm-content/level4'
+import { CM_LEVEL5_CARDS } from './cm-content/level5'
+import { CM_LEVEL6_CARDS } from './cm-content/level6'
+import { CM_LEVEL7_CARDS } from './cm-content/level7'
+import { CM_LEVEL8_CARDS } from './cm-content/level8'
+import { CM_LEVEL9_CARDS } from './cm-content/level9'
+import { CM_ADVANCED_CARDS } from './cm-content/advanced'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -83,21 +91,79 @@ export const DECKS: Deck[] = [
   {
     id: 'cm-level1',
     title: 'CM Level 1',
-    description: 'Certificate of Merit Level 1 — signs & terms, tonality, intervals, rhythm, chords, and ear training.',
+    description: 'Signs & terms, note reading, intervals, rhythm, scales, chords, and ear training.',
     tag: 'cm',
     cards: CM_LEVEL1_CARDS,
   },
   {
     id: 'cm-level2',
     title: 'CM Level 2',
-    description: 'Certificate of Merit Level 2 — builds on Level 1, adds cadences, minor scales, and new keys.',
+    description: 'Builds on Level 1 — adds cadences, minor scales, new keys, and sequence.',
     tag: 'cm',
     cards: CM_LEVEL2_CARDS,
   },
+  {
+    id: 'cm-level3',
+    title: 'CM Level 3',
+    description: 'Adds triad inversions, Perfect/Major intervals, and new signs & terms.',
+    tag: 'cm',
+    cards: CM_LEVEL3_CARDS,
+  },
+  {
+    id: 'cm-level4',
+    title: 'CM Level 4',
+    description: 'Scale degrees with Roman numerals, minor/diminished intervals, music history.',
+    tag: 'cm',
+    cards: CM_LEVEL4_CARDS,
+  },
+  {
+    id: 'cm-level5',
+    title: 'CM Level 5',
+    description: 'All major keys, figured bass, dominant 7th, ornaments, and history.',
+    tag: 'cm',
+    cards: CM_LEVEL5_CARDS,
+  },
+  {
+    id: 'cm-level6',
+    title: 'CM Level 6',
+    description: 'Melodic minor, augmented/diminished intervals, deceptive cadence, modulation.',
+    tag: 'cm',
+    cards: CM_LEVEL6_CARDS,
+  },
+  {
+    id: 'cm-level7',
+    title: 'CM Level 7',
+    description: 'Circle of fifths, modes, diminished 7th chord, sonata form.',
+    tag: 'cm',
+    cards: CM_LEVEL7_CARDS,
+  },
+  {
+    id: 'cm-level8',
+    title: 'CM Level 8',
+    description: 'All seven modes, secondary dominants, pivot chords, polyphonic texture.',
+    tag: 'cm',
+    cards: CM_LEVEL8_CARDS,
+  },
+  {
+    id: 'cm-level9',
+    title: 'CM Level 9',
+    description: 'Baroque suite dances, fugue structure, 7th chords, Impressionism.',
+    tag: 'cm',
+    cards: CM_LEVEL9_CARDS,
+  },
+  {
+    id: 'cm-advanced',
+    title: 'CM Advanced',
+    description: 'Fugue analysis, non-harmonic tones, serialism, advanced compositional techniques.',
+    tag: 'cm',
+    cards: CM_ADVANCED_CARDS,
+  },
 ]
 
-// Decks that require CM bundle purchase
-export const CM_DECK_IDS = ['cm-level1', 'cm-level2']
+export const CM_DECK_IDS = [
+  'cm-level1', 'cm-level2', 'cm-level3', 'cm-level4', 'cm-level5',
+  'cm-level6', 'cm-level7', 'cm-level8', 'cm-level9', 'cm-advanced',
+]
 
 export function deckRequiresPurchase(deckId: string): boolean {
   return CM_DECK_IDS.includes(deckId)

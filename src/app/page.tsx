@@ -11,13 +11,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 import { signOut } from '@/lib/auth'
 
-const TAG_COLORS: Record<DeckTag, { bg: string; color: string }> = {
-  free: { bg: '#E1F5EE', color: '#0F6E56' },
-  cm: { bg: '#FAEEDA', color: '#BA7517' },
-  theory: { bg: '#EEEDFE', color: '#534AB7' },
-  repertoire: { bg: '#FAECE7', color: '#993C1D' },
-}
-
 export default function Home() {
   const { user, loading } = useAuth()
   const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
@@ -42,36 +35,21 @@ export default function Home() {
   }, [user, loading])
 
   async function handleBuy(priceId: string, productType: string) {
-    if (!user) {
-      setShowAuth(true)
-      return
-    }
+    if (!user) { setShowAuth(true); return }
     setCheckingOut(true)
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId,
-          userId: user.id,
-          userEmail: user.email,
-          productType,
-        }),
+        body: JSON.stringify({ priceId, userId: user.id, userEmail: user.email, productType }),
       })
       const { url, error } = await res.json()
       if (error) throw new Error(error)
       window.location.href = url
     } catch (err) {
-      console.error('Checkout error:', err)
+      console.error(err)
       setCheckingOut(false)
     }
-  }
-
-  function canAccessDeck(deckId: string): boolean {
-    if (!deckRequiresPurchase(deckId)) return true
-    if (hasSubscription()) return true
-    if (hasPurchased(CM_BUNDLE_PRICE_ID)) return true
-    return false
   }
 
   async function handleCreateDeck() {
@@ -100,7 +78,9 @@ export default function Home() {
     setUserDecks([])
   }
 
-  const allDecks = [...DECKS, ...userDecks]
+  const freeDecks = DECKS.filter(d => d.tag === 'free')
+  const cmCount = DECKS.filter(d => d.tag === 'cm').length
+  const cmUnlocked = hasPurchased(CM_BUNDLE_PRICE_ID) || hasSubscription()
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
@@ -148,106 +128,123 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Pro subscription banner */}
-      {!hasSubscription() && user && (
-        <div style={{ maxWidth: '960px', margin: '0 auto 24px', padding: '0 32px' }}>
-          <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '0 32px 64px' }}>
+
+        {/* Pro banner */}
+        {!hasSubscription() && user && (
+          <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 300, color: 'white', marginBottom: '2px' }}>NoteLab Pro</p>
-              <p style={{ fontSize: '12px', fontWeight: 300, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.03em' }}>Unlimited access to all collections</p>
+              <p style={{ fontSize: '12px', fontWeight: 300, color: 'rgba(255,255,255,0.6)' }}>Unlimited access to all collections</p>
             </div>
-            <button
-              onClick={() => handleBuy(PRO_PRICE_ID, 'subscription')}
-              disabled={checkingOut}
-              style={{ background: '#BA7517', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', cursor: 'pointer', whiteSpace: 'nowrap' }}
-            >
+            <button onClick={() => handleBuy(PRO_PRICE_ID, 'subscription')} disabled={checkingOut}
+              style={{ background: '#BA7517', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: '13px', fontWeight: 300, cursor: 'pointer', whiteSpace: 'nowrap' }}>
               {checkingOut ? 'Loading…' : 'Subscribe — $7.99/mo'}
             </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Deck grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', padding: '0 32px 64px', maxWidth: '960px', margin: '0 auto' }}>
-        {allDecks.map(deck => {
-          const isUser = deck.id.startsWith('user-')
-          const tagStyle = TAG_COLORS[deck.tag] || TAG_COLORS.free
-          const locked = !canAccessDeck(deck.id)
-
-          return (
-            <div key={deck.id} style={{ position: 'relative' }}>
-              {/* Locked overlay */}
-              {locked ? (
+        {/* Free decks */}
+        <div style={{ marginBottom: '48px' }}>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '24px', color: '#1A1A18', marginBottom: '4px', letterSpacing: '0.02em' }}>
+            Free Collections
+          </h2>
+          <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '20px' }}>
+            {freeDecks.length} collections — always free
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
+            {freeDecks.map(deck => (
+              <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
                 <div
-                  style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '28px', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', opacity: 0.85 }}
+                  style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(26,26,24,0.05)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
-                  <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '14px', background: tagStyle.bg, color: tagStyle.color }}>
-                    {deck.tag}
-                  </span>
-                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '22px', marginBottom: '6px', color: '#1A1A18' }}>
-                    {deck.title}
-                  </h3>
-                  <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6, marginBottom: '20px' }}>
-                    {deck.description}
-                  </p>
+                  <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 8px', borderRadius: '20px', marginBottom: '10px', background: '#E1F5EE', color: '#0F6E56' }}>Free</span>
+                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>{deck.title}</h3>
+                  <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780' }}>{deck.cards.length} cards</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* CM Collection */}
+        <div style={{ marginBottom: '48px' }}>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '24px', color: '#1A1A18', marginBottom: '4px', letterSpacing: '0.02em' }}>
+            CM Collection
+          </h2>
+          <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '20px' }}>
+            {cmCount} levels — Certificate of Merit exam preparation
+          </p>
+          <Link href="/collection?tag=cm" style={{ textDecoration: 'none', display: 'block' }}>
+            <div
+              style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '28px 32px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
+            >
+              <div>
+                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#FAEEDA', color: '#BA7517' }}>
+                  {cmUnlocked ? 'Unlocked' : 'CM'}
+                </span>
+                <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#1A1A18', marginBottom: '6px' }}>
+                  Certificate of Merit — Levels 1–Advanced
+                </h3>
+                <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6, maxWidth: '480px' }}>
+                  Complete exam preparation for all CM levels. Covers signs & terms, scales, intervals, chords, history, and ear training for each level.
+                </p>
+              </div>
+              <div style={{ marginLeft: '24px', textAlign: 'right', flexShrink: 0 }}>
+                {cmUnlocked ? (
+                  <span style={{ fontSize: '14px', fontWeight: 300, color: '#BA7517' }}>Browse →</span>
+                ) : (
+                  <div>
+                    <button
+                      onClick={e => { e.preventDefault(); handleBuy(CM_BUNDLE_PRICE_ID, 'cm_bundle') }}
+                      disabled={checkingOut}
+                      style={{ display: 'block', background: '#BA7517', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 20px', fontSize: '13px', fontWeight: 300, cursor: 'pointer', marginBottom: '8px', whiteSpace: 'nowrap' }}
+                    >
+                      {checkingOut ? 'Loading…' : 'Unlock Bundle'}
+                    </button>
+                    <span style={{ fontSize: '11px', fontWeight: 300, color: '#888780' }}>or browse locked levels →</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* User decks */}
+        {userDecks.length > 0 && (
+          <div style={{ marginBottom: '48px' }}>
+            <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '24px', color: '#1A1A18', marginBottom: '4px', letterSpacing: '0.02em' }}>
+              My Decks
+            </h2>
+            <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '20px' }}>
+              {userDecks.length} custom collection{userDecks.length !== 1 ? 's' : ''}
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
+              {userDecks.map(deck => (
+                <div key={deck.id} style={{ position: 'relative' }}>
+                  <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                    <div
+                      style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)' }}
+                    >
+                      <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>{deck.title}</h3>
+                      <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780' }}>{deck.cards.length} cards</p>
+                    </div>
+                  </Link>
                   <button
-                    onClick={() => handleBuy(CM_BUNDLE_PRICE_ID, 'cm_bundle')}
-                    disabled={checkingOut}
-                    style={{ width: '100%', background: '#BA7517', color: 'white', border: 'none', borderRadius: '8px', padding: '10px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', cursor: 'pointer' }}
+                    onClick={() => setEditingDeck(deck)}
+                    style={{ position: 'absolute', top: '10px', right: '10px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}
                   >
-                    {checkingOut ? 'Loading…' : '🔒 Unlock CM Bundle'}
+                    Edit
                   </button>
                 </div>
-              ) : (
-                <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-                  <div
-                    style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '28px', cursor: 'pointer', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', transition: 'all 0.2s' }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#BA7517'
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#D3D1C7'
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)'
-                    }}
-                  >
-                    <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '14px', background: tagStyle.bg, color: tagStyle.color }}>
-                      {deck.tag}
-                    </span>
-                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '22px', marginBottom: '6px', color: '#1A1A18' }}>
-                      {deck.title}
-                    </h3>
-                    <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6, marginBottom: '20px' }}>
-                      {deck.description || 'No description'}
-                    </p>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 300, color: '#888780' }}>
-                      <span>{deck.cards.length} cards</span>
-                      <span>Start →</span>
-                    </div>
-                    <div style={{ height: '3px', background: '#D3D1C7', borderRadius: '2px', marginTop: '12px' }}>
-                      <div style={{ height: '100%', width: '0%', background: '#BA7517', borderRadius: '2px' }} />
-                    </div>
-                  </div>
-                </Link>
-              )}
-
-              {isUser && !locked && (
-                <button
-                  onClick={e => { e.preventDefault(); setEditingDeck(deck) }}
-                  style={{ position: 'absolute', top: '12px', right: '12px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '4px 10px', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}
-                >
-                  Edit
-                </button>
-              )}
+              ))}
             </div>
-          )
-        })}
-
-        {decksLoading && (
-          <div style={{ padding: '40px', textAlign: 'center', color: '#888780', fontSize: '13px', fontWeight: 300 }}>
-            Loading your decks…
           </div>
         )}
       </div>
@@ -261,7 +258,7 @@ export default function Home() {
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '6px' }}>Title</label>
               <input style={{ width: '100%', background: 'white', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '10px 14px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '15px', fontWeight: 300, color: '#1A1A18', outline: 'none' }}
-                value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="e.g. CM Level 2 — Theory" autoFocus onKeyDown={e => e.key === 'Enter' && handleCreateDeck()} />
+                value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="e.g. My Practice Deck" autoFocus onKeyDown={e => e.key === 'Enter' && handleCreateDeck()} />
             </div>
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '6px' }}>Description</label>

@@ -1,0 +1,188 @@
+'use client'
+
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
+import Link from 'next/link'
+import { DECKS, deckRequiresPurchase, CM_BUNDLE_PRICE_ID, PRO_PRICE_ID } from '@/lib/decks'
+import { useAuth } from '@/hooks/useAuth'
+import { usePurchases } from '@/hooks/usePurchases'
+import AuthModal from '@/components/AuthModal'
+import { useState } from 'react'
+
+const TAG_COLORS: Record<string, { bg: string; color: string }> = {
+  free: { bg: '#E1F5EE', color: '#0F6E56' },
+  cm: { bg: '#FAEEDA', color: '#BA7517' },
+  theory: { bg: '#EEEDFE', color: '#534AB7' },
+  repertoire: { bg: '#FAECE7', color: '#993C1D' },
+}
+
+function CollectionContent() {
+  const searchParams = useSearchParams()
+  const tag = searchParams.get('tag') ?? 'cm'
+  const { user } = useAuth()
+  const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
+  const [showAuth, setShowAuth] = useState(false)
+  const [checkingOut, setCheckingOut] = useState(false)
+
+  const decks = DECKS.filter(d => d.tag === tag)
+  const tagStyle = TAG_COLORS[tag] || TAG_COLORS.free
+
+  const titles: Record<string, string> = {
+    cm: 'CM Collection',
+    free: 'Free Collections',
+    theory: 'Theory Collections',
+    repertoire: 'Repertoire Collections',
+  }
+
+  const descriptions: Record<string, string> = {
+    cm: 'Certificate of Merit exam preparation — Levels 1 through Advanced. Each deck covers the cumulative theory requirements for that level.',
+    free: 'Free collections covering fundamental music concepts.',
+    theory: 'College-level music theory collections.',
+    repertoire: 'Composer and repertoire study collections.',
+  }
+
+  function canAccessDeck(deckId: string): boolean {
+    if (!deckRequiresPurchase(deckId)) return true
+    if (hasSubscription()) return true
+    if (hasPurchased(CM_BUNDLE_PRICE_ID)) return true
+    return false
+  }
+
+  async function handleBuy(priceId: string, productType: string) {
+    if (!user) { setShowAuth(true); return }
+    setCheckingOut(true)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, userId: user.id, userEmail: user.email, productType }),
+      })
+      const { url, error } = await res.json()
+      if (error) throw new Error(error)
+      window.location.href = url
+    } catch (err) {
+      console.error(err)
+      setCheckingOut(false)
+    }
+  }
+
+  const allUnlocked = decks.every(d => canAccessDeck(d.id))
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
+      {/* Header */}
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
+        <Link href="/" style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780', textDecoration: 'none' }}>
+          ← Back
+        </Link>
+        <div style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
+          Note<span style={{ fontWeight: 400 }}>Lab</span>
+        </div>
+        <div style={{ width: '60px' }} />
+      </header>
+
+      {/* Hero */}
+      <div style={{ padding: '48px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
+        <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '16px', background: tagStyle.bg, color: tagStyle.color }}>
+          {tag}
+        </span>
+        <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#1A1A18', marginBottom: '12px', letterSpacing: '0.02em' }}>
+          {titles[tag] ?? tag}
+        </h1>
+        <p style={{ fontSize: '15px', fontWeight: 300, color: '#888780', maxWidth: '560px', lineHeight: 1.7, marginBottom: '32px' }}>
+          {descriptions[tag] ?? ''}
+        </p>
+
+        {/* Buy all banner for locked collections */}
+        {!allUnlocked && (
+          <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 300, color: 'white', marginBottom: '2px' }}>
+                Unlock the full {titles[tag]}
+              </p>
+              <p style={{ fontSize: '12px', fontWeight: 300, color: 'rgba(255,255,255,0.6)' }}>
+                All {decks.length} levels in one purchase
+              </p>
+            </div>
+            <button
+              onClick={() => handleBuy(CM_BUNDLE_PRICE_ID, 'cm_bundle')}
+              disabled={checkingOut}
+              style={{ background: '#BA7517', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', cursor: 'pointer', whiteSpace: 'nowrap' }}
+            >
+              {checkingOut ? 'Loading…' : 'Unlock Bundle'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Deck grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px', padding: '0 32px 64px', maxWidth: '960px', margin: '0 auto' }}>
+        {decks.map((deck, i) => {
+          const locked = !canAccessDeck(deck.id)
+          return (
+            <div key={deck.id} style={{ position: 'relative' }}>
+              {locked ? (
+                <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '24px', opacity: 0.75 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 300, color: '#D3D1C7' }}>🔒</span>
+                    <span style={{ fontSize: '11px', fontWeight: 300, color: '#D3D1C7', letterSpacing: '0.05em' }}>Locked</span>
+                  </div>
+                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#888780', marginBottom: '6px' }}>
+                    {deck.title}
+                  </h3>
+                  <p style={{ fontSize: '12px', fontWeight: 300, color: '#D3D1C7', lineHeight: 1.6 }}>
+                    {deck.cards.length} cards
+                  </p>
+                </div>
+              ) : (
+                <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                  <div
+                    style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '24px', cursor: 'pointer', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', transition: 'all 0.2s' }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = '#BA7517'
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = '#D3D1C7'
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#BA7517', letterSpacing: '0.05em' }}>
+                        Level {i + 1 === decks.length ? 'Advanced' : i + 1}
+                      </span>
+                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#888780' }}>{deck.cards.length} cards</span>
+                    </div>
+                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '6px' }}>
+                      {deck.title}
+                    </h3>
+                    <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780', lineHeight: 1.6, marginBottom: '16px' }}>
+                      {deck.description}
+                    </p>
+                    <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517' }}>Start →</span>
+                  </div>
+                </Link>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} onSuccess={() => setShowAuth(false)} />}
+    </div>
+  )
+}
+
+export default function CollectionPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780' }}>Loading…</p>
+      </div>
+    }>
+      <CollectionContent />
+    </Suspense>
+  )
+}
