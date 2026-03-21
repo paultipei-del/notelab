@@ -35,7 +35,7 @@ function CollectionContent() {
   }
 
   const descriptions: Record<string, string> = {
-    cm: 'Certificate of Merit exam preparation — Levels 1 through Advanced. Each deck covers the cumulative theory requirements for that level.',
+    cm: 'Certificate of Merit exam preparation — Preparatory through Advanced. Each deck covers the cumulative theory requirements for that level.',
     free: 'Free collections covering fundamental music concepts.',
     theory: 'College-level music theory collections.',
     repertoire: 'Composer and repertoire study collections.',

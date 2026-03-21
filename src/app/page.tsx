@@ -188,10 +188,10 @@ export default function Home() {
                   {cmUnlocked ? 'Unlocked' : 'CM'}
                 </span>
                 <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#1A1A18', marginBottom: '6px' }}>
-                  Certificate of Merit — Levels 1–Advanced
+                  Certificate of Merit — Preparatory through Advanced
                 </h3>
                 <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6, maxWidth: '480px' }}>
-                  Complete exam preparation for all CM levels. Covers signs & terms, scales, intervals, chords, history, and ear training for each level.
+                  Complete exam preparation for all CM levels — Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training for each level.
                 </p>
               </div>
               <div style={{ marginLeft: '24px', textAlign: 'right', flexShrink: 0 }}>
