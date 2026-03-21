@@ -1,9 +1,12 @@
 import { Deck } from './types'
+import { CM_LEVEL1_CARDS } from './cm-content/level1'
+import { CM_LEVEL2_CARDS } from './cm-content/level2'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
 
 export const DECKS: Deck[] = [
+  // ── FREE COLLECTIONS ──
   {
     id: 'dynamics',
     title: 'Dynamic Markings',
@@ -75,30 +78,27 @@ export const DECKS: Deck[] = [
       { id: 9, front: 'F5', back: 'Fifth line of treble staff', type: 'staff', note: 'F5', clef: 'treble' },
     ],
   },
+
+  // ── CM COLLECTIONS ──
   {
     id: 'cm-level1',
     title: 'CM Level 1',
-    description: 'Certificate of Merit Level 1 — vocabulary, scales, and basic theory.',
+    description: 'Certificate of Merit Level 1 — signs & terms, tonality, intervals, rhythm, chords, and ear training.',
     tag: 'cm',
-    cards: [
-      { id: 1, front: 'Time Signature', back: 'The two numbers at the start of a piece. Top = beats per measure, bottom = note value of one beat.', type: 'text' },
-      { id: 2, front: 'Bar Line', back: 'A vertical line dividing music into measures', type: 'text' },
-      { id: 3, front: 'Double Bar Line', back: 'Two vertical lines marking the end of a section or piece', type: 'text' },
-      { id: 4, front: 'Repeat Sign', back: 'Two dots before a double bar — go back and play again', type: 'text' },
-      { id: 5, front: 'Whole Note', back: '4 beats in 4/4 time — open note head, no stem', type: 'text' },
-      { id: 6, front: 'Half Note', back: '2 beats in 4/4 time — open note head with stem', type: 'text' },
-      { id: 7, front: 'Quarter Note', back: '1 beat in 4/4 time — filled note head with stem', type: 'text' },
-      { id: 8, front: 'Eighth Note', back: '½ beat in 4/4 time — filled note head with stem and flag', type: 'text' },
-      { id: 9, front: 'Treble Clef', back: 'The G clef — wraps around the G line (second line). Used for higher notes.', type: 'text' },
-      { id: 10, front: 'Bass Clef', back: 'The F clef — dots surround the F line (fourth line). Used for lower notes.', type: 'text' },
-    ],
+    cards: CM_LEVEL1_CARDS,
+  },
+  {
+    id: 'cm-level2',
+    title: 'CM Level 2',
+    description: 'Certificate of Merit Level 2 — builds on Level 1, adds cadences, minor scales, and new keys.',
+    tag: 'cm',
+    cards: CM_LEVEL2_CARDS,
   },
 ]
 
 // Decks that require CM bundle purchase
-export const CM_DECK_IDS = ['cm-level1']
+export const CM_DECK_IDS = ['cm-level1', 'cm-level2']
 
-// Check if a deck requires purchase
 export function deckRequiresPurchase(deckId: string): boolean {
   return CM_DECK_IDS.includes(deckId)
 }
