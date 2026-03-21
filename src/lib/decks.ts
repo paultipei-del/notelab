@@ -1,5 +1,8 @@
 import { Deck } from './types'
 
+export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
+export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
+
 export const DECKS: Deck[] = [
   {
     id: 'dynamics',
@@ -58,7 +61,7 @@ export const DECKS: Deck[] = [
   {
     id: 'notes-treble',
     title: 'Note Reading — Treble',
-    description: 'Identify notes on the treble clef staff. Includes image cards.',
+    description: 'Identify notes on the treble clef staff.',
     tag: 'free',
     cards: [
       { id: 1, front: 'E4', back: 'First ledger line below treble staff', type: 'staff', note: 'E4', clef: 'treble' },
@@ -91,6 +94,14 @@ export const DECKS: Deck[] = [
     ],
   },
 ]
+
+// Decks that require CM bundle purchase
+export const CM_DECK_IDS = ['cm-level1']
+
+// Check if a deck requires purchase
+export function deckRequiresPurchase(deckId: string): boolean {
+  return CM_DECK_IDS.includes(deckId)
+}
 
 export function getDeckById(id: string): Deck | undefined {
   return DECKS.find(d => d.id === id)
