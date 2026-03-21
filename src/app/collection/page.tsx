@@ -24,7 +24,7 @@ function CollectionContent() {
   const [showAuth, setShowAuth] = useState(false)
   const [checkingOut, setCheckingOut] = useState(false)
 
-  const decks = tag === 'ear' ? DECKS.filter(d => d.id.startsWith('ear-')) : DECKS.filter(d => d.tag === tag)
+  const decks = tag === 'ear' ? DECKS.filter(d => d.id.startsWith('ear-')) : tag === 'symbols' ? DECKS.filter(d => d.id.startsWith('symbols-')) : DECKS.filter(d => d.tag === tag)
   const tagStyle = TAG_COLORS[tag] || TAG_COLORS.free
 
   const titles: Record<string, string> = {
@@ -33,6 +33,7 @@ function CollectionContent() {
     theory: 'Theory Collections',
     repertoire: 'Repertoire Collections',
     ear: 'Ear Training',
+    symbols: 'Music Symbols',
   }
 
   const descriptions: Record<string, string> = {
@@ -41,10 +42,12 @@ function CollectionContent() {
     theory: 'College-level music theory collections.',
     repertoire: 'Composer and repertoire study collections.',
     ear: 'Train your ear with real piano audio. Listen to intervals, triads, cadences, and scales — then identify what you heard. Go back and forth freely to compare examples.',
+    symbols: 'Learn to read music notation symbols — dynamics, articulations, accidentals, and note values. Each card shows the actual engraved symbol.',
   }
 
   function canAccessDeck(deckId: string): boolean {
     if (deckId.startsWith('ear-')) return true
+    if (deckId.startsWith('symbols-')) return true
     if (!deckRequiresPurchase(deckId)) return true
     if (hasSubscription()) return true
     if (hasPurchased(CM_BUNDLE_PRICE_ID)) return true
@@ -97,7 +100,7 @@ function CollectionContent() {
         </p>
 
         {/* Buy all banner for locked collections */}
-        {tag !== 'ear' && !allUnlocked && (
+        {tag !== 'ear' && tag !== 'symbols' && !allUnlocked && (
           <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 300, color: 'white', marginBottom: '2px' }}>
@@ -131,7 +134,7 @@ function CollectionContent() {
                     <span style={{ fontSize: '11px', fontWeight: 300, color: '#D3D1C7', letterSpacing: '0.05em' }}>Locked</span>
                   </div>
                   <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#888780', marginBottom: '6px' }}>
-                    {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : deck.title}
+                    {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                   </h3>
                   <p style={{ fontSize: '12px', fontWeight: 300, color: '#D3D1C7', lineHeight: 1.6 }}>
                     {deck.cards.length} cards
@@ -154,12 +157,12 @@ function CollectionContent() {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                       <span style={{ fontSize: '11px', fontWeight: 300, color: '#BA7517', letterSpacing: '0.05em' }}>
-                        {tag === 'ear' ? deck.title.split('—')[1]?.trim() ?? '' : `Level ${i + 1 === decks.length ? 'Advanced' : i + 1}`}
+                        {tag === 'ear' || tag === 'symbols' ? '' : `Level ${i + 1 === decks.length ? 'Advanced' : i + 1}`}
                       </span>
                       <span style={{ fontSize: '11px', fontWeight: 300, color: '#888780' }}>{deck.cards.length} cards</span>
                     </div>
                     <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '6px' }}>
-                      {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : deck.title}
+                      {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                     </h3>
                     <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780', lineHeight: 1.6, marginBottom: '16px' }}>
                       {deck.description}
