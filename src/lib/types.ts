@@ -1,15 +1,17 @@
-export type CardType = 'text' | 'staff' | 'image'
+export type CardType = 'text' | 'staff' | 'image' | 'symbol'
 
 export type DeckTag = 'free' | 'cm' | 'theory' | 'repertoire'
 
 export interface Card {
   id: number
-  front: string
-  back: string
+  front: string       // for symbol cards: the Bravura unicode character(s), | separated for multiple
+  back: string        // definition/explanation
   type: CardType
   note?: string       // for staff cards e.g. 'G4'
   clef?: 'treble' | 'bass'
   imageUrl?: string   // for image cards
+  symbolName?: string // for symbol cards: the name shown on the answer (e.g. 'Fermata')
+  symbolLabel?: string // optional label shown below symbol on front (e.g. 'Articulation')
 }
 
 export interface Deck {

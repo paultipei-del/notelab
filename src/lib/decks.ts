@@ -1,4 +1,5 @@
 import { Deck } from './types'
+import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { CM_PREP_CARDS } from "./cm-content/preparatory"
 import { CM_LEVEL1_CARDS } from "./cm-content/level1"
 import { CM_LEVEL2_CARDS } from './cm-content/level2'
@@ -86,6 +87,35 @@ export const DECKS: Deck[] = [
       { id: 8, front: 'E5', back: 'Fourth space of treble staff', type: 'staff', note: 'E5', clef: 'treble' },
       { id: 9, front: 'F5', back: 'Fifth line of treble staff', type: 'staff', note: 'F5', clef: 'treble' },
     ],
+  },
+
+  {
+    id: 'symbols-dynamics',
+    title: 'Dynamic Markings',
+    description: 'Read and identify dynamic symbols — p, f, mf, mp, ff, pp, sfz, crescendo and more.',
+    tag: 'free',
+    cards: DYNAMICS_SYMBOL_CARDS,
+  },
+  {
+    id: 'symbols-articulation',
+    title: 'Articulation Markings',
+    description: 'Identify staccato, tenuto, accent, fermata, and trill symbols.',
+    tag: 'free',
+    cards: ARTICULATION_SYMBOL_CARDS,
+  },
+  {
+    id: 'symbols-accidentals',
+    title: 'Accidentals',
+    description: 'Identify sharp, flat, natural, double sharp, and double flat symbols.',
+    tag: 'free',
+    cards: ACCIDENTAL_SYMBOL_CARDS,
+  },
+  {
+    id: 'symbols-note-values',
+    title: 'Note & Rest Values',
+    description: 'Identify whole, half, quarter, eighth, and sixteenth notes and rests.',
+    tag: 'free',
+    cards: NOTE_VALUES_SYMBOL_CARDS,
   },
 
   // ── CM COLLECTIONS ──
