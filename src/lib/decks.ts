@@ -1,5 +1,6 @@
 import { Deck } from './types'
-import { CM_LEVEL1_CARDS } from './cm-content/level1'
+import { CM_PREP_CARDS } from "./cm-content/preparatory"
+import { CM_LEVEL1_CARDS } from "./cm-content/level1"
 import { CM_LEVEL2_CARDS } from './cm-content/level2'
 import { CM_LEVEL3_CARDS } from './cm-content/level3'
 import { CM_LEVEL4_CARDS } from './cm-content/level4'
@@ -89,6 +90,13 @@ export const DECKS: Deck[] = [
 
   // ── CM COLLECTIONS ──
   {
+    id: 'cm-prep',
+    title: 'CM Preparatory',
+    description: 'Certificate of Merit Preparatory level — signs & terms, note reading, five-finger patterns, basic scales and chords.',
+    tag: 'cm',
+    cards: CM_PREP_CARDS,
+  },
+  {
     id: 'cm-level1',
     title: 'CM Level 1',
     description: 'Signs & terms, note reading, intervals, rhythm, scales, chords, and ear training.',
@@ -161,7 +169,7 @@ export const DECKS: Deck[] = [
 ]
 
 export const CM_DECK_IDS = [
-  'cm-level1', 'cm-level2', 'cm-level3', 'cm-level4', 'cm-level5',
+  'cm-prep', 'cm-level1', 'cm-level2', 'cm-level3', 'cm-level4', 'cm-level5',
   'cm-level6', 'cm-level7', 'cm-level8', 'cm-level9', 'cm-advanced',
 ]
 
