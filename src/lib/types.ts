@@ -1,17 +1,27 @@
-export type CardType = 'text' | 'staff' | 'image' | 'symbol'
+export type CardType = 'text' | 'staff' | 'image' | 'symbol' | 'audio'
 
 export type DeckTag = 'free' | 'cm' | 'theory' | 'repertoire'
 
 export interface Card {
   id: number
-  front: string       // for symbol cards: the Bravura unicode character(s), | separated for multiple
-  back: string        // definition/explanation
+  front: string
+  back: string
   type: CardType
-  note?: string       // for staff cards e.g. 'G4'
+  // staff cards
+  note?: string
   clef?: 'treble' | 'bass'
-  imageUrl?: string   // for image cards
-  symbolName?: string // for symbol cards: the name shown on the answer (e.g. 'Fermata')
-  symbolLabel?: string // optional label shown below symbol on front (e.g. 'Articulation')
+  // image cards
+  imageUrl?: string
+  // symbol cards
+  symbolName?: string
+  symbolLabel?: string
+  // audio cards
+  audioNotes?: string[]        // e.g. ['C4', 'E4', 'G4'] for harmonic playback
+  audioChords?: string[][]     // e.g. [['C4','E4','G4'], ['G4','B4','D5']] for cadences
+  audioPattern?: 'harmonic' | 'ascending' | 'descending' | 'cadence' | 'scale'
+  audioLabel?: string          // shown on front: e.g. 'Major Triad'
+  audioHint?: string           // optional hint: e.g. 'Root position, C major'
+  audioDuration?: string       // Tone.js duration e.g. '4n', '2n', '1n'
 }
 
 export interface Deck {
@@ -30,7 +40,6 @@ export interface CardProgress {
 }
 
 export type ProgressStore = Record<string, CardProgress>
-// key format: `${deckId}-${cardId}`
 
 export interface QueueCard extends Card {
   easeFactor?: number
@@ -42,7 +51,6 @@ export interface QueueCard extends Card {
 export type StudyMode = 'flip' | 'mc' | 'type'
 
 export type RatingValue = 1 | 2 | 3
-// 1 = Again, 2 = Hard, 3 = Easy
 
 export interface SessionStats {
   correct: number

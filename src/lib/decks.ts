@@ -1,4 +1,5 @@
 import { Deck } from './types'
+import { EAR_TRAINING_INTERVALS, EAR_TRAINING_TRIADS, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { CM_PREP_CARDS } from "./cm-content/preparatory"
 import { CM_LEVEL1_CARDS } from "./cm-content/level1"
@@ -116,6 +117,35 @@ export const DECKS: Deck[] = [
     description: 'Identify whole, half, quarter, eighth, and sixteenth notes and rests.',
     tag: 'free',
     cards: NOTE_VALUES_SYMBOL_CARDS,
+  },
+
+  {
+    id: 'ear-intervals',
+    title: 'Ear Training — Intervals',
+    description: 'Listen and identify all intervals from minor 2nd to octave, ascending.',
+    tag: 'free',
+    cards: EAR_TRAINING_INTERVALS,
+  },
+  {
+    id: 'ear-triads',
+    title: 'Ear Training — Triads',
+    description: 'Identify major, minor, diminished and augmented triads by ear.',
+    tag: 'free',
+    cards: EAR_TRAINING_TRIADS,
+  },
+  {
+    id: 'ear-cadences',
+    title: 'Ear Training — Cadences',
+    description: 'Identify authentic, half, plagal, and deceptive cadences by ear.',
+    tag: 'free',
+    cards: EAR_TRAINING_CADENCES,
+  },
+  {
+    id: 'ear-scales',
+    title: 'Ear Training — Scales',
+    description: 'Identify major, natural minor, harmonic minor, and melodic minor scales.',
+    tag: 'free',
+    cards: EAR_TRAINING_SCALES,
   },
 
   // ── CM COLLECTIONS ──

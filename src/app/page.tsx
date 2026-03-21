@@ -150,10 +150,10 @@ export default function Home() {
             Free Collections
           </h2>
           <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '20px' }}>
-            {freeDecks.length} collections — always free
+            Always free
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
-            {freeDecks.map(deck => (
+            {freeDecks.filter(d => !d.id.startsWith('ear-')).map(deck => (
               <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
                 <div
                   style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(26,26,24,0.05)' }}
@@ -166,6 +166,19 @@ export default function Home() {
                 </div>
               </Link>
             ))}
+
+            {/* Ear Training group card */}
+            <Link href="/collection?tag=ear" style={{ textDecoration: 'none' }}>
+              <div
+                style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(26,26,24,0.05)' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)' }}
+              >
+                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 8px', borderRadius: '20px', marginBottom: '10px', background: '#E1F5EE', color: '#0F6E56' }}>Free</span>
+                <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>Ear Training</h3>
+                <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780' }}>Intervals, triads, cadences, scales →</p>
+              </div>
+            </Link>
           </div>
         </div>
 

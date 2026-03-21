@@ -7,6 +7,8 @@ import FlipCard from '@/components/cards/FlipCard'
 import MultipleChoice from '@/components/cards/MultipleChoice'
 import TypeAnswer from '@/components/cards/TypeAnswer'
 import SymbolCard from '@/components/cards/SymbolCard'
+import AudioCard from '@/components/cards/AudioCard'
+import QuizEngine from '@/components/QuizEngine'
 import { useRouter } from 'next/navigation'
 
 interface StudyEngineProps {
@@ -24,6 +26,7 @@ const STUDY_MODES: { id: StudyMode; label: string }[] = [
 export default function StudyEngine({ deck, userId }: StudyEngineProps) {
   const router = useRouter()
   const [viewMode, setViewMode] = useState<ViewMode>('study')
+  const [quizMode, setQuizMode] = useState(false)
   const [browseExpanded, setBrowseExpanded] = useState<number | null>(null)
   const [flipIndex, setFlipIndex] = useState(0)
   const [flipRevealed, setFlipRevealed] = useState(false)
@@ -88,7 +91,11 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
               style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>
               Back to Decks
             </button>
-            <button onClick={() => setViewMode('browse')}
+            <button onClick={() => setQuizMode(true)}
+          style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+          Quiz
+        </button>
+        <button onClick={() => setViewMode('browse')}
               style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
               Browse All Cards
             </button>
@@ -96,6 +103,11 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
         </div>
       </div>
     )
+  }
+
+  // ── QUIZ MODE ──
+  if (quizMode) {
+    return <QuizEngine deck={deck} onExit={() => setQuizMode(false)} />
   }
 
   // ── BROWSE VIEW ──
@@ -166,6 +178,9 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
 
   function renderFlipCard() {
     if (!flipCard) return null
+    if (flipCard.type === 'audio') {
+      return <AudioCard card={flipCard} revealed={flipRevealed} onReveal={() => setFlipRevealed(true)} />
+    }
     if (flipCard.type === 'symbol') {
       return <SymbolCard card={flipCard} revealed={flipRevealed} onReveal={() => setFlipRevealed(true)} />
     }
@@ -196,6 +211,10 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
           </button>
         ))}
         <div style={{ width: '1px', height: '16px', background: '#D3D1C7', margin: '0 4px' }} />
+        <button onClick={() => setQuizMode(true)}
+          style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+          Quiz
+        </button>
         <button onClick={() => setViewMode('browse')}
           style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
           Browse
@@ -237,7 +256,7 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
       )}
 
       {/* Rating buttons for MC and Type */}
-      {!isFlipMode && revealed && (
+      {!isFlipMode && currentCard?.type !== 'audio' && revealed && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '16px 32px 24px', flexWrap: 'wrap' }}>
           {[
             { rating: 1 as const, label: 'Again', interval: intervals.again, bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' },
@@ -253,8 +272,8 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
         </div>
       )}
 
-      {/* Flip mode rating */}
-      {isFlipMode && flipRevealed && (
+      {/* Flip mode rating — hidden for audio cards */}
+      {isFlipMode && flipCard?.type !== 'audio' && flipRevealed && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '8px 32px 24px', flexWrap: 'wrap' }}>
           {[
             { rating: 1 as const, label: 'Again', bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' },
