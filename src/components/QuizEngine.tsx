@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Deck } from '@/lib/types'
 import { useQuizSession } from '@/hooks/useQuizSession'
 import AudioCard from '@/components/cards/AudioCard'
@@ -29,6 +29,12 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
   const [showMissed, setShowMissed] = useState(false)
 
   // ── RESULTS SCREEN ──
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const options = useMemo(() => currentCard ? getMCOptions(currentCard) : [], [currentCard?.id])
+  const correctAnswer = currentCard?.type === 'symbol'
+    ? (currentCard.symbolName ?? currentCard.back)
+    : currentCard?.back ?? ''
+
   if (isComplete) {
     const pct = Math.round((score / total) * 100)
     const grade = pct >= 90 ? 'A' : pct >= 80 ? 'B' : pct >= 70 ? 'C' : pct >= 60 ? 'D' : 'F'
@@ -112,13 +118,9 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
     )
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   // ── QUIZ QUESTION ──
   if (!currentCard) return null
-
-  const options = getMCOptions(currentCard)
-  const correctAnswer = currentCard.type === 'symbol'
-    ? (currentCard.symbolName ?? currentCard.back)
-    : currentCard.back
   const progressPct = (index / total) * 100
 
   return (
@@ -151,7 +153,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
         {/* Question */}
         <div style={{ width: '100%', maxWidth: '480px', marginBottom: '24px' }}>
           {currentCard.type === 'audio' ? (
-            <AudioCard card={currentCard} revealed={false} onReveal={() => {}} />
+            <AudioCard card={currentCard} revealed={false} onReveal={() => {}} hideReveal />
           ) : currentCard.type === 'symbol' ? (
             <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }}>
               <div style={{ fontFamily: 'Bravura, serif', fontSize: '96px', lineHeight: 1.4, color: '#1A1A18' }}>

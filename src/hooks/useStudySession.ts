@@ -103,7 +103,7 @@ export function useStudySession(deck: Deck | null, userId: string | null = null)
     if (!currentCard) return []
     const getAnswer = (c: Card) => {
       if (c.type === 'staff') return c.front
-      if (c.type === 'symbol') return c.symbolName ?? c.back
+      if (c.type === 'symbol' || c.type === 'audio') return c.symbolName ?? c.back
       return c.back
     }
     const correct = getAnswer(currentCard)

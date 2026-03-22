@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { Card, Deck } from '@/lib/types'
 import { shuffle } from '@/lib/sm2'
 
@@ -11,7 +11,8 @@ export interface QuizResult {
 }
 
 export function useQuizSession(deck: Deck) {
-  const cards = shuffle([...deck.cards])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const cards = useMemo(() => shuffle([...deck.cards]), [deck.id])
   const [index, setIndex] = useState(0)
   const [results, setResults] = useState<QuizResult[]>([])
   const [isComplete, setIsComplete] = useState(false)

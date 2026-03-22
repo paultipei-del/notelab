@@ -1,9 +1,9 @@
 'use client'
-
 import { use, useEffect, useState } from 'react'
 import { getDeckById } from '@/lib/decks'
 import { loadUserDecks } from '@/lib/userDecks'
 import StudyEngine from '@/components/StudyEngine'
+import QuizEngine from '@/components/QuizEngine'
 import { useAuth } from '@/hooks/useAuth'
 import { Deck } from '@/lib/types'
 
@@ -17,17 +17,16 @@ export default function StudyPage({ params }: Props) {
   const [deck, setDeck] = useState<Deck | null>(null)
   const [deckLoading, setDeckLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [quizMode, setQuizMode] = useState(false)
 
   useEffect(() => {
     if (loading) return
-
     const builtIn = getDeckById(deckId)
     if (builtIn) {
       setDeck(builtIn)
       setDeckLoading(false)
       return
     }
-
     loadUserDecks(user?.id ?? null).then(userDecks => {
       const found = userDecks.find(d => d.id === deckId)
       if (found) {
@@ -42,9 +41,7 @@ export default function StudyPage({ params }: Props) {
   if (loading || deckLoading) {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>
-          Loading…
-        </p>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>Loading…</p>
       </div>
     )
   }
@@ -52,15 +49,20 @@ export default function StudyPage({ params }: Props) {
   if (notFound || !deck) {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-        <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#1A1A18' }}>
-          Deck not found
-        </p>
-        <a href="/" style={{ fontSize: '13px', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>
-          ← Back to decks
-        </a>
+        <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#1A1A18' }}>Deck not found</p>
+        <a href="/" style={{ fontSize: '13px', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>← Back to decks</a>
       </div>
     )
   }
 
-  return <StudyEngine deck={deck} userId={user?.id ?? null} />
+  return (
+    <>
+      <div key="quiz" style={{ display: quizMode ? 'contents' : 'none' }}>
+        <QuizEngine deck={deck} onExit={() => setQuizMode(false)} />
+      </div>
+      <div key="study" style={{ display: quizMode ? 'none' : 'contents' }}>
+        <StudyEngine deck={deck} userId={user?.id ?? null} onQuiz={() => setQuizMode(true)} />
+      </div>
+    </>
+  )
 }

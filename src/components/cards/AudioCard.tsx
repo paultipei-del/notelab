@@ -7,6 +7,8 @@ interface AudioCardProps {
   card: Card
   revealed: boolean
   onReveal: () => void
+  compact?: boolean
+  hideReveal?: boolean
 }
 
 type PlayState = 'idle' | 'loading' | 'playing' | 'ready'
@@ -48,7 +50,7 @@ async function ensureSampler(): Promise<void> {
   })
 }
 
-export default function AudioCard({ card, revealed, onReveal }: AudioCardProps) {
+export default function AudioCard({ card, revealed, onReveal, compact, hideReveal }: AudioCardProps) {
   const [playState, setPlayState] = useState<PlayState>('idle')
   const [hasPlayed, setHasPlayed] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -129,7 +131,7 @@ export default function AudioCard({ card, revealed, onReveal }: AudioCardProps) 
         padding: '36px 32px',
         textAlign: 'center',
         boxShadow: '0 4px 24px rgba(26,26,24,0.08)',
-        marginBottom: revealed ? '12px' : '16px',
+        marginBottom: compact ? '8px' : revealed ? '12px' : '16px',
       }}>
         <div style={{ fontSize: '36px', marginBottom: '16px', lineHeight: 1 }}>𝄞</div>
 
@@ -177,7 +179,7 @@ export default function AudioCard({ card, revealed, onReveal }: AudioCardProps) 
             </p>
           )}
         </div>
-      ) : hasPlayed ? (
+      ) : hasPlayed && !hideReveal ? (
         <div style={{ textAlign: 'center' }}>
           <button
             onClick={onReveal}

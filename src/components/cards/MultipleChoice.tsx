@@ -22,7 +22,7 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
   // For symbol cards the correct answer is symbolName, not back
   const correct = card.type === 'staff'
     ? card.front
-    : card.type === 'symbol'
+    : (card.type === 'symbol' || card.type === 'audio')
     ? (card.symbolName ?? card.back)
     : card.back
 
@@ -40,11 +40,11 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
       padding: '14px 18px',
       borderRadius: '12px',
       border: '1.5px solid',
-      fontFamily: 'var(--font-jost), sans-serif',
-      fontSize: '14px',
-      fontWeight: 300,
-      letterSpacing: '0.03em',
-      lineHeight: 1.5,
+      fontFamily: 'var(--font-cormorant), serif',
+      fontSize: '18px',
+      fontWeight: 400,
+      letterSpacing: '0.01em',
+      lineHeight: 1.4,
       cursor: chosen ? 'default' : 'pointer',
       transition: 'all 0.15s',
     }
@@ -86,9 +86,9 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* Question card */}
-      <div style={{
+    <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* Question card — hidden for audio cards (AudioCard renders above) */}
+      {card.type !== 'audio' && <div style={{
         background: 'white',
         borderRadius: '20px',
         border: '1px solid #D3D1C7',
@@ -104,10 +104,10 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
           Choose the correct answer
         </span>
         {questionContent()}
-      </div>
+      </div>}
 
-      {/* Options grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+      {/* Options grid - fixed height to prevent layout shift */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', minHeight: '130px' }}>
         {options.map((option, i) => (
           <button
             key={i}
