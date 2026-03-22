@@ -2,16 +2,16 @@ import { Card } from '../types'
 import { B } from '../bravura'
 
 export const DYNAMICS_SYMBOL_CARDS: Card[] = [
-  { id: 1, type: 'symbol', front: B.p, back: 'Soft', symbolName: 'Piano (p)' },
-  { id: 2, type: 'symbol', front: B.f, back: 'Loud', symbolName: 'Forte (f)' },
-  { id: 3, type: 'symbol', front: B.mp, back: 'Moderately soft', symbolName: 'Mezzo piano (mp)' },
-  { id: 4, type: 'symbol', front: B.mf, back: 'Moderately loud', symbolName: 'Mezzo forte (mf)' },
-  { id: 5, type: 'symbol', front: B.pp, back: 'Very soft', symbolName: 'Pianissimo (pp)' },
-  { id: 6, type: 'symbol', front: B.ff, back: 'Very loud', symbolName: 'Fortissimo (ff)' },
-  { id: 7, type: 'symbol', front: B.ppp, back: 'Very, very soft', symbolName: 'Pianississimo (ppp)' },
-  { id: 8, type: 'symbol', front: B.fff, back: 'Very, very loud', symbolName: 'Fortississimo (fff)' },
-  { id: 9, type: 'symbol', front: B.sfz, back: 'A sudden, strong accent', symbolName: 'Sforzando (sfz)' },
-  { id: 10, type: 'symbol', front: B.fp, back: 'Loud, then immediately soft', symbolName: 'Forte-piano (fp)' },
+  { id: 1, type: 'symbol', front: B.p, back: 'Soft', symbolName: 'Piano' },
+  { id: 2, type: 'symbol', front: B.f, back: 'Loud', symbolName: 'Forte' },
+  { id: 3, type: 'symbol', front: B.mp, back: 'Moderately soft', symbolName: 'Mezzo piano' },
+  { id: 4, type: 'symbol', front: B.mf, back: 'Moderately loud', symbolName: 'Mezzo forte' },
+  { id: 5, type: 'symbol', front: B.pp, back: 'Very soft', symbolName: 'Pianissimo' },
+  { id: 6, type: 'symbol', front: B.ff, back: 'Very loud', symbolName: 'Fortissimo' },
+  { id: 7, type: 'symbol', front: B.ppp, back: 'Very, very soft', symbolName: 'Pianississimo' },
+  { id: 8, type: 'symbol', front: B.fff, back: 'Very, very loud', symbolName: 'Fortississimo' },
+  { id: 9, type: 'symbol', front: B.sfz, back: 'A sudden, strong accent', symbolName: 'Sforzando' },
+  { id: 10, type: 'symbol', front: B.fp, back: 'Loud, then immediately soft', symbolName: 'Forte-piano' },
   { id: 11, type: 'symbol', front: B.cresc, back: 'Gradually getting louder', symbolName: 'Crescendo', symbolLabel: 'hairpin' },
   { id: 12, type: 'symbol', front: B.decresc, back: 'Gradually getting softer', symbolName: 'Decrescendo / Diminuendo', symbolLabel: 'hairpin' },
 ]
@@ -19,17 +19,17 @@ export const DYNAMICS_SYMBOL_CARDS: Card[] = [
 export const ARTICULATION_SYMBOL_CARDS: Card[] = [
   { id: 1, type: 'symbol', front: B.staccatoAbove, back: 'Short and detached — play notes separated', symbolName: 'Staccato' },
   { id: 2, type: 'symbol', front: B.tenutoAbove, back: 'Hold the note for its full value and/or emphasize it', symbolName: 'Tenuto' },
-  { id: 3, type: 'symbol', front: B.accentAbove, back: 'With emphasis or stress on the note', symbolName: 'Accent (>)' },
+  { id: 3, type: 'symbol', front: B.accentAbove, back: 'With emphasis or stress on the note', symbolName: 'Accent' },
   { id: 4, type: 'symbol', front: B.fermataAbove, back: 'Hold longer — sustain beyond its normal value', symbolName: 'Fermata' },
-  { id: 5, type: 'symbol', front: B.trill, back: 'Rapid alternation between the written note and the note above it', symbolName: 'Trill (tr)' },
+  { id: 5, type: 'symbol', front: B.trill, back: 'Rapid alternation between the written note and the note above it', symbolName: 'Trill' },
 ]
 
 export const ACCIDENTAL_SYMBOL_CARDS: Card[] = [
-  { id: 1, type: 'symbol', front: B.sharp, back: 'Raises a note by a half step', symbolName: 'Sharp (#)' },
-  { id: 2, type: 'symbol', front: B.flat, back: 'Lowers a note by a half step', symbolName: 'Flat (♭)' },
-  { id: 3, type: 'symbol', front: B.natural, back: 'Cancels a sharp or flat — returns the note to its original pitch', symbolName: 'Natural (♮)' },
-  { id: 4, type: 'symbol', front: B.doubleSharp, back: 'Raises a note by two half steps', symbolName: 'Double Sharp (𝄪)' },
-  { id: 5, type: 'symbol', front: B.doubleFlat, back: 'Lowers a note by two half steps', symbolName: 'Double Flat (𝄫)' },
+  { id: 1, type: 'symbol', front: B.sharp, back: 'Raises a note by a half step', symbolName: 'Sharp' },
+  { id: 2, type: 'symbol', front: B.flat, back: 'Lowers a note by a half step', symbolName: 'Flat' },
+  { id: 3, type: 'symbol', front: B.natural, back: 'Cancels a sharp or flat — returns the note to its original pitch', symbolName: 'Natural' },
+  { id: 4, type: 'symbol', front: B.doubleSharp, back: 'Raises a note by two half steps', symbolName: 'Double Sharp' },
+  { id: 5, type: 'symbol', front: B.doubleFlat, back: 'Lowers a note by two half steps', symbolName: 'Double Flat' },
 ]
 
 export const NOTE_VALUES_SYMBOL_CARDS: Card[] = [

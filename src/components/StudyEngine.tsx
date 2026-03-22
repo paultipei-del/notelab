@@ -8,6 +8,7 @@ import MultipleChoice from '@/components/cards/MultipleChoice'
 import TypeAnswer from '@/components/cards/TypeAnswer'
 import SymbolCard from '@/components/cards/SymbolCard'
 import AudioCard from '@/components/cards/AudioCard'
+import ExplainCard from '@/components/cards/ExplainCard'
 import QuizEngine from '@/components/QuizEngine'
 import { useRouter } from 'next/navigation'
 
@@ -21,6 +22,7 @@ const STUDY_MODES: { id: StudyMode; label: string }[] = [
   { id: 'flip', label: 'Flip' },
   { id: 'mc', label: 'Multiple Choice' },
   { id: 'type', label: 'Type Answer' },
+  { id: 'explain', label: 'Explain It' },
 ]
 
 export default function StudyEngine({ deck, userId }: StudyEngineProps) {
@@ -47,6 +49,7 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
     recordAnswer,
     setMode,
     getMCOptions,
+    resetSession,
   } = useStudySession(deck, userId)
 
   const flipCards = deck.cards
@@ -86,18 +89,22 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-            <button onClick={() => router.push('/')}
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={() => { resetSession(); setViewMode('study') }}
               style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>
-              Back to Decks
+              Study Again
             </button>
-            <button onClick={() => setQuizMode(true)}
-          style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-          Quiz
-        </button>
-        <button onClick={() => setViewMode('browse')}
+            <button onClick={() => setViewMode('browse')}
               style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-              Browse All Cards
+              Browse Cards
+            </button>
+            <button onClick={() => {
+              const tag = deck.id.startsWith('cm-') ? 'cm' : deck.id.startsWith('ear-') ? 'ear' : deck.id.startsWith('symbols-') ? 'symbols' : null
+              if (tag) router.push('/collection?tag=' + tag)
+              else router.push('/')
+            }}
+              style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              ← Back
             </button>
           </div>
         </div>
@@ -115,7 +122,11 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
-          <button onClick={() => router.push('/')}
+          <button onClick={() => {
+          const tag = deck.id.startsWith('cm-') ? 'cm' : deck.id.startsWith('ear-') ? 'ear' : deck.id.startsWith('symbols-') ? 'symbols' : null
+          if (tag) router.push('/collection?tag=' + tag)
+          else router.push('/')
+        }}
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780' }}>
             ← Back
           </button>
@@ -192,7 +203,11 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', gap: '16px' }}>
-        <button onClick={() => router.push('/')}
+        <button onClick={() => {
+          const tag = deck.id.startsWith('cm-') ? 'cm' : deck.id.startsWith('ear-') ? 'ear' : deck.id.startsWith('symbols-') ? 'symbols' : null
+          if (tag) router.push('/collection?tag=' + tag)
+          else router.push('/')
+        }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780' }}>
           ← Back
         </button>
@@ -205,7 +220,7 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
       {/* Mode selector + Browse */}
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 20px', flexWrap: 'wrap' }}>
         {STUDY_MODES.map(({ id, label }) => (
-          <button key={id} onClick={() => setMode(id)}
+          <button key={id} onClick={() => { setMode(id); if (id !== 'flip') resetSession() }}
             style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#D3D1C7'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>
             {label}
           </button>
@@ -237,6 +252,8 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
             <MultipleChoice card={currentCard} options={mcOptions} onAnswer={recordAnswer} onReveal={reveal} />
           ) : mode === 'type' && currentCard ? (
             <TypeAnswer card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
+          ) : mode === 'explain' && currentCard ? (
+            <ExplainCard card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
           ) : null}
       </div>
 
@@ -272,8 +289,8 @@ export default function StudyEngine({ deck, userId }: StudyEngineProps) {
         </div>
       )}
 
-      {/* Flip mode rating — hidden for audio cards */}
-      {isFlipMode && flipCard?.type !== 'audio' && flipRevealed && (
+      {/* Flip mode rating — removed, flip is now pure free browsing */}
+      {false && isFlipMode && flipRevealed && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '8px 32px 24px', flexWrap: 'wrap' }}>
           {[
             { rating: 1 as const, label: 'Again', bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' },

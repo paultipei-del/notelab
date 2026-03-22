@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { QueueCard } from '@/lib/types'
 import StaffCard from './StaffCard'
 
@@ -14,6 +14,11 @@ interface MultipleChoiceProps {
 export default function MultipleChoice({ card, options, onAnswer, onReveal }: MultipleChoiceProps) {
   const [chosen, setChosen] = useState<string | null>(null)
 
+  // Reset when card changes
+  useEffect(() => {
+    setChosen(null)
+  }, [card.id])
+
   // For symbol cards the correct answer is symbolName, not back
   const correct = card.type === 'staff'
     ? card.front
@@ -25,7 +30,7 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
     if (chosen) return
     setChosen(option)
     onAnswer(option === correct)
-    setTimeout(onReveal, 400)
+    onReveal()
   }
 
   function getButtonStyle(option: string) {

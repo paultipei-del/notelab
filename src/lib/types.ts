@@ -48,7 +48,7 @@ export interface QueueCard extends Card {
   dueDate?: number
 }
 
-export type StudyMode = 'flip' | 'mc' | 'type'
+export type StudyMode = 'flip' | 'mc' | 'type' | 'explain'
 
 export type RatingValue = 1 | 2 | 3
 

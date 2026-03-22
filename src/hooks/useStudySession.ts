@@ -31,8 +31,10 @@ export function useStudySession(deck: Deck | null, userId: string | null = null)
       setProgress(stored)
       setProgressLoaded(true)
 
-      const q = buildQueue(deck.cards, stored, deck.id) as QueueCard[]
-      setQueue(q)
+      // Always show all cards — SM-2 due dates affect intervals shown
+      // but never prevent a card from appearing in a session
+      const allCards = deck.cards.map(c => ({ ...c })) as QueueCard[]
+      setQueue(shuffle([...allCards]))
       setCardIndex(0)
       setRevealed(false)
       setIsComplete(false)
@@ -48,7 +50,7 @@ export function useStudySession(deck: Deck | null, userId: string | null = null)
   }, [deck, userId])
 
   const currentCard = queue[cardIndex] ?? null
-  const isSessionDone = cardIndex >= queue.length && queue.length > 0 && progressLoaded
+  const isSessionDone = cardIndex >= queue.length && queue.length > 0 && progressLoaded && !revealed
 
   const reveal = useCallback(() => {
     setRevealed(true)
@@ -113,8 +115,27 @@ export function useStudySession(deck: Deck | null, userId: string | null = null)
     return shuffle([correct, ...distractors])
   }, [currentCard])
 
+  function resetSession() {
+    loadProgress(userId).then(stored => {
+      setProgress(stored)
+      const q = deck!.cards.map(c => ({ ...c })) as QueueCard[]
+      setQueue(shuffle([...q]))
+      setCardIndex(0)
+      setRevealed(false)
+      setStats({
+        correct: 0,
+        total: 0,
+        streak: 0,
+        bestStreak: 0,
+        streakHistory: [],
+        startTime: Date.now(),
+      })
+    })
+  }
+
   return {
     currentCard,
+    resetSession,
     queue,
     cardIndex,
     mode,
