@@ -99,10 +99,15 @@ export function useStudySession(deck: Deck | null, userId: string | null = null)
 
   const getMCOptions = useCallback((allCards: Card[]): string[] => {
     if (!currentCard) return []
-    const correct = currentCard.type === 'staff' ? currentCard.front : currentCard.back
+    const getAnswer = (c: Card) => {
+      if (c.type === 'staff') return c.front
+      if (c.type === 'symbol') return c.symbolName ?? c.back
+      return c.back
+    }
+    const correct = getAnswer(currentCard)
     const pool = allCards
       .filter(c => c.id !== currentCard.id)
-      .map(c => c.type === 'staff' ? c.front : c.back)
+      .map(c => getAnswer(c))
     shuffle(pool)
     const distractors = pool.slice(0, 3)
     return shuffle([correct, ...distractors])
