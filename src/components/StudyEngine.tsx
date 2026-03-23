@@ -100,7 +100,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
           <div style={{ padding: '20px 32px 64px', maxWidth: '720px', margin: '0 auto', width: '100%' }}>
             <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '20px' }}>{deck.cards.length} cards{deck.cards[0]?.type !== 'audio' ? ' — click any card to see the answer' : ''}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {deck.cards.map((card, i) => (
+              {(deck.browseCards ?? deck.cards).map((card, i) => (
                 <div key={card.id} onClick={() => card.type !== 'audio' && setBrowseExpanded(browseExpanded === card.id ? null : card.id)}
                   style={{ background: 'white', border: `1px solid ${browseExpanded === card.id ? '#BA7517' : '#D3D1C7'}`, borderRadius: '12px', padding: '16px 20px', cursor: card.type !== 'audio' ? 'pointer' : 'default', transition: 'all 0.15s' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>

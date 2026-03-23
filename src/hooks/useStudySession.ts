@@ -107,12 +107,16 @@ export function useStudySession(deck: Deck | null, userId: string | null = null)
       return c.back
     }
     const correct = getAnswer(currentCard)
-    const pool = allCards
-      .filter(c => c.id !== currentCard.id)
-      .map(c => getAnswer(c))
-    shuffle(pool)
-    const distractors = pool.slice(0, 3)
-    return shuffle([correct, ...distractors])
+    // Deduplicate pool so each unique answer appears once
+    const seen = new Set<string>([correct])
+    const pool: string[] = []
+    const shuffled = shuffle([...allCards.filter(c => c.id !== currentCard.id)])
+    for (const c of shuffled) {
+      const ans = getAnswer(c)
+      if (!seen.has(ans)) { seen.add(ans); pool.push(ans) }
+      if (pool.length >= 3) break
+    }
+    return shuffle([correct, ...pool])
   }, [currentCard])
 
   function resetSession() {

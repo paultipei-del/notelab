@@ -30,6 +30,7 @@ export interface Deck {
   description: string
   tag: DeckTag
   cards: Card[]
+  browseCards?: Card[] // optional override for browse view
 }
 
 export interface CardProgress {

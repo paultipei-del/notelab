@@ -1,5 +1,5 @@
 import { Deck } from './types'
-import { EAR_TRAINING_INTERVALS, EAR_TRAINING_TRIADS, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
+import { EAR_TRAINING_INTERVALS, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { CM_PREP_CARDS } from "./cm-content/preparatory"
 import { CM_LEVEL1_CARDS } from "./cm-content/level1"
@@ -132,6 +132,7 @@ export const DECKS: Deck[] = [
     description: 'Identify major, minor, diminished and augmented triads by ear.',
     tag: 'free',
     cards: EAR_TRAINING_TRIADS,
+    browseCards: EAR_TRAINING_TRIADS_BROWSE,
   },
   {
     id: 'ear-cadences',

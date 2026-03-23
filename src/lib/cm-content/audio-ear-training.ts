@@ -75,3 +75,10 @@ export const EAR_TRAINING_SCALES: Card[] = [
   { id: 3, type: 'audio', front: 'scale', back: 'Harmonic minor — raised 7th — exotic, tense', audioNotes: ['A3','B3','C4','D4','E4','F4','Ab4','A4'], audioPattern: 'scale', audioLabel: 'Which scale?', audioHint: 'Ascending', symbolName: 'Harmonic minor' },
   { id: 4, type: 'audio', front: 'scale', back: 'Melodic minor (ascending) — raised 6th and 7th', audioNotes: ['A3','B3','C4','D4','E4','F#4','G#4','A4'], audioPattern: 'scale', audioLabel: 'Which scale?', audioHint: 'Ascending', symbolName: 'Melodic minor' },
 ]
+
+export const EAR_TRAINING_TRIADS_BROWSE: Card[] = [
+  { id: 1, type: 'audio', front: 'triad', back: 'Major — bright, stable. M3 + P5 above root', audioNotes: ['C4','E4','G4'], audioPattern: 'harmonic', audioLabel: 'Major', audioDuration: '2n', symbolName: 'Major' },
+  { id: 2, type: 'audio', front: 'triad', back: 'Minor — dark, somber. m3 + P5 above root', audioNotes: ['C4','Eb4','G4'], audioPattern: 'harmonic', audioLabel: 'Minor', audioDuration: '2n', symbolName: 'Minor' },
+  { id: 3, type: 'audio', front: 'triad', back: 'Diminished — tense, unstable. m3 + d5 above root', audioNotes: ['C4','Eb4','Gb4'], audioPattern: 'harmonic', audioLabel: 'Diminished', audioDuration: '2n', symbolName: 'Diminished' },
+  { id: 4, type: 'audio', front: 'triad', back: 'Augmented — bright, tense. M3 + A5 above root', audioNotes: ['C4','E4','Ab4'], audioPattern: 'harmonic', audioLabel: 'Augmented', audioDuration: '2n', symbolName: 'Augmented' },
+]
