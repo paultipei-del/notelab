@@ -14,9 +14,16 @@ type Status = 'starting' | 'listening' | 'correct' | 'wrong'
 
 const DATA_SIZE = 4096
 
-// Shared AudioContext across cards so we don't restart the mic each time
-let sharedCtx: AudioContext | null = null
-let sharedStream: MediaStream | null = null
+// Track ALL streams and contexts ever created so we can stop them all
+const allStreams: MediaStream[] = []
+const allContexts: AudioContext[] = []
+
+export function stopMic() {
+  allStreams.forEach(s => s.getTracks().forEach(t => t.stop()))
+  allStreams.length = 0
+  allContexts.forEach(ctx => ctx.close().catch(() => {}))
+  allContexts.length = 0
+}
 
 export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
   const [status, setStatus] = useState<Status>('starting')
@@ -27,23 +34,33 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
   const animRef    = useRef<number | null>(null)
   const detectorRef = useRef<NoteDetector | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
+  const sourceRef   = useRef<MediaStreamAudioSourceNode | null>(null)
   const bufRef     = useRef<Float32Array<ArrayBuffer>>(new Float32Array(DATA_SIZE) as Float32Array<ArrayBuffer>)
   const doneRef    = useRef(false)
 
   const targetPitch = noteToPitchClass(card.note ?? '')
 
+  // Stop mic when Play It mode is exited entirely
+  useEffect(() => {
+    return () => {
+      stopMic()
+    }
+  }, [])
+
   function stopLoop() {
     if (animRef.current) { cancelAnimationFrame(animRef.current); animRef.current = null }
+    if (sourceRef.current) { try { sourceRef.current.disconnect() } catch(_) {}; sourceRef.current = null }
     detectorRef.current = null
     analyserRef.current = null
   }
 
   const startDetecting = useCallback(async (stream: MediaStream) => {
-    const ctx = sharedCtx ?? new AudioContext()
-    sharedCtx = ctx
+    const ctx = new AudioContext()
+    allContexts.push(ctx)
     if (ctx.state === 'suspended') await ctx.resume()
 
     const source = ctx.createMediaStreamSource(stream)
+    sourceRef.current = source
     const analyser = ctx.createAnalyser()
     analyser.fftSize = DATA_SIZE * 2
     source.connect(analyser)
@@ -99,11 +116,10 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
 
     async function init() {
       try {
-        if (!sharedStream) {
-          sharedStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-          setPermissionGranted(true)
-        }
-        await startDetecting(sharedStream)
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        allStreams.push(stream)
+        setPermissionGranted(true)
+        await startDetecting(stream)
       } catch (e: any) {
         setError('Mic access denied. Please allow microphone access.')
         setStatus('listening')
@@ -111,7 +127,10 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
     }
 
     init()
-    return () => stopLoop()
+    return () => {
+      stopLoop()
+      // Don't stop sharedStream here — handled by mode switch
+    }
   }, [card.id])
 
   const bgColor = status === 'correct' ? '#EAF3DE'
