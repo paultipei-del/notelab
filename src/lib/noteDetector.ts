@@ -99,7 +99,7 @@ class Detector_yin {
 class Detector_mpm {
   peak_ignore = 0.25
   peak_cutoff = 0.93
-  pitch_min = 80
+  pitch_min = 200
   sampleRate: number
   tmp: Float32Array
   constructor(dataSize: number, sampleRate: number) {
@@ -124,7 +124,7 @@ class Detector_mpm {
 }
 
 class Detector_acx {
-  volume_min = 0.005
+  volume_min = 0.015
   peak_ignore = 0.00
   peak_cutoff = 0.93
   sampleRate: number
@@ -160,7 +160,7 @@ export class NoteDetector {
     close_threshold:     0.05,
     track_lone_ms:       40,
     track_cons_ms:       25,
-    detrack_min_volume:  0.005,
+    detrack_min_volume:  0.015,
     detrack_est_none_ms: 500,
     detrack_est_some_ms: 250,
     stable_note_ms:      30,
@@ -219,6 +219,11 @@ export class NoteDetector {
         this.startTracking_(this.candidate.freq, this.candidate.start); return
       }
     }
+  }
+
+  reset() {
+    this.candidate = null
+    this.tracking = null
   }
 
   getNote(): DetectedNote | null {

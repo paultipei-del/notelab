@@ -106,6 +106,37 @@ function repeatCards(cards: ReturnType<typeof trebleCards>, times: number, maxCo
   return result
 }
 
+
+// Chromatic helper
+const TREBLE_CHROMATIC: Record<string, string> = {
+  'C#4': 'Sharp C — between C and D', 'Db4': 'Flat D — between C and D',
+  'D#4': 'Sharp D — between D and E', 'Eb4': 'Flat E — between D and E',
+  'F#4': 'Sharp F — between F and G', 'Gb4': 'Flat G — between F and G',
+  'G#4': 'Sharp G — between G and A', 'Ab4': 'Flat A — between G and A',
+  'A#4': 'Sharp A — between A and B', 'Bb4': 'Flat B — between A and B',
+  'C#5': 'Sharp C — between C and D', 'Db5': 'Flat D — between C and D',
+  'D#5': 'Sharp D — between D and E', 'Eb5': 'Flat E — between D and E',
+  'F#5': 'Sharp F — between F and G', 'Gb5': 'Flat G — between F and G',
+  'G#5': 'Sharp G — between G and A', 'Ab5': 'Flat A — between G and A',
+  'A#5': 'Sharp A — between A and B', 'Bb5': 'Flat B — between A and B',
+  'C#3': 'Sharp C — between C and D', 'Db3': 'Flat D — between C and D',
+  'D#3': 'Sharp D — between D and E', 'Eb3': 'Flat E — between D and E',
+}
+
+function chromaticCards(notes: string[], idOffset = 0) {
+  return notes.map((note, i) => n(idOffset + i + 1, note, 'treble', TREBLE_CHROMATIC[note] ?? note))
+}
+
+function mergeNatural(natural: string[], chromatic: string[]) {
+  return [...trebleCards(natural), ...chromaticCards(chromatic, natural.length)]
+}
+
+// Chromatic note sets per level range
+const L6_CHROMATIC = ['C#4','Db4','D#4','Eb4','F#4','Gb4','G#4','Ab4']
+const L7_CHROMATIC = [...L6_CHROMATIC, 'A#4','Bb4','C#5','Db5','D#5','Eb5']
+const L8_CHROMATIC = [...L7_CHROMATIC, 'F#5','Gb5','G#5','Ab5','A#5','Bb5']
+const L9_CHROMATIC = [...L8_CHROMATIC, 'C#3','Db3','D#3','Eb3']
+
 export const SIGHT_READ_DECKS: Deck[] = [
   {
     id: 'sight-read-treble-free',
@@ -156,6 +187,41 @@ export const SIGHT_READ_DECKS: Deck[] = [
     tag: 'free',
     cards: trebleCards(L5),
   },
+  {
+    id: 'sight-read-treble-6',
+    title: 'Level 6',
+    description: 'C4 through G4 — with sharps and flats.',
+    tag: 'free',
+    cards: repeatCards(mergeNatural(L2, L6_CHROMATIC), 2, 1),
+  },
+  {
+    id: 'sight-read-treble-7',
+    title: 'Level 7',
+    description: 'C4 through C5 — with sharps and flats.',
+    tag: 'free',
+    cards: repeatCards(mergeNatural(L3, L7_CHROMATIC), 2, 1),
+  },
+  {
+    id: 'sight-read-treble-8',
+    title: 'Level 8',
+    description: 'C4 through A5 — with sharps and flats.',
+    tag: 'free',
+    cards: mergeNatural(L4, L8_CHROMATIC),
+  },
+  {
+    id: 'sight-read-treble-9',
+    title: 'Level 9',
+    description: 'A3 through C6 — with sharps and flats.',
+    tag: 'free',
+    cards: mergeNatural(L5, L9_CHROMATIC),
+  },
+  {
+    id: 'sight-read-treble-10',
+    title: 'Level 10',
+    description: 'Full range F3–E6 — all chromatic notes.',
+    tag: 'free',
+    cards: mergeNatural(L5, L9_CHROMATIC),
+  },
 ]
 
 export const SIGHT_READ_PRO_IDS = [
@@ -164,4 +230,9 @@ export const SIGHT_READ_PRO_IDS = [
   'sight-read-treble-3',
   'sight-read-treble-4',
   'sight-read-treble-5',
+  'sight-read-treble-6',
+  'sight-read-treble-7',
+  'sight-read-treble-8',
+  'sight-read-treble-9',
+  'sight-read-treble-10',
 ]

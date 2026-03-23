@@ -8,15 +8,43 @@ import { NoteDetector, noteToPitchClass } from '@/lib/noteDetector'
 interface PlayItCardProps {
   card: QueueCard
   onCorrect: () => void
+  onWrong: () => void
 }
 
 type Status = 'starting' | 'listening' | 'correct' | 'wrong'
 
 const DATA_SIZE = 2048
 
+const ENHARMONICS: Record<string, string> = {
+  'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
+  'F#': 'Gb', 'Gb': 'F#', 'G#': 'Ab', 'Ab': 'G#',
+  'A#': 'Bb', 'Bb': 'A#',
+}
+
+function pitchMatches(played: string, target: string): boolean {
+  if (played === target) return true
+  return ENHARMONICS[target] === played
+}
+
+// Full note matching including octave e.g. 'D#4' matches 'Eb4'
+function pitchMatchesFull(played: string, target: string): boolean {
+  if (played === target) return true
+  // Extract pitch class and octave
+  const playedClass = played.replace(/\d+$/, '')
+  const targetClass = target.replace(/\d+$/, '')
+  const playedOctave = played.match(/\d+$/)?.[0]
+  const targetOctave = target.match(/\d+$/)?.[0]
+  // Must be same octave AND enharmonic equivalent
+  if (playedOctave !== targetOctave) return false
+  return ENHARMONICS[targetClass] === playedClass
+}
+
+
+
 // Track ALL streams and contexts ever created so we can stop them all
 const allStreams: MediaStream[] = []
 const allContexts: AudioContext[] = []
+let cardReadyAt = 0  // timestamp after which wrong answers count
 
 export function stopMic() {
   allStreams.forEach(s => s.getTracks().forEach(t => t.stop()))
@@ -25,7 +53,7 @@ export function stopMic() {
   allContexts.length = 0
 }
 
-export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
+export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps) {
   const [status, setStatus] = useState<Status>('starting')
   const [detected, setDetected] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -38,7 +66,8 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
   const bufRef     = useRef<Float32Array<ArrayBuffer>>(new Float32Array(DATA_SIZE) as Float32Array<ArrayBuffer>)
   const doneRef    = useRef(false)
 
-  const targetPitch = noteToPitchClass(card.note ?? '')
+  const targetNote = card.note ?? ''  // full note e.g. 'D5'
+  const targetPitch = noteToPitchClass(targetNote)  // pitch class e.g. 'D' (kept for display)
 
   // Stop mic when Play It mode is exited entirely
   useEffect(() => {
@@ -50,7 +79,7 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
   function stopLoop() {
     if (animRef.current) { cancelAnimationFrame(animRef.current); animRef.current = null }
     if (sourceRef.current) { try { sourceRef.current.disconnect() } catch(_) {}; sourceRef.current = null }
-    detectorRef.current = null
+    if (detectorRef.current) { detectorRef.current.reset(); detectorRef.current = null }
     analyserRef.current = null
   }
 
@@ -83,7 +112,7 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
         setDetected(note.name)
         const played = noteToPitchClass(note.name)
 
-        if (played === targetPitch) {
+        if (pitchMatches(played, targetPitch)) {
           if (wrongTimeout) { clearTimeout(wrongTimeout); wrongTimeout = null }
           doneRef.current = true
           setStatus('correct')
@@ -92,6 +121,7 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
           return
         } else {
           setStatus('wrong')
+          if (Date.now() >= cardReadyAt) onWrong()
           if (!wrongTimeout) {
             wrongTimeout = setTimeout(() => {
               if (!doneRef.current) setStatus('listening')
@@ -176,7 +206,7 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
           )}
           {status === 'wrong' && detected && (
             <span style={{ fontSize: '15px', fontWeight: 400, color: '#A32D2D', letterSpacing: '0.04em' }}>
-              ✗ That's {detected} — try {targetPitch}
+              ✗ That's {detected} — try {targetNote}
             </span>
           )}
         </div>

@@ -62,6 +62,17 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const elapsedMs = Date.now() - stats.startTime
   const elapsed = Math.round(elapsedMs / 60000)
   const isPlayMode = mode === 'play'
+
+  // Best time tracking for sight-read decks
+  const bestTimeKey = `notelab-best-time-${deck.id}`
+  const prevBest = typeof window !== 'undefined' ? parseFloat(localStorage.getItem(bestTimeKey) ?? '0') : 0
+  const currentTime = elapsedMs / 1000
+  const isNewBest = isSightReadDeck && (prevBest === 0 || currentTime < prevBest)
+  if (isSightReadDeck && typeof window !== 'undefined') {
+    if (prevBest === 0 || currentTime < prevBest) {
+      localStorage.setItem(bestTimeKey, currentTime.toString())
+    }
+  }
   const elapsedDisplay = isPlayMode
     ? (elapsedMs / 1000).toFixed(2) + 's'
     : elapsed < 1 ? '<1' : String(elapsed)
@@ -95,7 +106,10 @@ return (
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px' }}>Session Complete</h2>
             <p style={{ fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '40px' }}>
-              {[{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }].map(({ num, label }) => (
+              {(isSightReadDeck
+              ? [{ num: Math.round((stats.correct / stats.total) * 100) + '%', label: 'Score' }, { num: elapsedDisplay, label: 'Time' }, { num: prevBest > 0 ? prevBest.toFixed(2) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' }]
+              : [{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }]
+            ).map(({ num, label }) => (
                 <div key={label} style={{ textAlign: 'center' }}>
                   <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '40px', color: '#1A1A18', lineHeight: 1 }}>{num}</div>
                   <div style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', marginTop: '4px' }}>{label}</div>
@@ -183,7 +197,7 @@ return (
             ) : mode === 'explain' && currentCard ? (
               <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
             ) : mode === 'play' && currentCard ? (
-              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={() => { recordAnswer(true); rate(3) }} />
+              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={() => { recordAnswer(true); rate(3) }} onWrong={() => recordAnswer(false)} />
             ) : null}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '8px 32px 16px', visibility: isFlipMode ? 'visible' : 'hidden' }}>
