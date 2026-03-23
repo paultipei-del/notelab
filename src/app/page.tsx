@@ -193,14 +193,6 @@ export default function Home() {
               </div>
             </Link>
 
-            {/* Sight Read card */}
-            <Link href="/sight-read" style={{ textDecoration: 'none' }}>
-              <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '20px', cursor: 'pointer', transition: 'all 0.15s' }}>
-                <div style={{ fontSize: '24px', marginBottom: '10px' }}>𝄞</div>
-                <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>Sight Read</h3>
-                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#888780', lineHeight: 1.5 }}>Read notes on the staff in real time</p>
-              </div>
-            </Link>
           </div>
         </div>
 
@@ -249,9 +241,42 @@ export default function Home() {
           </Link>
         </div>
 
+        {/* Sight Read */}
+        <div style={{ marginBottom: '48px' }}>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '24px', color: '#1A1A18', marginBottom: '4px', letterSpacing: '0.02em' }}>
+            Sight Read
+          </h2>
+          <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '20px' }}>
+            Train your eyes and hands — read notes on the staff in real time
+          </p>
+          <Link href="/sight-read" style={{ textDecoration: 'none', display: 'block' }}>
+            <div
+              style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '28px 32px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
+            >
+              <div>
+                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#888780' }}>
+                  Free + Pro
+                </span>
+                <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#1A1A18', marginBottom: '6px' }}>
+                  Staff Note Recognition
+                </h3>
+                <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6, maxWidth: '480px' }}>
+                  Play notes on your piano as they appear on the staff. Free treble and bass clef decks included — Pro unlocks 5 progressive treble levels.
+                </p>
+              </div>
+              <div style={{ marginLeft: '24px', flexShrink: 0 }}>
+                <span style={{ fontSize: '14px', fontWeight: 300, color: '#888780' }}>Explore →</span>
+              </div>
+            </div>
+          </Link>
+        </div>
+
         {/* User decks */}
+
         {userDecks.length > 0 && (
-          <div style={{ marginBottom: '48px' }}>
+        <div style={{ marginBottom: '48px' }}>
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '24px', color: '#1A1A18', marginBottom: '4px', letterSpacing: '0.02em' }}>
               My Decks
             </h2>
