@@ -52,7 +52,13 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
     if (tag) router.push('/collection?tag=' + tag); else router.push('/')
   }
 
-  const elapsed = Math.round((Date.now() - stats.startTime) / 60000)
+  const elapsedMs = Date.now() - stats.startTime
+  const elapsed = Math.round(elapsedMs / 60000)
+  const isPlayMode = mode === 'play'
+  const elapsedDisplay = isPlayMode
+    ? (elapsedMs / 1000).toFixed(2) + 's'
+    : elapsed < 1 ? '<1' : String(elapsed)
+  const elapsedLabel = isPlayMode ? 'Time' : 'Minutes'
   const sessionMsg = stats.correct === stats.total ? 'Perfect session!' : stats.correct > stats.total * 0.8 ? 'Great work!' : 'Keep practicing!'
 
   return (
@@ -64,7 +70,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px' }}>Session Complete</h2>
             <p style={{ fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '40px' }}>
-              {[{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsed < 1 ? '<1' : elapsed, label: 'Minutes' }].map(({ num, label }) => (
+              {[{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }].map(({ num, label }) => (
                 <div key={label} style={{ textAlign: 'center' }}>
                   <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '40px', color: '#1A1A18', lineHeight: 1 }}>{num}</div>
                   <div style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', marginTop: '4px' }}>{label}</div>
@@ -150,7 +156,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
             ) : mode === 'explain' && currentCard ? (
               <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
             ) : mode === 'play' && currentCard ? (
-              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={() => { recordAnswer(true); reveal() }} />
+              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={() => { recordAnswer(true); rate(3) }} />
             ) : null}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '8px 32px 16px', visibility: isFlipMode ? 'visible' : 'hidden' }}>
@@ -158,7 +164,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
             <span style={{ fontSize: '12px', fontWeight: 300, color: '#888780' }}>{flipIndex + 1} / {flipCards.length}</span>
             <button onClick={goNext} disabled={flipIndex === flipCards.length - 1} style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: flipIndex === flipCards.length - 1 ? '#D3D1C7' : '#888780', cursor: flipIndex === flipCards.length - 1 ? 'default' : 'pointer' }}>Next →</button>
           </div>
-          {!isFlipMode && (
+          {!isFlipMode && mode !== 'play' && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '12px 32px 16px', flexWrap: 'wrap', visibility: revealed ? 'visible' : 'hidden', minHeight: '80px', alignItems: 'center' }}>
               {([{ rating: 1, label: 'Again', interval: intervals.again, bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' }, { rating: 2, label: 'Hard', interval: intervals.hard, bg: '#FAEEDA', border: '#FAC775', color: '#BA7517' }, { rating: 3, label: 'Easy', interval: intervals.easy, bg: '#EAF3DE', border: '#C0DD97', color: '#3B6D11' }] as const).map(({ rating, label, interval, bg, border, color }) => (
                 <button key={rating} onClick={() => rate(rating)}
