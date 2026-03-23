@@ -10,6 +10,7 @@ import SymbolCard from '@/components/cards/SymbolCard'
 import AudioCard from '@/components/cards/AudioCard'
 import AudioBrowseRow from '@/components/cards/AudioBrowseRow'
 import ExplainCard from '@/components/cards/ExplainCard'
+import PlayItCard from '@/components/cards/PlayItCard'
 import { useRouter } from 'next/navigation'
 
 interface StudyEngineProps { deck: Deck; userId: string | null; onQuiz: () => void }
@@ -17,6 +18,7 @@ type ViewMode = 'study' | 'browse'
 const STUDY_MODES: { id: StudyMode; label: string }[] = [
   { id: 'flip', label: 'Flip' }, { id: 'mc', label: 'Multiple Choice' },
   { id: 'type', label: 'Type Answer' }, { id: 'explain', label: 'Explain It' },
+  { id: 'play', label: 'Play It' },
 ]
 
 export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) {
@@ -29,7 +31,12 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const flipCards = useMemo(() => [...deck.cards].sort(() => Math.random() - 0.5), [deck.id])
   const flipCard = flipCards[flipIndex] ?? null
   const isAudioDeck = deck.cards.every(c => c.type === 'audio')
-  const visibleModes = STUDY_MODES.filter(m => !isAudioDeck || !['type', 'explain'].includes(m.id))
+  const isStaffDeck = deck.cards.some(c => c.type === 'staff')
+  const visibleModes = STUDY_MODES.filter(m => {
+    if (isAudioDeck && ['type', 'explain', 'play'].includes(m.id)) return false
+    if (!isStaffDeck && m.id === 'play') return false
+    return true
+  })
   const isFlipMode = mode === 'flip'
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const mcOptions = useMemo(() => mode === 'mc' && currentCard ? getMCOptions(deck.cards) : [], [currentCard?.id, mode])
@@ -142,6 +149,8 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
               <TypeAnswer key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
             ) : mode === 'explain' && currentCard ? (
               <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
+            ) : mode === 'play' && currentCard ? (
+              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={() => { recordAnswer(true); reveal() }} />
             ) : null}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '8px 32px 16px', visibility: isFlipMode ? 'visible' : 'hidden' }}>
