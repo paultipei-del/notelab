@@ -23,16 +23,21 @@ const STUDY_MODES: { id: StudyMode; label: string }[] = [
 
 export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) {
   const router = useRouter()
+  const isSightReadDeckInit = deck.id.startsWith('sight-read-')
   const [viewMode, setViewMode] = useState<ViewMode>('study')
+  const [showIntro, setShowIntro] = useState(deck.id.startsWith('sight-read-'))
   const [browseExpanded, setBrowseExpanded] = useState<number | null>(null)
   const [flipIndex, setFlipIndex] = useState(0)
   const [flipRevealed, setFlipRevealed] = useState(false)
+  const initialMode: StudyMode = deck.id.startsWith('sight-read-') ? 'play' : 'flip'
   const { currentCard, mode, revealed, stats, isComplete, progressPct, progressLabel, intervals, reveal, rate, recordAnswer, setMode, getMCOptions, resetSession } = useStudySession(deck, userId)
   const flipCards = useMemo(() => [...deck.cards].sort(() => Math.random() - 0.5), [deck.id])
   const flipCard = flipCards[flipIndex] ?? null
   const isAudioDeck = deck.cards.every(c => c.type === 'audio')
   const isStaffDeck = deck.cards.some(c => c.type === 'staff')
+  const isSightReadDeck = deck.id.startsWith('sight-read-')
   const visibleModes = STUDY_MODES.filter(m => {
+    if (isSightReadDeck) return m.id === 'play'
     if (isAudioDeck && ['type', 'explain', 'play'].includes(m.id)) return false
     if (!isStaffDeck && m.id === 'play') return false
     return true
@@ -62,7 +67,25 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const elapsedLabel = isPlayMode ? 'Time' : 'Minutes'
   const sessionMsg = stats.correct === stats.total ? 'Perfect session!' : stats.correct > stats.total * 0.8 ? 'Great work!' : 'Keep practicing!'
 
-  return (
+    if (showIntro) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+        <div style={{ background: 'white', borderRadius: '20px', border: '1px solid #D3D1C7', padding: '56px 48px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)' }}>
+          <div style={{ fontSize: '48px', marginBottom: '24px' }}>𝄞</div>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '12px', letterSpacing: '0.02em' }}>{deck.title}</h2>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#888780', lineHeight: 1.8, marginBottom: '8px' }}>A note will appear on the staff.</p>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#888780', lineHeight: 1.8, marginBottom: '36px' }}>Play it on your piano — the mic will detect the correct note and move to the next one automatically.</p>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#D3D1C7', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
+          <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
+          <div style={{ marginTop: '20px' }}>
+            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#D3D1C7' }}>← Back</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+return (
     <>
       {isComplete && viewMode === 'study' && (
         <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
@@ -132,15 +155,17 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
             </div>
             <span style={{ fontSize: '12px', fontWeight: 300, color: '#888780', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{progressLabel}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 20px', flexWrap: 'wrap' }}>
+          {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 20px', flexWrap: 'wrap' }}>
             {visibleModes.map(({ id, label }) => (
               <button key={id} onClick={() => { stopMic(); setMode(id); if (id !== 'flip') resetSession() }}
                 style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#D3D1C7'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>{label}</button>
             ))}
-            <div style={{ width: '1px', height: '16px', background: '#D3D1C7', margin: '0 4px' }} />
+            {!isSightReadDeck && <div style={{ width: '1px', height: '16px', background: '#D3D1C7', margin: '0 4px' }} />}
+            <>
             <button onClick={() => { stopMic(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Quiz</button>
             <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Browse</button>
-          </div>
+            </>
+          </div>}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', padding: '0 32px 16px', minHeight: '22px' }}>
             {stats.streakHistory.slice(-10).map((result, i) => (
               <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: result === 'hit' ? '#BA7517' : '#F09595' }} />

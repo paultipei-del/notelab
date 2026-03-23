@@ -5,12 +5,12 @@ import { Card, Deck, StudyMode, RatingValue, SessionStats, ProgressStore, QueueC
 import { sm2, formatInterval, buildQueue, shuffle } from '@/lib/sm2'
 import { loadProgress, saveCardProgress } from '@/lib/progressSync'
 
-export function useStudySession(deck: Deck | null, userId: string | null = null) {
+export function useStudySession(deck: Deck | null, userId: string | null = null, initialMode: StudyMode = 'flip') {
   const [progress, setProgress] = useState<ProgressStore>({})
   const [progressLoaded, setProgressLoaded] = useState(false)
   const [queue, setQueue] = useState<QueueCard[]>([])
   const [cardIndex, setCardIndex] = useState(0)
-  const [mode, setMode] = useState<StudyMode>('flip')
+  const [mode, setMode] = useState<StudyMode>(initialMode)
   const [revealed, setRevealed] = useState(false)
   const [stats, setStats] = useState<SessionStats>({
     correct: 0,
