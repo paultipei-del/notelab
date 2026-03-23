@@ -59,22 +59,32 @@ export default function StaffCard({ note, clef, className = '' }: StaffCardProps
   }
 
   const clefSymbol = clef === 'treble' ? (
-    <text x={staffLeft + 2} y={staffTop + 44} fontSize="64" fontFamily="serif"
+    <text x={staffLeft} y={staffTop + 36} fontSize="50" fontFamily="Bravura, serif"
       fill="#1A1A18" dominantBaseline="auto">𝄞</text>
   ) : (
-    <text x={staffLeft + 2} y={staffTop + 24} fontSize="42" fontFamily="serif"
+    <text x={staffLeft + 2} y={staffTop + 13} fontSize="52" fontFamily="Bravura, serif"
       fill="#1A1A18" dominantBaseline="auto">𝄢</text>
   )
 
-  const stemUp = pos !== undefined && pos >= 4
+  const stemUp = pos === undefined || pos >= 3
   const noteEl = pos !== undefined ? (
     <g>
-      <ellipse cx={noteX} cy={noteY} rx={8} ry={5.5} fill="#1A1A18"
-        transform={`rotate(-15, ${noteX}, ${noteY})`} />
+      <ellipse
+        cx={noteX}
+        cy={noteY}
+        rx={9}
+        ry={6}
+        fill="#1A1A18"
+        transform={`rotate(-15, ${noteX}, ${noteY})`}
+      />
       <line
-        x1={stemUp ? noteX + 7 : noteX - 7} y1={noteY}
-        x2={stemUp ? noteX + 7 : noteX - 7} y2={stemUp ? noteY - 30 : noteY + 30}
-        stroke="#1A1A18" strokeWidth="1.5" />
+        x1={stemUp ? noteX + 8.5 : noteX - 8.5}
+        y1={noteY}
+        x2={stemUp ? noteX + 8.5 : noteX - 8.5}
+        y2={stemUp ? noteY - 44 : noteY + 44}
+        stroke="#1A1A18"
+        strokeWidth="1.6"
+      />
     </g>
   ) : null
 

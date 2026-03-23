@@ -30,7 +30,7 @@ export default function RootLayout({
         {/* Preload Bravura so symbols render without flash */}
         <link
           rel="preload"
-          href="https://cdn.jsdelivr.net/gh/steinbergmedia/bravura@master/redist/woff2/Bravura.woff2"
+          href="/Bravura.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
@@ -38,8 +38,8 @@ export default function RootLayout({
         <style>{`
           @font-face {
             font-family: 'Bravura';
-            src: url('https://cdn.jsdelivr.net/gh/steinbergmedia/bravura@master/redist/woff2/Bravura.woff2') format('woff2'),
-                 url('https://cdn.jsdelivr.net/gh/steinbergmedia/bravura@master/redist/woff/Bravura.woff') format('woff');
+            src: url('/Bravura.woff2') format('woff2'),
+                 url('/Bravura.woff2') format('woff');
             font-display: block;
           }
         `}</style>

@@ -78,7 +78,7 @@ export default function Home() {
     setUserDecks([])
   }
 
-  const freeDecks = DECKS.filter(d => d.tag === 'free')
+  const freeDecks = DECKS.filter(d => d.tag === 'free' && !d.id.startsWith('sight-read'))
   const cmCount = DECKS.filter(d => d.tag === 'cm').length
   const cmUnlocked = hasPurchased(CM_BUNDLE_PRICE_ID) || hasSubscription()
 
@@ -190,6 +190,15 @@ export default function Home() {
                 <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '2px 8px', borderRadius: '20px', marginBottom: '10px', background: '#E1F5EE', color: '#0F6E56' }}>Free</span>
                 <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>Ear Training</h3>
                 <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780' }}>Intervals, triads, cadences, scales →</p>
+              </div>
+            </Link>
+
+            {/* Sight Read card */}
+            <Link href="/sight-read" style={{ textDecoration: 'none' }}>
+              <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '20px', cursor: 'pointer', transition: 'all 0.15s' }}>
+                <div style={{ fontSize: '24px', marginBottom: '10px' }}>𝄞</div>
+                <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>Sight Read</h3>
+                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#888780', lineHeight: 1.5 }}>Read notes on the staff in real time</p>
               </div>
             </Link>
           </div>
