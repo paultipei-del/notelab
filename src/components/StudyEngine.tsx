@@ -30,7 +30,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const [flipIndex, setFlipIndex] = useState(0)
   const [flipRevealed, setFlipRevealed] = useState(false)
   const initialMode: StudyMode = deck.id.startsWith('sight-read-') ? 'play' : 'flip'
-  const { currentCard, mode, revealed, stats, isComplete, progressPct, progressLabel, intervals, reveal, rate, recordAnswer, setMode, getMCOptions, resetSession } = useStudySession(deck, userId)
+  const { currentCard, mode, revealed, stats, isComplete, progressPct, progressLabel, intervals, reveal, rate, recordAnswer, setMode, getMCOptions, resetSession } = useStudySession(deck, userId, initialMode)
   const flipCards = useMemo(() => [...deck.cards].sort(() => Math.random() - 0.5), [deck.id])
   const flipCard = flipCards[flipIndex] ?? null
   const isAudioDeck = deck.cards.every(c => c.type === 'audio')
