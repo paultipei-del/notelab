@@ -158,12 +158,12 @@ export interface DetectedNote {
 export class NoteDetector {
   private conf = {
     close_threshold:     0.05,
-    track_lone_ms:       100,
-    track_cons_ms:       50,
+    track_lone_ms:       40,
+    track_cons_ms:       25,
     detrack_min_volume:  0.005,
     detrack_est_none_ms: 500,
     detrack_est_some_ms: 250,
-    stable_note_ms:      50,
+    stable_note_ms:      30,
   }
   private taper: TaperFn
   private candidate: { freq: number; lone: boolean; start: number } | null = null

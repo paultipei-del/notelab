@@ -12,7 +12,7 @@ interface PlayItCardProps {
 
 type Status = 'starting' | 'listening' | 'correct' | 'wrong'
 
-const DATA_SIZE = 4096
+const DATA_SIZE = 2048
 
 // Track ALL streams and contexts ever created so we can stop them all
 const allStreams: MediaStream[] = []
@@ -88,7 +88,7 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
           doneRef.current = true
           setStatus('correct')
           stopLoop()
-          setTimeout(onCorrect, 200)
+          setTimeout(onCorrect, 100)
           return
         } else {
           setStatus('wrong')
@@ -160,11 +160,7 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
         )}
 
         <div style={{ marginTop: '20px', minHeight: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          {status === 'starting' && (
-            <span style={{ fontSize: '13px', fontWeight: 300, color: '#D3D1C7', letterSpacing: '0.04em' }}>
-              Starting mic…
-            </span>
-          )}
+
           {status === 'listening' && (
             <>
               <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#BA7517', animation: 'pulse 1s infinite' }} />

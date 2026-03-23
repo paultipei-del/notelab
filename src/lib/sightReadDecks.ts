@@ -59,6 +59,53 @@ const L3 = ['C4','D4','E4','F4','G4','A4','B4','C5']
 const L4 = ['C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5']
 const L5 = ['A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5','B5','C6']
 
+function shuffleArr<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+function repeatCards(cards: ReturnType<typeof trebleCards>, times: number, maxConsecutive = 1) {
+  // Build pool
+  const pool: typeof cards = []
+  for (let i = 0; i < times; i++) pool.push(...cards)
+
+  // Place cards one by one, always picking from available cards
+  // that don't violate the maxConsecutive constraint
+  const result: typeof cards = []
+  const remaining = [...pool]
+
+  while (remaining.length > 0) {
+    const lastNote = result.length > 0 ? result[result.length - 1].note : null
+    const lastLastNote = result.length > 1 ? result[result.length - 2].note : null
+
+    // Determine forbidden note (if we've hit maxConsecutive)
+    let forbidden: string | null = null
+    if (maxConsecutive === 1 && lastNote) {
+      forbidden = lastNote
+    } else if (maxConsecutive === 2 && lastNote && lastNote === lastLastNote) {
+      forbidden = lastNote
+    }
+
+    // Get eligible cards
+    const eligible = forbidden
+      ? remaining.filter(c => c.note !== forbidden)
+      : remaining
+
+    // Pick randomly from eligible (or all if none eligible)
+    const pool2 = eligible.length > 0 ? eligible : remaining
+    const pick = pool2[Math.floor(Math.random() * pool2.length)]
+    const idx = remaining.findIndex(c => c === pick)
+    remaining.splice(idx, 1)
+    result.push({ ...pick, id: result.length + 1 })
+  }
+
+  return result
+}
+
 export const SIGHT_READ_DECKS: Deck[] = [
   {
     id: 'sight-read-treble-free',
@@ -79,21 +126,21 @@ export const SIGHT_READ_DECKS: Deck[] = [
     title: 'Level 1',
     description: 'C4 and G4 only — the two anchor notes.',
     tag: 'free',
-    cards: trebleCards(L1),
+    cards: repeatCards(trebleCards(L1), 4, 2),
   },
   {
     id: 'sight-read-treble-2',
     title: 'Level 2',
     description: 'C4 through G4 — five notes.',
     tag: 'free',
-    cards: trebleCards(L2),
+    cards: repeatCards(trebleCards(L2), 3, 1),
   },
   {
     id: 'sight-read-treble-3',
     title: 'Level 3',
     description: 'C4 through C5 — one full octave.',
     tag: 'free',
-    cards: trebleCards(L3),
+    cards: repeatCards(trebleCards(L3), 2, 1),
   },
   {
     id: 'sight-read-treble-4',
