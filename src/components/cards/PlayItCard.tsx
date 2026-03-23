@@ -88,7 +88,7 @@ export default function PlayItCard({ card, onCorrect }: PlayItCardProps) {
           doneRef.current = true
           setStatus('correct')
           stopLoop()
-          setTimeout(onCorrect, 500)
+          setTimeout(onCorrect, 200)
           return
         } else {
           setStatus('wrong')

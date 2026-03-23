@@ -55,6 +55,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   function goBack() {
     if (mode === 'play') stopMic()
     const tag = deck.id.startsWith('cm-') ? 'cm' : deck.id.startsWith('ear-') ? 'ear' : deck.id.startsWith('symbols-') ? 'symbols' : null
+    if (deck.id.startsWith('sight-read-')) { router.push('/sight-read'); return }
     if (tag) router.push('/collection?tag=' + tag); else router.push('/')
   }
 
@@ -103,7 +104,7 @@ return (
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => { resetSession(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Study Again</button>
-              <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Browse Cards</button>
+              {!isSightReadDeck && <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Browse Cards</button>}
               <button onClick={goBack} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>← Back</button>
             </div>
           </div>

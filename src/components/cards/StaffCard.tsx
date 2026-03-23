@@ -13,7 +13,7 @@ const TREBLE_POSITIONS: Record<string, number> = {
   'C6': -4, 'B5': -3, 'A5': -2, 'G5': -1,
   'F5': 0, 'E5': 1, 'D5': 2, 'C5': 3, 'B4': 4,
   'A4': 5, 'G4': 6, 'F4': 7, 'E4': 8,
-  'D4': 9, 'C4': 10,
+  'D4': 9, 'C4': 10, 'B3': 11, 'A3': 12,
 }
 
 const BASS_POSITIONS: Record<string, number> = {
@@ -66,7 +66,7 @@ export default function StaffCard({ note, clef, className = '' }: StaffCardProps
       fill="#1A1A18" dominantBaseline="auto">𝄢</text>
   )
 
-  const stemUp = pos === undefined || pos >= 3
+  const stemUp = pos === undefined || pos >= 4
   const noteEl = pos !== undefined ? (
     <g>
       <ellipse
