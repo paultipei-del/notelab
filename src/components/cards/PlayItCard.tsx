@@ -111,8 +111,9 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
       if (note && note.stable) {
         setDetected(note.name)
         const played = noteToPitchClass(note.name)
+        const playedFull = note.name  // includes octave e.g. 'D4'
 
-        if (pitchMatches(played, targetPitch)) {
+        if (pitchMatchesFull(playedFull, targetNote)) {
           if (wrongTimeout) { clearTimeout(wrongTimeout); wrongTimeout = null }
           doneRef.current = true
           setStatus('correct')

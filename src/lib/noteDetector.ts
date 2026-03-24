@@ -275,7 +275,7 @@ export function hzToNoteString(freq: number) {
   const note = hzToNote(freq)
   const names = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#']
   const letter = names[(note + 11) % names.length]
-  const octave = Math.floor((note - 49) / names.length) + 4
+  const octave = Math.floor((note - 40) / names.length) + 4
   return letter + octave
 }
 
