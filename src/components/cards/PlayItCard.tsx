@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { QueueCard } from '@/lib/types'
 import StaffCard from './StaffCard'
+import GrandStaffCard from './GrandStaffCard'
 import { NoteDetector, noteToPitchClass } from '@/lib/noteDetector'
 
 interface PlayItCardProps {
@@ -183,7 +184,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
         </span>
 
         {card.note && card.clef ? (
-          <StaffCard note={card.note} clef={card.clef} />
+          card.clef === 'grand' ? <GrandStaffCard note={card.note} /> : <StaffCard note={card.note} clef={card.clef} />
         ) : (
           <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#1A1A18' }}>
             {card.front}

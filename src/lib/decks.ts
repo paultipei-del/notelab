@@ -1,5 +1,6 @@
 import { Deck } from './types'
 import { SIGHT_READ_DECKS, SIGHT_READ_PRO_IDS } from './sightReadDecks'
+import { GRAND_STAFF_DECKS, GRAND_STAFF_PRO_IDS } from './grandStaffDecks'
 import { EAR_TRAINING_INTERVALS, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { CM_PREP_CARDS } from "./cm-content/preparatory"
@@ -229,6 +230,7 @@ export const DECKS: Deck[] = [
     cards: CM_ADVANCED_CARDS,
   },
   ...SIGHT_READ_DECKS,
+  ...GRAND_STAFF_DECKS,
 ]
 
 export const CM_DECK_IDS = [
@@ -237,6 +239,7 @@ export const CM_DECK_IDS = [
 ]
 
 export const SIGHT_READ_PRO_DECK_IDS = SIGHT_READ_PRO_IDS
+export const GRAND_STAFF_PRO_DECK_IDS = GRAND_STAFF_PRO_IDS
 
 export function deckRequiresPurchase(deckId: string): boolean {
   return CM_DECK_IDS.includes(deckId)

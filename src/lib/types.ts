@@ -9,7 +9,7 @@ export interface Card {
   type: CardType
   // staff cards
   note?: string
-  clef?: 'treble' | 'bass'
+  clef?: 'treble' | 'bass' | 'grand'
   // image cards
   imageUrl?: string
   // symbol cards
