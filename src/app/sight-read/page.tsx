@@ -10,7 +10,7 @@ const TREBLE_LEVELS = SIGHT_READ_DECKS.filter(d => SIGHT_READ_PRO_IDS.includes(d
 
 const PRO_COLLECTIONS = [
   { id: 'treble', label: 'Treble Clef', description: '10 progressive levels — C4 through full chromatic range', available: true },
-  { id: 'bass', label: 'Bass Clef', description: 'Progressive bass staff training', available: true },
+  { id: 'bass', label: 'Bass Clef', description: '10 progressive levels — C4 through full chromatic range', available: true },
   { id: 'grand', label: 'Grand Staff', description: 'Combined treble and bass reading', available: false },
   { id: 'custom', label: 'Build Your Own', description: 'Create custom note sets', available: false },
 ]
