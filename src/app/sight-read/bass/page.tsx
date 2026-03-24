@@ -23,7 +23,7 @@ export default function BassPage() {
 
       <div style={{ maxWidth: '680px', margin: '0 auto', padding: '40px 32px 80px' }}>
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '13px', color: '#888780', marginBottom: '24px' }}>
-          10 progressive levels — start with anchor notes and build down to the full bass range.
+          10 progressive levels — start with anchor notes and build down to the full chromatic range.
         </p>
         <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', overflow: 'hidden' }}>
           {BASS_LEVELS.map((deck, i) => {
