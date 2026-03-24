@@ -9,10 +9,10 @@ interface StaffCardProps {
 // pos 0 = top staff line, pos 8 = bottom staff line
 // each integer step = one line or space = step/2 px
 const TREBLE_POSITIONS: Record<string, number> = {
-  'C6': -4, 'B5': -3, 'A5': -2, 'G5': -1,
+  'E6': -6, 'D6': -5, 'C6': -4, 'B5': -3, 'A5': -2, 'G5': -1,
   'F5': 0, 'E5': 1, 'D5': 2, 'C5': 3, 'B4': 4,
   'A4': 5, 'G4': 6, 'F4': 7, 'E4': 8,
-  'D4': 9, 'C4': 10, 'B3': 11, 'A3': 12,
+  'D4': 9, 'C4': 10, 'B3': 11, 'A3': 12, 'G3': 13, 'F3': 14, 'E3': 15, 'D3': 16, 'C3': 17,
 }
 
 const BASS_POSITIONS: Record<string, number> = {
@@ -47,9 +47,9 @@ const ACCIDENTAL_MAP: Record<string, { natural: string; acc: 'sharp' | 'flat' }>
 
 export default function StaffCard({ note, clef, className = '' }: StaffCardProps) {
   const W = 280
-  const H = 170
+  const H = 210
   const step = 6
-  const staffTop = 55
+  const staffTop = 65
   const staffLeft = 50
   const staffWidth = 185
   const noteX = staffLeft + staffWidth / 2 + 10

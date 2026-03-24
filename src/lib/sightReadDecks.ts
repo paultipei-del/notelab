@@ -58,6 +58,7 @@ const L2 = ['C4','D4','E4','F4','G4']
 const L3 = ['C4','D4','E4','F4','G4','A4','B4','C5']
 const L4 = ['C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5']
 const L5 = ['A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5','B5','C6']
+const L10 = ['F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5','B5','C6','D6','E6']
 
 function shuffleArr<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -135,7 +136,17 @@ function mergeNatural(natural: string[], chromatic: string[]) {
 const L6_CHROMATIC = ['C#4','Db4','D#4','Eb4','F#4','Gb4','G#4','Ab4']
 const L7_CHROMATIC = [...L6_CHROMATIC, 'A#4','Bb4','C#5','Db5','D#5','Eb5']
 const L8_CHROMATIC = [...L7_CHROMATIC, 'F#5','Gb5','G#5','Ab5','A#5','Bb5']
-const L9_CHROMATIC = [...L8_CHROMATIC, 'C#3','Db3','D#3','Eb3']
+const L9_CHROMATIC = [...L8_CHROMATIC, 'A#3','Bb3']
+const L10_CHROMATIC = [
+  // Octave 3 chromatics (F3-B3 range)
+  'F#3','Gb3','G#3','Ab3','A#3','Bb3',
+  // Octave 4 chromatics
+  'C#4','Db4','D#4','Eb4','F#4','Gb4','G#4','Ab4','A#4','Bb4',
+  // Octave 5 chromatics
+  'C#5','Db5','D#5','Eb5','F#5','Gb5','G#5','Ab5','A#5','Bb5',
+  // Octave 6 chromatics (C6-E6 range)
+  'C#6','Db6','D#6','Eb6',
+]
 
 export const SIGHT_READ_DECKS: Deck[] = [
   {
