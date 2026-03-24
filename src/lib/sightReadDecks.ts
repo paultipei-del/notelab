@@ -231,7 +231,7 @@ export const SIGHT_READ_DECKS: Deck[] = [
     title: 'Level 10',
     description: 'Full range F3–E6 — all chromatic notes.',
     tag: 'free',
-    cards: mergeNatural(L5, L9_CHROMATIC),
+    cards: mergeNatural(L10, L10_CHROMATIC),
   },
 ]
 
