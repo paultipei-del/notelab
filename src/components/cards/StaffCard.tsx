@@ -16,10 +16,10 @@ const TREBLE_POSITIONS: Record<string, number> = {
 }
 
 const BASS_POSITIONS: Record<string, number> = {
-  'E4': -4, 'D4': -3, 'C4': -2, 'B3': -1,
+  'G4': -6, 'F4': -5, 'E4': -4, 'D4': -3, 'C4': -2, 'B3': -1,
   'A3': 0, 'G3': 1, 'F3': 2, 'E3': 3, 'D3': 4,
   'C3': 5, 'B2': 6, 'A2': 7, 'G2': 8,
-  'F2': 9, 'E2': 10,
+  'F2': 9, 'E2': 10, 'D2': 11, 'C2': 12, 'B1': 13, 'A1': 14,
 }
 
 // Map enharmonic/chromatic notes to their natural position + accidental
@@ -43,6 +43,15 @@ const ACCIDENTAL_MAP: Record<string, { natural: string; acc: 'sharp' | 'flat' }>
   'C#6': { natural: 'C6', acc: 'sharp' }, 'Db6': { natural: 'D6', acc: 'flat' },
   'F#6': { natural: 'F6', acc: 'sharp' }, 'Gb6': { natural: 'G6', acc: 'flat' },
   'D#6': { natural: 'D6', acc: 'sharp' }, 'Eb6': { natural: 'E6', acc: 'flat' },
+  // Bass octave 2
+  'C#2': { natural: 'C2', acc: 'sharp' }, 'Db2': { natural: 'D2', acc: 'flat' },
+  'D#2': { natural: 'D2', acc: 'sharp' }, 'Eb2': { natural: 'E2', acc: 'flat' },
+  'F#2': { natural: 'F2', acc: 'sharp' }, 'Gb2': { natural: 'G2', acc: 'flat' },
+  'G#2': { natural: 'G2', acc: 'sharp' }, 'Ab2': { natural: 'A2', acc: 'flat' },
+  'A#2': { natural: 'A2', acc: 'sharp' }, 'Bb2': { natural: 'B2', acc: 'flat' },
+  // Bass octave 1
+  'G#1': { natural: 'G1', acc: 'sharp' }, 'Ab1': { natural: 'A1', acc: 'flat' },
+  'A#1': { natural: 'A1', acc: 'sharp' }, 'Bb1': { natural: 'B1', acc: 'flat' },
 }
 
 export default function StaffCard({ note, clef, className = '' }: StaffCardProps) {

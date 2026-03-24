@@ -10,7 +10,7 @@ const TREBLE_LEVELS = SIGHT_READ_DECKS.filter(d => SIGHT_READ_PRO_IDS.includes(d
 
 const PRO_COLLECTIONS = [
   { id: 'treble', label: 'Treble Clef', description: '10 progressive levels — C4 through full chromatic range', available: true },
-  { id: 'bass', label: 'Bass Clef', description: 'Progressive bass staff training', available: false },
+  { id: 'bass', label: 'Bass Clef', description: 'Progressive bass staff training', available: true },
   { id: 'grand', label: 'Grand Staff', description: 'Combined treble and bass reading', available: false },
   { id: 'custom', label: 'Build Your Own', description: 'Create custom note sets', available: false },
 ]
@@ -68,6 +68,7 @@ export default function SightReadPage() {
                   onClick={() => {
                     if (locked || comingSoon) return
                     if (col.id === 'treble') router.push('/sight-read/treble')
+                    if (col.id === 'bass') router.push('/sight-read/bass')
                   }}
                   style={{ width: '100%', background: 'white', border: '1px solid #D3D1C7', borderRadius: '12px', padding: '20px 24px', textAlign: 'left', cursor: locked || comingSoon ? 'default' : 'pointer', opacity: locked ? 0.5 : 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'all 0.15s' }}>
                   <div>
