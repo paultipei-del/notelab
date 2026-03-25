@@ -8,7 +8,7 @@ import { NoteDetector, noteToPitchClass } from '@/lib/noteDetector'
 
 interface PlayItCardProps {
   card: QueueCard
-  onCorrect: () => void
+  onCorrect: (firstTry: boolean) => void
   onWrong: () => void
 }
 
@@ -46,6 +46,7 @@ function pitchMatchesFull(played: string, target: string): boolean {
 const allStreams: MediaStream[] = []
 const allContexts: AudioContext[] = []
 let cardReadyAt = 0  // timestamp after which wrong answers count
+let cardHadWrong = false  // tracks if current card had a wrong attempt
 
 export function stopMic() {
   allStreams.forEach(s => s.getTracks().forEach(t => t.stop()))
@@ -119,11 +120,11 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
           doneRef.current = true
           setStatus('correct')
           stopLoop()
-          setTimeout(onCorrect, 100)
+          setTimeout(() => onCorrect(!cardHadWrong), 100)
           return
         } else {
           setStatus('wrong')
-          if (Date.now() >= cardReadyAt) onWrong()
+          if (Date.now() >= cardReadyAt) { cardHadWrong = true; onWrong() }
           if (!wrongTimeout) {
             wrongTimeout = setTimeout(() => {
               if (!doneRef.current) setStatus('listening')
@@ -158,6 +159,8 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
       }
     }
 
+    cardHadWrong = false
+    cardReadyAt = Date.now() + 500
     init()
     return () => {
       stopLoop()

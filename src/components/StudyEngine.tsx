@@ -88,7 +88,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#888780', lineHeight: 1.8, marginBottom: '8px' }}>A note will appear on the staff.</p>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#888780', lineHeight: 1.8, marginBottom: '36px' }}>Play it on your piano — the mic will detect the correct note and move to the next one automatically.</p>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#D3D1C7', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
-          <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
+          <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); resetSession(); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
           <div style={{ marginTop: '20px' }}>
             <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#D3D1C7' }}>← Back</button>
           </div>
@@ -107,7 +107,7 @@ return (
             <p style={{ fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '40px' }}>
               {(isSightReadDeck
-              ? [{ num: Math.round((stats.correct / stats.total) * 100) + '%', label: 'Score' }, { num: elapsedDisplay, label: 'Time' }, { num: prevBest > 0 ? prevBest.toFixed(2) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' }]
+              ? [{ num: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '—', label: 'Score' }, { num: elapsedDisplay, label: 'Time' }, { num: prevBest > 0 ? prevBest.toFixed(2) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' }]
               : [{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }]
             ).map(({ num, label }) => (
                 <div key={label} style={{ textAlign: 'center' }}>
@@ -197,7 +197,7 @@ return (
             ) : mode === 'explain' && currentCard ? (
               <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
             ) : mode === 'play' && currentCard ? (
-              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={() => { recordAnswer(true); rate(3) }} onWrong={() => recordAnswer(false)} />
+              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={(firstTry: boolean) => { recordAnswer(firstTry); rate(3) }} onWrong={() => {}} />
             ) : null}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '8px 32px 16px', visibility: isFlipMode ? 'visible' : 'hidden' }}>
