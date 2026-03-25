@@ -358,6 +358,7 @@ function CustomNoteIDInner() {
             What note is this?
           </p>
 
+
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px', overflowX: 'auto' }}>
             {groupSize === 1 ? (
               clef === 'grand'

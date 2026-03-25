@@ -21,8 +21,6 @@ interface Config {
   stopMode: StopMode
   stopValue: number
   stopMinutes: number
-  metronomeOn: boolean
-  bpm: number
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -35,8 +33,6 @@ const DEFAULT_CONFIG: Config = {
   stopMode: 'exercises',
   stopValue: 5,
   stopMinutes: 5,
-  metronomeOn: false,
-  bpm: 60,
 }
 
 // ── Quick Start Levels ─────────────────────────────────────────────────────
@@ -113,7 +109,6 @@ export default function NoteIDPage() {
       group: config.groupSize.toString(),
       stopMode: config.stopMode,
       stopValue: (config.stopMode === 'minutes' ? (config.stopMinutes ?? 5) : config.stopValue).toString(),
-      metronome: config.metronomeOn ? config.bpm.toString() : '0',
     })
     router.push('/note-id/custom?' + params.toString())
   }
@@ -266,27 +261,6 @@ export default function NoteIDPage() {
                     style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: config.stopMode === 'minutes' ? '#1A1A18' : '#D3D1C7' }}>+</button>
                 </div>
               </div>
-            </div>
-          </Section>
-
-          {/* Metronome */}
-          <Section last>
-            {label('Tempo')}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' as const }}>
-              <button onClick={() => set('metronomeOn', !config.metronomeOn)} style={pill(config.metronomeOn)}>
-                {config.metronomeOn ? '♩ ' + config.bpm + ' BPM' : 'No Tempo'}
-              </button>
-              {config.metronomeOn && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button onClick={() => set('bpm', Math.max(30, config.bpm - 5))}
-                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#888780' }}>−</button>
-                  <span style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#1A1A18', minWidth: '48px', textAlign: 'center' as const }}>
-                    {config.bpm}
-                  </span>
-                  <button onClick={() => set('bpm', Math.min(200, config.bpm + 5))}
-                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#888780' }}>+</button>
-                </div>
-              )}
             </div>
           </Section>
 
