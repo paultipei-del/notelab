@@ -6,7 +6,9 @@ import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import MultiNoteStaff from '@/components/cards/MultiNoteStaff'
+import FullPiano from '@/components/cards/FullPiano'
 import { SIGHT_READ_DECKS } from '@/lib/sightReadDecks'
+import * as Tone from 'tone'
 import { GRAND_STAFF_DECKS } from '@/lib/grandStaffDecks'
 
 const NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
@@ -96,8 +98,9 @@ function CustomNoteIDInner() {
   const clef = (searchParams.get('clef') ?? 'treble') as 'treble' | 'bass' | 'grand'
   const filters = (searchParams.get('filters') ?? 'lines,spaces').split(',')
   const useAccidentals = searchParams.get('accidentals') === '1'
-  const inputMode = (searchParams.get('input') ?? 'letters') as 'letters' | 'keyboard'
+  const inputMode = (searchParams.get('input') ?? 'letters') as 'letters' | 'keyboard' | 'keyboard-full'
   const groupSize = parseInt(searchParams.get('group') ?? '1')
+  const playCorrectNotes = searchParams.get('playCorrect') === '1'
   const stopMode = searchParams.get('stopMode') ?? 'exercises'
   const stopValue = parseInt(searchParams.get('stopValue') ?? '10')
 
@@ -110,6 +113,27 @@ function CustomNoteIDInner() {
   const [flash, setFlash] = useState<'correct' | 'wrong' | null>(null)
   const [startTime] = useState(Date.now())
   const [elapsed, setElapsed] = useState(0)
+  const samplerRef = useRef<Tone.Sampler | null>(null)
+
+  // Init Salamander sampler
+  useEffect(() => {
+    if (!playCorrectNotes) return
+    const sampler = new Tone.Sampler({
+      urls: {
+        A0: 'A0.mp3', C1: 'C1.mp3', 'D#1': 'Ds1.mp3', 'F#1': 'Fs1.mp3',
+        A1: 'A1.mp3', C2: 'C2.mp3', 'D#2': 'Ds2.mp3', 'F#2': 'Fs2.mp3',
+        A2: 'A2.mp3', C3: 'C3.mp3', 'D#3': 'Ds3.mp3', 'F#3': 'Fs3.mp3',
+        A3: 'A3.mp3', C4: 'C4.mp3', 'D#4': 'Ds4.mp3', 'F#4': 'Fs4.mp3',
+        A4: 'A4.mp3', C5: 'C5.mp3', 'D#5': 'Ds5.mp3', 'F#5': 'Fs5.mp3',
+        A5: 'A5.mp3', C6: 'C6.mp3', 'D#6': 'Ds6.mp3', 'F#6': 'Fs6.mp3',
+        A6: 'A6.mp3', C7: 'C7.mp3', 'D#7': 'Ds7.mp3', 'F#7': 'Fs7.mp3',
+        A7: 'A7.mp3', C8: 'C8.mp3',
+      },
+      baseUrl: 'https://tonejs.github.io/audio/salamander/',
+      onload: () => { samplerRef.current = sampler },
+    }).toDestination()
+    return () => { sampler.dispose() }
+  }, [playCorrectNotes])
   const processingRef = useRef(false)
 
   // Timer for minutes mode
@@ -208,6 +232,11 @@ function CustomNoteIDInner() {
     if (isCorrect) setCorrect(c => c + 1)
     setFlash(isCorrect ? 'correct' : 'wrong')
     setTimeout(() => setFlash(null), 400)
+    if (isCorrect && playCorrectNotes && samplerRef.current) {
+      Tone.start().then(() => {
+        samplerRef.current?.triggerAttackRelease(current.note, '2n')
+      })
+    }
 
     setGroup(prev => prev.map((n, i) => {
       if (i === activeIdx) return { ...n, status: isCorrect ? 'correct' : 'wrong' }
@@ -341,15 +370,27 @@ function CustomNoteIDInner() {
 
           {inputMode === 'letters' ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-              {/* Sharps row — above naturals, offset by half key+gap = 27px */}
+              {/* Sharps and flats — only when accidentals enabled, stacked above naturals */}
               {useAccidentals && (
-                <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
-                  {SHARP_ROW.map((note, i) => note ? (
-                    <button key={note} onClick={() => handleAnswer(note)}
-                      style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                      {note}
-                    </button>
-                  ) : <div key={i} style={{ width: '48px' }} />)}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
+                  {/* Sharps row — offset by 27px so C# centers between C and D */}
+                  <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
+                    {SHARP_ROW.map((note, i) => note ? (
+                      <button key={note} onClick={() => handleAnswer(note)}
+                        style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                        {note}
+                      </button>
+                    ) : <div key={i} style={{ width: '48px' }} />)}
+                  </div>
+                  {/* Flats row — same offset */}
+                  <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
+                    {FLAT_ROW.map((note, i) => note ? (
+                      <button key={note} onClick={() => handleAnswer(note)}
+                        style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                        {note}
+                      </button>
+                    ) : <div key={i} style={{ width: '48px' }} />)}
+                  </div>
                 </div>
               )}
               {/* Naturals */}
@@ -361,28 +402,6 @@ function CustomNoteIDInner() {
                   </button>
                 ))}
               </div>
-              {/* Flats row — below naturals, same offset */}
-              {useAccidentals && (
-                <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
-                  {FLAT_ROW.map((note, i) => note ? (
-                    <button key={note} onClick={() => handleAnswer(note)}
-                      style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                      {note}
-                    </button>
-                  ) : <div key={i} style={{ width: '48px' }} />)}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px', margin: '0 auto' }}>
-              {WHITE_KEY_NOTES.map((note, i) => (
-                <button key={note} onClick={() => handleAnswer(note)}
-                  style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: 'white', border: '1px solid #D3D1C7', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
-              ))}
-              {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
-                <button key={note} onClick={() => handleAnswer(note)}
-                  style={{ position: 'absolute', left: (afterWhite + 1) * KEY_W - BLACK_W / 2, top: 0, width: BLACK_W, height: BLACK_H, background: '#1A1A18', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 2, border: 'none', boxShadow: '0 4px 8px rgba(26,26,24,0.3)' }} />
-              ))}
             </div>
           )}
         </div>
