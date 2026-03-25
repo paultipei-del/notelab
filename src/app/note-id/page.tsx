@@ -20,6 +20,7 @@ interface Config {
   groupSize: number
   stopMode: StopMode
   stopValue: number
+  stopMinutes: number
   metronomeOn: boolean
   bpm: number
 }
@@ -32,7 +33,8 @@ const DEFAULT_CONFIG: Config = {
   inputMode: 'letters',
   groupSize: 1,
   stopMode: 'exercises',
-  stopValue: 10,
+  stopValue: 5,
+  stopMinutes: 5,
   metronomeOn: false,
   bpm: 60,
 }
@@ -110,7 +112,7 @@ export default function NoteIDPage() {
       playCorrect: config.playCorrectNotes ? '1' : '0',
       group: config.groupSize.toString(),
       stopMode: config.stopMode,
-      stopValue: config.stopValue.toString(),
+      stopValue: (config.stopMode === 'minutes' ? (config.stopMinutes ?? 5) : config.stopValue).toString(),
       metronome: config.metronomeOn ? config.bpm.toString() : '0',
     })
     router.push('/note-id/custom?' + params.toString())
@@ -179,7 +181,7 @@ export default function NoteIDPage() {
 
           {/* Use notes over */}
           <Section>
-            {label('Use notes over')}
+            {label('Note types')}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
               {(['lines', 'spaces', 'ledger'] as NoteFilter[]).map(f => (
                 <button key={f} onClick={() => toggleFilter(f)} style={pill(config.noteFilters.includes(f))}>
@@ -197,12 +199,12 @@ export default function NoteIDPage() {
 
           {/* Answer with */}
           <Section>
-            {label('Answer with')}
+            {label('Input method')}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
               {([
-                { id: 'letters', label: 'Note Name' },
-                { id: 'keyboard', label: 'Piano — 1 Oct' },
-                { id: 'keyboard-full', label: 'Piano — Full' },
+                { id: 'letters', label: 'Letter Keys' },
+                { id: 'keyboard', label: 'Mini Piano' },
+                { id: 'keyboard-full', label: 'Full Keyboard' },
               ] as { id: InputMode; label: string }[]).map(m => (
                 <button key={m.id} onClick={() => set('inputMode', m.id)} style={pill(config.inputMode === m.id)}>
                   {m.label}
@@ -214,39 +216,55 @@ export default function NoteIDPage() {
           {/* Notes in group */}
           <Section>
             {label('Notes per group')}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-                <button key={n} onClick={() => set('groupSize', n)} style={{
-                  ...pill(config.groupSize === n),
-                  width: '40px', padding: '8px 0', textAlign: 'center' as const,
-                }}>
-                  {n}
-                </button>
-              ))}
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap' as const }}>
+              <button onClick={() => set('groupSize', 1)} style={pill(config.groupSize === 1)}>Single Note</button>
+              <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px' }}>
+                <button onClick={() => set('groupSize', config.groupSize < 4 ? 4 : config.groupSize)} style={pill(config.groupSize >= 4)}>Multiple Notes</button>
+                {config.groupSize >= 4 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button onClick={() => set('groupSize', Math.max(4, config.groupSize - 1))} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#1A1A18' }}>−</button>
+                    <span style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#1A1A18', minWidth: '24px', textAlign: 'center' as const }}>{config.groupSize}</span>
+                    <button onClick={() => set('groupSize', Math.min(10, config.groupSize + 1))} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#1A1A18' }}>+</button>
+                    <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>notes</span>
+                  </div>
+                )}
+              </div>
             </div>
           </Section>
 
           {/* Stop after */}
           <Section>
             {label('Stop after')}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' as const }}>
-              <button onClick={() => set('stopMode', 'exercises')} style={pill(config.stopMode === 'exercises')}>
-                Exercises
-              </button>
-              <button onClick={() => set('stopMode', 'minutes')} style={pill(config.stopMode === 'minutes')}>
-                Minutes
-              </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <button onClick={() => set('stopValue', Math.max(1, config.stopValue - 1))}
-                  style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#888780' }}>−</button>
-                <span style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#1A1A18', minWidth: '40px', textAlign: 'center' as const }}>
-                  {config.stopValue}
-                </span>
-                <button onClick={() => set('stopValue', Math.min(config.stopMode === 'exercises' ? 100 : 60, config.stopValue + 1))}
-                  style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#888780' }}>+</button>
-                <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>
-                  {config.stopMode === 'exercises' ? 'rounds' : 'min'}
-                </span>
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' as const }}>
+              {/* Rounds dial */}
+              <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px' }}>
+                <button onClick={() => set('stopMode', 'exercises')} style={pill(config.stopMode === 'exercises')}>
+                  Rounds
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button onClick={() => set('stopValue', Math.max(1, config.stopValue - 1))}
+                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: config.stopMode === 'exercises' ? '#1A1A18' : '#D3D1C7' }}>−</button>
+                  <span style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: config.stopMode === 'exercises' ? '#1A1A18' : '#D3D1C7', minWidth: '32px', textAlign: 'center' as const }}>
+                    {config.stopValue}
+                  </span>
+                  <button onClick={() => set('stopValue', Math.min(100, config.stopValue + 1))}
+                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: config.stopMode === 'exercises' ? '#1A1A18' : '#D3D1C7' }}>+</button>
+                </div>
+              </div>
+              {/* Minutes dial */}
+              <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px' }}>
+                <button onClick={() => set('stopMode', 'minutes')} style={pill(config.stopMode === 'minutes')}>
+                  Minutes
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button onClick={() => set('stopMinutes', Math.max(1, (config.stopMinutes ?? 5) - 1))}
+                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: config.stopMode === 'minutes' ? '#1A1A18' : '#D3D1C7' }}>−</button>
+                  <span style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: config.stopMode === 'minutes' ? '#1A1A18' : '#D3D1C7', minWidth: '32px', textAlign: 'center' as const }}>
+                    {config.stopMinutes ?? 5}
+                  </span>
+                  <button onClick={() => set('stopMinutes', Math.min(60, (config.stopMinutes ?? 5) + 1))}
+                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: config.stopMode === 'minutes' ? '#1A1A18' : '#D3D1C7' }}>+</button>
+                </div>
               </div>
             </div>
           </Section>
