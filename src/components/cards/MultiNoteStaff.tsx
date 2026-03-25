@@ -25,6 +25,10 @@ const BASS_POSITIONS: Record<string, number> = {
   'F2': 9, 'E2': 10, 'D2': 11, 'C2': 12, 'B1': 13, 'A1': 14,
 }
 
+const TREBLE_NOTES = new Set(Object.keys(TREBLE_POSITIONS))
+// In grand staff context, notes D4 and below go to bass staff
+const GRAND_TREBLE_NOTES = new Set(['E6','D6','C6','B5','A5','G5','F5','E5','D5','C5','B4','A4','G4','F4','E4'])
+
 const ACCIDENTAL_MAP: Record<string, { natural: string; acc: 'sharp' | 'flat' }> = {
   'C#4': { natural: 'C4', acc: 'sharp' }, 'Db4': { natural: 'D4', acc: 'flat' },
   'D#4': { natural: 'D4', acc: 'sharp' }, 'Eb4': { natural: 'E4', acc: 'flat' },
@@ -57,115 +61,139 @@ const NOTE_COLORS = {
   wrong: '#E53935',
 }
 
-const FEEDBACK_SYMBOLS = {
-  correct: '✓',
-  wrong: '✗',
-  pending: '',
-  active: '',
+function drawNote(
+  noteState: NoteState,
+  noteX: number,
+  staffTop: number,
+  pos: number,
+  step: number,
+  i: number,
+  feedbackY: number
+): React.ReactElement {
+  const { note, status } = noteState
+  const accInfo = ACCIDENTAL_MAP[note]
+  const accidental = accInfo ? accInfo.acc : null
+  const color = NOTE_COLORS[status]
+  const noteY = staffTop + pos * step
+  const stemUp = pos >= 4
+
+  const ledgers: React.ReactElement[] = []
+  for (let p = 10; p <= pos; p += 2) {
+    const y = staffTop + p * step
+    ledgers.push(<line key={'b'+p+i} x1={noteX-12} y1={y} x2={noteX+12} y2={y} stroke="#1A1A18" strokeWidth="1.2" />)
+  }
+  for (let p = -2; p >= pos; p -= 2) {
+    const y = staffTop + p * step
+    ledgers.push(<line key={'a'+p+i} x1={noteX-12} y1={y} x2={noteX+12} y2={y} stroke="#1A1A18" strokeWidth="1.2" />)
+  }
+
+  const feedbackEl = (status === 'correct' || status === 'wrong') ? (
+    <g>
+      <circle cx={noteX} cy={feedbackY} r={11}
+        fill="none"
+        stroke={status === 'correct' ? '#4CAF50' : '#E53935'}
+        strokeWidth="1.5" />
+      {status === 'correct' ? (
+        <polyline
+          points={`${noteX - 5},${feedbackY} ${noteX - 1},${feedbackY + 4} ${noteX + 6},${feedbackY - 5}`}
+          fill="none" stroke="#4CAF50" strokeWidth="1.8"
+          strokeLinecap="round" strokeLinejoin="round" />
+      ) : (
+        <g>
+          <line x1={noteX - 5} y1={feedbackY - 5} x2={noteX + 5} y2={feedbackY + 5}
+            stroke="#E53935" strokeWidth="1.8" strokeLinecap="round" />
+          <line x1={noteX + 5} y1={feedbackY - 5} x2={noteX - 5} y2={feedbackY + 5}
+            stroke="#E53935" strokeWidth="1.8" strokeLinecap="round" />
+        </g>
+      )}
+    </g>
+  ) : null
+
+  return (
+    <g key={i}>
+      {ledgers}
+      {accidental && (
+        <text x={noteX - 18} y={noteY} fontSize="36" fontFamily="Bravura, serif"
+          fill={color} dominantBaseline="central" textAnchor="middle">
+          {accidental === 'sharp' ? '' : ''}
+        </text>
+      )}
+      <ellipse cx={noteX} cy={noteY} rx={9} ry={6} fill={color}
+        transform={`rotate(-15, ${noteX}, ${noteY})`} />
+      <line
+        x1={stemUp ? noteX + 8.5 : noteX - 8.5} y1={noteY}
+        x2={stemUp ? noteX + 8.5 : noteX - 8.5} y2={stemUp ? noteY - 44 : noteY + 44}
+        stroke={color} strokeWidth="1.6" />
+      {feedbackEl}
+    </g>
+  )
 }
 
 export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
   const step = 6
-  const staffTop = 65
+  const trebleTop = 70
+  const bassTop = trebleTop + 8 * step + 48
+  const staffLeft = 20
   const clefWidth = 52
   const noteSpacing = 52
-  const leftPad = 20
   const rightPad = 24
-
   const staffWidth = clefWidth + notes.length * noteSpacing + rightPad
-  const W = leftPad + staffWidth
-  const H = 210
+  const W = staffLeft + staffWidth
+  const H = clef === 'grand' ? bassTop + 8 * step + 60 : trebleTop + 8 * step + 60
+  const feedbackY = 22
 
-  const positions = clef === 'bass' ? BASS_POSITIONS : TREBLE_POSITIONS
+  const noteXs = notes.map((_, i) => staffLeft + clefWidth + i * noteSpacing + 20)
 
-  // Compute noteX for each note
-  const noteXs = notes.map((_, i) => leftPad + clefWidth + i * noteSpacing + 20)
+  function staffLines(top: number, key: string) {
+    return [0, 2, 4, 6, 8].map(p => (
+      <line key={key+p} x1={staffLeft} y1={top + p * step}
+        x2={staffLeft + staffWidth} y2={top + p * step}
+        stroke="#1A1A18" strokeWidth="1.2" />
+    ))
+  }
 
-  // Staff lines
-  const staffLines = [0, 2, 4, 6, 8].map(p => {
-    const y = staffTop + p * step
-    return <line key={p} x1={leftPad} y1={y} x2={leftPad + staffWidth} y2={y}
-      stroke="#1A1A18" strokeWidth="1.2" />
-  })
+  // For grand staff: vertical connecting line + brace
+  const grandConnectors = clef === 'grand' ? (
+    <>
+      <line x1={staffLeft} y1={trebleTop} x2={staffLeft} y2={bassTop + 8 * step}
+        stroke="#1A1A18" strokeWidth="1.5" />
+    </>
+  ) : null
 
-  // Clef
-  const clefEl = clef === 'bass'
-    ? <text x={leftPad + 2} y={staffTop + 13} fontSize="52" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄢</text>
-    : <text x={leftPad} y={staffTop + 36} fontSize="50" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
+  const trebleClef = <text x={staffLeft + 2} y={trebleTop + 36} fontSize="50"
+    fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
+  const bassClef = <text x={staffLeft + 2} y={bassTop + 13} fontSize="52"
+    fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄢</text>
 
   const noteEls = notes.map((noteState, i) => {
-    const { note, status } = noteState
+    const { note } = noteState
     const accInfo = ACCIDENTAL_MAP[note]
     const naturalNote = accInfo ? accInfo.natural : note
-    const accidental = accInfo ? accInfo.acc : null
-    const pos = positions[naturalNote]
-    if (pos === undefined) return null
-
     const noteX = noteXs[i]
-    const noteY = staffTop + pos * step
-    const color = NOTE_COLORS[status]
-    const stemUp = pos >= 4
 
-    // Ledger lines below
-    const ledgers: React.ReactElement[] = []
-    for (let p = 10; p <= pos; p += 2) {
-      const y = staffTop + p * step
-      ledgers.push(<line key={'b'+p+i} x1={noteX-12} y1={y} x2={noteX+12} y2={y} stroke="#1A1A18" strokeWidth="1.2" />)
+    if (clef === 'grand') {
+      const onTreble = GRAND_TREBLE_NOTES.has(naturalNote)
+      const positions = onTreble ? TREBLE_POSITIONS : BASS_POSITIONS
+      const activeStaffTop = onTreble ? trebleTop : bassTop
+      const pos = positions[naturalNote]
+      if (pos === undefined) return null
+      return drawNote(noteState, noteX, activeStaffTop, pos, step, i, feedbackY)
+    } else {
+      const positions = clef === 'bass' ? BASS_POSITIONS : TREBLE_POSITIONS
+      const pos = positions[naturalNote]
+      if (pos === undefined) return null
+      return drawNote(noteState, noteX, trebleTop, pos, step, i, feedbackY)
     }
-    // Ledger lines above
-    for (let p = -2; p >= pos; p -= 2) {
-      const y = staffTop + p * step
-      ledgers.push(<line key={'a'+p+i} x1={noteX-12} y1={y} x2={noteX+12} y2={y} stroke="#1A1A18" strokeWidth="1.2" />)
-    }
-
-    // Active indicator — small dot below staff
-    const activeIndicator = status === 'active'
-      ? <circle cx={noteX} cy={staffTop + 10 * step + 12} r={3} fill="#BA7517" />
-      : null
-
-    // Feedback symbol above/below
-    const feedbackEl = (status === 'correct' || status === 'wrong') ? (
-      <text
-        x={noteX}
-        y={stemUp ? noteY - 52 : noteY + 52}
-        fontSize="14"
-        fontFamily="var(--font-jost), sans-serif"
-        fill={color}
-        textAnchor="middle"
-        dominantBaseline="middle"
-      >
-        {FEEDBACK_SYMBOLS[status]}
-      </text>
-    ) : null
-
-    return (
-      <g key={i}>
-        {ledgers}
-        {/* Accidental */}
-        {accidental && (
-          <text x={noteX - 14} y={noteY} fontSize="30" fontFamily="Bravura, serif"
-            fill={color} dominantBaseline="central" textAnchor="middle">
-            {accidental === 'sharp' ? '' : ''}
-          </text>
-        )}
-        {/* Notehead */}
-        <ellipse cx={noteX} cy={noteY} rx={9} ry={6} fill={color}
-          transform={`rotate(-15, ${noteX}, ${noteY})`} />
-        {/* Stem */}
-        <line
-          x1={stemUp ? noteX + 8.5 : noteX - 8.5} y1={noteY}
-          x2={stemUp ? noteX + 8.5 : noteX - 8.5} y2={stemUp ? noteY - 44 : noteY + 44}
-          stroke={color} strokeWidth="1.6" />
-        {activeIndicator}
-        {feedbackEl}
-      </g>
-    )
   })
 
   return (
     <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg">
-      {staffLines}
-      {clefEl}
+      {grandConnectors}
+      {staffLines(trebleTop, 't')}
+      {clef === 'grand' && staffLines(bassTop, 'b')}
+      {clef !== 'bass' && trebleClef}
+      {(clef === 'bass' || clef === 'grand') && bassClef}
+      {clef === 'bass' && staffLines(trebleTop, 't')}
       {noteEls}
     </svg>
   )

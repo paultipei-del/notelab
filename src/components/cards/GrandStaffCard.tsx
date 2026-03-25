@@ -63,7 +63,7 @@ export default function GrandStaffCard({ note, className = '' }: GrandStaffCardP
   const staffWidth = 200
   const noteX = staffLeft + staffWidth / 2 + 10
 
-  const trebleTop = 30
+  const trebleTop = 55
   const bassTop = trebleTop + 8 * step + 48
 
   const accInfo = ACCIDENTAL_MAP[note]

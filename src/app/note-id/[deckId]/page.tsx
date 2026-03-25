@@ -40,8 +40,7 @@ const ENHARMONICS: Record<string, string> = {
 }
 
 function answersMatch(played: string, target: string) {
-  if (played === target) return true
-  return ENHARMONICS[target] === played
+  return played === target
 }
 
 function shuffleArr<T>(arr: T[]): T[] {

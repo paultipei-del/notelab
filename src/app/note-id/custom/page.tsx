@@ -24,16 +24,23 @@ const KEY_W = 52, KEY_H = 120, BLACK_W = 32, BLACK_H = 76
 const TREBLE_LINE_NOTES = new Set(['E4','G4','B4','D5','F5'])
 const TREBLE_SPACE_NOTES = new Set(['F4','A4','C5','E5'])
 const TREBLE_LEDGER_NOTES = new Set([
-  'C4','D4',           // below staff ledger line and space
-  'G5','A5','B5','C6', // above staff
-  'A3','B3',           // far below staff
+  'C4','D4',           // below staff — middle C ledger line + space above it
+  'A5','B5','C6',      // above staff — actual ledger lines
+  'A3','B3','G3','F3', // far below staff — ledger lines and spaces
 ])
 const BASS_LINE_NOTES = new Set(['G2','B2','D3','F3','A3'])
 const BASS_SPACE_NOTES = new Set(['A2','C3','E3','G3','B3'])
 const BASS_LEDGER_NOTES = new Set([
-  'E2','F2',           // below staff
-  'C4','D4','E4',      // above staff ledger
+  'E2',                // below staff — actual ledger line
+  'C4','D4','E4',      // above staff — actual ledger lines
 ])
+// Grand staff — treble staff E4-C6, bass staff G2-B3, ledger = C4/D4 between + extremes
+const GRAND_TREBLE_LINE_NOTES = new Set(['E4','G4','B4','D5','F5'])
+const GRAND_TREBLE_SPACE_NOTES = new Set(['F4','A4','C5','E5'])
+const GRAND_TREBLE_LEDGER_NOTES = new Set(['A5','B5','C6'])
+const GRAND_BASS_LINE_NOTES = new Set(['G2','B2','D3','F3','A3'])
+const GRAND_BASS_SPACE_NOTES = new Set(['A2','C3','E3','G3','B3'])
+const GRAND_BASS_LEDGER_NOTES = new Set(['E2','C4','D4'])
 
 const ENHARMONICS: Record<string, string> = {
   'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
@@ -41,8 +48,7 @@ const ENHARMONICS: Record<string, string> = {
 }
 
 function answersMatch(played: string, target: string) {
-  if (played === target) return true
-  return ENHARMONICS[target] === played
+  return played === target
 }
 
 function notePitchClass(note: string) {
@@ -66,13 +72,15 @@ function buildGroup(pool: string[], size: number): string[] {
   const group: string[] = []
   const shuffled = shuffleArr(pool)
   for (const note of shuffled) {
-    if (group.length === 0 || notePitchClass(note) !== notePitchClass(group[group.length - 1])) {
+    const last = group[group.length - 1]
+    if (group.length === 0 || note !== last) {
       group.push(note)
     }
     if (group.length >= size) break
   }
   while (group.length < size) {
-    const candidates = pool.filter(n => notePitchClass(n) !== notePitchClass(group[group.length - 1]))
+    const last = group[group.length - 1]
+    const candidates = pool.filter(n => n !== last)
     group.push(candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : pool[0])
   }
   return group
@@ -99,6 +107,7 @@ function CustomNoteIDInner() {
   const [total, setTotal] = useState(0)
   const [rounds, setRounds] = useState(0)
   const [done, setDone] = useState(false)
+  const [flash, setFlash] = useState<'correct' | 'wrong' | null>(null)
   const [startTime] = useState(Date.now())
   const [elapsed, setElapsed] = useState(0)
   const processingRef = useRef(false)
@@ -116,37 +125,54 @@ function CustomNoteIDInner() {
 
   // Build pool from config
   const pool = useMemo(() => {
-    const allDecks = clef === 'grand' ? GRAND_STAFF_DECKS : SIGHT_READ_DECKS
-    const targetDeckId = clef === 'grand' ? 'sight-read-grand-free'
-      : clef === 'bass' ? 'sight-read-bass-free'
-      : 'sight-read-treble-free'
-    
-    // Use all decks matching the clef for a larger pool
-    const relevantDecks = allDecks.filter(d => 
-      d.id.startsWith('sight-read-' + (clef === 'grand' ? 'grand' : clef))
-    )
-    
-    const allNotes = new Set<string>()
-    relevantDecks.forEach(d => d.cards.forEach(c => {
-      const note = c.note ?? c.front
-      if (!note) return
-      
-      const isAcc = isAccidental(note)
-      if (isAcc && !useAccidentals) return
-      if (isAcc) { allNotes.add(note); return }
-      
-      // Filter by lines/spaces/ledger
-      const lineSet = clef === 'bass' ? BASS_LINE_NOTES : TREBLE_LINE_NOTES
-      const spaceSet = clef === 'bass' ? BASS_SPACE_NOTES : TREBLE_SPACE_NOTES
-      const ledgerSet = clef === 'bass' ? BASS_LEDGER_NOTES : TREBLE_LEDGER_NOTES
-      
-      if (filters.includes('lines') && lineSet.has(note)) allNotes.add(note)
-      if (filters.includes('spaces') && spaceSet.has(note)) allNotes.add(note)
-      if (filters.includes('ledger') && ledgerSet.has(note)) allNotes.add(note)
-    }))
-    
-    return Array.from(allNotes)
+    // Explicit note sets — no filtering from decks, just defined directly
+    const NOTES: Record<string, { lines: string[], spaces: string[], ledger: string[] }> = {
+      treble: {
+        lines:  ['E4','G4','B4','D5','F5'],
+        spaces: ['F4','A4','C5','E5'],
+        ledger: ['C4','D4','A5','B5','C6','A3','B3','G3','F3'],
+      },
+      bass: {
+        lines:  ['G2','B2','D3','F3','A3'],
+        spaces: ['A2','C3','E3','G3','B3'],
+        ledger: ['E2','F2','C4','D4','E4'],
+      },
+      grand: {
+        lines:  ['E4','G4','B4','D5','F5','G2','B2','D3','F3','A3'],
+        spaces: ['F4','A4','C5','E5','A2','C3','E3','G3','B3'],
+        ledger: ['C4','D4','A5','B5','C6','E2'],
+      },
+    }
+
+    const set = NOTES[clef]
+    const naturalPool: string[] = []
+    if (filters.includes('lines')) naturalPool.push(...set.lines)
+    if (filters.includes('spaces')) naturalPool.push(...set.spaces)
+    if (filters.includes('ledger')) naturalPool.push(...set.ledger)
+
+    if (!useAccidentals) return naturalPool
+
+    // Add accidentals for each natural note in pool
+    const ACCIDENTAL_PAIRS: Record<string, string[]> = {
+      'C4': ['C#4','Db4'], 'D4': ['D#4','Eb4'], 'F4': ['F#4','Gb4'],
+      'G4': ['G#4','Ab4'], 'A4': ['A#4','Bb4'],
+      'C5': ['C#5','Db5'], 'D5': ['D#5','Eb5'], 'F5': ['F#5','Gb5'],
+      'G5': ['G#5','Ab5'], 'A5': ['A#5','Bb5'],
+      'C3': ['C#3','Db3'], 'D3': ['D#3','Eb3'], 'F3': ['F#3','Gb3'],
+      'G3': ['G#3','Ab3'], 'A3': ['A#3','Bb3'],
+      'C2': ['C#2','Db2'], 'D2': ['D#2','Eb2'], 'F2': ['F#2','Gb2'],
+      'G2': ['G#2','Ab2'], 'A2': ['A#2','Bb2'],
+    }
+
+    const accPool: string[] = []
+    naturalPool.forEach(note => {
+      const pairs = ACCIDENTAL_PAIRS[note]
+      if (pairs) accPool.push(...pairs)
+    })
+
+    return [...naturalPool, ...accPool]
   }, [clef, filters, useAccidentals])
+
 
   // Init first group — only run once when pool is ready
   const initializedRef = useRef(false)
@@ -180,6 +206,8 @@ function CustomNoteIDInner() {
     const isCorrect = answersMatch(answer, targetPitch)
     setTotal(t => t + 1)
     if (isCorrect) setCorrect(c => c + 1)
+    setFlash(isCorrect ? 'correct' : 'wrong')
+    setTimeout(() => setFlash(null), 400)
 
     setGroup(prev => prev.map((n, i) => {
       if (i === activeIdx) return { ...n, status: isCorrect ? 'correct' : 'wrong' }
@@ -235,8 +263,9 @@ function CustomNoteIDInner() {
 
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0
   const currentNote = group[activeIdx]?.note ?? ''
-  const bgColor = group[activeIdx]?.status === 'wrong' ? '#FFF0F0' : 'white'
-  const borderColor = group[activeIdx]?.status === 'wrong' ? '#F09595' : '#D3D1C7'
+  const activeStatus = group[activeIdx]?.status
+  const bgColor = flash === 'wrong' ? '#FFF0F0' : flash === 'correct' ? '#F0FBF4' : 'white'
+  const borderColor = flash === 'wrong' ? '#F09595' : flash === 'correct' ? '#4CAF50' : '#D3D1C7'
   const progressPct = stopMode === 'exercises' ? (rounds / stopValue) * 100 : (elapsed / (stopValue * 60)) * 100
 
   if (done) {
@@ -312,7 +341,7 @@ function CustomNoteIDInner() {
 
           {inputMode === 'letters' ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-              {/* Sharps row — above naturals, offset to sit between naturals */}
+              {/* Sharps row — above naturals, offset by half key+gap = 27px */}
               {useAccidentals && (
                 <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
                   {SHARP_ROW.map((note, i) => note ? (
@@ -332,7 +361,7 @@ function CustomNoteIDInner() {
                   </button>
                 ))}
               </div>
-              {/* Flats row — below naturals */}
+              {/* Flats row — below naturals, same offset */}
               {useAccidentals && (
                 <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
                   {FLAT_ROW.map((note, i) => note ? (
