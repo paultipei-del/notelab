@@ -32,7 +32,7 @@ const DEFAULT_CONFIG: Config = {
   inputMode: 'letters',
   groupSize: 1,
   stopMode: 'exercises',
-  stopValue: 20,
+  stopValue: 10,
   metronomeOn: false,
   bpm: 60,
 }
@@ -237,15 +237,15 @@ export default function NoteIDPage() {
                 Minutes
               </button>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <button onClick={() => set('stopValue', Math.max(1, config.stopValue - (config.stopMode === 'exercises' ? 5 : 1)))}
+                <button onClick={() => set('stopValue', Math.max(1, config.stopValue - 1))}
                   style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#888780' }}>−</button>
                 <span style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#1A1A18', minWidth: '40px', textAlign: 'center' as const }}>
                   {config.stopValue}
                 </span>
-                <button onClick={() => set('stopValue', Math.min(config.stopMode === 'exercises' ? 200 : 60, config.stopValue + (config.stopMode === 'exercises' ? 5 : 1)))}
+                <button onClick={() => set('stopValue', Math.min(config.stopMode === 'exercises' ? 100 : 60, config.stopValue + 1))}
                   style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', fontSize: '16px', color: '#888780' }}>+</button>
                 <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>
-                  {config.stopMode === 'exercises' ? 'notes' : 'min'}
+                  {config.stopMode === 'exercises' ? 'rounds' : 'min'}
                 </span>
               </div>
             </div>
