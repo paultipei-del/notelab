@@ -99,7 +99,7 @@ class Detector_yin {
 class Detector_mpm {
   peak_ignore = 0.25
   peak_cutoff = 0.93
-  pitch_min = 200
+  pitch_min = 150
   sampleRate: number
   tmp: Float32Array
   constructor(dataSize: number, sampleRate: number) {
@@ -124,7 +124,7 @@ class Detector_mpm {
 }
 
 class Detector_acx {
-  volume_min = 0.015
+  volume_min = 0.12
   peak_ignore = 0.00
   peak_cutoff = 0.93
   sampleRate: number
@@ -158,12 +158,12 @@ export interface DetectedNote {
 export class NoteDetector {
   private conf = {
     close_threshold:     0.05,
-    track_lone_ms:       40,
-    track_cons_ms:       25,
-    detrack_min_volume:  0.015,
+    track_lone_ms:       120,
+    track_cons_ms:       80,
+    detrack_min_volume:  0.12,
     detrack_est_none_ms: 500,
     detrack_est_some_ms: 250,
-    stable_note_ms:      30,
+    stable_note_ms:      120,
   }
   private taper: TaperFn
   private candidate: { freq: number; lone: boolean; start: number } | null = null
