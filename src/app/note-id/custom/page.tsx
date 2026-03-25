@@ -1,46 +1,55 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { useRouter, useParams, useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import MultiNoteStaff from '@/components/cards/MultiNoteStaff'
-import { getDeckById } from '@/lib/decks'
-import { Deck } from '@/lib/types'
+import { SIGHT_READ_DECKS } from '@/lib/sightReadDecks'
+import { GRAND_STAFF_DECKS } from '@/lib/grandStaffDecks'
 
 const NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-
-const WHITE_KEY_NOTES = ['C','D','E','F','G','A','B']
-const BLACK_KEY_NOTES = [
-  { note: 'C#', afterWhite: 0 },
-  { note: 'D#', afterWhite: 1 },
-  { note: 'F#', afterWhite: 3 },
-  { note: 'G#', afterWhite: 4 },
-  { note: 'A#', afterWhite: 5 },
-]
-const KEY_W = 52
-const KEY_H = 120
-const BLACK_W = 32
-const BLACK_H = 76
-
-// 3-row accidental button layout
-// Top row: sharps, Middle: naturals, Bottom: flats
 const SHARP_ROW: (string | null)[] = ['C#', 'D#', null, 'F#', 'G#', 'A#', null]
 const FLAT_ROW: (string | null)[]  = ['Db', 'Eb', null, 'Gb', 'Ab', 'Bb', null]
 
-function notePitchClass(note: string) {
-  return note.replace(/\d+$/, '').trim()
-}
+const WHITE_KEY_NOTES = ['C','D','E','F','G','A','B']
+const BLACK_KEY_NOTES = [
+  { note: 'C#', afterWhite: 0 }, { note: 'D#', afterWhite: 1 },
+  { note: 'F#', afterWhite: 3 }, { note: 'G#', afterWhite: 4 }, { note: 'A#', afterWhite: 5 },
+]
+const KEY_W = 52, KEY_H = 120, BLACK_W = 32, BLACK_H = 76
+
+// Note classification for treble clef
+const TREBLE_LINE_NOTES = new Set(['E4','G4','B4','D5','F5'])
+const TREBLE_SPACE_NOTES = new Set(['F4','A4','C5','E5'])
+const TREBLE_LEDGER_NOTES = new Set([
+  'C4','D4',           // below staff ledger line and space
+  'G5','A5','B5','C6', // above staff
+  'A3','B3',           // far below staff
+])
+const BASS_LINE_NOTES = new Set(['G2','B2','D3','F3','A3'])
+const BASS_SPACE_NOTES = new Set(['A2','C3','E3','G3','B3'])
+const BASS_LEDGER_NOTES = new Set([
+  'E2','F2',           // below staff
+  'C4','D4','E4',      // above staff ledger
+])
 
 const ENHARMONICS: Record<string, string> = {
   'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
-  'F#': 'Gb', 'Gb': 'F#', 'G#': 'Ab', 'Ab': 'G#',
-  'A#': 'Bb', 'Bb': 'A#',
+  'F#': 'Gb', 'Gb': 'F#', 'G#': 'Ab', 'Ab': 'G#', 'A#': 'Bb', 'Bb': 'A#',
 }
 
 function answersMatch(played: string, target: string) {
   if (played === target) return true
   return ENHARMONICS[target] === played
+}
+
+function notePitchClass(note: string) {
+  return note.replace(/\d+$/, '').trim()
+}
+
+function isAccidental(note: string) {
+  return note.includes('#') || note.includes('b')
 }
 
 function shuffleArr<T>(arr: T[]): T[] {
@@ -56,35 +65,33 @@ function buildGroup(pool: string[], size: number): string[] {
   const group: string[] = []
   const shuffled = shuffleArr(pool)
   for (const note of shuffled) {
-    if (group.length === 0 || note !== group[group.length - 1]) {
+    if (group.length === 0 || notePitchClass(note) !== notePitchClass(group[group.length - 1])) {
       group.push(note)
     }
     if (group.length >= size) break
   }
-  // Fill remaining if not enough unique notes
   while (group.length < size) {
-    const candidates = pool.filter(n => n !== group[group.length - 1])
-    group.push(candidates[Math.floor(Math.random() * candidates.length)] ?? pool[0])
+    const candidates = pool.filter(n => notePitchClass(n) !== notePitchClass(group[group.length - 1]))
+    group.push(candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : pool[0])
   }
   return group
 }
 
 type NoteStatus = 'pending' | 'active' | 'correct' | 'wrong'
+interface NoteState { note: string; status: NoteStatus }
 
-interface NoteState {
-  note: string
-  status: NoteStatus
-}
-
-export default function NoteIDExercise() {
+export default function CustomNoteID() {
   const router = useRouter()
-  const params = useParams()
   const searchParams = useSearchParams()
-  const deckId = params.deckId as string
-  const inputMode = (searchParams.get('input') ?? 'letters') as 'letters' | 'keyboard' | 'keyboard-full'
-  const groupSize = parseInt(searchParams.get('group') ?? '1')
 
-  const [deck, setDeck] = useState<Deck | null>(null)
+  const clef = (searchParams.get('clef') ?? 'treble') as 'treble' | 'bass' | 'grand'
+  const filters = (searchParams.get('filters') ?? 'lines,spaces').split(',')
+  const useAccidentals = searchParams.get('accidentals') === '1'
+  const inputMode = (searchParams.get('input') ?? 'letters') as 'letters' | 'keyboard'
+  const groupSize = parseInt(searchParams.get('group') ?? '1')
+  const stopMode = searchParams.get('stopMode') ?? 'exercises'
+  const stopValue = parseInt(searchParams.get('stopValue') ?? '10')
+
   const [group, setGroup] = useState<NoteState[]>([])
   const [activeIdx, setActiveIdx] = useState(0)
   const [correct, setCorrect] = useState(0)
@@ -92,32 +99,68 @@ export default function NoteIDExercise() {
   const [rounds, setRounds] = useState(0)
   const [done, setDone] = useState(false)
   const [startTime] = useState(Date.now())
+  const [elapsed, setElapsed] = useState(0)
   const processingRef = useRef(false)
 
-  const stopRounds = parseInt(searchParams.get('stopValue') ?? '10')
-
+  // Timer for minutes mode
   useEffect(() => {
-    const d = getDeckById(deckId)
-    if (d) setDeck(d)
-  }, [deckId])
+    if (stopMode !== 'minutes' || done) return
+    const interval = setInterval(() => {
+      const secs = (Date.now() - startTime) / 1000
+      setElapsed(secs)
+      if (secs >= stopValue * 60) setDone(true)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [stopMode, stopValue, startTime, done])
 
+  // Build pool from config
   const pool = useMemo(() => {
-    if (!deck) return []
-    return deck.cards.map(c => c.note ?? c.front).filter(Boolean) as string[]
-  }, [deck])
+    const allDecks = clef === 'grand' ? GRAND_STAFF_DECKS : SIGHT_READ_DECKS
+    const targetDeckId = clef === 'grand' ? 'sight-read-grand-free'
+      : clef === 'bass' ? 'sight-read-bass-free'
+      : 'sight-read-treble-free'
+    
+    // Use all decks matching the clef for a larger pool
+    const relevantDecks = allDecks.filter(d => 
+      d.id.startsWith('sight-read-' + (clef === 'grand' ? 'grand' : clef))
+    )
+    
+    const allNotes = new Set<string>()
+    relevantDecks.forEach(d => d.cards.forEach(c => {
+      const note = c.note ?? c.front
+      if (!note) return
+      
+      const isAcc = isAccidental(note)
+      if (isAcc && !useAccidentals) return
+      if (isAcc) { allNotes.add(note); return }
+      
+      // Filter by lines/spaces/ledger
+      const lineSet = clef === 'bass' ? BASS_LINE_NOTES : TREBLE_LINE_NOTES
+      const spaceSet = clef === 'bass' ? BASS_SPACE_NOTES : TREBLE_SPACE_NOTES
+      const ledgerSet = clef === 'bass' ? BASS_LEDGER_NOTES : TREBLE_LEDGER_NOTES
+      
+      if (filters.includes('lines') && lineSet.has(note)) allNotes.add(note)
+      if (filters.includes('spaces') && spaceSet.has(note)) allNotes.add(note)
+      if (filters.includes('ledger') && ledgerSet.has(note)) allNotes.add(note)
+    }))
+    
+    return Array.from(allNotes)
+  }, [clef, filters, useAccidentals])
 
-  // Build initial group
+  // Init first group — only run once when pool is ready
+  const initializedRef = useRef(false)
   useEffect(() => {
-    if (pool.length === 0) return
+    if (pool.length === 0 || initializedRef.current) return
+    initializedRef.current = true
     const notes = buildGroup(pool, groupSize)
     setGroup(notes.map((note, i) => ({ note, status: i === 0 ? 'active' : 'pending' })))
     setActiveIdx(0)
-  }, [pool, groupSize])
+  }, [pool])
 
   function nextGroup() {
     const newRounds = rounds + 1
     setRounds(newRounds)
-    if (newRounds >= stopRounds) {
+    if (stopMode === 'exercises' && newRounds >= stopValue) {
       setDone(true)
       return
     }
@@ -137,7 +180,6 @@ export default function NoteIDExercise() {
     setTotal(t => t + 1)
     if (isCorrect) setCorrect(c => c + 1)
 
-    // Update group state
     setGroup(prev => prev.map((n, i) => {
       if (i === activeIdx) return { ...n, status: isCorrect ? 'correct' : 'wrong' }
       if (isCorrect && i === activeIdx + 1) return { ...n, status: 'active' }
@@ -146,17 +188,23 @@ export default function NoteIDExercise() {
 
     if (isCorrect) {
       processingRef.current = true
-      const isLastInGroup = activeIdx >= group.length - 1
-      if (isLastInGroup) {
+      const isLast = activeIdx >= group.length - 1
+      if (isLast) {
         setTimeout(() => nextGroup(), 600)
       } else {
         setActiveIdx(i => i + 1)
         processingRef.current = false
       }
+    } else {
+      // Clear wrong state after 600ms so card returns to neutral
+      setTimeout(() => {
+        setGroup(prev => prev.map((n, i) =>
+          i === activeIdx ? { ...n, status: 'active' } : n
+        ))
+      }, 600)
     }
-  }, [done, group, activeIdx, rounds, stopRounds, pool, groupSize])
+  }, [done, group, activeIdx, rounds, stopValue, stopMode, pool, groupSize])
 
-  // Keyboard listener
   useEffect(() => {
     if (inputMode !== 'letters') return
     function onKey(e: KeyboardEvent) {
@@ -167,7 +215,16 @@ export default function NoteIDExercise() {
     return () => window.removeEventListener('keydown', onKey)
   }, [inputMode, handleAnswer])
 
-  if (!deck || pool.length === 0 || group.length === 0) {
+  if (pool.length === 0) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780' }}>No notes match your selection.</p>
+        <button onClick={() => router.push('/note-id')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', color: '#888780' }}>← Back</button>
+      </div>
+    )
+  }
+
+  if (group.length === 0) {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780' }}>Loading…</p>
@@ -177,26 +234,22 @@ export default function NoteIDExercise() {
 
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0
   const currentNote = group[activeIdx]?.note ?? ''
-  const clef = (deck.cards[0]?.clef ?? 'treble') as 'treble' | 'bass' | 'grand'
+  const bgColor = group[activeIdx]?.status === 'wrong' ? '#FFF0F0' : 'white'
+  const borderColor = group[activeIdx]?.status === 'wrong' ? '#F09595' : '#D3D1C7'
+  const progressPct = stopMode === 'exercises' ? (rounds / stopValue) * 100 : (elapsed / (stopValue * 60)) * 100
 
   if (done) {
     const finalTime = ((Date.now() - startTime) / 1000).toFixed(2)
-    const bestKey = 'notelab-note-id-best-' + deckId
-    const prevBest = typeof window !== 'undefined' ? parseFloat(localStorage.getItem(bestKey) ?? '0') : 0
-    const currentTimeSec = parseFloat(finalTime)
-    const isNewBest = prevBest === 0 || currentTimeSec < prevBest
-    if (typeof window !== 'undefined' && isNewBest) localStorage.setItem(bestKey, finalTime)
-
     return (
       <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div style={{ background: 'white', borderRadius: '20px', border: '1px solid #D3D1C7', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Session Complete</p>
-          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '32px' }}>{deck.title}</h2>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '32px' }}>Custom Session</h2>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '36px' }}>
             {[
-              { num: Math.round((correct / total) * 100) + '%', label: 'Score' },
+              { num: pct + '%', label: 'Score' },
               { num: finalTime + 's', label: 'Time' },
-              { num: prevBest > 0 ? (isNewBest ? finalTime : prevBest.toFixed(2)) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' },
+              { num: correct + '/' + total, label: 'Correct' },
             ].map(({ num, label }) => (
               <div key={label}>
                 <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#1A1A18' }}>{num}</p>
@@ -219,24 +272,24 @@ export default function NoteIDExercise() {
     )
   }
 
-  const bgColor = group[activeIdx]?.status === 'wrong' ? '#FFF0F0' : 'white'
-  const borderColor = group[activeIdx]?.status === 'wrong' ? '#F09595' : '#D3D1C7'
-
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 32px', borderBottom: '1px solid #D3D1C7' }}>
         <button onClick={() => router.push('/note-id')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
         <div style={{ display: 'flex', gap: '24px' }}>
-          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780' }}>Round {rounds + 1} / {stopRounds}</span>
+          {stopMode === 'exercises'
+            ? <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780' }}>Round {rounds + 1} / {stopValue}</span>
+            : <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780' }}>{Math.max(0, stopValue * 60 - Math.floor(elapsed))}s left</span>
+          }
           <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780' }}>{pct}%</span>
         </div>
         <div style={{ width: '60px' }} />
       </div>
 
-      {/* Progress bar */}
+      {/* Progress */}
       <div style={{ height: '2px', background: '#EDE8DF' }}>
-        <div style={{ height: '100%', background: '#1A1A18', width: (rounds / stopRounds * 100) + '%', transition: 'width 0.3s' }} />
+        <div style={{ height: '100%', background: '#1A1A18', width: progressPct + '%', transition: 'width 0.3s' }} />
       </div>
 
       {/* Card */}
@@ -246,7 +299,6 @@ export default function NoteIDExercise() {
             What note is this?
           </p>
 
-          {/* Staff */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px', overflowX: 'auto' }}>
             {groupSize === 1 ? (
               clef === 'grand'
@@ -257,19 +309,20 @@ export default function NoteIDExercise() {
             )}
           </div>
 
-          {/* Input */}
           {inputMode === 'letters' ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-              {/* Sharps row */}
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {SHARP_ROW.map((note, i) => note ? (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                    {note}
-                  </button>
-                ) : <div key={i} style={{ width: '48px' }} />)}
-              </div>
-              {/* Naturals row */}
+              {/* Sharps row — above naturals, offset to sit between naturals */}
+              {useAccidentals && (
+                <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
+                  {SHARP_ROW.map((note, i) => note ? (
+                    <button key={note} onClick={() => handleAnswer(note)}
+                      style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                      {note}
+                    </button>
+                  ) : <div key={i} style={{ width: '48px' }} />)}
+                </div>
+              )}
+              {/* Naturals */}
               <div style={{ display: 'flex', gap: '6px' }}>
                 {NOTE_LETTERS.map(letter => (
                   <button key={letter} onClick={() => handleAnswer(letter)}
@@ -278,15 +331,17 @@ export default function NoteIDExercise() {
                   </button>
                 ))}
               </div>
-              {/* Flats row */}
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {FLAT_ROW.map((note, i) => note ? (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                    {note}
-                  </button>
-                ) : <div key={i} style={{ width: '48px' }} />)}
-              </div>
+              {/* Flats row — below naturals */}
+              {useAccidentals && (
+                <div style={{ display: 'flex', gap: '6px', marginLeft: '27px' }}>
+                  {FLAT_ROW.map((note, i) => note ? (
+                    <button key={note} onClick={() => handleAnswer(note)}
+                      style={{ width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                      {note}
+                    </button>
+                  ) : <div key={i} style={{ width: '48px' }} />)}
+                </div>
+              )}
             </div>
           ) : (
             <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px', margin: '0 auto' }}>
