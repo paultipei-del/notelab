@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import StaffCard from '@/components/cards/StaffCard'
@@ -76,7 +77,7 @@ interface NoteState {
   status: NoteStatus
 }
 
-export default function NoteIDExercise() {
+function NoteIDExerciseInner() {
   const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
@@ -303,5 +304,17 @@ export default function NoteIDExercise() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function NoteIDExercise() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780' }}>Loading…</p>
+      </div>
+    }>
+      <NoteIDExerciseInner />
+    </Suspense>
   )
 }

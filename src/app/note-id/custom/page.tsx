@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import StaffCard from '@/components/cards/StaffCard'
@@ -80,7 +81,7 @@ function buildGroup(pool: string[], size: number): string[] {
 type NoteStatus = 'pending' | 'active' | 'correct' | 'wrong'
 interface NoteState { note: string; status: NoteStatus }
 
-export default function CustomNoteID() {
+function CustomNoteIDInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -358,5 +359,17 @@ export default function CustomNoteID() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CustomNoteID() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780' }}>Loading…</p>
+      </div>
+    }>
+      <CustomNoteIDInner />
+    </Suspense>
   )
 }
