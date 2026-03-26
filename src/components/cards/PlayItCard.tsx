@@ -184,7 +184,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
         const stream = sharedStream
         setPermissionGranted(true)
         console.log('sharedStream active:', sharedStream?.active, 'sharedCtx:', sharedCtx?.state)
-        await startDetecting(stream)
+        if (stream) await startDetecting(stream)
       } catch (e: any) {
         setError('Mic access denied. Please allow microphone access.')
         setStatus('listening')
