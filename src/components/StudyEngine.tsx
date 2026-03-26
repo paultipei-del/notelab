@@ -30,7 +30,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const [flipIndex, setFlipIndex] = useState(0)
   const [flipRevealed, setFlipRevealed] = useState(false)
   const initialMode: StudyMode = deck.id.startsWith('sight-read-') ? 'play' : 'flip'
-  const { currentCard, mode, revealed, stats, isComplete, progressPct, progressLabel, intervals, reveal, rate, recordAnswer, setMode, getMCOptions, resetSession } = useStudySession(deck, userId, initialMode)
+  const { currentCard, mode, revealed, stats, isComplete, progressPct, progressLabel, intervals, reveal, rate, recordAnswer, setMode, getMCOptions, resetSession, resetTimer } = useStudySession(deck, userId, initialMode)
   const flipCards = useMemo(() => [...deck.cards].sort(() => Math.random() - 0.5), [deck.id])
   const flipCard = flipCards[flipIndex] ?? null
   const isAudioDeck = deck.cards.every(c => c.type === 'audio')
@@ -88,7 +88,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#888780', lineHeight: 1.8, marginBottom: '8px' }}>A note will appear on the staff.</p>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#888780', lineHeight: 1.8, marginBottom: '36px' }}>Play it on your piano — the mic will detect the correct note and move to the next one automatically.</p>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#D3D1C7', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
-          <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); resetSession(); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
+          <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); resetTimer(); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
           <div style={{ marginTop: '20px' }}>
             <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#D3D1C7' }}>← Back</button>
           </div>

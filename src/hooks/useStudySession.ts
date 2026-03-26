@@ -137,9 +137,12 @@ export function useStudySession(deck: Deck | null, userId: string | null = null,
     })
   }
 
+  const resetTimer = () => setStats(prev => ({ ...prev, startTime: Date.now() }))
+
   return {
     currentCard,
     resetSession,
+    resetTimer,
     queue,
     cardIndex,
     mode,
