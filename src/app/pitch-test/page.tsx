@@ -72,7 +72,7 @@ export default function PitchTest() {
       const match = ALL_NOTES[targetIdx].match(/^([A-G][#b]?)(\d)$/)
       const midi = match ? (parseInt(match[2]) + 1) * 12 + NOTE_NAMES_D.indexOf(match[1]) : 60
       const dataSize = midi < 76 ? DATA_SIZE_LO : DATA_SIZE_HI
-      analyser.fftSize = dataSize * 2
+      analyser.fftSize = dataSize
       bufRef.current = new Float32Array(dataSize)
       const det = new NoteDetector(dataSize, ctx.sampleRate)
       det.setTarget(midi)

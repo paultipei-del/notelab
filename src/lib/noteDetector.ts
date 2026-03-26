@@ -198,8 +198,9 @@ export class NoteDetector {
     if (this.targetMidi > 0 && freq > 0) {
       const detectedMidi = Math.round(69 + 12 * Math.log2(freq / 440))
       const diff = this.targetMidi - detectedMidi
-      if (diff === 12) freq = freq * 2
-      if (diff === -12) freq = freq / 2
+      // Only correct if within reasonable piano range (A0=21 to C8=108)
+      if (diff === 12 && detectedMidi + 12 <= 108) freq = freq * 2
+      if (diff === -12 && detectedMidi - 12 >= 21) freq = freq / 2
     }
     if (this.tracking) {
       if (this.isClose_(this.tracking.freq, freq)) return
