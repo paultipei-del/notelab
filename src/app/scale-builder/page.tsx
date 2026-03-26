@@ -35,7 +35,7 @@ const SCALE_PATTERNS: Record<ScaleType, Step[]> = {
   natural_minor:   ['W','H','W','W','H','W','W'],
   harmonic_minor:  ['W','H','W','W','H','A','W'],
   melodic_minor:   ['W','H','W','W','W','W','H'],
-  // Pentatonic
+  // Pentatonic — displayed as scale degrees
   major_pentatonic: ['W','W','A','W','A'],
   minor_pentatonic: ['A','W','W','A','W'],
   // Other
@@ -73,8 +73,17 @@ const SCALE_LABELS: Record<ScaleType, string> = {
 }
 
 const STEP_SEMITONES: Record<Step, number> = { W: 2, H: 1, A: 3 }
+const DEGREE_LABELS: Partial<Record<ScaleType, string[]>> = {
+  major_pentatonic: ['1','2','3','5','6','1'],
+  minor_pentatonic: ['1','b3','4','5','b7','1'],
+  blues: ['1','b3','4','b5','5','b7','1'],
+  whole_tone: ['1','2','3','#4','#5','b7','1'],
+  diminished_hw: ['1','b2','b3','3','b5','5','6','b7','1'],
+  diminished_wh: ['1','2','b3','4','#4','#5','6','7','1'],
+}
+
 const STEP_LABELS: Record<Step, string> = {
-  W: 'Whole Step', H: 'Half Step', A: 'Aug. Step'
+  W: 'Whole Step', H: 'Half Step', A: 'Minor 3rd'
 }
 
 // ── Note helpers ───────────────────────────────────────────────────────────
@@ -99,44 +108,161 @@ function noteToMidi(name: string, octave: number): number {
 }
 
 function buildExpectedNotes(rootName: string, rootOctave: number, scaleType: ScaleType): BuiltNote[] {
-  const pattern = SCALE_PATTERNS[scaleType]
   const NATURALS = ['C','D','E','F','G','A','B']
-  // Semitones above C for each natural note
   const NAT_PC: Record<string, number> = { C:0, D:2, E:4, F:5, G:7, A:9, B:11 }
+  const STEP_SEM: Record<Step, number> = { W:2, H:1, A:3 }
 
-  // Parse root
-  const rootNatural = rootName[0]
-  const rootAcc = rootName.slice(1)  // '', '#', 'b'
-  let rootNatIdx = NATURALS.indexOf(rootNatural)
-
-  const notes: BuiltNote[] = []
-  let midi = noteToMidi(rootName, rootOctave)
-  notes.push({ name: rootName, octave: rootOctave, midiNum: midi })
-
-  let natIdx = rootNatIdx
-  let octave = rootOctave
-
-  for (const step of pattern) {
-    midi += STEP_SEMITONES[step]
-    natIdx = natIdx + 1
-    if (natIdx === 7) { natIdx = 0; octave++ }
-
-    const nat = NATURALS[natIdx]
-    const natMidi = (octave + 1) * 12 + NAT_PC[nat]
-    const diff = midi - natMidi  // 0=natural, 1=sharp, -1=flat, 2=##, -2=bb
-
-    let name: string
-    if (diff === 0) name = nat
-    else if (diff === 1) name = nat + '#'
-    else if (diff === -1) name = nat + 'b'
-    else if (diff === 2) name = nat + '##'
-    else if (diff === -2) name = nat + 'bb'
-    else name = nat  // fallback
-
-    notes.push({ name, octave, midiNum: midi })
+  function noteToMidiLocal(name: string, oct: number): number {
+    const nat = name[0]
+    const acc = name.slice(1)
+    let pc = NAT_PC[nat]
+    if (acc === '#') pc += 1
+    else if (acc === '##') pc += 2
+    else if (acc === 'b') pc -= 1
+    else if (acc === 'bb') pc -= 2
+    return (oct + 1) * 12 + ((pc % 12 + 12) % 12)
   }
 
-  return notes
+  // Build from interval pattern with correct enharmonic spelling
+  function buildFromPattern(root: string, rootOct: number, pattern: Step[]): BuiltNote[] {
+    const rootNat = root[0]
+    let natIdx = NATURALS.indexOf(rootNat)
+    const notes: BuiltNote[] = []
+    let midi = noteToMidiLocal(root, rootOct)
+    notes.push({ name: root, octave: rootOct, midiNum: midi })
+    let octave = rootOct
+
+    for (const step of pattern) {
+      midi += STEP_SEM[step]
+      natIdx = natIdx + 1
+      if (natIdx === 7) { natIdx = 0; octave++ }
+      const nat = NATURALS[natIdx]
+      const natMidi = (octave + 1) * 12 + NAT_PC[nat]
+      const diff = midi - natMidi
+      let name: string
+      if (diff === 0) name = nat
+      else if (diff === 1) name = nat + '#'
+      else if (diff === -1) name = nat + 'b'
+      else if (diff === 2) name = nat + '##'
+      else if (diff === -2) name = nat + 'bb'
+      else name = nat
+      notes.push({ name, octave, midiNum: midi })
+    }
+    return notes
+  }
+
+  // Build pentatonic/blues from scale degrees of a parent scale
+  function buildFromDegrees(root: string, rootOct: number, parentPattern: Step[], degrees: number[]): BuiltNote[] {
+    const full = buildFromPattern(root, rootOct, parentPattern)
+    return degrees.map(d => full[d])
+  }
+
+  // Pragmatic whole tone / diminished spelling — no double accidentals, no E#/B#/Fb/Cb
+  function buildPragmatic(root: string, rootOct: number, semitones: number[]): BuiltNote[] {
+    // Circle of fifths preferred spellings
+    // Bb instead of A#, Db instead of C#, Eb instead of D#, Ab instead of G#
+    const PREFERRED: Record<number, string> = {
+      1: 'Db', 3: 'Eb', 6: 'Gb', 8: 'Ab', 10: 'Bb'
+    }
+    const SHARP_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+    
+    const notes: BuiltNote[] = []
+    let midi = noteToMidiLocal(root, rootOct)
+    notes.push({ name: root, octave: rootOct, midiNum: midi })
+    
+    for (const semi of semitones) {
+      midi += semi
+      const pc = midi % 12
+      const oct = Math.floor(midi / 12) - 1
+      // Use preferred spelling (flats for black keys mostly)
+      let name = PREFERRED[pc] ?? SHARP_NAMES[pc]
+      // F# preferred over Gb when root is sharpy
+      if (pc === 6 && ['G','D','A','E','B','F#'].includes(root)) name = 'F#'
+      notes.push({ name, octave: oct, midiNum: midi })
+    }
+    return notes
+  }
+
+  const MAJ_PATTERN: Step[] = ['W','W','H','W','W','W','H']
+  const MIN_PATTERN: Step[] = ['W','H','W','W','H','W','W']
+  const HARM_MIN_PATTERN: Step[] = ['W','H','W','W','H','A','H']
+
+  switch (scaleType) {
+    case 'major':
+    case 'ionian':
+      return buildFromPattern(rootName, rootOctave, MAJ_PATTERN)
+    
+    case 'dorian':
+      return buildFromPattern(rootName, rootOctave, ['W','H','W','W','W','H','W'])
+    case 'phrygian':
+      return buildFromPattern(rootName, rootOctave, ['H','W','W','W','H','W','W'])
+    case 'lydian':
+      return buildFromPattern(rootName, rootOctave, ['W','W','W','H','W','W','H'])
+    case 'mixolydian':
+      return buildFromPattern(rootName, rootOctave, ['W','W','H','W','W','H','W'])
+    case 'aeolian':
+    case 'natural_minor':
+      return buildFromPattern(rootName, rootOctave, MIN_PATTERN)
+    case 'locrian':
+      return buildFromPattern(rootName, rootOctave, ['H','W','W','H','W','W','W'])
+    
+    case 'harmonic_minor':
+      return buildFromPattern(rootName, rootOctave, HARM_MIN_PATTERN)
+    
+    case 'melodic_minor':
+      return buildFromPattern(rootName, rootOctave, ['W','H','W','W','W','W','H'])
+    
+    // Pentatonics — derived from scale degrees
+    case 'major_pentatonic': {
+      // Degrees 1 2 3 5 6 + octave root
+      const notes = buildFromDegrees(rootName, rootOctave, MAJ_PATTERN, [0,1,2,4,5])
+      const last = notes[0]
+      notes.push({ name: last.name, octave: last.octave + 1, midiNum: last.midiNum + 12 })
+      return notes
+    }
+    
+    case 'minor_pentatonic': {
+      // Degrees 1 b3 4 5 b7 + octave root
+      const notes = buildFromDegrees(rootName, rootOctave, MIN_PATTERN, [0,2,3,4,6])
+      const last = notes[0]
+      notes.push({ name: last.name, octave: last.octave + 1, midiNum: last.midiNum + 12 })
+      return notes
+    }
+    
+    case 'blues': {
+      // Minor pentatonic + b5 (tritone)
+      const minPent = buildFromDegrees(rootName, rootOctave, MIN_PATTERN, [0,2,3,4,6])
+      // Insert b5 between degree 4 and 5 of minor scale
+      const full = buildFromPattern(rootName, rootOctave, MIN_PATTERN)
+      // b5 = half step above degree 4 of minor scale
+      const p4midi = full[3].midiNum + 1
+      const p4pc = p4midi % 12
+      const p4oct = Math.floor(p4midi / 12) - 1
+      const SHARP_N = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+      const FLAT_N  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
+      const useF = ['F','Bb','Eb','Ab','Db','Gb'].includes(rootName)
+      const b5name = useF ? FLAT_N[p4pc] : SHARP_N[p4pc]
+      const b5: BuiltNote = { name: b5name, octave: p4oct, midiNum: p4midi }
+      const octRoot: BuiltNote = { name: minPent[0].name, octave: minPent[0].octave + 1, midiNum: minPent[0].midiNum + 12 }
+      return [minPent[0], minPent[1], minPent[2], b5, minPent[3], minPent[4], octRoot]
+    }
+    
+    case 'whole_tone': {
+      const notes = buildPragmatic(rootName, rootOctave, [2,2,2,2,2,2])
+      const r = notes[0]
+      notes.push({ name: r.name, octave: r.octave + 1, midiNum: r.midiNum + 12 })
+      return notes
+    }
+    
+    case 'diminished_hw':
+      return buildPragmatic(rootName, rootOctave, [1,2,1,2,1,2,1,2])
+    
+    case 'diminished_wh':
+      return buildPragmatic(rootName, rootOctave, [2,1,2,1,2,1,2,1])
+    
+    default:
+      return buildFromPattern(rootName, rootOctave, MAJ_PATTERN)
+  }
 }
 
 
@@ -235,6 +361,11 @@ export default function ScaleBuilder() {
   const pattern = SCALE_PATTERNS[scaleType]
   const currentStepIndex = builtNotes.length - 1  // index into pattern
   const currentStep = pattern[currentStepIndex] as Step | undefined
+  const expectedLength = ['major_pentatonic','minor_pentatonic'].includes(scaleType) ? 6
+    : scaleType === 'blues' ? 7
+    : scaleType === 'whole_tone' ? 7
+    : ['diminished_hw','diminished_wh'].includes(scaleType) ? 9
+    : 8
   const isComplete = phase === 'complete'
 
   // Expected next note
@@ -243,7 +374,7 @@ export default function ScaleBuilder() {
     return buildExpectedNotes(builtNotes[0].name, builtNotes[0].octave, scaleType)
   }, [builtNotes, scaleType])
 
-  const expectedNextMidi = builtNotes.length > 0 && builtNotes.length < 8
+  const expectedNextMidi = builtNotes.length > 0 && builtNotes.length < expectedLength
     ? expectedNotes[builtNotes.length]?.midiNum
     : null
 
@@ -289,7 +420,7 @@ export default function ScaleBuilder() {
         setBuiltNotes(newNotes)
         playNote(key.midi)
 
-        if (newNotes.length === 8) {
+if (newNotes.length === expectedLength) {
           setPhase('complete')
           setTimeout(() => playScale(newNotes), 500)
         } else {
@@ -313,7 +444,7 @@ export default function ScaleBuilder() {
         playNote(key.midi)
       }
     }
-  }, [phase, expectedNextMidi, builtNotes, currentStep])
+  }, [phase, expectedNextMidi, builtNotes, currentStep, expectedLength, expectedNotes, scaleType])
 
   function reset() {
     setBuiltNotes([])
@@ -413,7 +544,33 @@ export default function ScaleBuilder() {
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', marginBottom: '24px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Pattern</p>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {/* Root */}
+            {(DEGREE_LABELS[scaleType] ?? []).length > 0 ? (
+            // Show scale degrees for pentatonic/blues/WT/dim
+            DEGREE_LABELS[scaleType]!.map((deg, i) => {
+              // i=0 is the root box, rest are subsequent notes
+              const noteAtIdx = i === 0 ? builtNotes[0] : builtNotes[i]
+              const isActive = builtNotes.length === i && phase !== 'select_root' && i > 0
+              const isDone = builtNotes.length > i
+              const isLast = i === DEGREE_LABELS[scaleType]!.length - 1
+              return (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  {/* Note box with degree below */}
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: isDone ? '#E8F5E9' : isActive ? '#F5F2EC' : '#F5F2EC', border: '1px solid ' + (isDone ? '#4CAF50' : isActive ? '#1A1A18' : '#EDE8DF'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontFamily: SERIF, fontSize: '14px', color: isDone ? '#4CAF50' : '#D3D1C7' }}>{noteAtIdx?.name ?? '?'}</span>
+                    </div>
+                    <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 300, color: isDone ? '#4CAF50' : '#D3D1C7', letterSpacing: '0.04em' }}>{deg}</span>
+                  </div>
+                  {/* Arrow between boxes (not after last) */}
+                  {!isLast && (
+                    <div style={{ width: '16px', height: '1px', background: isDone ? '#4CAF50' : '#D3D1C7' }} />
+                  )}
+                </div>
+              )
+            })
+          ) : (
+            <>
+            {/* Root box for normal scales */}
             <div style={{ textAlign: 'center' as const }}>
               <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: builtNotes.length > 0 ? '#FAEEDA' : '#F5F2EC', border: '1px solid ' + (builtNotes.length > 0 ? '#BA7517' : '#D3D1C7'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <span style={{ fontFamily: SERIF, fontSize: '16px', color: builtNotes.length > 0 ? '#BA7517' : '#888780' }}>
@@ -442,7 +599,8 @@ export default function ScaleBuilder() {
                   </div>
                 </div>
               )
-            })}
+            })}</>
+          )}
           </div>
         </div>
 
