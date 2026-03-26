@@ -99,7 +99,7 @@ class Detector_yin {
 class Detector_mpm {
   peak_ignore = 0.25
   peak_cutoff = 0.93
-  pitch_min = 150
+  pitch_min = 80
   sampleRate: number
   tmp: Float32Array
   constructor(dataSize: number, sampleRate: number) {
@@ -156,14 +156,18 @@ export interface DetectedNote {
 }
 
 export class NoteDetector {
+  private targetMidi: number = 0
+
+  setTarget(midi: number) { this.targetMidi = midi }
+
   private conf = {
     close_threshold:     0.05,
-    track_lone_ms:       120,
-    track_cons_ms:       80,
-    detrack_min_volume:  0.12,
-    detrack_est_none_ms: 500,
-    detrack_est_some_ms: 250,
-    stable_note_ms:      120,
+    track_lone_ms:       80,
+    track_cons_ms:       50,
+    detrack_min_volume:  0.10,
+    detrack_est_none_ms: 400,
+    detrack_est_some_ms: 200,
+    stable_note_ms:      80,
   }
   private taper: TaperFn
   private candidate: { freq: number; lone: boolean; start: number } | null = null
@@ -188,8 +192,15 @@ export class NoteDetector {
     const est = this.est
     for (let i = 0; i < this.detectors.length; i++) est[i] = this.detectors[i].process(this.buf)
     const res = this.getConsensus_(est)
-    const freq = res.cons <= 0 ? res.lone : res.cons
+    const rawFreq = res.cons <= 0 ? res.lone : res.cons
     const lone = res.cons <= 0
+    let freq = rawFreq
+    if (this.targetMidi > 0 && freq > 0) {
+      const detectedMidi = Math.round(69 + 12 * Math.log2(freq / 440))
+      const diff = this.targetMidi - detectedMidi
+      if (diff === 12) freq = freq * 2
+      if (diff === -12) freq = freq / 2
+    }
     if (this.tracking) {
       if (this.isClose_(this.tracking.freq, freq)) return
       for (let i = 0; i < est.length; i++) {

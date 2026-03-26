@@ -14,7 +14,8 @@ interface PlayItCardProps {
 
 type Status = 'starting' | 'listening' | 'correct' | 'wrong'
 
-const DATA_SIZE = 2048
+const DATA_SIZE_LO = 4096  // for bass notes below C4
+const DATA_SIZE_HI = 2048  // for treble notes C4 and above
 
 const ENHARMONICS: Record<string, string> = {
   'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
@@ -30,12 +31,10 @@ function pitchMatches(played: string, target: string): boolean {
 // Full note matching including octave e.g. 'D#4' matches 'Eb4'
 function pitchMatchesFull(played: string, target: string): boolean {
   if (played === target) return true
-  // Extract pitch class and octave
   const playedClass = played.replace(/\d+$/, '')
   const targetClass = target.replace(/\d+$/, '')
   const playedOctave = played.match(/\d+$/)?.[0]
   const targetOctave = target.match(/\d+$/)?.[0]
-  // Must be same octave AND enharmonic equivalent
   if (playedOctave !== targetOctave) return false
   return ENHARMONICS[targetClass] === playedClass
 }
@@ -63,9 +62,11 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
 
   const animRef    = useRef<number | null>(null)
   const detectorRef = useRef<NoteDetector | null>(null)
+  const detectorLoRef = useRef<NoteDetector | null>(null)
+  const bufLoRef = useRef<Float32Array | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const sourceRef   = useRef<MediaStreamAudioSourceNode | null>(null)
-  const bufRef     = useRef<Float32Array<ArrayBuffer>>(new Float32Array(DATA_SIZE) as Float32Array<ArrayBuffer>)
+  const bufRef     = useRef<Float32Array<ArrayBuffer>>(new Float32Array(DATA_SIZE_LO) as Float32Array<ArrayBuffer>)
   const doneRef    = useRef(false)
 
   const targetNote = card.note ?? ''  // full note e.g. 'D5'
@@ -93,11 +94,22 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
     const source = ctx.createMediaStreamSource(stream)
     sourceRef.current = source
     const analyser = ctx.createAnalyser()
-    analyser.fftSize = DATA_SIZE * 2
     source.connect(analyser)
     analyserRef.current = analyser
 
-    const detector = new NoteDetector(DATA_SIZE, ctx.sampleRate)
+    // Use larger buffer for bass notes (below C4) for better low freq resolution
+    const NOTE_NAMES_D = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+    const FLAT_NAMES_D = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
+    const noteMatch = targetNote.match(/^([A-G][#b]?)(\d)$/)
+    const noteMidi = noteMatch ? (() => {
+      const pc = NOTE_NAMES_D.indexOf(noteMatch[1]) >= 0 ? NOTE_NAMES_D.indexOf(noteMatch[1]) : FLAT_NAMES_D.indexOf(noteMatch[1])
+      return (parseInt(noteMatch[2]) + 1) * 12 + pc
+    })() : 60
+    const isBass = noteMidi < 60
+    const dataSize = isBass ? DATA_SIZE_LO : DATA_SIZE_HI
+    analyser.fftSize = dataSize * 2
+    const detector = new NoteDetector(dataSize, ctx.sampleRate)
+    detector.setTarget(noteMidi)
     detectorRef.current = detector
     doneRef.current = false
     setStatus('listening')
@@ -160,7 +172,18 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
     }
 
     cardHadWrong = false
-    cardReadyAt = Date.now() + 500
+    cardReadyAt = Date.now() + 800
+    // Update detector target for octave correction
+    if (detectorRef.current) {
+      const NOTE_NAMES_T = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+      const FLAT_NAMES_T = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
+      const m = targetNote.match(/^([A-G][#b]?)(\d)$/)
+      if (m) {
+        const pc = NOTE_NAMES_T.indexOf(m[1]) >= 0 ? NOTE_NAMES_T.indexOf(m[1]) : FLAT_NAMES_T.indexOf(m[1])
+        const midi = (parseInt(m[2]) + 1) * 12 + pc
+        detectorRef.current.setTarget(midi)
+      }
+    }
     init()
     return () => {
       stopLoop()
