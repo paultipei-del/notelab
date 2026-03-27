@@ -21,6 +21,14 @@ const STUDY_MODES: { id: StudyMode; label: string }[] = [
   { id: 'play', label: 'Play It' },
 ]
 
+function formatTime(ms: number): string {
+  const totalSec = ms / 1000
+  const m = Math.floor(totalSec / 60)
+  const s = Math.floor(totalSec % 60)
+  const cs = Math.floor((ms % 1000) / 10)
+  return `${m}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`
+}
+
 export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) {
   const router = useRouter()
   const isSightReadDeckInit = deck.id.startsWith('sight-read-')
@@ -169,6 +177,18 @@ return (
               <div style={{ height: '100%', width: `${progressPct}%`, background: '#BA7517', borderRadius: '2px', transition: 'width 0.4s ease' }} />
             </div>
             <span style={{ fontSize: '12px', fontWeight: 300, color: '#888780', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{progressLabel}</span>
+          </div>
+          {/* Live timer + correct/incorrect */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 32px 8px' }}>
+            <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780', letterSpacing: '0.08em', fontVariantNumeric: 'tabular-nums' }}>
+              {formatTime(elapsedMs)}
+            </span>
+            {stats.total > 0 && (
+              <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780' }}>
+                <span style={{ color: '#4CAF50' }}>{stats.correct} ✓</span>
+                {stats.total - stats.correct > 0 && <span style={{ color: '#F09595', marginLeft: '8px' }}>{stats.total - stats.correct} ✗</span>}
+              </span>
+            )}
           </div>
           {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 20px', flexWrap: 'wrap' }}>
             {visibleModes.map(({ id, label }) => (
