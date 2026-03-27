@@ -1,4 +1,5 @@
 'use client'
+import KeyDrill from '@/components/KeyDrill'
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -404,7 +405,7 @@ export default function KeySignatures() {
   const [selectedKey, setSelectedKey] = useState('C')
   const [clef, setClef] = useState<'treble' | 'bass' | 'both'>('both')
   const [showScale, setShowScale] = useState(true)
-  const [activeTab, setActiveTab] = useState<'signature' | 'affekt'>('signature')
+  const [activeTab, setActiveTab] = useState<'signature' | 'affekt' | 'drill'>('signature')
   const [showRelativeOnPiano, setShowRelativeOnPiano] = useState(false)
   const samplerRef = useRef<Tone.Sampler | null>(null)
 
@@ -522,15 +523,17 @@ export default function KeySignatures() {
 
             {/* Tabs */}
             <div style={{ display: 'flex', gap: '6px', marginBottom: '4px' }}>
-              {(['signature', 'affekt'] as const).map(tab => (
+              {(['signature', 'affekt', 'drill'] as const).map(tab => (
                 <button key={tab} onClick={() => setActiveTab(tab)}
                   style={{ padding: '8px 18px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#D3D1C7'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                  {tab === 'signature' ? 'Key Signature' : 'Historical Affekt'}
+                  {tab === 'signature' ? 'Key Signature' : tab === 'affekt' ? 'Historical Affekt' : 'Drill'}
                 </button>
               ))}
             </div>
 
             {/* Staff display */}
+            {activeTab === 'drill' && <KeyDrill />}
+
             {activeTab === 'signature' && <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780' }}>Staff</p>
@@ -603,6 +606,8 @@ export default function KeySignatures() {
             })()}
 
             {/* Piano */}
+            {activeTab === 'drill' && <KeyDrill />}
+
             {activeTab === 'signature' && <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780' }}>Piano</p>
