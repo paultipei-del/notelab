@@ -242,6 +242,26 @@ export default function Home() {
         </div>
 
 
+        {/* Glossary */}
+        <div style={{ marginBottom: '48px' }}>
+          <Link href="/glossary" style={{ textDecoration: 'none', display: 'block' }}>
+            <div
+              style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '28px 32px', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)' }}
+            >
+              <div>
+                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#888780' }}>Free</span>
+                <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#1A1A18', marginBottom: '6px' }}>Glossary</h3>
+                <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6, maxWidth: '480px' }}>
+                  Searchable reference of musical terms — French, German, Italian, and common abbreviations.
+                </p>
+              </div>
+              <span style={{ fontSize: '14px', fontWeight: 300, color: '#888780', marginLeft: '24px' }}>Browse →</span>
+            </div>
+          </Link>
+        </div>
+
         {/* Key Signatures */}
         <div style={{ marginBottom: '48px' }}>
           <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '24px', color: '#1A1A18', marginBottom: '4px', letterSpacing: '0.02em' }}>
