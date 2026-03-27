@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { NoteDetector, noteToPitchClass, DetectedNote } from '@/lib/noteDetector'
+import { SADPitchDetector, midiToName } from '@/lib/sadDetector'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
 
 // All chromatic notes C2-C6
@@ -28,7 +29,12 @@ export default function PitchTest() {
   const [idx, setIdx] = useState(0)
   const [detected, setDetected] = useState<string>('—')
   const [detectedFreq, setDetectedFreq] = useState<number>(0)
-  const [log, setLog] = useState<{note: string, detected: string, freq: number}[]>([])
+  const [detectedSAD, setDetectedSAD] = useState<string>('—')
+  const [detectedSADFreq, setDetectedSADFreq] = useState<number>(0)
+  const sadDetectorRef = useRef<SADPitchDetector | null>(null)
+  const sadBufRef = useRef<Float32Array | null>(null)
+  const sadAnalyserRef = useRef<AnalyserNode | null>(null)
+  const [log, setLog] = useState<{note: string, detected: string, freq: number, detectedSAD: string, freqSAD: number}[]>([])
   const [micActive, setMicActive] = useState(false)
   const detectorRef = useRef<NoteDetector | null>(null)
   const rafRef = useRef<number>(0)
@@ -54,6 +60,9 @@ export default function PitchTest() {
     } else if (detectorRef.current) {
       // Same buffer size — just update target
       detectorRef.current.setTarget(midi)
+      sadDetectorRef.current?.reset()
+      setDetectedSAD('—')
+      setDetectedSADFreq(0)
     }
   }, [idx])
 
@@ -77,6 +86,16 @@ export default function PitchTest() {
       const det = new NoteDetector(dataSize, ctx.sampleRate)
       det.setTarget(midi)
       detectorRef.current = det
+
+      // SAD detector with its own analyser
+      const sadSource = ctx.createMediaStreamSource(stream)
+      const sadAn = ctx.createAnalyser()
+      sadAn.fftSize = DATA_SIZE_LO
+      sadSource.connect(sadAn)
+      sadAnalyserRef.current = sadAn
+      sadBufRef.current = new Float32Array(DATA_SIZE_LO)
+      sadDetectorRef.current = new SADPitchDetector(ctx.sampleRate)
+      console.log('SAD initialized')
       setMicActive(true)
 
       function tick() {
@@ -87,6 +106,15 @@ export default function PitchTest() {
         if (result?.stable) {
           setDetected(result.name)
           setDetectedFreq(Math.round(result.freq))
+        }
+        // SAD detector
+        if (sadDetectorRef.current && sadBufRef.current) {
+          sadAnalyserRef.current?.getFloatTimeDomainData(sadBufRef.current as unknown as Float32Array<ArrayBuffer>)
+          const sadResult = sadDetectorRef.current.update(sadBufRef.current)
+          if (sadResult?.stable) {
+            setDetectedSAD(sadResult.name)
+            setDetectedSADFreq(Math.round(sadResult.freq))
+          }
         }
         rafRef.current = requestAnimationFrame(tick)
       }
@@ -105,7 +133,7 @@ export default function PitchTest() {
   }, [])
 
   function logAndNext() {
-    setLog(prev => [...prev, { note: currentNote, detected, freq: detectedFreq }])
+    setLog(prev => [...prev, { note: currentNote, detected, freq: detectedFreq, detectedSAD, freqSAD: detectedSADFreq }])
     if (idx < ALL_NOTES.length - 1) {
       setIdx(i => i + 1)
     }
@@ -140,11 +168,17 @@ export default function PitchTest() {
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
             <GrandStaffCard note={currentNote} />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', alignItems: 'center' }}>
             <div style={{ textAlign: 'center' as const }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', marginBottom: '4px' }}>Detected</p>
-              <p style={{ fontFamily: SERIF, fontSize: '32px', fontWeight: 300, color: detected === currentNote ? '#4CAF50' : '#E53935' }}>{detected}</p>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', marginBottom: '4px' }}>YIN/MPM/ACX</p>
+              <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: detected === currentNote ? '#4CAF50' : '#E53935' }}>{detected}</p>
               <p style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>{detectedFreq > 0 ? detectedFreq + ' Hz' : ''}</p>
+            </div>
+            <div style={{ width: '1px', height: '60px', background: '#D3D1C7' }} />
+            <div style={{ textAlign: 'center' as const }}>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', marginBottom: '4px' }}>SAD</p>
+              <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: detectedSAD === currentNote ? '#4CAF50' : '#E53935' }}>{detectedSAD}</p>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>{detectedSADFreq > 0 ? detectedSADFreq + ' Hz' : ''}</p>
             </div>
           </div>
         </div>
@@ -167,7 +201,7 @@ export default function PitchTest() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', color: '#888780', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Log</p>
               <button onClick={() => {
-                const text = log.map(e => `${e.note}→ ${e.detected}${e.freq} Hz`).join('\n')
+                const text = log.map(e => `${e.note} | ACX: ${e.detected} ${e.freq}Hz | SAD: ${e.detectedSAD} ${e.freqSAD}Hz`).join('\n')
                 navigator.clipboard.writeText(text)
               }} style={{ background: 'none', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '3px 10px', fontFamily: F, fontSize: '11px', color: '#888780', cursor: 'pointer' }}>
                 Copy
@@ -175,10 +209,13 @@ export default function PitchTest() {
             </div>
             <div style={{ fontFamily: F, fontSize: '12px', lineHeight: 1.8 }}>
               {log.map((entry, i) => (
-                <div key={i} style={{ display: 'flex', gap: '16px', color: entry.note === entry.detected ? '#4CAF50' : '#E53935' }}>
-                  <span style={{ width: '50px' }}>{entry.note}</span>
-                  <span style={{ width: '80px' }}>→ {entry.detected}</span>
-                  <span style={{ color: '#888780' }}>{entry.freq} Hz</span>
+                <div key={i} style={{ display: 'flex', gap: '12px', fontSize: '11px' }}>
+                  <span style={{ width: '40px', fontWeight: 400 }}>{entry.note}</span>
+                  <span style={{ width: '70px', color: entry.note === entry.detected ? '#4CAF50' : '#E53935' }}>ACX: {entry.detected}</span>
+                  <span style={{ width: '70px', color: '#888780' }}>{entry.freq}Hz</span>
+                  <span style={{ width: '2px', background: '#D3D1C7' }} />
+                  <span style={{ width: '70px', color: entry.note === entry.detectedSAD ? '#4CAF50' : '#E53935' }}>SAD: {entry.detectedSAD}</span>
+                  <span style={{ color: '#888780' }}>{entry.freqSAD}Hz</span>
                 </div>
               ))}
             </div>

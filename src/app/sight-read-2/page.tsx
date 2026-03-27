@@ -1,0 +1,33 @@
+'use client'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+
+const F = 'var(--font-jost), sans-serif'
+const SERIF = 'var(--font-cormorant), serif'
+
+export default function SightRead2() {
+  const router = useRouter()
+  return (
+    <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
+        <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#1A1A18' }}>Staff Recognition 2 <span style={{ fontSize: '12px', color: '#888780' }}>(SAD detector)</span></h1>
+        <div style={{ width: '60px' }} />
+      </div>
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '48px 24px', display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
+        {[
+          { href: '/sight-read-2/treble', label: 'Treble Clef', desc: 'C4 – C6' },
+          { href: '/sight-read-2/bass', label: 'Bass Clef', desc: 'C2 – C4' },
+          { href: '/sight-read-2/grand', label: 'Grand Staff', desc: 'Full range' },
+        ].map(({ href, label, desc }) => (
+          <Link key={href} href={href} style={{ textDecoration: 'none' }}>
+            <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '24px 28px', cursor: 'pointer' }}>
+              <h2 style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#1A1A18', marginBottom: '4px' }}>{label}</h2>
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>{desc}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
