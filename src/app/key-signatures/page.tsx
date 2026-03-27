@@ -229,7 +229,43 @@ function CircleOfFifths({ selected, onSelect }: { selected: string, onSelect: (k
 }
 
 
-// ── Piano with highlighted notes ───────────────────────────────────────────
+// ── Historical Affekt Data ─────────────────────────────────────────────────
+interface AffektEntry { key: string; schubart?: string; galeazzi?: string }
+
+const AFFEKT: AffektEntry[] = [
+  { key: 'C',   schubart: "Utterly pure. Its character connotes innocence, simplicity, naivete, the language of children.", galeazzi: "A grandiose, military key, apt for expressing great happenings, serious, majestic and sonorous." },
+  { key: 'Cm',  schubart: "At once a declaration of love and the lament of ill-fated love — all the languishing, longing and sighing of a soul drunken with love.", galeazzi: "A tragic key, apt for expressing great misfortunes, the deaths of heroes and great actions that are mournful and lamentable." },
+  { key: 'D',   schubart: "The key of triumph, of hallelujahs, of the battle cry and the shout of victory. Introductory symphonies, marches, festive songs and jubilant choruses are set in this key.", galeazzi: "The most lively and gay key that music possesses. Sonorous to the highest degree, apt for expressing festivities, weddings, rejoicing, merriment." },
+  { key: 'Dm',  schubart: "Melancholy womanliness, bitterness and bad temper.", galeazzi: "Totally opposite to D major, being extremely melancholic and somber; of little use except in modulations." },
+  { key: 'Eb',  schubart: "The key of love, devoutness, of intimate dialogue with the divine; its three flats represent the Holy Trinity.", galeazzi: "A heroic key, majestic in the extreme, solemn and serious: in all these qualities it is superior even to C major." },
+  { key: 'Ebm', schubart: "Anxiety born of the very deepest spiritual distress, increasing desperation, blackest melancholy. Every imaginable fear, every hesitation of the shuddering heart, breathes out of this most terrible of keys.", galeazzi: "Little used on account of its difficult execution; it is extremely melancholic and induces sleep." },
+  { key: 'E',   schubart: "A shout of jubilation, laughing joy, but not quite complete fulfillment.", galeazzi: "A rather shrill key, piercing and child-like, trifling and somewhat harsh." },
+  { key: 'Em',  schubart: "Naive, feminine, innocent declarations of love, lament without complaint, sighs accompanied by a few tears. Expresses a hope of happiness soon to be fulfilled.", galeazzi: "Well nigh banned from music in good taste, except for modulations." },
+  { key: 'F',   schubart: "Amiable and calm.", galeazzi: "Majestic, but less so than either E flat or C. It too is piercing, but not shrill." },
+  { key: 'Fm',  schubart: "Deepest melancholy, funereal lament, groans of misery and longing for the grave.", galeazzi: "Most apt for expressing tears, pain, anxiety, anguish, violent transports, agitation." },
+  { key: 'F#',  schubart: "Triumph over obstacles, a deep breath at the top of the hill, the echoes of a soul that has struggled long and hard and at last gained the victory." },
+  { key: 'Gb',  schubart: "Triumph over obstacles, a deep breath at the top of the hill, the echoes of a soul that has struggled long and hard and at last gained the victory." },
+  { key: 'F#m', schubart: "A dark key: it tears and pulls at the passions like a vicious dog at one's clothing. Resentment and displeasure is its language." },
+  { key: 'G',   schubart: "Suits all things rural, idyllic and pastoral, any quiet, contented passion, every tender word of thanks for true friendship.", galeazzi: "An innocent key, simple, cold and indifferent, of little effect." },
+  { key: 'Gm',  schubart: "Displeasure, uneasiness, worry over an unsuccessful plan, sullen champing at the bit — resentment and listlessness.", galeazzi: "Has the same character as C minor, but apt for restlessness, desperation, agitation." },
+  { key: 'Ab',  schubart: "The funereal key. Death, the tomb, decay, judgment and eternal life are all encompassed in this key.", galeazzi: "A dark, deep and profound key, apt for expressing horror, the silence of the night, quietness, fear, terror." },
+  { key: 'G#m', schubart: "Heavy affliction, a heart nearly overwhelmed by grief, lamentation which sighs in the double sharp; a hard fight." },
+  { key: 'A',   schubart: "Declarations of innocent love, contentment; the hope of a reunion when lovers part; youthful happiness and confidence in God.", galeazzi: "Highly euphonious, expressive, passionate, playful, smiling and lively." },
+  { key: 'Am',  schubart: "Gentle womanliness and a mild character.", galeazzi: "Deeply lugubrious and sad. Little used, except to express slaughters, massacres and funeral laments." },
+  { key: 'Bb',  schubart: "Happy love, good conscience, hope and longing for a better world.", galeazzi: "A tender, soft, sweet, effeminate key, apt for expressing love's transports, charms and graces." },
+  { key: 'Bbm', schubart: "An oddity, mostly clothed in the garment of the night. Bad-tempered. Mockery of God and the world, displeasure with itself and everything else, preludes to suicide echo in this key.", galeazzi: "Little used because of its too great difficulty." },
+  { key: 'B',   schubart: "Strong color, announcing tempestuous passions. Anger, fury, jealousy, madness, desperation, every burden of the heart lies in its domain.", galeazzi: "A harsh key, shriller than E, apt for expressing the cries of the desperate, shouts, roars and the like." },
+  { key: 'Bm',  schubart: "The key of patience, of quiet expectation of one's fate and submission to the divine order. The lament is so gentle and never breaks out in grumbling or whimpering.", galeazzi: "Proscribed from music in good taste." },
+  { key: 'C#',  schubart: undefined, galeazzi: undefined },
+  { key: 'C#m', schubart: "A penitential lament, intimate dialogue with God, a friend or one's life-long companion; sighs of unrequited friendship and love." },
+  { key: 'Db',  schubart: "A key of yearning which is resolved in sorrow or ecstasy. This key cannot laugh, but it smiles; it cannot weep, but it can at least make the face of one who might cry." },
+]
+
+function getAffekt(keyName: string, isMinor: boolean): AffektEntry | undefined {
+  const k = isMinor ? keyName + 'm' : keyName
+  return AFFEKT.find(a => a.key === k)
+}
+
 // ── Piano with highlighted notes ───────────────────────────────────────────
 const NOTE_NAMES_S = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 const NOTE_NAMES_F = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
@@ -368,6 +404,7 @@ export default function KeySignatures() {
   const [selectedKey, setSelectedKey] = useState('C')
   const [clef, setClef] = useState<'treble' | 'bass' | 'both'>('both')
   const [showScale, setShowScale] = useState(true)
+  const [activeTab, setActiveTab] = useState<'signature' | 'affekt'>('signature')
   const [showRelativeOnPiano, setShowRelativeOnPiano] = useState(false)
   const samplerRef = useRef<Tone.Sampler | null>(null)
 
@@ -483,8 +520,18 @@ export default function KeySignatures() {
               </div>
             </div>
 
+            {/* Tabs */}
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '4px' }}>
+              {(['signature', 'affekt'] as const).map(tab => (
+                <button key={tab} onClick={() => setActiveTab(tab)}
+                  style={{ padding: '8px 18px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#D3D1C7'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                  {tab === 'signature' ? 'Key Signature' : 'Historical Affekt'}
+                </button>
+              ))}
+            </div>
+
             {/* Staff display */}
-            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
+            {activeTab === 'signature' && <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780' }}>Staff</p>
                 <div style={{ display: 'flex', gap: '6px' }}>
@@ -499,10 +546,64 @@ export default function KeySignatures() {
               {(clef === 'treble' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="treble" width={340} />}
               {(clef === 'bass' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="bass" width={340} />}
 
-            </div>
+            </div>}
+
+            {/* Affekt panel */}
+            {activeTab === 'affekt' && (() => {
+              const major = getAffekt(selectedKey, false)
+              const minor = getAffekt(keyInfo.relativeMinor, true)
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '12px' }}>
+                  {/* Source note */}
+                  <div style={{ background: '#F5F2EC', borderRadius: '12px', padding: '12px 16px' }}>
+                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', lineHeight: 1.6 }}>
+                      Based on C.F.D. Schubart's <em>Ideen zu einer Aestetik der Tonkunst</em> (1784) and Francesco Galeazzi's <em>Elementi teorico-pratici di musica</em> (1791). These describe the expressive character associated with each key in the Baroque and Classical eras.
+                    </p>
+                  </div>
+                  {/* Major key */}
+                  <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
+                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>{selectedKey} Major</p>
+                    {major?.schubart && (
+                      <div style={{ marginBottom: '12px' }}>
+                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#BA7517', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Schubart</p>
+                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#1A1A18', lineHeight: 1.7, fontStyle: 'italic' }}>"{major.schubart}"</p>
+                      </div>
+                    )}
+                    {major?.galeazzi && (
+                      <div>
+                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#888780', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
+                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#555', lineHeight: 1.7, fontStyle: 'italic' }}>"{major.galeazzi}"</p>
+                      </div>
+                    )}
+                    {!major?.schubart && !major?.galeazzi && (
+                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>No historical description available for this key.</p>
+                    )}
+                  </div>
+                  {/* Relative minor */}
+                  <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
+                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>{keyInfo.relativeMinor} minor (relative)</p>
+                    {minor?.schubart && (
+                      <div style={{ marginBottom: '12px' }}>
+                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#BA7517', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Schubart</p>
+                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#1A1A18', lineHeight: 1.7, fontStyle: 'italic' }}>"{minor.schubart}"</p>
+                      </div>
+                    )}
+                    {minor?.galeazzi && (
+                      <div>
+                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#888780', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
+                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#555', lineHeight: 1.7, fontStyle: 'italic' }}>"{minor.galeazzi}"</p>
+                      </div>
+                    )}
+                    {!minor?.schubart && !minor?.galeazzi && (
+                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>No historical description available for this key.</p>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
 
             {/* Piano */}
-            <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
+            {activeTab === 'signature' && <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780' }}>Piano</p>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
@@ -523,7 +624,7 @@ export default function KeySignatures() {
               <div style={{ overflowX: 'auto' }}>
             <KeyPiano keyInfo={keyInfo} showScale={showScale} highlightOneOctave={true} isRelativeMinor={showRelativeOnPiano} relativeMinorName={keyInfo.relativeMinor} />
           </div>
-            </div>
+            </div>}
 
           </div>
         </div>
