@@ -55,7 +55,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   useEffect(() => {
     doneRef.current = false
     cardHadWrong2 = false
-    cardReadyAt2 = Date.now() + 500
+    cardReadyAt2 = Date.now() + 300
     setStatus('starting')
     setDetected(null)
 
@@ -83,9 +83,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
         }
 
         // Update detector target hint
-        if (sadDetector && targetNote) {
-          sadDetector.reset()
-        }
+        // Reset detector — clears pitch memory from previous card
+        if (sadDetector) sadDetector.reset()
 
         setStatus('listening')
 

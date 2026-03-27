@@ -192,7 +192,9 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
     }
 
     cardHadWrong = false
-    cardReadyAt = Date.now() + 800
+    cardReadyAt = Date.now() + 300
+    // Reset detector to clear previous note memory
+    if (detectorRef.current) detectorRef.current.reset()
     // Update detector target for octave correction
     if (detectorRef.current) {
       const NOTE_NAMES_T = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
