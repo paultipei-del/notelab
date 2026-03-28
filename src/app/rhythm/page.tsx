@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
-import type { RhythmExerciseMeta } from '@/lib/rhythmLibrary'
+import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
+import { useAuth } from '@/hooks/useAuth'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -93,12 +94,13 @@ function renderMeasure(
 
 // ── Library panel ─────────────────────────────────────────────────────────────
 function LibraryPanel({
-  onSelect, onDrop, dragOver, setDragOver
+  onSelect, onDrop, dragOver, setDragOver, progress
 }: {
   onSelect: (meta: RhythmExerciseMeta) => void
   onDrop: (e: React.DragEvent) => void
   dragOver: boolean
   setDragOver: (v: boolean) => void
+  progress: Record<string, RhythmProgress>
 }) {
   const [library, setLibrary] = useState<Record<string, RhythmExerciseMeta[]>>({})
   const [loading, setLoading] = useState(true)
@@ -144,6 +146,11 @@ function LibraryPanel({
                       {DIFFICULTY_LABEL[ex.difficulty]}
                     </span>
                     <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>{ex.beats}/{ex.beat_type}</span>
+                    {progress[ex.id] && (
+                      <span style={{ fontFamily: F, fontSize: '10px', color: progress[ex.id].completed ? '#4CAF50' : '#BA7517' }}>
+                        {progress[ex.id].completed ? '✓' : `${progress[ex.id].best_timing}%`}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -184,6 +191,8 @@ export default function RhythmPage() {
   const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [loadingExercise, setLoadingExercise] = useState(false)
+  const [progress, setProgress] = useState<Record<string, RhythmProgress>>({})
+  const { user } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
   const [svgWidth, setSvgWidth] = useState(800)
 
@@ -267,7 +276,12 @@ export default function RhythmPage() {
 
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
-    setPlaying(false); setCurrentBeat(null); setCountdown(null)
+    // Close audio context to cancel all scheduled clicks
+    if (ctxRef.current) {
+      ctxRef.current.close()
+      ctxRef.current = null
+    }
+    setPlaying(false); setCurrentBeat(null); setCountdown(null); setLiveFeedback(null)
   }
 
   // Prevent space from scrolling or triggering buttons always when exercise loaded
@@ -338,6 +352,16 @@ export default function RhythmPage() {
     }))
     setTapResults(perMeasure)
 
+    // Save progress
+    if (currentMeta) {
+      const timingPct = expected.length > 0 ? Math.round(hits / expected.length * 100) : 0
+      import('@/lib/rhythmLibrary').then(({ saveProgress, fetchProgress }) => {
+        saveProgress(user?.id ?? null, currentMeta.id, timingPct, 0).then(() =>
+          fetchProgress(user?.id ?? null).then(setProgress)
+        )
+      })
+    }
+
     // Duration scoring — compare each tap duration to expected note duration
     const expectedDurations = expected.map(beatIdx => {
       let dur = beatDuration * 1000  // default quarter note
@@ -374,7 +398,8 @@ export default function RhythmPage() {
     if (!playing || countdown !== null) return
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
-    const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
+    const elapsed = ctx.currentTime - startTimeRef.current
+    const beat = Math.round(Math.max(0, elapsed) / beatDuration)
     const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
     setTaps(prev => [...prev, clampedBeat])
     if (exercise) {
@@ -448,6 +473,7 @@ export default function RhythmPage() {
             onDrop={onDrop}
             dragOver={dragOver}
             setDragOver={setDragOver}
+            progress={progress}
           />
         )}
 
