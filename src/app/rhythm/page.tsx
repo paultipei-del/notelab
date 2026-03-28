@@ -490,15 +490,16 @@ export default function RhythmPage() {
               </div>
             </div>
 
-            {/* Countdown */}
+            {/* Countdown — overlaid on exercise area, no layout shift */}
             {countdown !== null && (
-              <div style={{ textAlign: 'center' as const, marginBottom: '12px' }}>
-                <span style={{ fontFamily: SERIF, fontSize: '56px', fontWeight: 300, color: '#BA7517' }}>{countdown}</span>
+              <div style={{ position: 'absolute' as const, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10, pointerEvents: 'none' as const }}>
+                <span style={{ fontFamily: SERIF, fontSize: '80px', fontWeight: 300, color: '#BA7517', opacity: 0.9 }}>{countdown}</span>
               </div>
             )}
 
             {/* Notation / Grid */}
-            <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', marginBottom: '20px' }}>
+            <div style={{ position: 'relative' as const, marginBottom: '20px' }}>
+            <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px' }}>
               {view === 'notation' && rows.map((rowMeasures, rowIdx) => {
                 const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const isLastRow = rowIdx === rows.length - 1
@@ -562,6 +563,7 @@ export default function RhythmPage() {
                   </div>
                 </div>
               ))}
+            </div>
             </div>
 
             {/* Mobile tap button */}
