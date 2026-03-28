@@ -339,18 +339,40 @@ export default function RhythmPage() {
       pos += n.durationBeats
     }))
     const hits = expected.filter(e => taps.includes(e)).length
+
+    // Build note ranges for extra-tap detection
+    const noteRanges: { start: number; end: number; isNote: boolean }[] = []
+    let posR = 0
+    exercise.measures.forEach(m => m.notes.forEach(n => {
+      noteRanges.push({ start: posR, end: posR + n.durationBeats, isNote: !n.rest && !n.tieStop })
+      posR += n.durationBeats
+    }))
+
+    // Count extra taps: taps that don't match an expected onset
+    const extraTaps = taps.filter(t => !expected.includes(t))
+
     let pos2 = 0
     const perMeasure = exercise.measures.map(m => m.notes.map(n => {
       const beatIdx = Math.round(pos2)
       pos2 += n.durationBeats
       if (n.rest || n.tieStop) return 'none' as const
-      return taps.includes(beatIdx) ? 'hit' as const : 'miss' as const
+      // Check if this note's onset was tapped correctly
+      if (!taps.includes(beatIdx)) return 'miss' as const
+      // Check if there was an extra tap within this note's duration
+      const noteStart = beatIdx
+      const noteEnd = beatIdx + n.durationBeats
+      const hasExtraTap = taps.filter(t => t !== beatIdx && t >= noteStart && t < noteEnd).length > 0
+      if (hasExtraTap) return 'miss' as const
+      return 'hit' as const
     }))
+
+    // Adjust hits to account for extra taps within notes
+    const adjustedHits = perMeasure.flat().filter(r => r === 'hit').length
     setTapResults(perMeasure)
 
     // Save progress
     if (currentMeta) {
-      const timingPct = expected.length > 0 ? Math.round(hits / expected.length * 100) : 0
+      const timingPct = expected.length > 0 ? Math.round(adjustedHits / expected.length * 100) : 0
       import('@/lib/rhythmLibrary').then(({ saveProgress, fetchProgress }) => {
         saveProgress(user?.id ?? null, currentMeta.id, timingPct, 0).then(() =>
           fetchProgress(user?.id ?? null).then(setProgress)
@@ -374,11 +396,11 @@ export default function RhythmPage() {
       const exp = expectedDurations[i]
       if (!exp) return false
       const ratio = d / exp
-      return ratio >= 0.4 && ratio <= 1.8  // within 40-180% of expected = acceptable
+      return ratio >= 0.15 && ratio <= 2.0  // hold at least 15% of note value, not more than 200%
     }).length
     const durationTotal = Math.min(tapDurations.length, expectedDurations.length)
 
-    setScore({ hits, total: expected.length, durationHits, durationTotal })
+    setScore({ hits: adjustedHits, total: expected.length, durationHits, durationTotal })
   }, [playing])
 
   const onDrop = useCallback(async (e: React.DragEvent) => {
