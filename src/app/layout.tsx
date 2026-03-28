@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, Jost } from 'next/font/google'
 import './globals.css'
 import SiteHeader from '@/components/SiteHeader'
+import { Analytics } from '@vercel/analytics/next'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body className={`${cormorant.variable} ${jost.variable}`}>
         <SiteHeader />
         {children}
+        <Analytics />
       </body>
     </html>
   )
