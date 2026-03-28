@@ -99,7 +99,12 @@ function fillMeasure(
           // (too complex to handle correctly without ties)
           return false
         }
-        // Starting on a main beat — dotted note is OK if remainder is fillable
+        // Starting on a main beat — dotted note is OK only if the dot remainder
+        // (half the undotted value) can be filled by a note in the pool
+        const undottedBeats = Math.round(d.beats / 1.5 * 16) / 16
+        const dotRemainder = Math.round(undottedBeats * 0.5 * 16) / 16
+        const canFillDotRemainder = validDurations.some(d2 => !d2.dot && Math.abs(d2.beats - dotRemainder) < 0.001)
+        if (!canFillDotRemainder) return false
       }
 
       if (rem < 0.001) return true  // fills exactly
