@@ -107,6 +107,7 @@ function fillMeasure(
       continue
     }
 
+
     // Separate dotted and plain pools
     const dottedPool = fitting.filter(d => d.dot)
     const plainPool = fitting.filter(d => !d.dot)
@@ -146,10 +147,15 @@ function fillMeasure(
         continue
       }
 
-      // Check if dotted note crosses a beat boundary
+      // Check if dotted note crosses a MAIN beat boundary (integer beat positions only)
       const noteEnd = Math.round((pos + note.durationBeats) * 16) / 16
-      const nextBeat = Math.ceil(pos / beatUnit + 0.001) * beatUnit
-      const crossesBeat = nextBeat < noteEnd - 0.001
+      // Find next integer beat after current position
+      const nextMainBeat = Math.ceil(pos / beatUnit + 0.001) * beatUnit
+      // Only rewrite if it crosses a main beat AND the note doesn't start ON a main beat
+      // e.g. dotted quarter from beat 2 to beat 3.5 crosses beat 3 — rewrite
+      // but dotted quarter from beat 1 to beat 2.5 is fine — don't rewrite
+      const posOnBeat = Math.abs(pos % beatUnit) < 0.001
+      const crossesBeat = !posOnBeat && nextMainBeat < noteEnd - 0.001
 
       if (!crossesBeat) {
         rewritten.push(note)
