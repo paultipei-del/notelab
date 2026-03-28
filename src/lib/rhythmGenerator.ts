@@ -82,13 +82,17 @@ function fillMeasure(
 
   let safetyCounter = 0
   while (remaining > 0.001 && safetyCounter++ < 64) {
-    // Filter to only durations that fit exactly or leave a fillable remainder
+    // Filter to only durations that fit within remaining space
     const fitting = validDurations.filter(d => {
       if (d.beats > remaining + 0.001) return false
       const rem = Math.round((remaining - d.beats) * 16) / 16
       if (rem < 0.001) return true  // fills exactly
-      // Check remainder can be filled by at least one note in pool
-      return validDurations.some(d2 => !d2.dot && d2.beats <= rem + 0.001)
+      // For dotted notes: check remainder can eventually be filled
+      // (any note smaller or equal to remainder works)
+      const smallestNonDot = validDurations
+        .filter(d2 => !d2.dot)
+        .reduce((min, d2) => d2.beats < min ? d2.beats : min, Infinity)
+      return smallestNonDot <= rem + 0.001
     })
 
     if (fitting.length === 0) {
