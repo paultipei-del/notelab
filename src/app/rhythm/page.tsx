@@ -270,6 +270,16 @@ export default function RhythmPage() {
     setPlaying(false); setCurrentBeat(null); setCountdown(null)
   }
 
+  // Prevent space from scrolling or triggering buttons always when exercise loaded
+  useEffect(() => {
+    if (!exercise) return
+    const preventSpace = (e: KeyboardEvent) => {
+      if (e.code === 'Space') e.preventDefault()
+    }
+    window.addEventListener('keydown', preventSpace)
+    return () => window.removeEventListener('keydown', preventSpace)
+  }, [exercise])
+
   useEffect(() => {
     if (!playing || !exercise || countdown !== null) return
 
@@ -478,11 +488,13 @@ export default function RhythmPage() {
                 )}
                 {!playing ? (
                   <button onClick={start}
+                    onKeyDown={e => e.code === 'Space' && e.preventDefault()}
                     style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
                     {score ? 'Try Again' : 'Start'}
                   </button>
                 ) : (
                   <button onClick={stop}
+                    onKeyDown={e => e.code === 'Space' && e.preventDefault()}
                     style={{ background: 'none', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
                     Stop
                   </button>
