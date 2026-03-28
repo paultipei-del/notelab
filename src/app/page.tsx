@@ -53,6 +53,12 @@ const TOOLS = [
 ]
 
 export default function Home() {
+  // Early access gate
+  useEffect(() => {
+    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access='))
+    if (!cookie) window.location.href = '/unlock'
+  }, [])
+
   const { user, loading } = useAuth()
   const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
   const [userDecks, setUserDecks] = useState<Deck[]>([])
