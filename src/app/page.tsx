@@ -50,6 +50,13 @@ const TOOLS = [
     badge: 'Free',
     cta: 'Browse →',
   },
+  {
+    href: '/rhythm',
+    title: 'Rhythm Trainer',
+    desc: 'Tap along to rhythm exercises in notation or grid view. Progressive library from beginner to advanced.',
+    badge: 'Free',
+    cta: 'Practice →',
+  },
 ]
 
 export default function Home() {

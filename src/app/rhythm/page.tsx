@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
+import type { RhythmExerciseMeta } from '@/lib/rhythmLibrary'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -14,6 +15,16 @@ const BRAVURA = {
 
 const STAFF_Y = 52
 const STEM_H = 36
+
+const DIFFICULTY_COLORS: Record<number, string> = {
+  1: '#E1F5EE', 2: '#E8EEF9', 3: '#FEF3E2', 4: '#F9EEE8', 5: '#F3E8F9'
+}
+const DIFFICULTY_TEXT: Record<number, string> = {
+  1: '#0F6E56', 2: '#3A5A9B', 3: '#BA7517', 4: '#8A4A1A', 5: '#7A3A9B'
+}
+const DIFFICULTY_LABEL: Record<number, string> = {
+  1: 'Beginner', 2: 'Elementary', 3: 'Intermediate', 4: 'Advanced', 5: 'Expert'
+}
 
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
   const beatsPerMeasure = exercise.timeSignature.beats
@@ -59,15 +70,11 @@ function renderMeasure(
     const filled = note.type === 'quarter' || note.type === 'eighth' || note.type === 'sixteenth'
     const isActive = highlight !== null && beatPos <= highlight && highlight < beatPos + note.durationBeats
     const tr = tapResult[i]
+    const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
 
-    // Active beat highlight
     if (isActive) {
       els.push(<rect key={`hl-${i}`} x={mx + beatPos * noteW + 2} y={STAFF_Y - 24} width={note.durationBeats * noteW - 4} height={48} fill="#BA7517" opacity={0.12} rx={4} />)
     }
-
-    // Note color based on tap result
-    const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
-
     if (note.rest) {
       els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
     } else {
@@ -84,9 +91,84 @@ function renderMeasure(
   return els
 }
 
+// ── Library panel ─────────────────────────────────────────────────────────────
+function LibraryPanel({
+  onSelect, onDrop, dragOver, setDragOver
+}: {
+  onSelect: (meta: RhythmExerciseMeta) => void
+  onDrop: (e: React.DragEvent) => void
+  dragOver: boolean
+  setDragOver: (v: boolean) => void
+}) {
+  const [library, setLibrary] = useState<Record<string, RhythmExerciseMeta[]>>({})
+  const [loading, setLoading] = useState(true)
+  const [openCategory, setOpenCategory] = useState<string | null>(null)
+
+  useEffect(() => {
+    import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
+      fetchExercisesByCategory().then(data => {
+        setLibrary(data)
+        const first = Object.keys(data)[0]
+        if (first) setOpenCategory(first)
+        setLoading(false)
+      })
+    })
+  }, [])
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+      {/* Library */}
+      <div>
+        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Exercises</p>
+        {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>Loading…</p>}
+        {!loading && Object.keys(library).length === 0 && (
+          <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>No exercises yet — upload .mxl files to Supabase storage.</p>
+        )}
+        {Object.entries(library).map(([category, exercises]) => (
+          <div key={category} style={{ marginBottom: '8px' }}>
+            <button onClick={() => setOpenCategory(openCategory === category ? null : category)}
+              style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderRadius: '10px', border: '1px solid #D3D1C7', background: openCategory === category ? '#1A1A18' : 'white', color: openCategory === category ? 'white' : '#1A1A18', fontFamily: SERIF, fontSize: '16px', fontWeight: 300, cursor: 'pointer', textAlign: 'left' as const }}>
+              <span>{category}</span>
+              <span style={{ fontFamily: F, fontSize: '11px', color: openCategory === category ? 'rgba(255,255,255,0.5)' : '#888780' }}>{exercises.length}</span>
+            </button>
+            {openCategory === category && (
+              <div style={{ paddingTop: '4px', display: 'flex', flexDirection: 'column' as const, gap: '4px' }}>
+                {exercises.map((ex, idx) => (
+                  <button key={ex.id} onClick={() => onSelect(ex)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', textAlign: 'left' as const, transition: 'all 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '16px' }}>{idx + 1}</span>
+                    <span style={{ fontFamily: SERIF, fontSize: '15px', color: '#1A1A18', flex: 1 }}>{ex.title}</span>
+                    <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', background: DIFFICULTY_COLORS[ex.difficulty], color: DIFFICULTY_TEXT[ex.difficulty] }}>
+                      {DIFFICULTY_LABEL[ex.difficulty]}
+                    </span>
+                    <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>{ex.beats}/{ex.beat_type}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Drop zone */}
+      <div>
+        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Or load your own</p>
+        <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+          style={{ border: `2px dashed ${dragOver ? '#BA7517' : '#D3D1C7'}`, borderRadius: '16px', padding: '48px 24px', textAlign: 'center' as const, background: dragOver ? '#FEF3E2' : 'white', transition: 'all 0.2s', height: '200px', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
+          <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#888780', marginBottom: '6px' }}>Drop .mxl here</p>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#D3D1C7' }}>Export from MuseScore</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function RhythmPage() {
   const [exercise, setExercise] = useState<RhythmExercise | null>(null)
+  const [currentMeta, setCurrentMeta] = useState<RhythmExerciseMeta | null>(null)
   const [view, setView] = useState<'notation' | 'grid'>('notation')
   const [bpm, setBpm] = useState(72)
   const [playing, setPlaying] = useState(false)
@@ -96,6 +178,7 @@ export default function RhythmPage() {
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [score, setScore] = useState<{ hits: number; total: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
+  const [loadingExercise, setLoadingExercise] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const [svgWidth, setSvgWidth] = useState(800)
 
@@ -127,6 +210,21 @@ export default function RhythmPage() {
     gain.gain.setValueAtTime(accent ? 0.35 : 0.15, time)
     gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05)
     osc.start(time); osc.stop(time + 0.06)
+  }
+
+  const loadExercise = async (meta: RhythmExerciseMeta) => {
+    setLoadingExercise(true)
+    try {
+      const { fetchExerciseFile } = await import('@/lib/rhythmLibrary')
+      const { parseMXL } = await import('@/lib/parseMXL')
+      const buffer = await fetchExerciseFile(meta.file_path)
+      const ex = await parseMXL(buffer)
+      setExercise(ex); setCurrentMeta(meta)
+      setScore(null); setTaps([]); setTapResults([])
+      setBpm(72)
+    } finally {
+      setLoadingExercise(false)
+    }
   }
 
   const start = useCallback(() => {
@@ -167,7 +265,6 @@ export default function RhythmPage() {
     setPlaying(false); setCurrentBeat(null); setCountdown(null)
   }
 
-  // Keyboard tap
   useEffect(() => {
     if (!playing || !exercise || countdown !== null) return
     const onKey = (e: KeyboardEvent) => {
@@ -181,7 +278,6 @@ export default function RhythmPage() {
     return () => window.removeEventListener('keydown', onKey)
   }, [playing, countdown, beatDuration, totalBeats, exercise])
 
-  // Score on finish
   useEffect(() => {
     if (playing || !exercise || taps.length === 0) return
     const expected: number[] = []
@@ -207,10 +303,10 @@ export default function RhythmPage() {
     const file = e.dataTransfer.files[0]; if (!file) return
     const { parseMXL } = await import('@/lib/parseMXL')
     const ex = await parseMXL(await file.arrayBuffer())
-    setExercise(ex); setScore(null); setTaps([]); setTapResults([])
+    setExercise(ex); setCurrentMeta(null)
+    setScore(null); setTaps([]); setTapResults([])
   }, [])
 
-  // Mobile tap handler
   const handleTap = useCallback(() => {
     if (!playing || countdown !== null) return
     const ctx = ctxRef.current; if (!ctx) return
@@ -226,7 +322,6 @@ export default function RhythmPage() {
     ? Array.from({ length: Math.ceil(exercise.measures.length / MEASURES_PER_ROW) },
         (_, i) => exercise.measures.slice(i * MEASURES_PER_ROW, (i + 1) * MEASURES_PER_ROW))
     : []
-
   const pct = score && score.total > 0 ? Math.round(score.hits / score.total * 100) : 0
 
   return (
@@ -234,38 +329,58 @@ export default function RhythmPage() {
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '4px' }}>Rhythm Trainer</h1>
-          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>
-            {exercise
-              ? `${exercise.timeSignature.beats}/${exercise.timeSignature.beatType} · ${bpm} BPM`
-              : 'Drop a .mxl file to load an exercise'}
-            {!exercise && ' · tap Space or button below'}
-          </p>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <div>
+            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '4px' }}>Rhythm Trainer</h1>
+            {exercise && currentMeta && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', background: DIFFICULTY_COLORS[currentMeta.difficulty], color: DIFFICULTY_TEXT[currentMeta.difficulty] }}>
+                  {DIFFICULTY_LABEL[currentMeta.difficulty]}
+                </span>
+                <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>
+                  {currentMeta.category} · {exercise.timeSignature.beats}/{exercise.timeSignature.beatType} · {bpm} BPM
+                </span>
+              </div>
+            )}
+            {exercise && !currentMeta && (
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>
+                {exercise.timeSignature.beats}/{exercise.timeSignature.beatType} · {bpm} BPM
+              </p>
+            )}
+          </div>
+          {exercise && (
+            <button onClick={() => { setExercise(null); setCurrentMeta(null); stop() }}
+              style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '6px 14px', cursor: 'pointer' }}>
+              ← Library
+            </button>
+          )}
         </div>
 
-        {/* Drop zone */}
+        {/* Library view */}
         {!exercise && (
-          <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
-            style={{ border: `2px dashed ${dragOver ? '#BA7517' : '#D3D1C7'}`, borderRadius: '16px', padding: '80px 32px', textAlign: 'center' as const, background: dragOver ? '#FEF3E2' : 'white', transition: 'all 0.2s' }}>
-            <p style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#888780', marginBottom: '8px' }}>Drop a .mxl file here</p>
-            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#D3D1C7' }}>Export from MuseScore as .mxl</p>
-          </div>
+          <LibraryPanel
+            onSelect={loadExercise}
+            onDrop={onDrop}
+            dragOver={dragOver}
+            setDragOver={setDragOver}
+          />
         )}
 
-        {exercise && (
+        {loadingExercise && (
+          <div style={{ textAlign: 'center' as const, padding: '64px', color: '#888780', fontFamily: F, fontSize: '13px' }}>Loading…</div>
+        )}
+
+        {/* Exercise view */}
+        {exercise && !loadingExercise && (
           <>
-            {/* Controls row */}
+            {/* Controls */}
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' as const }}>
-              {/* View toggle */}
               {(['notation', 'grid'] as const).map(v => (
                 <button key={v} onClick={() => setView(v)}
                   style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid ' + (view === v ? '#1A1A18' : '#D3D1C7'), background: view === v ? '#1A1A18' : 'white', color: view === v ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                   {v === 'notation' ? '𝄞 Notation' : '⊞ Grid'}
                 </button>
               ))}
-
-              {/* BPM control */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '8px' }}>
                 <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
                   style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '16px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1 }}>−</button>
@@ -273,13 +388,6 @@ export default function RhythmPage() {
                 <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
                   style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '16px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1 }}>+</button>
               </div>
-
-              <button onClick={() => { setExercise(null); stop() }}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                Load new
-              </button>
-
-              {/* Score + start/stop */}
               <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
                 {score && !playing && (
                   <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: pct === 100 ? '#4CAF50' : '#1A1A18' }}>
@@ -307,10 +415,8 @@ export default function RhythmPage() {
               </div>
             )}
 
-            {/* Exercise area */}
+            {/* Notation / Grid */}
             <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', marginBottom: '20px' }}>
-
-              {/* NOTATION */}
               {view === 'notation' && rows.map((rowMeasures, rowIdx) => {
                 const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const isLastRow = rowIdx === rows.length - 1
@@ -353,7 +459,6 @@ export default function RhythmPage() {
                 )
               })}
 
-              {/* GRID */}
               {view === 'grid' && exercise.measures.map((measure, mIdx) => (
                 <div key={mIdx} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <span style={{ fontFamily: F, fontSize: '10px', color: '#888780', width: '18px', flexShrink: 0 }}>{mIdx + 1}</span>
