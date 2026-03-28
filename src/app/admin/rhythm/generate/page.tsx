@@ -88,7 +88,7 @@ export default function GeneratePage() {
   const generate = useCallback(async () => {
     const { generateExercise } = await import('@/lib/rhythmGenerator')
     const ex = generateExercise({ ...opts, seed: Math.floor(Math.random() * 999999) })
-    setPreview(ex as RhythmExercise)
+    setPreview(ex as unknown as RhythmExercise)
     setMessage(null)
   }, [opts])
 

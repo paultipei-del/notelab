@@ -27,7 +27,7 @@ export interface GeneratedNote {
   dot: boolean
   tieStart: boolean
   tieStop: boolean
-  tuplet: TupletType
+  tuplet?: TupletType
   durationBeats: number
 }
 
@@ -36,6 +36,7 @@ export interface GeneratedMeasure {
 }
 
 export interface GeneratedExercise {
+  title: string
   timeSignature: { beats: number; beatType: number }
   measures: GeneratedMeasure[]
   hands: 1 | 2
@@ -65,69 +66,135 @@ function fillMeasure(
   rng: () => number
 ): GeneratedNote[] {
   const notes: GeneratedNote[] = []
-  let remaining = beatsPerMeasure
-  const maxBeatValue = (4 / opts.timeSignature.beatType)  // e.g. in 6/8, maxBeat = 0.5
+  let remaining = Math.round(beatsPerMeasure * 16) / 16  // work in 16ths to avoid float errors
+  const beatTypeFactor = 4 / opts.timeSignature.beatType
 
-  while (remaining > 0.001) {
-    // Build pool of valid notes that fit
-    const validPool = opts.notePool.filter(n => {
-      const beats = NOTE_BEATS[n] * (4 / opts.timeSignature.beatType)
-      // Check dotted version fits too
-      return beats <= remaining + 0.001
+  // Build valid note durations in beats (quarter = 1 beat unit)
+  const validDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
+  for (const nv of opts.notePool) {
+    const b = Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16
+    validDurations.push({ type: nv, beats: b, dot: false })
+    if (opts.allowDots) {
+      const bd = Math.round(b * 1.5 * 16) / 16
+      validDurations.push({ type: nv, beats: bd, dot: true })
+    }
+  }
+
+  let safetyCounter = 0
+  while (remaining > 0.001 && safetyCounter++ < 64) {
+    // Filter to only durations that fit exactly or leave a fillable remainder
+    const fitting = validDurations.filter(d => {
+      if (d.beats > remaining + 0.001) return false
+      const rem = Math.round((remaining - d.beats) * 16) / 16
+      if (rem < 0.001) return true  // fills exactly
+      // Check remainder can be filled by at least one note in pool
+      return validDurations.some(d2 => !d2.dot && d2.beats <= rem + 0.001)
     })
 
-    if (validPool.length === 0) {
-      // Fill remainder with smallest available note
-      const smallest = opts.notePool[opts.notePool.length - 1]
-      const beats = NOTE_BEATS[smallest] * (4 / opts.timeSignature.beatType)
-      notes.push({ type: smallest, rest: false, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: beats })
-      remaining -= beats
+    if (fitting.length === 0) {
+      // Fallback: use smallest non-dotted note that fits
+      const fallback = opts.notePool
+        .map(nv => ({ type: nv, beats: Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16, dot: false }))
+        .filter(d => d.beats <= remaining + 0.001)
+        .sort((a, b) => b.beats - a.beats)[0]
+      if (!fallback) break
+      notes.push({ type: fallback.type, rest: false, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: fallback.beats })
+      remaining = Math.round((remaining - fallback.beats) * 16) / 16
       continue
     }
 
-    const noteType = pickRandom(validPool, rng)
-    let beats = NOTE_BEATS[noteType] * (4 / opts.timeSignature.beatType)
-    let dot = false
+    // Prefer non-dotted unless dot probability fires
+    const useDot = opts.allowDots && rng() < opts.dotProbability
+    const pool = fitting.filter(d => d.dot === useDot).length > 0
+      ? fitting.filter(d => d.dot === useDot)
+      : fitting.filter(d => !d.dot)
 
-    // Try dotting
-    if (opts.allowDots && rng() < opts.dotProbability) {
-      const dottedBeats = beats * 1.5
-      if (dottedBeats <= remaining + 0.001) {
-        beats = dottedBeats
-        dot = true
-      }
-    }
-
-    // Clamp to remaining
-    if (beats > remaining) beats = remaining
-
+    const chosen = pickRandom(pool.length > 0 ? pool : fitting, rng)
     const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
 
     notes.push({
-      type: noteType,
+      type: chosen.type,
       rest: isRest,
-      dot,
+      dot: chosen.dot,
       tieStart: false,
       tieStop: false,
       tuplet: null,
-      durationBeats: beats,
+      durationBeats: chosen.beats,
     })
-
-    remaining = Math.max(0, remaining - beats)
+    remaining = Math.round((remaining - chosen.beats) * 16) / 16
   }
 
-  // Add ties — connect some adjacent non-rest notes
-  if (opts.allowTies) {
-    for (let i = 0; i < notes.length - 1; i++) {
-      if (!notes[i].rest && !notes[i+1].rest && rng() < opts.tieProbability) {
-        notes[i].tieStart = true
-        notes[i+1].tieStop = true
+  // ── Notation convention: rewrite beats that cross beat boundaries ──────────
+  // In simple meter, beats must be clearly visible
+  // e.g. dotted quarter starting on beat 2 in 4/4 crosses beat 3 — rewrite as
+  // dotted quarter + eighth tied to next note
+  if (opts.timeSignature.beatType === 4 || opts.timeSignature.beatType === 2) {
+    const beatUnit = beatTypeFactor  // 1 beat in quarter-note units
+    const rewritten: GeneratedNote[] = []
+    let pos = 0
+
+    for (const note of notes) {
+      if (note.rest || !note.dot) {
+        rewritten.push(note)
+        pos = Math.round((pos + note.durationBeats) * 16) / 16
+        continue
       }
+
+      // Check if dotted note crosses a beat boundary
+      const noteEnd = Math.round((pos + note.durationBeats) * 16) / 16
+      const nextBeat = Math.ceil(pos / beatUnit + 0.001) * beatUnit
+      const crossesBeat = nextBeat < noteEnd - 0.001
+
+      if (!crossesBeat) {
+        rewritten.push(note)
+        pos = noteEnd
+        continue
+      }
+
+      // Split: undotted note + tied remainder
+      const undottedBeats = Math.round(note.durationBeats / 1.5 * 16) / 16
+      const remainderBeats = Math.round((note.durationBeats - undottedBeats) * 16) / 16
+
+      // Find type for remainder
+      const remType = opts.notePool.find(nv =>
+        Math.abs(NOTE_BEATS[nv] * beatTypeFactor - remainderBeats) < 0.01
+      ) ?? note.type
+
+      rewritten.push({
+        ...note,
+        dot: false,
+        durationBeats: undottedBeats,
+        tieStart: true,
+      })
+      rewritten.push({
+        type: remType,
+        rest: false,
+        dot: false,
+        tieStart: false,
+        tieStop: true,
+        tuplet: null,
+        durationBeats: remainderBeats,
+      })
+      pos = noteEnd
+    }
+
+    return applyTies(rewritten, opts, rng)
+  }
+
+  return applyTies(notes, opts, rng)
+}
+
+function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
+  if (!opts.allowTies) return notes
+  for (let i = 0; i < notes.length - 1; i++) {
+    if (!notes[i].rest && !notes[i+1].rest && !notes[i].tieStart && !notes[i+1].tieStop && rng() < opts.tieProbability) {
+      notes[i].tieStart = true
+      notes[i+1].tieStop = true
     }
   }
-
   return notes
 }
+
 
 export function generateExercise(opts: GeneratorOptions): GeneratedExercise {
   const rng = makeRng(opts.seed ?? Math.floor(Math.random() * 999999))
@@ -137,7 +204,7 @@ export function generateExercise(opts: GeneratorOptions): GeneratedExercise {
     notes: fillMeasure(beatsPerMeasure, opts, rng)
   }))
 
-  return { timeSignature: opts.timeSignature, measures, hands: opts.hands }
+  return { title: '', timeSignature: opts.timeSignature, measures, hands: opts.hands }
 }
 
 // ── MusicXML export ───────────────────────────────────────────────────────────
