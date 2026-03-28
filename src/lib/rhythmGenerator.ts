@@ -82,13 +82,27 @@ function fillMeasure(
 
   let safetyCounter = 0
   while (remaining > 0.001 && safetyCounter++ < 64) {
-    // Filter to only durations that fit within remaining space
+    // Current beat position within the measure
+    const currentBeatPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
+    const beatUnit = beatTypeFactor
+
     const fitting = validDurations.filter(d => {
       if (d.beats > remaining + 0.001) return false
       const rem = Math.round((remaining - d.beats) * 16) / 16
+
+      // For dotted notes: check they don't obscure a main beat
+      if (d.dot) {
+        const noteEnd = Math.round((currentBeatPos + d.beats) * 16) / 16
+        const onMainBeat = Math.abs(currentBeatPos % beatUnit) < 0.001
+        if (!onMainBeat) {
+          // Not starting on a main beat — reject dotted note
+          // (too complex to handle correctly without ties)
+          return false
+        }
+        // Starting on a main beat — dotted note is OK if remainder is fillable
+      }
+
       if (rem < 0.001) return true  // fills exactly
-      // For dotted notes: check remainder can eventually be filled
-      // (any note smaller or equal to remainder works)
       const smallestNonDot = validDurations
         .filter(d2 => !d2.dot)
         .reduce((min, d2) => d2.beats < min ? d2.beats : min, Infinity)
@@ -131,67 +145,7 @@ function fillMeasure(
     remaining = Math.round((remaining - chosen.beats) * 16) / 16
   }
 
-  // ── Notation convention: rewrite beats that cross beat boundaries ──────────
-  // In simple meter, beats must be clearly visible
-  // e.g. dotted quarter starting on beat 2 in 4/4 crosses beat 3 — rewrite as
-  // dotted quarter + eighth tied to next note
-  if (opts.timeSignature.beatType === 4 || opts.timeSignature.beatType === 2) {
-    const beatUnit = beatTypeFactor  // 1 beat in quarter-note units
-    const rewritten: GeneratedNote[] = []
-    let pos = 0
-
-    for (const note of notes) {
-      if (note.rest || !note.dot) {
-        rewritten.push(note)
-        pos = Math.round((pos + note.durationBeats) * 16) / 16
-        continue
-      }
-
-      // Check if dotted note crosses a MAIN beat boundary (integer beat positions only)
-      const noteEnd = Math.round((pos + note.durationBeats) * 16) / 16
-      // Find next integer beat after current position
-      const nextMainBeat = Math.ceil(pos / beatUnit + 0.001) * beatUnit
-      // Only rewrite if it crosses a main beat AND the note doesn't start ON a main beat
-      // e.g. dotted quarter from beat 2 to beat 3.5 crosses beat 3 — rewrite
-      // but dotted quarter from beat 1 to beat 2.5 is fine — don't rewrite
-      const posOnBeat = Math.abs(pos % beatUnit) < 0.001
-      const crossesBeat = !posOnBeat && nextMainBeat < noteEnd - 0.001
-
-      if (!crossesBeat) {
-        rewritten.push(note)
-        pos = noteEnd
-        continue
-      }
-
-      // Split: undotted note + tied remainder
-      const undottedBeats = Math.round(note.durationBeats / 1.5 * 16) / 16
-      const remainderBeats = Math.round((note.durationBeats - undottedBeats) * 16) / 16
-
-      // Find type for remainder
-      const remType = opts.notePool.find(nv =>
-        Math.abs(NOTE_BEATS[nv] * beatTypeFactor - remainderBeats) < 0.01
-      ) ?? note.type
-
-      rewritten.push({
-        ...note,
-        dot: false,
-        durationBeats: undottedBeats,
-        tieStart: true,
-      })
-      rewritten.push({
-        type: remType,
-        rest: false,
-        dot: false,
-        tieStart: false,
-        tieStop: true,
-        tuplet: null,
-        durationBeats: remainderBeats,
-      })
-      pos = noteEnd
-    }
-
-    return applyTies(rewritten, opts, rng)
-  }
+  // Beat visibility enforced during generation
 
   return applyTies(notes, opts, rng)
 }
