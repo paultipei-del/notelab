@@ -45,6 +45,18 @@ function Stem({ x, y, color }: { x: number; y: number; color: string }) {
   return <line x1={x + 8.5} y1={y} x2={x + 8.5} y2={y - STEM_H} stroke={color} strokeWidth={1.6} />
 }
 
+
+function Flag({ x, y }: { x: number; y: number }) {
+  const sx = x + 8.5
+  const sy = y - STEM_H
+  return (
+    <path
+      d={`M ${sx} ${sy} C ${sx+12} ${sy+4} ${sx+10} ${sy+14} ${sx+2} ${sy+20}`}
+      fill="none" stroke="#1A1A18" strokeWidth={1.6}
+    />
+  )
+}
+
 function RestSymbol({ x, type }: { x: number; type: string }) {
   if (type === 'whole') return <rect x={x - 7} y={STAFF_Y + 3} width={14} height={5} fill="#1A1A18" />
   if (type === 'half')  return <rect x={x - 7} y={STAFF_Y - 8} width={14} height={5} fill="#1A1A18" />
@@ -76,6 +88,7 @@ function renderMeasure(
     } else {
       els.push(<NoteHead key={`nh-${i}`} x={x} y={STAFF_Y} filled={filled} color={noteColor} />)
       if (note.type !== 'whole') els.push(<Stem key={`st-${i}`} x={x} y={STAFF_Y} color={noteColor} />)
+      if (note.type === 'eighth' || note.type === 'sixteenth') els.push(<Flag key={`fl-${i}`} x={x} y={STAFF_Y} />)
       if (note.dot) els.push(<Dot key={`d-${i}`} x={x} color={noteColor} />)
       if (note.tieStart && i < notes.length - 1) {
         const nextX = mx + (beatPos + note.durationBeats) * noteW + noteW * 0.5
