@@ -55,7 +55,7 @@ const TOOLS = [
 export default function Home() {
   // Early access gate
   useEffect(() => {
-    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access='))
+    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted') || c.trim() === 'nl-access=granted')
     if (!cookie) window.location.href = '/unlock'
   }, [])
 
