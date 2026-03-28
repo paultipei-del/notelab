@@ -53,9 +53,10 @@ const TOOLS = [
 ]
 
 export default function Home() {
-  // Early access gate
+  // Early access gate — production only
   useEffect(() => {
-    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted') || c.trim() === 'nl-access=granted')
+    if (process.env.NODE_ENV !== 'production') return
+    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted'))
     if (!cookie) window.location.href = '/unlock'
   }, [])
 
@@ -130,27 +131,6 @@ export default function Home() {
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
 
       {/* Header */}
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7', background: '#F5F2EC' }}>
-        <div style={{ fontFamily: F, fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
-          Note<span style={{ fontWeight: 400 }}>Lab</span>
-        </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          {!loading && (
-            user ? (
-              <>
-                <span style={{ fontSize: '13px', fontWeight: 300, color: '#888780' }}>{user.email}</span>
-                <button onClick={() => setShowNewDeck(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, color: '#1A1A18', background: 'none', cursor: 'pointer', fontFamily: F }}>+ New Deck</button>
-                <button onClick={handleSignOut} style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', fontSize: '13px', fontWeight: 300, color: '#888780', background: 'none', cursor: 'pointer', fontFamily: F }}>Sign Out</button>
-              </>
-            ) : (
-              <>
-                <button onClick={() => setShowNewDeck(true)} style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, color: '#888780', background: 'none', cursor: 'pointer', fontFamily: F }}>+ New Deck</button>
-                <button onClick={() => setShowAuth(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 300, color: '#1A1A18', background: 'none', cursor: 'pointer', fontFamily: F }}>Sign In</button>
-              </>
-            )
-          )}
-        </div>
-      </header>
 
       {/* Hero */}
       <div style={{ textAlign: 'center', padding: '56px 32px 48px' }}>
@@ -362,7 +342,6 @@ export default function Home() {
         </div>
       )}
 
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} onSuccess={() => setShowAuth(false)} />}
       {editingDeck && <DeckEditor deck={editingDeck} onUpdate={handleDeckUpdate} onDelete={handleDeckDelete} onClose={() => setEditingDeck(null)} userId={user?.id ?? null} />}
     </div>
   )
