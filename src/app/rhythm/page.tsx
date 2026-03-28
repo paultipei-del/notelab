@@ -258,7 +258,7 @@ export default function RhythmPage() {
       }
       setCountdown(null)
       const beat = Math.floor((ctx2.currentTime - startTimeRef.current) / beatDuration)
-      if (beat >= totalBeats) { setCurrentBeat(null); setPlaying(false); return }
+      if (beat >= totalBeats) { setCurrentBeat(null); setPlaying(false); setLiveFeedback(null); return }
       setCurrentBeat({ measure: Math.floor(beat / beatsPerMeasure), beat: beat % beatsPerMeasure })
       rafRef.current = requestAnimationFrame(tick)
     }
