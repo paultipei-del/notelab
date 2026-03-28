@@ -7,22 +7,27 @@ const COOKIE = 'nl-access'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Allow the unlock endpoint and static assets through
-  if (pathname === '/unlock' || pathname.startsWith('/_next') || pathname.startsWith('/api')) {
+  // Let static assets, api, and unlock page through unconditionally
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/unlock') ||
+    pathname === '/favicon.ico'
+  ) {
     return NextResponse.next()
   }
 
-  // Check cookie
+  // Check access cookie
   if (request.cookies.get(COOKIE)?.value === PASSWORD) {
     return NextResponse.next()
   }
 
-  // Redirect to unlock page
+  // Gate — redirect to unlock
   const url = request.nextUrl.clone()
   url.pathname = '/unlock'
   return NextResponse.redirect(url)
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: '/(.*)',
 }
