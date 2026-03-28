@@ -175,10 +175,13 @@ export default function RhythmPage() {
   const [countdown, setCountdown] = useState<number | null>(null)
   const [currentBeat, setCurrentBeat] = useState<{ measure: number; beat: number } | null>(null)
   const [taps, setTaps] = useState<number[]>([])
+  const [tapDurations, setTapDurations] = useState<number[]>([])  // ms held per tap
+  const keyDownTimeRef = useRef<number | null>(null)
+  const pointerDownTimeRef = useRef<number | null>(null)
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [score, setScore] = useState<{ hits: number; total: number } | null>(null)
+  const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [loadingExercise, setLoadingExercise] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -233,7 +236,7 @@ export default function RhythmPage() {
     if (!exercise) return
     const ctx = getCtx()
     if (ctx.state === 'suspended') ctx.resume()
-    setTaps([]); setScore(null); setTapResults([])
+    setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -269,29 +272,42 @@ export default function RhythmPage() {
 
   useEffect(() => {
     if (!playing || !exercise || countdown !== null) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Space') return
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== 'Space' || e.repeat) return
       e.preventDefault()
+      keyDownTimeRef.current = performance.now()
       const ctx = ctxRef.current; if (!ctx) return
       const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
       const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
       setTaps(prev => [...prev, clampedBeat])
       // Live feedback
-      if (exercise) {
-        const expected: number[] = []
-        let pos = 0
-        exercise.measures.forEach(m => m.notes.forEach(n => {
-          if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
-          pos += n.durationBeats
-        }))
-        const isHit = expected.includes(clampedBeat)
-        setLiveFeedback(isHit ? 'hit' : 'miss')
-        if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
-        feedbackTimerRef.current = setTimeout(() => setLiveFeedback(null), 300)
+      const expected: number[] = []
+      let pos = 0
+      exercise.measures.forEach(m => m.notes.forEach(n => {
+        if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
+        pos += n.durationBeats
+      }))
+      const isHit = expected.includes(clampedBeat)
+      setLiveFeedback(isHit ? 'hit' : 'miss')
+    }
+
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (e.code !== 'Space') return
+      setLiveFeedback(null)
+      if (keyDownTimeRef.current !== null) {
+        const duration = performance.now() - keyDownTimeRef.current
+        setTapDurations(prev => [...prev, duration])
+        keyDownTimeRef.current = null
       }
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('keyup', onKeyUp)
+    }
   }, [playing, countdown, beatDuration, totalBeats, exercise])
 
   useEffect(() => {
@@ -311,7 +327,28 @@ export default function RhythmPage() {
       return taps.includes(beatIdx) ? 'hit' as const : 'miss' as const
     }))
     setTapResults(perMeasure)
-    setScore({ hits, total: expected.length })
+
+    // Duration scoring — compare each tap duration to expected note duration
+    const expectedDurations = expected.map(beatIdx => {
+      let dur = beatDuration * 1000  // default quarter note
+      let pos3 = 0
+      for (const m of exercise.measures) {
+        for (const n of m.notes) {
+          if (Math.round(pos3) === beatIdx) { dur = n.durationBeats * beatDuration * 1000; break }
+          pos3 += n.durationBeats
+        }
+      }
+      return dur
+    })
+    const durationHits = tapDurations.slice(0, expectedDurations.length).filter((d, i) => {
+      const exp = expectedDurations[i]
+      if (!exp) return false
+      const ratio = d / exp
+      return ratio >= 0.4 && ratio <= 1.8  // within 40-180% of expected = acceptable
+    }).length
+    const durationTotal = Math.min(tapDurations.length, expectedDurations.length)
+
+    setScore({ hits, total: expected.length, durationHits, durationTotal })
   }, [playing])
 
   const onDrop = useCallback(async (e: React.DragEvent) => {
@@ -323,14 +360,13 @@ export default function RhythmPage() {
     setScore(null); setTaps([]); setTapResults([])
   }, [])
 
-  const handleTap = useCallback(() => {
+  const handlePointerDown = useCallback(() => {
     if (!playing || countdown !== null) return
+    pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
     const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
     const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
     setTaps(prev => [...prev, clampedBeat])
-
-    // Live feedback — check against expected onsets
     if (exercise) {
       const expected: number[] = []
       let pos = 0
@@ -340,10 +376,17 @@ export default function RhythmPage() {
       }))
       const isHit = expected.includes(clampedBeat)
       setLiveFeedback(isHit ? 'hit' : 'miss')
-      if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
-      feedbackTimerRef.current = setTimeout(() => setLiveFeedback(null), 300)
     }
   }, [playing, countdown, beatDuration, totalBeats, exercise])
+
+  const handlePointerUp = useCallback(() => {
+    setLiveFeedback(null)
+    if (pointerDownTimeRef.current !== null) {
+      const duration = performance.now() - pointerDownTimeRef.current
+      setTapDurations(prev => [...prev, duration])
+      pointerDownTimeRef.current = null
+    }
+  }, [])
 
   const MEASURES_PER_ROW = exercise
     ? Math.min(exercise.measures.length, exercise.timeSignature.beats <= 3 ? 5 : 4)
@@ -354,6 +397,7 @@ export default function RhythmPage() {
         (_, i) => exercise.measures.slice(i * MEASURES_PER_ROW, (i + 1) * MEASURES_PER_ROW))
     : []
   const pct = score && score.total > 0 ? Math.round(score.hits / score.total * 100) : 0
+  const durationPct = score && score.durationTotal > 0 ? Math.round(score.durationHits / score.durationTotal * 100) : 0
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '32px' }}>
@@ -421,9 +465,16 @@ export default function RhythmPage() {
               </div>
               <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
                 {score && !playing && (
-                  <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: pct === 100 ? '#4CAF50' : '#1A1A18' }}>
-                    {score.hits}/{score.total} · {pct}%
-                  </p>
+                  <div style={{ textAlign: 'right' as const }}>
+                    <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: pct === 100 ? '#4CAF50' : '#1A1A18', marginBottom: '2px' }}>
+                      {score.hits}/{score.total} · {pct}%
+                    </p>
+                    {score.durationTotal > 0 && (
+                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780' }}>
+                        Duration: {score.durationHits}/{score.durationTotal} · {Math.round(score.durationHits/score.durationTotal*100)}%
+                      </p>
+                    )}
+                  </div>
                 )}
                 {!playing ? (
                   <button onClick={start}
@@ -515,7 +566,7 @@ export default function RhythmPage() {
 
             {/* Mobile tap button */}
             <button
-              onPointerDown={handleTap}
+              onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
               disabled={!playing || countdown !== null}
               style={{
                 width: '100%', height: '72px', borderRadius: '16px',
@@ -527,7 +578,7 @@ export default function RhythmPage() {
                 transition: 'background 0.1s, border 0.1s',
                 letterSpacing: '0.08em'
               }}>
-              {countdown !== null ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}%` : '·'}
+              {countdown !== null ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
             </button>
           </>
         )}
