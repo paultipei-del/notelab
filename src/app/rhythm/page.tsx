@@ -579,7 +579,7 @@ export default function RhythmPage() {
                       if (playhead < rowStartBeat || playhead >= rowEndBeat) return null
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                       const beatInRow = playhead - rowStartBeat
-                      const x = 56 + beatInRow * noteW
+                      const x = 56 + beatInRow * noteW + noteW * 0.5
                       return (
                         <line
                           x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32}
