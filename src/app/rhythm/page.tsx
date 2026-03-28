@@ -176,6 +176,8 @@ export default function RhythmPage() {
   const [currentBeat, setCurrentBeat] = useState<{ measure: number; beat: number } | null>(null)
   const [taps, setTaps] = useState<number[]>([])
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
+  const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
+  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [score, setScore] = useState<{ hits: number; total: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [loadingExercise, setLoadingExercise] = useState(false)
@@ -272,7 +274,21 @@ export default function RhythmPage() {
       e.preventDefault()
       const ctx = ctxRef.current; if (!ctx) return
       const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
-      setTaps(prev => [...prev, Math.max(0, Math.min(beat, totalBeats - 1))])
+      const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
+      setTaps(prev => [...prev, clampedBeat])
+      // Live feedback
+      if (exercise) {
+        const expected: number[] = []
+        let pos = 0
+        exercise.measures.forEach(m => m.notes.forEach(n => {
+          if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
+          pos += n.durationBeats
+        }))
+        const isHit = expected.includes(clampedBeat)
+        setLiveFeedback(isHit ? 'hit' : 'miss')
+        if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
+        feedbackTimerRef.current = setTimeout(() => setLiveFeedback(null), 300)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -311,8 +327,23 @@ export default function RhythmPage() {
     if (!playing || countdown !== null) return
     const ctx = ctxRef.current; if (!ctx) return
     const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
-    setTaps(prev => [...prev, Math.max(0, Math.min(beat, totalBeats - 1))])
-  }, [playing, countdown, beatDuration, totalBeats])
+    const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
+    setTaps(prev => [...prev, clampedBeat])
+
+    // Live feedback — check against expected onsets
+    if (exercise) {
+      const expected: number[] = []
+      let pos = 0
+      exercise.measures.forEach(m => m.notes.forEach(n => {
+        if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
+        pos += n.durationBeats
+      }))
+      const isHit = expected.includes(clampedBeat)
+      setLiveFeedback(isHit ? 'hit' : 'miss')
+      if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current)
+      feedbackTimerRef.current = setTimeout(() => setLiveFeedback(null), 300)
+    }
+  }, [playing, countdown, beatDuration, totalBeats, exercise])
 
   const MEASURES_PER_ROW = exercise
     ? Math.min(exercise.measures.length, exercise.timeSignature.beats <= 3 ? 5 : 4)
@@ -486,8 +517,17 @@ export default function RhythmPage() {
             <button
               onPointerDown={handleTap}
               disabled={!playing || countdown !== null}
-              style={{ width: '100%', height: '72px', borderRadius: '16px', border: '2px solid #D3D1C7', background: playing && countdown === null ? '#1A1A18' : '#F5F2EC', color: playing && countdown === null ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '15px', fontWeight: 300, cursor: playing && countdown === null ? 'pointer' : 'default', transition: 'all 0.15s', letterSpacing: '0.08em' }}>
-              {countdown !== null ? String(countdown) : playing ? 'TAP' : score ? `${pct}%` : '·'}
+              style={{
+                width: '100%', height: '72px', borderRadius: '16px',
+                border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
+                background: liveFeedback === 'hit' ? '#4CAF50' : liveFeedback === 'miss' ? '#E53935' : playing && countdown === null ? '#1A1A18' : '#F5F2EC',
+                color: liveFeedback ? 'white' : playing && countdown === null ? 'white' : '#D3D1C7',
+                fontFamily: F, fontSize: '15px', fontWeight: 300,
+                cursor: playing && countdown === null ? 'pointer' : 'default',
+                transition: 'background 0.1s, border 0.1s',
+                letterSpacing: '0.08em'
+              }}>
+              {countdown !== null ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}%` : '·'}
             </button>
           </>
         )}
