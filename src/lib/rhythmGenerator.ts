@@ -103,13 +103,15 @@ function fillMeasure(
       continue
     }
 
-    // Prefer non-dotted unless dot probability fires
-    const useDot = opts.allowDots && rng() < opts.dotProbability
-    const pool = fitting.filter(d => d.dot === useDot).length > 0
-      ? fitting.filter(d => d.dot === useDot)
-      : fitting.filter(d => !d.dot)
+    // Separate dotted and plain pools
+    const dottedPool = fitting.filter(d => d.dot)
+    const plainPool = fitting.filter(d => !d.dot)
 
-    const chosen = pickRandom(pool.length > 0 ? pool : fitting, rng)
+    // Use dotted if allowed, probability fires, and dotted options exist
+    const useDot = opts.allowDots && dottedPool.length > 0 && rng() < opts.dotProbability
+    const pool = useDot ? dottedPool : (plainPool.length > 0 ? plainPool : fitting)
+
+    const chosen = pickRandom(pool, rng)
     const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
 
     notes.push({
