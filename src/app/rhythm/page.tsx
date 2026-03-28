@@ -217,7 +217,7 @@ export default function RhythmPage() {
     try {
       const { fetchExerciseFile } = await import('@/lib/rhythmLibrary')
       const { parseMXL } = await import('@/lib/parseMXL')
-      const buffer = await fetchExerciseFile(meta.file_path)
+      const buffer = await fetchExerciseFile(meta.id)
       const ex = await parseMXL(buffer)
       setExercise(ex); setCurrentMeta(meta)
       setScore(null); setTaps([]); setTapResults([])
