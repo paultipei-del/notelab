@@ -62,20 +62,15 @@ function TieCurve({ x1, x2 }: { x1: number; x2: number }) {
 
 function renderMeasure(
   notes: RhythmNote[], mx: number, noteW: number,
-  highlight: number | null, tapResult: ('hit'|'miss'|'none')[]
+  tapResult: ('hit'|'miss'|'none')[]
 ) {
   const els: React.ReactElement[] = []
   let beatPos = 0
   notes.forEach((note, i) => {
     const x = mx + beatPos * noteW + noteW * 0.5
     const filled = note.type === 'quarter' || note.type === 'eighth' || note.type === 'sixteenth'
-    const isActive = highlight !== null && beatPos <= highlight && highlight < beatPos + note.durationBeats
     const tr = tapResult[i]
     const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
-
-    if (isActive) {
-      els.push(<rect key={`hl-${i}`} x={mx + beatPos * noteW + 2} y={STAFF_Y - 24} width={note.durationBeats * noteW - 4} height={48} fill="#BA7517" opacity={0.12} rx={4} />)
-    }
     if (note.rest) {
       els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
     } else {
@@ -180,7 +175,7 @@ export default function RhythmPage() {
   const [bpm, setBpm] = useState(72)
   const [playing, setPlaying] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
-  const [currentBeat, setCurrentBeat] = useState<{ measure: number; beat: number } | null>(null)
+  const [playhead, setPlayhead] = useState<number | null>(null)  // absolute beat position (float)
   const [taps, setTaps] = useState<number[]>([])
   const [tapDurations, setTapDurations] = useState<number[]>([])  // ms held per tap
   const keyDownTimeRef = useRef<number | null>(null)
@@ -259,16 +254,17 @@ export default function RhythmPage() {
     const countdownStart = now
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
-      const elapsed = ctx2.currentTime - countdownStart
-      if (elapsed < countdownBeats * beatDuration) {
-        setCountdown(Math.floor(elapsed / beatDuration) + 1)
+      const countdownElapsed = ctx2.currentTime - countdownStart
+      if (countdownElapsed < countdownBeats * beatDuration) {
+        setCountdown(Math.floor(countdownElapsed / beatDuration) + 1)
         rafRef.current = requestAnimationFrame(tick)
         return
       }
       setCountdown(null)
-      const beat = Math.floor((ctx2.currentTime - startTimeRef.current) / beatDuration)
-      if (beat >= totalBeats) { setCurrentBeat(null); setPlaying(false); setLiveFeedback(null); return }
-      setCurrentBeat({ measure: Math.floor(beat / beatsPerMeasure), beat: beat % beatsPerMeasure })
+      const elapsed = ctx2.currentTime - startTimeRef.current
+      const beatFloat = elapsed / beatDuration
+      if (beatFloat >= totalBeats) { setPlayhead(null); setPlaying(false); setLiveFeedback(null); return }
+      setPlayhead(beatFloat)
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
@@ -281,7 +277,7 @@ export default function RhythmPage() {
       ctxRef.current.close()
       ctxRef.current = null
     }
-    setPlaying(false); setCurrentBeat(null); setCountdown(null); setLiveFeedback(null)
+    setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
   }
 
   // Prevent space from scrolling or triggering buttons always when exercise loaded
@@ -558,12 +554,10 @@ export default function RhythmPage() {
                     {rowMeasures.map((measure, mIdx) => {
                       const mx = 56 + mIdx * measureW
                       const globalMeasureIdx = rowIdx * MEASURES_PER_ROW + mIdx
-                      const isCurrentMeasure = currentBeat?.measure === globalMeasureIdx
-                      const highlightBeat = isCurrentMeasure ? currentBeat!.beat : null
                       const tapRes: ('hit'|'miss'|'none')[] = tapResults[globalMeasureIdx] ?? measure.notes.map(() => 'none' as const)
                       return (
                         <g key={mIdx}>
-                          {renderMeasure(measure.notes, mx, noteW, highlightBeat, tapRes)}
+                          {renderMeasure(measure.notes, mx, noteW, tapRes)}
                           {!(isLastRow && mIdx === rowMeasures.length - 1) && (
                             <line x1={mx + measureW} y1={STAFF_Y - 28} x2={mx + measureW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
@@ -576,6 +570,24 @@ export default function RhythmPage() {
                         <line x1={svgWidth - 9} y1={STAFF_Y - 28} x2={svgWidth - 9} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={7} />
                       </>
                     )}
+                    {/* Smooth playhead */}
+                    {(() => {
+                      if (playhead === null) return null
+                      const beatsPerMeasure = exercise.timeSignature.beats
+                      const rowStartBeat = rowIdx * MEASURES_PER_ROW * beatsPerMeasure
+                      const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
+                      if (playhead < rowStartBeat || playhead >= rowEndBeat) return null
+                      const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
+                      const beatInRow = playhead - rowStartBeat
+                      const x = 56 + beatInRow * noteW
+                      return (
+                        <line
+                          x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32}
+                          stroke="#BA7517" strokeWidth={1.5} opacity={0.7}
+                          style={{ pointerEvents: 'none' }}
+                        />
+                      )
+                    })()}
                   </svg>
                 )
               })}
@@ -585,7 +597,10 @@ export default function RhythmPage() {
                   <span style={{ fontFamily: F, fontSize: '10px', color: '#888780', width: '18px', flexShrink: 0 }}>{mIdx + 1}</span>
                   <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
                     {measure.notes.map((note, nIdx) => {
-                      const isCurrent = currentBeat?.measure === mIdx
+                      const beatsPerMeasure2 = exercise.timeSignature.beats
+                      const measureStart = mIdx * beatsPerMeasure2
+                      const measureEnd = measureStart + beatsPerMeasure2
+                      const isCurrent = playhead !== null && playhead >= measureStart && playhead < measureEnd
                       const tr: 'hit'|'miss'|'none' = tapResults[mIdx]?.[nIdx] ?? 'none'
                       let bg = note.rest ? '#F5F2EC' : '#1A1A18'
                       let border = '1px solid #D3D1C7'
