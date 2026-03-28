@@ -70,11 +70,26 @@ function fillMeasure(
   const beatTypeFactor = 4 / opts.timeSignature.beatType
 
   // Build valid note durations in beats (quarter = 1 beat unit)
+  // When dots are enabled, automatically include complement notes for filling
+  // e.g. dotted quarter needs eighth to fill; dotted half needs quarter (already in pool)
+  const effectivePool = [...opts.notePool]
+  if (opts.allowDots) {
+    const complementMap: Record<string, NoteValue> = {
+      whole: 'half', half: 'quarter', quarter: 'eighth', eighth: 'sixteenth'
+    }
+    opts.notePool.forEach(nv => {
+      const comp = complementMap[nv] as NoteValue | undefined
+      if (comp && !effectivePool.includes(comp)) effectivePool.push(comp)
+    })
+  }
+
   const validDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
-  for (const nv of opts.notePool) {
+  for (const nv of effectivePool) {
     const b = Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16
+    // Only add dotted version for notes in original pool
+    const inOriginalPool = opts.notePool.includes(nv)
     validDurations.push({ type: nv, beats: b, dot: false })
-    if (opts.allowDots) {
+    if (opts.allowDots && inOriginalPool) {
       const bd = Math.round(b * 1.5 * 16) / 16
       validDurations.push({ type: nv, beats: bd, dot: true })
     }
@@ -116,7 +131,7 @@ function fillMeasure(
 
     if (fitting.length === 0) {
       // Fallback: use smallest non-dotted note that fits
-      const fallback = opts.notePool
+      const fallback = effectivePool
         .map(nv => ({ type: nv, beats: Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16, dot: false }))
         .filter(d => d.beats <= remaining + 0.001)
         .sort((a, b) => b.beats - a.beats)[0]
