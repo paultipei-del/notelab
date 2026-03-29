@@ -401,10 +401,8 @@ export default function RhythmPage() {
   const samplerRef = useRef<Tone.Sampler | null>(null)
   const tapNoteRef = useRef<string | null>(null)
 
-  // Initialize Tone.js sampler lazily on first user gesture
-  const initSampler = useCallback(async () => {
-    if (samplerRef.current) return
-    await Tone.start()
+  // Initialize Tone.js sampler eagerly on mount, resume on gesture
+  useEffect(() => {
     const sampler = new Tone.Sampler({
       urls: {
         C4: 'C4.mp3',
@@ -418,6 +416,11 @@ export default function RhythmPage() {
       onload: () => console.log('Piano loaded ✓'),
     }).toDestination()
     samplerRef.current = sampler
+    return () => { try { sampler.dispose() } catch(e) {} }
+  }, [])
+
+  const initSampler = useCallback(async () => {
+    await Tone.start()  // resume AudioContext on user gesture
   }, [])
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number; restTaps: number } | null>(null)
@@ -530,7 +533,14 @@ export default function RhythmPage() {
       setCountdown(null)
       const elapsed = ctx2.currentTime - startTimeRef.current
       const beatFloat = elapsed / beatDuration
-      if (beatFloat >= totalBeats) { setPlayhead(null); setPlaying(false); setLiveFeedback(null); return }
+      if (beatFloat >= totalBeats) {
+        setPlayhead(null); setPlaying(false); setLiveFeedback(null)
+        if (samplerRef.current && tapNoteRef.current) {
+          try { samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now()) } catch(e) {}
+          tapNoteRef.current = null
+        }
+        return
+      }
       setPlayhead(beatFloat)
       rafRef.current = requestAnimationFrame(tick)
     }
