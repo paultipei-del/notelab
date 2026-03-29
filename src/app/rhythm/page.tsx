@@ -49,7 +49,7 @@ function BravuraNote({ x, y, type, color }: { x: number; y: number; type: string
   const glyph = BRAVURA_NOTE[type] ?? BRAVURA_NOTE.quarter
   return (
     <text
-      x={x} y={y + 10}
+      x={x} y={y - 4}
       fontSize={BRAVURA_NOTE_SIZE}
       fontFamily="Bravura, serif"
       fill={color}
