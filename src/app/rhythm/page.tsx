@@ -452,7 +452,6 @@ export default function RhythmPage() {
     import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
       fetchExercisesByCategory().then(data => {
         const flat = Object.values(data).flat()
-        console.log('allExercises loaded:', flat.length)
         setAllExercises(flat)
       })
     })
