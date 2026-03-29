@@ -29,9 +29,21 @@ const DIFFICULTY_LABEL: Record<number, string> = {
 
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
   const beatsPerMeasure = exercise.timeSignature.beats
+
+  // Find smallest note duration in this row to set minimum slot width
+  const allNotes = rowMeasures.flatMap(m => m.notes)
+  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+
+  // Minimum readable slot width per smallest subdivision
+  const MIN_SLOT_W = 36  // px per smallest note
+  const slotsPerMeasure = beatsPerMeasure / smallestDuration
+  const minMeasureW = slotsPerMeasure * MIN_SLOT_W
+
   const usableW = svgW - 96
-  const measureW = usableW / rowMeasures.length
+  const naturalMeasureW = usableW / rowMeasures.length
+  const measureW = Math.max(naturalMeasureW, minMeasureW)
   const noteW = measureW / beatsPerMeasure
+
   return { measureW, noteW, beatsPerMeasure }
 }
 
@@ -571,9 +583,10 @@ export default function RhythmPage() {
             <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px' }}>
               {view === 'notation' && rows.map((rowMeasures, rowIdx) => {
                 const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
+                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
                 const isLastRow = rowIdx === rows.length - 1
                 return (
-                  <svg key={rowIdx} width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
+                  <svg key={rowIdx} width={actualSvgW} height={SVG_H} style={{ display: 'block', overflowX: 'visible' }}>
                     {rowIdx === 0 && (
                       <>
                         <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
@@ -585,7 +598,7 @@ export default function RhythmPage() {
                       </>
                     )}
                     <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
-                    <line x1={56} y1={STAFF_Y} x2={svgWidth - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+                    <line x1={56} y1={STAFF_Y} x2={actualSvgW - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                     {rowMeasures.map((measure, mIdx) => {
                       const mx = 56 + mIdx * measureW
                       const globalMeasureIdx = rowIdx * MEASURES_PER_ROW + mIdx
@@ -601,8 +614,8 @@ export default function RhythmPage() {
                     })}
                     {isLastRow && (
                       <>
-                        <line x1={svgWidth - 16} y1={STAFF_Y - 28} x2={svgWidth - 16} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1.2} />
-                        <line x1={svgWidth - 9} y1={STAFF_Y - 28} x2={svgWidth - 9} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={7} />
+                        <line x1={actualSvgW - 16} y1={STAFF_Y - 28} x2={actualSvgW - 16} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1.2} />
+                        <line x1={actualSvgW - 9} y1={STAFF_Y - 28} x2={actualSvgW - 9} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={7} />
                       </>
                     )}
                     {/* Smooth playhead */}
@@ -613,6 +626,7 @@ export default function RhythmPage() {
                       const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
                       if (playhead < rowStartBeat || playhead >= rowEndBeat) return null
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
+                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
                       const beatInRow = playhead - rowStartBeat
                       const x = 56 + beatInRow * noteW + noteW * 0.5
                       return (
