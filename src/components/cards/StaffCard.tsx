@@ -119,15 +119,23 @@ export default function StaffCard({ note, clef, className = '' }: StaffCardProps
     </text>
   ) : null
 
-  // Note + stem
+  // Note + stem — Bravura notehead glyph U+E0A4
   const stemUp = pos === undefined || pos >= 4
+  // U+E0A4 = filled notehead only, U+E0A3 = half notehead
   const noteEl = pos !== undefined ? (
     <g>
-      <ellipse cx={noteX} cy={noteY} rx={9} ry={6} fill="#1A1A18"
-        transform={`rotate(-15, ${noteX}, ${noteY})`} />
+      <text
+        x={noteX}
+        y={noteY}
+        fontSize="44"
+        fontFamily="Bravura, serif"
+        fill="#1A1A18"
+        textAnchor="middle"
+        dominantBaseline="central"
+      >{String.fromCodePoint(0xE0A4)}</text>
       <line
-        x1={stemUp ? noteX + 8.5 : noteX - 8.5} y1={noteY}
-        x2={stemUp ? noteX + 8.5 : noteX - 8.5} y2={stemUp ? noteY - 44 : noteY + 44}
+        x1={stemUp ? noteX + 9 : noteX - 9} y1={noteY}
+        x2={stemUp ? noteX + 6 : noteX - 6} y2={stemUp ? noteY - 44 : noteY + 44}
         stroke="#1A1A18" strokeWidth="1.6" />
     </g>
   ) : null
