@@ -35,37 +35,27 @@ function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof
   return { measureW, noteW, beatsPerMeasure }
 }
 
-function NoteHead({ x, y, filled, color }: { x: number; y: number; filled: boolean; color: string }) {
-  return filled
-    ? <ellipse cx={x} cy={y} rx={9} ry={6} fill={color} transform={`rotate(-15 ${x} ${y})`} />
-    : <ellipse cx={x} cy={y} rx={9} ry={6} fill="none" stroke={color} strokeWidth={1.6} transform={`rotate(-15 ${x} ${y})`} />
+// Bravura note glyphs (SMuFL U+E1D0 range)
+const BRAVURA_NOTE: Record<string, string> = {
+  whole:     String.fromCodePoint(0xE1D2),  // noteWhole
+  half:      String.fromCodePoint(0xE1D3),  // noteHalfUp
+  quarter:   String.fromCodePoint(0xE1D5),  // noteQuarterUp
+  eighth:    String.fromCodePoint(0xE1D7),  // note8thUp
+  sixteenth: String.fromCodePoint(0xE1D9),  // note16thUp
 }
+const BRAVURA_NOTE_SIZE = 32  // font-size for note glyphs
 
-function Stem({ x, y, color }: { x: number; y: number; color: string }) {
-  return <line x1={x + 8.5} y1={y} x2={x + 8.5} y2={y - STEM_H} stroke={color} strokeWidth={1.6} />
-}
-
-
-function Flag({ x, y, color = '#1A1A18' }: { x: number; y: number; color?: string }) {
-  const sx = x + 8.5
-  const sy = y - STEM_H
-  // Flag curves from top of stem downward and to the right
+function BravuraNote({ x, y, type, color }: { x: number; y: number; type: string; color: string }) {
+  const glyph = BRAVURA_NOTE[type] ?? BRAVURA_NOTE.quarter
   return (
-    <path
-      d={`M ${sx} ${sy} C ${sx+14} ${sy+6} ${sx+14} ${sy+16} ${sx} ${sy+24}`}
-      fill="none" stroke={color} strokeWidth={1.8}
-    />
-  )
-}
-
-function DoubleFlag({ x, y, color = '#1A1A18' }: { x: number; y: number; color?: string }) {
-  const sx = x + 8.5
-  const sy = y - STEM_H
-  return (
-    <>
-      <path d={`M ${sx} ${sy} C ${sx+14} ${sy+6} ${sx+14} ${sy+16} ${sx} ${sy+24}`} fill="none" stroke={color} strokeWidth={1.8} />
-      <path d={`M ${sx} ${sy+8} C ${sx+14} ${sy+14} ${sx+14} ${sy+24} ${sx} ${sy+32}`} fill="none" stroke={color} strokeWidth={1.8} />
-    </>
+    <text
+      x={x} y={y + 10}
+      fontSize={BRAVURA_NOTE_SIZE}
+      fontFamily="Bravura, serif"
+      fill={color}
+      textAnchor="middle"
+      dominantBaseline="auto"
+    >{glyph}</text>
   )
 }
 
@@ -98,11 +88,8 @@ function renderMeasure(
     if (note.rest) {
       els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
     } else {
-      els.push(<NoteHead key={`nh-${i}`} x={x} y={STAFF_Y} filled={filled} color={noteColor} />)
-      if (note.type !== 'whole') els.push(<Stem key={`st-${i}`} x={x} y={STAFF_Y} color={noteColor} />)
-      if (note.type === 'eighth') els.push(<Flag key={`fl-${i}`} x={x} y={STAFF_Y} color={noteColor} />)
-      if (note.type === 'sixteenth') els.push(<DoubleFlag key={`fl-${i}`} x={x} y={STAFF_Y} color={noteColor} />)
-      if (note.dot) els.push(<Dot key={`d-${i}`} x={x} color={noteColor} />)
+      els.push(<BravuraNote key={`n-${i}`} x={x} y={STAFF_Y} type={note.type} color={noteColor} />)
+      if (note.dot) { els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y - 4} r={2.5} fill={noteColor} />) }
       if (note.tieStart && i < notes.length - 1) {
         const nextX = mx + (beatPos + note.durationBeats) * noteW + noteW * 0.5
         els.push(<TieCurve key={`tie-${i}`} x1={x} x2={nextX} />)

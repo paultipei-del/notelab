@@ -27,6 +27,15 @@ const DEFAULT_OPTS: GeneratorOptions = {
   hands: 1,
 }
 
+
+const BRAVURA_NOTE: Record<string, string> = {
+  whole:     String.fromCodePoint(0xE1D2),
+  half:      String.fromCodePoint(0xE1D3),
+  quarter:   String.fromCodePoint(0xE1D5),
+  eighth:    String.fromCodePoint(0xE1D7),
+  sixteenth: String.fromCodePoint(0xE1D9),
+}
+
 function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
   if (!exercise) return null
   const STAFF_Y = 40
@@ -54,14 +63,10 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
                 return (
                   <g key={nIdx}>
                     {!n.rest && <>
-                      <ellipse cx={x} cy={STAFF_Y} rx={8} ry={5.5} fill={filled ? '#1A1A18' : 'none'} stroke="#1A1A18" strokeWidth={1.5} transform={`rotate(-15 ${x} ${STAFF_Y})`} />
-                      {n.type !== 'whole' && <line x1={x+7.5} y1={STAFF_Y} x2={x+7.5} y2={STAFF_Y - 28} stroke="#1A1A18" strokeWidth={1.4} />}
-                      {n.type === 'eighth' && <path d={`M ${x+7.5} ${STAFF_Y - 28} C ${x+21} ${STAFF_Y - 28 + 6} ${x+21} ${STAFF_Y - 28 + 16} ${x+7.5} ${STAFF_Y - 28 + 24}`} fill="none" stroke="#1A1A18" strokeWidth={1.6} />}
-                      {n.type === 'sixteenth' && <>
-                        <path d={`M ${x+7.5} ${STAFF_Y - 28} C ${x+21} ${STAFF_Y - 28 + 6} ${x+21} ${STAFF_Y - 28 + 16} ${x+7.5} ${STAFF_Y - 28 + 24}`} fill="none" stroke="#1A1A18" strokeWidth={1.6} />
-                        <path d={`M ${x+7.5} ${STAFF_Y - 28 + 8} C ${x+21} ${STAFF_Y - 28 + 14} ${x+21} ${STAFF_Y - 28 + 24} ${x+7.5} ${STAFF_Y - 28 + 32}`} fill="none" stroke="#1A1A18" strokeWidth={1.6} />
-                      </>}
-                      {n.dot && <circle cx={x+12} cy={STAFF_Y-3} r={2} fill="#1A1A18" />}
+                      <text x={x} y={STAFF_Y + 10} fontSize={32} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="auto">
+                        {BRAVURA_NOTE[n.type] ?? BRAVURA_NOTE.quarter}
+                      </text>
+                      {n.dot && <circle cx={x + 14} cy={STAFF_Y - 4} r={2} fill="#1A1A18" />}
                     </>}
                     {n.rest && <rect x={x-6} y={STAFF_Y-6} width={12} height={5} fill="#1A1A18" />}
                   </g>
