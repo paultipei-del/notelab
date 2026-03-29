@@ -135,7 +135,7 @@ export default function StaffCard({ note, clef, className = '' }: StaffCardProps
       >{String.fromCodePoint(0xE0A4)}</text>
       <line
         x1={stemUp ? noteX + 5.5 : noteX - 5.5} y1={noteY}
-        x2={stemUp ? noteX + 5.5 : noteX - 5.5} y2={stemUp ? noteY - 44 : noteY + 44}
+        x2={stemUp ? noteX + 5.5 : noteX - 5.5} y2={stemUp ? noteY - 38 : noteY + 38}
         stroke="#1A1A18" strokeWidth="1.6" />
     </g>
   ) : null
