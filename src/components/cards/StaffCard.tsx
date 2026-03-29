@@ -127,7 +127,7 @@ export default function StaffCard({ note, clef, className = '' }: StaffCardProps
       <text
         x={noteX}
         y={noteY}
-        fontSize="44"
+        fontSize="46"
         fontFamily="Bravura, serif"
         fill="#1A1A18"
         textAnchor="middle"
