@@ -640,8 +640,8 @@ if (newNotes.length === expectedLength) {
                   acc === 'double_flat' ? String.fromCodePoint(0xE264) :
                   String.fromCodePoint(0xE260)
                 }</text>}
-                  <ellipse cx={nx} cy={ny} rx={8} ry={5.5} fill={color} transform={`rotate(-15,${nx},${ny})`} />
-                  <line x1={stemUp ? nx+8 : nx-8} y1={ny} x2={stemUp ? nx+8 : nx-8} y2={stemUp ? ny-40 : ny+40} stroke={color} strokeWidth="1.5" />
+                  <text x={nx} y={ny} fontSize="46" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xE0A4)}</text>
+                  <line x1={stemUp ? nx+6 : nx-6} y1={ny} x2={stemUp ? nx+6 : nx-6} y2={stemUp ? ny-38 : ny+38} stroke={color} strokeWidth="1.5" />
 
                 </g>
               )

@@ -118,11 +118,10 @@ function drawNote(
           {accidental === 'sharp' ? '' : ''}
         </text>
       )}
-      <ellipse cx={noteX} cy={noteY} rx={9} ry={6} fill={color}
-        transform={`rotate(-15, ${noteX}, ${noteY})`} />
+      <text x={noteX} y={noteY} fontSize="46" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xE0A4)}</text>
       <line
-        x1={stemUp ? noteX + 8.5 : noteX - 8.5} y1={noteY}
-        x2={stemUp ? noteX + 8.5 : noteX - 8.5} y2={stemUp ? noteY - 44 : noteY + 44}
+        x1={stemUp ? noteX + 6 : noteX - 6} y1={noteY}
+        x2={stemUp ? noteX + 6 : noteX - 6} y2={stemUp ? noteY - 38 : noteY + 38}
         stroke={color} strokeWidth="1.6" />
       {feedbackEl}
     </g>
