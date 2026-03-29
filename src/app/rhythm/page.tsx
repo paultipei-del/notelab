@@ -263,9 +263,9 @@ function renderMeasure(
       for (let k = 0; k < idx; k++) pos += notes[k].durationBeats
       return mx + pos * noteW + notes[idx].durationBeats * noteW * 0.5
     })
-    const x1 = xs[0] + 4
-    const x2 = xs[xs.length - 1] + 4
-    const beamY = STAFF_Y - 38  // tuned to Bravura E1F1 stem top at fontSize=44
+    const x1 = xs[0] + 5
+    const x2 = xs[xs.length - 1] + 5
+    const beamY = STAFF_Y - 39  // tuned to Bravura E1F1 stem top at fontSize=44
 
     // Primary beam (always for 8th+)
     els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
