@@ -218,7 +218,7 @@ function renderMeasure(
   // ── Render each note ──────────────────────────────────────────────────────
   bp = 0
   notes.forEach((note, i) => {
-    const x = mx + bp * noteW + 10  // notehead at onset position
+    const x = mx + bp * noteW + 14  // notehead at onset position
     const tr = tapResult[i]
     const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
 
@@ -249,7 +249,7 @@ function renderMeasure(
     // Tie curve
     if (note.tieStart && i < notes.length - 1) {
       const nextBp = bp + note.durationBeats
-      const nextX = mx + nextBp * noteW + 10
+      const nextX = mx + nextBp * noteW + 14
       els.push(<TieCurve key={`tie-${i}`} x1={x} x2={nextX} />)
     }
 
@@ -820,7 +820,7 @@ export default function RhythmPage() {
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
                       const beatInRow = playhead - rowStartBeat
-                      const x = 56 + beatInRow * noteW + 10
+                      const x = 56 + beatInRow * noteW + 14
                       return (
                         <line
                           x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32}
