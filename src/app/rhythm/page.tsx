@@ -576,25 +576,7 @@ export default function RhythmPage() {
 
     const onKeyUp = (e: KeyboardEvent) => {
       if (e.code !== 'Space') return
-      // Check if held note crossed into a rest
-      const ctx2 = ctxRef.current
-      if (ctx2 && exercise) {
-        const releaseElapsed = ctx2.currentTime - startTimeRef.current
-        const releaseBeat = Math.max(0, releaseElapsed) / beatDuration
-        const restRangesUp: { start: number; end: number }[] = []
-        let rp = 0
-        exercise.measures.forEach(m => m.notes.forEach(n => {
-          if (n.rest) restRangesUp.push({ start: rp, end: rp + n.durationBeats })
-          rp += n.durationBeats
-        }))
-        const lastTapBeat = taps[taps.length - 1] ?? -1
-        const crossedRest = restRangesUp.some(r => lastTapBeat < r.start && releaseBeat >= r.start)
-        if (crossedRest) setLiveFeedback('miss')
-        else setLiveFeedback(null)
-        setTimeout(() => setLiveFeedback(null), 400)
-      } else {
-        setLiveFeedback(null)
-      }
+      setLiveFeedback(null)
       // Stop tap tone
       if (samplerRef.current && tapNoteRef.current) {
         samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now())
@@ -654,9 +636,12 @@ export default function RhythmPage() {
       // Check if this note's onset was tapped correctly
       if (!taps.includes(beatIdx)) return 'miss' as const
       // Check if there was an extra tap within this note's duration
+      // Only count as extra if the tap is NOT a valid note onset
       const noteStart = beatIdx
       const noteEnd = beatIdx + n.durationBeats
-      const hasExtraTap = taps.filter(t => t !== beatIdx && t >= noteStart && t < noteEnd).length > 0
+      const hasExtraTap = taps.filter(t => 
+        t !== beatIdx && t >= noteStart && t < noteEnd && !expected.includes(t)
+      ).length > 0
       if (hasExtraTap) return 'miss' as const
       return 'hit' as const
     }))
