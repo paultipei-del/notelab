@@ -43,7 +43,7 @@ const BRAVURA_NOTE: Record<string, string> = {
   eighth:    String.fromCodePoint(0xE1D7),  // note8thUp
   sixteenth: String.fromCodePoint(0xE1D9),  // note16thUp
 }
-const BRAVURA_NOTE_SIZE = 32  // font-size for note glyphs
+const BRAVURA_NOTE_SIZE = 44  // font-size for note glyphs
 
 function BravuraNote({ x, y, type, color }: { x: number; y: number; type: string; color: string }) {
   const glyph = BRAVURA_NOTE[type] ?? BRAVURA_NOTE.quarter
