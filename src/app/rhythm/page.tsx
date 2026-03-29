@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import * as Tone from 'tone'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
 import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
 import { useAuth } from '@/hooks/useAuth'
@@ -398,30 +397,9 @@ export default function RhythmPage() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
-  const samplerRef = useRef<Tone.Sampler | null>(null)
   const tapNoteRef = useRef<string | null>(null)
 
-  // Initialize Tone.js sampler eagerly on mount, resume on gesture
-  useEffect(() => {
-    const sampler = new Tone.Sampler({
-      urls: {
-        C4: 'C4.mp3',
-        'D#4': 'Ds4.mp3',
-        'F#4': 'Fs4.mp3',
-        A4: 'A4.mp3',
-        C5: 'C5.mp3',
-      },
-      release: 2,
-      baseUrl: 'https://tonejs.github.io/audio/salamander/',
-      onload: () => console.log('Piano loaded ✓'),
-    }).toDestination()
-    samplerRef.current = sampler
-    return () => { try { sampler.dispose() } catch(e) {} }
-  }, [])
-
-  const initSampler = useCallback(async () => {
-    await Tone.start()  // resume AudioContext on user gesture
-  }, [])
+  const initSampler = useCallback(() => {}, [])
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number; restTaps: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
@@ -535,10 +513,7 @@ export default function RhythmPage() {
       const beatFloat = elapsed / beatDuration
       if (beatFloat >= totalBeats) {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
-        if (samplerRef.current && tapNoteRef.current) {
-          try { samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now()) } catch(e) {}
-          tapNoteRef.current = null
-        }
+        tapNoteRef.current = null  // sound auto-decays
         return
       }
       setPlayhead(beatFloat)
@@ -555,10 +530,7 @@ export default function RhythmPage() {
       ctxRef.current = null
     }
     setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
-    if (samplerRef.current && tapNoteRef.current) {
-      samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now())
-      tapNoteRef.current = null
-    }
+    tapNoteRef.current = null  // sound auto-decays
   }
 
   // Prevent space from scrolling or triggering buttons always when exercise loaded
@@ -582,10 +554,25 @@ export default function RhythmPage() {
       keyDownTimeRef.current = performance.now()
       const ctx = ctxRef.current; if (!ctx) return
       // Start tap tone via Tone.js sampler
-      if (soundEnabledRef.current && samplerRef.current) {
-        const note = 'C4'
-        tapNoteRef.current = note
-        samplerRef.current.triggerAttack('C4', Tone.now())
+      if (soundEnabledRef.current) {
+        const ctx2 = ctxRef.current
+        if (ctx2) {
+          // Piano-like tone: two detuned oscillators + quick decay
+          const osc1 = ctx2.createOscillator()
+          const osc2 = ctx2.createOscillator()
+          const gain = ctx2.createGain()
+          osc1.connect(gain); osc2.connect(gain); gain.connect(ctx2.destination)
+          osc1.frequency.value = 261.63  // C4
+          osc2.frequency.value = 261.63 * 2  // C5 octave
+          osc1.type = 'triangle'
+          osc2.type = 'sine'
+          gain.gain.setValueAtTime(0.3, ctx2.currentTime)
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 1.5)
+          osc1.start(); osc2.start()
+          osc1.stop(ctx2.currentTime + 1.5)
+          osc2.stop(ctx2.currentTime + 1.5)
+          tapNoteRef.current = 'playing'
+        }
       }
       const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
       const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
@@ -605,10 +592,7 @@ export default function RhythmPage() {
       if (e.code !== 'Space') return
       setLiveFeedback(null)
       // Stop tap tone
-      if (samplerRef.current && tapNoteRef.current) {
-        samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now())
-        tapNoteRef.current = null
-      }
+      tapNoteRef.current = null  // sound auto-decays
       if (keyDownTimeRef.current !== null) {
         const duration = performance.now() - keyDownTimeRef.current
         setTapDurations(prev => [...prev, duration])
@@ -753,10 +737,7 @@ export default function RhythmPage() {
 
   const handlePointerUp = useCallback(() => {
     setLiveFeedback(null)
-    if (samplerRef.current && tapNoteRef.current) {
-      try { samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now()) } catch(e) {}
-      tapNoteRef.current = null
-    }
+    tapNoteRef.current = null  // sound auto-decays
     if (pointerDownTimeRef.current !== null) {
       const duration = performance.now() - pointerDownTimeRef.current
       setTapDurations(prev => [...prev, duration])
