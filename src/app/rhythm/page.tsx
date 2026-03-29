@@ -377,7 +377,9 @@ export default function RhythmPage() {
   const pointerDownTimeRef = useRef<number | null>(null)
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
-  const [soundEnabled, setSoundEnabled] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(true)
+  const soundEnabledRef = useRef(true)
+  useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
   const tapToneRef = useRef<{ osc: OscillatorNode; gain: GainNode } | null>(null)
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number } | null>(null)
@@ -507,7 +509,7 @@ export default function RhythmPage() {
       keyDownTimeRef.current = performance.now()
       const ctx = ctxRef.current; if (!ctx) return
       // Start sustained tap tone
-      if (soundEnabled) {
+      if (soundEnabledRef.current) {
         const osc = ctx.createOscillator()
         const gain = ctx.createGain()
         osc.connect(gain); gain.connect(ctx.destination)
@@ -646,7 +648,7 @@ export default function RhythmPage() {
     if (!playing || countdown !== null) return
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
-    if (soundEnabled) {
+    if (soundEnabledRef.current) {
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.connect(gain); gain.connect(ctx.destination)
