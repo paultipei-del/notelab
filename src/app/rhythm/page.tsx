@@ -513,7 +513,13 @@ export default function RhythmPage() {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const countdownElapsed = ctx2.currentTime - countdownStart
       if (countdownElapsed < countdownBeats * beatDuration) {
-        setCountdown(Math.floor(countdownElapsed / beatDuration) + 1)
+        const countBeat = Math.floor(countdownElapsed / beatDuration) + 1
+        setCountdown(countBeat)
+        // Show playhead approaching from last countdown beat
+        const timeToStart = startTimeRef.current - ctx2.currentTime
+        if (timeToStart < beatDuration) {
+          setPlayhead(-timeToStart / beatDuration)
+        }
         rafRef.current = requestAnimationFrame(tick)
         return
       }
@@ -1028,7 +1034,7 @@ export default function RhythmPage() {
                       const beatsPerMeasure = exercise.timeSignature.beats
                       const rowStartBeat = rowIdx * MEASURES_PER_ROW * beatsPerMeasure
                       const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
-                      if (playhead < rowStartBeat || playhead >= rowEndBeat) return null
+                      if (playhead < rowStartBeat - 1 || playhead >= rowEndBeat) return null
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
                       const beatInRow = playhead - rowStartBeat
