@@ -527,7 +527,9 @@ export default function RhythmPage() {
   }, [exercise])
 
   useEffect(() => {
-    if (!playing || !exercise || countdown !== null) return
+    if (!playing || !exercise) return
+    // Allow early taps during last countdown beat
+    if (countdown !== null && countdown > 1) return
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.code !== 'Space' || e.repeat) return
@@ -674,6 +676,7 @@ export default function RhythmPage() {
       osc.start()
     }
     const elapsed = ctx.currentTime - startTimeRef.current
+    if (elapsed < -beatDuration) return
     const beat = Math.round(Math.max(0, elapsed) / beatDuration)
     const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
     setTaps(prev => [...prev, clampedBeat])
