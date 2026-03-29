@@ -424,6 +424,7 @@ export default function RhythmPage() {
   const [dragOver, setDragOver] = useState(false)
   const [loadingExercise, setLoadingExercise] = useState(false)
   const [progress, setProgress] = useState<Record<string, RhythmProgress>>({})
+  const [allExercises, setAllExercises] = useState<RhythmExerciseMeta[]>([])
   const { user } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
   const [isPortrait, setIsPortrait] = useState(false)
@@ -575,7 +576,25 @@ export default function RhythmPage() {
 
     const onKeyUp = (e: KeyboardEvent) => {
       if (e.code !== 'Space') return
-      setLiveFeedback(null)
+      // Check if held note crossed into a rest
+      const ctx2 = ctxRef.current
+      if (ctx2 && exercise) {
+        const releaseElapsed = ctx2.currentTime - startTimeRef.current
+        const releaseBeat = Math.max(0, releaseElapsed) / beatDuration
+        const restRangesUp: { start: number; end: number }[] = []
+        let rp = 0
+        exercise.measures.forEach(m => m.notes.forEach(n => {
+          if (n.rest) restRangesUp.push({ start: rp, end: rp + n.durationBeats })
+          rp += n.durationBeats
+        }))
+        const lastTapBeat = taps[taps.length - 1] ?? -1
+        const crossedRest = restRangesUp.some(r => lastTapBeat < r.start && releaseBeat >= r.start)
+        if (crossedRest) setLiveFeedback('miss')
+        else setLiveFeedback(null)
+        setTimeout(() => setLiveFeedback(null), 400)
+      } else {
+        setLiveFeedback(null)
+      }
       // Stop tap tone
       if (samplerRef.current && tapNoteRef.current) {
         samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now())
@@ -754,6 +773,9 @@ export default function RhythmPage() {
         (_, i) => exercise.measures.slice(i * MEASURES_PER_ROW, (i + 1) * MEASURES_PER_ROW))
     : []
   const pct = score && score.total > 0 ? Math.round(score.hits / score.total * 100) : 0
+  const currentExIdx = currentMeta ? allExercises.findIndex(e => e.id === currentMeta.id) : -1
+  const prevEx = currentExIdx > 0 ? allExercises[currentExIdx - 1] : null
+  const nextEx = currentExIdx >= 0 && currentExIdx < allExercises.length - 1 ? allExercises[currentExIdx + 1] : null
   const durationPct = score && score.durationTotal > 0 ? Math.round(score.durationHits / score.durationTotal * 100) : 0
 
   return (
@@ -780,6 +802,18 @@ export default function RhythmPage() {
               </p>
             )}
           </div>
+          {exercise && currentMeta && (
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <button onClick={() => prevEx && loadExercise(prevEx)} disabled={!prevEx}
+                style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid #D3D1C7', background: prevEx ? 'white' : '#F5F2EC', color: prevEx ? '#1A1A18' : '#D3D1C7', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: prevEx ? 'pointer' : 'default' }}>
+                ←
+              </button>
+              <button onClick={() => nextEx && loadExercise(nextEx)} disabled={!nextEx}
+                style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#D3D1C7'), background: nextEx ? '#1A1A18' : '#F5F2EC', color: nextEx ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: nextEx ? 'pointer' : 'default' }}>
+                →
+              </button>
+            </div>
+          )}
           {exercise && (
             <button onClick={() => setSoundEnabled((s: boolean) => !s)}
               style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
@@ -888,7 +922,7 @@ export default function RhythmPage() {
                 return (
                   <div style={{ overflow: 'hidden' }}>
                     <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
-                      <g transform={`translateX(${offsetX})`} style={{ transition: playing ? 'none' : 'transform 0.3s ease' }}>
+                      <g transform={`translate(${offsetX}, 0)`}>
                         <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                         <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                         <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
