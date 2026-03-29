@@ -902,8 +902,8 @@ export default function RhythmPage() {
                 const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
                 const centerX = svgWidth / 2
                 const offsetX = playhead !== null
-                  ? centerX - (56 + playhead * NOTE_W_PORTRAIT + 14)
-                  : centerX - 70
+                  ? centerX - (56 + playhead * NOTE_W_PORTRAIT + 14) - NOTE_W_PORTRAIT * 0.5
+                  : centerX - 70 - NOTE_W_PORTRAIT * 0.5
                 return (
                   <div style={{ overflow: 'hidden' }}>
                     <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
