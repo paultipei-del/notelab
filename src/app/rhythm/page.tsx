@@ -263,8 +263,8 @@ function renderMeasure(
       for (let k = 0; k < idx; k++) pos += notes[k].durationBeats
       return mx + pos * noteW + notes[idx].durationBeats * noteW * 0.5
     })
-    const x1 = xs[0] + 5
-    const x2 = xs[xs.length - 1] + 5
+    const x1 = xs[0] + 7
+    const x2 = xs[xs.length - 1] + 7
     const beamY = STAFF_Y - 39  // tuned to Bravura E1F1 stem top at fontSize=44
 
     // Primary beam (always for 8th+)
@@ -273,7 +273,7 @@ function renderMeasure(
     // Secondary beam for sixteenth pairs
     for (let k = 0; k < group.length - 1; k++) {
       if (notes[group[k]].type === 'sixteenth' && notes[group[k+1]].type === 'sixteenth') {
-        els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+4} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+        els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+7} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
       }
     }
   })
