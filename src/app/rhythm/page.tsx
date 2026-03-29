@@ -85,6 +85,23 @@ function TieCurve({ x1, x2 }: { x1: number; x2: number }) {
 }
 
 
+
+// Bravura text-style note glyphs for beaming (E1F0 range)
+const B = {
+  blackShort:   String.fromCodePoint(0xE1F0),  // black note short stem
+  blackLong:    String.fromCodePoint(0xE1F1),  // black note long stem
+  frac8Short:   String.fromCodePoint(0xE1F2),  // frac 8th beam short stem
+  frac8Long:    String.fromCodePoint(0xE1F3),  // frac 8th beam long stem
+  frac16Short:  String.fromCodePoint(0xE1F4),  // frac 16th beam short stem
+  frac16Long:   String.fromCodePoint(0xE1F5),  // frac 16th beam long stem
+  cont8Short:   String.fromCodePoint(0xE1F7),  // continuing 8th beam short stem
+  cont8Long:    String.fromCodePoint(0xE1F8),  // continuing 8th beam long stem
+  cont16Short:  String.fromCodePoint(0xE1F9),  // continuing 16th beam short stem
+  cont16Long:   String.fromCodePoint(0xE1FA),  // continuing 16th beam long stem
+  dot:          String.fromCodePoint(0xE1FC),  // augmentation dot
+}
+const BEAM_FONT_SIZE = 44
+
 // ── Beaming ───────────────────────────────────────────────────────────────────
 // Group consecutive beamable notes (eighth, sixteenth) within each beat
 interface BeamGroup {
@@ -157,57 +174,113 @@ function renderMeasure(
   beatsPerMeasure: number
 ) {
   const els: React.ReactElement[] = []
-  let beatPos = 0
+
+  // ── Pre-compute beam groups ───────────────────────────────────────────────
+  // A beam group is consecutive beamable notes within the same beat
+  interface NoteInfo { idx: number; beatPos: number; x: number }
+  const noteInfos: NoteInfo[] = []
+  let bp = 0
+  notes.forEach((n, i) => {
+    noteInfos.push({ idx: i, beatPos: bp, x: mx + bp * noteW + n.durationBeats * noteW * 0.5 })
+    bp += n.durationBeats
+  })
+
+  // Group beamable notes by beat
+  const beamGroups: number[][] = []
+  let currentGroup: number[] = []
+  let currentBeatStart = 0
+
+  noteInfos.forEach(({ idx, beatPos }) => {
+    const n = notes[idx]
+    const beamable = (n.type === 'eighth' || n.type === 'sixteenth') && !n.rest && !n.tieStop
+    const beatBoundary = Math.floor(beatPos + 0.001)
+
+    if (beamable) {
+      if (currentGroup.length === 0) {
+        currentBeatStart = beatBoundary
+        currentGroup.push(idx)
+      } else if (beatBoundary === currentBeatStart) {
+        currentGroup.push(idx)
+      } else {
+        if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
+        currentBeatStart = beatBoundary
+        currentGroup = [idx]
+      }
+    } else {
+      if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
+      currentGroup = []
+    }
+  })
+  if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
+
+  const beamedSet = new Set(beamGroups.flat())
+
+  // ── Render each note ──────────────────────────────────────────────────────
+  bp = 0
   notes.forEach((note, i) => {
-    const x = mx + beatPos * noteW + (note.durationBeats * noteW * 0.5)
-    const filled = note.type === 'quarter' || note.type === 'eighth' || note.type === 'sixteenth'
+    const x = mx + bp * noteW + note.durationBeats * noteW * 0.5
     const tr = tapResult[i]
     const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
+
+    // Active beat highlight (driven by playhead — handled outside)
+
     if (note.rest) {
       els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
+    } else if (beamedSet.has(i)) {
+      // Beamed note — render as Bravura text glyph (no standalone flag)
+      // Use blackLong glyph (notehead + stem, no flag)
+      const glyph = String.fromCodePoint(0xE1F1)  // blackLong
+      els.push(
+        <text key={`n-${i}`} x={x} y={STAFF_Y} fontSize={BEAM_FONT_SIZE}
+          fontFamily="Bravura, serif" fill={noteColor}
+          textAnchor="middle" dominantBaseline="auto">{glyph}</text>
+      )
+      if (note.dot) {
+        els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y - 4} r={2.5} fill={noteColor} />)
+      }
     } else {
+      // Standalone note — use precomposed glyph with stem+flag
       els.push(<BravuraNote key={`n-${i}`} x={x} y={STAFF_Y} type={note.type} color={noteColor} />)
-      if (note.dot) { els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y - 4} r={2.5} fill={noteColor} />) }
-      if (note.tieStart && i < notes.length - 1) {
-        const nextX = mx + (beatPos + note.durationBeats) * noteW + noteW * 0.5
-        els.push(<TieCurve key={`tie-${i}`} x1={x} x2={nextX} />)
+      if (note.dot) {
+        els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y - 4} r={2.5} fill={noteColor} />)
       }
     }
-    beatPos += note.durationBeats
+
+    // Tie curve
+    if (note.tieStart && i < notes.length - 1) {
+      const nextBp = bp + note.durationBeats
+      const nextX = mx + nextBp * noteW + notes[i+1].durationBeats * noteW * 0.5
+      els.push(<TieCurve key={`tie-${i}`} x1={x} x2={nextX} />)
+    }
+
+    bp += note.durationBeats
   })
 
-  // ── Draw beams ────────────────────────────────────────────────────────────
-  const beamGroups = computeBeamGroups(notes, mx, noteW, beatsPerMeasure)
+  // ── Draw SVG beams between beamed groups ──────────────────────────────────
   beamGroups.forEach((group, gi) => {
-    const x1 = group.xs[0]
-    const x2 = group.xs[group.xs.length - 1]
-    // Primary beam (eighth)
-    els.push(<BeamBar key={`beam-${gi}`} x1={x1} x2={x2} y={STEM_TOP} />)
-    // Secondary beam (sixteenth) — only between notes that are both sixteenth
-    if (group.type === 'sixteenth' || group.noteIndices.some(idx => notes[idx].type === 'sixteenth')) {
-      for (let k = 0; k < group.noteIndices.length - 1; k++) {
-        const idxA = group.noteIndices[k]
-        const idxB = group.noteIndices[k + 1]
-        if (notes[idxA].type === 'sixteenth' && notes[idxB].type === 'sixteenth') {
-          els.push(<BeamBar key={`beam2-${gi}-${k}`} x1={group.xs[k]} x2={group.xs[k+1]} y={STEM_TOP - BEAM_GAP} />)
-        }
+    const xs = group.map(idx => {
+      let pos = 0
+      for (let k = 0; k < idx; k++) pos += notes[k].durationBeats
+      return mx + pos * noteW + notes[idx].durationBeats * noteW * 0.5
+    })
+    const x1 = xs[0] + 4
+    const x2 = xs[xs.length - 1] + 4
+    const beamY = STAFF_Y - STEM_H
+
+    // Primary beam (always for 8th+)
+    els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY - 5} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
+
+    // Secondary beam for sixteenth pairs
+    for (let k = 0; k < group.length - 1; k++) {
+      if (notes[group[k]].type === 'sixteenth' && notes[group[k+1]].type === 'sixteenth') {
+        els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+4} y={beamY - 12} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
       }
     }
   })
 
-  // For beamed notes, suppress individual flags
-  const beamedIndices = new Set(beamGroups.flatMap(g => g.noteIndices))
-
-  return els.filter((el) => {
-    const key = String(el.key ?? '')
-    const match = key.match(/fl-(\d+)/)
-    if (match) {
-      const noteIdx = parseInt(match[1])
-      return !beamedIndices.has(noteIdx)
-    }
-    return true
-  })
+  return els
 }
+
 
 // ── Library panel ─────────────────────────────────────────────────────────────
 function LibraryPanel({
