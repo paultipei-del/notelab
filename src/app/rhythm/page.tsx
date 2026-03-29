@@ -265,15 +265,15 @@ function renderMeasure(
     })
     const x1 = xs[0] + 4
     const x2 = xs[xs.length - 1] + 4
-    const beamY = STAFF_Y - STEM_H
+    const beamY = STAFF_Y - 38  // tuned to Bravura E1F1 stem top at fontSize=44
 
     // Primary beam (always for 8th+)
-    els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY - 5} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
+    els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
 
     // Secondary beam for sixteenth pairs
     for (let k = 0; k < group.length - 1; k++) {
       if (notes[group[k]].type === 'sixteenth' && notes[group[k+1]].type === 'sixteenth') {
-        els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+4} y={beamY - 12} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+        els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+4} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
       }
     }
   })
