@@ -398,6 +398,7 @@ export default function RhythmPage() {
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
   const tapNoteRef = useRef<string | null>(null)
+  const pianoBufferRef = useRef<AudioBuffer | null>(null)
 
   const initSampler = useCallback(() => {}, [])
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -453,7 +454,15 @@ export default function RhythmPage() {
   }, [exercise])
 
   const getCtx = () => {
-    if (!ctxRef.current) ctxRef.current = new AudioContext()
+    if (!ctxRef.current) {
+      ctxRef.current = new AudioContext()
+      // Load piano sample
+      fetch('https://tonejs.github.io/audio/salamander/C4.mp3')
+        .then(r => r.arrayBuffer())
+        .then(buf => ctxRef.current?.decodeAudioData(buf))
+        .then(decoded => { if (decoded) pianoBufferRef.current = decoded })
+        .catch(() => {})
+    }
     return ctxRef.current
   }
 
@@ -714,19 +723,30 @@ export default function RhythmPage() {
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
     if (soundEnabledRef.current) {
-      const osc1 = ctx.createOscillator()
-      const osc2 = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination)
-      osc1.frequency.value = 261.63  // C4
-      osc2.frequency.value = 523.25  // C5
-      osc1.type = 'triangle'
-      osc2.type = 'sine'
-      gain.gain.setValueAtTime(0.3, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
-      osc1.start(); osc2.start()
-      osc1.stop(ctx.currentTime + 1.5)
-      osc2.stop(ctx.currentTime + 1.5)
+      if (pianoBufferRef.current) {
+        // Real piano sample
+        const source = ctx.createBufferSource()
+        const gain = ctx.createGain()
+        source.buffer = pianoBufferRef.current
+        source.connect(gain); gain.connect(ctx.destination)
+        gain.gain.setValueAtTime(0.8, ctx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2)
+        source.start()
+        source.stop(ctx.currentTime + 2)
+      } else {
+        // Fallback: piano-like synthesis
+        const osc1 = ctx.createOscillator()
+        const osc2 = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination)
+        osc1.frequency.value = 261.63
+        osc2.frequency.value = 523.25
+        osc1.type = 'triangle'; osc2.type = 'sine'
+        gain.gain.setValueAtTime(0.3, ctx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
+        osc1.start(); osc2.start()
+        osc1.stop(ctx.currentTime + 1.5); osc2.stop(ctx.currentTime + 1.5)
+      }
     }
     const elapsed = ctx.currentTime - startTimeRef.current
     if (elapsed < -beatDuration) return
