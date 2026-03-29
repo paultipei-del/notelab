@@ -285,17 +285,22 @@ function renderMeasure(
 
 // ── Library panel ─────────────────────────────────────────────────────────────
 function LibraryPanel({
-  onSelect, onDrop, dragOver, setDragOver, progress
+  onSelect, onDrop, dragOver, setDragOver, progress, currentId
 }: {
   onSelect: (meta: RhythmExerciseMeta) => void
   onDrop: (e: React.DragEvent) => void
   dragOver: boolean
   setDragOver: (v: boolean) => void
   progress: Record<string, RhythmProgress>
+  currentId?: string
 }) {
   const [library, setLibrary] = useState<Record<string, RhythmExerciseMeta[]>>({})
   const [loading, setLoading] = useState(true)
   const [openCategory, setOpenCategory] = useState<string | null>(null)
+  const flatList: RhythmExerciseMeta[] = Object.values(library).flat()
+  const currentIdx = currentId ? flatList.findIndex(e => e.id === currentId) : -1
+  const canPrev = currentIdx > 0
+  const canNext = currentIdx >= 0 && currentIdx < flatList.length - 1
 
   useEffect(() => {
     import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
@@ -312,7 +317,19 @@ function LibraryPanel({
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
       {/* Library */}
       <div>
-        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Exercises</p>
+        {currentId && (
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+        <button onClick={() => canPrev && onSelect(flatList[currentIdx - 1])} disabled={!canPrev}
+          style={{ flex: 1, padding: '8px', borderRadius: '10px', border: '1px solid #D3D1C7', background: canPrev ? 'white' : '#F5F2EC', color: canPrev ? '#1A1A18' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: canPrev ? 'pointer' : 'default' }}>
+          ← Previous
+        </button>
+        <button onClick={() => canNext && onSelect(flatList[currentIdx + 1])} disabled={!canNext}
+          style={{ flex: 1, padding: '8px', borderRadius: '10px', border: '1px solid #D3D1C7', background: canNext ? '#1A1A18' : '#F5F2EC', color: canNext ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: canNext ? 'pointer' : 'default' }}>
+          Next →
+        </button>
+      </div>
+    )}
+    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Exercises</p>
         {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>Loading…</p>}
         {!loading && Object.keys(library).length === 0 && (
           <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>No exercises yet — upload .mxl files to Supabase storage.</p>
@@ -403,7 +420,7 @@ export default function RhythmPage() {
     samplerRef.current = sampler
   }, [])
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number } | null>(null)
+  const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number; restTaps: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [loadingExercise, setLoadingExercise] = useState(false)
   const [progress, setProgress] = useState<Record<string, RhythmProgress>>({})
@@ -589,6 +606,16 @@ export default function RhythmPage() {
     }))
     const hits = expected.filter(e => taps.includes(e)).length
 
+    // Build rest ranges for silence detection
+    const restRanges: { start: number; end: number }[] = []
+    let rPos = 0
+    exercise.measures.forEach(m => m.notes.forEach(n => {
+      if (n.rest) restRanges.push({ start: rPos, end: rPos + n.durationBeats })
+      rPos += n.durationBeats
+    }))
+    // Count taps that fall within rest ranges
+    const restTaps = taps.filter(t => restRanges.some(r => t >= r.start && t < r.end)).length
+
     // Build note ranges for extra-tap detection
     const noteRanges: { start: number; end: number; isNote: boolean }[] = []
     let posR = 0
@@ -649,7 +676,7 @@ export default function RhythmPage() {
     }).length
     const durationTotal = Math.min(tapDurations.length, expectedDurations.length)
 
-    setScore({ hits: adjustedHits, total: expected.length, durationHits, durationTotal })
+    setScore({ hits: Math.max(0, adjustedHits - restTaps), total: expected.length, durationHits, durationTotal, restTaps })
   }, [playing])
 
   const onDrop = useCallback(async (e: React.DragEvent) => {
@@ -775,6 +802,7 @@ export default function RhythmPage() {
             dragOver={dragOver}
             setDragOver={setDragOver}
             progress={progress}
+            currentId={currentMeta?.id}
           />
         )}
 
@@ -811,6 +839,11 @@ export default function RhythmPage() {
                         Duration: {score.durationHits}/{score.durationTotal} · {Math.round(score.durationHits/score.durationTotal*100)}%
                       </p>
                     )}
+                    {score.restTaps > 0 && (
+                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#E53935' }}>
+                        {score.restTaps} tap{score.restTaps > 1 ? 's' : ''} on rests
+                      </p>
+                    )}
                   </div>
                 )}
                 {!playing ? (
@@ -838,8 +871,58 @@ export default function RhythmPage() {
 
             {/* Notation / Grid */}
             <div style={{ position: 'relative' as const, marginBottom: '20px' }}>
-            <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px' }}>
-              {view === 'notation' && rows.map((rowMeasures, rowIdx) => {
+            <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: isPortrait ? '16px 0' : '24px', overflow: 'hidden', position: 'relative' as const }}>
+              {/* Portrait fixed playhead line */}
+              {isPortrait && view === 'notation' && (
+                <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-1px)' }} />
+              )}
+              {/* PORTRAIT: single scrolling staff */}
+              {view === 'notation' && isPortrait && (() => {
+                const NOTE_W_PORTRAIT = 52
+                const totalBeatsAll = exercise.timeSignature.beats * exercise.measures.length
+                const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
+                const centerX = svgWidth / 2
+                const offsetX = playhead !== null
+                  ? centerX - (56 + playhead * NOTE_W_PORTRAIT + 14)
+                  : centerX - 70
+                return (
+                  <div style={{ overflow: 'hidden' }}>
+                    <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
+                      <g transform={`translateX(${offsetX})`} style={{ transition: playing ? 'none' : 'transform 0.3s ease' }}>
+                        <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+                        <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
+                        <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
+                          {String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}
+                        </text>
+                        <text x={34} y={STAFF_Y + 8} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
+                          {String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}
+                        </text>
+                        {exercise.measures.map((measure, mIdx) => {
+                          const mx = 56 + mIdx * exercise.timeSignature.beats * NOTE_W_PORTRAIT
+                          const noteW = NOTE_W_PORTRAIT
+                          const tapRes: ('hit'|'miss'|'none')[] = tapResults[mIdx] ?? measure.notes.map(() => 'none' as const)
+                          const isLast = mIdx === exercise.measures.length - 1
+                          return (
+                            <g key={mIdx}>
+                              {renderMeasure(measure.notes, mx, noteW, tapRes, exercise.timeSignature.beats)}
+                              {!isLast
+                                ? <line x1={mx + exercise.timeSignature.beats * noteW} y1={STAFF_Y - 28} x2={mx + exercise.timeSignature.beats * noteW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
+                                : <>
+                                  <line x1={mx + exercise.timeSignature.beats * noteW - 8} y1={STAFF_Y - 28} x2={mx + exercise.timeSignature.beats * noteW - 8} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1.2} />
+                                  <line x1={mx + exercise.timeSignature.beats * noteW - 1} y1={STAFF_Y - 28} x2={mx + exercise.timeSignature.beats * noteW - 1} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={7} />
+                                </>
+                              }
+                            </g>
+                          )
+                        })}
+                      </g>
+                    </svg>
+                  </div>
+                )
+              })()}
+
+              {/* LANDSCAPE/DESKTOP: row-based notation */}
+              {view === 'notation' && !isPortrait && rows.map((rowMeasures, rowIdx) => {
                 const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
                 const isLastRow = rowIdx === rows.length - 1
@@ -899,7 +982,7 @@ export default function RhythmPage() {
                 )
               })}
 
-              {view === 'grid' && exercise.measures.map((measure, mIdx) => (
+              {view === 'grid' && !isPortrait && exercise.measures.map((measure, mIdx) => (
                 <div key={mIdx} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                   <span style={{ fontFamily: F, fontSize: '10px', color: '#888780', width: '18px', flexShrink: 0 }}>{mIdx + 1}</span>
                   <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
