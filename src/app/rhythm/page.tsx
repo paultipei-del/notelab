@@ -447,6 +447,24 @@ export default function RhythmPage() {
     return () => window.removeEventListener('resize', checkOrientation)
   }, [])
 
+  // Load all exercises for next/prev navigation
+  useEffect(() => {
+    import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
+      fetchExercisesByCategory().then(data => {
+        const flat = Object.values(data).flat()
+        console.log('allExercises loaded:', flat.length)
+        setAllExercises(flat)
+      })
+    })
+  }, [])
+
+  // Load progress
+  useEffect(() => {
+    import('@/lib/rhythmLibrary').then(({ fetchProgress }) => {
+      fetchProgress(user?.id ?? null).then(setProgress)
+    })
+  }, [user])
+
   useEffect(() => {
     if (!containerRef.current) return
     const obs = new ResizeObserver(entries => setSvgWidth(entries[0].contentRect.width - 48))
