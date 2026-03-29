@@ -781,7 +781,7 @@ export default function RhythmPage() {
   const durationPct = score && score.durationTotal > 0 ? Math.round(score.durationHits / score.durationTotal * 100) : 0
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '32px' }}>
+    <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '32px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
 
         {/* Header */}
@@ -1048,6 +1048,7 @@ export default function RhythmPage() {
             {/* Mobile tap button */}
             <button
               onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
+              onContextMenu={e => e.preventDefault()}
               disabled={!playing || countdown !== null}
               style={{
                 width: '100%', height: '72px', borderRadius: '16px',
@@ -1057,7 +1058,10 @@ export default function RhythmPage() {
                 fontFamily: F, fontSize: '15px', fontWeight: 300,
                 cursor: playing && countdown === null ? 'pointer' : 'default',
                 transition: 'background 0.1s, border 0.1s',
-                letterSpacing: '0.08em'
+                letterSpacing: '0.08em',
+                userSelect: 'none' as const,
+                WebkitUserSelect: 'none' as const,
+                touchAction: 'none' as const
               }}>
               {countdown !== null ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
             </button>
