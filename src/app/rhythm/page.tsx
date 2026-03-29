@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import * as Tone from 'tone'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
 import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
 import { useAuth } from '@/hooks/useAuth'
@@ -380,7 +381,22 @@ export default function RhythmPage() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
-  const tapToneRef = useRef<{ osc: OscillatorNode; gain: GainNode } | null>(null)
+  const samplerRef = useRef<Tone.Sampler | null>(null)
+  const tapNoteRef = useRef<string | null>(null)
+
+  // Initialize Tone.js sampler with piano samples
+  useEffect(() => {
+    const sampler = new Tone.Sampler({
+      urls: {
+        C4: 'C4.mp3', E4: 'E4.mp3', G4: 'G4.mp3',
+        C5: 'C5.mp3', E5: 'E5.mp3', G5: 'G5.mp3',
+      },
+      release: 1.2,
+      baseUrl: 'https://tonejs.github.io/audio/salamander/',
+    }).toDestination()
+    samplerRef.current = sampler
+    return () => { sampler.dispose() }
+  }, [])
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
@@ -488,11 +504,9 @@ export default function RhythmPage() {
       ctxRef.current = null
     }
     setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
-    if (tapToneRef.current) {
-      const { osc, gain } = tapToneRef.current
-      const ctx3 = ctxRef.current as AudioContext | null
-      if (ctx3) { try { gain.gain.linearRampToValueAtTime(0, ctx3.currentTime + 0.05); osc.stop(ctx3.currentTime + 0.06) } catch {} }
-      tapToneRef.current = null
+    if (samplerRef.current && tapNoteRef.current) {
+      samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now())
+      tapNoteRef.current = null
     }
   }
 
@@ -514,18 +528,11 @@ export default function RhythmPage() {
       e.preventDefault()
       keyDownTimeRef.current = performance.now()
       const ctx = ctxRef.current; if (!ctx) return
-      // Start sustained tap tone
-      if (soundEnabledRef.current) {
-        const osc = ctx.createOscillator()
-        const gain = ctx.createGain()
-        osc.connect(gain); gain.connect(ctx.destination)
-        osc.frequency.value = 523  // C5
-        osc.type = 'triangle'
-        gain.gain.setValueAtTime(0, ctx.currentTime)
-        gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.008)  // quick attack
-        gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.1)  // fast decay to soft sustain
-        osc.start()
-        tapToneRef.current = { osc, gain }
+      // Start tap tone via Tone.js sampler
+      if (soundEnabledRef.current && samplerRef.current?.loaded) {
+        const note = 'C5'
+        tapNoteRef.current = note
+        samplerRef.current.triggerAttack(note, Tone.now())
       }
       const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
       const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
@@ -545,14 +552,9 @@ export default function RhythmPage() {
       if (e.code !== 'Space') return
       setLiveFeedback(null)
       // Stop tap tone
-      if (tapToneRef.current) {
-        const { osc, gain } = tapToneRef.current
-        const ctx2 = ctxRef.current
-        if (ctx2) {
-          gain.gain.linearRampToValueAtTime(0, ctx2.currentTime + 0.05)
-          osc.stop(ctx2.currentTime + 0.06)
-        }
-        tapToneRef.current = null
+      if (samplerRef.current && tapNoteRef.current) {
+        samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now())
+        tapNoteRef.current = null
       }
       if (keyDownTimeRef.current !== null) {
         const duration = performance.now() - keyDownTimeRef.current
@@ -664,7 +666,6 @@ export default function RhythmPage() {
       gain.gain.setValueAtTime(0, ctx.currentTime)
       gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01)
       osc.start()
-      tapToneRef.current = { osc, gain }
     }
     const elapsed = ctx.currentTime - startTimeRef.current
     const beat = Math.round(Math.max(0, elapsed) / beatDuration)
@@ -684,14 +685,9 @@ export default function RhythmPage() {
 
   const handlePointerUp = useCallback(() => {
     setLiveFeedback(null)
-    if (tapToneRef.current) {
-      const { osc, gain } = tapToneRef.current
-      const ctx2 = ctxRef.current
-      if (ctx2) {
-        gain.gain.linearRampToValueAtTime(0, ctx2.currentTime + 0.05)
-        osc.stop(ctx2.currentTime + 0.06)
-      }
-      tapToneRef.current = null
+    if (samplerRef.current && tapNoteRef.current) {
+      try { samplerRef.current.triggerRelease(tapNoteRef.current, Tone.now()) } catch(e) {}
+      tapNoteRef.current = null
     }
     if (pointerDownTimeRef.current !== null) {
       const duration = performance.now() - pointerDownTimeRef.current
