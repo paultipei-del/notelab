@@ -519,7 +519,12 @@ export default function RhythmPage() {
       }
       setCountdown(null)
       const elapsed = ctx2.currentTime - startTimeRef.current
+      // Start playhead slightly early so it arrives at first note on beat 0
       const beatFloat = elapsed / beatDuration
+      // Show playhead from -0.5 beats so student can anticipate
+      if (elapsed > -beatDuration * 0.5) {
+        setPlayhead(Math.max(-0.5, beatFloat))
+      }
       if (beatFloat >= totalBeats) {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null
@@ -1027,7 +1032,7 @@ export default function RhythmPage() {
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
                       const beatInRow = playhead - rowStartBeat
-                      const x = 56 + beatInRow * noteW + 14
+                      const x = beatInRow < 0 ? 56 + 14 : 56 + beatInRow * noteW + 14
                       return (
                         <line
                           x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32}
