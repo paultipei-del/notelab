@@ -393,6 +393,7 @@ export default function RhythmPage() {
       },
       release: 1.2,
       baseUrl: 'https://tonejs.github.io/audio/salamander/',
+      onload: () => console.log('Sampler loaded'),
     }).toDestination()
     samplerRef.current = sampler
     return () => { sampler.dispose() }
@@ -466,6 +467,7 @@ export default function RhythmPage() {
     if (!exercise) return
     const ctx = getCtx()
     if (ctx.state === 'suspended') ctx.resume()
+    Tone.start()  // resume Tone.js AudioContext after user gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
     setPlaying(true)
 
@@ -529,7 +531,7 @@ export default function RhythmPage() {
       keyDownTimeRef.current = performance.now()
       const ctx = ctxRef.current; if (!ctx) return
       // Start tap tone via Tone.js sampler
-      if (soundEnabledRef.current && samplerRef.current?.loaded) {
+      if (soundEnabledRef.current && samplerRef.current) {
         const note = 'C5'
         tapNoteRef.current = note
         samplerRef.current.triggerAttack(note, Tone.now())
