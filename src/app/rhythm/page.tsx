@@ -46,14 +46,26 @@ function Stem({ x, y, color }: { x: number; y: number; color: string }) {
 }
 
 
-function Flag({ x, y }: { x: number; y: number }) {
+function Flag({ x, y, color = '#1A1A18' }: { x: number; y: number; color?: string }) {
+  const sx = x + 8.5
+  const sy = y - STEM_H
+  // Flag curves from top of stem downward and to the right
+  return (
+    <path
+      d={`M ${sx} ${sy} C ${sx+14} ${sy+6} ${sx+14} ${sy+16} ${sx} ${sy+24}`}
+      fill="none" stroke={color} strokeWidth={1.8}
+    />
+  )
+}
+
+function DoubleFlag({ x, y, color = '#1A1A18' }: { x: number; y: number; color?: string }) {
   const sx = x + 8.5
   const sy = y - STEM_H
   return (
-    <path
-      d={`M ${sx} ${sy} C ${sx+12} ${sy+4} ${sx+10} ${sy+14} ${sx+2} ${sy+20}`}
-      fill="none" stroke="#1A1A18" strokeWidth={1.6}
-    />
+    <>
+      <path d={`M ${sx} ${sy} C ${sx+14} ${sy+6} ${sx+14} ${sy+16} ${sx} ${sy+24}`} fill="none" stroke={color} strokeWidth={1.8} />
+      <path d={`M ${sx} ${sy+8} C ${sx+14} ${sy+14} ${sx+14} ${sy+24} ${sx} ${sy+32}`} fill="none" stroke={color} strokeWidth={1.8} />
+    </>
   )
 }
 
@@ -88,7 +100,8 @@ function renderMeasure(
     } else {
       els.push(<NoteHead key={`nh-${i}`} x={x} y={STAFF_Y} filled={filled} color={noteColor} />)
       if (note.type !== 'whole') els.push(<Stem key={`st-${i}`} x={x} y={STAFF_Y} color={noteColor} />)
-      if (note.type === 'eighth' || note.type === 'sixteenth') els.push(<Flag key={`fl-${i}`} x={x} y={STAFF_Y} />)
+      if (note.type === 'eighth') els.push(<Flag key={`fl-${i}`} x={x} y={STAFF_Y} color={noteColor} />)
+      if (note.type === 'sixteenth') els.push(<DoubleFlag key={`fl-${i}`} x={x} y={STAFF_Y} color={noteColor} />)
       if (note.dot) els.push(<Dot key={`d-${i}`} x={x} color={noteColor} />)
       if (note.tieStart && i < notes.length - 1) {
         const nextX = mx + (beatPos + note.durationBeats) * noteW + noteW * 0.5
