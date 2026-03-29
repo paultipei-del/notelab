@@ -649,13 +649,17 @@ export default function RhythmPage() {
 
   const MEASURES_PER_ROW = (() => {
     if (!exercise) return 4
-    // Check for sixteenth notes — reduce measures per row
-    const hasSixteenth = exercise.measures.some(m => m.notes.some(n => n.type === 'sixteenth'))
-    const hasEighth = exercise.measures.some(m => m.notes.some(n => n.type === 'eighth'))
     const beats = exercise.timeSignature.beats
-    if (hasSixteenth) return Math.min(exercise.measures.length, beats <= 3 ? 2 : 2)
-    if (hasEighth) return Math.min(exercise.measures.length, beats <= 3 ? 4 : 3)
-    return Math.min(exercise.measures.length, beats <= 3 ? 5 : 4)
+    // Find smallest note across all measures
+    const allNotes = exercise.measures.flatMap(m => m.notes)
+    const smallest = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+    const slotsPerMeasure = beats / smallest
+    const MIN_SLOT = 28
+    const minMeasureW = slotsPerMeasure * MIN_SLOT
+    // How many measures fit in the card width?
+    const cardW = svgWidth  // svgWidth = containerWidth - 48
+    const maxPerRow = Math.max(1, Math.floor((cardW - 96) / minMeasureW))
+    return Math.min(exercise.measures.length, maxPerRow)
   })()
   const SVG_H = 130
   const rows = exercise
