@@ -29,21 +29,9 @@ const DIFFICULTY_LABEL: Record<number, string> = {
 
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
   const beatsPerMeasure = exercise.timeSignature.beats
-
-  // Find smallest note duration in this row to set minimum slot width
-  const allNotes = rowMeasures.flatMap(m => m.notes)
-  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
-
-  // Minimum readable slot width per smallest subdivision
-  const MIN_SLOT_W = 36  // px per smallest note
-  const slotsPerMeasure = beatsPerMeasure / smallestDuration
-  const minMeasureW = slotsPerMeasure * MIN_SLOT_W
-
   const usableW = svgW - 96
-  const naturalMeasureW = usableW / rowMeasures.length
-  const measureW = Math.max(naturalMeasureW, minMeasureW)
+  const measureW = usableW / rowMeasures.length
   const noteW = measureW / beatsPerMeasure
-
   return { measureW, noteW, beatsPerMeasure }
 }
 
@@ -86,14 +74,82 @@ function TieCurve({ x1, x2 }: { x1: number; x2: number }) {
   return <path d={`M ${x1+5} ${STAFF_Y+6} Q ${mx} ${STAFF_Y+18} ${x2+5} ${STAFF_Y+6}`} fill="none" stroke="#1A1A18" strokeWidth={1.1} />
 }
 
+
+// ── Beaming ───────────────────────────────────────────────────────────────────
+// Group consecutive beamable notes (eighth, sixteenth) within each beat
+interface BeamGroup {
+  noteIndices: number[]
+  xs: number[]
+  type: 'eighth' | 'sixteenth'
+}
+
+function computeBeamGroups(
+  notes: RhythmNote[], mx: number, noteW: number, beatsPerMeasure: number
+): BeamGroup[] {
+  const groups: BeamGroup[] = []
+  let i = 0
+  let beatPos = 0
+
+  while (i < notes.length) {
+    const note = notes[i]
+    const isBeamable = (note.type === 'eighth' || note.type === 'sixteenth') && !note.rest
+
+    if (!isBeamable) {
+      beatPos += note.durationBeats
+      i++
+      continue
+    }
+
+    // Collect consecutive beamable notes within the same beat group
+    const beatStart = Math.floor(beatPos + 0.001)
+    const beatEnd = beatStart + 1
+    const group: number[] = []
+    const xs: number[] = []
+    let pos = beatPos
+    let j = i
+
+    while (j < notes.length) {
+      const n = notes[j]
+      const isB = (n.type === 'eighth' || n.type === 'sixteenth') && !n.rest
+      if (!isB) break
+      // Don't cross beat boundary
+      if (pos >= beatEnd - 0.001 && group.length > 0) break
+      group.push(j)
+      xs.push(mx + pos * noteW + n.durationBeats * noteW * 0.5)
+      pos += n.durationBeats
+      j++
+    }
+
+    if (group.length >= 2) {
+      // Determine beam type — use finest subdivision in group
+      const hasEighth = group.some(idx => notes[idx].type === 'eighth')
+      groups.push({ noteIndices: group, xs, type: hasEighth ? 'eighth' : 'sixteenth' })
+      beatPos = pos
+      i = j
+    } else {
+      beatPos += note.durationBeats
+      i++
+    }
+  }
+  return groups
+}
+
+function BeamBar({ x1, x2, y, thickness = 5 }: { x1: number; x2: number; y: number; thickness?: number }) {
+  return <rect x={x1 - 1} y={y - thickness} width={x2 - x1 + 2} height={thickness} fill="#1A1A18" rx={1} />
+}
+
+const STEM_TOP = STAFF_Y - STEM_H  // y coordinate of stem tops
+const BEAM_GAP = 6  // gap between double beams
+
 function renderMeasure(
   notes: RhythmNote[], mx: number, noteW: number,
-  tapResult: ('hit'|'miss'|'none')[]
+  tapResult: ('hit'|'miss'|'none')[],
+  beatsPerMeasure: number
 ) {
   const els: React.ReactElement[] = []
   let beatPos = 0
   notes.forEach((note, i) => {
-    const x = mx + beatPos * noteW + 10
+    const x = mx + beatPos * noteW + (note.durationBeats * noteW * 0.5)
     const filled = note.type === 'quarter' || note.type === 'eighth' || note.type === 'sixteenth'
     const tr = tapResult[i]
     const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
@@ -109,7 +165,40 @@ function renderMeasure(
     }
     beatPos += note.durationBeats
   })
-  return els
+
+  // ── Draw beams ────────────────────────────────────────────────────────────
+  const beamGroups = computeBeamGroups(notes, mx, noteW, beatsPerMeasure)
+  beamGroups.forEach((group, gi) => {
+    const x1 = group.xs[0]
+    const x2 = group.xs[group.xs.length - 1]
+    // Primary beam (eighth)
+    els.push(<BeamBar key={`beam-${gi}`} x1={x1} x2={x2} y={STEM_TOP} />)
+    // Secondary beam (sixteenth) — only between notes that are both sixteenth
+    if (group.type === 'sixteenth' || group.noteIndices.some(idx => notes[idx].type === 'sixteenth')) {
+      for (let k = 0; k < group.noteIndices.length - 1; k++) {
+        const idxA = group.noteIndices[k]
+        const idxB = group.noteIndices[k + 1]
+        if (notes[idxA].type === 'sixteenth' && notes[idxB].type === 'sixteenth') {
+          els.push(<BeamBar key={`beam2-${gi}-${k}`} x1={group.xs[k]} x2={group.xs[k+1]} y={STEM_TOP - BEAM_GAP} />)
+        }
+      }
+    }
+  })
+
+  // For beamed notes, suppress individual flags
+  const beamedIndices = new Set(beamGroups.flatMap(g => g.noteIndices))
+
+  return els.filter((el, idx) => {
+    // Remove Flag/DoubleFlag elements for beamed notes
+    const key = el.key as string
+    if (!key) return true
+    const match = key.match(/^fl-(\d+)$/)
+    if (match) {
+      const noteIdx = parseInt(match[1])
+      return !beamedIndices.has(noteIdx)
+    }
+    return true
+  })
 }
 
 // ── Library panel ─────────────────────────────────────────────────────────────
@@ -214,6 +303,8 @@ export default function RhythmPage() {
   const [progress, setProgress] = useState<Record<string, RhythmProgress>>({})
   const { user } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isPortrait, setIsPortrait] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const [svgWidth, setSvgWidth] = useState(800)
 
   const ctxRef = useRef<AudioContext | null>(null)
@@ -222,6 +313,15 @@ export default function RhythmPage() {
 
   const beatDuration = 60 / bpm
   const totalBeats = exercise ? exercise.timeSignature.beats * exercise.measures.length : 0
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth)
+    }
+    checkOrientation()
+    window.addEventListener('resize', checkOrientation)
+    return () => window.removeEventListener('resize', checkOrientation)
+  }, [])
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -583,7 +683,7 @@ export default function RhythmPage() {
             <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px' }}>
               {view === 'notation' && rows.map((rowMeasures, rowIdx) => {
                 const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
-                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
+                const actualSvgW = svgWidth
                 const isLastRow = rowIdx === rows.length - 1
                 return (
                   <svg key={rowIdx} width={actualSvgW} height={SVG_H} style={{ display: 'block', overflowX: 'visible' }}>
@@ -605,7 +705,7 @@ export default function RhythmPage() {
                       const tapRes: ('hit'|'miss'|'none')[] = tapResults[globalMeasureIdx] ?? measure.notes.map(() => 'none' as const)
                       return (
                         <g key={mIdx}>
-                          {renderMeasure(measure.notes, mx, noteW, tapRes)}
+                          {renderMeasure(measure.notes, mx, noteW, tapRes, exercise.timeSignature.beats)}
                           {!(isLastRow && mIdx === rowMeasures.length - 1) && (
                             <line x1={mx + measureW} y1={STAFF_Y - 28} x2={mx + measureW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
@@ -626,7 +726,7 @@ export default function RhythmPage() {
                       const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
                       if (playhead < rowStartBeat || playhead >= rowEndBeat) return null
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
-                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
+                const actualSvgW = svgWidth
                       const beatInRow = playhead - rowStartBeat
                       const x = 56 + beatInRow * noteW + noteW * 0.5
                       return (
