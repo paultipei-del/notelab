@@ -216,16 +216,25 @@ export default function GeneratePage() {
               </div>
               <div>
                 <label style={lbl}>Category</label>
-                <input
-                  value={category}
-                  onChange={e => setCategory(e.target.value)}
-                  list="category-suggestions"
-                  placeholder="Choose or type a new category"
-                  style={inp}
-                />
-                <datalist id="category-suggestions">
-                  {CATEGORIES.map(c => <option key={c} value={c} />)}
-                </datalist>
+                <select
+                  value={CATEGORIES.includes(category) ? category : '__custom__'}
+                  onChange={e => {
+                    if (e.target.value === '__custom__') setCategory('')
+                    else setCategory(e.target.value)
+                  }}
+                  style={{ ...inp, marginBottom: '6px' }}>
+                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  <option value="__custom__">+ New category…</option>
+                </select>
+                {!CATEGORIES.includes(category) && (
+                  <input
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    placeholder="Type new category name"
+                    style={inp}
+                    autoFocus
+                  />
+                )}
               </div>
               <div>
                 <label style={lbl}>Difficulty</label>

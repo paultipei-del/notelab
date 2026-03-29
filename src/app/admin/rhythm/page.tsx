@@ -95,6 +95,13 @@ export default function AdminRhythm() {
     }
   }
 
+  async function handleDeleteCategory(cat: string) {
+    if (!confirm(`Delete ALL exercises in "${cat}"?`)) return
+    const exs = grouped[cat] ?? []
+    await Promise.all(exs.map(ex => sb.from('rhythm_exercises').delete().eq('id', ex.id)))
+    await loadExercises()
+  }
+
   async function handleDelete(ex: RhythmExerciseMeta) {
     if (!confirm(`Delete "${ex.title}"?`)) return
     await sb.from('rhythm_exercises').delete().eq('id', ex.id)
@@ -191,7 +198,13 @@ export default function AdminRhythm() {
           )}
           {Object.entries(grouped).map(([cat, exs]) => (
             <div key={cat} style={{ marginBottom: '24px' }}>
-              <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#1A1A18', marginBottom: '8px' }}>{cat}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#1A1A18' }}>{cat}</p>
+                <button onClick={() => handleDeleteCategory(cat)}
+                  style={{ background: 'none', border: '1px solid #F09595', borderRadius: '8px', color: '#E53935', fontFamily: F, fontSize: '11px', padding: '2px 8px', cursor: 'pointer' }}>
+                  Delete category
+                </button>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {exs.map(ex => (
                   <div key={ex.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', borderRadius: '10px', border: '1px solid #D3D1C7', padding: '12px 16px' }}>
