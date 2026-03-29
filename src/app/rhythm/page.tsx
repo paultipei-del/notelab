@@ -740,6 +740,12 @@ export default function RhythmPage() {
             )}
           </div>
           {exercise && (
+            <button onClick={() => setSoundEnabled((s: boolean) => !s)}
+              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+              {soundEnabled ? '♪ On' : '♪ Off'}
+            </button>
+          )}
+          {exercise && (
             <button onClick={() => { setExercise(null); setCurrentMeta(null); stop() }}
               style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '6px 14px', cursor: 'pointer' }}>
               ← Library
