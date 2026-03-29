@@ -820,14 +820,12 @@ export default function RhythmPage() {
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
                       const beatInRow = playhead - rowStartBeat
-                      // Center playhead on current note's center
+                      // Center playhead on current note's notehead center
                       let noteHalfW = noteW * 0.5
                       let searchBeat = 0
-                      const rowBeatStart = rowIdx * MEASURES_PER_ROW * exercise.timeSignature.beats
-                      const localBeat = (playhead ?? 0) - rowBeatStart
                       outer: for (const m of rowMeasures) {
                         for (const n of m.notes) {
-                          if (localBeat >= searchBeat && localBeat < searchBeat + n.durationBeats) {
+                          if (beatInRow >= searchBeat && beatInRow < searchBeat + n.durationBeats + 0.001) {
                             noteHalfW = n.durationBeats * noteW * 0.5
                             break outer
                           }
