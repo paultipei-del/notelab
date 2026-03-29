@@ -513,7 +513,12 @@ export default function RhythmPage() {
       const beatFloat = elapsed / beatDuration
       if (beatFloat >= totalBeats) {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
-        tapNoteRef.current = null  // sound auto-decays
+        tapNoteRef.current = null
+        // Close AudioContext to cancel any remaining scheduled clicks
+        if (ctxRef.current) {
+          ctxRef.current.close()
+          ctxRef.current = null
+        }
         return
       }
       setPlayhead(beatFloat)
