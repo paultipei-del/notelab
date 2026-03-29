@@ -216,9 +216,16 @@ export default function GeneratePage() {
               </div>
               <div>
                 <label style={lbl}>Category</label>
-                <select value={category} onChange={e => setCategory(e.target.value)} style={inp}>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <input
+                  value={category}
+                  onChange={e => setCategory(e.target.value)}
+                  list="category-suggestions"
+                  placeholder="Choose or type a new category"
+                  style={inp}
+                />
+                <datalist id="category-suggestions">
+                  {CATEGORIES.map(c => <option key={c} value={c} />)}
+                </datalist>
               </div>
               <div>
                 <label style={lbl}>Difficulty</label>
