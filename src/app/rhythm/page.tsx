@@ -261,7 +261,7 @@ function renderMeasure(
     const xs = group.map(idx => {
       let pos = 0
       for (let k = 0; k < idx; k++) pos += notes[k].durationBeats
-      return mx + pos * noteW + notes[idx].durationBeats * noteW * 0.5
+      return mx + pos * noteW + 14
     })
     const x1 = xs[0] + 7
     const x2 = xs[xs.length - 1] + 7
