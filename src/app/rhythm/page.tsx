@@ -29,9 +29,19 @@ const DIFFICULTY_LABEL: Record<number, string> = {
 
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
   const beatsPerMeasure = exercise.timeSignature.beats
+
+  // Find smallest note in row to ensure minimum readable slot width
+  const allNotes = rowMeasures.flatMap(m => m.notes)
+  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+  const MIN_SLOT_W = 28  // px per smallest subdivision
+  const slotsPerMeasure = beatsPerMeasure / smallestDuration
+  const minMeasureW = slotsPerMeasure * MIN_SLOT_W
+
   const usableW = svgW - 96
-  const measureW = usableW / rowMeasures.length
+  const naturalMeasureW = usableW / rowMeasures.length
+  const measureW = Math.max(naturalMeasureW, minMeasureW)
   const noteW = measureW / beatsPerMeasure
+
   return { measureW, noteW, beatsPerMeasure }
 }
 
@@ -188,11 +198,9 @@ function renderMeasure(
   // For beamed notes, suppress individual flags
   const beamedIndices = new Set(beamGroups.flatMap(g => g.noteIndices))
 
-  return els.filter((el, idx) => {
-    // Remove Flag/DoubleFlag elements for beamed notes
-    const key = el.key as string
-    if (!key) return true
-    const match = key.match(/^fl-(\d+)$/)
+  return els.filter((el) => {
+    const key = String(el.key ?? '')
+    const match = key.match(/fl-(\d+)/)
     if (match) {
       const noteIdx = parseInt(match[1])
       return !beamedIndices.has(noteIdx)
@@ -566,9 +574,16 @@ export default function RhythmPage() {
     }
   }, [])
 
-  const MEASURES_PER_ROW = exercise
-    ? Math.min(exercise.measures.length, exercise.timeSignature.beats <= 3 ? 5 : 4)
-    : 4
+  const MEASURES_PER_ROW = (() => {
+    if (!exercise) return 4
+    // Check for sixteenth notes — reduce measures per row
+    const hasSixteenth = exercise.measures.some(m => m.notes.some(n => n.type === 'sixteenth'))
+    const hasEighth = exercise.measures.some(m => m.notes.some(n => n.type === 'eighth'))
+    const beats = exercise.timeSignature.beats
+    if (hasSixteenth) return Math.min(exercise.measures.length, beats <= 3 ? 2 : 2)
+    if (hasEighth) return Math.min(exercise.measures.length, beats <= 3 ? 4 : 3)
+    return Math.min(exercise.measures.length, beats <= 3 ? 5 : 4)
+  })()
   const SVG_H = 130
   const rows = exercise
     ? Array.from({ length: Math.ceil(exercise.measures.length / MEASURES_PER_ROW) },
