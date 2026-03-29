@@ -709,14 +709,19 @@ export default function RhythmPage() {
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
     if (soundEnabledRef.current) {
-      const osc = ctx.createOscillator()
+      const osc1 = ctx.createOscillator()
+      const osc2 = ctx.createOscillator()
       const gain = ctx.createGain()
-      osc.connect(gain); gain.connect(ctx.destination)
-      osc.frequency.value = 440
-      osc.type = 'sine'
-      gain.gain.setValueAtTime(0, ctx.currentTime)
-      gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01)
-      osc.start()
+      osc1.connect(gain); osc2.connect(gain); gain.connect(ctx.destination)
+      osc1.frequency.value = 261.63  // C4
+      osc2.frequency.value = 523.25  // C5
+      osc1.type = 'triangle'
+      osc2.type = 'sine'
+      gain.gain.setValueAtTime(0.3, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
+      osc1.start(); osc2.start()
+      osc1.stop(ctx.currentTime + 1.5)
+      osc2.stop(ctx.currentTime + 1.5)
     }
     const elapsed = ctx.currentTime - startTimeRef.current
     if (elapsed < -beatDuration) return
