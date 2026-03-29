@@ -8,3 +8,17 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+/* Prevent iOS text selection and callout on interactive elements */
+button, [role="button"] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Rhythm trainer specific */
+.rhythm-tap-btn {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}

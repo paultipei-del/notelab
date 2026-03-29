@@ -1050,6 +1050,7 @@ export default function RhythmPage() {
             <button
               onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
               onContextMenu={e => e.preventDefault()}
+              className="rhythm-tap-btn"
               disabled={!playing || countdown !== null}
               style={{
                 width: '100%', height: '72px', borderRadius: '16px',
