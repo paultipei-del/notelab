@@ -488,6 +488,12 @@ export default function RhythmPage() {
       ctxRef.current = null
     }
     setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
+    if (tapToneRef.current) {
+      const { osc, gain } = tapToneRef.current
+      const ctx3 = ctxRef.current as AudioContext | null
+      if (ctx3) { try { gain.gain.linearRampToValueAtTime(0, ctx3.currentTime + 0.05); osc.stop(ctx3.currentTime + 0.06) } catch {} }
+      tapToneRef.current = null
+    }
   }
 
   // Prevent space from scrolling or triggering buttons always when exercise loaded
@@ -513,10 +519,11 @@ export default function RhythmPage() {
         const osc = ctx.createOscillator()
         const gain = ctx.createGain()
         osc.connect(gain); gain.connect(ctx.destination)
-        osc.frequency.value = 440
-        osc.type = 'sine'
+        osc.frequency.value = 523  // C5
+        osc.type = 'triangle'
         gain.gain.setValueAtTime(0, ctx.currentTime)
-        gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01)
+        gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.008)  // quick attack
+        gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.1)  // fast decay to soft sustain
         osc.start()
         tapToneRef.current = { osc, gain }
       }
