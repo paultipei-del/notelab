@@ -536,9 +536,9 @@ export default function RhythmPage() {
       const ctx = ctxRef.current; if (!ctx) return
       // Start tap tone via Tone.js sampler
       if (soundEnabledRef.current && samplerRef.current) {
-        const note = 'C5'
+        const note = 'C4'
         tapNoteRef.current = note
-        samplerRef.current.triggerAttack(note, Tone.now())
+        samplerRef.current.triggerAttack('C4', Tone.now())
       }
       const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
       const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
