@@ -377,6 +377,8 @@ export default function RhythmPage() {
   const pointerDownTimeRef = useRef<number | null>(null)
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
+  const [soundEnabled, setSoundEnabled] = useState(false)
+  const tapToneRef = useRef<{ osc: OscillatorNode; gain: GainNode } | null>(null)
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [score, setScore] = useState<{ hits: number; total: number; durationHits: number; durationTotal: number } | null>(null)
   const [dragOver, setDragOver] = useState(false)
@@ -504,6 +506,18 @@ export default function RhythmPage() {
       e.preventDefault()
       keyDownTimeRef.current = performance.now()
       const ctx = ctxRef.current; if (!ctx) return
+      // Start sustained tap tone
+      if (soundEnabled) {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.connect(gain); gain.connect(ctx.destination)
+        osc.frequency.value = 440
+        osc.type = 'sine'
+        gain.gain.setValueAtTime(0, ctx.currentTime)
+        gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01)
+        osc.start()
+        tapToneRef.current = { osc, gain }
+      }
       const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
       const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
       setTaps(prev => [...prev, clampedBeat])
@@ -521,6 +535,16 @@ export default function RhythmPage() {
     const onKeyUp = (e: KeyboardEvent) => {
       if (e.code !== 'Space') return
       setLiveFeedback(null)
+      // Stop tap tone
+      if (tapToneRef.current) {
+        const { osc, gain } = tapToneRef.current
+        const ctx2 = ctxRef.current
+        if (ctx2) {
+          gain.gain.linearRampToValueAtTime(0, ctx2.currentTime + 0.05)
+          osc.stop(ctx2.currentTime + 0.06)
+        }
+        tapToneRef.current = null
+      }
       if (keyDownTimeRef.current !== null) {
         const duration = performance.now() - keyDownTimeRef.current
         setTapDurations(prev => [...prev, duration])
@@ -622,6 +646,17 @@ export default function RhythmPage() {
     if (!playing || countdown !== null) return
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
+    if (soundEnabled) {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain); gain.connect(ctx.destination)
+      osc.frequency.value = 440
+      osc.type = 'sine'
+      gain.gain.setValueAtTime(0, ctx.currentTime)
+      gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.01)
+      osc.start()
+      tapToneRef.current = { osc, gain }
+    }
     const elapsed = ctx.currentTime - startTimeRef.current
     const beat = Math.round(Math.max(0, elapsed) / beatDuration)
     const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
@@ -640,6 +675,15 @@ export default function RhythmPage() {
 
   const handlePointerUp = useCallback(() => {
     setLiveFeedback(null)
+    if (tapToneRef.current) {
+      const { osc, gain } = tapToneRef.current
+      const ctx2 = ctxRef.current
+      if (ctx2) {
+        gain.gain.linearRampToValueAtTime(0, ctx2.currentTime + 0.05)
+        osc.stop(ctx2.currentTime + 0.06)
+      }
+      tapToneRef.current = null
+    }
     if (pointerDownTimeRef.current !== null) {
       const duration = performance.now() - pointerDownTimeRef.current
       setTapDurations(prev => [...prev, duration])
