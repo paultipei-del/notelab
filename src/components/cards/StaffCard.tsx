@@ -134,8 +134,8 @@ export default function StaffCard({ note, clef, className = '' }: StaffCardProps
         dominantBaseline="central"
       >{String.fromCodePoint(0xE0A4)}</text>
       <line
-        x1={stemUp ? noteX + 6 : noteX - 7} y1={noteY}
-        x2={stemUp ? noteX + 6 : noteX - 7} y2={stemUp ? noteY - 44 : noteY + 44}
+        x1={stemUp ? noteX + 6 : noteX - 5} y1={noteY}
+        x2={stemUp ? noteX + 6 : noteX - 5} y2={stemUp ? noteY - 44 : noteY + 44}
         stroke="#1A1A18" strokeWidth="1.6" />
     </g>
   ) : null
