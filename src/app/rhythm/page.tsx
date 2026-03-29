@@ -710,6 +710,7 @@ export default function RhythmPage() {
   }, [])
 
   const handlePointerDown = useCallback(() => {
+    initSampler()  // ensure sampler loaded on mobile gesture
     if (!playing || countdown !== null) return
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
@@ -781,7 +782,7 @@ export default function RhythmPage() {
   const durationPct = score && score.durationTotal > 0 ? Math.round(score.durationHits / score.durationTotal * 100) : 0
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '32px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const }}>
+    <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '32px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
 
         {/* Header */}
@@ -1061,7 +1062,8 @@ export default function RhythmPage() {
                 letterSpacing: '0.08em',
                 userSelect: 'none' as const,
                 WebkitUserSelect: 'none' as const,
-                touchAction: 'none' as const
+                touchAction: 'none' as const,
+                WebkitTouchCallout: 'none' as const
               }}>
               {countdown !== null ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
             </button>
