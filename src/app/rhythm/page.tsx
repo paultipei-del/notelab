@@ -79,7 +79,7 @@ function renderMeasure(
   const els: React.ReactElement[] = []
   let beatPos = 0
   notes.forEach((note, i) => {
-    const x = mx + beatPos * noteW + (note.durationBeats * noteW) * 0.5
+    const x = mx + beatPos * noteW + 10
     const filled = note.type === 'quarter' || note.type === 'eighth' || note.type === 'sixteenth'
     const tr = tapResult[i]
     const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'

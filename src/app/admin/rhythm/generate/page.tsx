@@ -48,7 +48,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
           return (
             <g key={mIdx}>
               {m.notes.map((n, nIdx) => {
-                const x = mx + beatPos * noteW + (n.durationBeats * noteW) * 0.5
+                const x = mx + beatPos * noteW + 10
                 const filled = n.type === 'quarter' || n.type === 'eighth' || n.type === 'sixteenth'
                 beatPos += n.durationBeats
                 return (
