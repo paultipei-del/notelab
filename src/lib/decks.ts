@@ -3,6 +3,9 @@ import { SIGHT_READ_DECKS, SIGHT_READ_PRO_IDS } from './sightReadDecks'
 import { GRAND_STAFF_DECKS, GRAND_STAFF_PRO_IDS } from './grandStaffDecks'
 import { EAR_TRAINING_INTERVALS, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
+import { REPEAT_SYMBOL_CARDS } from './cm-content/symbols-repeats'
+import { CLEF_SYMBOL_CARDS } from './cm-content/symbols-clefs'
+import { ORNAMENT_SYMBOL_CARDS } from './cm-content/symbols-ornaments'
 import { CM_PREP_CARDS } from "./cm-content/preparatory"
 import { CM_LEVEL1_CARDS } from "./cm-content/level1"
 import { CM_LEVEL2_CARDS } from './cm-content/level2'
@@ -121,6 +124,27 @@ export const DECKS: Deck[] = [
     cards: NOTE_VALUES_SYMBOL_CARDS,
   },
 
+  {
+    id: 'symbols-repeats',
+    title: 'Repeat & Structure Signs',
+    description: 'Identify repeat barlines, D.C., D.S., coda, segno, and endings.',
+    tag: 'free' as const,
+    cards: REPEAT_SYMBOL_CARDS,
+  },
+  {
+    id: 'symbols-clefs',
+    title: 'Clefs & Time Signatures',
+    description: 'Identify treble, bass, alto, tenor clefs and common/cut time.',
+    tag: 'free' as const,
+    cards: CLEF_SYMBOL_CARDS,
+  },
+  {
+    id: 'symbols-ornaments',
+    title: 'Ornaments',
+    description: 'Identify trills, mordents, turns, and grace notes.',
+    tag: 'free' as const,
+    cards: ORNAMENT_SYMBOL_CARDS,
+  },
   {
     id: 'ear-intervals',
     title: 'Ear Training — Intervals',
