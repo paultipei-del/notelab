@@ -487,13 +487,13 @@ if (newNotes.length === expectedLength) {
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #D3D1C7' }}>
         <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#1A1A18', letterSpacing: '0.02em' }}>Scale Builder</h1>
         <div style={{ width: '60px' }} />
       </div>
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px 80px' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '16px 12px 80px' }}>
 
         {/* Scale type selector */}
         <div style={{ marginBottom: '32px' }}>
@@ -503,7 +503,7 @@ if (newNotes.length === expectedLength) {
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
                 {group.types.map(type => (
                   <button key={type} onClick={() => { setScaleType(type); reset() }}
-                    style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (scaleType === type ? '#1A1A18' : '#D3D1C7'), background: scaleType === type ? '#1A1A18' : 'white', color: scaleType === type ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                    style={{ padding: '5px 10px', borderRadius: '20px', border: '1px solid ' + (scaleType === type ? '#1A1A18' : '#D3D1C7'), background: scaleType === type ? '#1A1A18' : 'white', color: scaleType === type ? 'white' : '#888780', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                     {SCALE_LABELS[type]}
                   </button>
                 ))}
@@ -650,7 +650,7 @@ if (newNotes.length === expectedLength) {
         </div>
 
         {/* Instruction / Step confirmation */}
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', marginBottom: '24px', minHeight: '80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '14px 16px', marginBottom: '16px', minHeight: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {phase === 'select_root' && (
             <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780' }}>Click any key to choose your starting note.</p>
           )}
@@ -700,7 +700,7 @@ if (newNotes.length === expectedLength) {
             </button>
             </div>
           </div>
-          <div style={{ position: 'relative', height: KH + 'px', width: WHITE_KEYS.length * KW + 'px' }}>
+          <div style={{ overflowX: 'auto' as const, WebkitOverflowScrolling: 'touch' as const }}><div style={{ position: 'relative', height: KH + 'px', width: WHITE_KEYS.length * KW + 'px' }}>
             {WHITE_KEYS.map((key, i) => (
               <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
                 style={{ position: 'absolute', left: i * KW, top: 0, width: KW - 1, height: KH, background: keyBg(key), border: '1px solid #D3D1C7', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 1, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', transition: 'background 0.1s' }}>
@@ -712,7 +712,7 @@ if (newNotes.length === expectedLength) {
                 style={{ position: 'absolute', left: key.whiteIndex * KW + KW - BW/2, top: 0, width: BW, height: BH, background: keyBg(key), borderRadius: '0 0 4px 4px', cursor: 'pointer', zIndex: 2, border: 'none', transition: 'background 0.1s' }}>
               </button>
             ))}
-          </div>
+          </div></div>
         </div>
 
         {/* Show/hide toggle */}
