@@ -134,7 +134,6 @@ function NoteIDExerciseInner() {
     if (done || group.length === 0) return
     const current = group[activeIdx]
     if (!current) return
-    console.log('wrongIndices:', [...wrongIndicesRef.current], 'activeIdx:', activeIdx)
     if (wrongIndicesRef.current.has(activeIdx)) return  // locked after wrong answer
     if (processingRef.current || current.status !== 'active') return
     // In multi-note mode, once a note is wrong it's locked

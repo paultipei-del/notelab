@@ -135,6 +135,7 @@ function CustomNoteIDInner() {
     return () => { sampler.dispose() }
   }, [playCorrectNotes])
   const processingRef = useRef(false)
+  const wrongIndicesRef = useRef<Set<number>>(new Set())
 
   // Timer for minutes mode
   useEffect(() => {
@@ -206,6 +207,7 @@ function CustomNoteIDInner() {
     const notes = buildGroup(pool, groupSize)
     setGroup(notes.map((note, i) => ({ note, status: i === 0 ? 'active' : 'pending' })))
     setActiveIdx(0)
+    wrongIndicesRef.current = new Set()
   }, [pool])
 
   function nextGroup() {
@@ -218,13 +220,16 @@ function CustomNoteIDInner() {
     const notes = buildGroup(pool, groupSize)
     setGroup(notes.map((note, i) => ({ note, status: i === 0 ? 'active' : 'pending' })))
     setActiveIdx(0)
+    wrongIndicesRef.current = new Set()
     processingRef.current = false
   }
 
   const handleAnswer = useCallback((answer: string) => {
-    if (processingRef.current || done || group.length === 0) return
+    if (done || group.length === 0) return
     const current = group[activeIdx]
-    if (!current || current.status !== 'active') return
+    if (!current) return
+    if (wrongIndicesRef.current.has(activeIdx)) return
+    if (processingRef.current || current.status !== 'active') return
 
     const targetPitch = notePitchClass(current.note)
     const isCorrect = answersMatch(answer, targetPitch)
@@ -237,6 +242,8 @@ function CustomNoteIDInner() {
         samplerRef.current?.triggerAttackRelease(current.note, '2n')
       })
     }
+
+    if (!isCorrect && groupSize > 1) wrongIndicesRef.current.add(activeIdx)
 
     setGroup(prev => prev.map((n, i) => {
       if (i === activeIdx) return { ...n, status: isCorrect ? 'correct' : 'wrong' }
@@ -254,12 +261,21 @@ function CustomNoteIDInner() {
         processingRef.current = false
       }
     } else {
-      // Clear wrong state after 600ms so card returns to neutral
-      setTimeout(() => {
-        setGroup(prev => prev.map((n, i) =>
-          i === activeIdx ? { ...n, status: 'active' } : n
-        ))
-      }, 600)
+      // Wrong: lock note and advance after delay
+      processingRef.current = true
+      const isLast = activeIdx >= group.length - 1
+      if (isLast) {
+        setTimeout(() => { nextGroup(); processingRef.current = false }, 1000)
+      } else {
+        setTimeout(() => {
+          setGroup(prev => prev.map((n, i) => {
+            if (i === activeIdx + 1) return { ...n, status: 'active' as const }
+            return n
+          }))
+          setActiveIdx(i => i + 1)
+          processingRef.current = false
+        }, 1000)
+      }
     }
   }, [done, group, activeIdx, rounds, stopValue, stopMode, pool, groupSize])
 
