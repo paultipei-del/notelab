@@ -932,11 +932,14 @@ export default function RhythmPage() {
             </div>
 
             {/* Countdown — overlaid on exercise area, no layout shift */}
-            {countdown !== null && (
-              <div style={{ position: 'absolute' as const, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 10, pointerEvents: 'none' as const }}>
-                <span style={{ fontFamily: SERIF, fontSize: '80px', fontWeight: 300, color: '#BA7517', opacity: 0.9 }}>{countdown}</span>
-              </div>
-            )}
+
+
+            {/* Countdown — fixed strip above notation */}
+            <div style={{ height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+              {countdown !== null && (
+                <span style={{ fontFamily: SERIF, fontSize: '48px', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
+              )}
+            </div>
 
             {/* Notation / Grid */}
             <div style={{ position: 'relative' as const, marginBottom: '20px' }}>

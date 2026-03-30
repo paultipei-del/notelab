@@ -194,6 +194,33 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
       {(clef === 'bass' || clef === 'grand') && bassClef}
       {clef === 'bass' && staffLines(trebleTop, 't')}
       {noteEls}
+      {/* Status indicators below each note */}
+      {notes.map((ns, i) => {
+        const nx = noteXs[i]
+        const indicatorY = 180
+        if (ns.status === 'correct') {
+          return (
+            <text key={`ind-${i}`} x={nx} y={indicatorY}
+              fontSize="16" fontFamily="var(--font-jost), sans-serif"
+              fill="#4CAF50" textAnchor="middle" dominantBaseline="central">✓</text>
+          )
+        }
+        if (ns.status === 'wrong') {
+          return (
+            <g key={`ind-${i}`}>
+              <text x={nx} y={indicatorY}
+                fontSize="16" fontFamily="var(--font-jost), sans-serif"
+                fill="#E53935" textAnchor="middle" dominantBaseline="central">✗</text>
+              <text x={nx} y={indicatorY + 22}
+                fontSize="13" fontFamily="var(--font-cormorant), serif"
+                fill="#E53935" textAnchor="middle" dominantBaseline="central">
+                {ns.note.replace(/\d+$/, '')}
+              </text>
+            </g>
+          )
+        }
+        return null
+      })}
     </svg>
   )
 }

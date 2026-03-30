@@ -144,15 +144,35 @@ function NoteIDExerciseInner() {
       return n
     }))
 
+    processingRef.current = true
     if (isCorrect) {
-      processingRef.current = true
       const isLastInGroup = activeIdx >= group.length - 1
       if (isLastInGroup) {
-        setTimeout(() => nextGroup(), 600)
+        setTimeout(() => { nextGroup(); processingRef.current = false }, 600)
       } else {
-        setActiveIdx(i => i + 1)
-        processingRef.current = false
+        setTimeout(() => {
+          setActiveIdx(i => i + 1)
+          processingRef.current = false
+        }, 400)
       }
+    } else {
+      // Wrong: show correct answer briefly then move on
+      setTimeout(() => {
+        setGroup(prev => prev.map((n, i) => {
+          if (i === activeIdx) return { ...n, status: 'wrong' as const }
+          if (i === activeIdx + 1) return { ...n, status: 'active' as const }
+          return n
+        }))
+        const isLastInGroup = activeIdx >= group.length - 1
+        if (isLastInGroup) {
+          setTimeout(() => { nextGroup(); processingRef.current = false }, 800)
+        } else {
+          setTimeout(() => {
+            setActiveIdx(i => i + 1)
+            processingRef.current = false
+          }, 800)
+        }
+      }, 50)
     }
   }, [done, group, activeIdx, rounds, stopRounds, pool, groupSize])
 
@@ -256,6 +276,24 @@ function NoteIDExerciseInner() {
               <MultiNoteStaff notes={group} clef={clef} />
             )}
           </div>
+
+          {/* Feedback indicator + correct answer for single note */}
+          {groupSize === 1 && (
+            <div style={{ textAlign: 'center' as const, marginBottom: '8px', minHeight: '64px', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
+              {group[activeIdx]?.status === 'correct' && (
+                <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>
+              )}
+              {group[activeIdx]?.status === 'wrong' && (
+                <>
+                  <span style={{ fontSize: '36px', color: '#E53935', lineHeight: 1, marginBottom: '4px' }}>✗</span>
+                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E53935', marginBottom: '2px' }}>Correct answer</p>
+                  <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '28px', fontWeight: 300, color: '#1A1A18' }}>
+                    {notePitchClass(currentNote)}
+                  </p>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Input */}
           {inputMode === 'letters' ? (
