@@ -606,7 +606,9 @@ export default function RhythmPage() {
           tapNoteRef.current = 'playing'
         }
       }
-      const beat = Math.round((ctx.currentTime - startTimeRef.current) / beatDuration)
+      const kbElapsed = ctx.currentTime - startTimeRef.current
+      if (kbElapsed < -beatDuration * 1.5) return
+      const beat = kbElapsed < 0 ? 0 : Math.round(kbElapsed / beatDuration)
       const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
       setTaps(prev => [...prev, clampedBeat])
       // Live feedback
