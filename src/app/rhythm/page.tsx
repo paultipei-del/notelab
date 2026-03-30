@@ -577,12 +577,12 @@ export default function RhythmPage() {
 
   useEffect(() => {
     if (!playing || !exercise) return
-    // Allow early taps during last countdown beat
-    if (countdown !== null && countdown > 1) return
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.code !== 'Space' || e.repeat) return
       e.preventDefault()
+      // Block taps until last countdown beat
+      if (!tapReadyRef.current && countdown !== null) return
       keyDownTimeRef.current = performance.now()
       const ctx = ctxRef.current; if (!ctx) return
       // Start tap tone via Tone.js sampler
