@@ -479,7 +479,7 @@ if (newNotes.length === expectedLength) {
   const step = 6
   const staffTop = 40
   const staffLeft = 20
-  const noteSpacing = 46
+  const noteSpacing = 42
   const staffWidth = Math.max(200, builtNotes.length * noteSpacing + 80)
   const svgW = staffLeft * 2 + staffWidth
   const svgH = 160
