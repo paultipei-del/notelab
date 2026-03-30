@@ -116,7 +116,7 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
   const staffWidth = clefWidth + notes.length * noteSpacing + rightPad
   const W = staffLeft + staffWidth
   const H = clef === 'grand' ? bassTop + 8 * step + 60 : trebleTop + 8 * step + 60
-  const feedbackY = 22
+  const feedbackY = trebleTop - 24  // above staff
 
   const noteXs = notes.map((_, i) => staffLeft + clefWidth + i * noteSpacing + 20)
 
@@ -174,22 +174,23 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
       {/* Status indicators below each note */}
       {notes.map((ns, i) => {
         const nx = noteXs[i]
-        const indicatorY = 180
+        const indicatorY = feedbackY
         if (ns.status === 'correct') {
           return (
-            <text key={`ind-${i}`} x={nx} y={indicatorY}
-              fontSize="16" fontFamily="var(--font-jost), sans-serif"
-              fill="#4CAF50" textAnchor="middle" dominantBaseline="central">✓</text>
+            <g key={`ind-${i}`}>
+              <circle cx={nx} cy={indicatorY} r={10} fill="#4CAF50" />
+              <text x={nx} y={indicatorY} fontSize="12" fontFamily="var(--font-jost), sans-serif"
+                fill="white" textAnchor="middle" dominantBaseline="central">✓</text>
+            </g>
           )
         }
         if (ns.status === 'wrong') {
           return (
             <g key={`ind-${i}`}>
-              <text x={nx} y={indicatorY}
-                fontSize="16" fontFamily="var(--font-jost), sans-serif"
-                fill="#E53935" textAnchor="middle" dominantBaseline="central">✗</text>
-              <text x={nx} y={indicatorY + 22}
-                fontSize="13" fontFamily="var(--font-cormorant), serif"
+              <circle cx={nx} cy={indicatorY} r={10} fill="#E53935" />
+              <text x={nx} y={indicatorY} fontSize="12" fontFamily="var(--font-jost), sans-serif"
+                fill="white" textAnchor="middle" dominantBaseline="central">✗</text>
+              <text x={nx} y={indicatorY + 22} fontSize="12" fontFamily="var(--font-cormorant), serif"
                 fill="#E53935" textAnchor="middle" dominantBaseline="central">
                 {ns.note.replace(/\d+$/, '')}
               </text>
