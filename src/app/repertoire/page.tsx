@@ -1,0 +1,263 @@
+'use client'
+
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
+import { usePurchases } from '@/hooks/usePurchases'
+import SiteHeader from '@/components/SiteHeader'
+import repertoireData from '@/lib/data/cm-repertoire-complete.json'
+
+const F = 'var(--font-jost), sans-serif'
+const SERIF = 'var(--font-cormorant), serif'
+
+interface CMEntry {
+  composer: string
+  title: string
+  publisher: string
+  restrictions?: string
+}
+
+interface CMCategory {
+  id: string
+  label: string
+  repertoire: CMEntry[]
+}
+
+interface CMLevel {
+  id: string
+  label: string
+  requirements: {
+    pieces: number
+    memorized: number
+    categories: boolean
+    notes: string
+  }
+  categories: CMCategory[]
+}
+
+const data = repertoireData as { meta: { source: string; program: string; notes: string }; levels: CMLevel[] }
+const LEVELS = data.levels
+
+const LEVEL_ORDER = ['preparatory','level_1','level_2','level_3','level_4','level_5','level_6','level_7','level_8','level_9','advanced']
+
+export default function RepertoirePage() {
+  const router = useRouter()
+  const { user, loading } = useAuth()
+  const { hasSubscription, hasPurchased } = usePurchases(user?.id ?? null)
+  const isPro = hasSubscription() || hasPurchased('pro')
+
+  const [selectedLevel, setSelectedLevel] = useState<string>('level_1')
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+  const [sortCol, setSortCol] = useState<'composer' | 'title' | 'publisher'>('composer')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  const currentLevel = LEVELS.find(l => l.id === selectedLevel)
+
+  useEffect(() => {
+    if (currentLevel && currentLevel.categories.length > 0) {
+      setSelectedCategory(currentLevel.categories[0].id)
+    }
+  }, [selectedLevel])
+
+  const currentCategory = currentLevel?.categories.find(c => c.id === selectedCategory)
+
+  const sortedEntries = useMemo(() => {
+    if (!currentCategory) return []
+    return [...currentCategory.repertoire].sort((a, b) => {
+      const av = a[sortCol] ?? ''
+      const bv = b[sortCol] ?? ''
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av)
+    })
+  }, [currentCategory, sortCol, sortDir])
+
+  const searchResults = useMemo(() => {
+    if (!search.trim()) return []
+    const q = search.toLowerCase()
+    const results: { level: string; category: string; entry: CMEntry }[] = []
+    for (const level of LEVELS) {
+      for (const cat of level.categories) {
+        for (const entry of cat.repertoire) {
+          if (entry.composer.toLowerCase().includes(q) || entry.title.toLowerCase().includes(q)) {
+            results.push({ level: level.label, category: cat.label, entry })
+          }
+        }
+      }
+    }
+    return results
+  }, [search])
+
+  function toggleSort(col: 'composer' | 'title' | 'publisher') {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortCol(col); setSortDir('asc') }
+  }
+
+  if (loading) return null
+
+  if (!isPro) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
+        <SiteHeader />
+        <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px', textAlign: 'center' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Pro Feature</p>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '12px' }}>CM Repertoire Browser</h1>
+          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '32px', lineHeight: 1.7 }}>
+            Browse the complete CM repertoire lists by level — Preparatory through Advanced. Search across all levels, sort by composer or title.
+          </p>
+          <button onClick={() => router.push('/')}
+            style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+            Upgrade to Pro
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
+      <SiteHeader />
+
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px 80px' }}>
+
+        {/* Header */}
+        <div style={{ marginBottom: '32px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '6px' }}>Certificate of Merit</p>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '4px' }}>Repertoire Browser</h1>
+          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Browse or search the complete CM repertoire lists — Preparatory through Advanced.</p>
+        </div>
+
+        {/* Search */}
+        <div style={{ position: 'relative' as const, marginBottom: '32px' }}>
+          <input
+            ref={searchRef}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search by composer or title across all levels…"
+            style={{ width: '100%', padding: '12px 44px 12px 16px', borderRadius: '12px', border: '1px solid #D3D1C7', background: 'white', fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18', outline: 'none', boxSizing: 'border-box' as const }}
+          />
+          {search && (
+            <button onClick={() => setSearch('')}
+              style={{ position: 'absolute' as const, right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#888780', fontSize: '18px' }}>×</button>
+          )}
+        </div>
+
+        {/* Search Results */}
+        {search.trim() ? (
+          <div>
+            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginBottom: '16px' }}>{searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{search}"</p>
+            {searchResults.length === 0 ? (
+              <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '40px', textAlign: 'center' }}>
+                <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780' }}>No results found.</p>
+              </div>
+            ) : (
+              <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflowX: 'auto' as const }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
+                      {['Level', 'Category', 'Composer', 'Title', 'Publisher'].map(h => (
+                        <th key={h} style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', textAlign: 'left' as const }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {searchResults.map((r, i) => (
+                      <tr key={i} style={{ borderBottom: i < searchResults.length - 1 ? '1px solid #F5F2EC' : 'none' }}>
+                        <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', whiteSpace: 'nowrap' as const }}>{r.level}</td>
+                        <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', whiteSpace: 'nowrap' as const }}>{r.category}</td>
+                        <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18' }}>{r.entry.composer}</td>
+                        <td style={{ padding: '10px 16px', fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: '#1A1A18' }}>
+                          {r.entry.title}
+                          {r.entry.restrictions && <span style={{ marginLeft: '8px', fontFamily: F, fontSize: '11px', color: '#BA7517', fontStyle: 'italic' }}>{r.entry.restrictions}</span>}
+                        </td>
+                        <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>{r.entry.publisher}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div>
+            {/* Level selector */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '24px' }}>
+              {LEVELS.map(l => (
+                <button key={l.id} onClick={() => setSelectedLevel(l.id)}
+                  style={{ padding: '7px 16px', borderRadius: '20px', border: '1px solid ' + (selectedLevel === l.id ? '#1A1A18' : '#D3D1C7'), background: selectedLevel === l.id ? '#1A1A18' : 'white', color: selectedLevel === l.id ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>
+                  {l.label}
+                </button>
+              ))}
+            </div>
+
+            {currentLevel && (
+              <>
+                {/* Requirements */}
+                <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', marginBottom: '20px', display: 'flex', gap: '32px', flexWrap: 'wrap' as const, alignItems: 'flex-start' }}>
+                  <div>
+                    <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '4px' }}>Pieces Required</p>
+                    <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#1A1A18' }}>{currentLevel.requirements.pieces}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '4px' }}>Memorized</p>
+                    <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#1A1A18' }}>{currentLevel.requirements.memorized}</p>
+                  </div>
+                  {currentLevel.requirements.notes && (
+                    <div style={{ flex: 1, minWidth: '200px' }}>
+                      <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '4px' }}>Notes</p>
+                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6 }}>{currentLevel.requirements.notes}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Category tabs */}
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '16px' }}>
+                  {currentLevel.categories.map(c => (
+                    <button key={c.id} onClick={() => setSelectedCategory(c.id)}
+                      style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (selectedCategory === c.id ? '#BA7517' : '#D3D1C7'), background: selectedCategory === c.id ? '#BA7517' : 'white', color: selectedCategory === c.id ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>
+                      {c.label} <span style={{ opacity: 0.7 }}>({c.repertoire.length})</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Repertoire table */}
+                {currentCategory && (
+                  <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflowX: 'auto' as const }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' as const, minWidth: '500px' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
+                          {(['composer', 'title', 'publisher'] as const).map(col => (
+                            <th key={col} onClick={() => toggleSort(col)}
+                              style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: sortCol === col ? '#BA7517' : '#888780', textAlign: 'left' as const, cursor: 'pointer', userSelect: 'none' as const, whiteSpace: 'nowrap' as const }}>
+                              {col} {sortCol === col ? (sortDir === 'asc' ? '↑' : '↓') : ''}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortedEntries.map((entry, i) => (
+                          <tr key={i} style={{ borderBottom: i < sortedEntries.length - 1 ? '1px solid #F5F2EC' : 'none', transition: 'background 0.1s' }}
+                            onMouseEnter={e => { e.currentTarget.style.background = '#FAFAF8' }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'white' }}>
+                            <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', whiteSpace: 'nowrap' as const }}>{entry.composer}</td>
+                            <td style={{ padding: '10px 16px', fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: '#1A1A18' }}>
+                              {entry.title}
+                              {entry.restrictions && (
+                                <span style={{ marginLeft: '8px', fontFamily: F, fontSize: '11px', color: '#BA7517', fontStyle: 'italic' as const }}>{entry.restrictions}</span>
+                              )}
+                            </td>
+                            <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', whiteSpace: 'nowrap' as const }}>{entry.publisher}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
