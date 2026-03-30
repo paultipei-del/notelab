@@ -516,7 +516,7 @@ export default function RhythmPage() {
         const countBeat = Math.floor(countdownElapsed / beatDuration) + 1
         setCountdown(countBeat)
         // Start playhead moving during last countdown beat
-        if (countBeat === 1) {
+        if (countBeat <= 1) {
           const timeToStart = startTimeRef.current - ctx2.currentTime
           setPlayhead(-timeToStart / beatDuration)
         }
@@ -1035,12 +1035,12 @@ export default function RhythmPage() {
                       const beatsPerMeasure = exercise.timeSignature.beats
                       const rowStartBeat = rowIdx * MEASURES_PER_ROW * beatsPerMeasure
                       const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
-                      if (playhead < rowStartBeat - 0.6 || playhead >= rowEndBeat) return null
+                      if (playhead < rowStartBeat - 1 || playhead >= rowEndBeat) return null
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
                       if (!playing && countdown === null) return null
                       const beatInRow = playhead - rowStartBeat
-                      const x = beatInRow < 0 ? 56 + beatInRow * noteW + 14 : 56 + beatInRow * noteW + 14
+                      const x = 56 + beatInRow * noteW + 14
                       return (
                         <line
                           x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32}
