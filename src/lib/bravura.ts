@@ -70,6 +70,28 @@ export const B = {
 
   // ── Ornaments ──
   trill: '\uE566',
+  mordentUpper: '\uE56C',
+  mordentLower: '\uE56D',
+  turnSymbol: '\uE567',
+
+  // ── Repeat & Structure ──
+  repeatBarlineLeft: '\uE040',
+  repeatBarlineRight: '\uE041',
+  segno: '\uE047',
+  coda: '\uE048',
+
+  // ── Time Signatures ──
+  commonTime: '\uE08A',
+  cutTime: '\uE08B',
+
+  // ── Additional Clefs ──
+  altoClef: '\uE05C',
+  tenorClef: '\uE05E',
+  percussionClef: '\uE069',
+
+  // ── Additional Articulations ──
+  marcatoAbove: '\uE4AC',
+  staccatissimoAbove: '\uE4A8',
 } as const
 
 export type BravuraSymbol = keyof typeof B
