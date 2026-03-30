@@ -389,6 +389,7 @@ export default function RhythmPage() {
   const [countdown, setCountdown] = useState<number | null>(null)
   const [tapReady, setTapReady] = useState(false)
   const tapReadyRef = useRef(false)
+  const tapBtnRef = useRef<HTMLButtonElement>(null)
   const [playhead, setPlayhead] = useState<number | null>(null)  // absolute beat position (float)
   const [taps, setTaps] = useState<number[]>([])
   const [tapDurations, setTapDurations] = useState<number[]>([])  // ms held per tap
@@ -401,6 +402,15 @@ export default function RhythmPage() {
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
   const tapNoteRef = useRef<string | null>(null)
   const pianoBufferRef = useRef<AudioBuffer | null>(null)
+
+  // Prevent iOS selection bubble on tap button
+  useEffect(() => {
+    const btn = tapBtnRef.current
+    if (!btn) return
+    const prevent = (e: TouchEvent) => e.preventDefault()
+    btn.addEventListener('touchstart', prevent, { passive: false })
+    return () => btn.removeEventListener('touchstart', prevent)
+  }, [])
 
   const initSampler = useCallback(() => {}, [])
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -1094,6 +1104,7 @@ export default function RhythmPage() {
 
             {/* Mobile tap button */}
             <button
+              ref={tapBtnRef}
               onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
               onContextMenu={e => e.preventDefault()}
               className="rhythm-tap-btn"
