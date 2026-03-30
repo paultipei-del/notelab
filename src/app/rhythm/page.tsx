@@ -181,7 +181,7 @@ function renderMeasure(
   const noteInfos: NoteInfo[] = []
   let bp = 0
   notes.forEach((n, i) => {
-    noteInfos.push({ idx: i, beatPos: bp, x: mx + bp * noteW + n.durationBeats * noteW * 0.5 })
+    noteInfos.push({ idx: i, beatPos: bp, x: mx + 10 + bp * noteW + n.durationBeats * noteW * 0.5 })
     bp += n.durationBeats
   })
 
@@ -948,7 +948,7 @@ export default function RhythmPage() {
               )}
               {/* PORTRAIT: single scrolling staff */}
               {view === 'notation' && isPortrait && (() => {
-                const NOTE_W_PORTRAIT = 64
+                const NOTE_W_PORTRAIT = 52
                 const totalBeatsAll = exercise.timeSignature.beats * exercise.measures.length
                 const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
                 const centerX = svgWidth / 2
