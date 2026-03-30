@@ -497,7 +497,7 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (ctx.state === 'suspended') ctx.resume()
     initSampler()  // load piano on first gesture
-    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); setPlayhead(-0.3)
+    setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
