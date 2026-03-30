@@ -1101,10 +1101,10 @@ export default function RhythmPage() {
               style={{
                 width: '100%', height: '72px', borderRadius: '16px',
                 border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
-                background: liveFeedback === 'hit' ? '#4CAF50' : liveFeedback === 'miss' ? '#E53935' : playing && countdown === null ? '#1A1A18' : '#F5F2EC',
-                color: liveFeedback ? 'white' : playing && countdown === null ? 'white' : '#D3D1C7',
+                background: liveFeedback === 'hit' ? '#4CAF50' : liveFeedback === 'miss' ? '#E53935' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F5F2EC',
+                color: liveFeedback ? 'white' : (playing && (countdown === null || tapReady)) ? 'white' : '#D3D1C7',
                 fontFamily: F, fontSize: '15px', fontWeight: 300,
-                cursor: playing && countdown === null ? 'pointer' : 'default',
+                cursor: (playing && (countdown === null || tapReady)) ? 'pointer' : 'default',
                 transition: 'background 0.1s, border 0.1s',
                 letterSpacing: '0.08em',
                 userSelect: 'none' as const,
@@ -1112,7 +1112,7 @@ export default function RhythmPage() {
                 touchAction: 'none' as const,
                 WebkitTouchCallout: 'none' as const
               }}>
-              {countdown !== null ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
+              {(countdown !== null && !tapReady) ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
             </button>
           </>
         )}
