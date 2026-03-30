@@ -138,8 +138,8 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
   const rightPad = 24
   const staffWidth = clefWidth + notes.length * noteSpacing + rightPad
   const W = staffLeft + staffWidth
-  const H = clef === 'grand' ? bassTop + 8 * step + 60 : trebleTop + 8 * step + 60
-  const feedbackY = 22
+  const H = clef === 'grand' ? bassTop + 8 * step + 80 : trebleTop + 8 * step + 60
+  const feedbackY = trebleTop + 8 * step + 32
 
   const noteXs = notes.map((_, i) => staffLeft + clefWidth + i * noteSpacing + 20)
 
@@ -197,7 +197,7 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
       {/* Status indicators below each note */}
       {notes.map((ns, i) => {
         const nx = noteXs[i]
-        const indicatorY = 180
+        const indicatorY = trebleTop + 8 * step + 32
         if (ns.status === 'correct') {
           return (
             <text key={`ind-${i}`} x={nx} y={indicatorY}

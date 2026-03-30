@@ -543,7 +543,7 @@ if (newNotes.length === expectedLength) {
         {/* Pattern display */}
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', marginBottom: '24px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Pattern</p>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', overflowX: 'auto' as const, paddingBottom: '4px' }}>
             {(DEGREE_LABELS[scaleType] ?? []).length > 0 ? (
             // Show scale degrees for pentatonic/blues/WT/dim
             DEGREE_LABELS[scaleType]!.map((deg, i) => {
@@ -605,7 +605,7 @@ if (newNotes.length === expectedLength) {
         </div>
 
         {/* Staff */}
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid ' + (flash === 'correct' ? '#4CAF50' : flash === 'wrong' ? '#E53935' : '#D3D1C7'), padding: '16px 24px', marginBottom: '24px', overflowX: 'auto', transition: 'border-color 0.15s' }}>
+        <div style={{ background: 'white', borderRadius: '16px', overflowX: 'auto' as const, border: '1px solid ' + (flash === 'correct' ? '#4CAF50' : flash === 'wrong' ? '#E53935' : '#D3D1C7'), padding: '16px 24px', marginBottom: '24px', transition: 'border-color 0.15s' }}>
           <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
             {/* Staff lines */}
             {[0,2,4,6,8].map(p => (

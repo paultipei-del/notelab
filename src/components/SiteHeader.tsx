@@ -26,6 +26,7 @@ export default function SiteHeader() {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '18px 32px', borderBottom: '1px solid #D3D1C7',
         background: '#F5F2EC', position: 'sticky' as const, top: 0, zIndex: 50,
+        userSelect: 'none' as const, WebkitUserSelect: 'none' as const,
       }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
           <div style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18', cursor: 'pointer' }}>
@@ -37,7 +38,7 @@ export default function SiteHeader() {
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {user ? (
               <>
-                <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>{user.email}</span>
+                <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', userSelect: 'none' as const, WebkitUserSelect: 'none' as const }}>{user.email}</span>
                 <button onClick={handleSignOut}
                   style={{ border: '1px solid #D3D1C7', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', background: 'none', cursor: 'pointer' }}>
                   Sign Out

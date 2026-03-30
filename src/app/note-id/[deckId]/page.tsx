@@ -131,6 +131,8 @@ function NoteIDExerciseInner() {
     if (processingRef.current || done || group.length === 0) return
     const current = group[activeIdx]
     if (!current || current.status !== 'active') return
+    // In multi-note mode, once a note is wrong it's locked
+
 
     const targetPitch = notePitchClass(current.note)
     const isCorrect = answersMatch(answer, targetPitch)

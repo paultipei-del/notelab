@@ -8,9 +8,13 @@
     -webkit-font-smoothing: antialiased;
   }
 }
-/* Prevent iOS text selection and callout on interactive elements */
-button, [role="button"] {
+/* Prevent iOS text selection globally */
+* {
   -webkit-touch-callout: none;
+}
+
+/* Prevent text selection on interactive and UI elements */
+button, [role="button"], header, nav, .no-select {
   -webkit-user-select: none;
   user-select: none;
 }
