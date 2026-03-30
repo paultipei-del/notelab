@@ -498,7 +498,6 @@ export default function RhythmPage() {
     if (ctx.state === 'suspended') ctx.resume()
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
-    setPlayhead(-0.5)
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -514,7 +513,13 @@ export default function RhythmPage() {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const countdownElapsed = ctx2.currentTime - countdownStart
       if (countdownElapsed < countdownBeats * beatDuration) {
-        setCountdown(Math.floor(countdownElapsed / beatDuration) + 1)
+        const countBeat = Math.floor(countdownElapsed / beatDuration) + 1
+        setCountdown(countBeat)
+        // Start playhead moving during last countdown beat
+        if (countBeat === 1) {
+          const timeToStart = startTimeRef.current - ctx2.currentTime
+          setPlayhead(-timeToStart / beatDuration)
+        }
         rafRef.current = requestAnimationFrame(tick)
         return
       }
@@ -943,7 +948,7 @@ export default function RhythmPage() {
               )}
               {/* PORTRAIT: single scrolling staff */}
               {view === 'notation' && isPortrait && (() => {
-                const NOTE_W_PORTRAIT = 52
+                const NOTE_W_PORTRAIT = 64
                 const totalBeatsAll = exercise.timeSignature.beats * exercise.measures.length
                 const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
                 const centerX = svgWidth / 2
