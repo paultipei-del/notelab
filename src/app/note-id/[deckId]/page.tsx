@@ -163,23 +163,24 @@ function NoteIDExerciseInner() {
         }, 400)
       }
     } else {
-      // Wrong: show correct answer briefly then move on
-      setTimeout(() => {
-        setGroup(prev => prev.map((n, i) => {
-          if (i === activeIdx) return { ...n, status: 'wrong' as const }
-          if (i === activeIdx + 1) return { ...n, status: 'active' as const }
-          return n
-        }))
-        const isLastInGroup = activeIdx >= group.length - 1
-        if (isLastInGroup) {
-          setTimeout(() => { nextGroup(); processingRef.current = false }, 800)
-        } else {
-          setTimeout(() => {
-            setActiveIdx(i => i + 1)
-            processingRef.current = false
-          }, 800)
-        }
-      }, 50)
+      // Wrong: show correct answer briefly then advance
+      setGroup(prev => prev.map((n, i) => {
+        if (i === activeIdx) return { ...n, status: 'wrong' as const }
+        return n
+      }))
+      const isLastInGroup = activeIdx >= group.length - 1
+      if (isLastInGroup) {
+        setTimeout(() => { nextGroup(); processingRef.current = false }, 1000)
+      } else {
+        setTimeout(() => {
+          setGroup(prev => prev.map((n, i) => {
+            if (i === activeIdx + 1) return { ...n, status: 'active' as const }
+            return n
+          }))
+          setActiveIdx(i => i + 1)
+          processingRef.current = false
+        }, 1000)
+      }
     }
   }, [done, group, activeIdx, rounds, stopRounds, pool, groupSize])
 
