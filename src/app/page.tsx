@@ -51,6 +51,13 @@ const TOOLS = [
     cta: 'Browse →',
   },
   {
+    href: '/repertoire',
+    title: 'CM Repertoire',
+    desc: 'Browse the complete CM repertoire lists by level — Preparatory through Advanced. Search across all levels.',
+    badge: 'Pro',
+    cta: 'Browse →',
+  },
+  {
     href: '/rhythm',
     title: 'Rhythm Trainer',
     desc: 'Tap along to rhythm exercises in notation or grid view. Progressive library from beginner to advanced.',
