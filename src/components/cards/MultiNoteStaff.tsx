@@ -87,28 +87,6 @@ function drawNote(
     ledgers.push(<line key={'a'+p+i} x1={noteX-12} y1={y} x2={noteX+12} y2={y} stroke="#1A1A18" strokeWidth="1.2" />)
   }
 
-  const feedbackEl = (status === 'correct' || status === 'wrong') ? (
-    <g>
-      <circle cx={noteX} cy={feedbackY} r={11}
-        fill="none"
-        stroke={status === 'correct' ? '#4CAF50' : '#E53935'}
-        strokeWidth="1.5" />
-      {status === 'correct' ? (
-        <polyline
-          points={`${noteX - 5},${feedbackY} ${noteX - 1},${feedbackY + 4} ${noteX + 6},${feedbackY - 5}`}
-          fill="none" stroke="#4CAF50" strokeWidth="1.8"
-          strokeLinecap="round" strokeLinejoin="round" />
-      ) : (
-        <g>
-          <line x1={noteX - 5} y1={feedbackY - 5} x2={noteX + 5} y2={feedbackY + 5}
-            stroke="#E53935" strokeWidth="1.8" strokeLinecap="round" />
-          <line x1={noteX + 5} y1={feedbackY - 5} x2={noteX - 5} y2={feedbackY + 5}
-            stroke="#E53935" strokeWidth="1.8" strokeLinecap="round" />
-        </g>
-      )}
-    </g>
-  ) : null
-
   return (
     <g key={i}>
       {ledgers}
@@ -123,7 +101,6 @@ function drawNote(
         x1={stemUp ? noteX + 6 : noteX - 6} y1={noteY}
         x2={stemUp ? noteX + 6 : noteX - 6} y2={stemUp ? noteY - 38 : noteY + 38}
         stroke={color} strokeWidth="1.6" />
-      {feedbackEl}
     </g>
   )
 }
