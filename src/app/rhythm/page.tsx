@@ -729,7 +729,14 @@ export default function RhythmPage() {
 
   const handlePointerDown = useCallback(() => {
     initSampler()  // ensure sampler loaded on mobile gesture
-    if (!playing || countdown !== null) return
+    if (!playing) return
+    // Allow taps during last countdown beat
+    if (countdown !== null) {
+      const ctx0 = ctxRef.current
+      if (!ctx0) return
+      const timeToStart = startTimeRef.current - ctx0.currentTime
+      if (timeToStart > beatDuration) return
+    }
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
     if (soundEnabledRef.current) {
