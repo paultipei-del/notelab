@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
-import SiteHeader from '@/components/SiteHeader'
 import repertoireData from '@/lib/data/cm-repertoire-complete.json'
 
 const F = 'var(--font-jost), sans-serif'
@@ -98,8 +97,7 @@ export default function RepertoirePage() {
   if (!isPro) {
     return (
       <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-        <SiteHeader />
-        <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px', textAlign: 'center' }}>
+                <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Pro Feature</p>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '12px' }}>CM Repertoire Browser</h1>
           <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '32px', lineHeight: 1.7 }}>
@@ -116,7 +114,6 @@ export default function RepertoirePage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      <SiteHeader />
 
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px 80px' }}>
 
