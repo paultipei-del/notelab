@@ -497,7 +497,7 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (ctx.state === 'suspended') ctx.resume()
     initSampler()  // load piano on first gesture
-    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); setPlayhead(0)
+    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); setPlayhead(-0.3)
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -1033,7 +1033,7 @@ export default function RhythmPage() {
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
                       const beatInRow = playhead - rowStartBeat
-                      const x = beatInRow < 0 ? 56 + 14 : 56 + beatInRow * noteW + 14
+                      const x = 56 + Math.max(0, beatInRow) * noteW + 14
                       return (
                         <line
                           x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32}

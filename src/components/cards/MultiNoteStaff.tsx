@@ -116,7 +116,7 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
   const staffWidth = clefWidth + notes.length * noteSpacing + rightPad
   const W = staffLeft + staffWidth
   const H = clef === 'grand' ? bassTop + 8 * step + 60 : trebleTop + 8 * step + 60
-  const feedbackY = trebleTop - 24  // above staff
+  const feedbackY = trebleTop - 36  // above staff
 
   const noteXs = notes.map((_, i) => staffLeft + clefWidth + i * noteSpacing + 20)
 

@@ -131,10 +131,11 @@ function NoteIDExerciseInner() {
   }
 
   const handleAnswer = useCallback((answer: string) => {
-    if (processingRef.current || done || group.length === 0) return
+    if (done || group.length === 0) return
     const current = group[activeIdx]
-    if (!current || current.status !== 'active') return
+    if (!current) return
     if (wrongIndicesRef.current.has(activeIdx)) return  // locked after wrong answer
+    if (processingRef.current || current.status !== 'active') return
     // In multi-note mode, once a note is wrong it's locked
 
 
