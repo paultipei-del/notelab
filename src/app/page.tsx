@@ -130,7 +130,7 @@ export default function Home() {
     setUserDecks([])
   }
 
-  const freeDecks = DECKS.filter(d => d.tag === 'free' && !d.id.startsWith('sight-read'))
+  const freeDecks = DECKS.filter(d => d.tag === 'free' && !d.id.startsWith('sight-read') && d.id !== 'notes-treble' && d.id !== 'dynamics')
   const cmCount = DECKS.filter(d => d.tag === 'cm').length
   const cmUnlocked = hasPurchased(CM_BUNDLE_PRICE_ID) || hasSubscription()
 
@@ -222,7 +222,7 @@ export default function Home() {
 
           {/* Free decks grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
-            {freeDecks.filter(d => !d.id.startsWith('ear-') && !d.id.startsWith('symbols-')).map(deck => (
+            {/* Notation & Terms */}{freeDecks.filter(d => !d.id.startsWith('ear-') && !d.id.startsWith('symbols-')).map(deck => (
               <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
                 <div
                   style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s' }}
