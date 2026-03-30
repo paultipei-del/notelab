@@ -943,7 +943,7 @@ export default function RhythmPage() {
             <div style={{ position: 'relative' as const, marginBottom: '20px' }}>
             <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: isPortrait ? '16px 0' : '24px', overflow: 'hidden', position: 'relative' as const }}>
               {/* Portrait fixed playhead line */}
-              {isPortrait && view === 'notation' && (
+              {isPortrait && view === 'notation' && (playing || countdown !== null) && (
                 <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-1px)' }} />
               )}
               {/* PORTRAIT: single scrolling staff */}
@@ -1038,6 +1038,7 @@ export default function RhythmPage() {
                       if (playhead < rowStartBeat - 0.6 || playhead >= rowEndBeat) return null
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
                 const actualSvgW = svgWidth
+                      if (!playing && countdown === null) return null
                       const beatInRow = playhead - rowStartBeat
                       const x = beatInRow < 0 ? 56 + beatInRow * noteW + 14 : 56 + beatInRow * noteW + 14
                       return (
