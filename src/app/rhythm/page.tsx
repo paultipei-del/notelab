@@ -513,13 +513,7 @@ export default function RhythmPage() {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const countdownElapsed = ctx2.currentTime - countdownStart
       if (countdownElapsed < countdownBeats * beatDuration) {
-        const countBeat = Math.floor(countdownElapsed / beatDuration) + 1
-        setCountdown(countBeat)
-        // Show playhead approaching from last countdown beat
-        const timeToStart = startTimeRef.current - ctx2.currentTime
-        if (timeToStart < beatDuration) {
-          setPlayhead(-timeToStart / beatDuration)
-        }
+        setCountdown(Math.floor(countdownElapsed / beatDuration) + 1)
         rafRef.current = requestAnimationFrame(tick)
         return
       }
@@ -528,9 +522,7 @@ export default function RhythmPage() {
       // Start playhead slightly early so it arrives at first note on beat 0
       const beatFloat = elapsed / beatDuration
       // Show playhead from -0.5 beats so student can anticipate
-      if (elapsed > -beatDuration * 0.5) {
-        setPlayhead(Math.max(-0.5, beatFloat))
-      }
+      setPlayhead(beatFloat)
       if (beatFloat >= totalBeats) {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null

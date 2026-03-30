@@ -93,6 +93,7 @@ function NoteIDExerciseInner() {
   const [done, setDone] = useState(false)
   const [startTime] = useState(Date.now())
   const processingRef = useRef(false)
+  const wrongIndicesRef = useRef<Set<number>>(new Set())
 
   const stopRounds = parseInt(searchParams.get('stopValue') ?? '10')
 
@@ -112,6 +113,7 @@ function NoteIDExerciseInner() {
     const notes = buildGroup(pool, groupSize)
     setGroup(notes.map((note, i) => ({ note, status: i === 0 ? 'active' : 'pending' })))
     setActiveIdx(0)
+    wrongIndicesRef.current = new Set()
   }, [pool, groupSize])
 
   function nextGroup() {
@@ -125,12 +127,14 @@ function NoteIDExerciseInner() {
     setGroup(notes.map((note, i) => ({ note, status: i === 0 ? 'active' : 'pending' })))
     setActiveIdx(0)
     processingRef.current = false
+    wrongIndicesRef.current = new Set()
   }
 
   const handleAnswer = useCallback((answer: string) => {
     if (processingRef.current || done || group.length === 0) return
     const current = group[activeIdx]
     if (!current || current.status !== 'active') return
+    if (wrongIndicesRef.current.has(activeIdx)) return  // locked after wrong answer
     // In multi-note mode, once a note is wrong it's locked
 
 
@@ -138,6 +142,7 @@ function NoteIDExerciseInner() {
     const isCorrect = answersMatch(answer, targetPitch)
     setTotal(t => t + 1)
     if (isCorrect) setCorrect(c => c + 1)
+    if (!isCorrect && groupSize > 1) wrongIndicesRef.current.add(activeIdx)
 
     // Update group state
     setGroup(prev => prev.map((n, i) => {
