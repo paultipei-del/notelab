@@ -388,6 +388,7 @@ export default function RhythmPage() {
   const [playing, setPlaying] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
   const [tapReady, setTapReady] = useState(false)
+  const tapReadyRef = useRef(false)
   const [playhead, setPlayhead] = useState<number | null>(null)  // absolute beat position (float)
   const [taps, setTaps] = useState<number[]>([])
   const [tapDurations, setTapDurations] = useState<number[]>([])  // ms held per tap
@@ -500,6 +501,7 @@ export default function RhythmPage() {
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
     setTapReady(false)
+    tapReadyRef.current = false
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -522,6 +524,7 @@ export default function RhythmPage() {
         // Show playhead and enable tap during last beat
         if (timeToStart <= beatDuration) {
           setPlayhead(-timeToStart / beatDuration)
+          tapReadyRef.current = true
           setTapReady(true)
         }
         rafRef.current = requestAnimationFrame(tick)
@@ -552,6 +555,7 @@ export default function RhythmPage() {
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
     setTapReady(false)
+    tapReadyRef.current = false
     // Close audio context to cancel all scheduled clicks
     if (ctxRef.current) {
       ctxRef.current.close()
@@ -734,13 +738,7 @@ export default function RhythmPage() {
   const handlePointerDown = useCallback(() => {
     initSampler()  // ensure sampler loaded on mobile gesture
     if (!playing) return
-    // Allow taps during last countdown beat
-    if (countdown !== null) {
-      const ctx0 = ctxRef.current
-      if (!ctx0) return
-      const timeToStart = startTimeRef.current - ctx0.currentTime
-      if (timeToStart > beatDuration) return
-    }
+    if (countdown !== null && !tapReadyRef.current) return
     pointerDownTimeRef.current = performance.now()
     const ctx = ctxRef.current; if (!ctx) return
     if (soundEnabledRef.current) {
