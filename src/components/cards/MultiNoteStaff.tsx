@@ -190,7 +190,7 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
               <circle cx={nx} cy={indicatorY} r={10} fill="#E53935" />
               <text x={nx} y={indicatorY} fontSize="12" fontFamily="var(--font-jost), sans-serif"
                 fill="white" textAnchor="middle" dominantBaseline="central">✗</text>
-              <text x={nx} y={indicatorY + 22} fontSize="12" fontFamily="var(--font-cormorant), serif"
+              <text x={nx} y={trebleTop + 8 * step + 28} fontSize="18" fontFamily="var(--font-cormorant), serif"
                 fill="#E53935" textAnchor="middle" dominantBaseline="central">
                 {ns.note.replace(/\d+$/, '')}
               </text>
