@@ -387,6 +387,7 @@ export default function RhythmPage() {
   const [bpm, setBpm] = useState(72)
   const [playing, setPlaying] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
+  const [tapReady, setTapReady] = useState(false)
   const [playhead, setPlayhead] = useState<number | null>(null)  // absolute beat position (float)
   const [taps, setTaps] = useState<number[]>([])
   const [tapDurations, setTapDurations] = useState<number[]>([])  // ms held per tap
@@ -498,6 +499,7 @@ export default function RhythmPage() {
     if (ctx.state === 'suspended') ctx.resume()
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
+    setTapReady(false)
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -517,9 +519,10 @@ export default function RhythmPage() {
         setCountdown(countBeat)
         // Start playhead moving during last countdown beat
         const timeToStart = startTimeRef.current - ctx2.currentTime
-        // Only show playhead during last beat (within 1 beat of start)
+        // Show playhead and enable tap during last beat
         if (timeToStart <= beatDuration) {
           setPlayhead(-timeToStart / beatDuration)
+          setTapReady(true)
         }
         rafRef.current = requestAnimationFrame(tick)
         return
@@ -548,6 +551,7 @@ export default function RhythmPage() {
 
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
+    setTapReady(false)
     // Close audio context to cancel all scheduled clicks
     if (ctxRef.current) {
       ctxRef.current.close()
@@ -1093,7 +1097,7 @@ export default function RhythmPage() {
               onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
               onContextMenu={e => e.preventDefault()}
               className="rhythm-tap-btn"
-              disabled={!playing || countdown !== null}
+              disabled={!playing || (countdown !== null && !tapReady)}
               style={{
                 width: '100%', height: '72px', borderRadius: '16px',
                 border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
