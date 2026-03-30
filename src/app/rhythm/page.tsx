@@ -516,11 +516,10 @@ export default function RhythmPage() {
         const countBeat = Math.floor(countdownElapsed / beatDuration) + 1
         setCountdown(countBeat)
         // Start playhead moving during last countdown beat
-        if (countBeat <= 1) {
-          const timeToStart = startTimeRef.current - ctx2.currentTime
-          const ph = -timeToStart / beatDuration
-          console.log('setting playhead during countdown:', ph, 'countBeat:', countBeat)
-          setPlayhead(ph)
+        const timeToStart = startTimeRef.current - ctx2.currentTime
+        // Only show playhead during last beat (within 1 beat of start)
+        if (timeToStart <= beatDuration) {
+          setPlayhead(-timeToStart / beatDuration)
         }
         rafRef.current = requestAnimationFrame(tick)
         return
