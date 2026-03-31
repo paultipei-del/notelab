@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 import repertoireData from '@/lib/data/cm-repertoire-complete.json'
+import dynamic from 'next/dynamic'
+const MagrathBrowser = dynamic(() => import('./magrath/page'), { ssr: false })
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -45,6 +47,7 @@ export default function RepertoirePage() {
   const { hasSubscription, hasPurchased } = usePurchases(user?.id ?? null)
   const isPro = hasSubscription() || hasPurchased('pro')
 
+  const [activeTab, setActiveTab] = useState<'cm' | 'magrath'>('cm')
   const [selectedLevel, setSelectedLevel] = useState<string>('level_1')
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [search, setSearch] = useState('')
@@ -124,6 +127,18 @@ export default function RepertoirePage() {
           <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Browse or search the complete CM repertoire lists — Preparatory through Advanced.</p>
         </div>
 
+        {/* Tab switcher */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '28px' }}>
+          {(['cm', 'magrath'] as const).map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              style={{ padding: '8px 20px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#D3D1C7'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#888780', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              {tab === 'cm' ? 'CM Syllabus' : 'Magrath Guide'}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'magrath' ? <MagrathBrowser /> : (
+        <>
         {/* Search */}
         <div style={{ position: 'relative' as const, marginBottom: '32px' }}>
           <input
@@ -254,7 +269,8 @@ export default function RepertoirePage() {
             )}
           </div>
         )}
-      </div>
+      </>)}
+    </div>
     </div>
   )
 }
