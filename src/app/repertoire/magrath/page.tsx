@@ -27,6 +27,11 @@ interface MagrathData {
   periods: MagrathPeriod[]
 }
 
+function imslpUrl(composer: string, title: string) {
+  const q = encodeURIComponent(`${title} ${composer}`.trim())
+  return `https://imslp.org/wiki/Special:Search?search=${q}`
+}
+
 export default function MagrathBrowser() {
   const [data, setData] = useState<MagrathData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -105,7 +110,7 @@ export default function MagrathBrowser() {
             <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
-                  {['Period', 'Composer', 'Title', 'Level'].map(h => (
+                  {['Period', 'Composer', 'Title', 'Level', ''].map(h => (
                     <th key={h} style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', textAlign: 'left' as const }}>{h}</th>
                   ))}
                 </tr>
@@ -122,6 +127,12 @@ export default function MagrathBrowser() {
                         {r.entry.title || r.entry.description.slice(0, 60) + '…'}
                       </td>
                       <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>{r.entry.level}</td>
+                      <td style={{ padding: '10px 16px', textAlign: 'center' as const }}>
+                        <a href={imslpUrl(r.entry.composer, r.entry.title)} target="_blank" rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          style={{ color: '#888780', fontSize: '14px', textDecoration: 'none', opacity: 0.6 }}
+                          title="Search on IMSLP">↗</a>
+                      </td>
                     </tr>
                     {expandedIdx === i && (
                       <tr key={`exp-${i}`}>
@@ -187,6 +198,7 @@ export default function MagrathBrowser() {
                     </th>
                   ))}
                   <th style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', textAlign: 'left' as const }}>Description</th>
+                  <th style={{ padding: '12px 16px', width: '40px' }}></th>
                 </tr>
               </thead>
               <tbody>
@@ -203,6 +215,12 @@ export default function MagrathBrowser() {
                       </td>
                       <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', maxWidth: '320px' }}>
                         {expandedIdx === i ? '' : entry.description.slice(0, 80) + (entry.description.length > 80 ? '…' : '')}
+                      </td>
+                      <td style={{ padding: '10px 16px', textAlign: 'center' as const }}>
+                        <a href={imslpUrl(entry.composer, entry.title)} target="_blank" rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          style={{ color: '#888780', fontSize: '14px', textDecoration: 'none', opacity: 0.6 }}
+                          title="Search on IMSLP">↗</a>
                       </td>
                     </tr>
                     {expandedIdx === i && (

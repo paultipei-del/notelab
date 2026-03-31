@@ -36,6 +36,11 @@ interface CMLevel {
   categories: CMCategory[]
 }
 
+function imslpUrl(composer: string, title: string) {
+  const q = encodeURIComponent(`${title} ${composer}`.trim())
+  return `https://imslp.org/wiki/Special:Search?search=${q}`
+}
+
 const data = repertoireData as { meta: { source: string; program: string; notes: string }; levels: CMLevel[] }
 const LEVELS = data.levels
 
@@ -244,6 +249,7 @@ export default function RepertoirePage() {
                               {col} {sortCol === col ? (sortDir === 'asc' ? '↑' : '↓') : ''}
                             </th>
                           ))}
+                          <th style={{ padding: '12px 16px', width: '40px' }}></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -259,6 +265,11 @@ export default function RepertoirePage() {
                               )}
                             </td>
                             <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', whiteSpace: 'nowrap' as const }}>{entry.publisher}</td>
+                            <td style={{ padding: '10px 16px', textAlign: 'center' as const }}>
+                              <a href={imslpUrl(entry.composer, entry.title)} target="_blank" rel="noopener noreferrer"
+                                style={{ color: '#888780', fontSize: '14px', textDecoration: 'none', opacity: 0.6 }}
+                                title="Search on IMSLP">↗</a>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
