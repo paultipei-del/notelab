@@ -29,7 +29,7 @@ interface MagrathData {
 
 function imslpUrl(composer: string, title: string) {
   const q = encodeURIComponent(`${title} ${composer}`.trim())
-  return `https://imslp.org/wiki/Special:Search?search=${q}`
+  return `https://imslp.org/index.php?search=${q}&title=Special%3ASearch`
 }
 
 export default function MagrathBrowser() {
