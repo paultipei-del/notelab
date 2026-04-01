@@ -141,6 +141,7 @@ export class SADPitchDetector {
   // Sliding window of recent detections
   private windowSize = 8
   private detectionWindow: number[] = []  // last N midi detections
+  private freshReset = true  // bypass octave limiter after reset
 
   private levelThreshold = 0.008
 
@@ -207,17 +208,18 @@ export class SADPitchDetector {
     const midi = Math.round(69 + 12 * Math.log2(hz / 440))
     if (midi < 21 || midi > 108) { this.stableCount = 0; return null }
 
-    // Octave rate limiter
+    // Octave rate limiter — disabled after reset to allow large card jumps
     const now = performance.now()
-    if (this.lastMidi >= 0) {
+    if (this.lastMidi >= 0 && !this.freshReset) {
       const octaveJump = Math.abs(midi - this.lastMidi) / 12
       const elapsed = (now - this.lastMidiTime) / 1000
       if (octaveJump >= 1 && elapsed < 1 / this.maxOctaveRate) {
-        // Too fast an octave jump — reject
         this.stableCount = 0
         return null
       }
     }
+    // Clear fresh reset flag once we get a stable detection
+    if (this.freshReset) this.freshReset = false
 
     // Sliding window stability check
     this.detectionWindow.push(midi)
@@ -245,6 +247,7 @@ export class SADPitchDetector {
     this.lastMidiTime = 0
     this.stableCount = 0
     this.detectionWindow = []
+    this.freshReset = true
     this.lpFilter.reset()
     this.hpFilter.reset()
   }
