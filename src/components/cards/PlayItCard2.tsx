@@ -55,7 +55,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   useEffect(() => {
     doneRef.current = false
     cardHadWrong2 = false
-    cardReadyAt2 = Date.now() + 300
+    cardReadyAt2 = Date.now() + 600
     setStatus('starting')
     setDetected(null)
 
@@ -82,11 +82,27 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           sadDetector = new SADPitchDetector(sadCtx.sampleRate)
         }
 
-        // Update detector target hint
-        // Reset detector — clears pitch memory from previous card
+        // Hard flush — reset detector AND wait for dead window
         if (sadDetector) sadDetector.reset()
+        // Flush the analyser buffer by reading it several times
+        if (sadBuf && sadAnalyser) {
+          for (let i = 0; i < 8; i++) {
+            sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
+          }
+        }
 
         setStatus('listening')
+
+        // Wait for dead window before starting detection
+        await new Promise(resolve => setTimeout(resolve, 500))
+        if (doneRef.current) return
+        // Flush again after wait
+        if (sadDetector) sadDetector.reset()
+        if (sadBuf && sadAnalyser) {
+          for (let i = 0; i < 8; i++) {
+            sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
+          }
+        }
 
         function tick() {
           if (!sadAnalyser || !sadBuf || !sadDetector || doneRef.current) return
