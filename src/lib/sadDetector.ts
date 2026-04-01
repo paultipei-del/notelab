@@ -109,6 +109,13 @@ function rmsLevel(buf: Float32Array): number {
 }
 
 // ── Main SAD Pitch Detector ───────────────────────────────────────────────
+export interface SADConfig {
+  windowSize?: number
+  stableThreshold?: number
+  levelThreshold?: number
+  crossover?: number
+}
+
 export interface SADResult {
   freq: number
   midi: number
@@ -124,22 +131,26 @@ export class SADPitchDetector {
   private hiBuf: Float32Array
   private bufPos = 0
   private readonly bufSize: number
-  private readonly crossover = 400  // Hz split point (~G4)
+  private crossover = 400  // Hz split point (~G4)
 
   private lastMidi = -1
   private lastMidiTime = 0
   private readonly maxOctaveRate = 10  // max octave jumps per second
   private stableCount = 0
-  private readonly stableThreshold = 6  // frames needed to confirm
+  private stableThreshold = 6  // frames needed to confirm
   // Sliding window of recent detections
-  private readonly windowSize = 8
+  private windowSize = 8
   private detectionWindow: number[] = []  // last N midi detections
 
-  readonly levelThreshold = 0.008  // raised to reduce noise false positives
+  private levelThreshold = 0.008
 
-  constructor(sampleRate: number) {
+  constructor(sampleRate: number, config?: SADConfig) {
     this.sampleRate = sampleRate
-    this.bufSize = Math.ceil(sampleRate / 27.5) * 3  // 3x A0 period for safe SAD window
+    if (config?.crossover != null) this.crossover = config.crossover
+    if (config?.levelThreshold != null) this.levelThreshold = config.levelThreshold
+    if (config?.windowSize != null) this.windowSize = config.windowSize
+    if (config?.stableThreshold != null) this.stableThreshold = config.stableThreshold
+    this.bufSize = Math.ceil(sampleRate / 27.5) * 3
     this.loBuf = new Float32Array(this.bufSize)
     this.hiBuf = new Float32Array(this.bufSize)
     this.lpFilter = butterworthLowpass(this.crossover, sampleRate)
