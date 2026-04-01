@@ -130,9 +130,12 @@ export class SADPitchDetector {
   private lastMidiTime = 0
   private readonly maxOctaveRate = 10  // max octave jumps per second
   private stableCount = 0
-  private readonly stableThreshold = 4  // frames needed to confirm
+  private readonly stableThreshold = 6  // frames needed to confirm
+  // Sliding window of recent detections
+  private readonly windowSize = 8
+  private detectionWindow: number[] = []  // last N midi detections
 
-  readonly levelThreshold = 0.003
+  readonly levelThreshold = 0.008  // raised to reduce noise false positives
 
   constructor(sampleRate: number) {
     this.sampleRate = sampleRate
@@ -205,16 +208,19 @@ export class SADPitchDetector {
       }
     }
 
-    // Stability check — require consistent detection across frames
-    if (this.lastMidi === midi) {
-      this.stableCount++
-    } else {
-      this.stableCount = 1
-      this.lastMidi = midi
+    // Sliding window stability check
+    this.detectionWindow.push(midi)
+    if (this.detectionWindow.length > this.windowSize) {
+      this.detectionWindow.shift()
     }
-    this.lastMidiTime = now
 
-    const stable = this.stableCount >= this.stableThreshold
+    // Count how many of the last N frames agree on this midi note
+    const agreementCount = this.detectionWindow.filter(m => m === midi).length
+    const stable = agreementCount >= this.stableThreshold &&
+                   this.detectionWindow.length >= this.windowSize
+
+    this.lastMidi = midi
+    this.lastMidiTime = now
     const name = midiToName(midi)
 
     return { freq: hz, midi, stable, name }
@@ -227,6 +233,7 @@ export class SADPitchDetector {
     this.lastMidi = -1
     this.lastMidiTime = 0
     this.stableCount = 0
+    this.detectionWindow = []
     this.lpFilter.reset()
     this.hpFilter.reset()
   }
