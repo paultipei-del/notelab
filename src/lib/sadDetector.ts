@@ -124,13 +124,13 @@ export class SADPitchDetector {
   private hiBuf: Float32Array
   private bufPos = 0
   private readonly bufSize: number
-  private readonly crossover = 300  // Hz split point
+  private readonly crossover = 400  // Hz split point (~G4)
 
   private lastMidi = -1
   private lastMidiTime = 0
   private readonly maxOctaveRate = 10  // max octave jumps per second
   private stableCount = 0
-  private readonly stableThreshold = 3  // frames needed to confirm
+  private readonly stableThreshold = 4  // frames needed to confirm
 
   readonly levelThreshold = 0.003
 
@@ -225,6 +225,7 @@ export class SADPitchDetector {
     this.hiBuf.fill(0)
     this.bufPos = 0
     this.lastMidi = -1
+    this.lastMidiTime = 0
     this.stableCount = 0
     this.lpFilter.reset()
     this.hpFilter.reset()
