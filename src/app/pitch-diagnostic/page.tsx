@@ -135,6 +135,9 @@ export default function PitchDiagnostic() {
     setPhase('dead')
     setLiveDetected('')
     flushDetector()
+    // Restart RAF loop for this note
+    cancelAnimationFrame(rafRef.current)
+    rafRef.current = requestAnimationFrame(tick)
   }
 
   function finishNote(detected: string, latencyMs: number, cents: number, rms: number) {
@@ -154,7 +157,8 @@ export default function PitchDiagnostic() {
     if (nextIdx >= seqRef.current.length) {
       finishRun()
     } else {
-      startNote(nextIdx)
+      // Signal tick to advance — don't call startNote directly inside tick
+      setTimeout(() => startNote(nextIdx), 0)
     }
   }
 
@@ -212,6 +216,7 @@ export default function PitchDiagnostic() {
           if (firstCorrectRef.current === 0) firstCorrectRef.current = now
           const latency = now - deadEndRef.current
           finishNote(result.name, Math.round(latency), cents, Math.round(rms * 10000) / 10000)
+          // Don't schedule next frame — startNote will restart via setTimeout
           return
         } else {
           // Wrong note during listening — bleed
@@ -237,7 +242,6 @@ export default function PitchDiagnostic() {
     await initMic()
     seqRef.current = SEQUENCES[selectedSeq]
     startNote(0)
-    rafRef.current = requestAnimationFrame(tick)
   }
 
   function abort() {
