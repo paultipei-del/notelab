@@ -101,17 +101,9 @@ function midiToNote(midi: number, preferFlats: boolean): { name: string, octave:
 }
 
 function noteToMidi(name: string, octave: number): number {
-  // Handle double sharps/flats and enharmonics
-  const m = name.match(/^([A-G])(##|bb|#|b)?$/)
-  if (!m) return -1
-  const nat = m[1], acc = m[2] ?? ''
-  const naturalPc: Record<string,number> = { C:0,D:2,E:4,F:5,G:7,A:9,B:11 }
-  let pc = naturalPc[nat]
-  if (acc === '#') pc += 1
-  else if (acc === '##') pc += 2
-  else if (acc === 'b') pc -= 1
-  else if (acc === 'bb') pc -= 2
-  pc = ((pc % 12) + 12) % 12
+  const pc = NOTE_NAMES.indexOf(name) !== -1
+    ? NOTE_NAMES.indexOf(name)
+    : FLAT_NAMES.indexOf(name)
   return (octave + 1) * 12 + pc
 }
 
@@ -342,7 +334,6 @@ export default function ScaleBuilder() {
   const router = useRouter()
   const [scaleType, setScaleType] = useState<ScaleType>('major')
   const [selectedRoot, setSelectedRoot] = useState<string | null>(null)
-  const [accModifier, setAccModifier] = useState<'natural' | 'sharp' | 'flat' | 'double_sharp' | 'double_flat'>('natural')
   const [showHint, setShowHint] = useState(false)
   const [phase, setPhase] = useState<Phase>('select_root')
   const [builtNotes, setBuiltNotes] = useState<BuiltNote[]>([])
@@ -524,64 +515,28 @@ if (newNotes.length === expectedLength) {
         {/* Root note picker */}
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', marginBottom: '24px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Starting Note</p>
-          {/* Modifier row */}
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' as const }}>
-            {([
-              ['natural', '♮'],
-              ['sharp', '♯'],
-              ['flat', '♭'],
-              ['double_sharp', '𝄪'],
-              ['double_flat', '𝄫'],
-            ] as const).map(([mod, label]) => (
-              <button key={mod} onClick={() => setAccModifier(mod)} style={{
-                padding: '4px 12px', borderRadius: '8px',
-                border: '1px solid ' + (accModifier === mod ? '#BA7517' : '#D3D1C7'),
-                background: accModifier === mod ? '#FAEEDA' : 'white',
-                color: accModifier === mod ? '#BA7517' : '#888780',
-                fontFamily: 'Bravura, serif', fontSize: '18px', cursor: 'pointer',
-                minWidth: '36px', textAlign: 'center' as const,
-              }}>{label}</button>
-            ))}
-            <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', color: '#D3D1C7', alignSelf: 'center', marginLeft: '4px' }}>
-              {accModifier === 'natural' ? 'natural' : accModifier === 'sharp' ? 'add sharp' : accModifier === 'flat' ? 'add flat' : accModifier === 'double_sharp' ? 'double sharp' : 'double flat'}
-            </span>
-          </div>
-          {/* Note buttons — 7 naturals only, modifier applied on click */}
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
-            {['C','D','E','F','G','A','B'].map(natural => {
-              const note = accModifier === 'natural' ? natural
-                : accModifier === 'sharp' ? natural + '#'
-                : accModifier === 'flat' ? natural + 'b'
-                : accModifier === 'double_sharp' ? natural + '##'
-                : natural + 'bb'
-              const isSelected = selectedRoot === note
-              return (
-                <button key={natural} onClick={() => {
-                  setSelectedRoot(note)
-                  const midi = noteToMidi(note, 4)
-                  if (midi < 0) return
-                  const builtNote = { name: note, octave: 4, midiNum: midi }
-                  setBuiltNotes([builtNote])
-                  setPhase('play_note')
-                  setError(null)
-                  setFlash(null)
-                }} style={{
-                  padding: '6px 14px', borderRadius: '8px',
-                  border: '1px solid ' + (isSelected ? '#1A1A18' : '#D3D1C7'),
-                  background: isSelected ? '#1A1A18' : 'white',
-                  color: isSelected ? 'white' : '#1A1A18',
-                  fontFamily: SERIF, fontSize: '18px', fontWeight: 300,
-                  cursor: 'pointer', minWidth: '42px', textAlign: 'center' as const,
-                }}>
-                  {accModifier === 'natural' ? natural
-                    : accModifier === 'sharp' ? <>{natural}<span style={{ fontFamily: 'Bravura, serif', fontSize: '16px' }}>♯</span></>
-                    : accModifier === 'flat' ? <>{natural}<span style={{ fontFamily: 'Bravura, serif', fontSize: '16px' }}>♭</span></>
-                    : accModifier === 'double_sharp' ? <>{natural}<span style={{ fontFamily: 'Bravura, serif', fontSize: '16px' }}>𝄪</span></>
-                    : <>{natural}<span style={{ fontFamily: 'Bravura, serif', fontSize: '16px' }}>𝄫</span></>
-                  }
-                </button>
-              )
-            })}
+            {['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B'].map(note => (
+              <button key={note} onClick={() => {
+                setSelectedRoot(note)
+                // Find this note on the piano and set it as root
+                const midi = noteToMidi(note, 4)
+                const builtNote = { name: note, octave: 4, midiNum: midi }
+                setBuiltNotes([builtNote])
+                setPhase('play_note')
+                setError(null)
+                setFlash(null)
+              }} style={{
+                padding: '6px 12px', borderRadius: '8px',
+                border: '1px solid ' + (selectedRoot === note ? '#1A1A18' : '#D3D1C7'),
+                background: selectedRoot === note ? '#1A1A18' : 'white',
+                color: selectedRoot === note ? 'white' : note.includes('b') ? '#888780' : '#1A1A18',
+                fontFamily: SERIF, fontSize: '16px', fontWeight: 300,
+                cursor: 'pointer', minWidth: '36px', textAlign: 'center' as const,
+              }}>
+                {note}
+              </button>
+            ))}
           </div>
         </div>
 
