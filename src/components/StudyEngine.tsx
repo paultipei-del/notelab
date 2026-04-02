@@ -124,7 +124,7 @@ return (
             <p style={{ fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '40px' }}>
               {(isSightReadDeck
-              ? [{ num: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '—', label: 'Score' }, { num: elapsedDisplay, label: 'Time' }, { num: prevBest > 0 ? prevBest.toFixed(2) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' }]
+              ? [{ num: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '—', label: 'Score' }, { num: `${stats.correct}/${stats.total}`, label: 'Notes' }, { num: elapsedDisplay, label: 'Time' }, { num: prevBest > 0 ? prevBest.toFixed(2) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' }]
               : [{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }]
             ).map(({ num, label }) => (
                 <div key={label} style={{ textAlign: 'center' }}>
