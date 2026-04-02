@@ -157,6 +157,7 @@ export class SADPitchDetector {
   private windowSize = 10
   private detectionWindow: number[] = []  // last N midi detections
   private freshReset = true  // bypass octave limiter after reset
+  private warmupFrames = 0  // ignore detections during warmup
 
   private levelThreshold = 0.008
 
@@ -174,6 +175,11 @@ export class SADPitchDetector {
   }
 
   update(input: Float32Array): SADResult | null {
+    // Warmup period — discard early frames after reset
+    if (this.warmupFrames > 0) {
+      this.warmupFrames--
+      return null
+    }
     // Check level gate
     if (rmsLevel(input) < this.levelThreshold) {
       this.stableCount = 0
@@ -263,6 +269,7 @@ export class SADPitchDetector {
     this.stableCount = 0
     this.detectionWindow = []
     this.freshReset = true
+    this.warmupFrames = 15  // skip first 15 frames after reset
     this.lpFilter.reset()
     this.hpFilter.reset()
   }
