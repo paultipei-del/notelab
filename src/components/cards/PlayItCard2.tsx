@@ -113,15 +113,17 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   function tick() {
     if (!sadAnalyser || !sadBuf || !sadDetector || doneRef.current) return
     sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
-    const result = sadDetector.update(sadBuf)
     const now = Date.now()
     const timeOnCard = now - cardStartTime
 
-    // ── Time gate: MinTimeOnCurrentNote = 500ms ────────────────────────
+    // Dead window: drain analyser but don't feed detector
+    // Matches Note Rush: fxAudio.isPlaying check + MinTimeOnCurrentNote
     if (timeOnCard < MIN_TIME_ON_CARD_MS) {
       rafHandle = requestAnimationFrame(tick)
       return
     }
+
+    const result = sadDetector.update(sadBuf)
 
     if (result?.stable) {
       setDetected(result.name)
