@@ -313,6 +313,10 @@ export class SADPitchDetector {
     }
     return loHz > 0 ? loHz : hiHz > 0 ? hiHz : -1
   }
+  // ClearDetectionBuffer: zero votes only, keep audio pipeline running
+  clearVotes() {
+    this.detectionWindow = []
+  }
 
   reset() {
     this.loA.fill(0); this.hiA.fill(0)

@@ -7,17 +7,22 @@ import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
-const WRONG_FRAMES_REQUIRED = 20
-const WRONG_COOLDOWN_MS = 1000
-const WRONG_SEMITONE_RANGE = 25
-const DEAD_WINDOW_MS = 800
+// ── Note Rush confirmed constants ─────────────────────────────────────────
+const MIN_TIME_ON_CARD_MS = 500    // MinTimeOnCurrentNote = 0.5s
+const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
+const WRONG_COOLDOWN_MS = 1000     // 1s between wrong calls
+const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
 
+// ── Shared audio pipeline — never destroyed between cards ─────────────────
 let sadStream: MediaStream | null = null
 let sadCtx: AudioContext | null = null
 let sadAnalyser: AnalyserNode | null = null
 let sadDetector: SADPitchDetector | null = null
 let sadBuf: Float32Array | null = null
+let rafHandle = 0
 
+// ── Per-card state ────────────────────────────────────────────────────────
+let cardStartTime = 0
 let cardHadWrong = false
 let wrongFrameCount = 0
 let lastWrongTime = 0
@@ -55,22 +60,20 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const [detected, setDetected] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const doneRef = useRef(false)
-  const rafRef = useRef(0)
-  const acceptingRef = useRef(false)  // true only after dead window
-
-  const targetNote = card.note ?? ''
-  const stopLoop = useCallback(() => cancelAnimationFrame(rafRef.current), [])
+  const targetNoteRef = useRef(card.note ?? '')
 
   useEffect(() => {
+    targetNoteRef.current = card.note ?? ''
     doneRef.current = false
-    acceptingRef.current = false
     cardHadWrong = false
     wrongFrameCount = 0
+    cardStartTime = Date.now()
     setStatus('starting')
     setDetected(null)
 
     async function init() {
       try {
+        // ── Init audio pipeline once, keep it running ─────────────────
         if (!sadStream || !sadStream.active || !sadStream.getTracks().every(t => t.readyState === 'live')) {
           sadStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
           sadCtx = null; sadAnalyser = null; sadDetector = null
@@ -87,76 +90,15 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           sadDetector = new SADPitchDetector(sadCtx.sampleRate)
         }
 
-        // Reset detector immediately
-        sadDetector!.reset()
+        // ── ClearDetectionBuffer: zero votes only, keep audio running ─
+        // This is exactly what Note Rush does in SelectNextNote()
+        sadDetector!.clearVotes()
+        cardStartTime = Date.now()
         setStatus('listening')
 
-        // Schedule the moment we start accepting detections
-        const acceptTimer = setTimeout(() => {
-          if (doneRef.current) return
-          // Reset detector again right at the accept boundary —
-          // this clears any votes accumulated during the dead window
-          sadDetector!.reset()
-          acceptingRef.current = true
-        }, DEAD_WINDOW_MS)
-
-        function tick() {
-          if (!sadAnalyser || !sadBuf || !sadDetector || doneRef.current) return
-          sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
-
-          // Always run detector to keep buffers warm and filters settled
-          const result = sadDetector.update(sadBuf)
-
-          // But only act on results after dead window
-          if (!acceptingRef.current) {
-            rafRef.current = requestAnimationFrame(tick)
-            return
-          }
-
-          if (result?.stable) {
-            setDetected(result.name)
-
-            if (pitchMatch(result.name, targetNote)) {
-              if (doneRef.current) return
-              doneRef.current = true
-              prevMidi = result.midi
-              setStatus('correct')
-              stopLoop()
-              clearTimeout(acceptTimer)
-              setTimeout(() => onCorrect(!cardHadWrong), 200)
-              return
-            } else {
-              wrongFrameCount++
-              const now = Date.now()
-              const detMidi = result.midi
-              const tgtMidi = noteToMidi(targetNote)
-              const semDist = Math.abs(detMidi - tgtMidi)
-              const isOctaveOfPrev = prevMidi >= 0 &&
-                (detMidi === prevMidi + 12 || detMidi === prevMidi - 12)
-              const cooldownOk = now - lastWrongTime > WRONG_COOLDOWN_MS
-
-              if (
-                wrongFrameCount >= WRONG_FRAMES_REQUIRED &&
-                semDist <= WRONG_SEMITONE_RANGE &&
-                !isOctaveOfPrev &&
-                cooldownOk
-              ) {
-                setStatus('wrong')
-                cardHadWrong = true
-                lastWrongTime = now
-                wrongFrameCount = 0
-                onWrong()
-              }
-            }
-          } else {
-            wrongFrameCount = 0
-          }
-
-          rafRef.current = requestAnimationFrame(tick)
-        }
-
-        tick()
-        return () => clearTimeout(acceptTimer)
+        // Cancel any previous RAF loop before starting new one
+        cancelAnimationFrame(rafHandle)
+        rafHandle = requestAnimationFrame(tick)
 
       } catch(e: any) {
         setError('Mic access denied.')
@@ -164,10 +106,62 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
       }
     }
 
-    stopLoop()
     init()
-    return () => stopLoop()
+    return () => { doneRef.current = true }
   }, [card.id])
+
+  function tick() {
+    if (!sadAnalyser || !sadBuf || !sadDetector || doneRef.current) return
+    sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
+    const result = sadDetector.update(sadBuf)
+    const now = Date.now()
+    const timeOnCard = now - cardStartTime
+
+    // ── Time gate: MinTimeOnCurrentNote = 500ms ────────────────────────
+    if (timeOnCard < MIN_TIME_ON_CARD_MS) {
+      rafHandle = requestAnimationFrame(tick)
+      return
+    }
+
+    if (result?.stable) {
+      setDetected(result.name)
+      const target = targetNoteRef.current
+
+      if (pitchMatch(result.name, target)) {
+        if (doneRef.current) return
+        doneRef.current = true
+        prevMidi = result.midi
+        setStatus('correct')
+        setTimeout(() => onCorrect(!cardHadWrong), 200)
+        return
+      } else {
+        wrongFrameCount++
+        const detMidi = result.midi
+        const tgtMidi = noteToMidi(target)
+        const semDist = Math.abs(detMidi - tgtMidi)
+        const isOctaveOfPrev = prevMidi >= 0 &&
+          (detMidi === prevMidi + 12 || detMidi === prevMidi - 12)
+        const cooldownOk = now - lastWrongTime > WRONG_COOLDOWN_MS
+
+        if (
+          wrongFrameCount >= WRONG_FRAMES_REQUIRED &&
+          semDist <= WRONG_SEMITONE_RANGE &&
+          !isOctaveOfPrev &&
+          cooldownOk
+        ) {
+          setStatus('wrong')
+          cardHadWrong = true
+          lastWrongTime = now
+          wrongFrameCount = 0
+          onWrong()
+        }
+      }
+    } else {
+      wrongFrameCount = 0
+    }
+
+    rafHandle = requestAnimationFrame(tick)
+  }
 
   const bgColor = status === 'correct' ? '#EAF3DE' : status === 'wrong' ? '#FCEBEB' : 'white'
   const borderColor = status === 'correct' ? '#7EC86E' : status === 'wrong' ? '#F09595' : '#D3D1C7'
@@ -186,7 +180,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
       </div>
       {detected && status !== 'correct' && (
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: status === 'wrong' ? '#E53935' : '#888780' }}>
-          {status === 'wrong' ? `Heard: ${detected} — try ${targetNote}` : `Heard: ${detected}`}
+          {status === 'wrong' ? `Heard: ${detected} — try ${targetNoteRef.current}` : `Heard: ${detected}`}
         </p>
       )}
       {error && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', color: '#E53935' }}>{error}</p>}
