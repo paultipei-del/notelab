@@ -27,9 +27,12 @@ function pitchMatch(a: string, b: string) {
 
 const SEQUENCES: Record<string, string[]> = {
   Chromatic: ['C4','C#4','D4','D#4','E4','F4','F#4','G4','G#4','A4','A#4','B4','C5'],
+  'Chromatic 3': ['C3','C#3','D3','D#3','E3','F3','F#3','G3','G#3','A3','A#3','B3','C4'],
   Fifths:    ['C4','G4','D5','A4','E5','B4','F#4','C#5','G#4','D#5','A#4','F5','C5'],
+  'Fifths 3': ['C3','G3','D3','A3','E3','B3','F#3','C#3','G#3','D#3','A#3','F3','C4'],
   Octaves:   ['C3','C4','C5','G3','G4','G5','A3','A4','A5'],
   Wide:      ['C4','C6','G2','B5','A3','D#5','F2','E6','C4'],
+  'Mixed 3-4': ['C3','C4','G3','G4','E3','E4','A3','A4','D3','D4','B3','B4'],
 }
 
 interface NoteResult {
