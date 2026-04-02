@@ -76,6 +76,13 @@ export default function Home() {
 
   const { user, loading } = useAuth()
   const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
+
+  // Redirect logged-out users to landing page
+  useEffect(() => {
+    if (!loading && !user) {
+      window.location.href = '/landing'
+    }
+  }, [loading, user])
   const [userDecks, setUserDecks] = useState<Deck[]>([])
   const [decksLoading, setDecksLoading] = useState(true)
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null)

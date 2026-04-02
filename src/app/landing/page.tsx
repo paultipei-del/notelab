@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import AuthModal from '@/components/AuthModal'
+import { useAuth } from '@/hooks/useAuth'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -18,6 +18,11 @@ export default function LandingPage() {
   const [showAuth, setShowAuth] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [activeNote, setActiveNote] = useState(0)
+  const { user, loading } = useAuth()
+
+  useEffect(() => {
+    if (!loading && user) window.location.href = '/'
+  }, [loading, user])
 
   useEffect(() => {
     setMounted(true)
