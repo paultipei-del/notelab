@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Deck, StudyMode } from '@/lib/types'
 import { useStudySession } from '@/hooks/useStudySession'
 import FlipCard from '@/components/cards/FlipCard'
@@ -74,9 +74,21 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
 
   // Best time tracking for sight-read decks
   const bestTimeKey = `notelab-best-time-${deck.id}`
-  const prevBest = typeof window !== 'undefined' ? parseFloat(localStorage.getItem(bestTimeKey) ?? '0') : 0
+  const [bestTime, setBestTime] = useState<number>(() =>
+    typeof window !== 'undefined' ? parseFloat(localStorage.getItem(`notelab-best-time-${deck.id}`) ?? '0') : 0
+  )
   const currentTime = elapsedMs / 1000
-  const isNewBest = isSightReadDeck && isComplete && (prevBest === 0 || currentTime < prevBest)
+  const isNewBest = isSightReadDeck && isComplete && (bestTime === 0 || currentTime < bestTime)
+
+  // Save and update best time when session completes with a new best
+  useEffect(() => {
+    if (isNewBest && typeof window !== 'undefined') {
+      localStorage.setItem(bestTimeKey, currentTime.toString())
+      setBestTime(currentTime)
+    }
+  }, [isNewBest])
+
+  const prevBest = bestTime
   const elapsedDisplay = isPlayMode
     ? (elapsedMs / 1000).toFixed(2) + 's'
     : elapsed < 1 ? '<1' : String(elapsed)
