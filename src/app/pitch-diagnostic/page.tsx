@@ -59,7 +59,7 @@ let micCtx: AudioContext | null = null
 
 export default function PitchDiagnostic() {
   // Params
-  const [deadWindow, setDeadWindow] = useState(500)
+  const [deadWindow, setDeadWindow] = useState(1000)
   const [windowSize, setWindowSize] = useState(8)
   const [stableThreshold, setStableThreshold] = useState(6)
   const [levelThreshold, setLevelThreshold] = useState(0.008)
