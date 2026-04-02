@@ -8,7 +8,9 @@ import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
-const MIN_TIME_ON_CARD_MS = 800    // extra buffer to ensure old audio is flushed
+const MIN_TIME_ON_CARD_MS = 800
+const POST_DEAD_SILENCE_THRESHOLD = 0.006  // RMS must drop below this
+const POST_DEAD_SILENCE_FRAMES = 3  // for this many frames before accepting
 const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
 const WRONG_COOLDOWN_MS = 1000     // 1s between wrong calls
 const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
@@ -61,6 +63,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const [error, setError] = useState<string | null>(null)
   const doneRef = useRef(false)
   const targetNoteRef = useRef(card.note ?? '')
+  const silenceFramesRef = useRef(0)
+  const readyToAcceptRef = useRef(false)
 
   useEffect(() => {
     targetNoteRef.current = card.note ?? ''
@@ -117,8 +121,25 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     const timeOnCard = now - cardStartTime
 
     // Dead window: drain analyser but don't feed detector
-    // Matches Note Rush: fxAudio.isPlaying check + MinTimeOnCurrentNote
     if (timeOnCard < MIN_TIME_ON_CARD_MS) {
+      rafHandle = requestAnimationFrame(tick)
+      return
+    }
+
+    // Post-dead-window silence gate: wait for signal to drop before accepting
+    if (!readyToAcceptRef.current) {
+      let rmsSum = 0
+      for (let i = 0; i < sadBuf.length; i++) rmsSum += sadBuf[i] * sadBuf[i]
+      const rms = Math.sqrt(rmsSum / sadBuf.length)
+      if (rms < POST_DEAD_SILENCE_THRESHOLD) {
+        silenceFramesRef.current++
+        if (silenceFramesRef.current >= POST_DEAD_SILENCE_FRAMES) {
+          readyToAcceptRef.current = true
+          sadDetector!.clearVotes()
+        }
+      } else {
+        silenceFramesRef.current = 0
+      }
       rafHandle = requestAnimationFrame(tick)
       return
     }
