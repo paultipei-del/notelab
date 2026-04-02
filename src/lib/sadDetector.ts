@@ -69,6 +69,18 @@ function detectSAD(buf: Float32Array, sr: number, minHz: number, maxHz: number):
 
   if (bestPeriod < 1) return -1
 
+  // Sub-harmonic check: try 2x period if within valid range and SAD is close
+  const detHz = sr / bestPeriod
+  if (detHz >= minHz * 2.0) {
+    const dp = bestPeriod * 2
+    if (dp < n / 2 && sr / dp >= minHz) {
+      let ds = 0; const dl = n - dp
+      for (let i = 0; i < dl; i++) ds += Math.abs(buf[i] - buf[i + dp])
+      ds /= dl
+      if (ds < bestSAD * 1.06) { bestPeriod = dp; bestSAD = ds }
+    }
+  }
+
   // Parabolic interpolation for sub-sample accuracy
   function sadAt(p: number): number {
     let s = 0; const lim = n - p
