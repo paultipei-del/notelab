@@ -52,7 +52,7 @@ function hermiteInterp(x: number, y0: number, y1: number, y2: number, y3: number
 }
 
 // ── SAD pitch detection on a buffer ──────────────────────────────────────
-function detectSAD(buf: Float32Array, sampleRate: number, minHz: number, maxHz: number): number {
+function detectSAD(buf: Float32Array, sampleRate: number, minHz: number, maxHz: number, preferFundamental = false): number {
   const minPeriod = Math.floor(sampleRate / maxHz)
   const maxPeriod = Math.ceil(sampleRate / minHz)
   const n = buf.length
@@ -206,9 +206,9 @@ export class SADPitchDetector {
       hi[i] = this.hiBuf[(pos + i) % this.bufSize]
     }
 
-    // Detect in each band
-    const loHz = detectSAD(lo, this.sampleRate, 27.5, this.crossover)
-    const rawHiHz = detectSAD(hi, this.sampleRate, this.crossover, 4186)
+    // Detect in each band — lo band gets more aggressive sub-harmonic check
+    const loHz = detectSAD(lo, this.sampleRate, 27.5, this.crossover, true)
+    const rawHiHz = detectSAD(hi, this.sampleRate, this.crossover, 4186, false)
     const hiHz = rawHiHz > 0 && rawHiHz <= 4186 ? rawHiHz : -1
 
     // Choose best result
