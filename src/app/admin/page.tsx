@@ -26,7 +26,9 @@ export default function AdminPage() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    if (!loading && (!user || !ADMIN_EMAILS.includes(user.email ?? ''))) router.push('/')
+    if (loading) return
+    if (!user) { router.push('/'); return }
+    if (!ADMIN_EMAILS.includes(user.email ?? '')) { router.push('/'); return }
   }, [loading, user])
 
   useEffect(() => {
@@ -61,7 +63,9 @@ export default function AdminPage() {
 
   const filtered = users.filter(u => u.email?.toLowerCase().includes(search.toLowerCase()))
 
-  if (loading || !user) return null
+  if (loading) return <div style={{padding:'40px',fontFamily:'sans-serif'}}>Loading auth… {user?.email}</div>
+  if (!user) return <div style={{padding:'40px',fontFamily:'sans-serif'}}>No user</div>
+  if (!ADMIN_EMAILS.includes(user.email ?? '')) return <div style={{padding:'40px',fontFamily:'sans-serif'}}>Access denied: {user.email}</div>
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
