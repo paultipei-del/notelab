@@ -189,6 +189,7 @@ export class SADPitchDetector {
 
   // State
   private freshReset = true
+  private fillCountdown = 0  // chunks remaining before buffers are fresh
   private warmupFrames = 0
   private lastMidi = -1
   private lastMidiTime = 0
@@ -211,6 +212,21 @@ export class SADPitchDetector {
   update(input: Float32Array): SADResult | null {
     // Warmup after reset
     if (this.warmupFrames > 0) { this.warmupFrames--; return null }
+
+    // After clearVotes: still fill buffers but don't detect until fresh
+    if (this.fillCountdown > 0) {
+      this.fillCountdown--
+      // Still process audio through filters to keep filter state warm
+      for (let i = 0; i < input.length; i++) {
+        const s = input[i]
+        this.loA[this.posA % this.sizeA] = this.filtersA.loLP.process(this.filtersA.loHP.process(s))
+        this.hiA[this.posA % this.sizeA] = this.filtersA.hiLP.process(this.filtersA.hiHP.process(s))
+        this.loB[this.posB % this.sizeB] = this.filtersB.loLP.process(this.filtersB.loHP.process(s))
+        this.hiB[this.posB % this.sizeB] = this.filtersB.hiLP.process(this.filtersB.hiHP.process(s))
+        this.posA++; this.posB++
+      }
+      return null
+    }
 
     // Peak amplitude gate
     if (peakAmplitude(input) < this.levelThreshold) {
@@ -316,6 +332,9 @@ export class SADPitchDetector {
   // ClearDetectionBuffer: zero votes only, keep audio pipeline running
   clearVotes() {
     this.detectionWindow = []
+    // Block detections until circular buffers are fully overwritten with fresh audio
+    // sizeA = ~4410 samples, chunk = ~4096 samples → need 2 chunks to fully overwrite
+    this.fillCountdown = Math.ceil(this.sizeA / 4096) + 1
   }
 
   reset() {
@@ -326,6 +345,7 @@ export class SADPitchDetector {
     this.lastMidi = -1; this.lastMidiTime = 0
     this.freshReset = true
     this.warmupFrames = 20
+    this.fillCountdown = 0
     this.filtersA = makeBandFilters(this.sr)
     this.filtersB = makeBandFilters(this.sr)
   }

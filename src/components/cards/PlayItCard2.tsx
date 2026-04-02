@@ -8,7 +8,7 @@ import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
-const MIN_TIME_ON_CARD_MS = 500    // MinTimeOnCurrentNote = 0.5s
+const MIN_TIME_ON_CARD_MS = 800    // extra buffer to ensure old audio is flushed
 const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
 const WRONG_COOLDOWN_MS = 1000     // 1s between wrong calls
 const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
