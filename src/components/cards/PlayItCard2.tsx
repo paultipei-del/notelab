@@ -135,7 +135,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
         setTimeout(() => onCorrect(!cardHadWrong), 200)
         return
       } else {
-        wrongFrameCount++
+        // Wrong note — only penalize if stable (same bar as correct)
+        // AND cooldown and range checks pass
         const detMidi = result.midi
         const tgtMidi = noteToMidi(target)
         const semDist = Math.abs(detMidi - tgtMidi)
@@ -143,21 +144,13 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           (detMidi === prevMidi + 12 || detMidi === prevMidi - 12)
         const cooldownOk = now - lastWrongTime > WRONG_COOLDOWN_MS
 
-        if (
-          wrongFrameCount >= WRONG_FRAMES_REQUIRED &&
-          semDist <= WRONG_SEMITONE_RANGE &&
-          !isOctaveOfPrev &&
-          cooldownOk
-        ) {
+        if (semDist <= WRONG_SEMITONE_RANGE && !isOctaveOfPrev && cooldownOk) {
           setStatus('wrong')
           cardHadWrong = true
           lastWrongTime = now
-          wrongFrameCount = 0
           onWrong()
         }
       }
-    } else {
-      wrongFrameCount = 0
     }
 
     rafHandle = requestAnimationFrame(tick)
