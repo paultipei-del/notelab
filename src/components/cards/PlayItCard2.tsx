@@ -8,10 +8,10 @@ import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
-const MIN_TIME_ON_CARD_MS = 800    // default dead window
+const MIN_TIME_ON_CARD_MS = 600    // default dead window
 // Notes with strong sub-harmonic decay need longer dead windows
 const NOTE_DEAD_WINDOWS: Record<string, number> = {
-  'C5': 1800, 'B4': 1400, 'C4': 1400, 'B3': 1400,
+  'C5': 1200, 'B4': 900, 'C4': 900, 'B3': 900,
 }
 function deadWindowForNote(note: string): number {
   return NOTE_DEAD_WINDOWS[note.replace(/[#b]/g, '')] ?? MIN_TIME_ON_CARD_MS
