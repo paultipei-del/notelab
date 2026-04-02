@@ -9,7 +9,7 @@ import type { QueueCard } from '@/lib/types'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
 const MIN_TIME_ON_CARD_MS = 800
-const POST_DEAD_SILENCE_THRESHOLD = 0.012  // RMS must drop below this
+const POST_DEAD_SILENCE_THRESHOLD = 0.02  // RMS must drop below this
 const POST_DEAD_SILENCE_FRAMES = 2  // for this many frames before accepting
 const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
 const WRONG_COOLDOWN_MS = 1000     // 1s between wrong calls
