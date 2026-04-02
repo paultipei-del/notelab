@@ -79,7 +79,12 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           sadAnalyser.fftSize = DATA_SIZE
           source.connect(sadAnalyser)
           sadBuf = new Float32Array(DATA_SIZE)
-          sadDetector = new SADPitchDetector(sadCtx.sampleRate)
+          sadDetector = new SADPitchDetector(sadCtx.sampleRate, {
+          windowSize: 8,
+          stableThreshold: 6,
+          levelThreshold: 0.008,
+          crossover: 400,
+        })
         }
 
         // Hard flush — reset detector AND wait for dead window
