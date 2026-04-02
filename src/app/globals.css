@@ -26,3 +26,33 @@ button, [role="button"], header, nav, .no-select {
   user-select: none;
   touch-action: none;
 }
+
+/* ── Responsive base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Prevent iOS zoom on input focus */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+/* Safe area padding for notched devices */
+.safe-top    { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Mobile tap highlight */
+a, button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Responsive images */
+img, svg {
+  max-width: 100%;
+  height: auto;
+}

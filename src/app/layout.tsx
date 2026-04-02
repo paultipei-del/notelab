@@ -16,6 +16,12 @@ const jost = Jost({
   variable: '--font-jost',
 })
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export const metadata: Metadata = {
   title: 'NoteLab',
   description: 'Music theory flashcards for CM students and musicians',

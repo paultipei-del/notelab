@@ -34,7 +34,7 @@ export default function LandingPage() {
     <div style={{ minHeight: '100vh', background: '#F5F2EC', overflowX: 'hidden' }}>
 
       {/* Nav */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 48px', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(245,242,236,0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(211,209,199,0.6)' }}>
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px clamp(16px,4vw,48px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(245,242,236,0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(211,209,199,0.6)' }}>
         <div style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <a href="#pricing" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', textDecoration: 'none' }}>Pricing</a>
@@ -44,13 +44,13 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '100px 48px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(48px,8vw,100px) clamp(24px,4vw,48px) 80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'clamp(40px,6vw,80px)', alignItems: 'center' }}>
         <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'none' : 'translateY(20px)', transition: 'all 0.7s ease' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '5px 14px', marginBottom: '32px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4CAF50', display: 'inline-block' }} />
             <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780' }}>Now in Beta</span>
           </div>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '60px', lineHeight: 1.05, color: '#1A1A18', marginBottom: '24px', letterSpacing: '-0.01em' }}>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(36px,5vw,60px)', lineHeight: 1.05, color: '#1A1A18', marginBottom: '24px', letterSpacing: '-0.01em' }}>
             Music theory,<br /><em>deeply</em> learned.
           </h1>
           <p style={{ fontFamily: F, fontWeight: 300, fontSize: '16px', color: '#888780', lineHeight: 1.8, marginBottom: '40px', maxWidth: '440px' }}>
@@ -67,7 +67,7 @@ export default function LandingPage() {
 
         {/* Staff card */}
         <div style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.7s ease 0.3s', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #D3D1C7', padding: '48px 56px', boxShadow: '0 8px 48px rgba(26,26,24,0.08)', position: 'relative' as const, width: '320px' }}>
+          <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #D3D1C7', padding: '48px 56px', boxShadow: '0 8px 48px rgba(26,26,24,0.08)', position: 'relative' as const, width: 'min(320px, 100%)' }}>
             <div style={{ position: 'relative', height: '120px', marginBottom: '32px' }}>
               <svg width="100%" height="120" viewBox="0 0 240 120">
                 {[20,36,52,68,84].map((y, i) => (
@@ -94,12 +94,12 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 48px 100px' }}>
+      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 clamp(24px,4vw,48px) 100px' }}>
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#BA7517', marginBottom: '12px' }}>What's inside</p>
           <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#1A1A18', letterSpacing: '-0.01em' }}>Everything you need to practice smarter</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
           {FEATURES.map((f, i) => (
             <div key={i} style={{ background: 'white', borderRadius: '20px', border: '1px solid #D3D1C7', padding: '36px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
@@ -114,13 +114,13 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" style={{ background: 'white', borderTop: '1px solid #EDE8DF', borderBottom: '1px solid #EDE8DF', padding: '100px 48px' }}>
+      <section id="pricing" style={{ background: 'white', borderTop: '1px solid #EDE8DF', borderBottom: '1px solid #EDE8DF', padding: 'clamp(60px,8vw,100px) clamp(24px,4vw,48px)' }}>
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#BA7517', marginBottom: '12px' }}>Simple pricing</p>
             <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#1A1A18', letterSpacing: '-0.01em' }}>Start free, upgrade when ready</h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             <div style={{ background: '#F5F2EC', borderRadius: '20px', border: '1px solid #D3D1C7', padding: '40px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '16px' }}>Free</p>
               <div style={{ fontFamily: SERIF, fontSize: '52px', fontWeight: 300, color: '#1A1A18', lineHeight: 1, marginBottom: '8px' }}>$0</div>
@@ -151,7 +151,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <footer style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(24px,4vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontFamily: F, fontSize: '16px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
         <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#B8B5AD' }}>Built for pianists and musicians. © {new Date().getFullYear()}</p>
       </footer>
