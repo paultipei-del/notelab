@@ -134,7 +134,7 @@ export default function GrandStaffCard({ note, className = '' }: GrandStaffCardP
   )
 
   const accidentalEl = accidental && pos !== undefined ? (
-    <text x={noteX - 16} y={noteY} fontSize="30" fontFamily="Bravura, serif"
+    <text x={noteX - 16} y={noteY} fontSize="36" fontFamily="Bravura, serif"
       fill="#1A1A18" dominantBaseline="central" textAnchor="middle">
       {accidental === 'sharp' ? '\uE262' : '\uE260'}
     </text>
