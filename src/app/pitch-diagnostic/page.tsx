@@ -33,6 +33,9 @@ const SEQUENCES: Record<string, string[]> = {
   Octaves:   ['C3','C4','C5','G3','G4','G5','A3','A4','A5'],
   Wide:      ['C4','C6','G2','B5','A3','D#5','F2','E6','C4'],
   'Mixed 3-4': ['C3','C4','G3','G4','E3','E4','A3','A4','D3','D4','B3','B4'],
+  'C5 Focus': ['C5','C5','C5','C5','C5','B4','C5','D5','C5','G4','C5','C4','C5'],
+  'Octave C': ['C3','C4','C5','C6','C5','C4','C3','C5','C4','C5'],
+  'Around C5': ['B4','C5','D5','C5','A4','C5','E5','C5','G4','C5','F5','C5'],
 }
 
 interface NoteResult {
