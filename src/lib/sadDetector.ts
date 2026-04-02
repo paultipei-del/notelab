@@ -78,16 +78,17 @@ function detectSAD(buf: Float32Array, sampleRate: number, minHz: number, maxHz: 
 
   if (bestPeriod < 1) return -1
 
-  // Sub-harmonic check: if 2x period fits in buffer and has similar SAD, prefer it
-  // This prevents detecting the octave harmonic instead of the fundamental
+  // Sub-harmonic check: try 2x period only if it stays within 1 octave of minHz
+  // i.e. don't go below minHz*0.5 — prevents A4→A2 jumps
   const doublePeriod = bestPeriod * 2
-  if (doublePeriod <= maxPeriod && doublePeriod <= n / 2) {
+  const doubleHz = sampleRate / doublePeriod
+  if (doublePeriod <= n / 2 && doubleHz >= minHz * 0.6) {
     let doubleSad = 0
     const dlimit = n - doublePeriod
     for (let i = 0; i < dlimit; i++) doubleSad += Math.abs(buf[i] - buf[i + doublePeriod])
     doubleSad /= dlimit
-    // If double period SAD is within 20% of best, prefer the lower frequency
-    if (doubleSad < bestSAD * 1.05) {
+    // Only prefer sub-harmonic if clearly better (within 6%)
+    if (doubleSad < bestSAD * 1.06) {
       bestPeriod = doublePeriod
       bestSAD = doubleSad
     }
@@ -157,7 +158,7 @@ export class SADPitchDetector {
   private windowSize = 10
   private detectionWindow: number[] = []  // last N midi detections
   private freshReset = true  // bypass octave limiter after reset
-  private warmupFrames = 0  // ignore detections during warmup
+  private warmupFrames = 0
 
   private levelThreshold = 0.008
 
@@ -269,7 +270,7 @@ export class SADPitchDetector {
     this.stableCount = 0
     this.detectionWindow = []
     this.freshReset = true
-    this.warmupFrames = 15  // skip first 15 frames after reset
+    this.warmupFrames = 25  // skip first 25 frames after reset (~400ms at 60fps)
     this.lpFilter.reset()
     this.hpFilter.reset()
   }
