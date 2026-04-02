@@ -47,6 +47,7 @@ const SEQUENCES: Record<string, string[]> = {
   'Fifths 4':   ['C4','G4','D5','A4','E5','B4','F#4','C#5','G#4','D#5','A#4','F5','C5'],
   'Octaves':    ['C3','C4','C5','G3','G4','G5','A3','A4','A5'],
   'Around C5':  ['B4','C5','D5','C5','A4','C5','E5','C5','G4','C5'],
+  'Around B3':  ['A3','B3','C4','B3','G3','B3','D4','B3','E3','B3'],
   'Grand Mix':  ['C4','G4','C5','E4','A4','D5','F4','B4','C5','G3','E5','F#4'],
 }
 
