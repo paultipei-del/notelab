@@ -76,12 +76,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const bestTimeKey = `notelab-best-time-${deck.id}`
   const prevBest = typeof window !== 'undefined' ? parseFloat(localStorage.getItem(bestTimeKey) ?? '0') : 0
   const currentTime = elapsedMs / 1000
-  const isNewBest = isSightReadDeck && (prevBest === 0 || currentTime < prevBest)
-  if (isSightReadDeck && typeof window !== 'undefined') {
-    if (prevBest === 0 || currentTime < prevBest) {
-      localStorage.setItem(bestTimeKey, currentTime.toString())
-    }
-  }
+  const isNewBest = isSightReadDeck && isComplete && (prevBest === 0 || currentTime < prevBest)
   const elapsedDisplay = isPlayMode
     ? (elapsedMs / 1000).toFixed(2) + 's'
     : elapsed < 1 ? '<1' : String(elapsed)
@@ -111,7 +106,8 @@ return (
       {isComplete && viewMode === 'study' && (
         <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '64px 56px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.10)' }}>
-            <div style={{ fontSize: '48px', marginBottom: '24px' }}>♩</div>
+            {isSightReadDeck && isNewBest && typeof window !== 'undefined' && (() => { localStorage.setItem(bestTimeKey, currentTime.toString()); return null })()}
+        <div style={{ fontSize: '48px', marginBottom: '24px' }}>♩</div>
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px' }}>Session Complete</h2>
             <p style={{ fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '40px' }}>
