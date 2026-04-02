@@ -11,13 +11,14 @@ import type { QueueCard } from '@/lib/types'
 const MIN_TIME_ON_CARD_MS = 800    // default dead window
 // Notes with strong sub-harmonic decay need longer dead windows
 const NOTE_DEAD_WINDOWS: Record<string, number> = {
-  'C5': 1400, 'B4': 1100, 'C4': 1100, 'B3': 1100,
+  'C5': 1800, 'B4': 1200, 'C4': 1200, 'B3': 1200,
 }
 function deadWindowForNote(note: string): number {
   return NOTE_DEAD_WINDOWS[note.replace(/[#b]/g, '')] ?? MIN_TIME_ON_CARD_MS
 }
 const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
 const WRONG_COOLDOWN_MS = 1000     // 1s between wrong calls
+const OCTAVE_BLEED_FILTER_MS = 600  // ignore octave-below detections for this long after dead window
 const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
 
 // ── Shared audio pipeline — never destroyed between cards ─────────────────
@@ -68,10 +69,12 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const [error, setError] = useState<string | null>(null)
   const doneRef = useRef(false)
   const targetNoteRef = useRef(card.note ?? '')
+  const acceptStartRef = useRef(0)
 
   useEffect(() => {
     targetNoteRef.current = card.note ?? ''
     doneRef.current = false
+    acceptStartRef.current = 0
     cardHadWrong = false
     wrongFrameCount = 0
     cardStartTime = Date.now()
@@ -128,6 +131,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
       rafHandle = requestAnimationFrame(tick)
       return
     }
+
+    if (acceptStartRef.current === 0) acceptStartRef.current = now
 
     const result = sadDetector.update(sadBuf)
 
