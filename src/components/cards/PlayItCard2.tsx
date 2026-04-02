@@ -8,10 +8,10 @@ import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
-const MIN_TIME_ON_CARD_MS = 1000  // fixed dead window
-const WRONG_COOLDOWN_MS = 1000
-const WRONG_SEMITONE_RANGE = 25
-const WRONG_DELAY_AFTER_SILENCE_MS = 300
+const MIN_TIME_ON_CARD_MS = 800    // extra buffer to ensure old audio is flushed
+const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
+const WRONG_COOLDOWN_MS = 1000     // 1s between wrong calls
+const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
 
 // ── Shared audio pipeline — never destroyed between cards ─────────────────
 let sadStream: MediaStream | null = null
@@ -61,7 +61,6 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const [error, setError] = useState<string | null>(null)
   const doneRef = useRef(false)
   const targetNoteRef = useRef(card.note ?? '')
-
 
   useEffect(() => {
     targetNoteRef.current = card.note ?? ''
@@ -118,6 +117,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     const timeOnCard = now - cardStartTime
 
     // Dead window: drain analyser but don't feed detector
+    // Matches Note Rush: fxAudio.isPlaying check + MinTimeOnCurrentNote
     if (timeOnCard < MIN_TIME_ON_CARD_MS) {
       rafHandle = requestAnimationFrame(tick)
       return
