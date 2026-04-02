@@ -77,7 +77,7 @@ function detectSAD(buf: Float32Array, sr: number, minHz: number, maxHz: number):
       let ds = 0; const dl = n - dp
       for (let i = 0; i < dl; i++) ds += Math.abs(buf[i] - buf[i + dp])
       ds /= dl
-      if (ds < bestSAD * 1.06) { bestPeriod = dp; bestSAD = ds }
+      if (ds < bestSAD * 1.02) { bestPeriod = dp; bestSAD = ds }
     }
   }
 
