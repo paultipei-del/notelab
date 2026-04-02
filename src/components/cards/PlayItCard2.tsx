@@ -55,7 +55,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   useEffect(() => {
     doneRef.current = false
     cardHadWrong2 = false
-    cardReadyAt2 = Date.now() + 800
+    cardReadyAt2 = Date.now() + 1000
     setStatus('starting')
     setDetected(null)
 
@@ -94,7 +94,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
         setStatus('listening')
 
         // Wait for dead window before starting detection
-        await new Promise(resolve => setTimeout(resolve, 800))
+        await new Promise(resolve => setTimeout(resolve, 1000))
         if (doneRef.current) return
         // Flush again after wait
         if (sadDetector) sadDetector.reset()

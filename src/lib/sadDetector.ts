@@ -87,7 +87,7 @@ function detectSAD(buf: Float32Array, sampleRate: number, minHz: number, maxHz: 
     for (let i = 0; i < dlimit; i++) doubleSad += Math.abs(buf[i] - buf[i + doublePeriod])
     doubleSad /= dlimit
     // If double period SAD is within 20% of best, prefer the lower frequency
-    if (doubleSad < bestSAD * 1.2) {
+    if (doubleSad < bestSAD * 1.05) {
       bestPeriod = doublePeriod
       bestSAD = doubleSad
     }
@@ -152,9 +152,9 @@ export class SADPitchDetector {
   private lastMidiTime = 0
   private readonly maxOctaveRate = 10  // max octave jumps per second
   private stableCount = 0
-  private stableThreshold = 6  // frames needed to confirm
+  private stableThreshold = 7  // frames needed to confirm
   // Sliding window of recent detections
-  private windowSize = 8
+  private windowSize = 10
   private detectionWindow: number[] = []  // last N midi detections
   private freshReset = true  // bypass octave limiter after reset
 
@@ -166,7 +166,7 @@ export class SADPitchDetector {
     if (config?.levelThreshold != null) this.levelThreshold = config.levelThreshold
     if (config?.windowSize != null) this.windowSize = config.windowSize
     if (config?.stableThreshold != null) this.stableThreshold = config.stableThreshold
-    this.bufSize = Math.ceil(sampleRate / 27.5) * 3
+    this.bufSize = Math.ceil(sampleRate / 27.5) * 2  // 2x period sufficient for SAD
     this.loBuf = new Float32Array(this.bufSize)
     this.hiBuf = new Float32Array(this.bufSize)
     this.lpFilter = butterworthLowpass(this.crossover, sampleRate)
