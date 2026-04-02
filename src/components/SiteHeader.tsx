@@ -14,6 +14,7 @@ export default function SiteHeader() {
   const { user, loading } = useAuth()
 
   if (pathname === '/unlock') return null
+  if (pathname === '/landing') return null
   const [showAuth, setShowAuth] = useState(false)
 
   async function handleSignOut() {
