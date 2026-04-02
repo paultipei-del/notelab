@@ -17,7 +17,11 @@ let sadBuf: Float32Array | null = null
 let cardReadyAt2 = 0
 let cardHadWrong2 = false
 let consecutiveWrongFrames = 0
-const WRONG_FRAMES_REQUIRED = 3  // require 3 consecutive wrong frames before marking wrong
+const WRONG_FRAMES_REQUIRED = 3
+let waitingForSilence = false  // true after correct — must detect silence before next card
+let silentFrameCount = 0
+const SILENCE_FRAMES_REQUIRED = 8  // ~130ms of silence at 60fps
+const SILENCE_RMS_THRESHOLD = 0.004  // below this = silence
 
 const ENHARMONICS: Record<string, string> = {
   'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
@@ -58,6 +62,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     doneRef.current = false
     cardHadWrong2 = false
     consecutiveWrongFrames = 0
+    waitingForSilence = false
+    silentFrameCount = 0
     cardReadyAt2 = Date.now() + 1000
     setStatus('starting')
     setDetected(null)
@@ -115,6 +121,27 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
         function tick() {
           if (!sadAnalyser || !sadBuf || !sadDetector || doneRef.current) return
           sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
+          // Compute RMS for silence detection
+          let rmsSum = 0
+          for (let i = 0; i < sadBuf.length; i++) rmsSum += sadBuf[i] * sadBuf[i]
+          const rms = Math.sqrt(rmsSum / sadBuf.length)
+
+          // Silence gate: if waiting for silence after correct, check RMS
+          if (waitingForSilence) {
+            if (rms < SILENCE_RMS_THRESHOLD) {
+              silentFrameCount++
+              if (silentFrameCount >= SILENCE_FRAMES_REQUIRED) {
+                waitingForSilence = false
+                silentFrameCount = 0
+                sadDetector.reset()
+              }
+            } else {
+              silentFrameCount = 0
+            }
+            rafRef.current = requestAnimationFrame(tick)
+            return
+          }
+
           const result = sadDetector.update(sadBuf)
 
           if (result?.stable) {
@@ -123,6 +150,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
             if (pitchMatch(result.name, targetNote)) {
               if (doneRef.current) return
               doneRef.current = true
+              waitingForSilence = true
+              silentFrameCount = 0
               setStatus('correct')
               stopLoop()
               setTimeout(() => onCorrect(!cardHadWrong2), 100)
