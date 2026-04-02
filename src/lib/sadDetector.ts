@@ -141,26 +141,28 @@ export interface SADResult {
 
 export class SADPitchDetector {
   private sampleRate: number
-  private lpFilter: IIRFilter   // lowpass for bass band
-  private hpFilter: IIRFilter   // highpass for treble band
+  private lpFilter: IIRFilter   // lo band LP at 280Hz
+  private hpFilter: IIRFilter   // hi band LP at 1500Hz
+  private loHpFilter: IIRFilter // shared HP at 45Hz (lo band)
+  private hiHpFilter: IIRFilter // shared HP at 45Hz (hi band)
   private loBuf: Float32Array
   private hiBuf: Float32Array
   private bufPos = 0
   private readonly bufSize: number
-  private crossover = 400  // Hz split point (~G4)
+  private crossover = 400  // not used directly — see band filters below
 
   private lastMidi = -1
   private lastMidiTime = 0
   private readonly maxOctaveRate = 10  // max octave jumps per second
   private stableCount = 0
-  private stableThreshold = 7  // frames needed to confirm
+  private stableThreshold = 15  // confirmed: cumulativeDetectionsRepsRequired  // frames needed to confirm
   // Sliding window of recent detections
-  private windowSize = 10
+  private windowSize = 30  // confirmed: cumulativeDetectionsWindow
   private detectionWindow: number[] = []  // last N midi detections
   private freshReset = true  // bypass octave limiter after reset
   private warmupFrames = 0
 
-  private levelThreshold = 0.008
+  private levelThreshold = 0.01  // confirmed: peak amplitude threshold
 
   constructor(sampleRate: number, config?: SADConfig) {
     this.sampleRate = sampleRate
@@ -168,11 +170,16 @@ export class SADPitchDetector {
     if (config?.levelThreshold != null) this.levelThreshold = config.levelThreshold
     if (config?.windowSize != null) this.windowSize = config.windowSize
     if (config?.stableThreshold != null) this.stableThreshold = config.stableThreshold
-    this.bufSize = Math.ceil(sampleRate / 27.5) * 2  // 2x period sufficient for SAD
+    this.bufSize = Math.floor(0.04 * sampleRate) + 16  // confirmed: ~1780 samples @ 44100Hz
     this.loBuf = new Float32Array(this.bufSize)
     this.hiBuf = new Float32Array(this.bufSize)
-    this.lpFilter = butterworthLowpass(this.crossover, sampleRate)
-    this.hpFilter = butterworthHighpass(this.crossover, sampleRate)
+    // Lo band: HP 45Hz -> LP 280Hz (for bass fundamentals)
+    // Hi band: HP 45Hz -> LP 1500Hz (full range)
+    // Both share same HP to remove DC/rumble
+    this.lpFilter = butterworthLowpass(280, sampleRate)   // lo band LP
+    this.hpFilter = butterworthLowpass(1500, sampleRate)  // hi band LP (wide)
+    this.loHpFilter = butterworthHighpass(45, sampleRate)
+    this.hiHpFilter = butterworthHighpass(45, sampleRate)
   }
 
   update(input: Float32Array): SADResult | null {
@@ -181,17 +188,22 @@ export class SADPitchDetector {
       this.warmupFrames--
       return null
     }
-    // Check level gate
-    if (rmsLevel(input) < this.levelThreshold) {
+    // Level gate: peak amplitude check (confirmed from Note Rush source)
+    let peak = 0
+    for (let i = 0; i < input.length; i++) {
+      const abs = Math.abs(input[i])
+      if (abs > peak) peak = abs
+    }
+    if (peak < this.levelThreshold) {
       this.stableCount = 0
       return null
     }
 
-    // Fill circular buffers with filtered signals
+    // Fill circular buffers: lo = HP45->LP280, hi = HP45->LP1500
     for (let i = 0; i < input.length; i++) {
       const s = input[i]
-      this.loBuf[this.bufPos % this.bufSize] = this.lpFilter.process(s)
-      this.hiBuf[this.bufPos % this.bufSize] = this.hpFilter.process(s)
+      this.loBuf[this.bufPos % this.bufSize] = this.lpFilter.process(this.loHpFilter.process(s))
+      this.hiBuf[this.bufPos % this.bufSize] = this.hpFilter.process(this.hiHpFilter.process(s))
       this.bufPos++
     }
 
@@ -207,8 +219,8 @@ export class SADPitchDetector {
     }
 
     // Detect in each band — lo band gets more aggressive sub-harmonic check
-    const loHz = detectSAD(lo, this.sampleRate, 27.5, this.crossover, true)
-    const rawHiHz = detectSAD(hi, this.sampleRate, this.crossover, 4186, false)
+    const loHz = detectSAD(lo, this.sampleRate, 50, 280, true)  // confirmed lo band range
+    const rawHiHz = detectSAD(hi, this.sampleRate, 50, 1600, false)  // confirmed hi band range
     const hiHz = rawHiHz > 0 && rawHiHz <= 4186 ? rawHiHz : -1
 
     // Choose best result
@@ -273,6 +285,8 @@ export class SADPitchDetector {
     this.warmupFrames = 25  // skip first 25 frames after reset (~400ms at 60fps)
     this.lpFilter.reset()
     this.hpFilter.reset()
+    this.loHpFilter.reset()
+    this.hiHpFilter.reset()
   }
 }
 

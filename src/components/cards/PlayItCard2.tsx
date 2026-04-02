@@ -18,10 +18,19 @@ let cardReadyAt2 = 0
 let cardHadWrong2 = false
 let consecutiveWrongFrames = 0
 const WRONG_FRAMES_REQUIRED = 3
-let waitingForSilence = false  // true after correct — must detect silence before next card
+let waitingForSilence = false
+let lastIncorrectTime = 0  // timestamp of last wrong answer call
+let prevMidiGuess = -1  // previous accepted midi note
 let silentFrameCount = 0
 const SILENCE_FRAMES_REQUIRED = 8  // ~130ms of silence at 60fps
 const SILENCE_RMS_THRESHOLD = 0.004  // below this = silence
+
+const NOTE_NAMES_MIDI = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+function noteToMidi(name: string): number {
+  const m = name.match(/^([A-G]#?)(\d)$/)
+  if (!m) return 60
+  return (parseInt(m[2]) + 1) * 12 + NOTE_NAMES_MIDI.indexOf(m[1])
+}
 
 const ENHARMONICS: Record<string, string> = {
   'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
@@ -158,10 +167,17 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
               return
             } else {
               consecutiveWrongFrames++
-              if (consecutiveWrongFrames >= WRONG_FRAMES_REQUIRED) {
-                setStatus('wrong')
-                if (Date.now() >= cardReadyAt2) {
+              if (consecutiveWrongFrames >= WRONG_FRAMES_REQUIRED && Date.now() >= cardReadyAt2) {
+                const detectedMidi = result.midi
+                const targetMidi = noteToMidi(targetNote)
+                const semitoneDistance = Math.abs(detectedMidi - targetMidi)
+                const timeSinceLastIncorrect = Date.now() - lastIncorrectTime
+                const isOctaveOfPrev = prevMidiGuess >= 0 && (detectedMidi === prevMidiGuess + 12 || detectedMidi === prevMidiGuess - 12)
+                // Match Note Rush: within 25 semitones, not octave of prev, 1s cooldown
+                if (semitoneDistance <= 25 && !isOctaveOfPrev && timeSinceLastIncorrect > 1000) {
+                  setStatus('wrong')
                   cardHadWrong2 = true
+                  lastIncorrectTime = Date.now()
                   onWrong()
                 }
               }
