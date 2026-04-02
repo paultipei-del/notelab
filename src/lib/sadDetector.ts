@@ -62,7 +62,8 @@ function detectSAD(buf: Float32Array, sampleRate: number, minHz: number, maxHz: 
   let bestPeriod = -1
   let bestSAD = Infinity
 
-  // Coarse scan
+  // Coarse scan — apply mild penalty to shorter periods to prefer fundamentals
+  // Penalty: 2% per octave below maxPeriod (favors lower frequencies when SAD is close)
   for (let period = minPeriod; period <= maxPeriod; period++) {
     let sad = 0
     const limit = n - period
@@ -70,6 +71,10 @@ function detectSAD(buf: Float32Array, sampleRate: number, minHz: number, maxHz: 
       sad += Math.abs(buf[i] - buf[i + period])
     }
     sad /= limit
+    // Mild fundamental bias: shorter periods pay a small premium
+    const octavesFromTop = Math.log2(maxPeriod / period)
+    const penalty = 1 + octavesFromTop * 0.015  // 1.5% per octave
+    sad *= penalty
     if (sad < bestSAD) {
       bestSAD = sad
       bestPeriod = period
