@@ -8,7 +8,14 @@ import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
-const MIN_TIME_ON_CARD_MS = 800    // extra buffer to ensure old audio is flushed
+const MIN_TIME_ON_CARD_MS = 800    // default dead window
+// Notes with strong sub-harmonic decay need longer dead windows
+const NOTE_DEAD_WINDOWS: Record<string, number> = {
+  'C5': 1400, 'B4': 1100, 'C4': 1100, 'B3': 1100,
+}
+function deadWindowForNote(note: string): number {
+  return NOTE_DEAD_WINDOWS[note.replace(/[#b]/g, '')] ?? MIN_TIME_ON_CARD_MS
+}
 const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
 const WRONG_COOLDOWN_MS = 1000     // 1s between wrong calls
 const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
@@ -117,8 +124,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     const timeOnCard = now - cardStartTime
 
     // Dead window: drain analyser but don't feed detector
-    // Matches Note Rush: fxAudio.isPlaying check + MinTimeOnCurrentNote
-    if (timeOnCard < MIN_TIME_ON_CARD_MS) {
+    if (timeOnCard < deadWindowForNote(targetNoteRef.current)) {
       rafHandle = requestAnimationFrame(tick)
       return
     }
