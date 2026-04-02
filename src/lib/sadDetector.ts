@@ -78,6 +78,21 @@ function detectSAD(buf: Float32Array, sampleRate: number, minHz: number, maxHz: 
 
   if (bestPeriod < 1) return -1
 
+  // Sub-harmonic check: if 2x period fits in buffer and has similar SAD, prefer it
+  // This prevents detecting the octave harmonic instead of the fundamental
+  const doublePeriod = bestPeriod * 2
+  if (doublePeriod <= maxPeriod && doublePeriod <= n / 2) {
+    let doubleSad = 0
+    const dlimit = n - doublePeriod
+    for (let i = 0; i < dlimit; i++) doubleSad += Math.abs(buf[i] - buf[i + doublePeriod])
+    doubleSad /= dlimit
+    // If double period SAD is within 20% of best, prefer the lower frequency
+    if (doubleSad < bestSAD * 1.2) {
+      bestPeriod = doublePeriod
+      bestSAD = doubleSad
+    }
+  }
+
   // Fine scan with Hermite interpolation around best period
   const p0 = Math.max(minPeriod, bestPeriod - 1)
   const p1 = bestPeriod

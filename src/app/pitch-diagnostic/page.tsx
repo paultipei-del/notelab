@@ -72,6 +72,7 @@ export default function PitchDiagnostic() {
   const [currentNote, setCurrentNote] = useState('')
   const [liveDetected, setLiveDetected] = useState('')
   const [runs, setRuns] = useState<RunSummary[]>([])
+  const [copied, setCopied] = useState(false)
   const [currentResults, setCurrentResults] = useState<NoteResult[]>([])
 
   const detectorRef = useRef<SADPitchDetector | null>(null)
@@ -395,7 +396,29 @@ export default function PitchDiagnostic() {
             <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Run History</p>
-                <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: '11px', color: '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>Clear</button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <button onClick={() => {
+                    const NL = String.fromCharCode(10)
+                    const TAB = String.fromCharCode(9)
+                    const lines: string[] = ['=== PITCH DIAGNOSTIC RESULTS ===']
+                    runs.forEach((run, ri) => {
+                      lines.push(NL + 'RUN ' + (ri+1) + ': ' + run.sequence + ' | Accuracy: ' + run.accuracy + '% | Avg Latency: ' + run.avgLatencyMs + 'ms | FP: ' + run.falsePositiveCount + ' | Bleed: ' + run.bleedCount)
+                      lines.push('Params: deadWindow=' + run.params.deadWindow + 'ms windowSize=' + run.params.windowSize + ' stableThreshold=' + run.params.stableThreshold + ' levelThreshold=' + run.params.levelThreshold)
+                      lines.push('TARGET' + TAB + 'DETECTED' + TAB + 'CORRECT' + TAB + 'LATENCY' + TAB + 'FP_BEFORE' + TAB + 'BLEED_AFTER' + TAB + 'CENTS')
+                      run.notes.forEach(n => {
+                        lines.push([n.target, n.detected, n.correct ? 'Y' : 'N', n.latencyMs + 'ms', n.falsePositivesBefore.join(' ') || '-', n.bleedAfter.join(' ') || '-', n.cents ? ((n.cents > 0 ? '+' : '') + n.cents + 'c') : '-'].join(TAB))
+                      })
+                    })
+                    navigator.clipboard.writeText(lines.join(NL))
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 2000)
+                  }} style={{ fontFamily: F, fontSize: '11px', color: copied ? '#4CAF50' : '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>
+                    {copied ? '✓ Copied' : 'Copy All'}
+                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: '11px', color: '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>Clear</button>
+                </div>
+                </div>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
                 <thead>
