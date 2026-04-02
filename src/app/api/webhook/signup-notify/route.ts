@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(req: NextRequest) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     const body = await req.json()
     const email = body?.record?.email ?? body?.email ?? 'unknown'
     const created = body?.record?.created_at ?? new Date().toISOString()
@@ -18,6 +17,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true })
   } catch (e: any) {
+    console.error('Signup notify error:', e)
     return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }
