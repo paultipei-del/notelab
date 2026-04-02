@@ -180,9 +180,10 @@ export class SADPitchDetector {
   private filtersB: BandFilters
 
   // Sliding window vote: 15/30 confirmed from Note Rush source
-  private windowSize: number
-  private stableThreshold: number
+  private windowSize: number      // max frames in sliding window
+  private stableThreshold: number  // points needed to confirm (not frames)
   private detectionWindow: number[] = []
+  private detectionPointsWindow: number[] = []
 
   // Level gate: peak amplitude >= 0.01 (confirmed)
   private levelThreshold: number
@@ -199,7 +200,7 @@ export class SADPitchDetector {
     this.sr = sampleRate
     this.sizeA = Math.floor(sampleRate * 0.100)  // 4410 @ 44100
     this.sizeB = Math.floor(sampleRate * 0.105)  // 4630 @ 44100
-    this.windowSize = config?.windowSize ?? 30
+    this.windowSize = config?.windowSize ?? 10
     this.stableThreshold = config?.stableThreshold ?? 15
     this.levelThreshold = config?.levelThreshold ?? 0.01
 
@@ -309,13 +310,27 @@ export class SADPitchDetector {
     this.lastMidi = midi
     this.lastMidiTime = now
 
-    // Sliding window vote (15/30 confirmed)
-    this.detectionWindow.push(midi)
-    if (this.detectionWindow.length > this.windowSize) this.detectionWindow.shift()
+      // Weighted vote system (confirmed from Note Rush repetitions() function)
+    // Points based on cents deviation from integer MIDI:
+    // < 3.6 cents = 10pts, < 6 cents = 7pts, < 12 cents = 5pts, < 24 cents = 2pts, else 1pt
+    const midiPreciseLocal = hzToMidiPrecise(hz)
+    const centsDev = Math.abs(midiPreciseLocal - midi)  // deviation in semitones
+    const points = centsDev < 0.03 ? 10 : centsDev < 0.05 ? 7 : centsDev < 0.1 ? 5 : centsDev < 0.2 ? 2 : 1
 
-    const votes = this.detectionWindow.filter(m => m === midi).length
-    const stable = votes >= this.stableThreshold &&
-                   this.detectionWindow.length >= this.windowSize
+    // Push to detection window as [midi, points] pairs
+    this.detectionWindow.push(midi)
+    this.detectionPointsWindow.push(points)
+    if (this.detectionWindow.length > this.windowSize) {
+      this.detectionWindow.shift()
+      this.detectionPointsWindow.shift()
+    }
+
+    // Count weighted points for current midi in window
+    let totalPoints = 0
+    for (let i = 0; i < this.detectionWindow.length; i++) {
+      if (this.detectionWindow[i] === midi) totalPoints += this.detectionPointsWindow[i]
+    }
+    const stable = totalPoints >= this.stableThreshold
 
     return { freq: hz, midi, stable, name: midiToName(midi) }
   }
@@ -332,9 +347,11 @@ export class SADPitchDetector {
   // ClearDetectionBuffer: zero votes only, keep audio pipeline running
   clearVotes() {
     this.detectionWindow = []
+    this.detectionPointsWindow = []
     // Block detections until circular buffers are fully overwritten with fresh audio
     // sizeA = ~4410 samples, chunk = ~4096 samples → need 2 chunks to fully overwrite
     this.fillCountdown = Math.ceil(this.sizeA / 4096) + 1
+    this.detectionPointsWindow = []
   }
 
   reset() {
