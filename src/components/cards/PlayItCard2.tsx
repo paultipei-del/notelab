@@ -7,27 +7,22 @@ import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
-// ── Constants (confirmed from Note Rush Assembly-CSharp source) ───────────
-const MIN_TIME_ON_CARD_MS = 800    // MinTimeOnCurrentNote = 0.5s + buffer
-const WRONG_FRAMES_REQUIRED = 20   // IncorrectNoteRepsRequired = 20
-const WRONG_COOLDOWN_MS = 1000     // 1s between wrong answer calls
-const WRONG_SEMITONE_RANGE = 25    // must be within 25 semitones of target
+const WRONG_FRAMES_REQUIRED = 20
+const WRONG_COOLDOWN_MS = 1000
+const WRONG_SEMITONE_RANGE = 25
+const DEAD_WINDOW_MS = 800
 
-// ── Shared mic state (persists across cards) ──────────────────────────────
 let sadStream: MediaStream | null = null
 let sadCtx: AudioContext | null = null
 let sadAnalyser: AnalyserNode | null = null
 let sadDetector: SADPitchDetector | null = null
 let sadBuf: Float32Array | null = null
 
-// ── Per-card state ────────────────────────────────────────────────────────
-let cardStartTime = 0
 let cardHadWrong = false
 let wrongFrameCount = 0
 let lastWrongTime = 0
 let prevMidi = -1
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 function noteToMidi(name: string): number {
   const m = name.match(/^([A-G]#?)(\d)$/)
@@ -35,19 +30,18 @@ function noteToMidi(name: string): number {
   return (parseInt(m[2]) + 1) * 12 + NOTE_NAMES.indexOf(m[1])
 }
 
-const ENHARMONICS: Record<string, string> = {
+const ENHARMONICS: Record<string,string> = {
   'C#':'Db','Db':'C#','D#':'Eb','Eb':'D#',
   'F#':'Gb','Gb':'F#','G#':'Ab','Ab':'G#','A#':'Bb','Bb':'A#',
 }
 
 function pitchMatch(played: string, target: string): boolean {
   if (played === target) return true
-  const pp = played.replace(/\d+$/, ''), tp = target.replace(/\d+$/, '')
+  const pp = played.replace(/\d+$/,''), tp = target.replace(/\d+$/,'')
   const po = played.match(/\d+$/)?.[0], to = target.match(/\d+$/)?.[0]
   return po === to && ENHARMONICS[tp] === pp
 }
 
-// ── Component ─────────────────────────────────────────────────────────────
 interface Props {
   card: QueueCard
   onCorrect: (firstTry: boolean) => void
@@ -62,22 +56,21 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const [error, setError] = useState<string | null>(null)
   const doneRef = useRef(false)
   const rafRef = useRef(0)
+  const acceptingRef = useRef(false)  // true only after dead window
 
   const targetNote = card.note ?? ''
   const stopLoop = useCallback(() => cancelAnimationFrame(rafRef.current), [])
 
   useEffect(() => {
-    // ── Reset per-card state ──────────────────────────────────────────────
     doneRef.current = false
+    acceptingRef.current = false
     cardHadWrong = false
     wrongFrameCount = 0
-    cardStartTime = 0  // will be set after dead window
     setStatus('starting')
     setDetected(null)
 
     async function init() {
       try {
-        // ── Ensure mic stream is alive ──────────────────────────────────
         if (!sadStream || !sadStream.active || !sadStream.getTracks().every(t => t.readyState === 'live')) {
           sadStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
           sadCtx = null; sadAnalyser = null; sadDetector = null
@@ -94,53 +87,47 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           sadDetector = new SADPitchDetector(sadCtx.sampleRate)
         }
 
-        // ── Hard flush: reset detector completely ─────────────────────
-        // This clears circular buffers, filter state, and detection window
+        // Reset detector immediately
         sadDetector!.reset()
-
-        // ── Dead window: exactly like Note Rush's MinTimeOnCurrentNote ─
-        // Do NOT run detector during this period — just drain the analyser
         setStatus('listening')
-        const DEAD_WINDOW_MS = 800
-        const deadEnd = Date.now() + DEAD_WINDOW_MS
 
-        function drainAndWait() {
-          if (Date.now() < deadEnd) {
-            // Drain the analyser buffer to prevent buildup of old audio
-            if (sadBuf && sadAnalyser) {
-              sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
-            }
-            rafRef.current = requestAnimationFrame(drainAndWait)
-            return
-          }
-          // Dead window over — flush detector one final time then start
+        // Schedule the moment we start accepting detections
+        const acceptTimer = setTimeout(() => {
+          if (doneRef.current) return
+          // Reset detector again right at the accept boundary —
+          // this clears any votes accumulated during the dead window
           sadDetector!.reset()
-          cardStartTime = Date.now()
-          rafRef.current = requestAnimationFrame(tick)
-        }
+          acceptingRef.current = true
+        }, DEAD_WINDOW_MS)
 
         function tick() {
           if (!sadAnalyser || !sadBuf || !sadDetector || doneRef.current) return
           sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
+
+          // Always run detector to keep buffers warm and filters settled
           const result = sadDetector.update(sadBuf)
+
+          // But only act on results after dead window
+          if (!acceptingRef.current) {
+            rafRef.current = requestAnimationFrame(tick)
+            return
+          }
 
           if (result?.stable) {
             setDetected(result.name)
 
             if (pitchMatch(result.name, targetNote)) {
-              // ── Correct note ──────────────────────────────────────────
               if (doneRef.current) return
               doneRef.current = true
               prevMidi = result.midi
               setStatus('correct')
               stopLoop()
+              clearTimeout(acceptTimer)
               setTimeout(() => onCorrect(!cardHadWrong), 200)
               return
             } else {
-              // ── Wrong note ────────────────────────────────────────────
               wrongFrameCount++
               const now = Date.now()
-              const timeOnCard = now - cardStartTime
               const detMidi = result.midi
               const tgtMidi = noteToMidi(targetNote)
               const semDist = Math.abs(detMidi - tgtMidi)
@@ -150,7 +137,6 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
 
               if (
                 wrongFrameCount >= WRONG_FRAMES_REQUIRED &&
-                timeOnCard >= MIN_TIME_ON_CARD_MS &&
                 semDist <= WRONG_SEMITONE_RANGE &&
                 !isOctaveOfPrev &&
                 cooldownOk
@@ -163,14 +149,14 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
               }
             }
           } else {
-            // No stable detection — reset wrong counter
             wrongFrameCount = 0
           }
 
           rafRef.current = requestAnimationFrame(tick)
         }
 
-        drainAndWait()
+        tick()
+        return () => clearTimeout(acceptTimer)
 
       } catch(e: any) {
         setError('Mic access denied.')
