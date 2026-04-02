@@ -11,6 +11,7 @@ import AudioCard from '@/components/cards/AudioCard'
 import AudioBrowseRow from '@/components/cards/AudioBrowseRow'
 import ExplainCard from '@/components/cards/ExplainCard'
 import PlayItCard, { stopMic } from '@/components/cards/PlayItCard'
+import PlayItCard2 from '@/components/cards/PlayItCard2'
 import { useRouter } from 'next/navigation'
 
 interface StudyEngineProps { deck: Deck; userId: string | null; onQuiz: () => void }
@@ -217,7 +218,7 @@ return (
             ) : mode === 'explain' && currentCard ? (
               <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
             ) : mode === 'play' && currentCard ? (
-              <PlayItCard key={currentCard.id} card={currentCard} onCorrect={(firstTry: boolean) => { recordAnswer(firstTry); rate(3) }} onWrong={() => {}} />
+              <PlayItCard2 key={currentCard.id} card={currentCard} onCorrect={(firstTry: boolean) => { recordAnswer(firstTry); rate(3) }} onWrong={() => {}} />
             ) : null}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '8px 32px 16px', visibility: isFlipMode ? 'visible' : 'hidden' }}>
