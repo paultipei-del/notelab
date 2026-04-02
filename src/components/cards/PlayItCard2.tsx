@@ -16,6 +16,8 @@ let sadDetector: SADPitchDetector | null = null
 let sadBuf: Float32Array | null = null
 let cardReadyAt2 = 0
 let cardHadWrong2 = false
+let consecutiveWrongFrames = 0
+const WRONG_FRAMES_REQUIRED = 3  // require 3 consecutive wrong frames before marking wrong
 
 const ENHARMONICS: Record<string, string> = {
   'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
@@ -55,6 +57,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   useEffect(() => {
     doneRef.current = false
     cardHadWrong2 = false
+    consecutiveWrongFrames = 0
     cardReadyAt2 = Date.now() + 1000
     setStatus('starting')
     setDetected(null)
@@ -116,6 +119,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
 
           if (result?.stable) {
             setDetected(result.name)
+            consecutiveWrongFrames = 0
             if (pitchMatch(result.name, targetNote)) {
               if (doneRef.current) return
               doneRef.current = true
@@ -124,10 +128,13 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
               setTimeout(() => onCorrect(!cardHadWrong2), 100)
               return
             } else {
-              setStatus('wrong')
-              if (Date.now() >= cardReadyAt2) {
-                cardHadWrong2 = true
-                onWrong()
+              consecutiveWrongFrames++
+              if (consecutiveWrongFrames >= WRONG_FRAMES_REQUIRED) {
+                setStatus('wrong')
+                if (Date.now() >= cardReadyAt2) {
+                  cardHadWrong2 = true
+                  onWrong()
+                }
               }
             }
           }
