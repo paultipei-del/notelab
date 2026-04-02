@@ -8,13 +8,10 @@ import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
-const MIN_TIME_ON_CARD_MS = 800
-const POST_DEAD_SILENCE_THRESHOLD = 0.02  // RMS must drop below this
-const POST_DEAD_SILENCE_FRAMES = 2  // for this many frames before accepting
-const WRONG_FRAMES_REQUIRED = 20
+const MIN_TIME_ON_CARD_MS = 1000  // fixed dead window
 const WRONG_COOLDOWN_MS = 1000
 const WRONG_SEMITONE_RANGE = 25
-const WRONG_DELAY_AFTER_SILENCE_MS = 300  // extra delay after silence gate before wrong can fire
+const WRONG_DELAY_AFTER_SILENCE_MS = 300
 
 // ── Shared audio pipeline — never destroyed between cards ─────────────────
 let sadStream: MediaStream | null = null
@@ -64,9 +61,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const [error, setError] = useState<string | null>(null)
   const doneRef = useRef(false)
   const targetNoteRef = useRef(card.note ?? '')
-  const silenceFramesRef = useRef(0)
-  const readyToAcceptRef = useRef(false)
-  const silenceClearedAtRef = useRef(0)
+
 
   useEffect(() => {
     targetNoteRef.current = card.note ?? ''
@@ -128,25 +123,6 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
       return
     }
 
-    // Post-dead-window silence gate: wait for signal to drop before accepting
-    if (!readyToAcceptRef.current) {
-      let rmsSum = 0
-      for (let i = 0; i < sadBuf.length; i++) rmsSum += sadBuf[i] * sadBuf[i]
-      const rms = Math.sqrt(rmsSum / sadBuf.length)
-      if (rms < POST_DEAD_SILENCE_THRESHOLD) {
-        silenceFramesRef.current++
-        if (silenceFramesRef.current >= POST_DEAD_SILENCE_FRAMES) {
-          readyToAcceptRef.current = true
-          silenceClearedAtRef.current = Date.now()
-          sadDetector!.clearVotes()
-        }
-      } else {
-        silenceFramesRef.current = 0
-      }
-      rafHandle = requestAnimationFrame(tick)
-      return
-    }
-
     const result = sadDetector.update(sadBuf)
 
     if (result?.stable) {
@@ -170,8 +146,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           (detMidi === prevMidi + 12 || detMidi === prevMidi - 12)
         const cooldownOk = now - lastWrongTime > WRONG_COOLDOWN_MS
 
-        const silenceJustCleared = Date.now() - silenceClearedAtRef.current < WRONG_DELAY_AFTER_SILENCE_MS
-        if (semDist <= WRONG_SEMITONE_RANGE && !isOctaveOfPrev && cooldownOk && !silenceJustCleared) {
+        if (semDist <= WRONG_SEMITONE_RANGE && !isOctaveOfPrev && cooldownOk) {
           setStatus('wrong')
           cardHadWrong = true
           lastWrongTime = now
