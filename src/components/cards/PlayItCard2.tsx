@@ -139,6 +139,17 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     if (result?.stable) {
       setDetected(result.name)
       const target = targetNoteRef.current
+      const timeSinceAccept = now - acceptStartRef.current
+      const targetMidiVal = noteToMidi(target)
+      // Block octaves of prev note AND target note for OCTAVE_BLEED_FILTER_MS after dead window
+      const isOctaveBleed = (
+        (prevMidi >= 0 && (result.midi === prevMidi - 12 || result.midi === prevMidi + 12)) ||
+        (result.midi === targetMidiVal - 12 || result.midi === targetMidiVal + 12)
+      ) && timeSinceAccept < OCTAVE_BLEED_FILTER_MS
+      if (isOctaveBleed) {
+        rafHandle = requestAnimationFrame(tick)
+        return
+      }
 
       if (pitchMatch(result.name, target)) {
         if (doneRef.current) return
