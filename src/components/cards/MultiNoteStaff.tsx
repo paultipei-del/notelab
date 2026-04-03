@@ -209,9 +209,9 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
                 const nat2 = accInfo2 ? accInfo2.natural : ns.note
                 const positions2 = clef === 'bass' ? BASS_POSITIONS : TREBLE_POSITIONS
                 const pos2 = positions2[nat2] ?? 8
-                const noteBottom = trebleTop + pos2 * step + 16
-                if (clef === 'grand') return bassTop + 8 * step + 32
-                return Math.max(trebleTop + 8 * step + 32, noteBottom)
+                const noteBottom = trebleTop + pos2 * step + 24
+                if (clef === 'grand') return bassTop + 8 * step + 48
+                return Math.max(trebleTop + 8 * step + 48, noteBottom + 24)
               })()} fontSize="18" fontFamily="var(--font-cormorant), serif"
                 fill="#E53935" textAnchor="middle" dominantBaseline="central">
                 {ns.note.replace(/\d+$/, '')}
