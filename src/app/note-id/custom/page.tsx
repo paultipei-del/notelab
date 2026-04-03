@@ -391,7 +391,7 @@ function CustomNoteIDInner() {
                 <MultiNoteStaff notes={group} clef={clef} />
               )}
             </div>
-            <div style={{ height: groupSize === 1 ? 'clamp(28px,4vh,48px)' : '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ height: groupSize === 1 && !(useAccidentals && !isLandscape) ? 'clamp(28px,4vh,48px)' : '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
               {groupSize === 1 && flash === 'correct' && <span style={{ fontSize: 'clamp(24px,4vh,36px)', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
               {groupSize === 1 && flash === 'wrong' && (
                 <>
