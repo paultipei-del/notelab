@@ -410,7 +410,7 @@ function CustomNoteIDInner() {
             {isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '10px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '4px', textAlign: 'center' as const }}>What note is this?</p>}
             {inputMode === 'letters' ? (
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 'clamp(3px,0.8vh,6px)' }}>
-                {useAccidentals && (!isLandscape || showAccidentals) && (
+                {useAccidentals && (
                   <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                     {[null,'C#','D#',null,'F#','G#','A#'].map((s, i) => s ? (
                       <button key={s} onClick={() => handleAnswer(s)}
@@ -428,7 +428,7 @@ function CustomNoteIDInner() {
                     </button>
                   ))}
                 </div>
-                {useAccidentals && (!isLandscape || showAccidentals) && (
+                {useAccidentals && (
                   <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                     {['Db','Eb',null,'Gb','Ab','Bb',null].map((note, i) => note ? (
                       <button key={note} onClick={() => handleAnswer(note)}
@@ -438,12 +438,7 @@ function CustomNoteIDInner() {
                     ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
                   </div>
                 )}
-                {useAccidentals && isLandscape && (
-                  <button onClick={() => setShowAccidentals(a => !a)}
-                    style={{ marginTop: '4px', padding: '4px 16px', borderRadius: '8px', border: '1px solid #D3D1C7', background: showAccidentals ? '#1A1A18' : 'white', color: showAccidentals ? 'white' : '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
-                    {showAccidentals ? 'Hide ♯♭' : 'Show ♯♭'}
-                  </button>
-                )}
+
               </div>
             ) : inputMode === 'keyboard-full' ? (
               <FullPiano onNote={handleAnswer} />
