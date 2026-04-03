@@ -77,7 +77,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
                       {n.dot && <circle cx={x + 14} cy={STAFF_Y - 4} r={2.5} fill="#1A1A18" />}
                     </>}
                     {n.rest && (
-                      <text x={x} y={n.type === 'whole' ? STAFF_Y + 10 : n.type === 'half' ? STAFF_Y - 2 : STAFF_Y}
+                      <text x={x} y={n.type === 'whole' ? STAFF_Y + 10 : n.type === 'half' ? STAFF_Y - 1 : STAFF_Y}
                         fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
                         {BRAVURA_REST[n.type] ?? BRAVURA_REST.quarter}
                       </text>
