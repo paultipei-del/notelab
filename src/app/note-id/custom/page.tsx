@@ -154,17 +154,17 @@ function CustomNoteIDInner() {
       treble: {
         lines:  ['E4','G4','B4','D5','F5'],
         spaces: ['F4','A4','C5','E5'],
-        ledger: ['C4','D4','A5','B5','C6','A3','B3','G3','F3'],
+        ledger: ['C4','A5','B5','C6'],
       },
       bass: {
         lines:  ['G2','B2','D3','F3','A3'],
         spaces: ['A2','C3','E3','G3','B3'],
-        ledger: ['E2','F2','C4','D4','E4'],
+        ledger: ['E2','C4','D4'],
       },
       grand: {
         lines:  ['E4','G4','B4','D5','F5','G2','B2','D3','F3','A3'],
         spaces: ['F4','A4','C5','E5','A2','C3','E3','G3','B3'],
-        ledger: ['C4','D4','A5','B5','C6','E2'],
+        ledger: ['C4','A5','B5','C6','E2'],
       },
     }
 
