@@ -405,7 +405,7 @@ function CustomNoteIDInner() {
                     const s = [null,'C#','D#',null,'F#','G#','A#'][i]
                     return s ? (
                       <button key={s} onClick={() => handleAnswer(s)}
-                        style={{ flex: 1, maxWidth: '52px', height: '34px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
                         {s}
                       </button>
                     ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />
@@ -416,7 +416,7 @@ function CustomNoteIDInner() {
               <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
                 {NOTE_LETTERS.map(letter => (
                   <button key={letter} onClick={() => handleAnswer(letter)}
-                    style={{ flex: 1, maxWidth: '52px', height: '48px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', fontFamily: 'var(--font-cormorant), serif', fontSize: '22px', fontWeight: 400, color: '#1A1A18', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
+                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#1A1A18', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
                     {letter}
                   </button>
                 ))}
@@ -426,7 +426,7 @@ function CustomNoteIDInner() {
                 <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                   {['Db','Eb',null,'Gb','Ab','Bb',null].map((note, i) => note ? (
                     <button key={note} onClick={() => handleAnswer(note)}
-                      style={{ flex: 1, maxWidth: '52px', height: '34px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                      style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
                       {note}
                     </button>
                   ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
