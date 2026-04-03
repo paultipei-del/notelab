@@ -194,18 +194,16 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
         if (ns.status === 'correct') {
           return (
             <g key={`ind-${i}`}>
-              <circle cx={nx} cy={indicatorY} r={10} fill="#4CAF50" />
-              <text x={nx} y={indicatorY} fontSize="12" fontFamily="var(--font-jost), sans-serif"
-                fill="white" textAnchor="middle" dominantBaseline="central">✓</text>
+              <text x={nx} y={indicatorY} fontSize="28" fontFamily="var(--font-jost), sans-serif"
+                fill="#4CAF50" textAnchor="middle" dominantBaseline="central">✓</text>
             </g>
           )
         }
         if (ns.status === 'wrong') {
           return (
             <g key={`ind-${i}`}>
-              <circle cx={nx} cy={indicatorY} r={10} fill="#E53935" />
-              <text x={nx} y={indicatorY} fontSize="12" fontFamily="var(--font-jost), sans-serif"
-                fill="white" textAnchor="middle" dominantBaseline="central">✗</text>
+              <text x={nx} y={indicatorY} fontSize="28" fontFamily="var(--font-jost), sans-serif"
+                fill="#E53935" textAnchor="middle" dominantBaseline="central">✗</text>
               <text x={nx} y={(() => {
                 const accInfo2 = ACCIDENTAL_MAP[ns.note]
                 const nat2 = accInfo2 ? accInfo2.natural : ns.note
