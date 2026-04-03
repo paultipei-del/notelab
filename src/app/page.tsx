@@ -44,6 +44,13 @@ const TOOLS = [
     cta: 'Build →',
   },
   {
+    href: '/scale-fingerings',
+    title: 'Scale Fingerings',
+    desc: 'Two-octave major and minor scale fingerings for both hands, with keyboard and staff views.',
+    badge: 'Free',
+    cta: 'Study →',
+  },
+  {
     href: '/glossary',
     title: 'Glossary',
     desc: 'Searchable reference of musical terms — French, German, Italian, abbreviations.',
