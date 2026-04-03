@@ -129,13 +129,22 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
   }
 
   // For grand staff: vertical connecting line + brace
+  const braceTop = trebleTop
+  const braceBottom = bassTop + 8 * step
+  const braceFontSize = (braceBottom - braceTop) * 1.00
   const grandConnectors = clef === 'grand' ? (
     <>
       <line x1={staffLeft} y1={trebleTop} x2={staffLeft} y2={bassTop + 8 * step}
         stroke="#1A1A18" strokeWidth="1.5" />
-      <text x={staffLeft - 2} y={trebleTop + (bassTop + 8 * step - trebleTop) / 2}
-        fontSize="60" fontFamily="Bravura, serif" fill="#1A1A18"
-        textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xE003)}</text>
+      <text
+        x={staffLeft - 8}
+        y={braceTop + braceFontSize * 1.00}
+        fontSize={braceFontSize}
+        fontFamily="Bravura, serif"
+        fill="#1A1A18"
+        textAnchor="middle"
+        dominantBaseline="auto"
+      >{''}</text>
     </>
   ) : null
 
