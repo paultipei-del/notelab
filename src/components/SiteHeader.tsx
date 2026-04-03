@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { signOut } from '@/lib/auth'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import AuthModal from '@/components/AuthModal'
 
@@ -15,6 +15,13 @@ export default function SiteHeader() {
 
   if (pathname === '/unlock') return null
   if (pathname === '/landing') return null
+
+  // Early access gate — all pages except /unlock and /landing
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return
+    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted'))
+    if (!cookie) window.location.href = '/unlock'
+  }, [])
   const [showAuth, setShowAuth] = useState(false)
 
   async function handleSignOut() {
