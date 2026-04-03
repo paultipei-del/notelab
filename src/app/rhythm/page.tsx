@@ -72,9 +72,17 @@ function BravuraNote({ x, y, type, color }: { x: number; y: number; type: string
 }
 
 function RestSymbol({ x, type }: { x: number; type: string }) {
-  if (type === 'whole') return <rect x={x - 7} y={STAFF_Y + 3} width={14} height={5} fill="#1A1A18" />
-  if (type === 'half')  return <rect x={x - 7} y={STAFF_Y - 8} width={14} height={5} fill="#1A1A18" />
-  return <text x={x} y={STAFF_Y + 8} fontSize={18} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{BRAVURA.quarterRest}</text>
+  const glyph =
+    type === 'whole'      ? BRAVURA.wholeRest :
+    type === 'half'       ? BRAVURA.halfRest :
+    type === 'eighth'     ? BRAVURA.eighthRest :
+    type === 'sixteenth'  ? BRAVURA.sixteenthRest :
+    BRAVURA.quarterRest
+  const y =
+    type === 'whole' ? STAFF_Y + 2 :
+    type === 'half'  ? STAFF_Y + 2 :
+    STAFF_Y + 14
+  return <text x={x} y={y} fontSize={32} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
 }
 
 function Dot({ x, color }: { x: number; color: string }) {
