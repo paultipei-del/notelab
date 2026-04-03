@@ -437,8 +437,17 @@ function CustomNoteIDInner() {
           ) : inputMode === 'keyboard-full' ? (
             <FullPiano onNote={handleAnswer} />
           ) : (
-            <div style={{ overflowX: 'auto', width: '100%', WebkitOverflowScrolling: 'touch' as any }}>
-              <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px', margin: '0 auto' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px',
+                transformOrigin: 'top left',
+              }} ref={(el) => {
+                if (!el) return
+                const parent = el.parentElement
+                if (!parent) return
+                const scale = Math.min(1, parent.offsetWidth / (WHITE_KEY_NOTES.length * KEY_W))
+                el.style.transform = `scale(${scale})`
+                el.parentElement!.style.height = (KEY_H * scale) + 'px'
+              }}>
                 {WHITE_KEY_NOTES.map((note, i) => (
                   <button key={note} onClick={() => handleAnswer(note)}
                     style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: 'white', border: '1px solid #D3D1C7', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />

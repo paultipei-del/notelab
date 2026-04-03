@@ -336,10 +336,18 @@ function NoteIDExerciseInner() {
               </div>
             </div>
           ) : (
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
               <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px',
-                transformOrigin: 'top center',
-                transform: 'scale(min(1, calc((100vw - 80px) / ' + (WHITE_KEY_NOTES.length * KEY_W) + ')))'
+                transformOrigin: 'top left',
+                transform: `scale(${1})`,
+                maxWidth: '100%',
+              }} ref={(el) => {
+                if (!el) return
+                const parent = el.parentElement
+                if (!parent) return
+                const scale = Math.min(1, parent.offsetWidth / (WHITE_KEY_NOTES.length * KEY_W))
+                el.style.transform = `scale(${scale})`
+                el.parentElement!.style.height = (KEY_H * scale) + 'px'
               }}>
                 {WHITE_KEY_NOTES.map((note, i) => (
                   <button key={note} onClick={() => handleAnswer(note)}
