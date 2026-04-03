@@ -385,7 +385,7 @@ function CustomNoteIDInner() {
           </div>
 
           {/* Feedback — single note only */}
-          <div style={{ height: 'clamp(32px,5vh,52px)', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+          <div style={{ height: groupSize === 1 ? 'clamp(32px,5vh,52px)' : '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', marginBottom: groupSize === 1 ? '12px' : '0' }}>
             {groupSize === 1 && flash === 'correct' && <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
             {groupSize === 1 && flash === 'wrong' && (
               <>

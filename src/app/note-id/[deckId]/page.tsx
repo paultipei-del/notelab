@@ -288,7 +288,7 @@ function NoteIDExerciseInner() {
 
           {/* Feedback indicator + correct answer for single note */}
           {groupSize === 1 && (
-            <div style={{ textAlign: 'center' as const, marginBottom: '4px', minHeight: 'clamp(40px,8vh,64px)', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' as const, marginBottom: groupSize === 1 ? '4px' : '0', minHeight: groupSize === 1 ? 'clamp(40px,8vh,64px)' : '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
               {group[activeIdx]?.status === 'correct' && (
                 <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>
               )}
