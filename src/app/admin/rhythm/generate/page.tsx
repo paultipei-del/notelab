@@ -28,6 +28,14 @@ const DEFAULT_OPTS: GeneratorOptions = {
 }
 
 
+const BRAVURA_REST: Record<string, string> = {
+  whole:      String.fromCodePoint(0xE4E3),
+  half:       String.fromCodePoint(0xE4E4),
+  quarter:    String.fromCodePoint(0xE4E5),
+  eighth:     String.fromCodePoint(0xE4E6),
+  sixteenth:  String.fromCodePoint(0xE4E7),
+}
+
 const BRAVURA_NOTE: Record<string, string> = {
   whole:     String.fromCodePoint(0xE1D2),
   half:      String.fromCodePoint(0xE1D3),
@@ -63,12 +71,17 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
                 return (
                   <g key={nIdx}>
                     {!n.rest && <>
-                      <text x={x} y={STAFF_Y + 10} fontSize={32} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="auto">
+                      <text x={x} y={STAFF_Y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
                         {BRAVURA_NOTE[n.type] ?? BRAVURA_NOTE.quarter}
                       </text>
-                      {n.dot && <circle cx={x + 14} cy={STAFF_Y - 4} r={2} fill="#1A1A18" />}
+                      {n.dot && <circle cx={x + 14} cy={STAFF_Y - 4} r={2.5} fill="#1A1A18" />}
                     </>}
-                    {n.rest && <rect x={x-6} y={STAFF_Y-6} width={12} height={5} fill="#1A1A18" />}
+                    {n.rest && (
+                      <text x={x} y={n.type === 'whole' ? STAFF_Y - 2 : n.type === 'half' ? STAFF_Y + 2 : STAFF_Y}
+                        fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
+                        {BRAVURA_REST[n.type] ?? BRAVURA_REST.quarter}
+                      </text>
+                    )}
                   </g>
                 )
               })}
