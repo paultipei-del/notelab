@@ -53,13 +53,16 @@ function KeyboardSVG({ notes, fingering, hand }: {
 }) {
   const startMidi = notes[0]
   const endMidi = notes[notes.length - 1]
+  // Extend display to nearest C below start and C above end for context
+  const displayStart = startMidi - (startMidi % 12)  // nearest C below
+  const displayEnd = endMidi + (12 - (endMidi % 12)) % 12  // nearest C above
   const whiteCount = countWhiteKeys(notes, startMidi)
   const W = whiteCount * WW + 2
   const H = WH + 32  // extra space for finger numbers
 
   // Build all keys between start and end
   const allKeys: number[] = []
-  for (let m = startMidi; m <= endMidi; m++) allKeys.push(m)
+  for (let m = displayStart; m <= displayEnd; m++) allKeys.push(m)
   const whiteKeys = allKeys.filter(m => !isBlack(m - startMidi + (startMidi % 12 === 0 ? 0 : 0)))
   
   // Simpler: track white/black based on chromatic position
@@ -74,7 +77,7 @@ function KeyboardSVG({ notes, fingering, hand }: {
 
   // x position per midi
   function keyX(midi: number): number {
-    const diff = midi - startMidi
+    const diff = midi - displayStart
     // count white keys before this
     let whites = 0
     for (let m = startMidi; m < midi; m++) {
@@ -88,7 +91,7 @@ function KeyboardSVG({ notes, fingering, hand }: {
   }
 
   const totalWhites = chrWhite.length
-  const svgW = totalWhites * WW + 2
+  const svgW = totalWhites * WW + 4
 
   return (
     <svg width="100%" viewBox={`0 0 ${svgW} ${H}`} style={{ display: 'block' }} preserveAspectRatio="xMinYMin meet">
