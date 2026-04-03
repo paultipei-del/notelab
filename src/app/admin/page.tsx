@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
-const ADMIN_EMAILS = ['paul@paulvoiatipei.com', 'paulvoia@gmail.com']
+const ADMIN_EMAILS = ['paul@paulvoiatipei.com', 'paulvoia@gmail.com', 'paultipei@gmail.com']
 
 interface User {
   id: string; email: string; created_at: string
