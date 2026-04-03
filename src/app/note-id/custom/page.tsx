@@ -415,7 +415,7 @@ function CustomNoteIDInner() {
               )}
             </div>
             {/* Wrong answer — subtle correct note, no layout shift */}
-            <div style={{ height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '4px' }}>
+            <div style={{ height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-8px' }}>
               {wrongNote && <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 600, color: '#E53935' }}>{wrongNote}</span>}
             </div>
           </div>
