@@ -414,15 +414,13 @@ function CustomNoteIDInner() {
                 <MultiNoteStaff notes={group} clef={clef} />
               )}
             </div>
-            <div style={{ height: groupSize === 1 && !(useAccidentals && !isLandscape) ? 'clamp(28px,4vh,48px)' : '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
-              {groupSize === 1 && flash === 'correct' && <span style={{ fontSize: 'clamp(24px,4vh,36px)', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
-              {groupSize === 1 && flash === 'wrong' && (
-                <>
-                  <span style={{ fontSize: 'clamp(24px,4vh,36px)', color: '#E53935', lineHeight: 1 }}>✗</span>
-                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 500, color: '#E53935', marginTop: '2px' }}>{currentNote.replace(/\d+$/, '')}</p>
-                </>
-              )}
-            </div>
+            {/* Wrong answer overlay — compact, no layout shift */}
+            {wrongNote && (
+              <div style={{ marginTop: '6px', padding: '4px 14px', background: '#FDECEA', border: '1px solid #F09595', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '10px', fontWeight: 300, color: '#E53935', letterSpacing: '0.08em' }}>Correct:</span>
+                <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 500, color: '#E53935' }}>{wrongNote}</span>
+              </div>
+            )}
           </div>
 
           {/* Divider in landscape */}
