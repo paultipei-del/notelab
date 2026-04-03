@@ -37,22 +37,22 @@ const DEFAULT_CONFIG: Config = {
 
 // ── Quick Start Levels ─────────────────────────────────────────────────────
 const QUICK_START = [
-  { id: 'sight-read-treble-free', label: 'Treble — Free', clef: 'treble', pro: false },
-  { id: 'sight-read-treble-1', label: 'Treble L1', clef: 'treble', pro: true },
-  { id: 'sight-read-treble-2', label: 'Treble L2', clef: 'treble', pro: true },
-  { id: 'sight-read-treble-3', label: 'Treble L3', clef: 'treble', pro: true },
-  { id: 'sight-read-treble-4', label: 'Treble L4', clef: 'treble', pro: true },
-  { id: 'sight-read-treble-5', label: 'Treble L5', clef: 'treble', pro: true },
-  { id: 'sight-read-bass-free', label: 'Bass — Free', clef: 'bass', pro: false },
-  { id: 'sight-read-bass-1', label: 'Bass L1', clef: 'bass', pro: true },
-  { id: 'sight-read-bass-2', label: 'Bass L2', clef: 'bass', pro: true },
-  { id: 'sight-read-bass-3', label: 'Bass L3', clef: 'bass', pro: true },
-  { id: 'sight-read-bass-4', label: 'Bass L4', clef: 'bass', pro: true },
-  { id: 'sight-read-bass-5', label: 'Bass L5', clef: 'bass', pro: true },
-  { id: 'sight-read-grand-free', label: 'Grand — Free', clef: 'grand', pro: false },
-  { id: 'sight-read-grand-1', label: 'Grand L1', clef: 'grand', pro: true },
-  { id: 'sight-read-grand-2', label: 'Grand L2', clef: 'grand', pro: true },
-  { id: 'sight-read-grand-3', label: 'Grand L3', clef: 'grand', pro: true },
+  { id: 'sight-read-treble-free', label: 'Free', desc: 'C4–G4 anchor notes', clef: 'treble', pro: false },
+  { id: 'sight-read-treble-1', label: 'Level 1', desc: 'C4–G4 + ledger lines', clef: 'treble', pro: true },
+  { id: 'sight-read-treble-2', label: 'Level 2', desc: 'Full treble staff', clef: 'treble', pro: true },
+  { id: 'sight-read-treble-3', label: 'Level 3', desc: 'With sharps & flats', clef: 'treble', pro: true },
+  { id: 'sight-read-treble-4', label: 'Level 4', desc: 'Extended range', clef: 'treble', pro: true },
+  { id: 'sight-read-treble-5', label: 'Level 5', desc: 'Full chromatic', clef: 'treble', pro: true },
+  { id: 'sight-read-bass-free', label: 'Free', desc: 'F3–C4 anchor notes', clef: 'bass', pro: false },
+  { id: 'sight-read-bass-1', label: 'Level 1', desc: 'F3–C4 + ledger lines', clef: 'bass', pro: true },
+  { id: 'sight-read-bass-2', label: 'Level 2', desc: 'Full bass staff', clef: 'bass', pro: true },
+  { id: 'sight-read-bass-3', label: 'Level 3', desc: 'With sharps & flats', clef: 'bass', pro: true },
+  { id: 'sight-read-bass-4', label: 'Level 4', desc: 'Extended range', clef: 'bass', pro: true },
+  { id: 'sight-read-bass-5', label: 'Level 5', desc: 'Full chromatic', clef: 'bass', pro: true },
+  { id: 'sight-read-grand-free', label: 'Free', desc: 'Both clefs, anchor notes', clef: 'grand', pro: false },
+  { id: 'sight-read-grand-1', label: 'Level 1', desc: 'Grand staff basics', clef: 'grand', pro: true },
+  { id: 'sight-read-grand-2', label: 'Level 2', desc: 'Expanded range', clef: 'grand', pro: true },
+  { id: 'sight-read-grand-3', label: 'Level 3', desc: 'Full grand staff', clef: 'grand', pro: true },
 ]
 
 // ── Clef SVGs ──────────────────────────────────────────────────────────────
@@ -153,6 +153,34 @@ export default function NoteIDPage() {
       </div>
 
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: '40px 32px 80px' }}>
+
+        {/* ── Quick Start ── */}
+        <div style={{ marginBottom: '32px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '14px' }}>Quick Start</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px' }}>
+            {filteredQuick.map(l => {
+              const locked = l.pro && !isPro
+              return (
+                <button key={l.id} onClick={() => !locked && startQuick(l.id)}
+                  style={{
+                    background: locked ? '#FAFAF8' : 'white',
+                    border: '1px solid #D3D1C7', borderRadius: '10px',
+                    padding: '10px 14px', cursor: locked ? 'default' : 'pointer',
+                    display: 'flex', flexDirection: 'column' as const, alignItems: 'flex-start', gap: '2px',
+                    transition: 'all 0.15s', minWidth: '90px',
+                  }}
+                  onMouseEnter={e => { if (!locked) { e.currentTarget.style.borderColor = '#1A1A18' } }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+                >
+                  <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: locked ? '#D3D1C7' : '#1A1A18', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {locked && <span style={{ fontSize: '10px' }}>🔒</span>}{l.label}
+                  </span>
+                  <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: locked ? '#D3D1C7' : '#888780' }}>{l.desc}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
 
         {/* ── Custom Config ── */}
         <div style={{ background: 'white', borderRadius: '20px', border: '1px solid #D3D1C7', padding: '32px', marginBottom: '40px', boxShadow: '0 2px 12px rgba(26,26,24,0.06)' }}>
@@ -274,27 +302,7 @@ export default function NoteIDPage() {
           </button>
         </div>
 
-        {/* ── Quick Start ── */}
-        <div>
-          <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#1A1A18', marginBottom: '16px' }}>Quick Start</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '10px' }}>
-            {filteredQuick.map(l => {
-              const locked = l.pro && !isPro
-              return (
-                <button key={l.id} onClick={() => !locked && startQuick(l.id)}
-                  style={{
-                    background: 'white', border: '1px solid #D3D1C7', borderRadius: '10px',
-                    padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300,
-                    color: locked ? '#D3D1C7' : '#1A1A18', cursor: locked ? 'default' : 'pointer',
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                  }}>
-                  {locked && <span style={{ fontSize: '12px' }}>🔒</span>}
-                  {l.label}
-                </button>
-              )
-            })}
-          </div>
-        </div>
+
 
       </div>
     </div>

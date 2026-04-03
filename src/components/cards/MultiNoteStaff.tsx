@@ -138,7 +138,7 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
 
   const trebleClef = <text x={staffLeft + 2} y={trebleTop + 36} fontSize="50"
     fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
-  const bassClef = <text x={staffLeft + 2} y={bassTop + 13} fontSize="52"
+  const bassClef = <text x={staffLeft + 2} y={bassTop + 36} fontSize="50"
     fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄢</text>
 
   const noteEls = notes.map((noteState, i) => {
