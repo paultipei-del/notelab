@@ -4,7 +4,8 @@ import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   MAJOR_FINGERINGS, MAJOR_SCALE_NOTES, SCALE_ORDER, SCALE_DISPLAY,
-  NATURAL_MINOR_FINGERINGS, MINOR_SCALE_NOTES, MINOR_SCALE_ORDER, MINOR_SCALE_DISPLAY,
+  NATURAL_MINOR_FINGERINGS, HARMONIC_MINOR_FINGERINGS, MELODIC_MINOR_FINGERINGS,
+  MINOR_SCALE_NOTES, MINOR_SCALE_ORDER, MINOR_SCALE_DISPLAY,
   type Fingering,
 } from '@/lib/scale-fingerings'
 
@@ -56,13 +57,14 @@ function KeyboardSVG({ notes, fingering, hand }: {
   // Extend display to nearest C below start and C above end for context
   const displayStart = startMidi - (startMidi % 12)  // nearest C below
   const displayEnd = endMidi + (12 - (endMidi % 12)) % 12  // nearest C above
-  const whiteCount = countWhiteKeys(notes, startMidi)
-  const W = whiteCount * WW + 2
+  // whiteCount calculated after allKeys is built below
   const H = WH + 32  // extra space for finger numbers
 
   // Build all keys between start and end
   const allKeys: number[] = []
   for (let m = displayStart; m <= displayEnd; m++) allKeys.push(m)
+  const whiteCount = allKeys.filter(m => !isBlackMidi(m)).length
+  const W = whiteCount * WW + 4
   const whiteKeys = allKeys.filter(m => !isBlack(m - startMidi + (startMidi % 12 === 0 ? 0 : 0)))
   
   // Simpler: track white/black based on chromatic position
@@ -286,7 +288,7 @@ function HandPanel({ label, notes, fingering, clef }: {
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
-type ScaleType = 'major' | 'natural_minor'
+type ScaleType = 'major' | 'natural_minor' | 'harmonic_minor' | 'melodic_minor'
 
 export default function ScaleFingeringsPage() {
   const router = useRouter()
@@ -294,12 +296,26 @@ export default function ScaleFingeringsPage() {
   const [selectedKey, setSelectedKey] = useState('C')
 
   const isMajor = scaleType === 'major'
+  const isMelodicScale = scaleType === 'melodic_minor'
   const keys = isMajor ? SCALE_ORDER : MINOR_SCALE_ORDER
   const displayMap = isMajor ? SCALE_DISPLAY : MINOR_SCALE_DISPLAY
 
-  const fingering = isMajor
+  const fingeringRaw = isMajor
     ? MAJOR_FINGERINGS[selectedKey]
-    : NATURAL_MINOR_FINGERINGS[selectedKey]
+    : scaleType === 'harmonic_minor'
+      ? HARMONIC_MINOR_FINGERINGS[selectedKey]
+      : scaleType === 'melodic_minor'
+        ? MELODIC_MINOR_FINGERINGS[selectedKey]
+        : NATURAL_MINOR_FINGERINGS[selectedKey]
+
+  const [melodicDirection, setMelodicDirection] = useState<'asc'|'desc'>('asc')
+
+  const fingering = isMelodicScale && fingeringRaw && 'rh_asc' in fingeringRaw
+    ? {
+        rh: melodicDirection === 'asc' ? (fingeringRaw as any).rh_asc : (fingeringRaw as any).rh_desc,
+        lh: melodicDirection === 'asc' ? (fingeringRaw as any).lh_asc : (fingeringRaw as any).lh_desc,
+      }
+    : fingeringRaw as any
 
   const notes = isMajor
     ? MAJOR_SCALE_NOTES[selectedKey]
@@ -324,7 +340,7 @@ export default function ScaleFingeringsPage() {
 
         {/* Scale type toggle */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' as const }}>
-          {([['major','Major'],['natural_minor','Natural Minor']] as [ScaleType,string][]).map(([t, label]) => (
+          {([['major','Major'],['natural_minor','Natural Minor'],['harmonic_minor','Harmonic Minor'],['melodic_minor','Melodic Minor']] as [ScaleType,string][]).map(([t, label]) => (
             <button key={t} onClick={() => { setScaleType(t); setSelectedKey(t === 'major' ? 'C' : 'Am') }}
               style={{ padding: '8px 20px', borderRadius: '20px', border: '1px solid ' + (scaleType === t ? '#1A1A18' : '#D3D1C7'), background: scaleType === t ? '#1A1A18' : 'white', color: scaleType === t ? 'white' : '#888780', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
               {label}
@@ -354,6 +370,16 @@ export default function ScaleFingeringsPage() {
           <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginTop: '4px' }}>
             2 octaves · <span style={{ color: '#BA7517', fontWeight: 400 }}>●</span> thumb (1)
           </p>
+          {isMelodicScale && (
+            <div style={{ display: 'flex', gap: '6px', marginTop: '12px' }}>
+              {(['asc','desc'] as const).map(d => (
+                <button key={d} onClick={() => setMelodicDirection(d)}
+                  style={{ padding: '6px 16px', borderRadius: '8px', border: '1px solid ' + (melodicDirection === d ? '#1A1A18' : '#D3D1C7'), background: melodicDirection === d ? '#1A1A18' : 'white', color: melodicDirection === d ? 'white' : '#888780', fontFamily: F, fontSize: '12px', cursor: 'pointer' }}>
+                  {d === 'asc' ? '↑ Ascending' : '↓ Descending'}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right Hand */}
