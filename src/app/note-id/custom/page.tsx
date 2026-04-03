@@ -397,53 +397,52 @@ function CustomNoteIDInner() {
           </div>
 
           {inputMode === 'letters' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-              {/* Sharps and flats — only when accidentals enabled, stacked above naturals */}
-              {/* Button layout: naturals + optional accidentals */}
-              <div style={{ position: 'relative', width: 'min(372px, 100%)', height: useAccidentals ? '130px' : '48px' }}>
-                {/* Sharps row at top */}
-                {useAccidentals && [
-                  { note: 'C#', x: 27 }, { note: 'D#', x: 81 },
-                  { note: 'F#', x: 189 }, { note: 'G#', x: 243 }, { note: 'A#', x: 297 }
-                ].map(({ note, x }) => (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ position: 'absolute', left: x, top: 0, width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                    {note}
-                  </button>
-                ))}
-                {/* Flats row */}
-                {useAccidentals && [
-                  { note: 'Db', x: 27 }, { note: 'Eb', x: 81 },
-                  { note: 'Gb', x: 189 }, { note: 'Ab', x: 243 }, { note: 'Bb', x: 297 }
-                ].map(({ note, x }) => (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ position: 'absolute', left: x, top: 40, width: '48px', height: '36px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                    {note}
-                  </button>
-                ))}
-                {/* Naturals row at bottom */}
-                {NOTE_LETTERS.map((letter, i) => (
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '6px' }}>
+              {/* Accidentals rows */}
+              {useAccidentals && (
+                <>
+                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
+                    {['C#','D#','F#','G#','A#'].map(note => (
+                      <button key={note} onClick={() => handleAnswer(note)}
+                        style={{ flex: 1, maxWidth: '52px', height: '34px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                        {note}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
+                    {['Db','Eb','Gb','Ab','Bb'].map(note => (
+                      <button key={note} onClick={() => handleAnswer(note)}
+                        style={{ flex: 1, maxWidth: '52px', height: '34px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                        {note}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+              {/* Naturals row */}
+              <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
+                {NOTE_LETTERS.map(letter => (
                   <button key={letter} onClick={() => handleAnswer(letter)}
-                    style={{ position: 'absolute', left: i * 54, top: useAccidentals ? 82 : 0, width: '48px', height: '48px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', fontFamily: 'var(--font-cormorant), serif', fontSize: '24px', fontWeight: 400, color: '#1A1A18', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
+                    style={{ flex: 1, maxWidth: '52px', height: '48px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', fontFamily: 'var(--font-cormorant), serif', fontSize: '22px', fontWeight: 400, color: '#1A1A18', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
                     {letter}
                   </button>
                 ))}
-              </div>
-              <div style={{ display: 'flex', gap: '6px', width: '372px' }}>
               </div>
             </div>
           ) : inputMode === 'keyboard-full' ? (
             <FullPiano onNote={handleAnswer} />
           ) : (
-            <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px', margin: '0 auto' }}>
-              {WHITE_KEY_NOTES.map((note, i) => (
-                <button key={note} onClick={() => handleAnswer(note)}
-                  style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: 'white', border: '1px solid #D3D1C7', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
-              ))}
-              {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
-                <button key={note} onClick={() => handleAnswer(note)}
-                  style={{ position: 'absolute', left: (afterWhite + 1) * KEY_W - BLACK_W / 2, top: 0, width: BLACK_W, height: BLACK_H, background: '#1A1A18', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 2, border: 'none', boxShadow: '0 4px 8px rgba(26,26,24,0.3)' }} />
-              ))}
+            <div style={{ overflowX: 'auto', width: '100%', WebkitOverflowScrolling: 'touch' as any }}>
+              <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px', margin: '0 auto' }}>
+                {WHITE_KEY_NOTES.map((note, i) => (
+                  <button key={note} onClick={() => handleAnswer(note)}
+                    style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: 'white', border: '1px solid #D3D1C7', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
+                ))}
+                {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
+                  <button key={note} onClick={() => handleAnswer(note)}
+                    style={{ position: 'absolute', left: (afterWhite + 1) * KEY_W - BLACK_W / 2, top: 0, width: BLACK_W, height: BLACK_H, background: '#1A1A18', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 2, border: 'none', boxShadow: '0 4px 8px rgba(26,26,24,0.3)' }} />
+                ))}
+              </div>
             </div>
           )}
         </div>
