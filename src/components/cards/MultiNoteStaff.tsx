@@ -138,7 +138,10 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
 
   const trebleClef = <text x={staffLeft + 2} y={trebleTop + 36} fontSize="50"
     fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
-  const bassClef = <text x={staffLeft + 2} y={bassTop + 36} fontSize="50"
+  // Bass clef at correct position: trebleTop when bass-only, bassTop when grand
+  const bassClefBassOnly = <text x={staffLeft + 2} y={trebleTop + 36} fontSize="50"
+    fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄢</text>
+  const bassClefGrand = <text x={staffLeft + 2} y={bassTop + 36} fontSize="50"
     fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄢</text>
 
   const noteEls = notes.map((noteState, i) => {
@@ -168,7 +171,8 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
       {staffLines(trebleTop, 't')}
       {clef === 'grand' && staffLines(bassTop, 'b')}
       {clef !== 'bass' && trebleClef}
-      {(clef === 'bass' || clef === 'grand') && bassClef}
+      {clef === 'bass' && bassClefBassOnly}
+      {clef === 'grand' && bassClefGrand}
       {clef === 'bass' && staffLines(trebleTop, 't')}
       {noteEls}
       {/* Status indicators below each note */}
