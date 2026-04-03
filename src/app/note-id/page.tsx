@@ -130,7 +130,7 @@ export default function NoteIDPage() {
   const clefBtn = (active: boolean) => ({
     display: 'flex', flexDirection: 'column' as const, alignItems: 'center',
     justifyContent: 'center', gap: '6px',
-    width: '80px', height: '80px', borderRadius: '12px',
+    width: 'clamp(64px,20vw,80px)', height: 'clamp(64px,20vw,80px)', borderRadius: '12px',
     border: '1px solid ' + (active ? '#1A1A18' : '#D3D1C7'),
     background: active ? '#1A1A18' : 'white',
     cursor: 'pointer', transition: 'all 0.15s',
@@ -146,13 +146,13 @@ export default function NoteIDPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px clamp(16px,4vw,32px)', borderBottom: '1px solid #D3D1C7' }}>
         <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#1A1A18', letterSpacing: '0.02em' }}>Note ID</h1>
         <div style={{ width: '60px' }} />
       </div>
 
-      <div style={{ maxWidth: '640px', margin: '0 auto', padding: '40px 32px 80px' }}>
+      <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 80px' }}>
 
         {/* ── Quick Start ── */}
         <div style={{ marginBottom: '32px' }}>

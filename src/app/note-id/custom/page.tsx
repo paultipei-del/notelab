@@ -400,7 +400,7 @@ function CustomNoteIDInner() {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
               {/* Sharps and flats — only when accidentals enabled, stacked above naturals */}
               {/* Button layout: naturals + optional accidentals */}
-              <div style={{ position: 'relative', width: '372px', height: useAccidentals ? '130px' : '48px' }}>
+              <div style={{ position: 'relative', width: 'min(372px, 100%)', height: useAccidentals ? '130px' : '48px' }}>
                 {/* Sharps row at top */}
                 {useAccidentals && [
                   { note: 'C#', x: 27 }, { note: 'D#', x: 81 },
