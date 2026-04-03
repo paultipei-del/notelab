@@ -110,6 +110,15 @@ function CustomNoteIDInner() {
   const [rounds, setRounds] = useState(0)
   const [done, setDone] = useState(false)
   const [flash, setFlash] = useState<'correct' | 'wrong' | null>(null)
+  const [showAccidentals, setShowAccidentals] = useState(false)
+  const [isLandscape, setIsLandscape] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsLandscape(window.innerWidth > window.innerHeight && window.innerHeight < 500)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
   const [startTime] = useState(Date.now())
   const [elapsed, setElapsed] = useState(0)
   const samplerRef = useRef<Tone.Sampler | null>(null)
@@ -368,96 +377,99 @@ function CustomNoteIDInner() {
 
       {/* Card */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(4px,1vh,12px)', overflow: 'hidden' }}>
-        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(6px,1.2vh,20px) clamp(10px,2vw,24px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, minHeight: 0 }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(4px,1vh,12px)' }}>
-            What note is this?
-          </p>
+        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(6px,1.2vh,20px) clamp(10px,2vw,24px)', maxWidth: '900px', width: '100%', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)', overflow: 'hidden', display: 'flex', flexDirection: isLandscape ? 'row' as const : 'column' as const, minHeight: 0, gap: isLandscape ? '16px' : '0', alignItems: isLandscape ? 'center' : 'stretch' }}>
 
-
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', overflowX: 'auto' }}>
-            {groupSize === 1 ? (
-              clef === 'grand'
-                ? <GrandStaffCard note={currentNote} />
-                : <StaffCard note={currentNote} clef={clef} />
-            ) : (
-              <MultiNoteStaff notes={group} clef={clef} />
-            )}
+          {/* Staff side */}
+          <div style={{ flex: isLandscape ? '1' : 'none', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
+            {!isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(4px,1vh,12px)', textAlign: 'center' as const }}>What note is this?</p>}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: isLandscape ? '0' : '8px', maxWidth: '100%' }}>
+              {groupSize === 1 ? (
+                clef === 'grand'
+                  ? <GrandStaffCard note={currentNote} />
+                  : <StaffCard note={currentNote} clef={clef} />
+              ) : (
+                <MultiNoteStaff notes={group} clef={clef} />
+              )}
+            </div>
+            <div style={{ height: groupSize === 1 ? 'clamp(28px,4vh,48px)' : '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
+              {groupSize === 1 && flash === 'correct' && <span style={{ fontSize: 'clamp(24px,4vh,36px)', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
+              {groupSize === 1 && flash === 'wrong' && (
+                <>
+                  <span style={{ fontSize: 'clamp(24px,4vh,36px)', color: '#E53935', lineHeight: 1 }}>✗</span>
+                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#E53935', marginTop: '2px' }}>{currentNote.replace(/\d+$/, '')}</p>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* Feedback — single note only */}
-          <div style={{ height: groupSize === 1 ? 'clamp(32px,5vh,52px)' : '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', marginBottom: groupSize === 1 ? '12px' : '0' }}>
-            {groupSize === 1 && flash === 'correct' && <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
-            {groupSize === 1 && flash === 'wrong' && (
-              <>
-                <span style={{ fontSize: '36px', color: '#E53935', lineHeight: 1 }}>✗</span>
-                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#E53935', marginTop: '4px' }}>{currentNote.replace(/\d+$/, '')}</p>
-              </>
-            )}
-          </div>
+          {/* Divider in landscape */}
+          {isLandscape && <div style={{ width: '1px', alignSelf: 'stretch', background: '#EDE8DF', flexShrink: 0 }} />}
 
-          {inputMode === 'letters' ? (
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '6px' }}>
-              {/* Sharps row — always rendered, hidden when no accidentals */}
-              {useAccidentals && (
-                <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
-                  {['C#', null, 'D#', null, null, 'F#', null, 'G#', null, 'A#', null, null, null, null].slice(0,7).map((note, i) => {
-                    const sharps = [null,'C#',null,'D#',null,null,'F#',null,'G#',null,'A#',null,null,null]
-                    const s = [null,'C#','D#',null,'F#','G#','A#'][i]
-                    return s ? (
+          {/* Input side */}
+          <div style={{ flex: isLandscape ? '1' : 'none', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', gap: 'clamp(4px,1vh,8px)', minWidth: 0 }}>
+            {isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '10px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '4px', textAlign: 'center' as const }}>What note is this?</p>}
+            {inputMode === 'letters' ? (
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 'clamp(3px,0.8vh,6px)' }}>
+                {useAccidentals && (!isLandscape || showAccidentals) && (
+                  <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
+                    {[null,'C#','D#',null,'F#','G#','A#'].map((s, i) => s ? (
                       <button key={s} onClick={() => handleAnswer(s)}
                         style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
                         {s}
                       </button>
-                    ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />
-                  })}
-                </div>
-              )}
-              {/* Naturals row */}
-              <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
-                {NOTE_LETTERS.map(letter => (
-                  <button key={letter} onClick={() => handleAnswer(letter)}
-                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#1A1A18', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
-                    {letter}
-                  </button>
-                ))}
-              </div>
-              {/* Flats row */}
-              {useAccidentals && (
-                <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
-                  {['Db','Eb',null,'Gb','Ab','Bb',null].map((note, i) => note ? (
-                    <button key={note} onClick={() => handleAnswer(note)}
-                      style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                      {note}
+                    ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
+                  {NOTE_LETTERS.map(letter => (
+                    <button key={letter} onClick={() => handleAnswer(letter)}
+                      style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#1A1A18', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
+                      {letter}
                     </button>
-                  ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
+                  ))}
                 </div>
-              )}
-            </div>
-          ) : inputMode === 'keyboard-full' ? (
-            <FullPiano onNote={handleAnswer} />
-          ) : (
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
-              <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px',
-                transformOrigin: 'top left',
-              }} ref={(el) => {
-                if (!el) return
-                const parent = el.parentElement
-                if (!parent) return
-                const scale = Math.min(1, parent.offsetWidth / (WHITE_KEY_NOTES.length * KEY_W))
-                el.style.transform = `scale(${scale})`
-                el.parentElement!.style.height = (KEY_H * scale) + 'px'
-              }}>
-                {WHITE_KEY_NOTES.map((note, i) => (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: 'white', border: '1px solid #D3D1C7', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
-                ))}
-                {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ position: 'absolute', left: (afterWhite + 1) * KEY_W - BLACK_W / 2, top: 0, width: BLACK_W, height: BLACK_H, background: '#1A1A18', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 2, border: 'none', boxShadow: '0 4px 8px rgba(26,26,24,0.3)' }} />
-                ))}
+                {useAccidentals && (!isLandscape || showAccidentals) && (
+                  <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
+                    {['Db','Eb',null,'Gb','Ab','Bb',null].map((note, i) => note ? (
+                      <button key={note} onClick={() => handleAnswer(note)}
+                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                        {note}
+                      </button>
+                    ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
+                  </div>
+                )}
+                {useAccidentals && isLandscape && (
+                  <button onClick={() => setShowAccidentals(a => !a)}
+                    style={{ marginTop: '4px', padding: '4px 16px', borderRadius: '8px', border: '1px solid #D3D1C7', background: showAccidentals ? '#1A1A18' : 'white', color: showAccidentals ? 'white' : '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                    {showAccidentals ? 'Hide ♯♭' : 'Show ♯♭'}
+                  </button>
+                )}
               </div>
-            </div>
-          )}
+            ) : inputMode === 'keyboard-full' ? (
+              <FullPiano onNote={handleAnswer} />
+            ) : (
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px', transformOrigin: 'top left' }}
+                  ref={(el) => {
+                    if (!el) return
+                    const parent = el.parentElement
+                    if (!parent) return
+                    const scale = Math.min(1, parent.offsetWidth / (WHITE_KEY_NOTES.length * KEY_W))
+                    el.style.transform = `scale(${scale})`
+                    el.parentElement!.style.height = (KEY_H * scale) + 'px'
+                  }}>
+                  {WHITE_KEY_NOTES.map((note, i) => (
+                    <button key={note} onClick={() => handleAnswer(note)}
+                      style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: 'white', border: '1px solid #D3D1C7', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
+                  ))}
+                  {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
+                    <button key={note} onClick={() => handleAnswer(note)}
+                      style={{ position: 'absolute', left: (afterWhite + 1) * KEY_W - BLACK_W / 2, top: 0, width: BLACK_W, height: BLACK_H, background: '#1A1A18', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 2, border: 'none', boxShadow: '0 4px 8px rgba(26,26,24,0.3)' }} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
