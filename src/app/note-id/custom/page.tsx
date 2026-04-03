@@ -405,7 +405,7 @@ function CustomNoteIDInner() {
           {/* Staff side */}
           <div style={{ flex: isLandscape ? '1' : 'none', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
             {!isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(4px,1vh,12px)', textAlign: 'center' as const }}>What note is this?</p>}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: isLandscape ? '0' : '8px', maxWidth: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', marginBottom: isLandscape ? '0' : '8px', maxWidth: '100%' }}>
               {groupSize === 1 ? (
                 clef === 'grand'
                   ? <GrandStaffCard note={currentNote} />
@@ -413,11 +413,11 @@ function CustomNoteIDInner() {
               ) : (
                 <MultiNoteStaff notes={group} clef={clef} />
               )}
+              <div style={{ height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {groupSize === 1 && wrongNote && <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 600, color: '#E53935' }}>{wrongNote}</span>}
+              </div>
             </div>
-            {/* Wrong answer — single note only */}
-            <div style={{ height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-8px' }}>
-              {groupSize === 1 && wrongNote && <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 600, color: '#E53935' }}>{wrongNote}</span>}
-            </div>
+
           </div>
 
           {/* Divider in landscape */}
