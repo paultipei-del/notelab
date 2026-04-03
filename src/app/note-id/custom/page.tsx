@@ -236,7 +236,7 @@ function CustomNoteIDInner() {
     setTotal(t => t + 1)
     if (isCorrect) setCorrect(c => c + 1)
     setFlash(isCorrect ? 'correct' : 'wrong')
-    setTimeout(() => setFlash(null), 400)
+    setTimeout(() => setFlash(null), 800)
     if (isCorrect && playCorrectNotes && samplerRef.current) {
       Tone.start().then(() => {
         samplerRef.current?.triggerAttackRelease(current.note, '2n')
@@ -375,13 +375,24 @@ function CustomNoteIDInner() {
           </p>
 
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px', overflowX: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', overflowX: 'auto' }}>
             {groupSize === 1 ? (
               clef === 'grand'
                 ? <GrandStaffCard note={currentNote} />
                 : <StaffCard note={currentNote} clef={clef} />
             ) : (
               <MultiNoteStaff notes={group} clef={clef} />
+            )}
+          </div>
+
+          {/* Feedback */}
+          <div style={{ height: '52px', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
+            {flash === 'correct' && <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
+            {flash === 'wrong' && (
+              <>
+                <span style={{ fontSize: '36px', color: '#E53935', lineHeight: 1 }}>✗</span>
+                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#E53935', marginTop: '4px' }}>{currentNote.replace(/\d+$/, '')}</p>
+              </>
             )}
           </div>
 
