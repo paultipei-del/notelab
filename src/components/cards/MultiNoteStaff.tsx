@@ -211,7 +211,7 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
                 const pos2 = positions2[nat2] ?? 8
                 if (clef === 'grand') return bassTop + 8 * step + 48
                 return trebleTop + 8 * step + 48
-              })()} fontSize="18" fontFamily="var(--font-cormorant), serif"
+              })()} fontSize="20" fontFamily="var(--font-cormorant), serif" fontWeight="600"
                 fill="#E53935" textAnchor="middle" dominantBaseline="central">
                 {ns.note.replace(/\d+$/, '')}
               </text>

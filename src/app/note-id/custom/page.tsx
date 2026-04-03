@@ -396,7 +396,7 @@ function CustomNoteIDInner() {
               {groupSize === 1 && flash === 'wrong' && (
                 <>
                   <span style={{ fontSize: 'clamp(24px,4vh,36px)', color: '#E53935', lineHeight: 1 }}>✗</span>
-                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#E53935', marginTop: '2px' }}>{currentNote.replace(/\d+$/, '')}</p>
+                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 500, color: '#E53935', marginTop: '2px' }}>{currentNote.replace(/\d+$/, '')}</p>
                 </>
               )}
             </div>
