@@ -178,7 +178,7 @@ export default function MultiNoteStaff({ notes, clef }: MultiNoteStaffProps) {
   })
 
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg">
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" style={{ maxWidth: "100%", maxHeight: "40vh", width: "auto", height: "auto" }}>
       {grandConnectors}
       {staffLines(trebleTop, 't')}
       {clef === 'grand' && staffLines(bassTop, 'b')}

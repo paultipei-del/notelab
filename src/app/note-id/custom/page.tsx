@@ -347,7 +347,7 @@ function CustomNoteIDInner() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: '#F5F2EC', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 32px', borderBottom: '1px solid #D3D1C7' }}>
         <button onClick={() => router.push('/note-id')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
@@ -367,8 +367,8 @@ function CustomNoteIDInner() {
       </div>
 
       {/* Card */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(4px,1vh,12px)' }}>
-        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(8px,1.5vh,24px) clamp(12px,2vw,24px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)' }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(4px,1vh,12px)', overflow: 'hidden' }}>
+        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(6px,1.2vh,20px) clamp(10px,2vw,24px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)', overflow: 'hidden' }}>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(4px,1vh,12px)' }}>
             What note is this?
           </p>

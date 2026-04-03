@@ -141,7 +141,7 @@ export default function StaffCard({ note, clef, className = '' }: StaffCardProps
   ) : null
 
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ maxWidth: "100%", maxHeight: "40vh", width: "auto", height: "auto" }}
       xmlns="http://www.w3.org/2000/svg" className={className}
       aria-label={`${note} on ${clef} clef`}>
       {staffLines}
