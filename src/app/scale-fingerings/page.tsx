@@ -91,7 +91,7 @@ function KeyboardSVG({ notes, fingering, hand }: {
   const svgW = totalWhites * WW + 2
 
   return (
-    <svg width={svgW} height={H} style={{ maxWidth: '100%', display: 'block' }}>
+    <svg width="100%" viewBox={`0 0 ${svgW} ${H}`} style={{ display: 'block' }} preserveAspectRatio="xMinYMin meet">
       {/* White keys */}
       {chrWhite.map(m => {
         const x = keyX(m)
