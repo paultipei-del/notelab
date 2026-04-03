@@ -269,14 +269,14 @@ function NoteIDExerciseInner() {
       </div>
 
       {/* Card */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
-        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(16px,3vh,40px) clamp(16px,3vw,32px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)' }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(8px,2vh,24px)' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(4px,1vh,12px)' }}>
+        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(8px,1.5vh,24px) clamp(12px,2vw,24px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)' }}>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(4px,1vh,12px)' }}>
             What note is this?
           </p>
 
           {/* Staff */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(8px,2vh,32px)', overflowX: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(4px,1vh,16px)', overflowX: 'auto' }}>
             {groupSize === 1 ? (
               clef === 'grand'
                 ? <GrandStaffCard note={currentNote} />
