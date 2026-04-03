@@ -26,23 +26,22 @@ const KEY_W = 52, KEY_H = 120, BLACK_W = 32, BLACK_H = 76
 const TREBLE_LINE_NOTES = new Set(['E4','G4','B4','D5','F5'])
 const TREBLE_SPACE_NOTES = new Set(['F4','A4','C5','E5'])
 const TREBLE_LEDGER_NOTES = new Set([
-  'C4','D4',           // below staff — middle C ledger line + space above it
-  'A5','B5','C6',      // above staff — actual ledger lines
-  'A3','B3','G3','F3', // far below staff — ledger lines and spaces
+  'C4','B3',           // below staff — middle C ledger line, space below
+  'A5','B5','C6',      // above staff — ledger lines
 ])
 const BASS_LINE_NOTES = new Set(['G2','B2','D3','F3','A3'])
 const BASS_SPACE_NOTES = new Set(['A2','C3','E3','G3','B3'])
 const BASS_LEDGER_NOTES = new Set([
-  'E2',                // below staff — actual ledger line
-  'C4','D4','E4',      // above staff — actual ledger lines
+  'F2','E2',           // below staff — ledger lines
+  'C4','D4',           // above staff — middle C ledger line and space
 ])
 // Grand staff — treble staff E4-C6, bass staff G2-B3, ledger = C4/D4 between + extremes
 const GRAND_TREBLE_LINE_NOTES = new Set(['E4','G4','B4','D5','F5'])
 const GRAND_TREBLE_SPACE_NOTES = new Set(['F4','A4','C5','E5'])
-const GRAND_TREBLE_LEDGER_NOTES = new Set(['A5','B5','C6'])
+const GRAND_TREBLE_LEDGER_NOTES = new Set(['A5','B5','C6','C4'])
 const GRAND_BASS_LINE_NOTES = new Set(['G2','B2','D3','F3','A3'])
 const GRAND_BASS_SPACE_NOTES = new Set(['A2','C3','E3','G3','B3'])
-const GRAND_BASS_LEDGER_NOTES = new Set(['E2','C4','D4'])
+const GRAND_BASS_LEDGER_NOTES = new Set(['E2','F2'])
 
 const ENHARMONICS: Record<string, string> = {
   'C#': 'Db', 'Db': 'C#', 'D#': 'Eb', 'Eb': 'D#',
