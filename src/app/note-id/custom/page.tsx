@@ -32,7 +32,7 @@ const TREBLE_LEDGER_NOTES = new Set([
 const BASS_LINE_NOTES = new Set(['G2','B2','D3','F3','A3'])
 const BASS_SPACE_NOTES = new Set(['A2','C3','E3','G3','B3'])
 const BASS_LEDGER_NOTES = new Set([
-  'F2','E2',           // below staff — ledger lines
+  'E2',                // below staff — E2 ledger line only
   'C4','D4',           // above staff — middle C ledger line and space
 ])
 // Grand staff — treble staff E4-C6, bass staff G2-B3, ledger = C4/D4 between + extremes
