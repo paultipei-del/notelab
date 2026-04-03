@@ -316,7 +316,7 @@ function CustomNoteIDInner() {
   if (done) {
     const finalTime = ((Date.now() - startTime) / 1000).toFixed(2)
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
         <div style={{ background: 'white', borderRadius: '20px', border: '1px solid #D3D1C7', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Session Complete</p>
           <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '32px' }}>Custom Session</h2>
@@ -368,9 +368,9 @@ function CustomNoteIDInner() {
       </div>
 
       {/* Card */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: '40px 32px', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)' }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '24px' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
+        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(16px,3vh,40px) clamp(16px,3vw,32px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)' }}>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(8px,2vh,24px)' }}>
             What note is this?
           </p>
 
@@ -398,26 +398,20 @@ function CustomNoteIDInner() {
 
           {inputMode === 'letters' ? (
             <div style={{ width: '100%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '6px' }}>
-              {/* Accidentals rows */}
+              {/* Sharps row — always rendered, hidden when no accidentals */}
               {useAccidentals && (
-                <>
-                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
-                    {['C#','D#','F#','G#','A#'].map(note => (
-                      <button key={note} onClick={() => handleAnswer(note)}
+                <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
+                  {['C#', null, 'D#', null, null, 'F#', null, 'G#', null, 'A#', null, null, null, null].slice(0,7).map((note, i) => {
+                    const sharps = [null,'C#',null,'D#',null,null,'F#',null,'G#',null,'A#',null,null,null]
+                    const s = [null,'C#','D#',null,'F#','G#','A#'][i]
+                    return s ? (
+                      <button key={s} onClick={() => handleAnswer(s)}
                         style={{ flex: 1, maxWidth: '52px', height: '34px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                        {note}
+                        {s}
                       </button>
-                    ))}
-                  </div>
-                  <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
-                    {['Db','Eb','Gb','Ab','Bb'].map(note => (
-                      <button key={note} onClick={() => handleAnswer(note)}
-                        style={{ flex: 1, maxWidth: '52px', height: '34px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-                        {note}
-                      </button>
-                    ))}
-                  </div>
-                </>
+                    ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />
+                  })}
+                </div>
               )}
               {/* Naturals row */}
               <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
@@ -428,6 +422,17 @@ function CustomNoteIDInner() {
                   </button>
                 ))}
               </div>
+              {/* Flats row */}
+              {useAccidentals && (
+                <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
+                  {['Db','Eb',null,'Gb','Ab','Bb',null].map((note, i) => note ? (
+                    <button key={note} onClick={() => handleAnswer(note)}
+                      style={{ flex: 1, maxWidth: '52px', height: '34px', borderRadius: '8px', border: '1px solid #D3D1C7', background: '#F5F2EC', fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
+                      {note}
+                    </button>
+                  ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
+                </div>
+              )}
             </div>
           ) : inputMode === 'keyboard-full' ? (
             <FullPiano onNote={handleAnswer} />

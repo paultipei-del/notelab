@@ -217,7 +217,7 @@ function NoteIDExerciseInner() {
     if (typeof window !== 'undefined' && isNewBest) localStorage.setItem(bestKey, finalTime)
 
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
         <div style={{ background: 'white', borderRadius: '20px', border: '1px solid #D3D1C7', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Session Complete</p>
           <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '32px' }}>{deck.title}</h2>
@@ -269,14 +269,14 @@ function NoteIDExerciseInner() {
       </div>
 
       {/* Card */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: '40px 32px', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)' }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '24px' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
+        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(16px,3vh,40px) clamp(16px,3vw,32px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)' }}>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: 'clamp(8px,2vh,24px)' }}>
             What note is this?
           </p>
 
           {/* Staff */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px', overflowX: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(8px,2vh,32px)', overflowX: 'auto' }}>
             {groupSize === 1 ? (
               clef === 'grand'
                 ? <GrandStaffCard note={currentNote} />
@@ -288,7 +288,7 @@ function NoteIDExerciseInner() {
 
           {/* Feedback indicator + correct answer for single note */}
           {groupSize === 1 && (
-            <div style={{ textAlign: 'center' as const, marginBottom: '8px', minHeight: '64px', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' as const, marginBottom: '4px', minHeight: 'clamp(40px,8vh,64px)', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
               {group[activeIdx]?.status === 'correct' && (
                 <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>
               )}
@@ -336,8 +336,11 @@ function NoteIDExerciseInner() {
               </div>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto', width: '100%' }}>
-              <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px', margin: '0 auto' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+              <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px',
+                transformOrigin: 'top center',
+                transform: 'scale(min(1, calc((100vw - 80px) / ' + (WHITE_KEY_NOTES.length * KEY_W) + ')))'
+              }}>
                 {WHITE_KEY_NOTES.map((note, i) => (
                   <button key={note} onClick={() => handleAnswer(note)}
                     style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: 'white', border: '1px solid #D3D1C7', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
