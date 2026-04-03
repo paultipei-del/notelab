@@ -385,10 +385,10 @@ function CustomNoteIDInner() {
             )}
           </div>
 
-          {/* Feedback */}
+          {/* Feedback — single note only */}
           <div style={{ height: '52px', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-            {flash === 'correct' && <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
-            {flash === 'wrong' && (
+            {groupSize === 1 && flash === 'correct' && <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>}
+            {groupSize === 1 && flash === 'wrong' && (
               <>
                 <span style={{ fontSize: '36px', color: '#E53935', lineHeight: 1 }}>✗</span>
                 <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#E53935', marginTop: '4px' }}>{currentNote.replace(/\d+$/, '')}</p>
