@@ -10,7 +10,8 @@ import SymbolCard from '@/components/cards/SymbolCard'
 import AudioCard from '@/components/cards/AudioCard'
 import AudioBrowseRow from '@/components/cards/AudioBrowseRow'
 import ExplainCard from '@/components/cards/ExplainCard'
-import PlayItCard, { stopMic } from '@/components/cards/PlayItCard'
+import PlayItCard, { stopMic as stopMicOld } from '@/components/cards/PlayItCard'
+import { stopMic as stopMicNew } from '@/components/cards/PlayItCard2'
 import PlayItCard2 from '@/components/cards/PlayItCard2'
 import { useRouter } from 'next/navigation'
 
@@ -62,7 +63,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   function goNext() { setFlipIndex(i => Math.min(i + 1, flipCards.length - 1)); setFlipRevealed(false) }
   function goPrev() { setFlipIndex(i => Math.max(i - 1, 0)); setFlipRevealed(false) }
   function goBack() {
-    if (mode === 'play') stopMic()
+    if (mode === 'play') { stopMicOld(); stopMicNew() }
     const tag = deck.id.startsWith('cm-') ? 'cm' : deck.id.startsWith('ear-') ? 'ear' : deck.id.startsWith('symbols-') ? 'symbols' : null
     if (deck.id.startsWith('sight-read-')) { router.push('/sight-read'); return }
     if (tag) router.push('/collection?tag=' + tag); else router.push('/')
@@ -81,6 +82,13 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const isNewBest = isSightReadDeck && isComplete && (bestTime === 0 || currentTime < bestTime)
 
   // Save and update best time when session completes with a new best
+  // Stop mic when session completes
+  useEffect(() => {
+    if (isComplete && isSightReadDeck) {
+      stopMicNew()
+    }
+  }, [isComplete])
+
   useEffect(() => {
     if (isNewBest && typeof window !== 'undefined') {
       localStorage.setItem(bestTimeKey, currentTime.toString())
@@ -136,7 +144,7 @@ return (
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => { resetSession(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Study Again</button>
               {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Reset Best</button>}
-              {!isSightReadDeck && <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Browse Cards</button>}
+              {!isSightReadDeck && <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Browse Cards</button>}
               <button onClick={goBack} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>← Back</button>
             </div>
           </div>
@@ -202,13 +210,13 @@ return (
           </div>
           {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 20px', flexWrap: 'wrap' }}>
             {visibleModes.map(({ id, label }) => (
-              <button key={id} onClick={() => { stopMic(); setMode(id); if (id !== 'flip') resetSession() }}
+              <button key={id} onClick={() => { stopMicOld(); stopMicNew(); setMode(id); if (id !== 'flip') resetSession() }}
                 style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#D3D1C7'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>{label}</button>
             ))}
             {!isSightReadDeck && <div style={{ width: '1px', height: '16px', background: '#D3D1C7', margin: '0 4px' }} />}
             <>
-            <button onClick={() => { stopMic(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Quiz</button>
-            <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Browse</button>
+            <button onClick={() => { stopMicOld(); stopMicNew(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Quiz</button>
+            <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'transparent', color: '#888780', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Browse</button>
             </>
           </div>}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', padding: '0 32px 16px', minHeight: '22px' }}>

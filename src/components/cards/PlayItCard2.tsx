@@ -23,6 +23,20 @@ const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
 
 // ── Shared audio pipeline — never destroyed between cards ─────────────────
 let sadStream: MediaStream | null = null
+
+export function stopMic() {
+  cancelAnimationFrame(rafHandle)
+  if (sadStream) {
+    sadStream.getTracks().forEach(t => t.stop())
+    sadStream = null
+  }
+  if (sadCtx) {
+    sadCtx.close().catch(() => {})
+    sadCtx = null
+  }
+  sadAnalyser = null
+  sadDetector = null
+}
 let sadCtx: AudioContext | null = null
 let sadAnalyser: AnalyserNode | null = null
 let sadDetector: SADPitchDetector | null = null
