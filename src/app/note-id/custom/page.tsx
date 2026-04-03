@@ -244,7 +244,7 @@ function CustomNoteIDInner() {
     setTotal(t => t + 1)
     if (isCorrect) setCorrect(c => c + 1)
     setFlash(isCorrect ? 'correct' : 'wrong')
-    setTimeout(() => setFlash(null), 800)
+    setTimeout(() => setFlash(null), 400)
     if (isCorrect && playCorrectNotes && samplerRef.current) {
       Tone.start().then(() => {
         samplerRef.current?.triggerAttackRelease(current.note, '2n')
@@ -263,7 +263,7 @@ function CustomNoteIDInner() {
       processingRef.current = true
       const isLast = activeIdx >= group.length - 1
       if (isLast) {
-        setTimeout(() => nextGroup(), 600)
+        setTimeout(() => nextGroup(), 300)
       } else {
         setActiveIdx(i => i + 1)
         processingRef.current = false
@@ -273,7 +273,7 @@ function CustomNoteIDInner() {
       processingRef.current = true
       const isLast = activeIdx >= group.length - 1
       if (isLast) {
-        setTimeout(() => { nextGroup(); processingRef.current = false }, 1000)
+        setTimeout(() => { nextGroup(); processingRef.current = false }, 600)
       } else {
         setTimeout(() => {
           setGroup(prev => prev.map((n, i) => {
