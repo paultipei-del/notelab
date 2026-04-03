@@ -75,7 +75,10 @@ export default function AdminPage() {
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '6px' }}>Admin</p>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18' }}>User Management</h1>
           </div>
-          <a href="/admin/rhythm" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Generator →</a>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <a href="/admin/rhythm" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Library →</a>
+            <a href="/admin/rhythm/generate" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Generator →</a>
+          </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
