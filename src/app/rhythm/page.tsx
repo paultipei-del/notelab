@@ -9,9 +9,11 @@ const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 
 const BRAVURA = {
-  quarterRest: String.fromCodePoint(0xE4E5),
-  halfRest:    String.fromCodePoint(0xE4E4),
-  wholeRest:   String.fromCodePoint(0xE4E3),
+  quarterRest:  String.fromCodePoint(0xE4E5),
+  halfRest:     String.fromCodePoint(0xE4E4),
+  wholeRest:    String.fromCodePoint(0xE4E3),
+  eighthRest:   String.fromCodePoint(0xE4E6),
+  sixteenthRest:String.fromCodePoint(0xE4E7),
 }
 
 const STAFF_Y = 52
