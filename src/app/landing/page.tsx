@@ -21,6 +21,13 @@ export default function LandingPage() {
   const { user, loading } = useAuth()
 
   useEffect(() => {
+    // Early access gate
+    if (process.env.NODE_ENV !== 'production') return
+    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted'))
+    if (!cookie) window.location.href = '/unlock'
+  }, [])
+
+  useEffect(() => {
     if (!loading && user) window.location.href = '/'
   }, [loading, user])
 
