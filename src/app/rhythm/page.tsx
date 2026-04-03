@@ -78,11 +78,13 @@ function RestSymbol({ x, type }: { x: number; type: string }) {
     type === 'eighth'     ? BRAVURA.eighthRest :
     type === 'sixteenth'  ? BRAVURA.sixteenthRest :
     BRAVURA.quarterRest
+  // Position rests centered on the staff line
+  // whole/half rests sit above/below the line; quarter/eighth/sixteenth centered
   const y =
-    type === 'whole' ? STAFF_Y + 2 :
-    type === 'half'  ? STAFF_Y + 2 :
-    STAFF_Y + 14
-  return <text x={x} y={y} fontSize={32} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
+    type === 'whole'      ? STAFF_Y - 2 :
+    type === 'half'       ? STAFF_Y + 2 :
+    STAFF_Y
+  return <text x={x} y={y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
 }
 
 function Dot({ x, color }: { x: number; color: string }) {
