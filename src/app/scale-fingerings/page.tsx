@@ -139,14 +139,42 @@ function KeyboardSVG({ notes, fingering, hand }: {
   )
 }
 
-// ── Staff view ────────────────────────────────────────────────────────────────
-const TREBLE_POSITIONS: Record<number, number> = {
-  // pos 0 = top line, pos 8 = bottom line, step = 6px
-  // MIDI to staff position for treble clef
-  84:0, 83:1, 81:1, 80:2, 79:2, 77:3, 76:3, 74:4, 72:4, 71:5, 69:5, 67:6,
-  66:6, 65:6, 64:7, 62:7, 60:8, 59:8, 57:9, 55:9,
-  // extended
-  86:0, 88:-1, 90:-2,
+// ── Staff positions (matches StaffCard.tsx exactly) ──────────────────────────
+const step = 6
+
+// Treble: pos 0 = F5 (top line), pos 8 = E4 (bottom line)
+const TREBLE_POS: Record<string, number> = {
+  'C7':-12,'B6':-11,'A6':-10,'G6':-9,'F6':-8,'E6':-7,'D6':-6,'C6':-5,'B5':-4,'A5':-3,'G5':-2,'F5':-1,
+  'E5':0,'D5':1,'C5':2,'B4':3,'A4':4,'G4':5,'F4':6,'E4':7,'D4':8,'C4':9,'B3':10,'A3':11,'G3':12,'F3':13,'E3':14,'D3':15,'C3':16,
+}
+const BASS_POS: Record<string, number> = {
+  'E4':-4,'D4':-3,'C4':-2,'B3':-1,
+  'A3':0,'G3':1,'F3':2,'E3':3,'D3':4,'C3':5,'B2':6,'A2':7,'G2':8,'F2':9,'E2':10,'D2':11,'C2':12,
+  'B1':13,'A1':14,
+}
+
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+const FLAT_NAMES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
+
+function midiToNoteName(midi: number): string {
+  const oct = Math.floor(midi / 12) - 1
+  return NOTE_NAMES[midi % 12] + oct
+}
+
+function midiToPos(midi: number, clef: 'treble' | 'bass'): number | undefined {
+  const name = midiToNoteName(midi)
+  const pos = clef === 'treble' ? TREBLE_POS[name] : BASS_POS[name]
+  if (pos !== undefined) return pos
+  // Try flat enharmonic
+  const flatName = FLAT_NAMES[midi % 12] + Math.floor(midi / 12 - 1)
+  return clef === 'treble' ? TREBLE_POS[flatName] : BASS_POS[flatName]
+}
+
+function isBlackMidi(m: number) { return [1,3,6,8,10].includes(m % 12) }
+
+const ACCIDENTAL_MAP_MIDI: Record<string, string> = {
+  'C#':'sharp','Db':'flat','D#':'sharp','Eb':'flat',
+  'F#':'sharp','Gb':'flat','G#':'sharp','Ab':'flat','A#':'sharp','Bb':'flat',
 }
 
 function StaffView({ notes, fingering, clef, hand }: {
@@ -155,77 +183,75 @@ function StaffView({ notes, fingering, clef, hand }: {
   clef: 'treble' | 'bass'
   hand: 'rh' | 'lh'
 }) {
-  const step = 6
-  const staffTop = 48
-  const svgH = 160
-  const noteSpacing = 36
-  const leftPad = 56
+  const staffTop = 72
+  const noteSpacing = 40
+  const leftPad = 60
   const W = leftPad + notes.length * noteSpacing + 24
-  const showAbove = hand === 'rh'  // finger numbers above for RH, below for LH
+  const svgH = staffTop + 8 * step + 72
+  const showAbove = hand === 'rh'
 
-  // Map MIDI to vertical position
-  function midiToY(midi: number): number {
-    // Treble: E4(64)=pos8*step, each semitone up = ~0.5 step
-    // Simplified: use diatonic position
-    const refMidi = clef === 'treble' ? 64 : 43  // E4 or G2
-    const refPos = clef === 'treble' ? 8 : 8
-    // Approximate: each whole step = 1 position
-    const semiPerStep = 1
-    const pos = refPos - (midi - refMidi) / 2
-    return staffTop + pos * step
-  }
-
-  function isBlackMidi(m: number) { return [1,3,6,8,10].includes(m % 12) }
-  function accidental(midi: number): string | null {
-    if (!isBlackMidi(midi)) return null
-    // use sharps for sharp keys, flats for flat keys — simplified: always sharp
-    return '♯'
-  }
-
-  const clefGlyph = clef === 'treble' ? '𝄞' : '𝄢'
   const clefY = clef === 'treble' ? staffTop + 36 : staffTop + 12
 
   return (
     <svg width={W} height={svgH} style={{ maxWidth: '100%', display: 'block' }}>
       {/* Staff lines */}
-      {[0,1,2,3,4].map(i => (
-        <line key={i} x1={8} y1={staffTop + i*2*step} x2={W-4} y2={staffTop + i*2*step}
+      {[0,2,4,6,8].map(p => (
+        <line key={p} x1={8} y1={staffTop + p * step} x2={W - 4} y2={staffTop + p * step}
           stroke="#D3D1C7" strokeWidth={1} />
       ))}
       {/* Clef */}
       <text x={10} y={clefY} fontSize={clef === 'treble' ? 52 : 50}
-        fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">{clefGlyph}</text>
+        fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
+        {clef === 'treble' ? '𝄞' : '𝄢'}
+      </text>
       {/* Notes */}
       {notes.map((midi, i) => {
         const x = leftPad + i * noteSpacing
-        const y = midiToY(midi)
+        const pos = midiToPos(midi, clef)
+        if (pos === undefined) return null
+        const noteY = staffTop + pos * step
+        const stemUp = pos >= 4
         const finger = fingering[i]
         const isThumb = finger === 1
-        const acc = accidental(midi)
-        const fingerY = showAbove ? y - 22 : y + 22
+        const noteColor = isThumb ? '#BA7517' : '#1A1A18'
+        const fingerY = showAbove ? noteY - 28 : noteY + 28
+
+        // Accidental
+        const noteName = NOTE_NAMES[midi % 12]
+        const accType = ACCIDENTAL_MAP_MIDI[noteName]
+        const accGlyph = accType === 'sharp' ? String.fromCodePoint(0xE262) : accType === 'flat' ? String.fromCodePoint(0xE260) : null
+
+        // Ledger lines
+        const ledgers: number[] = []
+        if (pos < 0) for (let p = -2; p >= pos - (pos % 2); p -= 2) if (p % 2 === 0) ledgers.push(p)
+        if (pos > 8) for (let p = 10; p <= pos + (pos % 2); p += 2) if (p % 2 === 0) ledgers.push(p)
 
         return (
           <g key={i}>
-            {/* Ledger lines */}
-            {y <= staffTop - step && (
-              <line x1={x-10} y1={staffTop} x2={x+10} y2={staffTop} stroke="#1A1A18" strokeWidth={1} />
+            {ledgers.map(p => (
+              <line key={p} x1={x - 12} y1={staffTop + p * step} x2={x + 12} y2={staffTop + p * step}
+                stroke="#1A1A18" strokeWidth={1.2} />
+            ))}
+            {accGlyph && (
+              <text x={x - 16} y={noteY} fontSize={36} fontFamily="Bravura, serif"
+                fill={noteColor} textAnchor="middle" dominantBaseline="central">
+                {accGlyph}
+              </text>
             )}
-            {y >= staffTop + 8*step + step && (
-              <line x1={x-10} y1={staffTop+8*step} x2={x+10} y2={staffTop+8*step} stroke="#1A1A18" strokeWidth={1} />
-            )}
-            {/* Accidental */}
-            {acc && (
-              <text x={x - 12} y={y} fontSize={14} fontFamily="Bravura, serif"
-                fill="#888780" textAnchor="middle" dominantBaseline="central">{acc}</text>
-            )}
-            {/* Note head */}
-            <ellipse cx={x} cy={y} rx={7} ry={5} fill={isThumb ? '#BA7517' : '#1A1A18'} />
+            {/* Note head — Bravura filled notehead U+E0A4 */}
+            <text x={x} y={noteY} fontSize={46} fontFamily="Bravura, serif"
+              fill={noteColor} textAnchor="middle" dominantBaseline="central">
+              {String.fromCodePoint(0xE0A4)}
+            </text>
             {/* Stem */}
-            <line x1={x + 7} y1={y} x2={x + 7} y2={y - 28} stroke={isThumb ? '#BA7517' : '#1A1A18'} strokeWidth={1.5} />
+            <line
+              x1={stemUp ? x + 6 : x - 6} y1={noteY}
+              x2={stemUp ? x + 6 : x - 6} y2={stemUp ? noteY - 38 : noteY + 38}
+              stroke={noteColor} strokeWidth={1.6} />
             {/* Finger number */}
             {finger && (
               <text x={x} y={fingerY} textAnchor="middle" dominantBaseline="middle"
-                fontSize={11} fontFamily={F}
+                fontSize={12} fontFamily={F}
                 fontWeight={isThumb ? '600' : '400'}
                 fill={isThumb ? '#BA7517' : '#1A1A18'}>
                 {finger}
