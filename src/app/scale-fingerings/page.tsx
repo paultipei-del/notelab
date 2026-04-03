@@ -275,11 +275,8 @@ function HandPanel({ label, notes, fingering, clef }: {
   return (
     <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', marginBottom: '16px' }}>
       <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '16px' }}>{label}</p>
-      <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
-        <KeyboardSVG notes={notes} fingering={fingering} hand={hand} />
-      </div>
       <div style={{ overflowX: 'auto' }}>
-        <StaffView notes={notes} fingering={fingering} clef={clef} hand={hand} />
+        <KeyboardSVG notes={notes} fingering={fingering} hand={hand} />
       </div>
     </div>
   )
