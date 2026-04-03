@@ -82,7 +82,7 @@ function KeyboardSVG({ notes, fingering, hand }: {
     const diff = midi - displayStart
     // count white keys before this
     let whites = 0
-    for (let m = startMidi; m < midi; m++) {
+    for (let m = displayStart; m < midi; m++) {
       if (!isBlackMidi(m)) whites++
     }
     if (isBlackMidi(midi)) {
