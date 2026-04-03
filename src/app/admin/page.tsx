@@ -70,9 +70,12 @@ export default function AdminPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '48px 24px' }}>
-        <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '6px' }}>Admin</p>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18' }}>User Management</h1>
+        <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '6px' }}>Admin</p>
+            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18' }}>User Management</h1>
+          </div>
+          <a href="/admin/rhythm" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Generator →</a>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
