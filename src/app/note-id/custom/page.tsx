@@ -414,13 +414,10 @@ function CustomNoteIDInner() {
                 <MultiNoteStaff notes={group} clef={clef} />
               )}
             </div>
-            {/* Wrong answer overlay — compact, no layout shift */}
-            {wrongNote && (
-              <div style={{ marginTop: '6px', padding: '4px 14px', background: '#FDECEA', border: '1px solid #F09595', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '10px', fontWeight: 300, color: '#E53935', letterSpacing: '0.08em' }}>Correct:</span>
-                <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 500, color: '#E53935' }}>{wrongNote}</span>
-              </div>
-            )}
+            {/* Wrong answer — subtle correct note, no layout shift */}
+            <div style={{ height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '4px' }}>
+              {wrongNote && <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 600, color: '#E53935' }}>{wrongNote}</span>}
+            </div>
           </div>
 
           {/* Divider in landscape */}
