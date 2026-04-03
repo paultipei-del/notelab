@@ -110,6 +110,24 @@ function CustomNoteIDInner() {
   const [rounds, setRounds] = useState(0)
   const [done, setDone] = useState(false)
   const [flash, setFlash] = useState<'correct' | 'wrong' | null>(null)
+  const [wrongNote, setWrongNote] = useState<string | null>(null)
+
+  function playWrongSound() {
+    try {
+      const ctx = new AudioContext()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.type = 'square'
+      osc.frequency.setValueAtTime(180, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.15)
+      gain.gain.setValueAtTime(0.15, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2)
+      osc.start(ctx.currentTime)
+      osc.stop(ctx.currentTime + 0.2)
+    } catch {}
+  }
   const [showAccidentals, setShowAccidentals] = useState(false)
   const [isLandscape, setIsLandscape] = useState(false)
 
@@ -244,6 +262,11 @@ function CustomNoteIDInner() {
     setTotal(t => t + 1)
     if (isCorrect) setCorrect(c => c + 1)
     setFlash(isCorrect ? 'correct' : 'wrong')
+    if (!isCorrect) {
+      playWrongSound()
+      setWrongNote(current.note.replace(/\d+$/, ''))
+      setTimeout(() => setWrongNote(null), 800)
+    }
     setTimeout(() => setFlash(null), 400)
     if (isCorrect && playCorrectNotes && samplerRef.current) {
       Tone.start().then(() => {
