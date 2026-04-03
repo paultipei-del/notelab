@@ -156,7 +156,7 @@ function NoteIDExerciseInner() {
     if (isCorrect) {
       const isLastInGroup = activeIdx >= group.length - 1
       if (isLastInGroup) {
-        setTimeout(() => { nextGroup(); processingRef.current = false }, 600)
+        setTimeout(() => { nextGroup(); processingRef.current = false }, 300)
       } else {
         setTimeout(() => {
           setActiveIdx(i => i + 1)
@@ -171,7 +171,7 @@ function NoteIDExerciseInner() {
       }))
       const isLastInGroup = activeIdx >= group.length - 1
       if (isLastInGroup) {
-        setTimeout(() => { nextGroup(); processingRef.current = false }, 1000)
+        setTimeout(() => { nextGroup(); processingRef.current = false }, 600)
       } else {
         setTimeout(() => {
           setGroup(prev => prev.map((n, i) => {
