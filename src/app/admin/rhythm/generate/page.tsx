@@ -56,8 +56,8 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
   const noteW = measureW / exercise.timeSignature.beats
 
   return (
-    <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px', overflowX: 'auto' as const }}>
-      <svg width={svgW} height={svgH} style={{ display: 'block' }}>
+    <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px' }}>
+      <svg width="100%" viewBox={`0 0 ${svgW} ${svgH}`} style={{ display: 'block' }} preserveAspectRatio="xMinYMin meet">
         {/* Time signature */}
         <text x={20} y={STAFF_Y - 10} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}</text>
         <text x={20} y={STAFF_Y + 16} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}</text>
