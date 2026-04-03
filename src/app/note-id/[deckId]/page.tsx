@@ -91,7 +91,7 @@ function NoteIDExerciseInner() {
   const [total, setTotal] = useState(0)
   const [rounds, setRounds] = useState(0)
   const [done, setDone] = useState(false)
-  const [startTime] = useState(Date.now())
+  const startTimeRef = useRef(Date.now())
   const processingRef = useRef(false)
   const wrongIndicesRef = useRef<Set<number>>(new Set())
 
@@ -209,7 +209,7 @@ function NoteIDExerciseInner() {
   const clef = (deck.cards[0]?.clef ?? 'treble') as 'treble' | 'bass' | 'grand'
 
   if (done) {
-    const finalTime = ((Date.now() - startTime) / 1000).toFixed(2)
+    const finalTime = ((Date.now() - startTimeRef.current) / 1000).toFixed(2)
     const bestKey = 'notelab-note-id-best-' + deckId
     const prevBest = typeof window !== 'undefined' ? parseFloat(localStorage.getItem(bestKey) ?? '0') : 0
     const currentTimeSec = parseFloat(finalTime)
@@ -234,7 +234,7 @@ function NoteIDExerciseInner() {
             ))}
           </div>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-            <button onClick={() => { setRounds(0); setCorrect(0); setTotal(0); setDone(false); processingRef.current = false; const notes = buildGroup(pool, groupSize); setGroup(notes.map((note, i) => ({ note, status: (i === 0 ? 'active' : 'pending') as NoteStatus }))); setActiveIdx(0) }}
+            <button onClick={() => { setRounds(0); setCorrect(0); setTotal(0); setDone(false); processingRef.current = false; startTimeRef.current = Date.now(); const notes = buildGroup(pool, groupSize); setGroup(notes.map((note, i) => ({ note, status: (i === 0 ? 'active' : 'pending') as NoteStatus }))); setActiveIdx(0) }}
               style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
               Again
             </button>
