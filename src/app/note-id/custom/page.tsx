@@ -414,9 +414,9 @@ function CustomNoteIDInner() {
                 <MultiNoteStaff notes={group} clef={clef} />
               )}
             </div>
-            {/* Wrong answer — subtle correct note, no layout shift */}
+            {/* Wrong answer — single note only */}
             <div style={{ height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-8px' }}>
-              {wrongNote && <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 600, color: '#E53935' }}>{wrongNote}</span>}
+              {groupSize === 1 && wrongNote && <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 600, color: '#E53935' }}>{wrongNote}</span>}
             </div>
           </div>
 
