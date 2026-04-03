@@ -82,7 +82,7 @@ function RestSymbol({ x, type }: { x: number; type: string }) {
   // whole/half rests sit above/below the line; quarter/eighth/sixteenth centered
   const y =
     type === 'whole'      ? STAFF_Y + 10 :
-    type === 'half'       ? STAFF_Y - 1 :
+    type === 'half'       ? STAFF_Y - 0.5 :
     STAFF_Y
   return <text x={x} y={y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
 }
