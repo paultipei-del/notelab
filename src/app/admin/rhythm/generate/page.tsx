@@ -46,27 +46,32 @@ const BRAVURA_NOTE: Record<string, string> = {
 
 function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
   if (!exercise) return null
-  const STAFF_Y = 40
-  const STEM_H = 28
-  const NOTE_W = 44
-  const svgW = Math.min(800, exercise.measures.length * exercise.timeSignature.beats * NOTE_W + 80)
-  const measureW = (svgW - 80) / exercise.measures.length
+  const STAFF_Y = 52
+  const STEM_H = 36
+  const NOTE_W = 52
+  const leftPad = 56
+  const svgH = 120
+  const svgW = Math.min(900, exercise.measures.length * exercise.timeSignature.beats * NOTE_W + leftPad + 24)
+  const measureW = (svgW - leftPad - 24) / exercise.measures.length
   const noteW = measureW / exercise.timeSignature.beats
+
   return (
-    <div style={{ background: '#F5F2EC', borderRadius: '12px', padding: '16px', overflowX: 'auto' as const }}>
-      <svg width={svgW} height={90} style={{ display: 'block' }}>
-        <text x={18} y={STAFF_Y - 8} fontSize={32} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}</text>
-        <text x={18} y={STAFF_Y + 14} fontSize={32} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}</text>
-        <line x1={36} y1={STAFF_Y} x2={svgW - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
-        <line x1={36} y1={STAFF_Y - 20} x2={36} y2={STAFF_Y + 20} stroke="#1A1A18" strokeWidth={1} />
+    <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px', overflowX: 'auto' as const }}>
+      <svg width={svgW} height={svgH} style={{ display: 'block' }}>
+        {/* Time signature */}
+        <text x={20} y={STAFF_Y - 10} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}</text>
+        <text x={20} y={STAFF_Y + 16} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}</text>
+        {/* Staff line */}
+        <line x1={leftPad} y1={STAFF_Y} x2={svgW - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+        {/* Opening barline */}
+        <line x1={leftPad} y1={STAFF_Y - STEM_H} x2={leftPad} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
         {exercise.measures.map((m, mIdx) => {
-          const mx = 36 + mIdx * measureW
+          const mx = leftPad + mIdx * measureW
           let beatPos = 0
           return (
             <g key={mIdx}>
               {m.notes.map((n, nIdx) => {
-                const x = mx + beatPos * noteW + 10
-                const filled = n.type === 'quarter' || n.type === 'eighth' || n.type === 'sixteenth'
+                const x = mx + beatPos * noteW + noteW / 2
                 beatPos += n.durationBeats
                 return (
                   <g key={nIdx}>
@@ -74,10 +79,11 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
                       <text x={x} y={STAFF_Y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
                         {BRAVURA_NOTE[n.type] ?? BRAVURA_NOTE.quarter}
                       </text>
-                      {n.dot && <circle cx={x + 14} cy={STAFF_Y - 4} r={2.5} fill="#1A1A18" />}
+                      {n.dot && <circle cx={x + 14} cy={STAFF_Y - 5} r={2.5} fill="#1A1A18" />}
                     </>}
                     {n.rest && (
-                      <text x={x} y={n.type === 'whole' ? STAFF_Y + 10 : n.type === 'half' ? STAFF_Y - 0.5 : STAFF_Y}
+                      <text x={x}
+                        y={n.type === 'whole' ? STAFF_Y + 10 : n.type === 'half' ? STAFF_Y - 0.5 : STAFF_Y}
                         fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
                         {BRAVURA_REST[n.type] ?? BRAVURA_REST.quarter}
                       </text>
@@ -85,12 +91,16 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
                   </g>
                 )
               })}
-              {mIdx < exercise.measures.length - 1 && <line x1={mx + measureW} y1={STAFF_Y - 20} x2={mx + measureW} y2={STAFF_Y + 20} stroke="#1A1A18" strokeWidth={1} />}
+              {/* Barline */}
+              {mIdx < exercise.measures.length - 1 && (
+                <line x1={mx + measureW} y1={STAFF_Y - STEM_H} x2={mx + measureW} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
+              )}
             </g>
           )
         })}
-        <line x1={svgW - 14} y1={STAFF_Y - 20} x2={svgW - 14} y2={STAFF_Y + 20} stroke="#1A1A18" strokeWidth={1.2} />
-        <line x1={svgW - 7} y1={STAFF_Y - 20} x2={svgW - 7} y2={STAFF_Y + 20} stroke="#1A1A18" strokeWidth={6} />
+        {/* Final double barline */}
+        <line x1={svgW - 14} y1={STAFF_Y - STEM_H} x2={svgW - 14} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1.2} />
+        <line x1={svgW - 6} y1={STAFF_Y - STEM_H} x2={svgW - 6} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={6} />
       </svg>
     </div>
   )
