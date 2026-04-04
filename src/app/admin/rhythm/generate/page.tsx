@@ -192,7 +192,8 @@ function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof
   const usableW = svgW - 96
   const naturalMeasureW = usableW / rowMeasures.length
   const measureW = Math.max(naturalMeasureW, minMeasureW)
-  const noteW = measureW / beatsPerMeasure
+  const PADDING = 18  // px padding on each side of measure content
+  const noteW = (measureW - PADDING * 2) / beatsPerMeasure
   return { measureW, noteW, beatsPerMeasure }
 }
 
