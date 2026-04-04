@@ -114,6 +114,12 @@ function fillMeasure(
       if (d.beats > remaining + 0.001) return false
       // Never exceed measure length
       if (d.beats > beatsPerMeasure + 0.001) return false
+      // In compound meters, only allow notes that align to beat or division boundaries
+      if (isCompound) {
+        const divUnit = beatTypeFactor / 3  // eighth note in 6/8
+        const alignsToDiv = Math.abs(d.beats % divUnit) < 0.001
+        if (!alignsToDiv) return false
+      }
       const rem = Math.round((remaining - d.beats) * 16) / 16
 
       // For dotted notes: check they don't obscure a main beat

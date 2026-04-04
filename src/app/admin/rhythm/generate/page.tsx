@@ -330,8 +330,24 @@ export default function GeneratePage() {
     if (pool.length > 0) set('notePool', pool)
   }
   const NOTE_BEATS_MAP: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
-  const maxBeats = opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
-  const allowedNoteValues = ALL_NOTE_VALUES.filter(n => NOTE_BEATS_MAP[n] <= maxBeats + 0.001)
+  const isCompoundMeter = opts.timeSignature.beats % 3 === 0 && opts.timeSignature.beats > 3
+  const compBeatUnit = isCompoundMeter ? 3 * (4 / opts.timeSignature.beatType) : 4 / opts.timeSignature.beatType
+  const maxBeats = isCompoundMeter
+    ? (opts.timeSignature.beats / 3) * compBeatUnit
+    : opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
+  const allowedNoteValues = ALL_NOTE_VALUES.filter(n => {
+    const b = NOTE_BEATS_MAP[n]
+    if (b > maxBeats + 0.001) return false
+    // In compound meters, exclude notes that don't align to beat boundaries
+    // (i.e. whose duration is not a multiple of the beat unit or its divisions)
+    if (isCompoundMeter) {
+      // Allow: dotted quarter (1.5), dotted half (3), dotted whole (6), eighth (0.5), sixteenth (0.25)
+      // Disallow: half (2), quarter (1), whole (4) — these cross beat boundaries
+      const alignsToBeat = Math.abs(b % compBeatUnit) < 0.001 || Math.abs(b % (compBeatUnit / 3)) < 0.001
+      return alignsToBeat
+    }
+    return true
+  })
 
   const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #D3D1C7', fontFamily: F, fontSize: '13px', color: '#1A1A18', background: '#F5F2EC', outline: 'none', width: '100%', boxSizing: 'border-box' }
   const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#D3D1C7'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#888780' })
