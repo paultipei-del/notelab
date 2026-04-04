@@ -137,7 +137,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
     // Tie
     if (note.tieStart && i < notes.length - 1) {
       const nextX = mx + (bp + note.durationBeats) * noteW
-      els.push(<TieCurveP key={'tie-'+i} x1={x + 4} x2={nextX + 4} />)
+      els.push(<TieCurveP key={'tie-'+i} x1={x + 2} x2={nextX + 2} />)
     }
     bp += note.durationBeats
   })
