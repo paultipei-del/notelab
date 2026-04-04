@@ -234,6 +234,7 @@ function fillMeasure(
             if (bd <= maxFill + 0.001 && bd > bestBeats) { bestBeats = bd; bestType = nv; bestDot = true }
           }
         }
+        console.log('REST placed: '+bestType+(bestDot?'d':'')+' beats='+bestBeats+' at pos='+restPos+' onBeat='+onBeat)
         notes.push({ type: bestType, rest: true, dot: bestDot, tieStart: false, tieStop: false, tuplet: null, durationBeats: bestBeats })
         restRemaining = Math.round((restRemaining - bestBeats) * 16) / 16
         restPos = Math.round((restPos + bestBeats) * 16) / 16
