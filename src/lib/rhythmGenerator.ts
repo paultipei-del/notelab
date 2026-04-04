@@ -98,6 +98,7 @@ function fillMeasure(
   const validDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
   // Add dotted versions for dotPool items regardless of notePool
   const extraDotPool = (opts.dotPool ?? []).filter(nv => !effectivePool.includes(nv))
+  // Pre-add dotted versions for extraDotPool items directly to validDurations after the loop
   for (const nv of effectivePool) {
     const b = Math.round(NOTE_BEATS[nv] * 16) / 16  // quarter note units, no beatType scaling
     // Only add dotted version for notes in dotPool (or original pool if dotPool not set)
