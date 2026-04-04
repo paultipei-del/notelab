@@ -44,6 +44,96 @@ const BRAVURA_NOTE: Record<string, string> = {
   sixteenth: String.fromCodePoint(0xE1D9),
 }
 
+const BEAM_FONT_SIZE = 44
+const STAFF_Y_P = 52
+const STEM_H_P = 36
+
+const BRAVURA_NOTE_GLYPHS: Record<string, string> = {
+  whole:      String.fromCodePoint(0xE1D2),
+  half:       String.fromCodePoint(0xE1D3),
+  quarter:    String.fromCodePoint(0xE1D5),
+  eighth:     String.fromCodePoint(0xE1D7),
+  sixteenth:  String.fromCodePoint(0xE1DB),
+}
+
+function BravuraNoteP({ x, y, type, color }: { x: number; y: number; type: string; color: string }) {
+  return <text x={x} y={y} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="auto">
+    {BRAVURA_NOTE_GLYPHS[type] ?? BRAVURA_NOTE_GLYPHS.quarter}
+  </text>
+}
+
+function RestSymbolP({ x, type }: { x: number; type: string }) {
+  const glyph =
+    type === 'whole'      ? BRAVURA_REST.whole :
+    type === 'half'       ? BRAVURA_REST.half :
+    type === 'eighth'     ? BRAVURA_REST.eighth :
+    type === 'sixteenth'  ? BRAVURA_REST.sixteenth :
+    BRAVURA_REST.quarter
+  const y = type === 'whole' ? STAFF_Y_P + 10 : type === 'half' ? STAFF_Y_P - 0.5 : STAFF_Y_P
+  return <text x={x} y={y} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
+}
+
+interface RhythmNoteP { type: string; durationBeats: number; rest?: boolean; dot?: boolean; tieStart?: boolean; tieStop?: boolean }
+
+function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.ReactElement[] {
+  const els: React.ReactElement[] = []
+
+  // Pre-compute note positions
+  const noteInfos: { idx: number; beatPos: number; x: number }[] = []
+  let bp = 0
+  notes.forEach((n, i) => {
+    noteInfos.push({ idx: i, beatPos: bp, x: mx + 14 + bp * noteW })
+    bp += n.durationBeats
+  })
+
+  // Beam groups
+  const beamGroups: number[][] = []
+  let currentGroup: number[] = []
+  let currentBeatStart = 0
+  noteInfos.forEach(({ idx, beatPos }) => {
+    const n = notes[idx]
+    const beamable = (n.type === 'eighth' || n.type === 'sixteenth') && !n.rest && !n.tieStop
+    const beatBoundary = Math.floor(beatPos + 0.001)
+    if (beamable) {
+      if (currentGroup.length === 0) { currentBeatStart = beatBoundary; currentGroup.push(idx) }
+      else if (beatBoundary === currentBeatStart) currentGroup.push(idx)
+      else { if (currentGroup.length >= 2) beamGroups.push([...currentGroup]); currentBeatStart = beatBoundary; currentGroup = [idx] }
+    } else { if (currentGroup.length >= 2) beamGroups.push([...currentGroup]); currentGroup = [] }
+  })
+  if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
+  const beamedSet = new Set(beamGroups.flat())
+
+  // Render notes
+  bp = 0
+  notes.forEach((note, i) => {
+    const x = mx + bp * noteW + 14
+    if (note.rest) {
+      els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} />)
+    } else if (beamedSet.has(i)) {
+      els.push(<text key={`n-${i}`} x={x} y={STAFF_Y_P} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="auto">{String.fromCodePoint(0xE1F1)}</text>)
+      if (note.dot) els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y_P - 4} r={2.5} fill="#1A1A18" />)
+    } else {
+      els.push(<BravuraNoteP key={`n-${i}`} x={x} y={STAFF_Y_P} type={note.type} color="#1A1A18" />)
+      if (note.dot) els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y_P - 4} r={2.5} fill="#1A1A18" />)
+    }
+    bp += note.durationBeats
+  })
+
+  // Beams
+  beamGroups.forEach((group, gi) => {
+    const xs = group.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW + 14 })
+    const x1 = xs[0] + 7; const x2 = xs[xs.length - 1] + 7
+    const beamY = STAFF_Y_P - 39
+    els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
+    for (let k = 0; k < group.length - 1; k++) {
+      if (notes[group[k]].type === 'sixteenth' && notes[group[k+1]].type === 'sixteenth')
+        els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+7} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+    }
+  })
+
+  return els
+}
+
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
   const beatsPerMeasure = exercise.timeSignature.beats
   const allNotes = rowMeasures.flatMap(m => m.notes)
@@ -99,32 +189,11 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
             <line x1={56} y1={STAFF_Y - STEM_H} x2={56} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
             {rowMeasures.map((m, mIdx) => {
               const mx = 56 + mIdx * measureW
-              let beatPos = 0
               const globalMIdx = rowIdx * measuresPerRow + mIdx
               const isLastMeasure = isLastRow && mIdx === rowMeasures.length - 1
               return (
                 <g key={mIdx}>
-                  {m.notes.map((n, nIdx) => {
-                    const slotX = mx + beatPos * noteW
-                    const x = slotX + Math.min(n.durationBeats * noteW * 0.5, noteW * 0.5, measureW - beatPos * noteW - 8)
-                    beatPos += n.durationBeats
-                    return (
-                      <g key={nIdx}>
-                        {!n.rest && <>
-                          <text x={x} y={STAFF_Y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
-                            {BRAVURA_NOTE[n.type] ?? BRAVURA_NOTE.quarter}
-                          </text>
-                          {n.dot && <circle cx={x + 14} cy={STAFF_Y - 5} r={2.5} fill="#1A1A18" />}
-                        </>}
-                        {n.rest && (
-                          <text x={x} y={n.type === 'whole' ? STAFF_Y + 10 : n.type === 'half' ? STAFF_Y - 0.5 : STAFF_Y}
-                            fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
-                            {BRAVURA_REST[n.type] ?? BRAVURA_REST.quarter}
-                          </text>
-                        )}
-                      </g>
-                    )
-                  })}
+                  {renderMeasureP(m.notes as RhythmNoteP[], mx, noteW)}
                   {!isLastMeasure && (
                     <line x1={mx + measureW} y1={STAFF_Y - STEM_H} x2={mx + measureW} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
                   )}
