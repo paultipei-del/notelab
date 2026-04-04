@@ -167,7 +167,6 @@ function fillMeasure(
     })
 
     if (fitting.length === 0) {
-      console.log('FITTING EMPTY: remaining='+remaining+' currentPos='+currentBeatPos+' validDurs='+JSON.stringify(validDurations.map(d=>d.beats+(d.dot?'d':''))))
       // Fallback: use largest note from validDurations that fits
       const fallback = validDurations
         .filter(d => d.beats <= Math.round(remaining * 16) / 16 + 0.001)
@@ -234,7 +233,6 @@ function fillMeasure(
             if (bd <= maxFill + 0.001 && bd > bestBeats) { bestBeats = bd; bestType = nv; bestDot = true }
           }
         }
-        console.log('REST placed: '+bestType+(bestDot?'d':'')+' beats='+bestBeats+' at pos='+restPos+' onBeat='+onBeat)
         notes.push({ type: bestType, rest: true, dot: bestDot, tieStart: false, tieStop: false, tuplet: null, durationBeats: bestBeats })
         restRemaining = Math.round((restRemaining - bestBeats) * 16) / 16
         restPos = Math.round((restPos + bestBeats) * 16) / 16
