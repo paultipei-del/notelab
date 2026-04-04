@@ -252,8 +252,8 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
                     <line x1={barlineX} y1={STAFF_Y - STEM_H} x2={barlineX} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
                   )}
                   {isLastMeasure && <>
-                    <line x1={barlineX - 10} y1={STAFF_Y - STEM_H} x2={barlineX - 10} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1.2} />
-                    <line x1={barlineX - 3} y1={STAFF_Y - STEM_H} x2={barlineX - 3} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={6} />
+                    <line x1={barlineX} y1={STAFF_Y - STEM_H} x2={barlineX} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1.2} />
+                    <line x1={barlineX + 7} y1={STAFF_Y - STEM_H} x2={barlineX + 7} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={6} />
                   </>}
                 </g>
               )
