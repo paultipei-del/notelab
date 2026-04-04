@@ -272,9 +272,14 @@ function mergeConsecutiveRests(
   const BEATS: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
   const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
 
+  // Practical dotted rests: dotted half (3), dotted quarter (1.5), dotted eighth (0.75)
+  // Avoid dotted sixteenth (0.375) — not used in standard notation
+  const DOTTED_REST_TYPES: NoteValue[] = ['half', 'quarter', 'eighth']
   function findRestType(beats: number): [NoteValue, boolean] {
     for (const nv of NOTE_ORDER) {
       if (Math.abs(BEATS[nv] - beats) < 0.001) return [nv, false]
+    }
+    for (const nv of DOTTED_REST_TYPES) {
       if (Math.abs(BEATS[nv] * 1.5 - beats) < 0.001) return [nv, true]
     }
     return ['sixteenth', false]
@@ -376,6 +381,11 @@ function mergeMultiBeatRests(
       for (const nv of NOTE_ORDER) {
         const b = BEATS[nv]
         if (Math.abs(b - totalRest) < 0.001) { bestType = nv; bestDot = false; break }
+      }
+      // Only use practical dotted rests
+      const DOTTED_REST2: NoteValue[] = ['half', 'quarter', 'eighth']
+      for (const nv of DOTTED_REST2) {
+        const b = BEATS[nv]
         if (Math.abs(b * 1.5 - totalRest) < 0.001) { bestType = nv; bestDot = true; break }
       }
       result.push({ ...note, type: bestType, dot: bestDot, durationBeats: totalRest })
