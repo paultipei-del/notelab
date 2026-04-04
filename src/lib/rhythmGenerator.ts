@@ -318,6 +318,7 @@ function mergeConsecutiveRests(
       j++
     }
 
+    console.log('merge: i='+i+' j='+j+' pos='+pos+' beatEnd='+beatEnd+' totalRest='+totalRest)
     if (j > i) {
       // Merge all accumulated rests into one
       const [type, dot] = findRestType(totalRest)
