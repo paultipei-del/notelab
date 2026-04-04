@@ -366,11 +366,20 @@ function mergeMultiBeatRests(
 
 function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
   if (!opts.allowTies) return notes
+  const beatUnit = 4 / opts.timeSignature.beatType
+  function r16(n: number) { return Math.round(n * 16) / 16 }
+  let pos = 0
   for (let i = 0; i < notes.length - 1; i++) {
-    if (!notes[i].rest && !notes[i+1].rest && !notes[i].tieStart && !notes[i+1].tieStop && rng() < opts.tieProbability) {
+    const noteEnd = r16(pos + notes[i].durationBeats)
+    const nextBeatBoundary = r16(Math.ceil(r16(pos / beatUnit) + 0.001) * beatUnit)
+    // Only tie across a beat boundary — note ends exactly on a beat, next note continues
+    const crossesBeat = Math.abs(noteEnd - nextBeatBoundary) < 0.001
+    if (!notes[i].rest && !notes[i+1].rest && !notes[i].tieStart && !notes[i+1].tieStop
+        && crossesBeat && rng() < opts.tieProbability) {
       notes[i].tieStart = true
       notes[i+1].tieStop = true
     }
+    pos = r16(pos + notes[i].durationBeats)
   }
   return notes
 }
