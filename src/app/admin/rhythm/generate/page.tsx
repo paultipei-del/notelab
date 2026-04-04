@@ -83,7 +83,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
   const noteInfos: { idx: number; beatPos: number; x: number }[] = []
   let bp = 0
   notes.forEach((n, i) => {
-    noteInfos.push({ idx: i, beatPos: bp, x: mx + 14 + bp * noteW })
+    noteInfos.push({ idx: i, beatPos: bp, x: mx + bp * noteW })
     bp += n.durationBeats
   })
 
@@ -138,7 +138,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
       // Use nonRestIndices for secondary beams so indices align with xs array
     }
     // Secondary beams: full beam between adjacent 16ths, stub for isolated 16ths
-    const STUB = 8
+    const STUB = 12
     for (let k = 0; k < nonRestIndices.length; k++) {
       const ni = nonRestIndices[k]
       if (notes[ni].type !== 'sixteenth') continue

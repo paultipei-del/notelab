@@ -291,7 +291,7 @@ function renderMeasure(
       // legacy loop kept for reference
     }
     // Secondary beams using nonRestIndices for correct alignment
-    const STUB = 8
+    const STUB = 12
     for (let k = 0; k < nonRestIndices.length; k++) {
       const ni = nonRestIndices[k]
       if (notes[ni].type !== 'sixteenth') continue
