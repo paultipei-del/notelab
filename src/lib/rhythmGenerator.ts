@@ -258,7 +258,7 @@ function fillMeasure(
     }
   }
 
-  return applyTies(mergeMultiBeatRests(mergeConsecutiveRests(notes, beatTypeFactor), beatTypeFactor, beatsPerMeasure), opts, rng)
+  return applyTies(mergeMultiBeatRests(mergeConsecutiveRests(notes, beatTypeFactor, isCompound), beatTypeFactor, beatsPerMeasure), opts, rng)
 }
 
 // Validate that no note crosses a beat boundary
@@ -266,7 +266,8 @@ function fillMeasure(
 
 function mergeConsecutiveRests(
   notes: GeneratedNote[],
-  beatUnit: number
+  beatUnit: number,
+  isCompound: boolean = false
 ): GeneratedNote[] {
   function r16(n: number) { return Math.round(n * 16) / 16 }
   const BEATS: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
@@ -311,9 +312,16 @@ function mergeConsecutiveRests(
 
     console.log('merge: i='+i+' j='+j+' pos='+pos+' beatEnd='+beatEnd+' totalRest='+totalRest)
     if (j > i) {
-      // Merge all accumulated rests into one
+      // Only use dotted rest if starting on a beat boundary
+      const onBeat = Math.abs(pos % beatUnit) < 0.001
       const [type, dot] = findRestType(totalRest)
-      result.push({ ...note, type, dot, durationBeats: totalRest })
+      const useDot = dot && onBeat
+      // If dotted but off-beat, find plain equivalent or split further
+      const finalType = useDot ? type : (dot ? (() => {
+        const BEATS2: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
+        return NOTE_ORDER.find(nv => Math.abs(BEATS2[nv] - totalRest) < 0.001) ?? type
+      })() : type)
+      result.push({ ...note, type: finalType, dot: useDot, durationBeats: totalRest })
       pos = r16(pos + totalRest)
       i = j
     } else {
