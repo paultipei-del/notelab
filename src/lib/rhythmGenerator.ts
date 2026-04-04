@@ -232,12 +232,6 @@ export function generateExercise(opts: GeneratorOptions): GeneratedExercise {
     notes: fillMeasure(beatsPerMeasure, opts, rng)
   }))
 
-  // Verify measure sums
-  measures.forEach((m, i) => {
-    const sum = m.notes.reduce((acc, n) => acc + n.durationBeats, 0)
-    const expected = opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
-    console.log(`Measure ${i+1}: sum=${sum.toFixed(3)} ok=${Math.abs(sum-expected)<0.01}`, m.notes.map(n => `${n.rest?'R':''}${n.tieStop?'~':''}${n.dot?'d':''}${n.type}(${n.durationBeats})${n.tieStart?'~':''}`).join(' '))
-  })
   return { title: '', timeSignature: opts.timeSignature, measures, hands: opts.hands }
 }
 
