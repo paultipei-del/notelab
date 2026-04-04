@@ -53,7 +53,7 @@ const BRAVURA_NOTE_GLYPHS: Record<string, string> = {
   half:       String.fromCodePoint(0xE1D3),
   quarter:    String.fromCodePoint(0xE1D5),
   eighth:     String.fromCodePoint(0xE1D7),
-  sixteenth:  String.fromCodePoint(0xE1DB),
+  sixteenth:  String.fromCodePoint(0xE1D9),
 }
 
 function BravuraNoteP({ x, y, type, color }: { x: number; y: number; type: string; color: string }) {
