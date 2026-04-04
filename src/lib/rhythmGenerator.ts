@@ -170,6 +170,20 @@ function fillMeasure(
       const RBEATS: Record<NoteValue,number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
       let restRemaining = chosen.beats
       let restPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
+      // Consolidate: if starting on a beat, use largest single rest that fills complete beats
+      {
+        const onBeat = Math.abs(Math.round(restPos % beatTypeFactor * 16) / 16) < 0.001
+        if (onBeat && restRemaining >= beatTypeFactor - 0.001) {
+          const completeBeats = Math.floor(Math.round(restRemaining / beatTypeFactor * 16) / 16)
+          const totalW = Math.round(completeBeats * beatTypeFactor * 16) / 16
+          const nv = NOTE_ORDER.find(n => Math.abs(Math.round(RBEATS[n] * beatTypeFactor * 16) / 16 - totalW) < 0.001)
+          if (nv) {
+            notes.push({ type: nv, rest: true, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: totalW })
+            restRemaining = Math.round((restRemaining - totalW) * 16) / 16
+            restPos = Math.round((restPos + totalW) * 16) / 16
+          }
+        }
+      }
       while (restRemaining > 0.001) {
         // Space from current position to next beat boundary
         const nextBeat = Math.round(Math.ceil(Math.round(restPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
