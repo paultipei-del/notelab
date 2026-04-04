@@ -233,6 +233,7 @@ export default function GeneratePage() {
   const [difficulty, setDifficulty] = useState(1)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null)
+  const [showDiag, setShowDiag] = useState(false)
 
   const set = (key: keyof GeneratorOptions, val: unknown) =>
     setOpts(prev => ({ ...prev, [key]: val }))
@@ -423,12 +424,52 @@ export default function GeneratePage() {
           </div>
         )}
 
+        {preview && showDiag && (
+          <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px', marginBottom: '16px', overflowX: 'auto' }}>
+            <p style={{ fontFamily: F, fontSize: '11px', color: '#888780', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
+            {preview.measures.map((m, mi) => {
+              let pos = 0
+              const expected = preview.timeSignature.beats * (4 / preview.timeSignature.beatType)
+              const sum = m.notes.reduce((a, n) => a + n.durationBeats, 0)
+              const ok = Math.abs(sum - expected) < 0.01
+              return (
+                <div key={mi} style={{ marginBottom: '8px' }}>
+                  <span style={{ fontFamily: F, fontSize: '11px', color: ok ? '#4CAF50' : '#E53935', marginRight: '8px' }}>
+                    M{mi+1} sum={sum.toFixed(3)} {ok ? '✓' : '✗'}
+                  </span>
+                  {m.notes.map((n, ni) => {
+                    const start = pos
+                    pos += n.durationBeats
+                    const onBeat = Math.abs(start % 1) < 0.01
+                    return (
+                      <span key={ni} style={{
+                        fontFamily: 'monospace', fontSize: '10px',
+                        background: n.rest ? '#333' : (onBeat ? '#2A4A2A' : '#4A2A2A'),
+                        color: n.rest ? '#888' : (onBeat ? '#4CAF50' : '#FF6B6B'),
+                        padding: '2px 4px', borderRadius: '3px', margin: '1px',
+                        display: 'inline-block'
+                      }}>
+                        {n.rest ? 'R' : ''}{n.dot ? 'd' : ''}{n.type[0].toUpperCase()}{n.durationBeats} @{start.toFixed(2)}
+                      </span>
+                    )
+                  })}
+                </div>
+              )
+            })}
+          </div>
+        )}
         {message && <p style={{ fontFamily: F, fontSize: '13px', color: message.ok ? '#4CAF50' : '#E53935', marginBottom: '16px' }}>{message.text}</p>}
 
         <div style={{ display: 'flex', gap: '12px' }}>
           <button onClick={generate} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
             {preview ? 'Regenerate' : 'Generate'}
           </button>
+          {preview && (
+            <button onClick={() => setShowDiag(d => !d)}
+              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              {showDiag ? 'Hide Diag' : 'Diagnose'}
+            </button>
+          )}
           {preview && (
             <button onClick={save} disabled={saving || !title.trim()}
               style={{ background: saving || !title.trim() ? '#D3D1C7' : '#BA7517', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: saving || !title.trim() ? 'default' : 'pointer' }}>
