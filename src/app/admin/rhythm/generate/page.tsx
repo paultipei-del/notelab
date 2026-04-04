@@ -124,7 +124,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
   // Render notes
   bp = 0
   notes.forEach((note, i) => {
-    const x = mx + bp * noteW
+    const x = mx + bp * noteW + (bp === 0 ? 6 : 0)  // padding after barline for first note
     if (note.rest) {
       els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} dot={note.dot} />)
     } else if (beamedSet.has(i)) {
