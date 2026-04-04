@@ -466,6 +466,14 @@ export default function GeneratePage() {
         {preview && showDiag && (
           <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px', marginBottom: '16px', overflowX: 'auto' }}>
             <p style={{ fontFamily: F, fontSize: '11px', color: '#888780', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
+            <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#888780', marginBottom: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
+              <span><span style={{ border: '2px solid #4A9EFF', padding: '0 3px', borderRadius: '2px' }}>note~</span> tie start</span>
+              <span><span style={{ border: '2px solid #FF9E4A', padding: '0 3px', borderRadius: '2px' }}>~note</span> tie stop</span>
+              <span style={{ color: '#4CAF50' }}>● on beat</span>
+              <span style={{ color: '#FF6B6B' }}>● off beat</span>
+              <span style={{ color: '#888' }}>R = rest</span>
+              <span style={{ color: '#BA7517' }}>d = dotted</span>
+            </div>
             {preview.measures.map((m, mi) => {
               let pos = 0
               const expected = preview.timeSignature.beats * (4 / preview.timeSignature.beatType)
@@ -486,9 +494,10 @@ export default function GeneratePage() {
                         background: n.rest ? '#333' : (onBeat ? '#2A4A2A' : '#4A2A2A'),
                         color: n.rest ? '#888' : (onBeat ? '#4CAF50' : '#FF6B6B'),
                         padding: '2px 4px', borderRadius: '3px', margin: '1px',
-                        display: 'inline-block'
+                        display: 'inline-block',
+                        outline: n.tieStart ? '2px solid #4A9EFF' : n.tieStop ? '2px solid #FF9E4A' : 'none'
                       }}>
-                        {n.rest ? 'R' : ''}{n.dot ? 'd' : ''}{n.type[0].toUpperCase()}{n.durationBeats} @{start.toFixed(2)}
+                        {n.tieStop ? '~' : ''}{n.rest ? 'R' : ''}{n.dot ? 'd' : ''}{n.type[0].toUpperCase()}{n.durationBeats} @{start.toFixed(2)}{n.tieStart ? '~' : ''}
                       </span>
                     )
                   })}
