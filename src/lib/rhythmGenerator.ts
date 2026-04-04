@@ -155,6 +155,7 @@ function fillMeasure(
     const chosen = pickRandom(pool, rng)
     const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
 
+    const noteCountBefore = notes.length
     if (isRest) {
       // Replace with properly-sized rest(s) that don't cross beat boundaries
       const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
@@ -205,7 +206,13 @@ function fillMeasure(
         durationBeats: chosen.beats,
       })
     }
-    remaining = Math.round((remaining - chosen.beats) * 16) / 16
+    // Decrement by what was actually placed
+    if (isRest) {
+      const actualRestBeats = notes.slice(noteCountBefore).reduce((s, n) => s + n.durationBeats, 0)
+      remaining = Math.round((remaining - actualRestBeats) * 16) / 16
+    } else {
+      remaining = Math.round((remaining - chosen.beats) * 16) / 16
+    }
   }
 
   return applyTies(notes, opts, rng)
