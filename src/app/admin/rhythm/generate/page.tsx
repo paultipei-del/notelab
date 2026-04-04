@@ -133,10 +133,10 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
     if (xs.length < 2) return
     const x1 = xs[0] + 7; const x2 = xs[xs.length - 1] + 7
     const beamY = STAFF_Y_P - 39
-    els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
+    if (isFinite(x1) && isFinite(x2) && x2 > x1) els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
     for (let k = 0; k < group.length - 1; k++) {
       if (notes[group[k]].type === 'sixteenth' && notes[group[k+1]].type === 'sixteenth')
-        els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+7} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+        if (xs[k+1] !== undefined && isFinite(xs[k]) && isFinite(xs[k+1])) els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+7} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
     }
   })
 
