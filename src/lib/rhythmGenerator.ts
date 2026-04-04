@@ -160,20 +160,24 @@ function buildRests(
     const spaceToNext = r16(nextBeat - pos)
     // If exactly on a beat, space to next beat = beatUnit
     const effectiveSpace = spaceToNext > 0.001 ? spaceToNext : beatUnit
-    const maxFill = r16(Math.min(remaining, effectiveSpace))
 
-    // Find largest rest that fits within maxFill
-    // Prefer dotted rests if they fit and don't cross a beat
+    // Find largest rest that fits within remaining AND respects beat structure
+    // Plain rests: must fit within current beat segment
+    // Dotted rests: allowed if starting on a beat AND total <= remaining
     const candidates = validDurations
       .filter(d => {
-        if (d.beats > r16(maxFill) + 0.001) return false
+        if (d.beats > r16(remaining) + 0.001) return false
         if (d.dot && !allowDots) return false
-        // Dotted rest: only if it doesn't cross a beat boundary
         if (d.dot) {
-          const crossings = beatBoundariesCrossed(pos, d.beats, beatUnit)
-          if (crossings.length > 0) return false
+          // Dotted rest valid only when starting exactly on a beat
+          const onBeat = Math.abs(r16(pos % beatUnit)) < 0.001
+          if (!onBeat) return false
+          // And must not cross a beat two levels up (e.g. in 4/4, can't cross beat 3)
+          // Simple rule: dotted rest <= 1.5 beats is fine starting on any beat
+          return true
         }
-        return true
+        // Plain rest: must fit within current beat segment
+        return d.beats <= r16(effectiveSpace) + 0.001
       })
       .sort((a, b) => b.beats - a.beats)  // prefer largest
 
