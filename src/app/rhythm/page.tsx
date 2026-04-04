@@ -91,9 +91,12 @@ function Dot({ x, color }: { x: number; color: string }) {
 }
 
 function TieCurve({ x1, x2 }: { x1: number; x2: number }) {
-  const y = STAFF_Y + 12
-  const arc = Math.min(10, (x2 - x1) * 0.15)
-  return <path d={`M ${x1+8} ${y} C ${x1+8+(x2-x1)*0.25} ${y+arc} ${x2-(x2-x1)*0.25} ${y+arc} ${x2} ${y}`} fill="none" stroke="#1A1A18" strokeWidth={1.2} />
+  const y = STAFF_Y + 10
+  const h = Math.min(8, Math.max(4, (x2 - x1) * 0.12))
+  const cp1x = x1 + (x2-x1)*0.25; const cp2x = x2 - (x2-x1)*0.25
+  const outer = `M ${x1+6} ${y} C ${cp1x} ${y+h} ${cp2x} ${y+h} ${x2+2} ${y}`
+  const inner = `C ${cp2x} ${y+h-2} ${cp1x} ${y+h-2} ${x1+6} ${y}`
+  return <path d={outer + ' ' + inner + ' Z'} fill="#1A1A18" opacity={0.85} />
 }
 
 
