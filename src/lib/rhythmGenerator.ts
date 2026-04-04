@@ -111,6 +111,12 @@ function fillMeasure(
     }
   }
 
+  // Add dotted durations for dotPool-only items (not in notePool)
+  for (const nv of extraDotPool) {
+    const b = Math.round(NOTE_BEATS[nv] * 16) / 16
+    validDurations.push({ type: nv, beats: Math.round(b * 1.5 * 16) / 16, dot: true })
+  }
+
   let safetyCounter = 0
   while (remaining > 0.001 && safetyCounter++ < 64) {
     // Current beat position within the measure
