@@ -347,8 +347,11 @@ function mergeMultiBeatRests(
 
   // Strong beats: beat 1 and beat 3 in 4/4 (positions 0 and 2*beatUnit)
   function isStrongBeat(pos: number): boolean {
+    // Must be exactly on a beat boundary
+    const onBeat = Math.abs(r16(pos % beatUnit)) < 0.001
+    if (!onBeat) return false
     const beatNum = Math.round(pos / beatUnit)
-    return beatNum === 0 || beatNum * beatUnit === r16(beatsPerMeasure / 2)
+    return beatNum === 0 || r16(beatNum * beatUnit) === r16(beatsPerMeasure / 2)
   }
 
   const result: GeneratedNote[] = []
