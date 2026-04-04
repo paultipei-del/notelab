@@ -288,8 +288,21 @@ function renderMeasure(
 
     // Secondary beam for sixteenth pairs
     for (let k = 0; k < group.length - 1; k++) {
-      if (notes[group[k]].type === 'sixteenth' && notes[group[k+1]].type === 'sixteenth') {
-        if (xs[k+1] !== undefined && isFinite(xs[k]) && isFinite(xs[k+1])) els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+7} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+      // legacy loop kept for reference
+    }
+    // Secondary beams using nonRestIndices for correct alignment
+    const STUB = 8
+    for (let k = 0; k < nonRestIndices.length; k++) {
+      const ni = nonRestIndices[k]
+      if (notes[ni].type !== 'sixteenth') continue
+      const prevIs16 = k > 0 && notes[nonRestIndices[k-1]].type === 'sixteenth'
+      const nextIs16 = k < nonRestIndices.length - 1 && notes[nonRestIndices[k+1]].type === 'sixteenth'
+      if (nextIs16) {
+        if (xs[k+1] !== undefined && isFinite(xs[k]) && isFinite(xs[k+1]))
+          els.push(<rect key={'bm2-'+gi+'-f-'+k} x={xs[k]+7} y={beamY+7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+      } else if (!prevIs16) {
+        if (isFinite(xs[k]))
+          els.push(<rect key={'bm2-'+gi+'-s-'+k} x={xs[k]+7} y={beamY+7} width={STUB} height={5} fill="#1A1A18" rx={1} />)
       }
     }
   })

@@ -135,8 +135,24 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
     const beamY = STAFF_Y_P - 39
     if (isFinite(x1) && isFinite(x2) && x2 > x1) els.push(<rect key={`bm1-${gi}`} x={x1} y={beamY} width={x2 - x1} height={5} fill="#1A1A18" rx={1} />)
     for (let k = 0; k < group.length - 1; k++) {
-      if (notes[group[k]].type === 'sixteenth' && notes[group[k+1]].type === 'sixteenth')
-        if (xs[k+1] !== undefined && isFinite(xs[k]) && isFinite(xs[k+1])) els.push(<rect key={`bm2-${gi}-${k}`} x={xs[k]+7} y={beamY + 7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+      // Use nonRestIndices for secondary beams so indices align with xs array
+    }
+    // Secondary beams: full beam between adjacent 16ths, stub for isolated 16ths
+    const STUB = 8
+    for (let k = 0; k < nonRestIndices.length; k++) {
+      const ni = nonRestIndices[k]
+      if (notes[ni].type !== 'sixteenth') continue
+      const prevIs16 = k > 0 && notes[nonRestIndices[k-1]].type === 'sixteenth'
+      const nextIs16 = k < nonRestIndices.length - 1 && notes[nonRestIndices[k+1]].type === 'sixteenth'
+      if (nextIs16) {
+        // Full beam to next sixteenth
+        if (xs[k+1] !== undefined && isFinite(xs[k]) && isFinite(xs[k+1]))
+          els.push(<rect key={'bm2-'+gi+'-f-'+k} x={xs[k]+7} y={beamY+7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
+      } else if (!prevIs16) {
+        // Isolated sixteenth — stub pointing right
+        if (isFinite(xs[k]))
+          els.push(<rect key={'bm2-'+gi+'-s-'+k} x={xs[k]+7} y={beamY+7} width={STUB} height={5} fill="#1A1A18" rx={1} />)
+      }
     }
   })
 
