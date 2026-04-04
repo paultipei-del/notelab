@@ -163,10 +163,9 @@ function fillMeasure(
     })
 
     if (fitting.length === 0) {
-      // Fallback: use smallest non-dotted note that fits
-      const fallback = effectivePool
-        .map(nv => ({ type: nv, beats: Math.round(NOTE_BEATS[nv] * 16) / 16, dot: false }))
-        .filter(d => d.beats <= remaining + 0.001)
+      // Fallback: use largest note from validDurations that fits
+      const fallback = validDurations
+        .filter(d => d.beats <= Math.round(remaining * 16) / 16 + 0.001)
         .sort((a, b) => b.beats - a.beats)[0]
       if (!fallback) break
       notes.push({ type: fallback.type, rest: false, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: fallback.beats })
