@@ -1042,7 +1042,7 @@ export default function RhythmPage() {
               {/* LANDSCAPE/DESKTOP: row-based notation */}
               {view === 'notation' && !isPortrait && rows.map((rowMeasures, rowIdx) => {
                 const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
-                const actualSvgW = svgWidth
+                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
                 const isLastRow = rowIdx === rows.length - 1
                 return (
                   <svg key={rowIdx} width={actualSvgW} height={SVG_H} style={{ display: 'block', overflowX: 'visible' }}>
@@ -1085,7 +1085,7 @@ export default function RhythmPage() {
                       const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
                       if (playhead < rowStartBeat - 1 || playhead >= rowEndBeat) return null
                       const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
-                const actualSvgW = svgWidth
+                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
                       if (!playing && countdown === null) return null
                       const beatInRow = playhead - rowStartBeat
                       const x = 56 + beatInRow * noteW + 14
