@@ -107,18 +107,15 @@ function fillMeasure(
       if (d.beats > remaining + 0.001) return false
       const rem = Math.round((remaining - d.beats) * 16) / 16
 
-      // Check if note crosses a beat boundary
-      const noteEnd = Math.round((currentBeatPos + d.beats) * 16) / 16
-      const nextBeatBoundary = Math.round(Math.ceil(Math.round(currentBeatPos / beatUnit * 16) / 16 + 0.001) * beatUnit * 16) / 16
-      const crossesBeat = noteEnd > nextBeatBoundary + 0.001 && Math.abs(currentBeatPos % beatUnit) > 0.001
-
-      // If note crosses a beat and ties not allowed, reject it
-      if (crossesBeat && !opts.allowTies) return false
-
-      // For dotted notes: only on beat starts
+      // For dotted notes: check they don't obscure a main beat
       if (d.dot) {
+        const noteEnd = Math.round((currentBeatPos + d.beats) * 16) / 16
         const onMainBeat = Math.abs(currentBeatPos % beatUnit) < 0.001
-        if (!onMainBeat) return false
+        if (!onMainBeat) {
+          // Not starting on a main beat — reject dotted note
+          // (too complex to handle correctly without ties)
+          return false
+        }
         // Starting on a main beat — dotted note is OK only if the dot remainder
         // (half the undotted value) can be filled by a note in the pool
         const undottedBeats = Math.round(d.beats / 1.5 * 16) / 16
@@ -186,38 +183,15 @@ function fillMeasure(
         restPos = Math.round((restPos + bestBeats) * 16) / 16
       }
     } else {
-      // Check if note crosses beat boundary — if so split with tie
-      const noteEnd = Math.round((currentBeatPos + chosen.beats) * 16) / 16
-      const nextBound = Math.round(Math.ceil(Math.round(currentBeatPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
-      if (opts.allowTies && noteEnd > nextBound + 0.001 && Math.abs(currentBeatPos % beatTypeFactor) > 0.001) {
-        // Split at beat boundary
-        const piece1 = Math.round((nextBound - currentBeatPos) * 16) / 16
-        const piece2 = Math.round((chosen.beats - piece1) * 16) / 16
-        // Find note types for each piece
-        const NOTE_ORDER2: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
-        const BEATS2: Record<NoteValue,number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
-        const findType = (b: number): [NoteValue, boolean] => {
-          for (const nv of NOTE_ORDER2) {
-            if (Math.abs(BEATS2[nv] * beatTypeFactor - b) < 0.001) return [nv, false]
-            if (Math.abs(BEATS2[nv] * beatTypeFactor * 1.5 - b) < 0.001) return [nv, true]
-          }
-          return [chosen.type, false]
-        }
-        const [t1, d1] = findType(piece1)
-        const [t2, d2] = findType(piece2)
-        notes.push({ type: t1, rest: false, dot: d1, tieStart: true, tieStop: false, tuplet: null, durationBeats: piece1 })
-        notes.push({ type: t2, rest: false, dot: d2, tieStart: false, tieStop: true, tuplet: null, durationBeats: piece2 })
-      } else {
-        notes.push({
-          type: chosen.type,
-          rest: false,
-          dot: chosen.dot,
-          tieStart: false,
-          tieStop: false,
-          tuplet: null,
-          durationBeats: chosen.beats,
-        })
-      }
+      notes.push({
+        type: chosen.type,
+        rest: false,
+        dot: chosen.dot,
+        tieStart: false,
+        tieStop: false,
+        tuplet: null,
+        durationBeats: chosen.beats,
+      })
     }
     remaining = Math.round((remaining - chosen.beats) * 16) / 16
   }
