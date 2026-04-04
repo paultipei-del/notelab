@@ -87,22 +87,27 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
     bp += n.durationBeats
   })
 
-  // Beam groups
+  // Beat-aware beam groups — group beamable notes within the same beat
+  const beatSize = 1 // quarter note = 1 beat in simple time
+  const totalBeats = Math.round(noteInfos.reduce((sum, _, i) => sum + notes[i].durationBeats, 0))
   const beamGroups: number[][] = []
-  let currentGroup: number[] = []
-  let currentBeatStart = 0
-  noteInfos.forEach(({ idx, beatPos }) => {
-    const n = notes[idx]
-    const beamable = (n.type === 'eighth' || n.type === 'sixteenth') && !n.rest && !n.tieStop
-    const beatBoundary = Math.floor(beatPos + 0.001)
-    if (beamable) {
-      if (currentGroup.length === 0) { currentBeatStart = beatBoundary; currentGroup.push(idx) }
-      else if (beatBoundary === currentBeatStart) currentGroup.push(idx)
-      else { if (currentGroup.length >= 2) beamGroups.push([...currentGroup]); currentBeatStart = beatBoundary; currentGroup = [idx] }
-    } else { if (currentGroup.length >= 2) beamGroups.push([...currentGroup]); currentGroup = [] }
-  })
-  if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
-  const beamedSet = new Set(beamGroups.flat())
+  for (let beat = 0; beat < totalBeats; beat++) {
+    const beatStart = beat * beatSize
+    const beatEnd = beatStart + beatSize
+    const group = noteInfos
+      .filter(({ idx, beatPos }) => {
+        const n = notes[idx]
+        return (n.type === 'eighth' || n.type === 'sixteenth') && !n.tieStop &&
+          beatPos >= beatStart - 0.001 && beatPos < beatEnd - 0.001
+      })
+      .map(({ idx }) => idx)
+    const nonRest = group.filter(i => !notes[i].rest)
+    if (nonRest.length >= 2) {
+      const first = nonRest[0]; const last = nonRest[nonRest.length - 1]
+      beamGroups.push(noteInfos.filter(({ idx }) => idx >= first && idx <= last).map(({ idx }) => idx))
+    }
+  }
+  const beamedSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
 
   // Render notes
   bp = 0

@@ -188,7 +188,13 @@ function renderMeasure(
   const els: React.ReactElement[] = []
 
   // ── Pre-compute beam groups ───────────────────────────────────────────────
-  // A beam group is consecutive beamable notes within the same beat
+  // Rules:
+  // 1. Beam within a single beat only (beat = 1 quarter note in simple time)
+  // 2. Never beam across the midpoint of the measure (e.g. beats 2-3 in 4/4)
+  // 3. 16th notes group in groups of 4 (one beat), 8ths in groups of 2 or 4
+  // 4. Dotted 8th + 16th beam together as one beat unit
+  // 5. Rests do NOT break a beam group if within the same beat
+
   interface NoteInfo { idx: number; beatPos: number; x: number }
   const noteInfos: NoteInfo[] = []
   let bp = 0
@@ -197,35 +203,41 @@ function renderMeasure(
     bp += n.durationBeats
   })
 
-  // Group beamable notes by beat
+  // Determine beat size (1 quarter = 1 beat in simple time)
+  const beatSize = 1 // quarter note = 1 beat
+
+  // Group beamable notes by beat — beam group = all beamable notes within same beat
   const beamGroups: number[][] = []
-  let currentGroup: number[] = []
-  let currentBeatStart = 0
-
-  noteInfos.forEach(({ idx, beatPos }) => {
-    const n = notes[idx]
-    const beamable = (n.type === 'eighth' || n.type === 'sixteenth') && !n.rest && !n.tieStop
-    const beatBoundary = Math.floor(beatPos + 0.001)
-
-    if (beamable) {
-      if (currentGroup.length === 0) {
-        currentBeatStart = beatBoundary
-        currentGroup.push(idx)
-      } else if (beatBoundary === currentBeatStart) {
-        currentGroup.push(idx)
-      } else {
-        if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
-        currentBeatStart = beatBoundary
-        currentGroup = [idx]
+  
+  // For each beat, collect beamable notes
+  const totalBeats = beatsPerMeasure
+  for (let beat = 0; beat < totalBeats; beat++) {
+    const beatStart = beat * beatSize
+    const beatEnd = beatStart + beatSize
+    const group: number[] = []
+    noteInfos.forEach(({ idx, beatPos }) => {
+      const n = notes[idx]
+      const beamable = (n.type === 'eighth' || n.type === 'sixteenth') && !n.tieStop
+      // Note starts within this beat and is beamable (rests allowed inside group)
+      if (beamable && beatPos >= beatStart - 0.001 && beatPos < beatEnd - 0.001) {
+        group.push(idx)
       }
-    } else {
-      if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
-      currentGroup = []
+    })
+    // Only beam if 2+ non-rest notes in group
+    const nonRestInGroup = group.filter(i => !notes[i].rest)
+    if (nonRestInGroup.length >= 2) {
+      // Include any rests between first and last non-rest note
+      const first = nonRestInGroup[0]
+      const last = nonRestInGroup[nonRestInGroup.length - 1]
+      const fullGroup = noteInfos
+        .filter(({ idx }) => idx >= first && idx <= last)
+        .map(({ idx }) => idx)
+      beamGroups.push(fullGroup)
     }
-  })
-  if (currentGroup.length >= 2) beamGroups.push([...currentGroup])
+  }
 
-  const beamedSet = new Set(beamGroups.flat())
+  const beamedSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
+
 
   // ── Render each note ──────────────────────────────────────────────────────
   bp = 0
