@@ -86,9 +86,10 @@ function fillMeasure(
       whole: 'half', half: 'quarter', quarter: 'eighth', eighth: 'sixteenth'
     }
     // Only add complements for notes in BOTH notePool and dotPool
+    // If dotPool is empty, no complements needed
     const activeDotPool = (opts.dotPool && opts.dotPool.length > 0)
       ? opts.dotPool.filter(nv => opts.notePool.includes(nv))
-      : opts.notePool
+      : []
     activeDotPool.forEach(nv => {
       const comp = complementMap[nv] as NoteValue | undefined
       if (comp && !effectivePool.includes(comp)) effectivePool.push(comp)
