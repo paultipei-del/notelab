@@ -242,17 +242,18 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
             <line x1={56} y1={STAFF_Y - STEM_H} x2={56} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
             {rowMeasures.map((m, mIdx) => {
               const mx = 56 + mIdx * measureW + 18
+              const barlineX = 56 + (mIdx + 1) * measureW
               const globalMIdx = rowIdx * measuresPerRow + mIdx
               const isLastMeasure = isLastRow && mIdx === rowMeasures.length - 1
               return (
                 <g key={mIdx}>
                   {renderMeasureP(m.notes as RhythmNoteP[], mx, noteW)}
                   {!isLastMeasure && (
-                    <line x1={mx + measureW} y1={STAFF_Y - STEM_H} x2={mx + measureW} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
+                    <line x1={barlineX} y1={STAFF_Y - STEM_H} x2={barlineX} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
                   )}
                   {isLastMeasure && <>
-                    <line x1={mx + measureW - 10} y1={STAFF_Y - STEM_H} x2={mx + measureW - 10} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1.2} />
-                    <line x1={mx + measureW - 3} y1={STAFF_Y - STEM_H} x2={mx + measureW - 3} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={6} />
+                    <line x1={barlineX - 10} y1={STAFF_Y - STEM_H} x2={barlineX - 10} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1.2} />
+                    <line x1={barlineX - 3} y1={STAFF_Y - STEM_H} x2={barlineX - 3} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={6} />
                   </>}
                 </g>
               )
