@@ -112,7 +112,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
   // Render notes
   bp = 0
   notes.forEach((note, i) => {
-    const x = mx + bp * noteW + 14
+    const x = mx + bp * noteW
     if (note.rest) {
       els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} />)
     } else if (beamedSet.has(i)) {
@@ -129,7 +129,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
   beamGroups.forEach((group, gi) => {
     const nonRestIndices = group.filter(i => !notes[i].rest)
     if (nonRestIndices.length < 2) return
-    const xs = nonRestIndices.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW + 14 })
+    const xs = nonRestIndices.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW })
     if (xs.length < 2) return
     const x1 = xs[0] + 7; const x2 = xs[xs.length - 1] + 7
     const beamY = STAFF_Y_P - 39
