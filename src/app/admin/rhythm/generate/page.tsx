@@ -81,7 +81,9 @@ interface RhythmNoteP { type: string; durationBeats: number; rest?: boolean; dot
 
 function TieCurveP({ x1, x2 }: { x1: number; x2: number }) {
   const mx = (x1 + x2) / 2
-  return <path d={`M ${x1+6} ${STAFF_Y_P+8} Q ${mx} ${STAFF_Y_P+20} ${x2+6} ${STAFF_Y_P+8}`} fill="none" stroke="#1A1A18" strokeWidth={1.1} />
+  const y = STAFF_Y_P + 12
+  const arc = Math.min(10, (x2 - x1) * 0.15)
+  return <path d={`M ${x1+8} ${y} C ${x1+8+(x2-x1)*0.25} ${y+arc} ${x2-(x2-x1)*0.25} ${y+arc} ${x2} ${y}`} fill="none" stroke="#1A1A18" strokeWidth={1.2} />
 }
 
 function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.ReactElement[] {

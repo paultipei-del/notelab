@@ -91,8 +91,9 @@ function Dot({ x, color }: { x: number; color: string }) {
 }
 
 function TieCurve({ x1, x2 }: { x1: number; x2: number }) {
-  const mx = (x1 + x2) / 2
-  return <path d={`M ${x1+5} ${STAFF_Y+6} Q ${mx} ${STAFF_Y+18} ${x2+5} ${STAFF_Y+6}`} fill="none" stroke="#1A1A18" strokeWidth={1.1} />
+  const y = STAFF_Y + 12
+  const arc = Math.min(10, (x2 - x1) * 0.15)
+  return <path d={`M ${x1+8} ${y} C ${x1+8+(x2-x1)*0.25} ${y+arc} ${x2-(x2-x1)*0.25} ${y+arc} ${x2} ${y}`} fill="none" stroke="#1A1A18" strokeWidth={1.2} />
 }
 
 
