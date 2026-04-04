@@ -161,10 +161,9 @@ function fillMeasure(
       }
 
       if (rem < 0.001) return true  // fills exactly
-      const smallestNonDot = validDurations
-        .filter(d2 => !d2.dot)
+      const smallestAvailable = validDurations
         .reduce((min, d2) => d2.beats < min ? d2.beats : min, Infinity)
-      return smallestNonDot <= rem + 0.001
+      return smallestAvailable <= rem + 0.001
     })
 
     if (fitting.length === 0) {
