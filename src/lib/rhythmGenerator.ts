@@ -105,6 +105,8 @@ function fillMeasure(
 
     const fitting = validDurations.filter(d => {
       if (d.beats > remaining + 0.001) return false
+      // Never exceed measure length
+      if (d.beats > beatsPerMeasure + 0.001) return false
       const rem = Math.round((remaining - d.beats) * 16) / 16
 
       // For dotted notes: check they don't obscure a main beat
