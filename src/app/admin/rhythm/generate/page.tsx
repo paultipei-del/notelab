@@ -109,7 +109,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
     const group = noteInfos
       .filter(({ idx, beatPos }) => {
         const n = notes[idx]
-        return (n.type === 'eighth' || n.type === 'sixteenth') && !n.tieStop &&
+        return (n.type === 'eighth' || n.type === 'sixteenth') &&
           beatPos >= beatStart - 0.001 && beatPos < beatEnd - 0.001
       })
       .map(({ idx }) => idx)
@@ -137,7 +137,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
     // Tie
     if (note.tieStart && i < notes.length - 1) {
       const nextX = mx + (bp + note.durationBeats) * noteW
-      els.push(<TieCurveP key={'tie-'+i} x1={x + noteW * 0.5} x2={nextX + noteW * 0.5} />)
+      els.push(<TieCurveP key={'tie-'+i} x1={x + 4} x2={nextX + 4} />)
     }
     bp += note.durationBeats
   })

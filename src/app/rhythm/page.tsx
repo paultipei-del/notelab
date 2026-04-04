@@ -272,7 +272,7 @@ function renderMeasure(
     if (note.tieStart && i < notes.length - 1) {
       const nextBp = bp + note.durationBeats
       const nextX = mx + nextBp * noteW
-      els.push(<TieCurve key={`tie-${i}`} x1={x + noteW * 0.5} x2={nextX + noteW * 0.5} />)
+      els.push(<TieCurve key={`tie-${i}`} x1={x + 4} x2={nextX + 4} />)
     }
 
     bp += note.durationBeats
