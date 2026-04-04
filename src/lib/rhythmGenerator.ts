@@ -86,7 +86,7 @@ function fillMeasure(
 
   const validDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
   for (const nv of effectivePool) {
-    const b = Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16
+    const b = Math.round(NOTE_BEATS[nv] * 16) / 16  // quarter note units, no beatType scaling
     // Only add dotted version for notes in dotPool (or original pool if dotPool not set)
     const allowedDotPool = opts.dotPool ?? opts.notePool
     const inOriginalPool = allowedDotPool.includes(nv)
@@ -142,7 +142,7 @@ function fillMeasure(
     if (fitting.length === 0) {
       // Fallback: use smallest non-dotted note that fits
       const fallback = effectivePool
-        .map(nv => ({ type: nv, beats: Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16, dot: false }))
+        .map(nv => ({ type: nv, beats: Math.round(NOTE_BEATS[nv] * 16) / 16, dot: false }))
         .filter(d => d.beats <= remaining + 0.001)
         .sort((a, b) => b.beats - a.beats)[0]
       if (!fallback) break
@@ -176,7 +176,7 @@ function fillMeasure(
         if (onBeat && restRemaining >= beatTypeFactor - 0.001) {
           const completeBeats = Math.floor(Math.round(restRemaining / beatTypeFactor * 16) / 16)
           const totalW = Math.round(completeBeats * beatTypeFactor * 16) / 16
-          const nv = NOTE_ORDER.find(n => Math.abs(Math.round(RBEATS[n] * beatTypeFactor * 16) / 16 - totalW) < 0.001)
+          const nv = NOTE_ORDER.find(n => Math.abs(Math.round(RBEATS[n] * 16) / 16 - totalW) < 0.001)
           if (nv) {
             notes.push({ type: nv, rest: true, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: totalW })
             restRemaining = Math.round((restRemaining - totalW) * 16) / 16
@@ -199,7 +199,7 @@ function fillMeasure(
         let bestDot = false
         const onBeat = Math.abs(Math.round(restPos % beatTypeFactor * 16) / 16) < 0.001
         for (const nv of NOTE_ORDER) {
-          const b = Math.round(RBEATS[nv] * beatTypeFactor * 16) / 16
+          const b = Math.round(RBEATS[nv] * 16) / 16
           if (b <= maxFill + 0.001 && b > bestBeats) { bestBeats = b; bestType = nv; bestDot = false }
           // Dotted rests only on beat positions
           if (opts.allowDots && onBeat) {
