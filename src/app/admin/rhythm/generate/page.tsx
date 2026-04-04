@@ -106,18 +106,27 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number, beatUni
   for (let beat = 0; beat < totalBeats; beat++) {
     const beatStart = beat * beatSize
     const beatEnd = beatStart + beatSize
-    const group = noteInfos
-      .filter(({ idx, beatPos }) => {
-        const n = notes[idx]
-        return (n.type === 'eighth' || n.type === 'sixteenth') &&
-          beatPos >= beatStart - 0.001 && beatPos < beatEnd - 0.001
-      })
-      .map(({ idx }) => idx)
-    const nonRest = group.filter(i => !notes[i].rest)
-    if (nonRest.length >= 2) {
-      // Only include notes within this beat group
-      beamGroups.push(group)
-    }
+    // Build beam subgroups — break at any quarter+ note within the beat
+    const beatNotes = noteInfos.filter(({ beatPos }) =>
+      beatPos >= beatStart - 0.001 && beatPos < beatEnd - 0.001
+    )
+    const subGroups: number[][] = []
+    let currentSub: number[] = []
+    beatNotes.forEach(({ idx: ni }) => {
+      const n = notes[ni]
+      const beamable = (n.type === 'eighth' || n.type === 'sixteenth') && !n.tieStop
+      if (beamable) {
+        currentSub.push(ni)
+      } else {
+        if (currentSub.length >= 2) subGroups.push([...currentSub])
+        currentSub = []
+      }
+    })
+    if (currentSub.length >= 2) subGroups.push(currentSub)
+    subGroups.forEach((sg: number[]) => {
+      const nonRest = sg.filter((i: number) => !notes[i].rest)
+      if (nonRest.length >= 2) beamGroups.push(sg)
+    })
   }
   const beamedSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
 
