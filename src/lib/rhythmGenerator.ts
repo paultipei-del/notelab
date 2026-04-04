@@ -368,18 +368,38 @@ function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => nu
   if (!opts.allowTies) return notes
   const beatUnit = 4 / opts.timeSignature.beatType
   function r16(n: number) { return Math.round(n * 16) / 16 }
+  const BEATS: Record<string, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
+
   let pos = 0
   for (let i = 0; i < notes.length - 1; i++) {
-    const noteEnd = r16(pos + notes[i].durationBeats)
-    const nextBeatBoundary = r16(Math.ceil(r16(pos / beatUnit) + 0.001) * beatUnit)
-    // Only tie across a beat boundary — note ends exactly on a beat, next note continues
-    const crossesBeat = Math.abs(noteEnd - nextBeatBoundary) < 0.001
-    if (!notes[i].rest && !notes[i+1].rest && !notes[i].tieStart && !notes[i+1].tieStop
-        && crossesBeat && rng() < opts.tieProbability) {
-      notes[i].tieStart = true
-      notes[i+1].tieStop = true
+    const n1 = notes[i]
+    const n2 = notes[i+1]
+    const noteEnd = r16(pos + n1.durationBeats)
+    const nextBeat = r16(Math.ceil(r16(pos / beatUnit) + 0.001) * beatUnit)
+    const crossesBeat = Math.abs(noteEnd - nextBeat) < 0.001
+
+    if (!n1.rest && !n2.rest && !n1.tieStart && !n2.tieStop && crossesBeat) {
+      // Combined duration
+      const combined = r16(n1.durationBeats + n2.durationBeats)
+      // Check if combined duration can be expressed as a standard or dotted note
+      const canSimplify = Object.values(BEATS).some(b =>
+        Math.abs(b - combined) < 0.001 || Math.abs(b * 1.5 - combined) < 0.001
+      )
+      // Only tie if the combined duration CANNOT be simplified AND crosses a beat
+      // OR if the combined duration would cross beat 3 in 4/4 (obscuring midpoint)
+      const midpoint = r16(beatUnit * (opts.timeSignature.beats / 2))
+      const crossesMidpoint = pos < midpoint && noteEnd >= midpoint
+
+      if (!canSimplify && rng() < opts.tieProbability) {
+        n1.tieStart = true
+        n2.tieStop = true
+      } else if (crossesMidpoint && canSimplify && rng() < opts.tieProbability * 0.5) {
+        // Tie across midpoint even if simplifiable — shows beat 3 clearly
+        n1.tieStart = true
+        n2.tieStop = true
+      }
     }
-    pos = r16(pos + notes[i].durationBeats)
+    pos = r16(pos + n1.durationBeats)
   }
   return notes
 }
