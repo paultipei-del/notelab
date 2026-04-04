@@ -149,13 +149,15 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
         if (xs[k+1] !== undefined && isFinite(xs[k]) && isFinite(xs[k+1]))
           els.push(<rect key={'bm2-'+gi+'-f-'+k} x={xs[k]+7} y={beamY+7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
       } else if (prevIs16) {
-        // Last sixteenth after a run — stub pointing LEFT (toward group)
+        // Last in a sixteenth run — stub LEFT
         if (isFinite(xs[k]))
           els.push(<rect key={'bm2-'+gi+'-s-'+k} x={xs[k]+7-STUB} y={beamY+7} width={STUB} height={5} fill="#1A1A18" rx={1} />)
       } else {
-        // Isolated sixteenth — stub pointing right
+        // Isolated sixteenth — stub direction depends on position in group
+        const isLastInGroup = k === nonRestIndices.length - 1
+        const stubX = isLastInGroup ? xs[k]+7-STUB : xs[k]+7
         if (isFinite(xs[k]))
-          els.push(<rect key={'bm2-'+gi+'-s-'+k} x={xs[k]+7} y={beamY+7} width={STUB} height={5} fill="#1A1A18" rx={1} />)
+          els.push(<rect key={'bm2-'+gi+'-s-'+k} x={stubX} y={beamY+7} width={STUB} height={5} fill="#1A1A18" rx={1} />)
       }
     }
   })
