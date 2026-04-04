@@ -236,7 +236,8 @@ function renderMeasure(
     }
   }
 
-  const beamedSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
+  const beamedSet = new Set(beamGroups.flat())  // includes rests so beam spans over them
+  const beamedNonRestSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
 
 
   // ── Render each note ──────────────────────────────────────────────────────
@@ -248,9 +249,12 @@ function renderMeasure(
 
     // Active beat highlight (driven by playhead — handled outside)
 
-    if (note.rest) {
+    if (note.rest && beamedSet.has(i)) {
+      // Rest inside beam group — render glyph only, beam spans over it
       els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
-    } else if (beamedSet.has(i)) {
+    } else if (note.rest) {
+      els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
+    } else if (beamedNonRestSet.has(i)) {
       // Beamed note — render as Bravura text glyph (no standalone flag)
       // Use blackLong glyph (notehead + stem, no flag)
       const glyph = String.fromCodePoint(0xE1F1)  // blackLong
@@ -282,11 +286,10 @@ function renderMeasure(
 
   // ── Draw SVG beams between beamed groups ──────────────────────────────────
   beamGroups.forEach((group, gi) => {
-    const xs = group.map(idx => {
-      let pos = 0
-      for (let k = 0; k < idx; k++) pos += notes[k].durationBeats
-      return mx + pos * noteW + 14
-    })
+    const allXs = group.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW + 14 })
+    const nonRestIndices = group.filter(i => !notes[i].rest)
+    if (nonRestIndices.length < 2) return
+    const xs = nonRestIndices.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW + 14 })
     const x1 = xs[0] + 7
     const x2 = xs[xs.length - 1] + 7
     const beamY = STAFF_Y - 39  // tuned to Bravura E1F1 stem top at fontSize=44
