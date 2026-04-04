@@ -124,6 +124,14 @@ function fillMeasure(
         if (!canFillDotRemainder) return false
       }
 
+      // If starting off-beat, note must not cross the next beat boundary
+      const offBeat = Math.abs(Math.round(currentBeatPos % beatUnit * 16) / 16) > 0.001
+      if (offBeat) {
+        const nextBeat = Math.round(Math.ceil(Math.round(currentBeatPos / beatUnit * 16) / 16 + 0.001) * beatUnit * 16) / 16
+        const spaceToNextBeat = Math.round((nextBeat - currentBeatPos) * 16) / 16
+        if (d.beats > spaceToNextBeat + 0.001) return false
+      }
+
       if (rem < 0.001) return true  // fills exactly
       const smallestNonDot = validDurations
         .filter(d2 => !d2.dot)
