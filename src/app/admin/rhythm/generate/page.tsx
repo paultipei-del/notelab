@@ -44,64 +44,99 @@ const BRAVURA_NOTE: Record<string, string> = {
   sixteenth: String.fromCodePoint(0xE1D9),
 }
 
+function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
+  const beatsPerMeasure = exercise.timeSignature.beats
+  const allNotes = rowMeasures.flatMap(m => m.notes)
+  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+  const MIN_SLOT_W = 28
+  const slotsPerMeasure = beatsPerMeasure / smallestDuration
+  const minMeasureW = slotsPerMeasure * MIN_SLOT_W
+  const usableW = svgW - 96
+  const naturalMeasureW = usableW / rowMeasures.length
+  const measureW = Math.max(naturalMeasureW, minMeasureW)
+  const noteW = measureW / beatsPerMeasure
+  return { measureW, noteW, beatsPerMeasure }
+}
+
 function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
   if (!exercise) return null
   const STAFF_Y = 52
   const STEM_H = 36
-  const NOTE_W = 52
-  const leftPad = 56
-  const svgH = 120
-  const svgW = Math.min(900, exercise.measures.length * exercise.timeSignature.beats * NOTE_W + leftPad + 24)
-  const measureW = (svgW - leftPad - 24) / exercise.measures.length
-  const noteW = measureW / exercise.timeSignature.beats
+  const SVG_H = 120
+  const SVG_W = 700
+
+  // Same row logic as rhythm trainer
+  const beats = exercise.timeSignature.beats
+  const allNotes = exercise.measures.flatMap(m => m.notes)
+  const smallest = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+  const slotsPerMeasure = beats / smallest
+  const MIN_SLOT = 28
+  const minMeasureW = slotsPerMeasure * MIN_SLOT
+  const total = exercise.measures.length
+  let measuresPerRow = 1
+  for (const candidate of [4, 2, 1]) {
+    if (candidate !== 1 && total % candidate !== 0) continue
+    if (minMeasureW * candidate + 96 <= SVG_W) { measuresPerRow = candidate; break }
+  }
+  const rows = Array.from({ length: Math.ceil(total / measuresPerRow) },
+    (_, i) => exercise.measures.slice(i * measuresPerRow, (i + 1) * measuresPerRow))
 
   return (
     <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px' }}>
-      <svg width="100%" viewBox={`0 0 ${svgW} ${svgH}`} style={{ display: 'block' }} preserveAspectRatio="xMinYMin meet">
-        {/* Time signature */}
-        <text x={20} y={STAFF_Y - 10} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}</text>
-        <text x={20} y={STAFF_Y + 16} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}</text>
-        {/* Staff line */}
-        <line x1={leftPad} y1={STAFF_Y} x2={svgW - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
-        {/* Opening barline */}
-        <line x1={leftPad} y1={STAFF_Y - STEM_H} x2={leftPad} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
-        {exercise.measures.map((m, mIdx) => {
-          const mx = leftPad + mIdx * measureW
-          let beatPos = 0
-          return (
-            <g key={mIdx}>
-              {m.notes.map((n, nIdx) => {
-                const x = mx + beatPos * noteW + noteW / 2
-                beatPos += n.durationBeats
-                return (
-                  <g key={nIdx}>
-                    {!n.rest && <>
-                      <text x={x} y={STAFF_Y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
-                        {BRAVURA_NOTE[n.type] ?? BRAVURA_NOTE.quarter}
-                      </text>
-                      {n.dot && <circle cx={x + 14} cy={STAFF_Y - 5} r={2.5} fill="#1A1A18" />}
-                    </>}
-                    {n.rest && (
-                      <text x={x}
-                        y={n.type === 'whole' ? STAFF_Y + 10 : n.type === 'half' ? STAFF_Y - 0.5 : STAFF_Y}
-                        fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
-                        {BRAVURA_REST[n.type] ?? BRAVURA_REST.quarter}
-                      </text>
-                    )}
-                  </g>
-                )
-              })}
-              {/* Barline */}
-              {mIdx < exercise.measures.length - 1 && (
-                <line x1={mx + measureW} y1={STAFF_Y - STEM_H} x2={mx + measureW} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
-              )}
-            </g>
-          )
-        })}
-        {/* Final double barline */}
-        <line x1={svgW - 14} y1={STAFF_Y - STEM_H} x2={svgW - 14} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1.2} />
-        <line x1={svgW - 6} y1={STAFF_Y - STEM_H} x2={svgW - 6} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={6} />
-      </svg>
+      {rows.map((rowMeasures, rowIdx) => {
+        const { measureW, noteW } = buildLayout(exercise, SVG_W, rowMeasures)
+        const isLastRow = rowIdx === rows.length - 1
+        return (
+          <svg key={rowIdx} width="100%" viewBox={`0 0 ${SVG_W} ${SVG_H}`} style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? '8px' : 0 }} preserveAspectRatio="xMinYMin meet">
+            {/* Time signature on first row only */}
+            {rowIdx === 0 && <>
+              <text x={20} y={STAFF_Y - 10} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}</text>
+              <text x={20} y={STAFF_Y + 16} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}</text>
+            </>}
+            {/* Staff line */}
+            <line x1={56} y1={STAFF_Y} x2={SVG_W - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+            {/* Opening barline */}
+            <line x1={56} y1={STAFF_Y - STEM_H} x2={56} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
+            {rowMeasures.map((m, mIdx) => {
+              const mx = 56 + mIdx * measureW
+              let beatPos = 0
+              const globalMIdx = rowIdx * measuresPerRow + mIdx
+              const isLastMeasure = isLastRow && mIdx === rowMeasures.length - 1
+              return (
+                <g key={mIdx}>
+                  {m.notes.map((n, nIdx) => {
+                    const x = mx + beatPos * noteW + noteW / 2
+                    beatPos += n.durationBeats
+                    return (
+                      <g key={nIdx}>
+                        {!n.rest && <>
+                          <text x={x} y={STAFF_Y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
+                            {BRAVURA_NOTE[n.type] ?? BRAVURA_NOTE.quarter}
+                          </text>
+                          {n.dot && <circle cx={x + 14} cy={STAFF_Y - 5} r={2.5} fill="#1A1A18" />}
+                        </>}
+                        {n.rest && (
+                          <text x={x} y={n.type === 'whole' ? STAFF_Y + 10 : n.type === 'half' ? STAFF_Y - 0.5 : STAFF_Y}
+                            fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
+                            {BRAVURA_REST[n.type] ?? BRAVURA_REST.quarter}
+                          </text>
+                        )}
+                      </g>
+                    )
+                  })}
+                  {!isLastMeasure && (
+                    <line x1={mx + measureW} y1={STAFF_Y - STEM_H} x2={mx + measureW} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
+                  )}
+                  {isLastMeasure && <>
+                    <line x1={mx + measureW - 10} y1={STAFF_Y - STEM_H} x2={mx + measureW - 10} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1.2} />
+                    <line x1={mx + measureW - 3} y1={STAFF_Y - STEM_H} x2={mx + measureW - 3} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={6} />
+                  </>}
+                </g>
+              )
+            })}
+          </svg>
+        )
+      })}
     </div>
   )
 }
