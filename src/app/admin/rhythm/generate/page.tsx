@@ -256,7 +256,10 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
               const isLastMeasure = isLastRow && mIdx === rowMeasures.length - 1
               return (
                 <g key={mIdx}>
-                  {renderMeasureP(m.notes as RhythmNoteP[], mx, noteW, 4 / exercise.timeSignature.beatType)}
+                  {renderMeasureP(m.notes as RhythmNoteP[], mx, noteW, (() => {
+                    const isComp = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3
+                    return isComp ? 3 * (4 / exercise.timeSignature.beatType) : 4 / exercise.timeSignature.beatType
+                  })())}
                   {!isLastMeasure && (
                     <line x1={barlineX} y1={STAFF_Y - STEM_H} x2={barlineX} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
                   )}

@@ -68,7 +68,14 @@ function fillMeasure(
 ): GeneratedNote[] {
   const notes: GeneratedNote[] = []
   let remaining = Math.round(beatsPerMeasure * 16) / 16  // work in 16ths to avoid float errors
-  const beatTypeFactor = 4 / opts.timeSignature.beatType
+  // Detect compound meter (top number 6, 9, or 12)
+  const isCompound = opts.timeSignature.beats % 3 === 0 && opts.timeSignature.beats > 3
+  // Beat unit in quarter note durations:
+  // Simple: 4/beatType (e.g. 4/4 → 1, 3/8 → 0.5)
+  // Compound: 3 * (4/beatType) (e.g. 6/8 → 1.5, 12/8 → 1.5, 9/4 → 3)
+  const beatTypeFactor = isCompound
+    ? 3 * (4 / opts.timeSignature.beatType)
+    : 4 / opts.timeSignature.beatType
 
   // Build valid note durations in beats (quarter = 1 beat unit)
   // When dots are enabled, automatically include complement notes for filling
@@ -409,7 +416,11 @@ function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => nu
 
 export function generateExercise(opts: GeneratorOptions): GeneratedExercise {
   const rng = makeRng(opts.seed ?? Math.floor(Math.random() * 999999))
-  const beatsPerMeasure = opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
+  // beatsPerMeasure in quarter note durations
+  const isCompound2 = opts.timeSignature.beats % 3 === 0 && opts.timeSignature.beats > 3
+  const beatsPerMeasure = isCompound2
+    ? (opts.timeSignature.beats / 3) * 3 * (4 / opts.timeSignature.beatType)
+    : opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
 
   const measures: GeneratedMeasure[] = Array.from({ length: opts.measures }, () => ({
     notes: fillMeasure(beatsPerMeasure, opts, rng)
