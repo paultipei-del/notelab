@@ -61,6 +61,54 @@ function pickRandom<T>(arr: T[], rng: () => number): T {
   return arr[Math.floor(rng() * arr.length)]
 }
 
+
+// Split a rest duration into beat-boundary-respecting pieces
+// Rules:
+// 1. Never let a rest cross a beat boundary
+// 2. Combine rests only on strong beats (beat 1 and beat 3 in 4/4)
+// 3. Use the largest valid rest that fits within the current beat segment
+function splitRestToBeatBoundaries(
+  totalBeats: number,
+  startBeatPos: number,
+  beatUnit: number,
+  validDurations: { type: NoteValue; beats: number; dot: boolean }[]
+): GeneratedNote[] {
+  const rests: GeneratedNote[] = []
+  let remaining = Math.round(totalBeats * 16) / 16
+  let pos = Math.round(startBeatPos * 16) / 16
+
+  while (remaining > 0.001) {
+    // How much space is left until the next beat boundary?
+    const nextBeat = Math.ceil(pos / beatUnit + 0.001) * beatUnit
+    const spaceToNextBeat = Math.round((nextBeat - pos) * 16) / 16
+    const canFill = Math.min(remaining, spaceToNextBeat)
+
+    // Find largest non-dotted rest that fits within canFill
+    // (avoid dotted rests in simple time as they obscure beats)
+    const candidates = validDurations
+      .filter(d => !d.dot && d.beats <= canFill + 0.001)
+      .sort((a, b) => b.beats - a.beats)
+
+    if (candidates.length === 0) {
+      // Force smallest available
+      const fallback = validDurations
+        .filter(d => !d.dot)
+        .sort((a, b) => a.beats - b.beats)[0]
+      if (!fallback) break
+      rests.push({ type: fallback.type, rest: true, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: fallback.beats })
+      remaining = Math.round((remaining - fallback.beats) * 16) / 16
+      pos = Math.round((pos + fallback.beats) * 16) / 16
+    } else {
+      const chosen = candidates[0]
+      rests.push({ type: chosen.type, rest: true, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: chosen.beats })
+      remaining = Math.round((remaining - chosen.beats) * 16) / 16
+      pos = Math.round((pos + chosen.beats) * 16) / 16
+    }
+  }
+
+  return rests
+}
+
 function fillMeasure(
   beatsPerMeasure: number,
   opts: GeneratorOptions,
@@ -155,19 +203,27 @@ function fillMeasure(
     const chosen = pickRandom(pool, rng)
     const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
 
-    notes.push({
-      type: chosen.type,
-      rest: isRest,
-      dot: chosen.dot,
-      tieStart: false,
-      tieStop: false,
-      tuplet: null,
-      durationBeats: chosen.beats,
-    })
-    remaining = Math.round((remaining - chosen.beats) * 16) / 16
+    if (isRest) {
+      // Split rest into beat-boundary-respecting pieces
+      // Rule: rests must not cross beat boundaries; show each beat clearly
+      const restNotes = splitRestToBeatBoundaries(
+        chosen.beats, currentBeatPos, beatUnit, validDurations
+      )
+      notes.push(...restNotes)
+      remaining = Math.round((remaining - chosen.beats) * 16) / 16
+    } else {
+      notes.push({
+        type: chosen.type,
+        rest: false,
+        dot: chosen.dot,
+        tieStart: false,
+        tieStop: false,
+        tuplet: null,
+        durationBeats: chosen.beats,
+      })
+      remaining = Math.round((remaining - chosen.beats) * 16) / 16
+    }
   }
-
-  // Beat visibility enforced during generation
 
   return applyTies(notes, opts, rng)
 }
