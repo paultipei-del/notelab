@@ -155,112 +155,48 @@ function fillMeasure(
     const chosen = pickRandom(pool, rng)
     const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
 
-    notes.push({
-      type: chosen.type,
-      rest: isRest,
-      dot: chosen.dot,
-      tieStart: false,
-      tieStop: false,
-      tuplet: null,
-      durationBeats: chosen.beats,
-    })
+    if (isRest) {
+      // Replace with properly-sized rest(s) that don't cross beat boundaries
+      // and use the largest available rest value
+      const NOTE_ORDER: NoteValue[] = ['half','quarter','eighth','sixteenth']
+      const RBEATS: Record<NoteValue,number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
+      let restRemaining = chosen.beats
+      let restPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
+      while (restRemaining > 0.001) {
+        // Space to next beat
+        const nb = Math.round(Math.ceil(Math.round(restPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
+        const space = Math.round(Math.min(restRemaining, Math.max(nb - restPos, beatTypeFactor)) * 16) / 16
+        // Find largest standard rest <= space, also try dotted
+        let bestBeats = Math.round(RBEATS['sixteenth'] * beatTypeFactor * 16) / 16
+        let bestType: NoteValue = 'sixteenth'
+        let bestDot = false
+        for (const nv of NOTE_ORDER) {
+          const b = Math.round(RBEATS[nv] * beatTypeFactor * 16) / 16
+          if (b <= space + 0.001 && b > bestBeats) { bestBeats = b; bestType = nv; bestDot = false }
+          if (opts.allowDots) {
+            const bd = Math.round(b * 1.5 * 16) / 16
+            if (bd <= space + 0.001 && bd > bestBeats) { bestBeats = bd; bestType = nv; bestDot = true }
+          }
+        }
+        notes.push({ type: bestType, rest: true, dot: bestDot, tieStart: false, tieStop: false, tuplet: null, durationBeats: bestBeats })
+        restRemaining = Math.round((restRemaining - bestBeats) * 16) / 16
+        restPos = Math.round((restPos + bestBeats) * 16) / 16
+      }
+    } else {
+      notes.push({
+        type: chosen.type,
+        rest: false,
+        dot: chosen.dot,
+        tieStart: false,
+        tieStop: false,
+        tuplet: null,
+        durationBeats: chosen.beats,
+      })
+    }
     remaining = Math.round((remaining - chosen.beats) * 16) / 16
   }
 
-  return applyTies(cleanupRests(notes, beatsPerMeasure, beatTypeFactor), opts, rng)
-}
-
-// Post-process rests: split any rest crossing a beat boundary,
-// then consolidate consecutive rests within the same beat into larger ones
-function cleanupRests(
-  notes: GeneratedNote[],
-  beatsPerMeasure: number,
-  beatUnit: number
-): GeneratedNote[] {
-  const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
-  const BEATS: Record<NoteValue, number> = { whole:4, half:2, quarter:1, eighth:0.5, sixteenth:0.25 }
-
-  function r16(n: number) { return Math.round(n * 16) / 16 }
-
-  // Step 1: split rests that cross beat boundaries
-  const split: GeneratedNote[] = []
-  let pos = 0
-  for (const note of notes) {
-    if (!note.rest) {
-      split.push(note)
-      pos = r16(pos + note.durationBeats)
-      continue
-    }
-    let remaining = note.durationBeats
-    let p = pos
-    while (remaining > 0.001) {
-      const nextBeat = r16(Math.ceil(r16(p / beatUnit) + 0.001) * beatUnit)
-      const space = r16(nextBeat - p)
-      const fill = r16(Math.min(remaining, space > 0.001 ? space : beatUnit))
-      // Find largest standard rest that fits fill exactly or is smaller
-      let bestType: NoteValue = 'sixteenth'
-      for (const nv of NOTE_ORDER) {
-        const b = r16(BEATS[nv])
-        if (b <= r16(fill) + 0.001 && b > r16(BEATS[bestType])) bestType = nv
-      }
-      const pieceBeats = r16(BEATS[bestType])
-      split.push({ ...note, durationBeats: pieceBeats, dot: false })
-      remaining = r16(remaining - pieceBeats)
-      p = r16(p + pieceBeats)
-    }
-    pos = r16(pos + note.durationBeats)
-  }
-
-  // Step 2: consolidate consecutive rests within same beat into larger rests
-  const result: GeneratedNote[] = []
-  let i = 0
-  pos = 0
-  // recompute positions
-  const positions: number[] = []
-  let pp = 0
-  for (const n of split) { positions.push(pp); pp = r16(pp + n.durationBeats) }
-
-  i = 0
-  while (i < split.length) {
-    const note = split[i]
-    if (!note.rest) { result.push(note); pos = r16(pos + note.durationBeats); i++; continue }
-
-    // Accumulate consecutive rests within same beat
-    const beatStart = r16(Math.floor(r16(positions[i] / beatUnit)) * beatUnit)
-    const beatEnd = r16(beatStart + beatUnit)
-    let totalRest = 0
-    let j = i
-    while (j < split.length && split[j].rest) {
-      const endPos = r16(positions[j] + split[j].durationBeats)
-      if (r16(positions[j]) < r16(beatStart) - 0.001 || r16(endPos) > r16(beatEnd) + 0.001) break
-      totalRest = r16(totalRest + split[j].durationBeats)
-      j++
-    }
-
-    if (j > i + 1) {
-      // Find largest rest that equals totalRest
-      let bestType: NoteValue = 'sixteenth'
-      for (const nv of NOTE_ORDER) {
-        const b = r16(BEATS[nv])
-        if (Math.abs(b - totalRest) < 0.001) { bestType = nv; break }
-      }
-      // Also check dotted
-      let useDot = false
-      for (const nv of NOTE_ORDER) {
-        const b = r16(BEATS[nv] * 1.5)
-        if (Math.abs(b - totalRest) < 0.001) { bestType = nv; useDot = true; break }
-      }
-      result.push({ ...note, type: bestType, dot: useDot, durationBeats: totalRest })
-      pos = r16(pos + totalRest)
-      i = j
-    } else {
-      result.push(note)
-      pos = r16(pos + note.durationBeats)
-      i++
-    }
-  }
-
-  return result
+  return applyTies(notes, opts, rng)
 }
 
 function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
