@@ -124,7 +124,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
   // Render notes
   bp = 0
   notes.forEach((note, i) => {
-    const x = mx + bp * noteW + (bp === 0 ? 6 : 0)  // padding after barline for first note
+    const x = mx + bp * noteW
     if (note.rest) {
       els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} dot={note.dot} />)
     } else if (beamedSet.has(i)) {
@@ -241,7 +241,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
             {/* Opening barline */}
             <line x1={56} y1={STAFF_Y - STEM_H} x2={56} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
             {rowMeasures.map((m, mIdx) => {
-              const mx = 56 + mIdx * measureW
+              const mx = 56 + mIdx * measureW + 18
               const globalMIdx = rowIdx * measuresPerRow + mIdx
               const isLastMeasure = isLastRow && mIdx === rowMeasures.length - 1
               return (
