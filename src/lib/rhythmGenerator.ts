@@ -168,6 +168,7 @@ function fillMeasure(
       const _cappedBeats = _onBeat ? chosen.beats : Math.round(Math.min(chosen.beats, _spaceToNext) * 16) / 16
       let restRemaining = _cappedBeats > 0.001 ? _cappedBeats : chosen.beats
       let restPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
+      console.log('REST loop: cappedBeats='+_cappedBeats+' startPos='+_restStartPos+' onBeat='+_onBeat)
       while (restRemaining > 0.001) {
         // Space from current position to next beat boundary
         const nextBeat = Math.round(Math.ceil(Math.round(restPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
