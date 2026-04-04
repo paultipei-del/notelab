@@ -397,21 +397,23 @@ export default function GeneratePage() {
             </div>
             <p style={{ ...lbl, marginTop: '12px' }}>Dotted values</p>
             <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px' }}>
-              {(['half','quarter','eighth'] as NoteValue[]).map(n => {
-                const inPool = opts.notePool.includes(n)
+              {(['half','quarter','eighth'] as NoteValue[]).filter(n => allowedNoteValues.includes(n) || allowedNoteValues.length === 0).map(n => {
                 const dotSelected = (opts.dotPool ?? []).includes(n)
+                // Also show dotted versions of allowed notes in compound meters
+                const dottedBeatsMap: Record<string,number> = {whole:6,half:3,quarter:1.5,eighth:0.75,sixteenth:0.375}
+                const dottedBeats = dottedBeatsMap[n] ?? 0
+                const isCompound = opts.timeSignature.beats % 3 === 0 && opts.timeSignature.beats > 3
+                const maxB = isCompound
+                  ? (opts.timeSignature.beats / 3) * 3 * (4 / opts.timeSignature.beatType)
+                  : opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
+                if (dottedBeats > maxB + 0.001) return null
                 return (
                   <button key={'d'+n} onClick={() => {
-                    if (!inPool) return
                     const current = opts.dotPool ?? []
                     const next = dotSelected ? current.filter(x => x !== n) : [...current, n]
                     set('dotPool', next)
                     if (!opts.allowDots && !dotSelected) set('allowDots', true)
-                  }} style={{
-                    ...tog(dotSelected && inPool),
-                    opacity: inPool ? 1 : 0.3,
-                    cursor: inPool ? 'pointer' : 'default'
-                  }}>d.{n}</button>
+                  }} style={tog(dotSelected)}>d.{n}</button>
                 )
               })}
             </div>
