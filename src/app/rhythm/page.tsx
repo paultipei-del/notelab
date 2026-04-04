@@ -40,7 +40,7 @@ function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof
   const minMeasureW = slotsPerMeasure * MIN_SLOT_W
 
   const usableW = svgW - 96
-  const naturalMeasureW = usableW / rowMeasures.length
+  const naturalMeasureW = usableW / rowMeasures.length / rowMeasures.length
   const measureW = Math.max(naturalMeasureW, minMeasureW)
   const noteW = measureW / beatsPerMeasure
 
