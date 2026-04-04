@@ -327,7 +327,8 @@ export default function GeneratePage() {
 
   const toggleNote = (n: NoteValue) => {
     const pool = opts.notePool.includes(n) ? opts.notePool.filter(x => x !== n) : [...opts.notePool, n]
-    if (pool.length > 0) set('notePool', pool)
+    // Allow empty notePool if dotPool has items
+    if (pool.length > 0 || (opts.dotPool ?? []).length > 0) set('notePool', pool)
   }
   const NOTE_BEATS_MAP: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
   const isCompoundMeter = opts.timeSignature.beats % 3 === 0 && opts.timeSignature.beats > 3
