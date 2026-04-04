@@ -824,19 +824,12 @@ export default function RhythmPage() {
     }
   }, [])
 
-  const MEASURES_PER_ROW = (() => {
+    const MEASURES_PER_ROW = (() => {
     if (!exercise) return 4
-    const beats = exercise.timeSignature.beats
-    const allNotes = exercise.measures.flatMap(m => m.notes)
-    const smallest = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
-    const slotsPerMeasure = beats / smallest
-    const MIN_SLOT = 28
-    const minMeasureW = slotsPerMeasure * MIN_SLOT
-    const cardW = svgWidth
     const total = exercise.measures.length
+    // Always prefer 4 measures per row, fall back to 2 or 1
     for (const candidate of [4, 2, 1]) {
-      if (candidate !== 1 && total % candidate !== 0) continue
-      if (minMeasureW * candidate + 96 <= cardW) return candidate
+      if (total % candidate === 0 || candidate === 1) return candidate
     }
     return 1
   })()
