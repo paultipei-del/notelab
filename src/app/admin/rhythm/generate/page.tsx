@@ -230,7 +230,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
         const { measureW, noteW } = buildLayout(exercise, SVG_W, rowMeasures)
         const isLastRow = rowIdx === rows.length - 1
         return (
-          <svg key={rowIdx} width="100%" viewBox={`0 0 ${SVG_W} ${SVG_H}`} style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? '8px' : 0 }} preserveAspectRatio="xMinYMin meet">
+          <svg key={rowIdx} width="100%" viewBox={`0 0 ${Math.max(SVG_W, 56 + rowMeasures.length * measureW + 20)} ${SVG_H}`} style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? '8px' : 0 }} preserveAspectRatio="xMinYMin meet">
             {/* Time signature on first row only */}
             {rowIdx === 0 && <>
               <text x={20} y={STAFF_Y - 10} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}</text>
