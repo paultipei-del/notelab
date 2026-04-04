@@ -156,6 +156,7 @@ function fillMeasure(
     const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
 
     if (isRest) {
+      console.log('REST chosen, beats:', chosen.beats, 'pos:', Math.round((beatsPerMeasure - remaining)*16)/16)
       // Replace with properly-sized rest(s) that don't cross beat boundaries
       // and use the largest available rest value
       const NOTE_ORDER: NoteValue[] = ['half','quarter','eighth','sixteenth']
@@ -223,7 +224,7 @@ export function generateExercise(opts: GeneratorOptions): GeneratedExercise {
   measures.forEach((m, i) => {
     const sum = m.notes.reduce((acc, n) => acc + n.durationBeats, 0)
     const expected = opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
-    console.log(`Measure ${i+1}: sum=${sum.toFixed(3)} expected=${expected} ok=${Math.abs(sum-expected)<0.01}`, m.notes.map(n => `${n.dot?'d':''}${n.type}(${n.durationBeats})`).join(' '))
+    console.log(`Measure ${i+1}: sum=${sum.toFixed(3)} ok=${Math.abs(sum-expected)<0.01}`, m.notes.map(n => `${n.rest?'R':''}${n.tieStop?'~':''}${n.dot?'d':''}${n.type}(${n.durationBeats})${n.tieStart?'~':''}`).join(' '))
   })
   return { title: '', timeSignature: opts.timeSignature, measures, hands: opts.hands }
 }
