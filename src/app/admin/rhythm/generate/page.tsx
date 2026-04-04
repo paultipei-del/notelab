@@ -148,7 +148,11 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
         // Full beam to next sixteenth
         if (xs[k+1] !== undefined && isFinite(xs[k]) && isFinite(xs[k+1]))
           els.push(<rect key={'bm2-'+gi+'-f-'+k} x={xs[k]+7} y={beamY+7} width={xs[k+1]-xs[k]} height={5} fill="#1A1A18" rx={1} />)
-      } else if (!prevIs16) {
+      } else if (prevIs16) {
+        // Last sixteenth after a run — stub pointing LEFT (toward group)
+        if (isFinite(xs[k]))
+          els.push(<rect key={'bm2-'+gi+'-s-'+k} x={xs[k]+7-STUB} y={beamY+7} width={STUB} height={5} fill="#1A1A18" rx={1} />)
+      } else {
         // Isolated sixteenth — stub pointing right
         if (isFinite(xs[k]))
           els.push(<rect key={'bm2-'+gi+'-s-'+k} x={xs[k]+7} y={beamY+7} width={STUB} height={5} fill="#1A1A18" rx={1} />)
