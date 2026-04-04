@@ -237,7 +237,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
               <text x={20} y={STAFF_Y + 16} fontSize={36} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle">{String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}</text>
             </>}
             {/* Staff line */}
-            <line x1={56} y1={STAFF_Y} x2={SVG_W - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+            <line x1={56} y1={STAFF_Y} x2={56 + rowMeasures.length * measureW + 7} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
             {/* Opening barline */}
             <line x1={56} y1={STAFF_Y - STEM_H} x2={56} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
             {rowMeasures.map((m, mIdx) => {
