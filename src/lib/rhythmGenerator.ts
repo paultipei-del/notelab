@@ -307,33 +307,33 @@ function mergeConsecutiveRests(
       continue
     }
 
-    // Accumulate consecutive rests within the same beat
-    const beatStart = r16(Math.floor(r16(pos / beatUnit)) * beatUnit)
-    const beatEnd = r16(beatStart + beatUnit)
+    // Find all consecutive rests that stay within the current beat
+    const beatEnd = r16(Math.floor(r16(pos / beatUnit)) * beatUnit + beatUnit)
     let totalRest = 0
     let j = i
-
     while (j < notes.length && notes[j].rest) {
-      const endPos = r16(pos + totalRest + notes[j].durationBeats)
-      if (endPos > beatEnd + 0.001) break  // would cross beat boundary
-      totalRest = r16(totalRest + notes[j].durationBeats)
+      const newTotal = r16(totalRest + notes[j].durationBeats)
+      if (r16(pos + newTotal) > beatEnd + 0.001) break
+      totalRest = newTotal
       j++
     }
 
-    if (j > i + 1) {
-      // Multiple consecutive rests in same beat — merge into largest possible
+    if (j > i) {
+      // Merge all accumulated rests into one
       const [type, dot] = findRestType(totalRest)
       result.push({ ...note, type, dot, durationBeats: totalRest })
+      pos = r16(pos + totalRest)
+      i = j
     } else {
       result.push(note)
+      pos = r16(pos + note.durationBeats)
+      i++
     }
-
-    pos = r16(pos + totalRest || note.durationBeats)
-    i = j > i + 1 ? j : i + 1
   }
 
   return result
 }
+
 
 function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
   if (!opts.allowTies) return notes
