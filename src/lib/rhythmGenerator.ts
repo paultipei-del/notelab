@@ -209,7 +209,51 @@ function fillMeasure(
     }
   }
 
-  return applyTies(notes, opts, rng)
+  return applyTies(enforceBeatBoundaries(notes, beatTypeFactor), opts, rng)
+}
+
+// Validate that no note crosses a beat boundary
+// If it does, split it at the boundary
+function enforceBeatBoundaries(
+  notes: GeneratedNote[],
+  beatUnit: number
+): GeneratedNote[] {
+  const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
+  const BEATS: Record<NoteValue,number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
+  
+  function r16(n: number) { return Math.round(n * 16) / 16 }
+  
+  function findType(beats: number, btf: number): [NoteValue, boolean] {
+    for (const nv of NOTE_ORDER) {
+      if (Math.abs(BEATS[nv] * btf - beats) < 0.001) return [nv, false]
+      if (Math.abs(BEATS[nv] * btf * 1.5 - beats) < 0.001) return [nv, true]
+    }
+    return ['sixteenth', false]
+  }
+
+  const result: GeneratedNote[] = []
+  let pos = 0
+
+  for (const note of notes) {
+    const end = r16(pos + note.durationBeats)
+    const nextBeat = r16(Math.ceil(r16(pos / beatUnit) + 0.001) * beatUnit)
+    
+    // Does this note cross a beat boundary?
+    if (!note.rest && nextBeat < end - 0.001 && r16(pos % beatUnit) > 0.001) {
+      // Split at beat boundary
+      const piece1 = r16(nextBeat - pos)
+      const piece2 = r16(note.durationBeats - piece1)
+      const [t1, d1] = findType(piece1, 1)
+      const [t2, d2] = findType(piece2, 1)
+      result.push({ ...note, type: t1, dot: d1, durationBeats: piece1, tieStart: true, tieStop: note.tieStop })
+      result.push({ ...note, type: t2, dot: d2, durationBeats: piece2, tieStart: false, tieStop: true })
+    } else {
+      result.push(note)
+    }
+    pos = r16(pos + note.durationBeats)
+  }
+
+  return result
 }
 
 function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
