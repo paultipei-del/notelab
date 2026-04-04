@@ -34,7 +34,7 @@ function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof
 
   // Find smallest note in row to ensure minimum readable slot width
   const allNotes = rowMeasures.flatMap(m => m.notes)
-  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, isFinite(n.durationBeats) && n.durationBeats > 0 ? n.durationBeats : 1), 1)
   const MIN_SLOT_W = 28  // px per smallest subdivision
   const slotsPerMeasure = beatsPerMeasure / smallestDuration
   const minMeasureW = slotsPerMeasure * MIN_SLOT_W
