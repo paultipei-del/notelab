@@ -282,7 +282,7 @@ function renderMeasure(
     const allXs = group.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW + 14 })
     const nonRestIndices = group.filter(i => !notes[i].rest)
     if (nonRestIndices.length < 2) return
-    const xs = nonRestIndices.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW + 14 })
+    const xs = nonRestIndices.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW })
     if (xs.length < 2) return
     if (!isFinite(xs[0]) || !isFinite(xs[xs.length-1])) return
     const x1 = xs[0] + 7
