@@ -158,7 +158,9 @@ function buildRests(
     // Space until next beat boundary
     const nextBeat = r16(Math.ceil(r16(pos / beatUnit) + 0.001) * beatUnit)
     const spaceToNext = r16(nextBeat - pos)
-    const maxFill = spaceToNext > 0.001 ? r16(Math.min(remaining, spaceToNext)) : remaining
+    // If exactly on a beat, space to next beat = beatUnit
+    const effectiveSpace = spaceToNext > 0.001 ? spaceToNext : beatUnit
+    const maxFill = r16(Math.min(remaining, effectiveSpace))
 
     // Find largest rest that fits within maxFill
     // Prefer dotted rests if they fit and don't cross a beat
@@ -228,10 +230,13 @@ function fillMeasure(
     }
   }
 
-  // Also add dotted rests for rest splitting
+  // Rest pool: always include ALL standard durations so rests can properly fill beats
+  // This is independent of the note pool — rests have their own notation rules
+  const ALL_NOTE_VALUES: NoteValue[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth']
   const restDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
-  for (const nv of effectivePool) {
+  for (const nv of ALL_NOTE_VALUES) {
     const b = r16(NOTE_BEATS[nv] * beatTypeFactor)
+    if (b > r16(beatsPerMeasure) + 0.001) continue  // skip if larger than measure
     restDurations.push({ type: nv, beats: b, dot: false })
     if (opts.allowDots) {
       restDurations.push({ type: nv, beats: r16(b * 1.5), dot: true })
