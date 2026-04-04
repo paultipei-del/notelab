@@ -339,10 +339,11 @@ export default function GeneratePage() {
     const b = NOTE_BEATS_MAP[n]
     if (b > maxBeats + 0.001) return false
     if (isCompoundMeter) {
-      const divUnit = 4 / opts.timeSignature.beatType  // e.g. 0.5 for x/8
-      const onBeat = Math.abs(b % compBeatUnit) < 0.001
-      const isSubdivision = b <= divUnit + 0.001 && Math.abs(divUnit % b) < 0.001
-      return onBeat || isSubdivision
+      const divUnit = 4 / opts.timeSignature.beatType
+      const multOfDiv = Math.abs(b % divUnit) < 0.001
+      const subdivOfDiv = b < divUnit - 0.001 && Math.abs(divUnit % b) < 0.001
+      const crossesBeat = b > compBeatUnit + 0.001 && Math.abs(b % compBeatUnit) > 0.001
+      return (multOfDiv || subdivOfDiv) && !crossesBeat
     }
     return true
   })

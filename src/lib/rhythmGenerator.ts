@@ -118,12 +118,13 @@ function fillMeasure(
       if (d.beats > remaining + 0.001) return false
       // Never exceed measure length
       if (d.beats > beatsPerMeasure + 0.001) return false
-      // In compound meters: only beat-aligned or subdivision notes
+      // In compound meters: allow multiples/subdivisions of divUnit, reject beat-crossers
       if (isCompound) {
-        const divUnit = 4 / opts.timeSignature.beatType  // e.g. 0.5 for x/8
-        const onBeat = Math.abs(d.beats % beatTypeFactor) < 0.001
-        const isSubdivision = d.beats <= divUnit + 0.001 && Math.abs(divUnit % d.beats) < 0.001
-        if (!onBeat && !isSubdivision) return false
+        const divUnit = 4 / opts.timeSignature.beatType
+        const multOfDiv = Math.abs(d.beats % divUnit) < 0.001
+        const subdivOfDiv = d.beats < divUnit - 0.001 && Math.abs(divUnit % d.beats) < 0.001
+        const crossesBeat = d.beats > beatTypeFactor + 0.001 && Math.abs(d.beats % beatTypeFactor) > 0.001
+        if ((!multOfDiv && !subdivOfDiv) || crossesBeat) return false
       }
       const rem = Math.round((remaining - d.beats) * 16) / 16
 
