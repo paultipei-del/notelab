@@ -138,6 +138,8 @@ function fillMeasure(
       }
       const rem = Math.round((remaining - d.beats) * 16) / 16
 
+      if (rem < 0.001) return true  // fills exactly — always allow
+
       // For dotted notes in simple meters: check beat alignment and fillability
       if (d.dot && !isCompound) {
         const onMainBeat = Math.abs(currentBeatPos % beatUnit) < 0.001
@@ -161,7 +163,6 @@ function fillMeasure(
         if (d.beats > spaceToNextBeat + 0.001) return false
       }
 
-      if (rem < 0.001) return true  // fills exactly
       const smallestAvailable = validDurations
         .reduce((min, d2) => d2.beats < min ? d2.beats : min, Infinity)
       return smallestAvailable <= rem + 0.001
