@@ -8,18 +8,18 @@ export type TupletType = 'triplet' | 'quintuplet' | null
 export interface GeneratorOptions {
   timeSignature: { beats: number; beatType: number }
   measures: number
-  notePool: NoteValue[]          // which note values to use
+  notePool: NoteValue[]
   allowRests: boolean
-  restProbability: number        // 0-1, how often rests appear
+  restProbability: number
   allowDots: boolean
-  dotPool?: NoteValue[]           // which note values can be dotted (default: all in notePool)
-  dotProbability: number         // 0-1
+  dotPool?: NoteValue[]
+  dotProbability: number
   allowTies: boolean
-  tieProbability: number         // 0-1
+  tieProbability: number
   allowTuplets: boolean
   tupletType: TupletType
-  hands: 1 | 2                  // single line or grand staff
-  seed?: number                 // for reproducibility
+  hands: 1 | 2
+  seed?: number
 }
 
 export interface GeneratedNote {
@@ -43,12 +43,10 @@ export interface GeneratedExercise {
   hands: 1 | 2
 }
 
-// Note duration in quarter note beats
 const NOTE_BEATS: Record<NoteValue, number> = {
   whole: 4, half: 2, quarter: 1, eighth: 0.5, sixteenth: 0.25
 }
 
-// Simple seeded random
 function makeRng(seed: number) {
   let s = seed
   return () => {
@@ -61,48 +59,136 @@ function pickRandom<T>(arr: T[], rng: () => number): T {
   return arr[Math.floor(rng() * arr.length)]
 }
 
+function r16(n: number) { return Math.round(n * 16) / 16 }
 
-// Split a rest duration into beat-boundary-respecting pieces
-// Rules:
-// 1. Never let a rest cross a beat boundary
-// 2. Combine rests only on strong beats (beat 1 and beat 3 in 4/4)
-// 3. Use the largest valid rest that fits within the current beat segment
-function splitRestToBeatBoundaries(
+// ── Beat boundary logic ────────────────────────────────────────────────────────
+// beatUnit = quarter note = 1 in our system (beatTypeFactor applied externally)
+// Strong beats in 4/4: beats 1 and 3 (positions 0 and 2)
+// Any note that crosses a beat boundary must be split with a tie
+// Any rest must not cross a beat boundary
+
+function beatBoundariesCrossed(startPos: number, duration: number, beatUnit: number): number[] {
+  const boundaries: number[] = []
+  const end = r16(startPos + duration)
+  let b = Math.ceil(r16(startPos / beatUnit) + 0.001) * beatUnit
+  while (r16(b) < r16(end) - 0.001) {
+    boundaries.push(r16(b))
+    b = r16(b + beatUnit)
+  }
+  return boundaries
+}
+
+// Split a note/rest that crosses beat boundaries into tied pieces
+function splitAtBeatBoundaries(
+  type: NoteValue,
+  isRest: boolean,
+  dot: boolean,
   totalBeats: number,
-  startBeatPos: number,
+  startPos: number,
   beatUnit: number,
   validDurations: { type: NoteValue; beats: number; dot: boolean }[]
 ): GeneratedNote[] {
-  const rests: GeneratedNote[] = []
-  let remaining = Math.round(totalBeats * 16) / 16
-  let pos = Math.round(startBeatPos * 16) / 16
+  const boundaries = beatBoundariesCrossed(startPos, totalBeats, beatUnit)
+  if (boundaries.length === 0) {
+    return [{ type, rest: isRest, dot, tieStart: false, tieStop: false, tuplet: null, durationBeats: totalBeats }]
+  }
+
+  const pieces: GeneratedNote[] = []
+  let remaining = r16(totalBeats)
+  let pos = r16(startPos)
+  let isFirst = true
 
   while (remaining > 0.001) {
-    // How much space is left until the next beat boundary?
-    const nextBeat = Math.ceil(pos / beatUnit + 0.001) * beatUnit
-    const spaceToNextBeat = Math.round((nextBeat - pos) * 16) / 16
-    const canFill = Math.min(remaining, spaceToNextBeat)
+    // Find next boundary
+    const nextBoundary = r16(Math.ceil(r16(pos / beatUnit) + 0.001) * beatUnit)
+    const spaceToNext = r16(nextBoundary - pos)
+    const pieceBeats = r16(Math.min(remaining, spaceToNext > 0.001 ? spaceToNext : remaining))
 
-    // Find largest non-dotted rest that fits within canFill
-    // (avoid dotted rests in simple time as they obscure beats)
+    // Find the best note type for this piece duration
+    const match = validDurations
+      .filter(d => Math.abs(d.beats - pieceBeats) < 0.001)
+      .sort((a, b) => (a.dot ? 0 : 1) - (b.dot ? 0 : 1))[0]
+
+    const pieceType = match?.type ?? type
+    const pieceDot = match?.dot ?? false
+
+    const note: GeneratedNote = {
+      type: pieceType,
+      rest: isRest,
+      dot: pieceDot,
+      tieStart: false,
+      tieStop: !isFirst && !isRest,
+      tuplet: null,
+      durationBeats: pieceBeats,
+    }
+    pieces.push(note)
+
+    if (!isFirst && pieces.length >= 2) {
+      pieces[pieces.length - 2].tieStart = !isRest
+    }
+
+    remaining = r16(remaining - pieceBeats)
+    pos = r16(pos + pieceBeats)
+    isFirst = false
+  }
+
+  // Mark last piece tieStart = false, first piece tieStop = false
+  if (pieces.length > 0) {
+    pieces[0].tieStop = false
+    pieces[pieces.length - 1].tieStart = false
+  }
+
+  return pieces
+}
+
+// Best rest notation for a duration starting at pos, within beat constraints
+// Returns array of rest notes (may be multiple to show beats clearly)
+function buildRests(
+  totalBeats: number,
+  startPos: number,
+  beatUnit: number,
+  validDurations: { type: NoteValue; beats: number; dot: boolean }[],
+  allowDots: boolean
+): GeneratedNote[] {
+  const rests: GeneratedNote[] = []
+  let remaining = r16(totalBeats)
+  let pos = r16(startPos)
+
+  while (remaining > 0.001) {
+    // Space until next beat boundary
+    const nextBeat = r16(Math.ceil(r16(pos / beatUnit) + 0.001) * beatUnit)
+    const spaceToNext = r16(nextBeat - pos)
+    const maxFill = spaceToNext > 0.001 ? r16(Math.min(remaining, spaceToNext)) : remaining
+
+    // Find largest rest that fits within maxFill
+    // Prefer dotted rests if they fit and don't cross a beat
     const candidates = validDurations
-      .filter(d => !d.dot && d.beats <= canFill + 0.001)
-      .sort((a, b) => b.beats - a.beats)
+      .filter(d => {
+        if (d.beats > r16(maxFill) + 0.001) return false
+        if (d.dot && !allowDots) return false
+        // Dotted rest: only if it doesn't cross a beat boundary
+        if (d.dot) {
+          const crossings = beatBoundariesCrossed(pos, d.beats, beatUnit)
+          if (crossings.length > 0) return false
+        }
+        return true
+      })
+      .sort((a, b) => b.beats - a.beats)  // prefer largest
 
     if (candidates.length === 0) {
       // Force smallest available
       const fallback = validDurations
-        .filter(d => !d.dot)
+        .filter(d => !d.dot && d.beats <= r16(remaining) + 0.001)
         .sort((a, b) => a.beats - b.beats)[0]
       if (!fallback) break
       rests.push({ type: fallback.type, rest: true, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: fallback.beats })
-      remaining = Math.round((remaining - fallback.beats) * 16) / 16
-      pos = Math.round((pos + fallback.beats) * 16) / 16
+      remaining = r16(remaining - fallback.beats)
+      pos = r16(pos + fallback.beats)
     } else {
       const chosen = candidates[0]
-      rests.push({ type: chosen.type, rest: true, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: chosen.beats })
-      remaining = Math.round((remaining - chosen.beats) * 16) / 16
-      pos = Math.round((pos + chosen.beats) * 16) / 16
+      rests.push({ type: chosen.type, rest: true, dot: chosen.dot, tieStart: false, tieStop: false, tuplet: null, durationBeats: chosen.beats })
+      remaining = r16(remaining - chosen.beats)
+      pos = r16(pos + chosen.beats)
     }
   }
 
@@ -115,12 +201,11 @@ function fillMeasure(
   rng: () => number
 ): GeneratedNote[] {
   const notes: GeneratedNote[] = []
-  let remaining = Math.round(beatsPerMeasure * 16) / 16  // work in 16ths to avoid float errors
+  let remaining = r16(beatsPerMeasure)
   const beatTypeFactor = 4 / opts.timeSignature.beatType
+  const beatUnit = beatTypeFactor  // one beat in our system
 
-  // Build valid note durations in beats (quarter = 1 beat unit)
-  // When dots are enabled, automatically include complement notes for filling
-  // e.g. dotted quarter needs eighth to fill; dotted half needs quarter (already in pool)
+  // Build valid note/rest durations
   const effectivePool = [...opts.notePool]
   if (opts.allowDots) {
     const complementMap: Record<string, NoteValue> = {
@@ -134,98 +219,99 @@ function fillMeasure(
 
   const validDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
   for (const nv of effectivePool) {
-    const b = Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16
-    // Only add dotted version for notes in dotPool (or original pool if dotPool not set)
-    const allowedDotPool = opts.dotPool ?? opts.notePool
-    const inOriginalPool = allowedDotPool.includes(nv)
+    const b = r16(NOTE_BEATS[nv] * beatTypeFactor)
     validDurations.push({ type: nv, beats: b, dot: false })
-    if (opts.allowDots && inOriginalPool) {
-      const bd = Math.round(b * 1.5 * 16) / 16
+    const allowedDotPool = opts.dotPool ?? opts.notePool
+    if (opts.allowDots && allowedDotPool.includes(nv)) {
+      const bd = r16(b * 1.5)
       validDurations.push({ type: nv, beats: bd, dot: true })
     }
   }
 
-  let safetyCounter = 0
-  while (remaining > 0.001 && safetyCounter++ < 64) {
-    // Current beat position within the measure
-    const currentBeatPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
-    const beatUnit = beatTypeFactor
-
-    const fitting = validDurations.filter(d => {
-      if (d.beats > remaining + 0.001) return false
-      const rem = Math.round((remaining - d.beats) * 16) / 16
-
-      // For dotted notes: check they don't obscure a main beat
-      if (d.dot) {
-        const noteEnd = Math.round((currentBeatPos + d.beats) * 16) / 16
-        const onMainBeat = Math.abs(currentBeatPos % beatUnit) < 0.001
-        if (!onMainBeat) {
-          // Not starting on a main beat — reject dotted note
-          // (too complex to handle correctly without ties)
-          return false
-        }
-        // Starting on a main beat — dotted note is OK only if the dot remainder
-        // (half the undotted value) can be filled by a note in the pool
-        const undottedBeats = Math.round(d.beats / 1.5 * 16) / 16
-        const dotRemainder = Math.round(undottedBeats * 0.5 * 16) / 16
-        const canFillDotRemainder = validDurations.some(d2 => !d2.dot && Math.abs(d2.beats - dotRemainder) < 0.001)
-        if (!canFillDotRemainder) return false
-      }
-
-      if (rem < 0.001) return true  // fills exactly
-      const smallestNonDot = validDurations
-        .filter(d2 => !d2.dot)
-        .reduce((min, d2) => d2.beats < min ? d2.beats : min, Infinity)
-      return smallestNonDot <= rem + 0.001
-    })
-
-    if (fitting.length === 0) {
-      // Fallback: use smallest non-dotted note that fits
-      const fallback = effectivePool
-        .map(nv => ({ type: nv, beats: Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16, dot: false }))
-        .filter(d => d.beats <= remaining + 0.001)
-        .sort((a, b) => b.beats - a.beats)[0]
-      if (!fallback) break
-      notes.push({ type: fallback.type, rest: false, dot: false, tieStart: false, tieStop: false, tuplet: null, durationBeats: fallback.beats })
-      remaining = Math.round((remaining - fallback.beats) * 16) / 16
-      continue
-    }
-
-
-    // Separate dotted and plain pools
-    const dottedPool = fitting.filter(d => d.dot)
-    const plainPool = fitting.filter(d => !d.dot)
-
-    // Use dotted if allowed, probability fires, and dotted options exist
-    const useDot = opts.allowDots && dottedPool.length > 0 && rng() < opts.dotProbability
-    const pool = useDot ? dottedPool : (plainPool.length > 0 ? plainPool : fitting)
-
-    const chosen = pickRandom(pool, rng)
-    const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
-
-    if (isRest) {
-      // Split rest into beat-boundary-respecting pieces
-      // Rule: rests must not cross beat boundaries; show each beat clearly
-      const restNotes = splitRestToBeatBoundaries(
-        chosen.beats, currentBeatPos, beatUnit, validDurations
-      )
-      notes.push(...restNotes)
-      remaining = Math.round((remaining - chosen.beats) * 16) / 16
-    } else {
-      notes.push({
-        type: chosen.type,
-        rest: false,
-        dot: chosen.dot,
-        tieStart: false,
-        tieStop: false,
-        tuplet: null,
-        durationBeats: chosen.beats,
-      })
-      remaining = Math.round((remaining - chosen.beats) * 16) / 16
+  // Also add dotted rests for rest splitting
+  const restDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
+  for (const nv of effectivePool) {
+    const b = r16(NOTE_BEATS[nv] * beatTypeFactor)
+    restDurations.push({ type: nv, beats: b, dot: false })
+    if (opts.allowDots) {
+      restDurations.push({ type: nv, beats: r16(b * 1.5), dot: true })
     }
   }
 
-  return applyTies(notes, opts, rng)
+  let safetyCounter = 0
+  while (remaining > 0.001 && safetyCounter++ < 128) {
+    const currentPos = r16(beatsPerMeasure - remaining)
+
+    // Find notes that fit
+    const fitting = validDurations.filter(d => {
+      if (d.beats > r16(remaining) + 0.001) return false
+      const rem = r16(remaining - d.beats)
+
+      // Dotted notes: only if starting on a beat and don't cross a strong midpoint
+      if (d.dot) {
+        const onBeat = Math.abs(currentPos % beatUnit) < 0.001
+        if (!onBeat) return false
+        // Check the note doesn't cross any beat boundary (unless ties handle it)
+        // For generator simplicity: allow dotted notes but they'll be tied if crossing
+        // Actually for cleanliness: reject if crossing boundary and no tie opt
+        const crossings = beatBoundariesCrossed(currentPos, d.beats, beatUnit)
+        if (crossings.length > 0 && !opts.allowTies) return false
+      }
+
+      if (rem < 0.001) return true
+      const smallestNonDot = validDurations
+        .filter(d2 => !d2.dot)
+        .reduce((min, d2) => d2.beats < min ? d2.beats : min, Infinity)
+      return smallestNonDot <= r16(rem) + 0.001
+    })
+
+    if (fitting.length === 0) {
+      const fallback = effectivePool
+        .map(nv => ({ type: nv, beats: r16(NOTE_BEATS[nv] * beatTypeFactor), dot: false }))
+        .filter(d => d.beats <= r16(remaining) + 0.001)
+        .sort((a, b) => b.beats - a.beats)[0]
+      if (!fallback) break
+      const pieces = splitAtBeatBoundaries(fallback.type, false, false, fallback.beats, currentPos, beatUnit, validDurations)
+      notes.push(...pieces)
+      remaining = r16(remaining - fallback.beats)
+      continue
+    }
+
+    const dottedPool = fitting.filter(d => d.dot)
+    const plainPool = fitting.filter(d => !d.dot)
+    const useDot = opts.allowDots && dottedPool.length > 0 && rng() < opts.dotProbability
+    const pool = useDot ? dottedPool : (plainPool.length > 0 ? plainPool : fitting)
+    const chosen = pickRandom(pool, rng)
+
+    const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
+
+    if (isRest) {
+      // Build properly notated rests that respect beat boundaries
+      const restPieces = buildRests(chosen.beats, currentPos, beatUnit, restDurations, opts.allowDots)
+      notes.push(...restPieces)
+    } else {
+      // Check if note crosses a beat boundary — if so, split with ties
+      const crossings = beatBoundariesCrossed(currentPos, chosen.beats, beatUnit)
+      if (crossings.length > 0 && opts.allowTies) {
+        const pieces = splitAtBeatBoundaries(chosen.type, false, chosen.dot, chosen.beats, currentPos, beatUnit, validDurations)
+        notes.push(...pieces)
+      } else {
+        notes.push({
+          type: chosen.type,
+          rest: false,
+          dot: chosen.dot,
+          tieStart: false,
+          tieStop: false,
+          tuplet: null,
+          durationBeats: chosen.beats,
+        })
+      }
+    }
+
+    remaining = r16(remaining - chosen.beats)
+  }
+
+  return notes
 }
 
 function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
@@ -239,7 +325,6 @@ function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => nu
   return notes
 }
 
-
 export function generateExercise(opts: GeneratorOptions): GeneratedExercise {
   const rng = makeRng(opts.seed ?? Math.floor(Math.random() * 999999))
   const beatsPerMeasure = opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
@@ -248,16 +333,14 @@ export function generateExercise(opts: GeneratorOptions): GeneratedExercise {
     notes: fillMeasure(beatsPerMeasure, opts, rng)
   }))
 
-  // Verify measure sums
-  measures.forEach((m, i) => {
-    const sum = m.notes.reduce((acc, n) => acc + n.durationBeats, 0)
-    const expected = opts.timeSignature.beats * (4 / opts.timeSignature.beatType)
-    console.log(`Measure ${i+1}: sum=${sum.toFixed(3)} expected=${expected} ok=${Math.abs(sum-expected)<0.01}`, m.notes.map(n => `${n.dot?'d':''}${n.type}(${n.durationBeats})`).join(' '))
-  })
-  return { title: '', timeSignature: opts.timeSignature, measures, hands: opts.hands }
+  return {
+    title: '',
+    timeSignature: opts.timeSignature,
+    measures,
+    hands: opts.hands,
+  }
 }
 
-// ── MusicXML export ───────────────────────────────────────────────────────────
 const DIVISIONS = 16  // divisions per quarter note
 
 function noteDivisions(note: GeneratedNote, beatType: number): number {
@@ -370,3 +453,4 @@ export async function xmlToMxlBuffer(xmlString: string): Promise<ArrayBuffer> {
   zip.file('score.xml', xmlString)
   return zip.generateAsync({ type: 'arraybuffer', compression: 'DEFLATE' })
 }
+
