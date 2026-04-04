@@ -145,14 +145,8 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
 
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
   const beatsPerMeasure = exercise.timeSignature.beats
-  const allNotes = rowMeasures.flatMap(m => m.notes)
-  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
-  const MIN_SLOT_W = 28
-  const slotsPerMeasure = beatsPerMeasure / smallestDuration
-  const minMeasureW = slotsPerMeasure * MIN_SLOT_W
   const usableW = svgW - 96
-  const naturalMeasureW = usableW / rowMeasures.length
-  const measureW = Math.max(naturalMeasureW, minMeasureW)
+  const measureW = usableW / rowMeasures.length
   const noteW = measureW / beatsPerMeasure
   return { measureW, noteW, beatsPerMeasure }
 }
@@ -172,11 +166,10 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
   const MIN_SLOT = 28
   const minMeasureW = slotsPerMeasure * MIN_SLOT
   const total = exercise.measures.length
-  let measuresPerRow = 1
-  for (const candidate of [4, 2, 1]) {
-    if (candidate !== 1 && total % candidate !== 0) continue
-    if (minMeasureW * candidate + 96 <= SVG_W) { measuresPerRow = candidate; break }
-  }
+    let measuresPerRow = 4
+  if (total % 4 !== 0 && total % 2 === 0) measuresPerRow = 2
+  if (total < 4) measuresPerRow = total
+
   const rows = Array.from({ length: Math.ceil(total / measuresPerRow) },
     (_, i) => exercise.measures.slice(i * measuresPerRow, (i + 1) * measuresPerRow))
 
