@@ -160,15 +160,8 @@ function fillMeasure(
       // Replace with properly-sized rest(s) that don't cross beat boundaries
       const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
       const RBEATS: Record<NoteValue,number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
-      // Cap total rest to space before next beat boundary if off-beat
-      const _restStartPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
-      const _onBeat = Math.abs(Math.round(_restStartPos % beatTypeFactor * 16) / 16) < 0.001
-      const _nextBeat = Math.round(Math.ceil(Math.round(_restStartPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
-      const _spaceToNext = Math.round((_nextBeat - _restStartPos) * 16) / 16
-      const _cappedBeats = _onBeat ? chosen.beats : Math.round(Math.min(chosen.beats, _spaceToNext) * 16) / 16
-      let restRemaining = _cappedBeats > 0.001 ? _cappedBeats : chosen.beats
+      let restRemaining = chosen.beats
       let restPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
-      console.log('REST loop: cappedBeats='+_cappedBeats+' startPos='+_restStartPos+' onBeat='+_onBeat)
       while (restRemaining > 0.001) {
         // Space from current position to next beat boundary
         const nextBeat = Math.round(Math.ceil(Math.round(restPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
