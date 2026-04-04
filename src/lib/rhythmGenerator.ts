@@ -278,6 +278,63 @@ function enforceBeatBoundaries(
   return result
 }
 
+function mergeConsecutiveRests(
+  notes: GeneratedNote[],
+  beatUnit: number
+): GeneratedNote[] {
+  function r16(n: number) { return Math.round(n * 16) / 16 }
+  const BEATS: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
+  const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
+
+  function findRestType(beats: number): [NoteValue, boolean] {
+    for (const nv of NOTE_ORDER) {
+      if (Math.abs(BEATS[nv] - beats) < 0.001) return [nv, false]
+      if (Math.abs(BEATS[nv] * 1.5 - beats) < 0.001) return [nv, true]
+    }
+    return ['sixteenth', false]
+  }
+
+  const result: GeneratedNote[] = []
+  let pos = 0
+  let i = 0
+
+  while (i < notes.length) {
+    const note = notes[i]
+    if (!note.rest) {
+      result.push(note)
+      pos = r16(pos + note.durationBeats)
+      i++
+      continue
+    }
+
+    // Accumulate consecutive rests within the same beat
+    const beatStart = r16(Math.floor(r16(pos / beatUnit)) * beatUnit)
+    const beatEnd = r16(beatStart + beatUnit)
+    let totalRest = 0
+    let j = i
+
+    while (j < notes.length && notes[j].rest) {
+      const endPos = r16(pos + totalRest + notes[j].durationBeats)
+      if (endPos > beatEnd + 0.001) break  // would cross beat boundary
+      totalRest = r16(totalRest + notes[j].durationBeats)
+      j++
+    }
+
+    if (j > i + 1) {
+      // Multiple consecutive rests in same beat — merge into largest possible
+      const [type, dot] = findRestType(totalRest)
+      result.push({ ...note, type, dot, durationBeats: totalRest })
+    } else {
+      result.push(note)
+    }
+
+    pos = r16(pos + totalRest || note.durationBeats)
+    i = j > i + 1 ? j : i + 1
+  }
+
+  return result
+}
+
 function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
   if (!opts.allowTies) return notes
   for (let i = 0; i < notes.length - 1; i++) {
