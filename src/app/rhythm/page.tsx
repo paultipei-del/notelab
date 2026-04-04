@@ -94,8 +94,8 @@ function TieCurve({ x1, x2 }: { x1: number; x2: number }) {
   const y = STAFF_Y + 10
   const h = Math.min(8, Math.max(4, (x2 - x1) * 0.12))
   const cp1x = x1 + (x2-x1)*0.25; const cp2x = x2 - (x2-x1)*0.25
-  const outer = `M ${x1+6} ${y} C ${cp1x} ${y+h} ${cp2x} ${y+h} ${x2+2} ${y}`
-  const inner = `C ${cp2x} ${y+h-2} ${cp1x} ${y+h-2} ${x1+6} ${y}`
+  const outer = `M ${x1} ${y} C ${cp1x} ${y+h} ${cp2x} ${y+h} ${x2} ${y}`
+  const inner = `C ${cp2x} ${y+h-2} ${cp1x} ${y+h-2} ${x1} ${y}`
   return <path d={outer + ' ' + inner + ' Z'} fill="#1A1A18" opacity={0.85} />
 }
 
@@ -271,8 +271,8 @@ function renderMeasure(
     // Tie curve
     if (note.tieStart && i < notes.length - 1) {
       const nextBp = bp + note.durationBeats
-      const nextX = mx + nextBp * noteW + 14
-      els.push(<TieCurve key={`tie-${i}`} x1={x} x2={nextX} />)
+      const nextX = mx + nextBp * noteW
+      els.push(<TieCurve key={`tie-${i}`} x1={x + noteW * 0.5} x2={nextX + noteW * 0.5} />)
     }
 
     bp += note.durationBeats
