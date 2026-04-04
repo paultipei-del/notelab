@@ -189,11 +189,10 @@ function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof
   const MIN_SLOT_W = 32  // minimum px per smallest note slot
   const slotsPerMeasure = beatsPerMeasure / smallestDuration
   const minMeasureW = slotsPerMeasure * MIN_SLOT_W
-  const usableW = svgW - 96 - 18 * rowMeasures.length  // 18px left shift compensation per measure
+  const usableW = svgW - 96
   const naturalMeasureW = usableW / rowMeasures.length
   const measureW = Math.max(naturalMeasureW, minMeasureW)
-  const PADDING = 18  // px padding on each side of measure content
-  const noteW = (measureW - PADDING * 2) / beatsPerMeasure
+  const noteW = measureW / beatsPerMeasure
   return { measureW, noteW, beatsPerMeasure }
 }
 
