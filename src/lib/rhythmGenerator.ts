@@ -163,6 +163,7 @@ function fillMeasure(
     })
 
     if (fitting.length === 0) {
+      console.log('FITTING EMPTY: remaining='+remaining+' currentPos='+currentBeatPos+' validDurs='+JSON.stringify(validDurations.map(d=>d.beats+(d.dot?'d':''))))
       // Fallback: use largest note from validDurations that fits
       const fallback = validDurations
         .filter(d => d.beats <= Math.round(remaining * 16) / 16 + 0.001)
