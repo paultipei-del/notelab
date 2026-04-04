@@ -376,7 +376,7 @@ function mergeMultiBeatRests(
     }
 
     // Accumulate consecutive rests up to half measure
-    const maxMerge = r16(beatsPerMeasure / 2)  // max half rest
+    const maxMerge = r16(beatsPerMeasure)  // allow full-measure rest
     let totalRest = 0
     let j = i
     while (j < notes.length && notes[j].rest) {
