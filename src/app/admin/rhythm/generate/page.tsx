@@ -88,7 +88,7 @@ function TieCurveP({ x1, x2 }: { x1: number; x2: number }) {
   return <path d={outer + ' ' + inner + ' Z'} fill="#1A1A18" opacity={0.85} />
 }
 
-function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.ReactElement[] {
+function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number, beatUnit: number = 1): React.ReactElement[] {
   const els: React.ReactElement[] = []
 
   // Pre-compute note positions
@@ -100,7 +100,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
   })
 
   // Beat-aware beam groups — group beamable notes within the same beat
-  const beatSize = 1 // quarter note = 1 beat in simple time
+  const beatSize = beatUnit
   const totalBeats = Math.round(noteInfos.reduce((sum, _, i) => sum + notes[i].durationBeats, 0))
   const beamGroups: number[][] = []
   for (let beat = 0; beat < totalBeats; beat++) {
@@ -183,7 +183,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
 }
 
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
-  const beatsPerMeasure = exercise.timeSignature.beats
+  const beatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)  // in quarter note units
   const allNotes = rowMeasures.flatMap(m => m.notes)
   const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
   const MIN_SLOT_W = 32  // minimum px per smallest note slot
@@ -247,7 +247,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
               const isLastMeasure = isLastRow && mIdx === rowMeasures.length - 1
               return (
                 <g key={mIdx}>
-                  {renderMeasureP(m.notes as RhythmNoteP[], mx, noteW)}
+                  {renderMeasureP(m.notes as RhythmNoteP[], mx, noteW, 4 / exercise.timeSignature.beatType)}
                   {!isLastMeasure && (
                     <line x1={barlineX} y1={STAFF_Y - STEM_H} x2={barlineX} y2={STAFF_Y + STEM_H} stroke="#1A1A18" strokeWidth={1} />
                   )}
