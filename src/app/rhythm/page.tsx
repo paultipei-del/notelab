@@ -67,7 +67,7 @@ function BravuraNote({ x, y, type, color }: { x: number; y: number; type: string
   )
 }
 
-function RestSymbol({ x, type }: { x: number; type: string }) {
+function RestSymbol({ x, type, dot }: { x: number; type: string; dot?: boolean }) {
   const glyph =
     type === 'whole'      ? BRAVURA.wholeRest :
     type === 'half'       ? BRAVURA.halfRest :
@@ -80,7 +80,10 @@ function RestSymbol({ x, type }: { x: number; type: string }) {
     type === 'whole'      ? STAFF_Y + 10 :
     type === 'half'       ? STAFF_Y - 0.5 :
     STAFF_Y
-  return <text x={x} y={y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
+  return <g>
+    <text x={x} y={y} fontSize={44} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
+    {dot && <circle cx={x + 14} cy={y - 4} r={2.5} fill="#1A1A18" />}
+  </g>
 }
 
 function Dot({ x, color }: { x: number; color: string }) {
@@ -240,7 +243,7 @@ function renderMeasure(
     // Active beat highlight (driven by playhead — handled outside)
 
     if (note.rest) {
-      els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
+      els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} dot={note.dot} />)
     } else if (beamedSet.has(i)) {
       // Beamed note — render as Bravura text glyph (no standalone flag)
       // Use blackLong glyph (notehead + stem, no flag)

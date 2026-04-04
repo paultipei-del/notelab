@@ -231,7 +231,7 @@ function fillMeasure(
     }
   }
 
-  return applyTies(mergeConsecutiveRests(notes, beatTypeFactor), opts, rng)
+  return applyTies(mergeMultiBeatRests(mergeConsecutiveRests(notes, beatTypeFactor), beatTypeFactor, beatsPerMeasure), opts, rng)
 }
 
 // Validate that no note crosses a beat boundary
@@ -294,6 +294,75 @@ function mergeConsecutiveRests(
   return result
 }
 
+
+function mergeMultiBeatRests(
+  notes: GeneratedNote[],
+  beatUnit: number,
+  beatsPerMeasure: number
+): GeneratedNote[] {
+  function r16(n: number) { return Math.round(n * 16) / 16 }
+  const BEATS: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
+  const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
+
+  // Strong beats: beat 1 and beat 3 in 4/4 (positions 0 and 2*beatUnit)
+  function isStrongBeat(pos: number): boolean {
+    const beatNum = Math.round(pos / beatUnit)
+    return beatNum === 0 || beatNum * beatUnit === r16(beatsPerMeasure / 2)
+  }
+
+  const result: GeneratedNote[] = []
+  let pos = 0
+  let i = 0
+
+  while (i < notes.length) {
+    const note = notes[i]
+    if (!note.rest) {
+      result.push(note)
+      pos = r16(pos + note.durationBeats)
+      i++
+      continue
+    }
+
+    // Only try to merge if on a strong beat
+    if (!isStrongBeat(pos)) {
+      result.push(note)
+      pos = r16(pos + note.durationBeats)
+      i++
+      continue
+    }
+
+    // Accumulate consecutive rests up to half measure
+    const maxMerge = r16(beatsPerMeasure / 2)  // max half rest
+    let totalRest = 0
+    let j = i
+    while (j < notes.length && notes[j].rest) {
+      const newTotal = r16(totalRest + notes[j].durationBeats)
+      if (newTotal > maxMerge + 0.001) break
+      totalRest = newTotal
+      j++
+    }
+
+    if (j > i + 1) {
+      // Find largest standard rest for totalRest
+      let bestType: NoteValue = 'sixteenth'
+      let bestDot = false
+      for (const nv of NOTE_ORDER) {
+        const b = BEATS[nv]
+        if (Math.abs(b - totalRest) < 0.001) { bestType = nv; bestDot = false; break }
+        if (Math.abs(b * 1.5 - totalRest) < 0.001) { bestType = nv; bestDot = true; break }
+      }
+      result.push({ ...note, type: bestType, dot: bestDot, durationBeats: totalRest })
+      pos = r16(pos + totalRest)
+      i = j
+    } else {
+      result.push(note)
+      pos = r16(pos + note.durationBeats)
+      i++
+    }
+  }
+
+  return result
+}
 
 function applyTies(notes: GeneratedNote[], opts: GeneratorOptions, rng: () => number): GeneratedNote[] {
   if (!opts.allowTies) return notes

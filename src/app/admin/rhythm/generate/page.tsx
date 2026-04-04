@@ -63,7 +63,7 @@ function BravuraNoteP({ x, y, type, color }: { x: number; y: number; type: strin
   </text>
 }
 
-function RestSymbolP({ x, type }: { x: number; type: string }) {
+function RestSymbolP({ x, type, dot }: { x: number; type: string; dot?: boolean }) {
   const glyph =
     type === 'whole'      ? BRAVURA_REST.whole :
     type === 'half'       ? BRAVURA_REST.half :
@@ -71,7 +71,10 @@ function RestSymbolP({ x, type }: { x: number; type: string }) {
     type === 'sixteenth'  ? BRAVURA_REST.sixteenth :
     BRAVURA_REST.quarter
   const y = type === 'whole' ? STAFF_Y_P + 10 : type === 'half' ? STAFF_Y_P - 0.5 : STAFF_Y_P
-  return <text x={x} y={y} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
+  return <g>
+    <text x={x} y={y} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
+    {dot && <circle cx={x + 14} cy={y - 4} r={2.5} fill="#1A1A18" />}
+  </g>
 }
 
 interface RhythmNoteP { type: string; durationBeats: number; rest?: boolean; dot?: boolean; tieStart?: boolean; tieStop?: boolean }
@@ -114,7 +117,7 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
   notes.forEach((note, i) => {
     const x = mx + bp * noteW
     if (note.rest) {
-      els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} />)
+      els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} dot={note.dot} />)
     } else if (beamedSet.has(i)) {
       els.push(<text key={`n-${i}`} x={x} y={STAFF_Y_P} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="auto">{String.fromCodePoint(0xE1F1)}</text>)
       if (note.dot) els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y_P - 4} r={2.5} fill="#1A1A18" />)
