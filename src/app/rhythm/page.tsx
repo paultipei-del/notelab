@@ -32,16 +32,8 @@ const DIFFICULTY_LABEL: Record<number, string> = {
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
   const beatsPerMeasure = exercise.timeSignature.beats
 
-  // Find smallest note in row to ensure minimum readable slot width
-  const allNotes = rowMeasures.flatMap(m => m.notes)
-  const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
-  const MIN_SLOT_W = 28  // px per smallest subdivision
-  const slotsPerMeasure = beatsPerMeasure / smallestDuration
-  const minMeasureW = slotsPerMeasure * MIN_SLOT_W
-
   const usableW = svgW - 96
-  const naturalMeasureW = usableW / rowMeasures.length
-  const measureW = Math.max(naturalMeasureW, minMeasureW)
+  const measureW = usableW / rowMeasures.length
   const noteW = measureW / beatsPerMeasure
 
   return { measureW, noteW, beatsPerMeasure }
