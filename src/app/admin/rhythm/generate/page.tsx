@@ -107,18 +107,15 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
       beamGroups.push(noteInfos.filter(({ idx }) => idx >= first && idx <= last).map(({ idx }) => idx))
     }
   }
-  const beamedSet = new Set(beamGroups.flat())
-  const beamedNonRestSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
+  const beamedSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
 
   // Render notes
   bp = 0
   notes.forEach((note, i) => {
     const x = mx + bp * noteW + 14
-    if (note.rest && beamedSet.has(i)) {
+    if (note.rest) {
       els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} />)
-    } else if (note.rest) {
-      els.push(<RestSymbolP key={`r-${i}`} x={x} type={note.type} />)
-    } else if (beamedNonRestSet.has(i)) {
+    } else if (beamedSet.has(i)) {
       els.push(<text key={`n-${i}`} x={x} y={STAFF_Y_P} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="auto">{String.fromCodePoint(0xE1F1)}</text>)
       if (note.dot) els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y_P - 4} r={2.5} fill="#1A1A18" />)
     } else {

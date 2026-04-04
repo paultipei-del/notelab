@@ -236,8 +236,8 @@ function renderMeasure(
     }
   }
 
-  const beamedSet = new Set(beamGroups.flat())  // includes rests so beam spans over them
-  const beamedNonRestSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
+  const beamedSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))
+  const beamedNonRestSet = beamedSet
 
 
   // ── Render each note ──────────────────────────────────────────────────────
@@ -249,12 +249,9 @@ function renderMeasure(
 
     // Active beat highlight (driven by playhead — handled outside)
 
-    if (note.rest && beamedSet.has(i)) {
-      // Rest inside beam group — render glyph only, beam spans over it
+    if (note.rest) {
       els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
-    } else if (note.rest) {
-      els.push(<RestSymbol key={`r-${i}`} x={x} type={note.type} />)
-    } else if (beamedNonRestSet.has(i)) {
+    } else if (beamedSet.has(i)) {
       // Beamed note — render as Bravura text glyph (no standalone flag)
       // Use blackLong glyph (notehead + stem, no flag)
       const glyph = String.fromCodePoint(0xE1F1)  // blackLong

@@ -227,7 +227,7 @@ function fillMeasure(
   for (const nv of effectivePool) {
     const b = r16(NOTE_BEATS[nv] * beatTypeFactor)
     validDurations.push({ type: nv, beats: b, dot: false })
-    const allowedDotPool = opts.dotPool ?? opts.notePool
+    const allowedDotPool = (opts.dotPool && opts.dotPool.length > 0) ? opts.dotPool : opts.notePool
     if (opts.allowDots && allowedDotPool.includes(nv)) {
       const bd = r16(b * 1.5)
       validDurations.push({ type: nv, beats: bd, dot: true })
