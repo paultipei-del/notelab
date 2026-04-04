@@ -364,6 +364,26 @@ export default function GeneratePage() {
             <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px' }}>
               {ALL_NOTE_VALUES.map(n => <button key={n} onClick={() => toggleNote(n)} style={tog(opts.notePool.includes(n))}>{n}</button>)}
             </div>
+            <p style={{ ...lbl, marginTop: '12px' }}>Dotted values</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px' }}>
+              {(['half','quarter','eighth'] as NoteValue[]).map(n => {
+                const inPool = opts.notePool.includes(n)
+                const dotSelected = (opts.dotPool ?? []).includes(n)
+                return (
+                  <button key={'d'+n} onClick={() => {
+                    if (!inPool) return
+                    const current = opts.dotPool ?? []
+                    const next = dotSelected ? current.filter(x => x !== n) : [...current, n]
+                    set('dotPool', next)
+                    if (!opts.allowDots && !dotSelected) set('allowDots', true)
+                  }} style={{
+                    ...tog(dotSelected && inPool),
+                    opacity: inPool ? 1 : 0.3,
+                    cursor: inPool ? 'pointer' : 'default'
+                  }}>d.{n}</button>
+                )
+              })}
+            </div>
           </div>
 
           <div style={card}>
@@ -387,34 +407,6 @@ export default function GeneratePage() {
                   )}
                 </div>
               ))}
-
-              {/* Dotted notes */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontFamily: F, fontSize: '13px', color: '#1A1A18' }}>Dotted notes</span>
-                  <button onClick={() => set('allowDots', !opts.allowDots)} style={tog(!!opts.allowDots)}>{opts.allowDots ? 'On' : 'Off'}</button>
-                </div>
-                {opts.allowDots && (
-                  <div>
-                    <label style={lbl}>Which values can be dotted</label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '6px', marginBottom: '8px' }}>
-                      {(['whole','half','quarter','eighth'] as NoteValue[]).filter(n => opts.notePool.includes(n)).map(n => {
-                        const selected = (opts.dotPool ?? opts.notePool).includes(n)
-                        return (
-                          <button key={n} onClick={() => {
-                            const current = opts.dotPool ?? opts.notePool
-                            const next = selected ? current.filter(x => x !== n) : [...current, n]
-                            set('dotPool', next)
-                          }} style={tog(selected)}>{n}</button>
-                        )
-                      })}
-                    </div>
-                    <label style={lbl}>Probability: {Math.round(opts.dotProbability * 100)}%</label>
-                    <input type="range" min={5} max={60} value={Math.round(opts.dotProbability * 100)}
-                      onChange={e => set('dotProbability', Number(e.target.value) / 100)} style={{ width: '100%' }} />
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
