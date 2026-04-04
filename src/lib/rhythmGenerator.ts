@@ -12,6 +12,7 @@ export interface GeneratorOptions {
   allowRests: boolean
   restProbability: number        // 0-1, how often rests appear
   allowDots: boolean
+  dotPool?: NoteValue[]           // which note values can be dotted (default: all in notePool)
   dotProbability: number         // 0-1
   allowTies: boolean
   tieProbability: number         // 0-1
@@ -86,8 +87,9 @@ function fillMeasure(
   const validDurations: { type: NoteValue; beats: number; dot: boolean }[] = []
   for (const nv of effectivePool) {
     const b = Math.round(NOTE_BEATS[nv] * beatTypeFactor * 16) / 16
-    // Only add dotted version for notes in original pool
-    const inOriginalPool = opts.notePool.includes(nv)
+    // Only add dotted version for notes in dotPool (or original pool if dotPool not set)
+    const allowedDotPool = opts.dotPool ?? opts.notePool
+    const inOriginalPool = allowedDotPool.includes(nv)
     validDurations.push({ type: nv, beats: b, dot: false })
     if (opts.allowDots && inOriginalPool) {
       const bd = Math.round(b * 1.5 * 16) / 16

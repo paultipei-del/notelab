@@ -19,6 +19,7 @@ const DEFAULT_OPTS: GeneratorOptions = {
   allowRests: false,
   restProbability: 0.2,
   allowDots: false,
+  dotPool: [] as NoteValue[],
   dotProbability: 0.25,
   allowTies: false,
   tieProbability: 0.2,
@@ -316,7 +317,7 @@ export default function GeneratePage() {
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '12px' }}>
               {[
                 { key: 'allowRests' as const, probKey: 'restProbability' as const, label: 'Rests' },
-                { key: 'allowDots' as const, probKey: 'dotProbability' as const, label: 'Dotted notes' },
+
                 { key: 'allowTies' as const, probKey: 'tieProbability' as const, label: 'Ties' },
               ].map(({ key, probKey, label }) => (
                 <div key={key}>
@@ -332,6 +333,34 @@ export default function GeneratePage() {
                   )}
                 </div>
               ))}
+
+              {/* Dotted notes */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span style={{ fontFamily: F, fontSize: '13px', color: '#1A1A18' }}>Dotted notes</span>
+                  <button onClick={() => set('allowDots', !opts.allowDots)} style={tog(!!opts.allowDots)}>{opts.allowDots ? 'On' : 'Off'}</button>
+                </div>
+                {opts.allowDots && (
+                  <div>
+                    <label style={lbl}>Which values can be dotted</label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '6px', marginBottom: '8px' }}>
+                      {(['whole','half','quarter','eighth'] as NoteValue[]).filter(n => opts.notePool.includes(n)).map(n => {
+                        const selected = (opts.dotPool ?? opts.notePool).includes(n)
+                        return (
+                          <button key={n} onClick={() => {
+                            const current = opts.dotPool ?? opts.notePool
+                            const next = selected ? current.filter(x => x !== n) : [...current, n]
+                            set('dotPool', next)
+                          }} style={tog(selected)}>{n}</button>
+                        )
+                      })}
+                    </div>
+                    <label style={lbl}>Probability: {Math.round(opts.dotProbability * 100)}%</label>
+                    <input type="range" min={5} max={60} value={Math.round(opts.dotProbability * 100)}
+                      onChange={e => set('dotProbability', Number(e.target.value) / 100)} style={{ width: '100%' }} />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
