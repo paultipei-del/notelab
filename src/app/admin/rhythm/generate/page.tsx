@@ -105,7 +105,8 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
               return (
                 <g key={mIdx}>
                   {m.notes.map((n, nIdx) => {
-                    const x = mx + beatPos * noteW + noteW / 2
+                    const slotX = mx + beatPos * noteW
+                    const x = slotX + Math.min(n.durationBeats * noteW * 0.5, noteW * 0.5, measureW - beatPos * noteW - 8)
                     beatPos += n.durationBeats
                     return (
                       <g key={nIdx}>
