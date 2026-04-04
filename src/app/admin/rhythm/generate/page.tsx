@@ -79,6 +79,11 @@ function RestSymbolP({ x, type, dot }: { x: number; type: string; dot?: boolean 
 
 interface RhythmNoteP { type: string; durationBeats: number; rest?: boolean; dot?: boolean; tieStart?: boolean; tieStop?: boolean }
 
+function TieCurveP({ x1, x2 }: { x1: number; x2: number }) {
+  const mx = (x1 + x2) / 2
+  return <path d={`M ${x1+6} ${STAFF_Y_P+8} Q ${mx} ${STAFF_Y_P+20} ${x2+6} ${STAFF_Y_P+8}`} fill="none" stroke="#1A1A18" strokeWidth={1.1} />
+}
+
 function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.ReactElement[] {
   const els: React.ReactElement[] = []
 
@@ -124,6 +129,11 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
     } else {
       els.push(<BravuraNoteP key={`n-${i}`} x={x} y={STAFF_Y_P} type={note.type} color="#1A1A18" />)
       if (note.dot) els.push(<circle key={`d-${i}`} cx={x + 14} cy={STAFF_Y_P - 4} r={2.5} fill="#1A1A18" />)
+    }
+    // Tie
+    if (note.tieStart && i < notes.length - 1) {
+      const nextX = mx + (bp + note.durationBeats) * noteW
+      els.push(<TieCurveP key={'tie-'+i} x1={x} x2={nextX} />)
     }
     bp += note.durationBeats
   })
