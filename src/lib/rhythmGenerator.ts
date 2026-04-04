@@ -188,7 +188,7 @@ function fillMeasure(
     const pool = useDot ? dottedPool : (plainPool.length > 0 ? plainPool : fitting)
 
     const chosen = pickRandom(pool, rng)
-    const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
+    const isRest = opts.allowRests && rng() < opts.restProbability
 
     const noteCountBefore = notes.length
     if (isRest) {
