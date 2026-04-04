@@ -338,13 +338,11 @@ export default function GeneratePage() {
   const allowedNoteValues = ALL_NOTE_VALUES.filter(n => {
     const b = NOTE_BEATS_MAP[n]
     if (b > maxBeats + 0.001) return false
-    // In compound meters, exclude notes that don't align to beat boundaries
-    // (i.e. whose duration is not a multiple of the beat unit or its divisions)
     if (isCompoundMeter) {
-      // Allow: dotted quarter (1.5), dotted half (3), dotted whole (6), eighth (0.5), sixteenth (0.25)
-      // Disallow: half (2), quarter (1), whole (4) — these cross beat boundaries
-      const alignsToBeat = Math.abs(b % compBeatUnit) < 0.001 || Math.abs(b % (compBeatUnit / 3)) < 0.001
-      return alignsToBeat
+      const divUnit = 4 / opts.timeSignature.beatType  // e.g. 0.5 for x/8
+      const onBeat = Math.abs(b % compBeatUnit) < 0.001
+      const isSubdivision = b <= divUnit + 0.001 && Math.abs(divUnit % b) < 0.001
+      return onBeat || isSubdivision
     }
     return true
   })
