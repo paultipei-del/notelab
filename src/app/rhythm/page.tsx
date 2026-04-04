@@ -191,7 +191,7 @@ function renderMeasure(
   const noteInfos: NoteInfo[] = []
   let bp = 0
   notes.forEach((n, i) => {
-    noteInfos.push({ idx: i, beatPos: bp, x: mx + 10 + bp * noteW + n.durationBeats * noteW * 0.5 })
+    noteInfos.push({ idx: i, beatPos: bp, x: mx + bp * noteW + noteW * 0.4 })
     bp += n.durationBeats
   })
 
@@ -235,7 +235,7 @@ function renderMeasure(
   // ── Render each note ──────────────────────────────────────────────────────
   bp = 0
   notes.forEach((note, i) => {
-    const x = mx + bp * noteW + 14  // notehead at onset position
+    const x = mx + bp * noteW + noteW * 0.4  // notehead centered in its slot
     const tr = tapResult[i]
     const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
 
