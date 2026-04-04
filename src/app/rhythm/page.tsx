@@ -33,7 +33,7 @@ function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof
   const beatsPerMeasure = exercise.timeSignature.beats
   const allNotes = rowMeasures.flatMap(m => m.notes)
   const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
-  const MIN_SLOT_W = 24
+  const MIN_SLOT_W = 32
   const slotsPerMeasure = beatsPerMeasure / smallestDuration
   const minMeasureW = slotsPerMeasure * MIN_SLOT_W
   const usableW = svgW - 96
