@@ -137,21 +137,19 @@ function fillMeasure(
       }
       const rem = Math.round((remaining - d.beats) * 16) / 16
 
-      // For dotted notes: check they don't obscure a main beat
-      if (d.dot) {
-        const noteEnd = Math.round((currentBeatPos + d.beats) * 16) / 16
+      // For dotted notes in simple meters: check beat alignment and fillability
+      if (d.dot && !isCompound) {
         const onMainBeat = Math.abs(currentBeatPos % beatUnit) < 0.001
-        if (!onMainBeat) {
-          // Not starting on a main beat — reject dotted note
-          // (too complex to handle correctly without ties)
-          return false
-        }
-        // Starting on a main beat — dotted note is OK only if the dot remainder
-        // (half the undotted value) can be filled by a note in the pool
+        if (!onMainBeat) return false
+        // Check remainder can be filled
         const undottedBeats = Math.round(d.beats / 1.5 * 16) / 16
         const dotRemainder = Math.round(undottedBeats * 0.5 * 16) / 16
         const canFillDotRemainder = validDurations.some(d2 => !d2.dot && Math.abs(d2.beats - dotRemainder) < 0.001)
         if (!canFillDotRemainder) return false
+      } else if (d.dot && isCompound) {
+        // In compound meters, dotted notes must start on a beat
+        const onBeat = Math.abs(currentBeatPos % beatTypeFactor) < 0.001
+        if (!onBeat) return false
       }
 
       // If starting off-beat, note must not cross the next beat boundary
