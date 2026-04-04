@@ -103,8 +103,8 @@ function renderMeasureP(notes: RhythmNoteP[], mx: number, noteW: number): React.
       .map(({ idx }) => idx)
     const nonRest = group.filter(i => !notes[i].rest)
     if (nonRest.length >= 2) {
-      const first = nonRest[0]; const last = nonRest[nonRest.length - 1]
-      beamGroups.push(noteInfos.filter(({ idx }) => idx >= first && idx <= last).map(({ idx }) => idx))
+      // Only include notes within this beat group
+      beamGroups.push(group)
     }
   }
   const beamedSet = new Set(beamGroups.flat().filter(i => !notes[i].rest))

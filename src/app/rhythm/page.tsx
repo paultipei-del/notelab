@@ -222,13 +222,7 @@ function renderMeasure(
     // Only beam if 2+ non-rest notes in group
     const nonRestInGroup = group.filter(i => !notes[i].rest)
     if (nonRestInGroup.length >= 2) {
-      // Include any rests between first and last non-rest note
-      const first = nonRestInGroup[0]
-      const last = nonRestInGroup[nonRestInGroup.length - 1]
-      const fullGroup = noteInfos
-        .filter(({ idx }) => idx >= first && idx <= last)
-        .map(({ idx }) => idx)
-      beamGroups.push(fullGroup)
+      beamGroups.push(group)
     }
   }
 
