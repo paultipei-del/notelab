@@ -156,27 +156,32 @@ function fillMeasure(
     const isRest = opts.allowRests && rng() < opts.restProbability && notes.length > 0
 
     if (isRest) {
-      console.log('REST chosen, beats:', chosen.beats, 'pos:', Math.round((beatsPerMeasure - remaining)*16)/16)
       // Replace with properly-sized rest(s) that don't cross beat boundaries
-      // and use the largest available rest value
-      const NOTE_ORDER: NoteValue[] = ['half','quarter','eighth','sixteenth']
+      const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
       const RBEATS: Record<NoteValue,number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
       let restRemaining = chosen.beats
       let restPos = Math.round((beatsPerMeasure - remaining) * 16) / 16
       while (restRemaining > 0.001) {
-        // Space to next beat
-        const nb = Math.round(Math.ceil(Math.round(restPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
-        const space = Math.round(Math.min(restRemaining, Math.max(nb - restPos, beatTypeFactor)) * 16) / 16
-        // Find largest standard rest <= space, also try dotted
+        // Space from current position to next beat boundary
+        const nextBeat = Math.round(Math.ceil(Math.round(restPos / beatTypeFactor * 16) / 16 + 0.001) * beatTypeFactor * 16) / 16
+        const spaceToNextBeat = Math.round((nextBeat - restPos) * 16) / 16
+        // Max fill = space to next beat (never cross beat boundary)
+        // If exactly on a beat, fill up to beatTypeFactor
+        const maxFill = spaceToNextBeat > 0.001
+          ? Math.round(Math.min(restRemaining, spaceToNextBeat) * 16) / 16
+          : Math.round(Math.min(restRemaining, beatTypeFactor) * 16) / 16
+        // Find largest rest <= maxFill (prefer dotted if on beat)
         let bestBeats = Math.round(RBEATS['sixteenth'] * beatTypeFactor * 16) / 16
         let bestType: NoteValue = 'sixteenth'
         let bestDot = false
+        const onBeat = Math.abs(Math.round(restPos % beatTypeFactor * 16) / 16) < 0.001
         for (const nv of NOTE_ORDER) {
           const b = Math.round(RBEATS[nv] * beatTypeFactor * 16) / 16
-          if (b <= space + 0.001 && b > bestBeats) { bestBeats = b; bestType = nv; bestDot = false }
-          if (opts.allowDots) {
+          if (b <= maxFill + 0.001 && b > bestBeats) { bestBeats = b; bestType = nv; bestDot = false }
+          // Dotted rests only on beat positions
+          if (opts.allowDots && onBeat) {
             const bd = Math.round(b * 1.5 * 16) / 16
-            if (bd <= space + 0.001 && bd > bestBeats) { bestBeats = bd; bestType = nv; bestDot = true }
+            if (bd <= maxFill + 0.001 && bd > bestBeats) { bestBeats = bd; bestType = nv; bestDot = true }
           }
         }
         notes.push({ type: bestType, rest: true, dot: bestDot, tieStart: false, tieStop: false, tuplet: null, durationBeats: bestBeats })

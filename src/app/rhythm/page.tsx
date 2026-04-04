@@ -287,6 +287,7 @@ function renderMeasure(
     const nonRestIndices = group.filter(i => !notes[i].rest)
     if (nonRestIndices.length < 2) return
     const xs = nonRestIndices.map(idx => { let pos = 0; for (let k = 0; k < idx; k++) pos += notes[k].durationBeats; return mx + pos * noteW + 14 })
+    if (xs.length < 2) return
     const x1 = xs[0] + 7
     const x2 = xs[xs.length - 1] + 7
     const beamY = STAFF_Y - 39  // tuned to Bravura E1F1 stem top at fontSize=44
