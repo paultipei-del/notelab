@@ -225,7 +225,7 @@ function renderMeasure(
     let currentSub: number[] = []
     beatNotes.forEach(({ idx: ni }) => {
       const n = notes[ni]
-      const beamable = (n.type === 'eighth' || n.type === 'sixteenth') && !n.tieStop
+      const beamable = (n.type === 'eighth' || n.type === 'sixteenth')
       if (beamable) {
         currentSub.push(ni)
       } else {
