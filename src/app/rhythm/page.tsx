@@ -1007,8 +1007,10 @@ export default function RhythmPage() {
               )}
               {/* PORTRAIT: single scrolling staff */}
               {view === 'notation' && isPortrait && (() => {
-                const NOTE_W_PORTRAIT = 52
                 const qBeatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+                const allNotesFlat = exercise.measures.flatMap(m => m.notes)
+                const smallestDur = allNotesFlat.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
+                const NOTE_W_PORTRAIT = Math.max(40, 32 / smallestDur)
                 const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
                 const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
                 const centerX = svgWidth / 2
