@@ -30,7 +30,7 @@ const DIFFICULTY_LABEL: Record<number, string> = {
 }
 
 function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof exercise.measures) {
-  const beatsPerMeasure = exercise.timeSignature.beats
+  const beatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)  // in quarter note units
   const allNotes = rowMeasures.flatMap(m => m.notes)
   const smallestDuration = allNotes.reduce((min, n) => Math.min(min, n.durationBeats), 1)
   const MIN_SLOT_W = 32
@@ -186,7 +186,8 @@ const BEAM_GAP = 6  // gap between double beams
 function renderMeasure(
   notes: RhythmNote[], mx: number, noteW: number,
   tapResult: ('hit'|'miss'|'none')[],
-  beatsPerMeasure: number
+  beatsPerMeasure: number,
+  beatUnit: number = 1
 ) {
   const els: React.ReactElement[] = []
 
@@ -207,7 +208,7 @@ function renderMeasure(
   })
 
   // Determine beat size (1 quarter = 1 beat in simple time)
-  const beatSize = 1 // quarter note = 1 beat
+  const beatSize = beatUnit
 
   // Group beamable notes by beat — beam group = all beamable notes within same beat
   const beamGroups: number[][] = []
@@ -1007,7 +1008,8 @@ export default function RhythmPage() {
               {/* PORTRAIT: single scrolling staff */}
               {view === 'notation' && isPortrait && (() => {
                 const NOTE_W_PORTRAIT = 52
-                const totalBeatsAll = exercise.timeSignature.beats * exercise.measures.length
+                const qBeatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+                const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
                 const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
                 const centerX = svgWidth / 2
                 const offsetX = playhead !== null
@@ -1026,7 +1028,7 @@ export default function RhythmPage() {
                           {String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}
                         </text>
                         {exercise.measures.map((measure, mIdx) => {
-                          const mx = 56 + mIdx * exercise.timeSignature.beats * NOTE_W_PORTRAIT
+                          const mx = 56 + mIdx * qBeatsPerMeasure * NOTE_W_PORTRAIT + 18
                           const noteW = NOTE_W_PORTRAIT
                           const tapRes: ('hit'|'miss'|'none')[] = tapResults[mIdx] ?? measure.notes.map(() => 'none' as const)
                           const isLast = mIdx === exercise.measures.length - 1
