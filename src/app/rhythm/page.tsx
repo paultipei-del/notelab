@@ -699,10 +699,7 @@ export default function RhythmPage() {
           }
           // Pad layer
           if (padVolRef.current > 0.01) {
-            const pad = ctx2.createOscillator()
-            const padGainNode = ctx2.createGain()
             const padDest = padGainRef.current ?? ctx2.destination
-            pad.connect(padGainNode); padGainNode.connect(padDest)
           // Rhodes synthesis
           // Rhodes synthesis: sine fundamental + tine overtone + tremolo
           const rhodes1 = ctx2.createOscillator()
