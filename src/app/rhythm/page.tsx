@@ -77,7 +77,7 @@ function RestSymbol({ x, type, dot }: { x: number; type: string; dot?: boolean }
   // Position rests centered on the staff line
   // whole/half rests sit above/below the line; quarter/eighth/sixteenth centered
   const y =
-    type === 'whole'      ? STAFF_Y + 10 :
+    type === 'whole'      ? STAFF_Y :
     type === 'half'       ? STAFF_Y - 0.5 :
     STAFF_Y
   return <g>
