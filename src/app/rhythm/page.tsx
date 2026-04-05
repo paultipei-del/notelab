@@ -699,7 +699,7 @@ export default function RhythmPage() {
             const padGainNode = ctx2.createGain()
             const padDest = padGainRef.current ?? ctx2.destination
             pad.connect(padGainNode); padGainNode.connect(padDest)
-            pad.frequency.value = 261.63
+            pad.frequency.value = 523.25
             pad.type = 'sine'
             padGainNode.gain.setValueAtTime(0, ctx2.currentTime)
             padGainNode.gain.linearRampToValueAtTime(padVolRef.current * 0.5, ctx2.currentTime + 0.05)
@@ -866,7 +866,7 @@ export default function RhythmPage() {
           const padGainNode = ctx.createGain()
           const padDest = padGainRef.current ?? ctx.destination
           pad.connect(padGainNode); padGainNode.connect(padDest)
-          pad.frequency.value = 261.63
+          pad.frequency.value = 523.25
           pad.type = 'sine'
           padGainNode.gain.setValueAtTime(0, ctx.currentTime)
           padGainNode.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05)
