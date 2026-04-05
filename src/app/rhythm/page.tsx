@@ -1036,7 +1036,10 @@ export default function RhythmPage() {
                           const isLast = mIdx === exercise.measures.length - 1
                           return (
                             <g key={mIdx}>
-                              {renderMeasure(measure.notes, mx, noteW, tapRes, exercise.timeSignature.beats)}
+                              {renderMeasure(measure.notes, mx, noteW, tapRes,
+                            exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType),
+                            (() => { const isComp = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3; return isComp ? 3 * (4 / exercise.timeSignature.beatType) : 4 / exercise.timeSignature.beatType })()
+                          )}
                               {!isLast
                                 ? <line x1={mx + exercise.timeSignature.beats * noteW} y1={STAFF_Y - 28} x2={mx + exercise.timeSignature.beats * noteW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                                 : <>
@@ -1071,16 +1074,19 @@ export default function RhythmPage() {
                       </>
                     )}
                     <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
-                    <line x1={56} y1={STAFF_Y} x2={actualSvgW - 8} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+                    <line x1={56} y1={STAFF_Y} x2={56 + rowMeasures.length * measureW + 7} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                     {rowMeasures.map((measure, mIdx) => {
-                      const mx = 56 + mIdx * measureW
+                      const mx = 56 + mIdx * measureW + 18
                       const globalMeasureIdx = rowIdx * MEASURES_PER_ROW + mIdx
                       const tapRes: ('hit'|'miss'|'none')[] = tapResults[globalMeasureIdx] ?? measure.notes.map(() => 'none' as const)
                       return (
                         <g key={mIdx}>
-                          {renderMeasure(measure.notes, mx, noteW, tapRes, exercise.timeSignature.beats)}
+                          {renderMeasure(measure.notes, mx, noteW, tapRes,
+                            exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType),
+                            (() => { const isComp = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3; return isComp ? 3 * (4 / exercise.timeSignature.beatType) : 4 / exercise.timeSignature.beatType })()
+                          )}
                           {!(isLastRow && mIdx === rowMeasures.length - 1) && (
-                            <line x1={mx + measureW} y1={STAFF_Y - 28} x2={mx + measureW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
+                            <line x1={56 + (mIdx+1) * measureW} y1={STAFF_Y - 28} x2={56 + (mIdx+1) * measureW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
                         </g>
                       )
@@ -1094,7 +1100,7 @@ export default function RhythmPage() {
                     {/* Smooth playhead */}
                     {(() => {
                       if (playhead === null) return null
-                      const beatsPerMeasure = exercise.timeSignature.beats
+                      const beatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
                       const rowStartBeat = rowIdx * MEASURES_PER_ROW * beatsPerMeasure
                       const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
                       if (playhead < rowStartBeat - 1 || playhead >= rowEndBeat) return null
