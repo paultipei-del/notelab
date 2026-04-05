@@ -446,13 +446,13 @@ export default function RhythmPage() {
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
   const [metroVol, setMetroVol] = useState(0.7)
   const metroVolRef = useRef(0.7)
-  useEffect(() => { metroVolRef.current = metroVol }, [metroVol])
+  useEffect(() => { metroVolRef.current = metroVol; if (metroGainRef.current) metroGainRef.current.gain.value = metroVol }, [metroVol])
   const [pianoVol, setPianoVol] = useState(0.8)
   const pianoVolRef = useRef(0.8)
-  useEffect(() => { pianoVolRef.current = pianoVol }, [pianoVol])
+  useEffect(() => { pianoVolRef.current = pianoVol; if (pianoGainRef.current) pianoGainRef.current.gain.value = pianoVol }, [pianoVol])
   const [padVol, setPadVol] = useState(0.3)
   const padVolRef = useRef(0.3)
-  useEffect(() => { padVolRef.current = padVol }, [padVol])
+  useEffect(() => { padVolRef.current = padVol; if (padGainRef.current) padGainRef.current.gain.value = padVol }, [padVol])
   const tapNoteRef = useRef<string | null>(null)
   const pianoBufferRef = useRef<AudioBuffer | null>(null)
 
@@ -479,6 +479,9 @@ export default function RhythmPage() {
   const [svgWidth, setSvgWidth] = useState(800)
 
   const ctxRef = useRef<AudioContext | null>(null)
+  const metroGainRef = useRef<GainNode | null>(null)
+  const pianoGainRef = useRef<GainNode | null>(null)
+  const padGainRef = useRef<GainNode | null>(null)
   const rafRef = useRef(0)
   const startTimeRef = useRef(0)
 
@@ -529,6 +532,18 @@ export default function RhythmPage() {
         .then(decoded => { if (decoded) pianoBufferRef.current = decoded })
         .catch(() => {})
     }
+    if (!metroGainRef.current && ctxRef.current) {
+      const ctx = ctxRef.current
+      metroGainRef.current = ctx.createGain()
+      pianoGainRef.current = ctx.createGain()
+      padGainRef.current = ctx.createGain()
+      metroGainRef.current.gain.value = metroVolRef.current
+      pianoGainRef.current.gain.value = pianoVolRef.current
+      padGainRef.current.gain.value = padVolRef.current
+      metroGainRef.current.connect(ctx.destination)
+      pianoGainRef.current.connect(ctx.destination)
+      padGainRef.current.connect(ctx.destination)
+    }
     return ctxRef.current!
   }
 
@@ -536,9 +551,10 @@ export default function RhythmPage() {
     const ctx = getCtx()
     const osc = ctx.createOscillator()
     const gain = ctx.createGain()
-    osc.connect(gain); gain.connect(ctx.destination)
+    const dest = metroGainRef.current ?? ctx.destination
+    osc.connect(gain); gain.connect(dest)
     osc.frequency.value = accent ? 1000 : 700
-    gain.gain.setValueAtTime(accent ? metroVolRef.current * 0.5 : metroVolRef.current * 0.2, time)
+    gain.gain.setValueAtTime(accent ? 0.5 : 0.2, time)
     gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05)
     osc.start(time); osc.stop(time + 0.06)
   }
@@ -814,8 +830,9 @@ export default function RhythmPage() {
         const source = ctx.createBufferSource()
         const gain = ctx.createGain()
         source.buffer = pianoBufferRef.current
-        source.connect(gain); gain.connect(ctx.destination)
-        gain.gain.setValueAtTime(pianoVolRef.current, ctx.currentTime)
+        const pianoDest = pianoGainRef.current ?? ctx.destination
+        source.connect(gain); gain.connect(pianoDest)
+        gain.gain.setValueAtTime(1.0, ctx.currentTime)
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2)
         source.start()
         source.stop(ctx.currentTime + 2)
