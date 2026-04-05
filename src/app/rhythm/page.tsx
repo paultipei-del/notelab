@@ -663,7 +663,7 @@ export default function RhythmPage() {
       const kbElapsed = ctx.currentTime - startTimeRef.current
       if (kbElapsed < -beatDuration * 1.5) return
       const beat = kbElapsed < 0 ? 0 : Math.round(kbElapsed / beatDuration)
-      const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
+      const clampedBeat = Math.max(0, Math.min(beat, totalBeats))
       setTaps(prev => [...prev, clampedBeat])
       // Live feedback
       const expected: number[] = []
@@ -826,7 +826,7 @@ export default function RhythmPage() {
     const elapsed = ctx.currentTime - startTimeRef.current
     if (elapsed < -beatDuration * 1.5) return
     const beat = elapsed < 0 ? 0 : Math.round(elapsed / beatDuration)
-    const clampedBeat = Math.max(0, Math.min(beat, totalBeats - 1))
+    const clampedBeat = Math.max(0, Math.min(beat, totalBeats))
     setTaps(prev => [...prev, clampedBeat])
     if (exercise) {
       const expected: number[] = []
