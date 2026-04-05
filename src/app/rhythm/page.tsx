@@ -1058,11 +1058,14 @@ export default function RhythmPage() {
 
               {/* LANDSCAPE/DESKTOP: row-based notation */}
               {view === 'notation' && !isPortrait && rows.map((rowMeasures, rowIdx) => {
-                const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
-                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
+                const { measureW, noteW, beatsPerMeasure: bpm } = buildLayout(exercise, svgWidth, rowMeasures)
+                const beatUnit = (() => { const isComp = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3; return isComp ? 3 * (4 / exercise.timeSignature.beatType) : 4 / exercise.timeSignature.beatType })()
+                const contentW = 56 + rowMeasures.length * measureW + 7
+                const actualSvgW = Math.max(svgWidth, contentW + 20)
                 const isLastRow = rowIdx === rows.length - 1
+                const lastBarlineX = 56 + rowMeasures.length * measureW
                 return (
-                  <svg key={rowIdx} width={actualSvgW} height={SVG_H} style={{ display: 'block', overflowX: 'visible' }}>
+                  <svg key={rowIdx} width="100%" viewBox={`0 0 ${actualSvgW} ${SVG_H}`} style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? '8px' : 0 }} preserveAspectRatio="xMinYMin meet">
                     {rowIdx === 0 && (
                       <>
                         <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
@@ -1073,49 +1076,40 @@ export default function RhythmPage() {
                         </text>
                       </>
                     )}
+                    {/* Opening barline */}
                     <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
-                    <line x1={56} y1={STAFF_Y} x2={56 + rowMeasures.length * measureW + 7} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+                    {/* Staff line ending at last barline */}
+                    <line x1={56} y1={STAFF_Y} x2={lastBarlineX + 7} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                     {rowMeasures.map((measure, mIdx) => {
                       const mx = 56 + mIdx * measureW + 18
+                      const barlineX = 56 + (mIdx + 1) * measureW
                       const globalMeasureIdx = rowIdx * MEASURES_PER_ROW + mIdx
                       const tapRes: ('hit'|'miss'|'none')[] = tapResults[globalMeasureIdx] ?? measure.notes.map(() => 'none' as const)
+                      const isLastMeasure = isLastRow && mIdx === rowMeasures.length - 1
                       return (
                         <g key={mIdx}>
-                          {renderMeasure(measure.notes, mx, noteW, tapRes,
-                            exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType),
-                            (() => { const isComp = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3; return isComp ? 3 * (4 / exercise.timeSignature.beatType) : 4 / exercise.timeSignature.beatType })()
+                          {renderMeasure(measure.notes, mx, noteW, tapRes, bpm, beatUnit)}
+                          {!isLastMeasure && (
+                            <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
-                          {!(isLastRow && mIdx === rowMeasures.length - 1) && (
-                            <line x1={56 + (mIdx+1) * measureW} y1={STAFF_Y - 28} x2={56 + (mIdx+1) * measureW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
+                          {isLastMeasure && (
+                            <>
+                              <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1.2} />
+                              <line x1={barlineX + 7} y1={STAFF_Y - 28} x2={barlineX + 7} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={6} />
+                            </>
                           )}
                         </g>
                       )
                     })}
-                    {isLastRow && (
-                      <>
-                        <line x1={actualSvgW - 16} y1={STAFF_Y - 28} x2={actualSvgW - 16} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1.2} />
-                        <line x1={actualSvgW - 9} y1={STAFF_Y - 28} x2={actualSvgW - 9} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={7} />
-                      </>
-                    )}
-                    {/* Smooth playhead */}
+                    {/* Playhead */}
                     {(() => {
-                      if (playhead === null) return null
-                      const beatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-                      const rowStartBeat = rowIdx * MEASURES_PER_ROW * beatsPerMeasure
-                      const rowEndBeat = rowStartBeat + rowMeasures.length * beatsPerMeasure
+                      if (playhead === null || (!playing && countdown === null)) return null
+                      const rowStartBeat = rowIdx * MEASURES_PER_ROW * bpm
+                      const rowEndBeat = rowStartBeat + rowMeasures.length * bpm
                       if (playhead < rowStartBeat - 1 || playhead >= rowEndBeat) return null
-                      const { measureW, noteW } = buildLayout(exercise, svgWidth, rowMeasures)
-                const actualSvgW = Math.max(svgWidth, measureW * rowMeasures.length + 96)
-                      if (!playing && countdown === null) return null
                       const beatInRow = playhead - rowStartBeat
-                      const x = 56 + beatInRow * noteW + 14
-                      return (
-                        <line
-                          x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32}
-                          stroke="#BA7517" strokeWidth={1.5} opacity={0.7}
-                          style={{ pointerEvents: 'none' }}
-                        />
-                      )
+                      const x = 56 + 18 + beatInRow * noteW
+                      return <line x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32} stroke="#BA7517" strokeWidth={1.5} opacity={0.7} style={{ pointerEvents: 'none' }} />
                     })()}
                   </svg>
                 )
