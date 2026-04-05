@@ -203,7 +203,7 @@ function renderMeasure(
   const noteInfos: NoteInfo[] = []
   let bp = 0
   notes.forEach((n, i) => {
-    noteInfos.push({ idx: i, beatPos: bp, x: mx + bp * noteW + noteW * 0.4 })
+    noteInfos.push({ idx: i, beatPos: bp, x: mx + bp * noteW })
     bp += n.durationBeats
   })
 
@@ -248,7 +248,7 @@ function renderMeasure(
   // ── Render each note ──────────────────────────────────────────────────────
   bp = 0
   notes.forEach((note, i) => {
-    const x = mx + bp * noteW + noteW * 0.4  // notehead centered in its slot
+    const x = mx + bp * noteW  // notehead position
     const tr = tapResult[i]
     const noteColor = tr === 'hit' ? '#4CAF50' : tr === 'miss' ? '#E53935' : '#1A1A18'
 
@@ -853,9 +853,15 @@ export default function RhythmPage() {
     const MEASURES_PER_ROW = (() => {
     if (!exercise) return 4
     const total = exercise.measures.length
-    // Always prefer 4 measures per row, fall back to 2 or 1
+    const qBpm = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+    const allN = exercise.measures.flatMap(m => m.notes)
+    const smallest = allN.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+    const slotsPerMeasure = qBpm / smallest
+    const minMeasureW = slotsPerMeasure * 32
+    const cardW = svgWidth || 700
     for (const candidate of [4, 2, 1]) {
-      if (total % candidate === 0 || candidate === 1) return candidate
+      if (candidate !== 1 && total % candidate !== 0) continue
+      if (minMeasureW * candidate + 96 <= cardW) return candidate
     }
     return 1
   })()
