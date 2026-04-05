@@ -526,7 +526,7 @@ export default function RhythmPage() {
       const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext
       ctxRef.current = new AudioCtx()
       // Load piano sample
-      fetch('https://tonejs.github.io/audio/salamander/C4.mp3')
+      fetch('https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/C4.mp3')
         .then(r => r.arrayBuffer())
         .then(buf => ctxRef.current?.decodeAudioData(buf))
         .then(decoded => { if (decoded) pianoBufferRef.current = decoded })
@@ -823,7 +823,8 @@ export default function RhythmPage() {
     if (!playing) return
     if (countdown !== null && !tapReadyRef.current) return
     pointerDownTimeRef.current = performance.now()
-    const ctx = ctxRef.current; if (!ctx) return
+    const ctx = getCtx(); if (!ctx) return
+    void ctx.resume()
     if (soundEnabledRef.current) {
       if (pianoBufferRef.current) {
         // Real piano sample
@@ -836,6 +837,19 @@ export default function RhythmPage() {
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2)
         source.start()
         source.stop(ctx.currentTime + 2)
+        // Pad layer with piano sample too
+        if (padVolRef.current > 0.01) {
+          const pad = ctx.createOscillator()
+          const padGainNode = ctx.createGain()
+          const padDest = padGainRef.current ?? ctx.destination
+          pad.connect(padGainNode); padGainNode.connect(padDest)
+          pad.frequency.value = 261.63
+          pad.type = 'sine'
+          padGainNode.gain.setValueAtTime(0, ctx.currentTime)
+          padGainNode.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05)
+          padGainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5)
+          pad.start(); pad.stop(ctx.currentTime + 2.5)
+        }
       } else {
         // Fallback: piano-like synthesis
         const osc1 = ctx.createOscillator()
