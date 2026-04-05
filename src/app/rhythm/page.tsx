@@ -825,6 +825,7 @@ export default function RhythmPage() {
     pointerDownTimeRef.current = performance.now()
     const ctx = getCtx(); if (!ctx) return
     void ctx.resume()
+    console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current+' padGain='+!!padGainRef.current)
     if (soundEnabledRef.current) {
       if (pianoBufferRef.current) {
         // Real piano sample
