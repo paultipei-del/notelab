@@ -526,7 +526,7 @@ export default function RhythmPage() {
       const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext
       ctxRef.current = new AudioCtx()
       // Load piano sample
-      fetch('https://freesound.org/data/previews/794/794463_5287430-lq.mp3')
+      fetch('/samples/piano-g4.wav')
         .then(r => r.arrayBuffer())
         .then(buf => ctxRef.current?.decodeAudioData(buf))
         .then(decoded => { if (decoded) pianoBufferRef.current = decoded })
