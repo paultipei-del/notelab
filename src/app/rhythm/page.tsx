@@ -520,7 +520,8 @@ export default function RhythmPage() {
 
   const getCtx = () => {
     if (!ctxRef.current) {
-      ctxRef.current = new AudioContext()
+      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext
+      ctxRef.current = new AudioCtx()
       // Load piano sample
       fetch('https://tonejs.github.io/audio/salamander/C4.mp3')
         .then(r => r.arrayBuffer())
@@ -528,7 +529,7 @@ export default function RhythmPage() {
         .then(decoded => { if (decoded) pianoBufferRef.current = decoded })
         .catch(() => {})
     }
-    return ctxRef.current
+    return ctxRef.current!
   }
 
   const playClick = (time: number, accent: boolean) => {
@@ -652,6 +653,7 @@ export default function RhythmPage() {
       if (soundEnabledRef.current) {
         const ctx2 = ctxRef.current
         if (ctx2) {
+          if (ctx2.state === 'suspended') ctx2.resume()
           // Piano-like tone: two detuned oscillators + quick decay
           const osc1 = ctx2.createOscillator()
           const osc2 = ctx2.createOscillator()
