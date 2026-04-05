@@ -70,7 +70,7 @@ function RestSymbolP({ x, type, dot }: { x: number; type: string; dot?: boolean 
     type === 'eighth'     ? BRAVURA_REST.eighth :
     type === 'sixteenth'  ? BRAVURA_REST.sixteenth :
     BRAVURA_REST.quarter
-  const y = type === 'whole' ? STAFF_Y_P + 10 : type === 'half' ? STAFF_Y_P - 0.5 : STAFF_Y_P
+  const y = type === 'whole' ? STAFF_Y_P - 8 : type === 'half' ? STAFF_Y_P - 0.5 : STAFF_Y_P
   return <g>
     <text x={x} y={y} fontSize={BEAM_FONT_SIZE} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{glyph}</text>
     {dot && <circle cx={x + 14} cy={y - 4} r={2.5} fill="#1A1A18" />}

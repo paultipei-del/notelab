@@ -229,8 +229,9 @@ function fillMeasure(
         for (const nv of NOTE_ORDER) {
           const b = Math.round(RBEATS[nv] * 16) / 16
           if (b <= maxFill + 0.001 && b > bestBeats) { bestBeats = b; bestType = nv; bestDot = false }
-          // Dotted rests only on beat positions
-          if (opts.allowDots && onBeat) {
+          // Dotted rests only on beat positions, and only practical values (no dotted 16th)
+          const DOTTED_REST_OK: NoteValue[] = ['whole', 'half', 'quarter', 'eighth']
+          if (opts.allowDots && onBeat && DOTTED_REST_OK.includes(nv)) {
             const bd = Math.round(b * 1.5 * 16) / 16
             if (bd <= maxFill + 0.001 && bd > bestBeats) { bestBeats = bd; bestType = nv; bestDot = true }
           }
