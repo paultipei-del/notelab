@@ -539,7 +539,7 @@ export default function RhythmPage() {
       padGainRef.current = ctx.createGain()
       metroGainRef.current.gain.value = metroVolRef.current
       pianoGainRef.current.gain.value = pianoVolRef.current
-      padGainRef.current.gain.value = padVolRef.current
+      padGainRef.current.gain.value = 1.0  // pad volume controlled per-node
       metroGainRef.current.connect(ctx.destination)
       pianoGainRef.current.connect(ctx.destination)
       padGainRef.current.connect(ctx.destination)
@@ -574,10 +574,10 @@ export default function RhythmPage() {
     }
   }
 
-  const start = useCallback(() => {
+  const start = useCallback(async () => {
     if (!exercise) return
     const ctx = getCtx()
-    if (ctx.state === 'suspended') ctx.resume()
+    if (ctx.state === 'suspended') await ctx.resume()
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
     setTapReady(false)
@@ -702,7 +702,7 @@ export default function RhythmPage() {
             pad.frequency.value = 261.63
             pad.type = 'sine'
             padGainNode.gain.setValueAtTime(0, ctx2.currentTime)
-            padGainNode.gain.linearRampToValueAtTime(0.15, ctx2.currentTime + 0.05)
+            padGainNode.gain.linearRampToValueAtTime(padVolRef.current * 0.5, ctx2.currentTime + 0.05)
             padGainNode.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 2.5)
             pad.start(); pad.stop(ctx2.currentTime + 2.5)
           }
