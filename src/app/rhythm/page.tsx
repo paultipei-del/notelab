@@ -526,7 +526,7 @@ export default function RhythmPage() {
       const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext
       ctxRef.current = new AudioCtx()
       // Load piano sample
-      fetch('https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3/C4.mp3')
+      fetch('https://freesound.org/data/previews/794/794463_5287430-lq.mp3')
         .then(r => r.arrayBuffer())
         .then(buf => ctxRef.current?.decodeAudioData(buf))
         .then(decoded => { if (decoded) pianoBufferRef.current = decoded })
@@ -674,6 +674,7 @@ export default function RhythmPage() {
             const source = ctx2.createBufferSource()
             const gain = ctx2.createGain()
             source.buffer = pianoBufferRef.current
+            source.playbackRate.value = 261.63 / 392  // G4 sample → C4
             const dest = pianoGainRef.current ?? ctx2.destination
             source.connect(gain); gain.connect(dest)
             gain.gain.setValueAtTime(1.0, ctx2.currentTime)
@@ -699,12 +700,41 @@ export default function RhythmPage() {
             const padGainNode = ctx2.createGain()
             const padDest = padGainRef.current ?? ctx2.destination
             pad.connect(padGainNode); padGainNode.connect(padDest)
-            pad.frequency.value = 523.25
-            pad.type = 'sine'
-            padGainNode.gain.setValueAtTime(0, ctx2.currentTime)
-            padGainNode.gain.linearRampToValueAtTime(padVolRef.current * 0.5, ctx2.currentTime + 0.05)
-            padGainNode.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 2.5)
-            pad.start(); pad.stop(ctx2.currentTime + 2.5)
+          // Rhodes synthesis
+          // Rhodes synthesis: sine fundamental + tine overtone + tremolo
+          const rhodes1 = ctx2.createOscillator()
+          const rhodes2 = ctx2.createOscillator()
+          const rhodesGain1 = ctx2.createGain()
+          const rhodesGain2 = ctx2.createGain()
+          const tremoloOsc = ctx2.createOscillator()
+          const tremoloGain = ctx2.createGain()
+          const rhodesOut = ctx2.createGain()
+          // Fundamental C5
+          rhodes1.frequency.value = 523.25
+          rhodes1.type = 'sine'
+          // Tine overtone slightly detuned
+          rhodes2.frequency.value = 523.25 * 2.756  // characteristic Rhodes tine
+          rhodes2.type = 'sine'
+          // Tremolo LFO ~5Hz
+          tremoloOsc.frequency.value = 5
+          tremoloOsc.type = 'sine'
+          tremoloGain.gain.value = 0.08
+          tremoloOsc.connect(tremoloGain)
+          tremoloGain.connect(rhodesOut.gain)
+          // Mix
+          rhodesGain1.gain.setValueAtTime(0, ctx2.currentTime)
+          rhodesGain1.gain.linearRampToValueAtTime(padVolRef.current * 0.4, ctx2.currentTime + 0.01)
+          rhodesGain1.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 3.0)
+          rhodesGain2.gain.setValueAtTime(0, ctx2.currentTime)
+          rhodesGain2.gain.linearRampToValueAtTime(padVolRef.current * 0.08, ctx2.currentTime + 0.01)
+          rhodesGain2.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 1.5)
+          rhodes1.connect(rhodesGain1); rhodesGain1.connect(rhodesOut)
+          rhodes2.connect(rhodesGain2); rhodesGain2.connect(rhodesOut)
+          rhodesOut.connect(padDest)
+          tremoloOsc.start(); rhodes1.start(); rhodes2.start()
+          tremoloOsc.stop(ctx2.currentTime + 3.0)
+          rhodes1.stop(ctx2.currentTime + 3.0)
+          rhodes2.stop(ctx2.currentTime + 1.5)
           }
           tapNoteRef.current = 'playing'
         }
@@ -854,6 +884,7 @@ export default function RhythmPage() {
         const source = ctx.createBufferSource()
         const gain = ctx.createGain()
         source.buffer = pianoBufferRef.current
+        source.playbackRate.value = 261.63 / 392  // G4 sample → C4
         const pianoDest = pianoGainRef.current ?? ctx.destination
         source.connect(gain); gain.connect(pianoDest)
         gain.gain.setValueAtTime(1.0, ctx.currentTime)
