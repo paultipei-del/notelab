@@ -391,7 +391,10 @@ function mergeMultiBeatRests(
       // Find largest standard rest for totalRest
       let bestType: NoteValue = 'sixteenth'
       let bestDot = false
-      for (const nv of NOTE_ORDER) {
+      // Full measure rest → whole rest regardless of time signature
+      if (Math.abs(totalRest - beatsPerMeasure) < 0.001) {
+        bestType = 'whole'; bestDot = false
+      } else for (const nv of NOTE_ORDER) {
         const b = BEATS[nv]
         if (Math.abs(b - totalRest) < 0.001) { bestType = nv; bestDot = false; break }
       }
