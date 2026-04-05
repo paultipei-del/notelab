@@ -450,9 +450,7 @@ export default function RhythmPage() {
   const [pianoVol, setPianoVol] = useState(0.8)
   const pianoVolRef = useRef(0.8)
   useEffect(() => { pianoVolRef.current = pianoVol; if (pianoGainRef.current) pianoGainRef.current.gain.value = pianoVol }, [pianoVol])
-  const [padVol, setPadVol] = useState(0.3)
-  const padVolRef = useRef(0.3)
-  useEffect(() => { padVolRef.current = padVol; if (padGainRef.current) padGainRef.current.gain.value = padVol }, [padVol])
+
   const tapNoteRef = useRef<string | null>(null)
   const pianoBufferRef = useRef<AudioBuffer | null>(null)
 
@@ -481,7 +479,6 @@ export default function RhythmPage() {
   const ctxRef = useRef<AudioContext | null>(null)
   const metroGainRef = useRef<GainNode | null>(null)
   const pianoGainRef = useRef<GainNode | null>(null)
-  const padGainRef = useRef<GainNode | null>(null)
   const rafRef = useRef(0)
   const startTimeRef = useRef(0)
 
@@ -536,13 +533,10 @@ export default function RhythmPage() {
       const ctx = ctxRef.current
       metroGainRef.current = ctx.createGain()
       pianoGainRef.current = ctx.createGain()
-      padGainRef.current = ctx.createGain()
       metroGainRef.current.gain.value = metroVolRef.current
       pianoGainRef.current.gain.value = pianoVolRef.current
-      padGainRef.current.gain.value = 1.0  // pad volume controlled per-node
       metroGainRef.current.connect(ctx.destination)
       pianoGainRef.current.connect(ctx.destination)
-      padGainRef.current.connect(ctx.destination)
     }
     return ctxRef.current!
   }
@@ -642,7 +636,6 @@ export default function RhythmPage() {
       ctxRef.current = null
       metroGainRef.current = null
       pianoGainRef.current = null
-      padGainRef.current = null
     }
     setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
     tapNoteRef.current = null  // sound auto-decays
@@ -697,46 +690,6 @@ export default function RhythmPage() {
             osc1.start(); osc2.start()
             osc1.stop(ctx2.currentTime + 1.5); osc2.stop(ctx2.currentTime + 1.5)
           }
-          // Pad layer
-          if (padVolRef.current > 0.01) {
-            const padDest = padGainRef.current ?? ctx2.destination
-          // Rhodes synthesis
-          // Rhodes synthesis: sine fundamental + tine overtone + tremolo
-          const rhodes1 = ctx2.createOscillator()
-          const rhodes2 = ctx2.createOscillator()
-          const rhodesGain1 = ctx2.createGain()
-          const rhodesGain2 = ctx2.createGain()
-          const tremoloOsc = ctx2.createOscillator()
-          const tremoloGain = ctx2.createGain()
-          const rhodesOut = ctx2.createGain()
-          // Fundamental C5
-          rhodes1.frequency.value = 523.25
-          rhodes1.type = 'sine'
-          // Tine overtone slightly detuned
-          rhodes2.frequency.value = 523.25 * 2.756  // characteristic Rhodes tine
-          rhodes2.type = 'sine'
-          // Tremolo LFO ~5Hz
-          tremoloOsc.frequency.value = 5
-          tremoloOsc.type = 'sine'
-          tremoloGain.gain.value = 0.08
-          tremoloOsc.connect(tremoloGain)
-          tremoloGain.connect(rhodesOut.gain)
-          // Mix
-          rhodesGain1.gain.setValueAtTime(0, ctx2.currentTime)
-          rhodesGain1.gain.linearRampToValueAtTime(padVolRef.current * 0.4, ctx2.currentTime + 0.01)
-          rhodesGain1.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 3.0)
-          rhodesGain2.gain.setValueAtTime(0, ctx2.currentTime)
-          rhodesGain2.gain.linearRampToValueAtTime(padVolRef.current * 0.08, ctx2.currentTime + 0.01)
-          rhodesGain2.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 1.5)
-          rhodes1.connect(rhodesGain1); rhodesGain1.connect(rhodesOut)
-          rhodes2.connect(rhodesGain2); rhodesGain2.connect(rhodesOut)
-          rhodesOut.connect(padDest)
-          tremoloOsc.start(); rhodes1.start(); rhodes2.start()
-          tremoloOsc.stop(ctx2.currentTime + 3.0)
-          rhodes1.stop(ctx2.currentTime + 3.0)
-          rhodes2.stop(ctx2.currentTime + 1.5)
-          }
-          tapNoteRef.current = 'playing'
         }
       }
       const kbElapsed = ctx.currentTime - startTimeRef.current
@@ -877,7 +830,7 @@ export default function RhythmPage() {
     pointerDownTimeRef.current = performance.now()
     const ctx = getCtx(); if (!ctx) return
     void ctx.resume()
-    console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current+' padGain='+!!padGainRef.current)
+    console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current)
     if (soundEnabledRef.current) {
       if (pianoBufferRef.current) {
         // Real piano sample
@@ -891,19 +844,6 @@ export default function RhythmPage() {
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2)
         source.start()
         source.stop(ctx.currentTime + 2)
-        // Pad layer with piano sample too
-        if (padVolRef.current > 0.01) {
-          const pad = ctx.createOscillator()
-          const padGainNode = ctx.createGain()
-          const padDest = padGainRef.current ?? ctx.destination
-          pad.connect(padGainNode); padGainNode.connect(padDest)
-          pad.frequency.value = 523.25
-          pad.type = 'sine'
-          padGainNode.gain.setValueAtTime(0, ctx.currentTime)
-          padGainNode.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05)
-          padGainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5)
-          pad.start(); pad.stop(ctx.currentTime + 2.5)
-        }
       } else {
         // Fallback: piano-like synthesis
         const osc1 = ctx.createOscillator()
@@ -1028,12 +968,7 @@ export default function RhythmPage() {
                       onChange={e => setPianoVol(Number(e.target.value) / 100)}
                       style={{ width: '60px', accentColor: '#1A1A18' }} />
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Pad</span>
-                    <input type="range" min={0} max={100} value={Math.round(padVol * 100)}
-                      onChange={e => setPadVol(Number(e.target.value) / 100)}
-                      style={{ width: '60px', accentColor: '#1A1A18' }} />
-                  </div>
+
                 </div>
               )}
             </div>
