@@ -260,7 +260,7 @@ function fillMeasure(
     }
   }
 
-  return applyTies(mergeMultiBeatRests(mergeConsecutiveRests(notes, beatTypeFactor, isCompound), beatTypeFactor, beatsPerMeasure), opts, rng)
+  return applyTies(mergeMultiBeatRests(mergeConsecutiveRests(notes, beatTypeFactor, isCompound, beatsPerMeasure), beatTypeFactor, beatsPerMeasure), opts, rng)
 }
 
 // Validate that no note crosses a beat boundary
@@ -269,16 +269,19 @@ function fillMeasure(
 function mergeConsecutiveRests(
   notes: GeneratedNote[],
   beatUnit: number,
-  isCompound: boolean = false
+  isCompound: boolean = false,
+  beatsPerMeasure: number = 4
 ): GeneratedNote[] {
   function r16(n: number) { return Math.round(n * 16) / 16 }
   const BEATS: Record<NoteValue, number> = {whole:4,half:2,quarter:1,eighth:0.5,sixteenth:0.25}
   const NOTE_ORDER: NoteValue[] = ['whole','half','quarter','eighth','sixteenth']
 
-  // Practical dotted rests: dotted half (3), dotted quarter (1.5), dotted eighth (0.75)
-  // Avoid dotted sixteenth (0.375) — not used in standard notation
-  const DOTTED_REST_TYPES: NoteValue[] = ['half', 'quarter', 'eighth']
-  function findRestType(beats: number): [NoteValue, boolean] {
+  // Practical dotted rests: dotted quarter (1.5), dotted eighth (0.75) only
+  // dotted half (3.0) should be whole rest instead in most cases
+  const DOTTED_REST_TYPES: NoteValue[] = ['quarter', 'eighth']
+  function findRestType(beats: number, measureBeats?: number): [NoteValue, boolean] {
+    // Full measure rest → whole rest
+    if (measureBeats && Math.abs(beats - measureBeats) < 0.001) return ['whole', false]
     for (const nv of NOTE_ORDER) {
       if (Math.abs(BEATS[nv] - beats) < 0.001) return [nv, false]
     }
@@ -316,7 +319,7 @@ function mergeConsecutiveRests(
     if (j > i) {
       // Only use dotted rest if starting on a beat boundary
       const onBeat = Math.abs(pos % beatUnit) < 0.001
-      const [type, dot] = findRestType(totalRest)
+      const [type, dot] = findRestType(totalRest, beatUnit * Math.round(beatsPerMeasure / beatUnit))
       const useDot = dot && onBeat
       // If dotted but off-beat, find plain equivalent or split further
       const finalType = useDot ? type : (dot ? (() => {
