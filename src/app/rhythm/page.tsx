@@ -669,21 +669,43 @@ export default function RhythmPage() {
       if (soundEnabledRef.current) {
         const ctx2 = ctxRef.current
         if (ctx2) {
-          if (ctx2.state === 'suspended') ctx2.resume()
-          // Piano-like tone: two detuned oscillators + quick decay
-          const osc1 = ctx2.createOscillator()
-          const osc2 = ctx2.createOscillator()
-          const gain = ctx2.createGain()
-          osc1.connect(gain); osc2.connect(gain); gain.connect(ctx2.destination)
-          osc1.frequency.value = 261.63  // C4
-          osc2.frequency.value = 261.63 * 2  // C5 octave
-          osc1.type = 'triangle'
-          osc2.type = 'sine'
-          gain.gain.setValueAtTime(0.3, ctx2.currentTime)
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 1.5)
-          osc1.start(); osc2.start()
-          osc1.stop(ctx2.currentTime + 1.5)
-          osc2.stop(ctx2.currentTime + 1.5)
+          if (ctx2.state === 'suspended') void ctx2.resume()
+          if (pianoBufferRef.current) {
+            const source = ctx2.createBufferSource()
+            const gain = ctx2.createGain()
+            source.buffer = pianoBufferRef.current
+            const dest = pianoGainRef.current ?? ctx2.destination
+            source.connect(gain); gain.connect(dest)
+            gain.gain.setValueAtTime(1.0, ctx2.currentTime)
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 2)
+            source.start(); source.stop(ctx2.currentTime + 2)
+          } else {
+            const osc1 = ctx2.createOscillator()
+            const osc2 = ctx2.createOscillator()
+            const gain = ctx2.createGain()
+            const dest = pianoGainRef.current ?? ctx2.destination
+            osc1.connect(gain); osc2.connect(gain); gain.connect(dest)
+            osc1.frequency.value = 261.63
+            osc2.frequency.value = 523.25
+            osc1.type = 'triangle'; osc2.type = 'sine'
+            gain.gain.setValueAtTime(0.4, ctx2.currentTime)
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 1.5)
+            osc1.start(); osc2.start()
+            osc1.stop(ctx2.currentTime + 1.5); osc2.stop(ctx2.currentTime + 1.5)
+          }
+          // Pad layer
+          if (padVolRef.current > 0.01) {
+            const pad = ctx2.createOscillator()
+            const padGainNode = ctx2.createGain()
+            const padDest = padGainRef.current ?? ctx2.destination
+            pad.connect(padGainNode); padGainNode.connect(padDest)
+            pad.frequency.value = 261.63
+            pad.type = 'sine'
+            padGainNode.gain.setValueAtTime(0, ctx2.currentTime)
+            padGainNode.gain.linearRampToValueAtTime(0.15, ctx2.currentTime + 0.05)
+            padGainNode.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 2.5)
+            pad.start(); pad.stop(ctx2.currentTime + 2.5)
+          }
           tapNoteRef.current = 'playing'
         }
       }
