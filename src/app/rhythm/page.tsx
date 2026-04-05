@@ -1221,7 +1221,7 @@ export default function RhythmPage() {
               onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
               onContextMenu={e => e.preventDefault()}
               className="rhythm-tap-btn"
-              disabled={!playing}
+              disabled={false}
               style={{
                 width: '100%', height: '72px', borderRadius: '16px',
                 border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
