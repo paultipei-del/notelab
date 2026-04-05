@@ -387,6 +387,7 @@ function mergeMultiBeatRests(
       j++
     }
 
+    console.log('mergeMulti: pos='+pos+' j='+j+' i='+i+' totalRest='+totalRest+' beatsPerMeasure='+beatsPerMeasure)
     if (j > i + 1) {
       // Find largest standard rest for totalRest
       let bestType: NoteValue = 'sixteenth'
