@@ -640,6 +640,9 @@ export default function RhythmPage() {
     if (ctxRef.current) {
       ctxRef.current.close()
       ctxRef.current = null
+      metroGainRef.current = null
+      pianoGainRef.current = null
+      padGainRef.current = null
     }
     setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
     tapNoteRef.current = null  // sound auto-decays
