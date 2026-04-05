@@ -399,15 +399,17 @@ function mergeMultiBeatRests(
       // Full measure rest → whole rest regardless of time signature
       if (Math.abs(totalRest - beatsPerMeasure) < 0.001) {
         bestType = 'whole'; bestDot = false
-      } else for (const nv of NOTE_ORDER) {
-        const b = BEATS[nv]
-        if (Math.abs(b - totalRest) < 0.001) { bestType = nv; bestDot = false; break }
-      }
-      // Only use practical dotted rests
-      const DOTTED_REST2: NoteValue[] = ['half', 'quarter', 'eighth']
-      for (const nv of DOTTED_REST2) {
-        const b = BEATS[nv]
-        if (Math.abs(b * 1.5 - totalRest) < 0.001) { bestType = nv; bestDot = true; break }
+      } else {
+        for (const nv of NOTE_ORDER) {
+          const b = BEATS[nv]
+          if (Math.abs(b - totalRest) < 0.001) { bestType = nv; bestDot = false; break }
+        }
+        // Only use practical dotted rests
+        const DOTTED_REST2: NoteValue[] = ['half', 'quarter', 'eighth']
+        for (const nv of DOTTED_REST2) {
+          const b = BEATS[nv]
+          if (Math.abs(b * 1.5 - totalRest) < 0.001) { bestType = nv; bestDot = true; break }
+        }
       }
       result.push({ ...note, type: bestType, dot: bestDot, durationBeats: totalRest })
       pos = r16(pos + totalRest)
