@@ -444,6 +444,15 @@ export default function RhythmPage() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
+  const [metroVol, setMetroVol] = useState(0.7)
+  const metroVolRef = useRef(0.7)
+  useEffect(() => { metroVolRef.current = metroVol }, [metroVol])
+  const [pianoVol, setPianoVol] = useState(0.8)
+  const pianoVolRef = useRef(0.8)
+  useEffect(() => { pianoVolRef.current = pianoVol }, [pianoVol])
+  const [padVol, setPadVol] = useState(0.3)
+  const padVolRef = useRef(0.3)
+  useEffect(() => { padVolRef.current = padVol }, [padVol])
   const tapNoteRef = useRef<string | null>(null)
   const pianoBufferRef = useRef<AudioBuffer | null>(null)
 
@@ -528,7 +537,7 @@ export default function RhythmPage() {
     const gain = ctx.createGain()
     osc.connect(gain); gain.connect(ctx.destination)
     osc.frequency.value = accent ? 1000 : 700
-    gain.gain.setValueAtTime(accent ? 0.35 : 0.15, time)
+    gain.gain.setValueAtTime(accent ? metroVolRef.current * 0.5 : metroVolRef.current * 0.2, time)
     gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05)
     osc.start(time); osc.stop(time + 0.06)
   }
@@ -804,7 +813,7 @@ export default function RhythmPage() {
         const gain = ctx.createGain()
         source.buffer = pianoBufferRef.current
         source.connect(gain); gain.connect(ctx.destination)
-        gain.gain.setValueAtTime(0.8, ctx.currentTime)
+        gain.gain.setValueAtTime(pianoVolRef.current, ctx.currentTime)
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2)
         source.start()
         source.stop(ctx.currentTime + 2)
@@ -913,10 +922,34 @@ export default function RhythmPage() {
             </div>
           )}
           {exercise && (
-            <button onClick={() => setSoundEnabled((s: boolean) => !s)}
-              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-              {soundEnabled ? '♪ On' : '♪ Off'}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' as const }}>
+              <button onClick={() => setSoundEnabled((s: boolean) => !s)}
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                {soundEnabled ? '♪ On' : '♪ Off'}
+              </button>
+              {soundEnabled && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '4px 12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Metro</span>
+                    <input type="range" min={0} max={100} value={Math.round(metroVol * 100)}
+                      onChange={e => setMetroVol(Number(e.target.value) / 100)}
+                      style={{ width: '60px', accentColor: '#1A1A18' }} />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Piano</span>
+                    <input type="range" min={0} max={100} value={Math.round(pianoVol * 100)}
+                      onChange={e => setPianoVol(Number(e.target.value) / 100)}
+                      style={{ width: '60px', accentColor: '#1A1A18' }} />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Pad</span>
+                    <input type="range" min={0} max={100} value={Math.round(padVol * 100)}
+                      onChange={e => setPadVol(Number(e.target.value) / 100)}
+                      style={{ width: '60px', accentColor: '#1A1A18' }} />
+                  </div>
+                </div>
+              )}
+            </div>
           )}
           {exercise && (
             <button onClick={() => { setExercise(null); setCurrentMeta(null); stop() }}
