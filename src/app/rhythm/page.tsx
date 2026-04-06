@@ -914,6 +914,169 @@ export default function RhythmPage() {
   const nextEx = currentExIdx >= 0 && currentExIdx < allExercises.length - 1 ? allExercises[currentExIdx + 1] : null
   const durationPct = score && score.durationTotal > 0 ? Math.round(score.durationHits / score.durationTotal * 100) : 0
 
+
+  // ── PORTRAIT / MOBILE LAYOUT ─────────────────────────────────────────────
+  if (isPortrait) {
+    const tapBtnStyle: React.CSSProperties = {
+      width: '100%', height: '96px', borderRadius: '20px',
+      border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
+      background: liveFeedback === 'hit' ? '#4CAF50' : liveFeedback === 'miss' ? '#E53935' : (playing && tapReady) ? '#1A1A18' : '#F5F2EC',
+      color: liveFeedback ? 'white' : (playing && tapReady) ? 'white' : '#D3D1C7',
+      fontFamily: F, fontSize: '18px', fontWeight: 300,
+      cursor: 'pointer', transition: 'background 0.1s, border 0.1s',
+      userSelect: 'none', WebkitUserSelect: 'none',
+      touchAction: 'none', WebkitTouchCallout: 'none',
+      letterSpacing: '0.08em', flexShrink: 0,
+    }
+
+    return (
+      <div style={{ height: '100dvh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '12px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+
+        {/* Top bar: back + title + nav */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {exercise && (
+            <button onClick={() => { setExercise(null); setCurrentMeta(null); stop() }}
+              style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
+              ← Library
+            </button>
+          )}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {exercise && currentMeta ? (
+              <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
+                {currentMeta.title} · {exercise.timeSignature.beats}/{exercise.timeSignature.beatType} · {bpm} BPM
+              </p>
+            ) : (
+              <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#1A1A18', margin: 0 }}>Rhythm Trainer</p>
+            )}
+          </div>
+          {exercise && currentMeta && (
+            <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+              <button onClick={() => prevEx && loadExercise(prevEx)} disabled={!prevEx}
+                style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (prevEx ? '#1A1A18' : '#D3D1C7'), background: prevEx ? '#1A1A18' : '#F5F2EC', color: prevEx ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: prevEx ? 'pointer' : 'default' }}>←</button>
+              <button onClick={() => nextEx && loadExercise(nextEx)} disabled={!nextEx}
+                style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#D3D1C7'), background: nextEx ? '#1A1A18' : '#F5F2EC', color: nextEx ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: nextEx ? 'pointer' : 'default' }}>→</button>
+            </div>
+          )}
+        </div>
+
+        {/* Notation area */}
+        {exercise ? (
+          <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', position: 'relative' as const, flexShrink: 0 }}>
+            {/* Fixed playhead */}
+            {(playing || countdown !== null) && (
+              <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-1px)' }} />
+            )}
+            {view === 'notation' && (() => {
+              const qBeatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+              const allNotesFlat = exercise.measures.flatMap(m => m.notes)
+              const smallestDur = allNotesFlat.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
+              const NOTE_W_PORTRAIT = Math.max(40, 32 / smallestDur)
+              const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
+              const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
+              const centerX = svgWidth / 2
+              // Pre-roll: start 1 beat before beat 0
+              const preRoll = NOTE_W_PORTRAIT * qBeatsPerMeasure * 0.5
+              const offsetX = playhead !== null
+                ? centerX - (56 + 18 + Math.max(0, playhead) * NOTE_W_PORTRAIT) + preRoll
+                : centerX - 56 - 18 + preRoll
+              return (
+                <div style={{ overflow: 'hidden' }}>
+                  <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
+                    <g transform={`translate(${offsetX}, 0)`}>
+                      <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
+                      <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
+                      {exercise.measures.map((measure, mIdx) => {
+                        const mx = 56 + mIdx * qBeatsPerMeasure * NOTE_W_PORTRAIT + 18
+                        const barlineX = 56 + (mIdx + 1) * qBeatsPerMeasure * NOTE_W_PORTRAIT
+                        const tapRes: ('hit'|'miss'|'none')[] = tapResults[mIdx] ?? measure.notes.map(() => 'none' as const)
+                        const isLast = mIdx === exercise.measures.length - 1
+                        const beatUnit = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3
+                          ? 3 * (4 / exercise.timeSignature.beatType)
+                          : 4 / exercise.timeSignature.beatType
+                        return (
+                          <g key={mIdx}>
+                            {renderMeasure(measure.notes, mx, NOTE_W_PORTRAIT, tapRes, qBeatsPerMeasure, beatUnit)}
+                            {!isLast && <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />}
+                            {isLast && <>
+                              <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1.2} />
+                              <line x1={barlineX + 7} y1={STAFF_Y - 28} x2={barlineX + 7} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={6} />
+                            </>}
+                            {mIdx === 0 && (
+                              <>
+                                <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
+                                  {String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}
+                                </text>
+                                <text x={34} y={STAFF_Y + 8} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
+                                  {String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}
+                                </text>
+                              </>
+                            )}
+                          </g>
+                        )
+                      })}
+                    </g>
+                  </svg>
+                </div>
+              )
+            })()}
+          </div>
+        ) : (
+          <div ref={containerRef} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} />
+          </div>
+        )}
+
+        {/* Countdown */}
+        <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {countdown !== null && (
+            <span style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
+          )}
+          {score && !playing && !countdown && (
+            <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: pct >= 80 ? '#4CAF50' : '#1A1A18', margin: 0 }}>
+              {score.hits}/{score.total} · {pct}% timing · {durationPct}% duration
+            </p>
+          )}
+        </div>
+
+        {/* TAP button */}
+        {exercise && (
+          <button ref={tapBtnRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
+            onContextMenu={e => e.preventDefault()} style={tapBtnStyle as React.CSSProperties}>
+            {countdown !== null && !tapReady ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? 'Try Again' : 'Start'}
+          </button>
+        )}
+
+        {/* Bottom controls */}
+        {exercise && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
+              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>−</button>
+            <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', minWidth: '54px', textAlign: 'center' as const }}>{bpm} BPM</span>
+            <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
+              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
+            <div style={{ flex: 1 }} />
+            <button onClick={() => setSoundEnabled(s => !s)}
+              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+              {soundEnabled ? '♪ On' : '♪ Off'}
+            </button>
+            {!playing ? (
+              <button onClick={playing ? stop : start}
+                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                {score ? 'Try Again' : 'Start'}
+              </button>
+            ) : (
+              <button onClick={stop}
+                style={{ background: 'none', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                Stop
+              </button>
+            )}
+          </div>
+        )}
+
+      </div>
+    )
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '32px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
