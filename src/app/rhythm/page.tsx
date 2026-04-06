@@ -975,10 +975,10 @@ export default function RhythmPage() {
               const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
               const centerX = svgWidth / 2
               // Pre-roll: start 1 beat before beat 0
-              const preRoll = NOTE_W_PORTRAIT * qBeatsPerMeasure * 0.5
+              const preRoll = 0  // offset handled by mx+18 positioning
               const offsetX = playhead !== null
-                ? centerX - (56 + 18 + Math.max(0, playhead) * NOTE_W_PORTRAIT) + preRoll
-                : centerX - 56 - 18 + preRoll
+                ? centerX - (56 + 18 + playhead * NOTE_W_PORTRAIT)
+                : centerX - (56 + 18)
               return (
                 <div style={{ overflow: 'hidden' }}>
                   <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
