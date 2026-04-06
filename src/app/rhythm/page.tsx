@@ -715,40 +715,29 @@ export default function RhythmPage() {
       }))
       const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
-      // Real-time note coloring
+            // Real-time note coloring
       if (exercise) {
-        setTapResults(prev => {
-          let pos = 0
-          let found = false
-          const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-          exercise.measures.forEach((m, mi) => {
-            m.notes.forEach((n, ni) => {
-              if (!n.rest && !n.tieStop) {
-                const noteBeat = Math.round(pos)
-                if (noteBeat === clampedBeat && !found) {
-                  found = true
-                  newResults[mi][ni] = 'hit'
-                }
-              }
-              pos += n.durationBeats
-            })
+        const TOL = 0.4
+        let pos = 0
+        let nearest = { mi: -1, ni: -1, dist: Infinity }
+        exercise.measures.forEach((m, mi) => {
+          m.notes.forEach((n, ni) => {
+            if (!n.rest && !n.tieStop) {
+              const d = Math.abs(pos - clampedBeat)
+              if (d < nearest.dist) nearest = { mi, ni, dist: d }
+            }
+            pos += n.durationBeats
           })
-          if (!found) {
-            pos = 0
-            let nearest = { mi: -1, ni: -1, dist: Infinity }
-            exercise.measures.forEach((m, mi) => {
-              m.notes.forEach((n, ni) => {
-                if (!n.rest && !n.tieStop) {
-                  const d = Math.abs(Math.round(pos) - clampedBeat)
-                  if (d < nearest.dist) nearest = { mi, ni, dist: d }
-                }
-                pos += n.durationBeats
-              })
-            })
-            if (nearest.mi >= 0) newResults[nearest.mi][nearest.ni] = 'miss'
-          }
-          return newResults
         })
+        console.log('NEAREST: mi='+nearest.mi+' ni='+nearest.ni+' dist='+nearest.dist.toFixed(3)+' beat='+clampedBeat.toFixed(3))
+        if (nearest.mi >= 0) {
+          const result = nearest.dist <= TOL ? 'hit' : 'miss'
+          setTapResults(prev => {
+            const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+            newResults[nearest.mi][nearest.ni] = result
+            return newResults
+          })
+        }
       }
     }
 
