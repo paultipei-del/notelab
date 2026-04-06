@@ -740,8 +740,6 @@ export default function RhythmPage() {
         pos += n.durationBeats
       }))
       const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
-      if (isHit) setLiveFeedback('hit')
-      else if (expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
             // Real-time note coloring
       if (exercise) {
         const TOL = 0.4
@@ -812,12 +810,21 @@ export default function RhythmPage() {
       if (!n.rest && !n.tieStop) expected.push(pos)
       pos += n.durationBeats
     }))
+    // Build rest ranges for filtering taps
+    const restRangesForScoring: { start: number; end: number }[] = []
+    let rPosS = 0
+    exercise.measures.forEach(m => m.notes.forEach(n => {
+      if (n.rest) restRangesForScoring.push({ start: rPosS, end: rPosS + n.durationBeats })
+      rPosS += n.durationBeats
+    }))
+    // Only use taps that are NOT on a rest for note matching
+    const noteTaps = taps.filter(t => !restRangesForScoring.some(r => t >= r.start - 0.1 && t < r.end - 0.1))
     // One-to-one matching with tolerance
     const SCORE_TOL = 0.4
     const usedTaps = new Set<number>()
     const hits = expected.filter(e => {
       let bestIdx = -1; let bestDist = SCORE_TOL
-      taps.forEach((t, i) => {
+      noteTaps.forEach((t, i) => {
         if (!usedTaps.has(i) && Math.abs(t - e) <= bestDist) { bestDist = Math.abs(t - e); bestIdx = i }
       })
       if (bestIdx >= 0) { usedTaps.add(bestIdx); return true }
@@ -985,8 +992,9 @@ export default function RhythmPage() {
         if (diagFound !== 'unknown') break
       }
       setDiagLog(prev => [...prev, `TOUCH beat=${clampedBeat.toFixed(3)} on=${diagFound} isHit=${isHit} expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
-      if (isHit) setLiveFeedback('hit')
-      else if (expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
+      const effectiveIsHit = isHit && diagFound !== 'REST'
+      if (effectiveIsHit) setLiveFeedback('hit')
+      else if (diagFound === 'REST' || expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
     }
     // Real-time note coloring
     if (exercise) {
@@ -1477,7 +1485,11 @@ export default function RhythmPage() {
             {/* Diagnostic panel */}
             {showDiag && (
               <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '12px', marginBottom: '16px', maxHeight: '200px', overflowY: 'auto' as const }}>
-                <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#888780', marginBottom: '6px', letterSpacing: '0.05em' }}>DIAGNOSTIC LOG</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#888780', letterSpacing: '0.05em', margin: 0 }}>DIAGNOSTIC LOG</p>
+                  <button onClick={() => navigator.clipboard.writeText(diagLog.join('\n'))}
+                    style={{ fontFamily: 'monospace', fontSize: '10px', color: '#888780', background: 'none', border: '1px solid #888780', borderRadius: '4px', padding: '2px 6px', cursor: 'pointer' }}>Copy</button>
+                </div>
                 {diagLog.length === 0 && <p style={{ fontFamily: 'monospace', fontSize: '11px', color: '#888780' }}>No taps yet</p>}
                 {diagLog.map((line, i) => (
                   <p key={i} style={{ fontFamily: 'monospace', fontSize: '11px', color: line.includes('REST') ? '#E53935' : line.includes('SCORE') ? '#BA7517' : '#4CAF50', margin: '2px 0' }}>{line}</p>
