@@ -490,6 +490,7 @@ export default function RhythmPage() {
   const trailRef = useRef<{ beat: number; color: string }[]>([])
   const [trail, setTrail] = useState<{ beat: number; color: string }[]>([])
   const isPressedRef = useRef(false)
+  const effectiveBeatDurationRef = useRef(60 / 72)  // updated on start
   const [diagLog, setDiagLog] = useState<string[]>([])
   const [showDiag, setShowDiag] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
@@ -646,6 +647,7 @@ export default function RhythmPage() {
     startTimeRef.current = now + countdownDuration
     // For compound: actual quarter note duration differs from beatDuration
     const effectiveBeatDuration = isCompound ? compoundBeatDuration * 2 : beatDuration
+    effectiveBeatDurationRef.current = effectiveBeatDuration
 
     // Countdown clicks: accent on felt beats, subdivision clicks in between for compound
     for (let i = 0; i < feltBeats; i++) {
@@ -689,7 +691,7 @@ export default function RhythmPage() {
       setCountdown(null)
       const elapsed = ctx2.currentTime - startTimeRef.current
       // Start playhead slightly early so it arrives at first note on beat 0
-      const beatFloat = elapsed / beatDuration
+      const beatFloat = elapsed / effectiveBeatDuration
       // Show playhead from -0.5 beats so student can anticipate
       setPlayhead(beatFloat)
       // Paint trail — green if pressing near a note, red if pressing on rest, gray if not pressing
@@ -811,7 +813,7 @@ export default function RhythmPage() {
       }
       const kbElapsed = ctx.currentTime - startTimeRef.current
       if (kbElapsed < -beatDuration * 1.5) return
-      const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / beatDuration
+      const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / effectiveBeatDurationRef.current
       const beat = Math.round(beatFloat2)
       const clampedBeat = Math.max(0, Math.min(beatFloat2, totalBeats))
       console.log('KB TAP: beatFloat='+beatFloat2.toFixed(3)+' clampedBeat='+clampedBeat.toFixed(3))
@@ -1077,7 +1079,7 @@ export default function RhythmPage() {
     }
     const elapsed = ctx.currentTime - startTimeRef.current
     if (elapsed < -beatDuration * 1.5) return
-    const beatFloatP = elapsed < 0 ? 0 : elapsed / beatDuration
+    const beatFloatP = elapsed < 0 ? 0 : elapsed / effectiveBeatDurationRef.current
     const beat = Math.round(beatFloatP)
     const clampedBeat = Math.max(0, Math.min(beatFloatP, totalBeats))
     setTaps(prev => [...prev, clampedBeat])
