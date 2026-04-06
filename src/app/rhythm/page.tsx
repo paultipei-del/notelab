@@ -441,11 +441,6 @@ export default function RhythmPage() {
   const pointerDownTimeRef = useRef<number | null>(null)
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
-  const [holdBars, setHoldBars] = useState<{ pct: number; color: string; beatPos: number; durationBeats: number }[]>([])
-  const [activeHoldBar, setActiveHoldBar] = useState<{ pct: number; color: string; beatPos: number; durationBeats: number } | null>(null)
-  const holdStartRef = useRef<number | null>(null)
-  const holdRafRef = useRef<number>(0)
-  const holdNoteRef = useRef<{ x: number; maxWidth: number; expectedMs: number; beatPos: number; durationBeats: number } | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
@@ -580,7 +575,7 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
     initSampler()  // load piano on first gesture
-    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); setHoldBars([]); setActiveHoldBar(null)
+    setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
     setTapReady(false)
     tapReadyRef.current = false
     setPlaying(true)
@@ -734,6 +729,7 @@ export default function RhythmPage() {
             pos += n.durationBeats
           })
         })
+        console.log('NEAREST: mi='+nearest.mi+' ni='+nearest.ni+' dist='+nearest.dist.toFixed(3)+' beat='+clampedBeat.toFixed(3))
         if (nearest.mi >= 0) {
           const result = nearest.dist <= TOL ? 'hit' : 'miss'
           setTapResults(prev => {
@@ -741,49 +737,6 @@ export default function RhythmPage() {
             newResults[nearest.mi][nearest.ni] = result
             return newResults
           })
-          // Start hold bar
-          const nm = exercise.measures[nearest.mi].notes[nearest.ni]
-          const expectedMs = nm.durationBeats * beatDuration * 1000
-          const allNH = exercise.measures.flatMap(m => m.notes)
-          const smallH = allNH.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
-          const noteWH = Math.max(40, 32 / smallH)
-          const maxWidthPx = nm.durationBeats * noteWH
-          let bpAccum = 0
-          exercise.measures[nearest.mi].notes.slice(0, nearest.ni).forEach(n => bpAccum += n.durationBeats)
-          const beatPos = nearest.mi * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType) + bpAccum
-          holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs, beatPos, durationBeats: nm.durationBeats }
-          holdStartRef.current = performance.now()
-          cancelAnimationFrame(holdRafRef.current)
-          const animateKbHold = () => {
-            if (!holdStartRef.current || !holdNoteRef.current) return
-            const elapsed = performance.now() - holdStartRef.current
-            const pct = elapsed / holdNoteRef.current.expectedMs
-            const color = pct > 1.1 ? '#E53935' : '#4CAF50'
-            setActiveHoldBar({ pct: Math.min(pct, 1.5), color, beatPos: holdNoteRef.current.beatPos, durationBeats: holdNoteRef.current.durationBeats })
-            holdRafRef.current = requestAnimationFrame(animateKbHold)
-          }
-          holdRafRef.current = requestAnimationFrame(animateKbHold)
-        }
-        // Override hold bar if tap actually falls within a rest
-        {
-          const qBpmKB = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-          const allNKB = exercise.measures.flatMap(m => m.notes)
-          const smallKB = allNKB.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
-          const noteWKB = Math.max(40, 32 / smallKB)
-          let cpKB = 0
-          let found = false
-          for (let miKB = 0; miKB < exercise.measures.length && !found; miKB++) {
-            for (let niKB = 0; niKB < exercise.measures[miKB].notes.length && !found; niKB++) {
-              const nKB = exercise.measures[miKB].notes[niKB]
-              if (nKB.rest && clampedBeat >= cpKB - 0.15 && clampedBeat < cpKB + nKB.durationBeats + 0.15) {
-                let bpKB = 0
-                exercise.measures[miKB].notes.slice(0, niKB).forEach(nn => bpKB += nn.durationBeats)
-                holdNoteRef.current = { x: 0, maxWidth: nKB.durationBeats * noteWKB, expectedMs: nKB.durationBeats * beatDuration * 1000, beatPos: miKB * qBpmKB + bpKB, durationBeats: nKB.durationBeats }
-                found = true
-              }
-              cpKB += nKB.durationBeats
-            }
-          }
         }
       }
     }
@@ -791,19 +744,8 @@ export default function RhythmPage() {
     const onKeyUp = (e: KeyboardEvent) => {
       if (e.code !== 'Space') return
       setLiveFeedback(null)
-      tapNoteRef.current = null
-      // Stop hold bar and persist it
-      cancelAnimationFrame(holdRafRef.current)
-      if (holdNoteRef.current) {
-        const elapsed = performance.now() - (holdStartRef.current ?? performance.now())
-        const pct = Math.min(elapsed / holdNoteRef.current.expectedMs, 1.5)
-        const color = pct > 1.1 ? '#E53935' : '#4CAF50'
-        const bar = { pct: Math.min(pct, 1.5), color, beatPos: holdNoteRef.current.beatPos, durationBeats: holdNoteRef.current.durationBeats }
-        setHoldBars(prev => [...prev, bar])
-      }
-      setActiveHoldBar(null)
-      holdStartRef.current = null
-      holdNoteRef.current = null
+      // Stop tap tone
+      tapNoteRef.current = null  // sound auto-decays
       if (keyDownTimeRef.current !== null) {
         const duration = performance.now() - keyDownTimeRef.current
         setTapDurations(prev => [...prev, duration])
@@ -986,68 +928,27 @@ export default function RhythmPage() {
       const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
     }
-    // Real-time note coloring + hold bar using containing note/rest
+    // Real-time note coloring
     if (exercise) {
-      const qBpmH = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-      const allNH = exercise.measures.flatMap(m => m.notes)
-      const smallH = allNH.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
-      const noteWH = Math.max(40, 32 / smallH)
-
-      // Find which note/rest the tap falls within
-      let cpH = 0
-      let cn: { mi: number; ni: number; isRest: boolean; dur: number; beatPos: number } | null = null
-      outer: for (let miH = 0; miH < exercise.measures.length; miH++) {
-        for (let niH = 0; niH < exercise.measures[miH].notes.length; niH++) {
-          const nH = exercise.measures[miH].notes[niH]
-          if (clampedBeat >= cpH - 0.15 && clampedBeat < cpH + nH.durationBeats + 0.15) {
-            let bpH = 0
-            exercise.measures[miH].notes.slice(0, niH).forEach(nn => bpH += nn.durationBeats)
-            cn = { mi: miH, ni: niH, isRest: !!nH.rest, dur: nH.durationBeats, beatPos: miH * qBpmH + bpH }
-            break outer
+      const TOL = 0.4
+      let pos = 0
+      let nearest = { mi: -1, ni: -1, dist: Infinity }
+      exercise.measures.forEach((m, mi) => {
+        m.notes.forEach((n, ni) => {
+          if (!n.rest && !n.tieStop) {
+            const d = Math.abs(pos - clampedBeat)
+            if (d < nearest.dist) nearest = { mi, ni, dist: d }
           }
-          cpH += nH.durationBeats
-        }
-      }
-
-      if (cn) {
-        // Start hold bar at the containing note/rest position
-        holdNoteRef.current = { x: 0, maxWidth: cn.dur * noteWH, expectedMs: cn.dur * beatDuration * 1000, beatPos: cn.beatPos, durationBeats: cn.dur }
-        if (!cn.isRest) {
-          // Color the note hit/miss
-          const TOL = 0.4
-          let pos2 = 0
-          let nearest = { mi: -1, ni: -1, dist: Infinity }
-          exercise.measures.forEach((m, mi) => {
-            m.notes.forEach((n, ni) => {
-              if (!n.rest && !n.tieStop) {
-                const d = Math.abs(pos2 - clampedBeat)
-                if (d < nearest.dist) nearest = { mi, ni, dist: d }
-              }
-              pos2 += n.durationBeats
-            })
-          })
-          if (nearest.mi >= 0) {
-            const result = nearest.dist <= TOL ? 'hit' : 'miss'
-            setTapResults(prev => {
-              const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-              newResults[nearest.mi][nearest.ni] = result
-              return newResults
-            })
-          }
-        }
-        holdStartRef.current = performance.now()
-        cancelAnimationFrame(holdRafRef.current)
-        const animateHold = () => {
-          if (!holdStartRef.current || !holdNoteRef.current) return
-          const elapsed = performance.now() - holdStartRef.current
-          const { maxWidth, expectedMs } = holdNoteRef.current
-          const pct = elapsed / expectedMs
-          const color = pct > 1.1 ? '#E53935' : '#4CAF50'
-          // Width in pixels: grows at same rate as noteW per beat
-          setActiveHoldBar({ pct: Math.min(pct, 1.5), color, beatPos: holdNoteRef.current!.beatPos, durationBeats: holdNoteRef.current!.durationBeats })
-          holdRafRef.current = requestAnimationFrame(animateHold)
-        }
-        holdRafRef.current = requestAnimationFrame(animateHold)
+          pos += n.durationBeats
+        })
+      })
+      if (nearest.mi >= 0) {
+        const result = nearest.dist <= TOL ? 'hit' : 'miss'
+        setTapResults(prev => {
+          const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+          newResults[nearest.mi][nearest.ni] = result
+          return newResults
+        })
       }
     }
   }, [playing, countdown, beatDuration, totalBeats, exercise])
@@ -1055,14 +956,6 @@ export default function RhythmPage() {
   const handlePointerUp = useCallback(() => {
     setLiveFeedback(null)
     tapNoteRef.current = null  // sound auto-decays
-    // Stop hold bar animation and persist it
-    cancelAnimationFrame(holdRafRef.current)
-    if (activeHoldBar) {
-      setHoldBars(prev => [...prev, { ...activeHoldBar }])
-      setActiveHoldBar(null)
-    }
-    holdStartRef.current = null
-    holdNoteRef.current = null
     if (pointerDownTimeRef.current !== null) {
       const duration = performance.now() - pointerDownTimeRef.current
       setTapDurations(prev => [...prev, duration])
@@ -1198,14 +1091,6 @@ export default function RhythmPage() {
                           </g>
                         )
                       })}
-                      {/* Hold duration line — drawn on staff */}
-                      {/* Persisted hold bars */}
-                      {holdBars.map((hb, i) => (
-                        <rect key={'hb'+i} x={56 + 18 - 15 + hb.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={hb.pct * hb.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
-                      ))}
-                      {activeHoldBar && holdNoteRef.current && (
-                        <rect x={56 + 18 - 15 + activeHoldBar.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={activeHoldBar.pct * activeHoldBar.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
-                      )}
                     </g>
                   </svg>
                 </div>
@@ -1217,8 +1102,6 @@ export default function RhythmPage() {
             <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} />
           </div>
         )}
-
-
 
         {/* Countdown */}
         <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -1455,14 +1338,6 @@ export default function RhythmPage() {
                       return (
                         <g key={mIdx}>
                           {renderMeasure(measure.notes, mx, noteW, tapRes, bpm, beatUnit)}
-                          {/* Hold duration line */}
-                          {/* Persisted hold bars for this measure */}
-                          {holdBars.filter(hb => hb.beatPos >= globalMeasureIdx * bpm && hb.beatPos < (globalMeasureIdx + 1) * bpm).map((hb, i) => (
-                            <rect key={'hb'+i} x={mx - 10 + (hb.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={hb.pct * hb.durationBeats * noteW} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
-                          ))}
-                          {activeHoldBar && activeHoldBar.beatPos >= globalMeasureIdx * bpm && activeHoldBar.beatPos < (globalMeasureIdx + 1) * bpm && (
-                            <rect x={mx - 10 + (activeHoldBar.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={activeHoldBar.pct * activeHoldBar.durationBeats * noteW} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
-                          )}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
