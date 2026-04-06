@@ -927,31 +927,29 @@ export default function RhythmPage() {
       }))
       const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
+    }
     // Real-time note coloring
     if (exercise) {
-      setTapResults(prev => {
-        let pos = 0
-        let found = false
-        const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-        // Find nearest note to tap position using tolerance window
-        const TOL = 0.13  // slightly more than half a 16th note (0.125)
-        let nearest = { mi: -1, ni: -1, dist: Infinity }
-        exercise.measures.forEach((m, mi) => {
-          m.notes.forEach((n, ni) => {
-            if (!n.rest && !n.tieStop) {
-              const d = Math.abs(pos - clampedBeat)
-              if (d < nearest.dist) nearest = { mi, ni, dist: d }
-            }
-            pos += n.durationBeats
-          })
+      const TOL = 0.4
+      let pos = 0
+      let nearest = { mi: -1, ni: -1, dist: Infinity }
+      exercise.measures.forEach((m, mi) => {
+        m.notes.forEach((n, ni) => {
+          if (!n.rest && !n.tieStop) {
+            const d = Math.abs(pos - clampedBeat)
+            if (d < nearest.dist) nearest = { mi, ni, dist: d }
+          }
+          pos += n.durationBeats
         })
-        if (nearest.mi >= 0) {
-          newResults[nearest.mi][nearest.ni] = nearest.dist <= TOL ? 'hit' : 'miss'
-          found = true
-        }
-        return newResults
       })
-    }
+      if (nearest.mi >= 0) {
+        const result = nearest.dist <= TOL ? 'hit' : 'miss'
+        setTapResults(prev => {
+          const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+          newResults[nearest.mi][nearest.ni] = result
+          return newResults
+        })
+      }
     }
   }, [playing, countdown, beatDuration, totalBeats, exercise])
 
