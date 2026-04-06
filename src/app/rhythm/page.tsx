@@ -595,10 +595,9 @@ export default function RhythmPage() {
         setCountdown(countBeat)
         // Start playhead moving during last countdown beat
         const timeToStart = startTimeRef.current - ctx2.currentTime
-        // Show playhead throughout countdown for smooth pre-roll
-        setPlayhead(-timeToStart / beatDuration)
-        // Enable tap during last beat only
+        // Show playhead 1 beat before exercise starts
         if (timeToStart <= beatDuration) {
+          setPlayhead(-timeToStart / beatDuration)
           tapReadyRef.current = true
           setTapReady(true)
         }
@@ -931,7 +930,7 @@ export default function RhythmPage() {
     }
 
     return (
-      <div style={{ height: '100dvh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '12px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+      <div style={{ height: '100dvh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '12px 12px 24px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
 
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
@@ -960,6 +959,8 @@ export default function RhythmPage() {
           )}
         </div>
 
+        {/* Spacer */}
+        <div style={{ flex: 1 }} />
         {/* Notation area */}
         {exercise ? (
           <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', position: 'relative' as const, flexShrink: 0 }}>
@@ -1027,6 +1028,8 @@ export default function RhythmPage() {
           </div>
         )}
 
+        {/* Spacer */}
+        <div style={{ flex: 1 }} />
         {/* Countdown */}
         <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           {countdown !== null && (
