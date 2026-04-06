@@ -715,41 +715,38 @@ export default function RhythmPage() {
       setLiveFeedback(isHit ? 'hit' : 'miss')
       // Real-time note coloring
       if (exercise) {
-        let pos = 0
-        let found = false
-        const newResults = tapResults.map(m => [...m])
-        exercise.measures.forEach((m, mi) => {
-          m.notes.forEach((n, ni) => {
-            if (!n.rest && !n.tieStop) {
-              const noteBeat = Math.round(pos)
-              if (noteBeat === clampedBeat && !found) {
-                found = true
-                if (!newResults[mi]) newResults[mi] = m.notes.map(() => 'none' as const)
-                newResults[mi][ni] = 'hit'
-              }
-            }
-            pos += n.durationBeats
-          })
-        })
-        // If no note found, mark nearest note as miss
-        if (!found) {
-          pos = 0
-          let nearest = { mi: -1, ni: -1, dist: Infinity }
+        setTapResults(prev => {
+          let pos = 0
+          let found = false
+          const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
           exercise.measures.forEach((m, mi) => {
             m.notes.forEach((n, ni) => {
               if (!n.rest && !n.tieStop) {
-                const d = Math.abs(Math.round(pos) - clampedBeat)
-                if (d < nearest.dist) nearest = { mi, ni, dist: d }
+                const noteBeat = Math.round(pos)
+                if (noteBeat === clampedBeat && !found) {
+                  found = true
+                  newResults[mi][ni] = 'hit'
+                }
               }
               pos += n.durationBeats
             })
           })
-          if (nearest.mi >= 0) {
-            if (!newResults[nearest.mi]) newResults[nearest.mi] = exercise.measures[nearest.mi].notes.map(() => 'none' as const)
-            newResults[nearest.mi][nearest.ni] = 'miss'
+          if (!found) {
+            pos = 0
+            let nearest = { mi: -1, ni: -1, dist: Infinity }
+            exercise.measures.forEach((m, mi) => {
+              m.notes.forEach((n, ni) => {
+                if (!n.rest && !n.tieStop) {
+                  const d = Math.abs(Math.round(pos) - clampedBeat)
+                  if (d < nearest.dist) nearest = { mi, ni, dist: d }
+                }
+                pos += n.durationBeats
+              })
+            })
+            if (nearest.mi >= 0) newResults[nearest.mi][nearest.ni] = 'miss'
           }
-        }
-        setTapResults(newResults)
+          return newResults
+        })
       }
     }
 
