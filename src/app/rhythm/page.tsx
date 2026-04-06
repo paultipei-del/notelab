@@ -650,7 +650,15 @@ export default function RhythmPage() {
         playClick(now + i * feltBeatDuration + beatDuration * 2, false)
       }
     }
-    for (let i = 0; i < totalBeats; i++) playClick(startTimeRef.current + i * beatDuration, i % beatsPerMeasure === 0)
+    // For compound meters: click on felt beats (dotted quarters), not every quarter note
+    if (isCompound) {
+      const feltBeatCount = Math.round(totalBeats / 3)  // total dotted-quarter beats
+      for (let i = 0; i < feltBeatCount; i++) {
+        playClick(startTimeRef.current + i * feltBeatDuration, i % feltBeats === 0)
+      }
+    } else {
+      for (let i = 0; i < totalBeats; i++) playClick(startTimeRef.current + i * beatDuration, i % beatsPerMeasure === 0)
+    }
 
     const countdownStart = now
     const tick = () => {
