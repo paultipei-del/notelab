@@ -620,23 +620,24 @@ export default function RhythmPage() {
       const beatFloat = elapsed / beatDuration
       // Show playhead from -0.5 beats so student can anticipate
       setPlayhead(beatFloat)
-      // Paint trail — color depends on press state and note/rest at current position
-      let trailColor = '#D3D1C7'  // gray = not pressing
+      // Paint trail — green if pressing near a note, red if pressing on rest, gray if not pressing
+      let trailColor = '#D3D1C7'
       if (isPressedRef.current && exercise) {
-        let cp = 0
-        let foundOnRest = false
-        let foundNote = false
-        outer: for (const m of exercise.measures) {
+        let posT = 0
+        let onRest = true
+        outerT: for (const m of exercise.measures) {
           for (const n of m.notes) {
-            if (beatFloat >= cp - 0.15 && beatFloat < cp + n.durationBeats + 0.05) {
-              foundOnRest = !!n.rest
-              foundNote = true
-              break outer
+            const noteEnd = posT + n.durationBeats
+            if (!n.rest && beatFloat >= posT - 0.5 && beatFloat <= noteEnd + 0.5) {
+              onRest = false; break outerT
             }
-            cp += n.durationBeats
+            if (n.rest && beatFloat >= posT && beatFloat < noteEnd) {
+              onRest = true; break outerT
+            }
+            posT += n.durationBeats
           }
         }
-        if (foundNote) trailColor = foundOnRest ? '#E53935' : '#4CAF50'
+        trailColor = onRest ? '#E53935' : '#4CAF50'
       }
       trailRef.current.push({ beat: beatFloat, color: trailColor })
       if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
