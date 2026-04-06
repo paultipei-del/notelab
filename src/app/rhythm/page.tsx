@@ -622,17 +622,19 @@ export default function RhythmPage() {
       let trailColor = '#D3D1C7'  // gray = not pressing
       if (isPressedRef.current && exercise) {
         let cp = 0
-        let onRest = false
-        for (const m of exercise.measures) {
+        let foundOnRest = false
+        let foundNote = false
+        outer: for (const m of exercise.measures) {
           for (const n of m.notes) {
             if (beatFloat >= cp - 0.05 && beatFloat < cp + n.durationBeats + 0.05) {
-              onRest = !!n.rest; break
+              foundOnRest = !!n.rest
+              foundNote = true
+              break outer
             }
             cp += n.durationBeats
           }
-          if (cp > beatFloat + 0.5) break
         }
-        trailColor = onRest ? '#E53935' : '#4CAF50'
+        if (foundNote) trailColor = foundOnRest ? '#E53935' : '#4CAF50'
       }
       trailRef.current.push({ beat: beatFloat, color: trailColor })
       if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
