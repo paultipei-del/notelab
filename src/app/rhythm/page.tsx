@@ -966,7 +966,7 @@ export default function RhythmPage() {
         {exercise ? (
           <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', position: 'relative' as const, flexShrink: 0 }}>
             {/* Fixed playhead */}
-            {(playing || countdown !== null) && (
+            {playing && (countdown === null || (playhead !== null && playhead >= -1)) && (
               <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-1px)' }} />
             )}
             {view === 'notation' && (() => {
@@ -982,9 +982,8 @@ export default function RhythmPage() {
               // playhead goes from -countdownBeats to totalBeats
               // at playhead=0, first note (x=56+18) should be at centerX
               // at playhead=0, first notehead (x=74) aligns with center playhead line
-              const preRollBeats = 1
-              const idlePlayhead = playhead ?? -preRollBeats
-              const offsetX = centerX - 54 - idlePlayhead * NOTE_W_PORTRAIT
+              const effectivePlayhead = playhead ?? 0
+              const offsetX = centerX - 56 - effectivePlayhead * NOTE_W_PORTRAIT
               return (
                 <div style={{ overflow: 'hidden' }}>
                   <svg width={svgWidth} height={160} style={{ display: 'block' }}>
