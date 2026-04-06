@@ -444,7 +444,7 @@ export default function RhythmPage() {
   const [holdBar, setHoldBar] = useState<{ x: number; width: number; maxWidth: number; color: string } | null>(null)
   const holdStartRef = useRef<number | null>(null)
   const holdRafRef = useRef<number>(0)
-  const holdNoteRef = useRef<{ x: number; maxWidth: number; expectedMs: number } | null>(null)
+  const holdNoteRef = useRef<{ x: number; maxWidth: number; expectedMs: number; beatPos: number } | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
@@ -961,7 +961,7 @@ export default function RhythmPage() {
         const smallH = allNH.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
         const noteWH = Math.max(40, 32 / smallH)
         const maxWidthPx = nm.durationBeats * noteWH
-        holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs }
+        holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs, beatPos: nearest.mi * qBpmH + (() => { let p = 0; exercise.measures[nearest.mi].notes.slice(0, nearest.ni).forEach(n => p += n.durationBeats); return p })() }
         holdStartRef.current = performance.now()
         cancelAnimationFrame(holdRafRef.current)
         const animateHold = () => {
@@ -1447,6 +1447,18 @@ export default function RhythmPage() {
                 </div>
               ))}
             </div>
+            </div>
+
+            {/* Hold duration bar — desktop */}
+            <div style={{ height: '20px', position: 'relative' as const, marginBottom: '8px' }}>
+              <svg width="100%" height={20} style={{ display: 'block' }}>
+                {holdBar && holdBar.width > 0 && (
+                  <rect x={svgWidth / 2} y={8} width={holdBar.width} height={4} rx={2} fill={holdBar.color} />
+                )}
+                {holdBar && (
+                  <line x1={svgWidth / 2 + holdBar.maxWidth} y1={4} x2={svgWidth / 2 + holdBar.maxWidth} y2={16} stroke="#D3D1C7" strokeWidth={1.5} />
+                )}
+              </svg>
             </div>
 
             {/* Mobile tap button */}
