@@ -741,7 +741,11 @@ export default function RhythmPage() {
         pos += n.durationBeats
       }))
       const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.75)
-            // Real-time note coloring
+      // Live feedback for keyboard
+      const onRestFB = (() => { let p = 0; for (const m of exercise.measures) { for (const n of m.notes) { if (n.rest && clampedBeat >= p && clampedBeat < p + n.durationBeats - 0.75) return true; p += n.durationBeats; } } return false })()
+      if (isHit && !onRestFB) setLiveFeedback('hit')
+      else if (!isHit && onRestFB) setLiveFeedback('miss')
+      // Real-time note coloring
       if (exercise) {
         const TOL = 0.4
         let pos = 0
@@ -755,7 +759,6 @@ export default function RhythmPage() {
             pos += n.durationBeats
           })
         })
-        console.log('NEAREST: mi='+nearest.mi+' ni='+nearest.ni+' dist='+nearest.dist.toFixed(3)+' beat='+clampedBeat.toFixed(3))
         if (nearest.mi >= 0 && nearest.dist <= TOL) {
           const onRestKB = (() => { let p = 0; for (const m of exercise.measures) { for (const n of m.notes) { if (n.rest && clampedBeat >= p - 0.15 && clampedBeat < p + n.durationBeats) return true; p += n.durationBeats; } } return false })()
           // Color note if tap contains it OR if near note onset
@@ -1479,7 +1482,7 @@ export default function RhythmPage() {
                           ))}
                           {/* Trail */}
                           {trail.filter(t => t.beat >= globalMeasureIdx * bpm && t.beat < (globalMeasureIdx + 1) * bpm).map((t, i) => (
-                            <rect key={'t'+i} x={mx - 4 + (t.beat - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 13} width={Math.max(1, noteW / 20)} height={6} fill={t.color} opacity={0.9} />
+                            <rect key={'t'+i} x={mx - 6 + (t.beat - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 13} width={Math.max(1, noteW / 20)} height={6} fill={t.color} opacity={0.9} />
                           ))}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
