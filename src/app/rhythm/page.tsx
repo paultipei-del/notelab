@@ -596,7 +596,7 @@ export default function RhythmPage() {
         // Start playhead moving during last countdown beat
         const timeToStart = startTimeRef.current - ctx2.currentTime
         // Show playhead from 2 beats before downbeat
-        if (timeToStart <= beatDuration * 2) {
+        if (timeToStart <= beatDuration) {
           setPlayhead(-timeToStart / beatDuration)
         }
         // Enable tap during last beat only
@@ -985,7 +985,7 @@ export default function RhythmPage() {
               // at playhead=0, first note (x=56+18) should be at centerX
               // at playhead=0, barline at x=56 aligns with center playhead line
               // playhead < 0 during pre-roll: content shifts right so barline arrives at center on beat 0
-              const preRollBeats = 2
+              const preRollBeats = 1
               const idlePlayhead = playhead ?? -preRollBeats
               const offsetX = centerX - 56 - idlePlayhead * NOTE_W_PORTRAIT
               return (
@@ -1035,8 +1035,6 @@ export default function RhythmPage() {
           </div>
         )}
 
-        {/* Spacer */}
-        <div style={{ flex: 1 }} />
         {/* Countdown */}
         <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           {countdown !== null && (
