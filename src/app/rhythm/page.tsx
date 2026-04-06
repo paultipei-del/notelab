@@ -773,10 +773,14 @@ export default function RhythmPage() {
       tapNoteRef.current = null
       // Stop hold bar and persist it
       cancelAnimationFrame(holdRafRef.current)
-      setActiveHoldBar(prev => {
-        if (prev) setHoldBars(bars => [...bars, { ...prev, x: 0 }])
-        return null
-      })
+      if (holdNoteRef.current) {
+        const elapsed = performance.now() - (holdStartRef.current ?? performance.now())
+        const pct = Math.min(elapsed / holdNoteRef.current.expectedMs, 1.5)
+        const color = pct > 1.1 ? '#E53935' : '#4CAF50'
+        const bar = { x: 0, width: pct * holdNoteRef.current.maxWidth, maxWidth: holdNoteRef.current.maxWidth, color, beatPos: holdNoteRef.current.beatPos, measureIdx: 0 }
+        setHoldBars(prev => [...prev, bar])
+      }
+      setActiveHoldBar(null)
       holdStartRef.current = null
       holdNoteRef.current = null
       if (keyDownTimeRef.current !== null) {
@@ -1157,11 +1161,11 @@ export default function RhythmPage() {
                       {/* Hold duration line — drawn on staff */}
                       {/* Persisted hold bars */}
                       {holdBars.map((hb, i) => (
-                        <rect key={'hb'+i} x={56 + 18 - 14 + hb.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={hb.width} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
+                        <rect key={'hb'+i} x={56 + 18 - 26 + hb.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={hb.width} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
                       ))}
                       {/* Active growing bar */}
                       {activeHoldBar && holdNoteRef.current && (
-                        <rect x={56 + 18 - 14 + activeHoldBar.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={activeHoldBar.width} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
+                        <rect x={56 + 18 - 26 + activeHoldBar.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={activeHoldBar.width} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
                       )}
                     </g>
                   </svg>
@@ -1415,11 +1419,11 @@ export default function RhythmPage() {
                           {/* Hold duration line */}
                           {/* Persisted hold bars for this measure */}
                           {holdBars.filter(hb => hb.beatPos >= globalMeasureIdx * bpm && hb.beatPos < (globalMeasureIdx + 1) * bpm).map((hb, i) => (
-                            <rect key={'hb'+i} x={mx - 14 + (hb.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={hb.width} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
+                            <rect key={'hb'+i} x={mx - 10 + (hb.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={hb.width} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
                           ))}
                           {/* Active growing bar */}
                           {activeHoldBar && holdNoteRef.current && activeHoldBar.beatPos >= globalMeasureIdx * bpm && activeHoldBar.beatPos < (globalMeasureIdx + 1) * bpm && (
-                            <rect x={mx - 14 + (activeHoldBar.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={activeHoldBar.width} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
+                            <rect x={mx - 10 + (activeHoldBar.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={activeHoldBar.width} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
                           )}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
