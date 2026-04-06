@@ -441,11 +441,11 @@ export default function RhythmPage() {
   const pointerDownTimeRef = useRef<number | null>(null)
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
-  const [holdBars, setHoldBars] = useState<{ x: number; width: number; maxWidth: number; color: string; beatPos: number; measureIdx: number }[]>([])
-  const [activeHoldBar, setActiveHoldBar] = useState<{ width: number; maxWidth: number; color: string; beatPos: number; measureIdx: number } | null>(null)
+  const [holdBars, setHoldBars] = useState<{ pct: number; color: string; beatPos: number; durationBeats: number }[]>([])
+  const [activeHoldBar, setActiveHoldBar] = useState<{ pct: number; color: string; beatPos: number; durationBeats: number } | null>(null)
   const holdStartRef = useRef<number | null>(null)
   const holdRafRef = useRef<number>(0)
-  const holdNoteRef = useRef<{ x: number; maxWidth: number; expectedMs: number; beatPos: number } | null>(null)
+  const holdNoteRef = useRef<{ x: number; maxWidth: number; expectedMs: number; beatPos: number; durationBeats: number } | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
@@ -751,7 +751,7 @@ export default function RhythmPage() {
           let bpAccum = 0
           exercise.measures[nearest.mi].notes.slice(0, nearest.ni).forEach(n => bpAccum += n.durationBeats)
           const beatPos = nearest.mi * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType) + bpAccum
-          holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs, beatPos }
+          holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs, beatPos, durationBeats: nm.durationBeats }
           holdStartRef.current = performance.now()
           cancelAnimationFrame(holdRafRef.current)
           const animateKbHold = () => {
@@ -759,10 +759,33 @@ export default function RhythmPage() {
             const elapsed = performance.now() - holdStartRef.current
             const pct = elapsed / holdNoteRef.current.expectedMs
             const color = pct > 1.1 ? '#E53935' : '#4CAF50'
-            setActiveHoldBar({ width: Math.min(pct, 1.5) * holdNoteRef.current.maxWidth, maxWidth: holdNoteRef.current.maxWidth, color, beatPos: holdNoteRef.current.beatPos, measureIdx: 0 })
+            setActiveHoldBar({ pct: Math.min(pct, 1.5), color, beatPos: holdNoteRef.current.beatPos, durationBeats: holdNoteRef.current.durationBeats })
             holdRafRef.current = requestAnimationFrame(animateKbHold)
           }
           holdRafRef.current = requestAnimationFrame(animateKbHold)
+        }
+        // Also check if tapping on a rest (always red)
+        if (nearest.dist > TOL) {
+          let rpos = 0
+          let nearestRest = { mi: -1, ni: -1, dist: Infinity, dur: 0 }
+          exercise.measures.forEach((m, mi) => {
+            m.notes.forEach((n, ni) => {
+              if (n.rest) {
+                const d = Math.abs(rpos - clampedBeat)
+                if (d < nearestRest.dist) nearestRest = { mi, ni, dist: d, dur: n.durationBeats }
+              }
+              rpos += n.durationBeats
+            })
+          })
+          if (nearestRest.dist <= TOL && nearestRest.mi >= 0) {
+            let rbp = 0
+            exercise.measures[nearestRest.mi].notes.slice(0, nearestRest.ni).forEach(n => rbp += n.durationBeats)
+            const restBeatPos = nearestRest.mi * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType) + rbp
+            const allNR = exercise.measures.flatMap(m => m.notes)
+            const smallR = allNR.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
+            const noteWR = Math.max(40, 32 / smallR)
+            holdNoteRef.current = { x: 0, maxWidth: nearestRest.dur * noteWR, expectedMs: nearestRest.dur * beatDuration * 1000, beatPos: restBeatPos, durationBeats: nearestRest.dur }
+          }
         }
       }
     }
@@ -777,7 +800,7 @@ export default function RhythmPage() {
         const elapsed = performance.now() - (holdStartRef.current ?? performance.now())
         const pct = Math.min(elapsed / holdNoteRef.current.expectedMs, 1.5)
         const color = pct > 1.1 ? '#E53935' : '#4CAF50'
-        const bar = { x: 0, width: pct * holdNoteRef.current.maxWidth, maxWidth: holdNoteRef.current.maxWidth, color, beatPos: holdNoteRef.current.beatPos, measureIdx: 0 }
+        const bar = { pct: Math.min(pct, 1.5), color, beatPos: holdNoteRef.current.beatPos, durationBeats: holdNoteRef.current.durationBeats }
         setHoldBars(prev => [...prev, bar])
       }
       setActiveHoldBar(null)
@@ -994,7 +1017,7 @@ export default function RhythmPage() {
         const smallH = allNH.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
         const noteWH = Math.max(40, 32 / smallH)
         const maxWidthPx = nm.durationBeats * noteWH
-        holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs, beatPos: nearest.mi * qBpmH + (() => { let p = 0; exercise.measures[nearest.mi].notes.slice(0, nearest.ni).forEach(n => p += n.durationBeats); return p })() }
+        holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs, beatPos: nearest.mi * qBpmH + (() => { let p = 0; exercise.measures[nearest.mi].notes.slice(0, nearest.ni).forEach(n => p += n.durationBeats); return p })(), durationBeats: nm.durationBeats }
         holdStartRef.current = performance.now()
         cancelAnimationFrame(holdRafRef.current)
         const animateHold = () => {
@@ -1004,7 +1027,7 @@ export default function RhythmPage() {
           const pct = elapsed / expectedMs
           const color = pct > 1.1 ? '#E53935' : '#4CAF50'
           // Width in pixels: grows at same rate as noteW per beat
-          setActiveHoldBar({ width: Math.min(pct, 1.5) * maxWidth, maxWidth, color, beatPos: holdNoteRef.current!.beatPos, measureIdx: 0 })
+          setActiveHoldBar({ pct: Math.min(pct, 1.5), color, beatPos: holdNoteRef.current!.beatPos, durationBeats: holdNoteRef.current!.durationBeats })
           holdRafRef.current = requestAnimationFrame(animateHold)
         }
         holdRafRef.current = requestAnimationFrame(animateHold)
@@ -1018,7 +1041,7 @@ export default function RhythmPage() {
     // Stop hold bar animation and persist it
     cancelAnimationFrame(holdRafRef.current)
     if (activeHoldBar) {
-      setHoldBars(prev => [...prev, { ...activeHoldBar, x: 0 }])
+      setHoldBars(prev => [...prev, { ...activeHoldBar }])
       setActiveHoldBar(null)
     }
     holdStartRef.current = null
@@ -1161,11 +1184,10 @@ export default function RhythmPage() {
                       {/* Hold duration line — drawn on staff */}
                       {/* Persisted hold bars */}
                       {holdBars.map((hb, i) => (
-                        <rect key={'hb'+i} x={56 + 18 - 26 + hb.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={hb.width} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
+                        <rect key={'hb'+i} x={56 + 18 - 18 + hb.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={hb.pct * hb.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
                       ))}
-                      {/* Active growing bar */}
                       {activeHoldBar && holdNoteRef.current && (
-                        <rect x={56 + 18 - 26 + activeHoldBar.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={activeHoldBar.width} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
+                        <rect x={56 + 18 - 18 + activeHoldBar.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={activeHoldBar.pct * activeHoldBar.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
                       )}
                     </g>
                   </svg>
@@ -1419,11 +1441,10 @@ export default function RhythmPage() {
                           {/* Hold duration line */}
                           {/* Persisted hold bars for this measure */}
                           {holdBars.filter(hb => hb.beatPos >= globalMeasureIdx * bpm && hb.beatPos < (globalMeasureIdx + 1) * bpm).map((hb, i) => (
-                            <rect key={'hb'+i} x={mx - 10 + (hb.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={hb.width} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
+                            <rect key={'hb'+i} x={mx - 10 + (hb.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={hb.pct * hb.durationBeats * noteW} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
                           ))}
-                          {/* Active growing bar */}
-                          {activeHoldBar && holdNoteRef.current && activeHoldBar.beatPos >= globalMeasureIdx * bpm && activeHoldBar.beatPos < (globalMeasureIdx + 1) * bpm && (
-                            <rect x={mx - 10 + (activeHoldBar.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={activeHoldBar.width} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
+                          {activeHoldBar && activeHoldBar.beatPos >= globalMeasureIdx * bpm && activeHoldBar.beatPos < (globalMeasureIdx + 1) * bpm && (
+                            <rect x={mx - 10 + (activeHoldBar.beatPos - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 16} width={activeHoldBar.pct * activeHoldBar.durationBeats * noteW} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
                           )}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
