@@ -998,25 +998,27 @@ export default function RhythmPage() {
       if (effectiveIsHit) setLiveFeedback('hit')
       else if (diagFound === 'REST' || expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
     }
-    // Real-time note coloring
+    // Real-time note coloring — only color if tap falls within a note (not rest)
     if (exercise) {
-      const TOL = 0.4
-      let pos = 0
-      let nearest = { mi: -1, ni: -1, dist: Infinity }
-      exercise.measures.forEach((m, mi) => {
-        m.notes.forEach((n, ni) => {
-          if (!n.rest && !n.tieStop) {
-            const d = Math.abs(pos - clampedBeat)
-            if (d < nearest.dist) nearest = { mi, ni, dist: d }
+      let cpC = 0
+      let cn: { mi: number; ni: number; isRest: boolean; beatPos: number } | null = null
+      outerC: for (let miC = 0; miC < exercise.measures.length; miC++) {
+        for (let niC = 0; niC < exercise.measures[miC].notes.length; niC++) {
+          const nC = exercise.measures[miC].notes[niC]
+          if (clampedBeat >= cpC - 0.25 && clampedBeat < cpC + nC.durationBeats + 0.1) {
+            let bpC = 0
+            exercise.measures[miC].notes.slice(0, niC).forEach(nn => bpC += nn.durationBeats)
+            cn = { mi: miC, ni: niC, isRest: !!nC.rest, beatPos: miC * (exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)) + bpC }
+            break outerC
           }
-          pos += n.durationBeats
-        })
-      })
-      if (nearest.mi >= 0) {
-        const result = nearest.dist <= TOL ? 'hit' : 'miss'
+          cpC += nC.durationBeats
+        }
+      }
+      if (cn && !cn.isRest) {
+        const result = Math.abs(cn.beatPos - clampedBeat) <= 0.4 ? 'hit' : 'miss'
         setTapResults(prev => {
           const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-          newResults[nearest.mi][nearest.ni] = result
+          newResults[cn!.mi][cn!.ni] = result
           return newResults
         })
       }
