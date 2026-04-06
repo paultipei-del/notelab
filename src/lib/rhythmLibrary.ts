@@ -109,7 +109,7 @@ export async function saveProgress(
     .select('*')
     .eq('user_id', userId)
     .eq('exercise_id', exerciseId)
-    .single()
+    .maybeSingle()
 
   await sb.from('rhythm_progress').upsert({
     user_id: userId,
