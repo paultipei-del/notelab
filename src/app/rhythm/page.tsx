@@ -859,9 +859,9 @@ export default function RhythmPage() {
       const notePos = pos2
       pos2 += n.durationBeats
       if (n.rest || n.tieStop) return 'none' as const
-      // Find closest unused tap within tolerance
+      // Find closest unused NOTE tap within tolerance (exclude rest taps)
       let bestIdx = -1; let bestDist = PMTOL
-      taps.forEach((t, i) => {
+      noteTaps.forEach((t, i) => {
         if (!usedTapsPM.has(i) && Math.abs(t - notePos) <= bestDist) {
           bestDist = Math.abs(t - notePos); bestIdx = i
         }
@@ -916,7 +916,7 @@ export default function RhythmPage() {
 
     const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
     setScore(finalScore)
-    setDiagLog(prev => [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
+    setDiagLog(prev => [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} noteTaps=[${noteTaps.map(t=>t.toFixed(2)).join(',')}] taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
   }, [playing])
 
   const onDrop = useCallback(async (e: React.DragEvent) => {
