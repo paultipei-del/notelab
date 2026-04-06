@@ -472,6 +472,7 @@ export default function RhythmPage() {
   const [allExercises, setAllExercises] = useState<RhythmExerciseMeta[]>([])
   const { user } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
+  const landscapeContainerRef = useRef<HTMLDivElement>(null)
   const [isPortrait, setIsPortrait] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [svgWidth, setSvgWidth] = useState(800)
@@ -512,9 +513,10 @@ export default function RhythmPage() {
   }, [user])
 
   useEffect(() => {
-    if (!containerRef.current) return
+    const el = landscapeContainerRef.current || containerRef.current
+    if (!el) return
     const obs = new ResizeObserver(entries => setSvgWidth(entries[0].contentRect.width - 48))
-    obs.observe(containerRef.current)
+    obs.observe(el)
     return () => obs.disconnect()
   }, [exercise])
 
@@ -1231,7 +1233,7 @@ export default function RhythmPage() {
 
             {/* Notation / Grid */}
             <div style={{ position: 'relative' as const, marginBottom: '20px' }}>
-            <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', overflow: 'hidden', position: 'relative' as const }}>
+            <div ref={landscapeContainerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', overflow: 'hidden', position: 'relative' as const }}>
 
               {/* LANDSCAPE/DESKTOP: row-based notation */}
               {view === 'notation' && !isPortrait && rows.map((rowMeasures, rowIdx) => {
