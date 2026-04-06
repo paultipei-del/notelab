@@ -701,8 +701,9 @@ export default function RhythmPage() {
       }
       const kbElapsed = ctx.currentTime - startTimeRef.current
       if (kbElapsed < -beatDuration * 1.5) return
-      const beat = kbElapsed < 0 ? 0 : Math.round(kbElapsed / beatDuration)
-      const clampedBeat = Math.max(0, Math.min(beat, totalBeats))
+      const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / beatDuration
+      const beat = Math.round(beatFloat2)
+      const clampedBeat = Math.max(0, Math.min(beatFloat2, totalBeats))
       setTaps(prev => [...prev, clampedBeat])
       // Live feedback
       const expected: number[] = []
@@ -921,31 +922,21 @@ export default function RhythmPage() {
         let pos = 0
         let found = false
         const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+        // Find nearest note to tap position using tolerance window
+        const TOL = 0.3  // beats tolerance
+        let nearest = { mi: -1, ni: -1, dist: Infinity }
         exercise.measures.forEach((m, mi) => {
           m.notes.forEach((n, ni) => {
             if (!n.rest && !n.tieStop) {
-              const noteBeat = Math.round(pos)
-              if (noteBeat === clampedBeat && !found) {
-                found = true
-                newResults[mi][ni] = 'hit'
-              }
+              const d = Math.abs(pos - clampedBeat)
+              if (d < nearest.dist) nearest = { mi, ni, dist: d }
             }
             pos += n.durationBeats
           })
         })
-        if (!found) {
-          pos = 0
-          let nearest = { mi: -1, ni: -1, dist: Infinity }
-          exercise.measures.forEach((m, mi) => {
-            m.notes.forEach((n, ni) => {
-              if (!n.rest && !n.tieStop) {
-                const d = Math.abs(Math.round(pos) - clampedBeat)
-                if (d < nearest.dist) nearest = { mi, ni, dist: d }
-              }
-              pos += n.durationBeats
-            })
-          })
-          if (nearest.mi >= 0) newResults[nearest.mi][nearest.ni] = 'miss'
+        if (nearest.mi >= 0) {
+          newResults[nearest.mi][nearest.ni] = nearest.dist <= TOL ? 'hit' : 'miss'
+          found = true
         }
         return newResults
       })
