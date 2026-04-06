@@ -818,7 +818,7 @@ export default function RhythmPage() {
       rPosS += n.durationBeats
     }))
     // Only use taps that are NOT on a rest for note matching
-    const noteTaps = taps.filter(t => !restRangesForScoring.some(r => t >= r.start - 0.1 && t < r.end - 0.1))
+    const noteTaps = taps.filter(t => !restRangesForScoring.some(r => t >= r.start - 0.15 && t < r.end + 0.15))
     // One-to-one matching with tolerance
     const SCORE_TOL = 0.4
     const usedTaps = new Set<number>()
