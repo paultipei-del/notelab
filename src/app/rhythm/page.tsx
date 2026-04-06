@@ -937,7 +937,10 @@ export default function RhythmPage() {
 
     const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
     setScore(finalScore)
-    setDiagLog(prev => [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} noteTaps=[${noteTaps.map(t=>t.toFixed(2)).join(',')}] taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
+    setDiagLog(prev => {
+      const trailSummary = trailRef.current.filter((_, i) => i % 10 === 0).map(t => `${t.beat.toFixed(2)}:${t.color === '#4CAF50' ? 'G' : t.color === '#E53935' ? 'R' : '_'}`).join(' ')
+      return [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} noteTaps=[${noteTaps.map(t=>t.toFixed(2)).join(',')}] taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`, `TRAIL(every10): ${trailSummary}`]
+    })
   }, [playing])
 
   const onDrop = useCallback(async (e: React.DragEvent) => {
