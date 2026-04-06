@@ -737,8 +737,9 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
-      setLiveFeedback(isHit ? 'hit' : 'miss')
+      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
+      if (isHit) setLiveFeedback('hit')
+      else if (expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
             // Real-time note coloring
       if (exercise) {
         const TOL = 0.4
@@ -951,8 +952,9 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
-      setLiveFeedback(isHit ? 'hit' : 'miss')
+      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
+      if (isHit) setLiveFeedback('hit')
+      else if (expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
     }
     // Real-time note coloring
     if (exercise) {
