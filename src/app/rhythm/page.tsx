@@ -968,9 +968,10 @@ export default function RhythmPage() {
           if (!holdStartRef.current || !holdNoteRef.current) return
           const elapsed = performance.now() - holdStartRef.current
           const { maxWidth, expectedMs } = holdNoteRef.current
-          const pct = Math.min(elapsed / expectedMs, 1.5)
+          const pct = elapsed / expectedMs
           const color = pct > 1.1 ? '#E53935' : '#4CAF50'
-          setHoldBar({ x: 0, width: pct * maxWidth, maxWidth, color })
+          // Width in pixels: grows at same rate as noteW per beat
+          setHoldBar({ x: 0, width: Math.min(pct, 1.5) * maxWidth, maxWidth, color })
           holdRafRef.current = requestAnimationFrame(animateHold)
         }
         holdRafRef.current = requestAnimationFrame(animateHold)
@@ -1122,6 +1123,12 @@ export default function RhythmPage() {
                           </g>
                         )
                       })}
+                      {/* Hold duration line — drawn on staff */}
+                      {holdBar && holdNoteRef.current && (() => {
+                        const hb = holdNoteRef.current!
+                        const noteX = 56 + 18 + hb.beatPos * NOTE_W_PORTRAIT
+                        return <rect key="hold" x={noteX} y={STAFF_Y + 16} width={holdBar.width} height={3} rx={1.5} fill={holdBar.color} opacity={0.8} />
+                      })()}
                     </g>
                   </svg>
                 </div>
@@ -1134,32 +1141,7 @@ export default function RhythmPage() {
           </div>
         )}
 
-        {/* Hold duration bar — grows from playhead position rightward */}
-        <div style={{ height: '20px', position: 'relative' as const, flexShrink: 0 }}>
-          <svg width={svgWidth} height={20} style={{ display: 'block' }}>
-            {holdBar && holdBar.width > 0 && (
-              <rect
-                x={svgWidth / 2}
-                y={8}
-                width={holdBar.width}
-                height={4}
-                rx={2}
-                fill={holdBar.color}
-              />
-            )}
-            {/* Expected note end marker */}
-            {holdBar && (
-              <line
-                x1={svgWidth / 2 + holdBar.maxWidth}
-                y1={4}
-                x2={svgWidth / 2 + holdBar.maxWidth}
-                y2={16}
-                stroke="#D3D1C7"
-                strokeWidth={1.5}
-              />
-            )}
-          </svg>
-        </div>
+
 
         {/* Countdown */}
         <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -1396,6 +1378,14 @@ export default function RhythmPage() {
                       return (
                         <g key={mIdx}>
                           {renderMeasure(measure.notes, mx, noteW, tapRes, bpm, beatUnit)}
+                          {/* Hold duration line */}
+                          {holdBar && holdNoteRef.current && (() => {
+                            const hb = holdNoteRef.current!
+                            const measureStartBeat = globalMeasureIdx * bpm
+                            const noteX = mx + (hb.beatPos - measureStartBeat) * noteW
+                            if (hb.beatPos < measureStartBeat || hb.beatPos >= measureStartBeat + bpm) return null
+                            return <rect key="hold" x={noteX} y={STAFF_Y + 16} width={holdBar.width} height={3} rx={1.5} fill={holdBar.color} opacity={0.8} />
+                          })()}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
@@ -1447,18 +1437,6 @@ export default function RhythmPage() {
                 </div>
               ))}
             </div>
-            </div>
-
-            {/* Hold duration bar — desktop */}
-            <div style={{ height: '20px', position: 'relative' as const, marginBottom: '8px' }}>
-              <svg width="100%" height={20} style={{ display: 'block' }}>
-                {holdBar && holdBar.width > 0 && (
-                  <rect x={svgWidth / 2} y={8} width={holdBar.width} height={4} rx={2} fill={holdBar.color} />
-                )}
-                {holdBar && (
-                  <line x1={svgWidth / 2 + holdBar.maxWidth} y1={4} x2={svgWidth / 2 + holdBar.maxWidth} y2={16} stroke="#D3D1C7" strokeWidth={1.5} />
-                )}
-              </svg>
             </div>
 
             {/* Mobile tap button */}
