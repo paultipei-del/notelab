@@ -904,8 +904,9 @@ export default function RhythmPage() {
     }
     const elapsed = ctx.currentTime - startTimeRef.current
     if (elapsed < -beatDuration * 1.5) return
-    const beat = elapsed < 0 ? 0 : Math.round(elapsed / beatDuration)
-    const clampedBeat = Math.max(0, Math.min(beat, totalBeats))
+    const beatFloatP = elapsed < 0 ? 0 : elapsed / beatDuration
+    const beat = Math.round(beatFloatP)
+    const clampedBeat = Math.max(0, Math.min(beatFloatP, totalBeats))
     setTaps(prev => [...prev, clampedBeat])
     if (exercise) {
       const expected: number[] = []
