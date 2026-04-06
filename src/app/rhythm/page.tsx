@@ -632,27 +632,31 @@ export default function RhythmPage() {
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
-    const isCompound = beatsPerMeasure % 3 === 0 && beatsPerMeasure > 3
-    // Felt beats for countdown: compound meters feel in groups of 3
-    const feltBeats = isCompound ? beatsPerMeasure / 3 : beatsPerMeasure
-    // Duration of one felt beat
-    const feltBeatDuration = isCompound ? beatDuration * 3 : beatDuration
+    const isCompound = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3
+    // Felt beats: compound meters feel in groups of 3 eighth notes
+    const feltBeats = isCompound ? exercise.timeSignature.beats / 3 : exercise.timeSignature.beats
+    // For compound: bpm = dotted-quarter BPM, so feltBeatDuration = 60/bpm
+    // For simple: bpm = quarter BPM, so beatDuration = 60/bpm
+    const feltBeatDuration = isCompound ? 60 / bpm : beatDuration
+    const compoundBeatDuration = isCompound ? feltBeatDuration / 3 : beatDuration  // eighth note duration for compound
     const countdownBeats = feltBeats
     const countdownDuration = countdownBeats * feltBeatDuration
     const now = ctx.currentTime + 0.1
     startTimeRef.current = now + countdownDuration
+    // For compound: actual quarter note duration differs from beatDuration
+    const effectiveBeatDuration = isCompound ? compoundBeatDuration * 2 : beatDuration
 
     // Countdown clicks: accent on felt beats, subdivision clicks in between for compound
     for (let i = 0; i < feltBeats; i++) {
       playClick(now + i * feltBeatDuration, i === 0)
       if (isCompound) {
-        playClick(now + i * feltBeatDuration + beatDuration, false)
-        playClick(now + i * feltBeatDuration + beatDuration * 2, false)
+        playClick(now + i * feltBeatDuration + compoundBeatDuration, false)
+        playClick(now + i * feltBeatDuration + compoundBeatDuration * 2, false)
       }
     }
     // For compound meters: click on felt beats (dotted quarters), not every quarter note
     if (isCompound) {
-      const feltBeatCount = Math.round(totalBeats / 3)  // total dotted-quarter beats
+      const feltBeatCount = Math.round(totalBeats / 3)
       for (let i = 0; i < feltBeatCount; i++) {
         playClick(startTimeRef.current + i * feltBeatDuration, i % feltBeats === 0)
       }
