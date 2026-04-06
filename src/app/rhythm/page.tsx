@@ -704,8 +704,7 @@ export default function RhythmPage() {
       const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / beatDuration
       const beat = Math.round(beatFloat2)
       const clampedBeat = Math.max(0, Math.min(beatFloat2, totalBeats))
-      const clampedBeatRounded = Math.max(0, Math.min(beat, totalBeats))
-      setTaps(prev => [...prev, clampedBeatRounded])
+      setTaps(prev => [...prev, clampedBeat])
       // Live feedback
       const expected: number[] = []
       let pos = 0
@@ -713,7 +712,7 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.some(e => Math.abs(e - clampedBeatRounded) <= 0.4)
+      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
       // Real-time note coloring
       if (exercise) {
@@ -814,20 +813,21 @@ export default function RhythmPage() {
     const extraTaps = taps.filter(t => !expected.includes(t))
 
     let pos2 = 0
+    const PMTOL = 0.4
+    const usedTapsPM = new Set<number>()
     const perMeasure = exercise.measures.map(m => m.notes.map(n => {
-      const beatIdx = Math.round(pos2)
+      const notePos = pos2
       pos2 += n.durationBeats
       if (n.rest || n.tieStop) return 'none' as const
-      // Check if this note's onset was tapped correctly
-      if (!taps.includes(beatIdx)) return 'miss' as const
-      // Check if there was an extra tap within this note's duration
-      // Only count as extra if the tap is NOT a valid note onset
-      const noteStart = beatIdx
-      const noteEnd = beatIdx + n.durationBeats
-      const hasExtraTap = taps.filter(t => 
-        t !== beatIdx && t >= noteStart && t < noteEnd && !expected.includes(t)
-      ).length > 0
-      if (hasExtraTap) return 'miss' as const
+      // Find closest unused tap within tolerance
+      let bestIdx = -1; let bestDist = PMTOL
+      taps.forEach((t, i) => {
+        if (!usedTapsPM.has(i) && Math.abs(t - notePos) <= bestDist) {
+          bestDist = Math.abs(t - notePos); bestIdx = i
+        }
+      })
+      if (bestIdx < 0) return 'miss' as const
+      usedTapsPM.add(bestIdx)
       return 'hit' as const
     }))
 
@@ -927,8 +927,7 @@ export default function RhythmPage() {
     const beatFloatP = elapsed < 0 ? 0 : elapsed / beatDuration
     const beat = Math.round(beatFloatP)
     const clampedBeat = Math.max(0, Math.min(beatFloatP, totalBeats))
-    const clampedBeatRounded = Math.max(0, Math.min(beat, totalBeats))
-    setTaps(prev => [...prev, clampedBeatRounded])
+    setTaps(prev => [...prev, clampedBeat])
     if (exercise) {
       const expected: number[] = []
       let pos = 0
@@ -936,7 +935,7 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.some(e => Math.abs(e - clampedBeatRounded) <= 0.4)
+      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
     // Real-time note coloring
     if (exercise) {
