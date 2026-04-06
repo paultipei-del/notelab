@@ -933,7 +933,7 @@ export default function RhythmPage() {
     }
 
     return (
-      <div style={{ height: '100dvh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '12px 12px 8px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+      <div style={{ height: '100svh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '8px 12px 8px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
 
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
@@ -990,8 +990,8 @@ export default function RhythmPage() {
               const offsetX = centerX - 56 - idlePlayhead * NOTE_W_PORTRAIT
               return (
                 <div style={{ overflow: 'hidden' }}>
-                  <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
-                    <g transform={`translate(${offsetX}, 0)`}>
+                  <svg width={svgWidth} height={160} style={{ display: 'block' }}>
+                    <g transform={`translate(${offsetX}, 28)`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
