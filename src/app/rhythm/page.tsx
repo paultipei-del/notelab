@@ -1226,61 +1226,7 @@ export default function RhythmPage() {
 
             {/* Notation / Grid */}
             <div style={{ position: 'relative' as const, marginBottom: '20px' }}>
-            <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: isPortrait ? '16px 0' : '24px', overflow: 'hidden', position: 'relative' as const }}>
-              {/* Portrait fixed playhead line */}
-              {isPortrait && view === 'notation' && (playing || countdown !== null) && (
-                <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-1px)' }} />
-              )}
-              {/* PORTRAIT: single scrolling staff */}
-              {view === 'notation' && isPortrait && (() => {
-                const qBeatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-                const allNotesFlat = exercise.measures.flatMap(m => m.notes)
-                const smallestDur = allNotesFlat.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
-                const NOTE_W_PORTRAIT = Math.max(40, 32 / smallestDur)
-                const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
-                const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
-                const centerX = svgWidth / 2
-                const offsetX = playhead !== null
-                  ? centerX - (56 + Math.max(0, playhead) * NOTE_W_PORTRAIT + 14) + NOTE_W_PORTRAIT * 0.5
-                  : centerX - 70 + NOTE_W_PORTRAIT * 0.5
-                return (
-                  <div style={{ overflow: 'hidden' }}>
-                    <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
-                      <g transform={`translate(${offsetX}, 0)`}>
-                        <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
-                        <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
-                        <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
-                          {String.fromCodePoint(0xE080 + exercise.timeSignature.beats)}
-                        </text>
-                        <text x={34} y={STAFF_Y + 8} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
-                          {String.fromCodePoint(0xE080 + exercise.timeSignature.beatType)}
-                        </text>
-                        {exercise.measures.map((measure, mIdx) => {
-                          const mx = 56 + mIdx * qBeatsPerMeasure * NOTE_W_PORTRAIT + 18
-                          const noteW = NOTE_W_PORTRAIT
-                          const tapRes: ('hit'|'miss'|'none')[] = tapResults[mIdx] ?? measure.notes.map(() => 'none' as const)
-                          const isLast = mIdx === exercise.measures.length - 1
-                          return (
-                            <g key={mIdx}>
-                              {renderMeasure(measure.notes, mx, noteW, tapRes,
-                            exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType),
-                            (() => { const isComp = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3; return isComp ? 3 * (4 / exercise.timeSignature.beatType) : 4 / exercise.timeSignature.beatType })()
-                          )}
-                              {!isLast
-                                ? <line x1={mx + exercise.timeSignature.beats * noteW} y1={STAFF_Y - 28} x2={mx + exercise.timeSignature.beats * noteW} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
-                                : <>
-                                  <line x1={mx + exercise.timeSignature.beats * noteW - 8} y1={STAFF_Y - 28} x2={mx + exercise.timeSignature.beats * noteW - 8} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1.2} />
-                                  <line x1={mx + exercise.timeSignature.beats * noteW - 1} y1={STAFF_Y - 28} x2={mx + exercise.timeSignature.beats * noteW - 1} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={7} />
-                                </>
-                              }
-                            </g>
-                          )
-                        })}
-                      </g>
-                    </svg>
-                  </div>
-                )
-              })()}
+            <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', overflow: 'hidden', position: 'relative' as const }}>
 
               {/* LANDSCAPE/DESKTOP: row-based notation */}
               {view === 'notation' && !isPortrait && rows.map((rowMeasures, rowIdx) => {
