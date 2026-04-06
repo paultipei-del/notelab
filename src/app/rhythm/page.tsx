@@ -769,7 +769,9 @@ export default function RhythmPage() {
               cpCheck += nC.durationBeats
             }
           }
-          if (noteContainsTap) {
+          // Check tap is not in a rest zone
+          const onRestKB = (() => { let p = 0; for (const m of exercise.measures) { for (const n of m.notes) { if (n.rest && clampedBeat >= p - 0.15 && clampedBeat < p + n.durationBeats + 0.15) return true; p += n.durationBeats; } } return false })()
+          if (noteContainsTap && !onRestKB) {
             const result = nearest.dist <= TOL ? 'hit' : 'miss'
             setTapResults(prev => {
               const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
