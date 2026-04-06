@@ -568,7 +568,7 @@ export default function RhythmPage() {
       const buffer = await fetchExerciseFile(meta.id)
       const ex = await parseMXL(buffer)
       setExercise(ex); setCurrentMeta(meta)
-      setScore(null); setTaps([]); setTapResults([])
+      setScore(null); setTaps([]); setTapResults([]); setTrail([]); trailRef.current = []; setDiagLog([])
       setBpm(72)
     } finally {
       setLoadingExercise(false)
