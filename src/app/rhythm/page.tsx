@@ -1167,7 +1167,9 @@ export default function RhythmPage() {
   const pct = score && score.total > 0 ? Math.round(score.hits / score.total * 100) : 0
   const currentExIdx = currentMeta ? allExercises.findIndex(e => e.id === currentMeta.id) : -1
   const prevEx = currentExIdx > 0 ? allExercises[currentExIdx - 1] : null
-  const nextEx = currentExIdx >= 0 && currentExIdx < allExercises.length - 1 ? allExercises[currentExIdx + 1] : null
+  const currentCompleted = currentMeta ? (progress[currentMeta.id]?.completed ?? false) : false
+  const nextExRaw = currentExIdx >= 0 && currentExIdx < allExercises.length - 1 ? allExercises[currentExIdx + 1] : null
+  const nextEx = currentCompleted ? nextExRaw : null
   const durationPct = score && score.durationTotal > 0 ? Math.round(score.durationHits / score.durationTotal * 100) : 0
 
 
