@@ -81,7 +81,7 @@ export async function saveProgress(
   timingPct: number,
   durationPct: number
 ): Promise<void> {
-  const isCompleted = timingPct >= 90
+  const isCompleted = timingPct >= 90 && durationPct >= 90
 
   if (!userId) {
     // localStorage fallback for anonymous users
@@ -120,4 +120,26 @@ export async function saveProgress(
     completed: existing?.completed || isCompleted,
     last_played: new Date().toISOString(),
   }, { onConflict: 'user_id,exercise_id' })
+}
+
+export async function resetProgress(userId: string | null, exerciseId?: string): Promise<void> {
+  if (!userId) {
+    try {
+      if (exerciseId) {
+        const raw = localStorage.getItem('rhythm-progress')
+        const map: Record<string, RhythmProgress> = raw ? JSON.parse(raw) : {}
+        delete map[exerciseId]
+        localStorage.setItem('rhythm-progress', JSON.stringify(map))
+      } else {
+        localStorage.removeItem('rhythm-progress')
+      }
+    } catch {}
+    return
+  }
+  const sb = getSupabaseClient()
+  if (exerciseId) {
+    await sb.from('rhythm_progress').delete().eq('user_id', userId).eq('exercise_id', exerciseId)
+  } else {
+    await sb.from('rhythm_progress').delete().eq('user_id', userId)
+  }
 }

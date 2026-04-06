@@ -386,24 +386,33 @@ function LibraryPanel({
             </button>
             {openCategory === category && (
               <div style={{ paddingTop: '4px', display: 'flex', flexDirection: 'column' as const, gap: '4px' }}>
-                {exercises.map((ex, idx) => (
-                  <button key={ex.id} onClick={() => onSelect(ex)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', cursor: 'pointer', textAlign: 'left' as const, transition: 'all 0.15s' }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}>
-                    <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '16px' }}>{idx + 1}</span>
-                    <span style={{ fontFamily: SERIF, fontSize: '15px', color: '#1A1A18', flex: 1 }}>{ex.title}</span>
-                    <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', background: DIFFICULTY_COLORS[ex.difficulty], color: DIFFICULTY_TEXT[ex.difficulty] }}>
-                      {DIFFICULTY_LABEL[ex.difficulty]}
-                    </span>
-                    <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>{ex.beats}/{ex.beat_type}</span>
-                    {progress[ex.id] && (
-                      <span style={{ fontFamily: F, fontSize: '10px', color: progress[ex.id].completed ? '#4CAF50' : '#BA7517' }}>
-                        {progress[ex.id].completed ? '✓' : `${progress[ex.id].best_timing}%`}
+                {exercises.map((ex, exIdx) => {
+                  // Exercise is unlocked if: first in category, OR previous exercise completed
+                  const prevEx = exIdx > 0 ? exercises[exIdx - 1] : null
+                  const isUnlocked = exIdx === 0 || (prevEx ? (progress[prevEx.id]?.completed ?? false) : true)
+                  const p = progress[ex.id]
+                  const isCurrent = ex.id === currentId
+                  return (
+                    <button key={ex.id}
+                      onClick={() => isUnlocked && onSelect(ex)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '10px', border: '1px solid ' + (isCurrent ? '#BA7517' : '#D3D1C7'), background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#F5F2EC', cursor: isUnlocked ? 'pointer' : 'default', textAlign: 'left' as const, transition: 'all 0.15s', opacity: isUnlocked ? 1 : 0.6 }}
+                      onMouseEnter={e => { if (isUnlocked) e.currentTarget.style.borderColor = '#BA7517' }}
+                      onMouseLeave={e => { if (!isCurrent) e.currentTarget.style.borderColor = '#D3D1C7' }}>
+                      <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '16px' }}>{exIdx + 1}</span>
+                      <span style={{ fontFamily: SERIF, fontSize: '15px', color: isUnlocked ? '#1A1A18' : '#888780', flex: 1 }}>{ex.title}</span>
+                      <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', background: DIFFICULTY_COLORS[ex.difficulty], color: DIFFICULTY_TEXT[ex.difficulty] }}>
+                        {DIFFICULTY_LABEL[ex.difficulty]}
                       </span>
-                    )}
-                  </button>
-                ))}
+                      <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>{ex.beats}/{ex.beat_type}</span>
+                      {!isUnlocked && <span style={{ fontSize: '12px' }}>🔒</span>}
+                      {isUnlocked && p && (
+                        <span style={{ fontFamily: F, fontSize: '10px', color: p.completed ? '#4CAF50' : '#BA7517' }}>
+                          {p.completed ? '✓' : `${p.best_timing}%`}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -418,6 +427,10 @@ function LibraryPanel({
           <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#888780', marginBottom: '6px' }}>Drop .mxl here</p>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#D3D1C7' }}>Export from MuseScore</p>
         </div>
+        <button onClick={async () => { const { resetProgress } = await import('@/lib/rhythmLibrary'); await resetProgress(null); window.location.reload() }}
+          style={{ marginTop: '12px', width: '100%', padding: '8px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '11px', cursor: 'pointer' }}>
+          Reset all progress
+        </button>
       </div>
     </div>
   )
