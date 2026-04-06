@@ -953,10 +953,15 @@ export default function RhythmPage() {
           newResults[nearest.mi][nearest.ni] = result
           return newResults
         })
-        // Start hold bar
+        // Start hold bar — maxWidth in pixels using NOTE_W_PORTRAIT
         const nm = exercise.measures[nearest.mi].notes[nearest.ni]
         const expectedMs = nm.durationBeats * beatDuration * 1000
-        holdNoteRef.current = { x: nearest.mi * 100, maxWidth: nm.durationBeats * 100, expectedMs }
+        const qBpmH = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+        const allNH = exercise.measures.flatMap(m => m.notes)
+        const smallH = allNH.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
+        const noteWH = Math.max(40, 32 / smallH)
+        const maxWidthPx = nm.durationBeats * noteWH
+        holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs }
         holdStartRef.current = performance.now()
         cancelAnimationFrame(holdRafRef.current)
         const animateHold = () => {
@@ -1129,17 +1134,31 @@ export default function RhythmPage() {
           </div>
         )}
 
-        {/* Hold duration bar */}
-        <div style={{ height: '12px', background: 'white', borderRadius: '6px', overflow: 'hidden', flexShrink: 0, border: '1px solid #D3D1C7' }}>
-          {holdBar && (
-            <div style={{
-              height: '100%',
-              width: holdBar.maxWidth > 0 ? `${Math.min((holdBar.width / holdBar.maxWidth) * 100, 100)}%` : '0%',
-              background: holdBar.color,
-              borderRadius: '6px',
-              transition: 'background 0.1s',
-            }} />
-          )}
+        {/* Hold duration bar — grows from playhead position rightward */}
+        <div style={{ height: '20px', position: 'relative' as const, flexShrink: 0 }}>
+          <svg width={svgWidth} height={20} style={{ display: 'block' }}>
+            {holdBar && holdBar.width > 0 && (
+              <rect
+                x={svgWidth / 2}
+                y={8}
+                width={holdBar.width}
+                height={4}
+                rx={2}
+                fill={holdBar.color}
+              />
+            )}
+            {/* Expected note end marker */}
+            {holdBar && (
+              <line
+                x1={svgWidth / 2 + holdBar.maxWidth}
+                y1={4}
+                x2={svgWidth / 2 + holdBar.maxWidth}
+                y2={16}
+                stroke="#D3D1C7"
+                strokeWidth={1.5}
+              />
+            )}
+          </svg>
         </div>
 
         {/* Countdown */}
