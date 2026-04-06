@@ -342,10 +342,10 @@ function LibraryPanel({
   const [library, setLibrary] = useState<Record<string, RhythmExerciseMeta[]>>({})
   const [loading, setLoading] = useState(true)
   const [openCategory, setOpenCategory] = useState<string | null>(null)
+  const [showUpload, setShowUpload] = useState(false)
+
   const flatList: RhythmExerciseMeta[] = Object.values(library).flat()
   const currentIdx = currentId ? flatList.findIndex(e => e.id === currentId) : -1
-  const canPrev = currentIdx > 0
-  const canNext = currentIdx >= 0 && currentIdx < flatList.length - 1
 
   useEffect(() => {
     import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
@@ -359,84 +359,115 @@ function LibraryPanel({
   }, [])
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-      {/* Library */}
-      <div>
-        {currentId && (
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-        <button onClick={() => canPrev && onSelect(flatList[currentIdx - 1])} disabled={!canPrev}
-          style={{ flex: 1, padding: '8px', borderRadius: '10px', border: '1px solid #D3D1C7', background: canPrev ? 'white' : '#F5F2EC', color: canPrev ? '#1A1A18' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: canPrev ? 'pointer' : 'default' }}>
-          ← Previous
-        </button>
-        <button onClick={() => canNext && onSelect(flatList[currentIdx + 1])} disabled={!canNext}
-          style={{ flex: 1, padding: '8px', borderRadius: '10px', border: '1px solid #D3D1C7', background: canNext ? '#1A1A18' : '#F5F2EC', color: canNext ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: canNext ? 'pointer' : 'default' }}>
-          Next →
+    <div style={{ width: '100%', maxWidth: '560px' }}>
+
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <h2 style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#1A1A18', margin: 0 }}>Exercises</h2>
+        <button onClick={async () => {
+          if (!confirm('Reset all progress? This will lock all exercises except the first.')) return
+          const { resetProgress } = await import('@/lib/rhythmLibrary')
+          await resetProgress(userId ?? null)
+          onProgressReset?.()
+        }} style={{ fontFamily: F, fontSize: '11px', color: '#888780', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
+          Reset progress
         </button>
       </div>
-    )}
-    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Exercises</p>
-        {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>Loading…</p>}
-        {!loading && Object.keys(library).length === 0 && (
-          <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>No exercises yet — upload .mxl files to Supabase storage.</p>
-        )}
-        {Object.entries(library).map(([category, exercises]) => (
-          <div key={category} style={{ marginBottom: '8px' }}>
-            <button onClick={() => setOpenCategory(openCategory === category ? null : category)}
-              style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderRadius: '10px', border: '1px solid #D3D1C7', background: openCategory === category ? '#1A1A18' : 'white', color: openCategory === category ? 'white' : '#1A1A18', fontFamily: SERIF, fontSize: '16px', fontWeight: 300, cursor: 'pointer', textAlign: 'left' as const }}>
-              <span>{category}</span>
-              <span style={{ fontFamily: F, fontSize: '11px', color: openCategory === category ? 'rgba(255,255,255,0.5)' : '#888780' }}>{exercises.length}</span>
+
+      {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>Loading…</p>}
+
+      {/* Categories */}
+      {!loading && Object.entries(library).map(([category, exercises]) => {
+        const isOpen = openCategory === category
+        const categoryCompleted = exercises.filter(ex => progress[ex.id]?.completed).length
+        const categoryTotal = exercises.length
+
+        return (
+          <div key={category} style={{ marginBottom: '6px' }}>
+            {/* Category header */}
+            <button onClick={() => setOpenCategory(isOpen ? null : category)}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', borderRadius: isOpen ? '12px 12px 0 0' : '12px', border: '1px solid' + (isOpen ? '#1A1A18' : '#D3D1C7'), borderBottom: isOpen ? 'none' : '1px solid #D3D1C7', background: isOpen ? '#1A1A18' : 'white', cursor: 'pointer', textAlign: 'left' as const }}>
+              <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: isOpen ? 'white' : '#1A1A18', flex: 1 }}>{category}</span>
+              <span style={{ fontFamily: F, fontSize: '10px', color: isOpen ? 'rgba(255,255,255,0.5)' : '#888780' }}>
+                {categoryCompleted}/{categoryTotal}
+              </span>
+              {/* Progress bar */}
+              <div style={{ width: '48px', height: '3px', background: isOpen ? 'rgba(255,255,255,0.2)' : '#F0EDE8', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ width: `${(categoryCompleted / categoryTotal) * 100}%`, height: '100%', background: isOpen ? '#4CAF50' : '#4CAF50', borderRadius: '2px' }} />
+              </div>
+              <span style={{ fontFamily: F, fontSize: '12px', color: isOpen ? 'rgba(255,255,255,0.6)' : '#888780' }}>{isOpen ? '▲' : '▼'}</span>
             </button>
-            {openCategory === category && (
-              <div style={{ paddingTop: '4px', display: 'flex', flexDirection: 'column' as const, gap: '4px' }}>
+
+            {/* Exercises list */}
+            {isOpen && (
+              <div style={{ border: '1px solid #1A1A18', borderTop: 'none', borderRadius: '0 0 12px 12px', overflow: 'hidden' }}>
                 {exercises.map((ex, exIdx) => {
-                  // Exercise is unlocked if: first in category, OR previous exercise completed
                   const prevEx = exIdx > 0 ? exercises[exIdx - 1] : null
                   const isUnlocked = exIdx === 0 || (prevEx ? (progress[prevEx.id]?.completed ?? false) : true)
                   const p = progress[ex.id]
                   const isCurrent = ex.id === currentId
+                  const isLast = exIdx === exercises.length - 1
+
                   return (
                     <button key={ex.id}
                       onClick={() => isUnlocked && onSelect(ex)}
-                      style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '10px', border: '1px solid ' + (isCurrent ? '#BA7517' : '#D3D1C7'), background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#F5F2EC', cursor: isUnlocked ? 'pointer' : 'default', textAlign: 'left' as const, transition: 'all 0.15s', opacity: isUnlocked ? 1 : 0.6 }}
-                      onMouseEnter={e => { if (isUnlocked) e.currentTarget.style.borderColor = '#BA7517' }}
-                      onMouseLeave={e => { if (!isCurrent) e.currentTarget.style.borderColor = '#D3D1C7' }}>
-                      <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '16px' }}>{exIdx + 1}</span>
-                      <span style={{ fontFamily: SERIF, fontSize: '15px', color: isUnlocked ? '#1A1A18' : '#888780', flex: 1 }}>{ex.title}</span>
-                      <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', background: DIFFICULTY_COLORS[ex.difficulty], color: DIFFICULTY_TEXT[ex.difficulty] }}>
-                        {DIFFICULTY_LABEL[ex.difficulty]}
-                      </span>
-                      <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>{ex.beats}/{ex.beat_type}</span>
-                      {!isUnlocked && <span style={{ fontSize: '12px' }}>🔒</span>}
-                      {isUnlocked && p && (
-                        <span style={{ fontFamily: F, fontSize: '10px', color: p.completed ? '#4CAF50' : '#BA7517' }}>
-                          {p.completed ? '✓' : `${p.best_timing}%`}
-                        </span>
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
+                        padding: '11px 16px',
+                        borderBottom: isLast ? 'none' : '1px solid #F0EDE8',
+                        background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8',
+                        cursor: isUnlocked ? 'pointer' : 'default',
+                        textAlign: 'left' as const, transition: 'background 0.1s',
+
+                      }}
+                      onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#FEFCF8' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8' }}>
+
+                      {/* Index */}
+                      <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '20px', flexShrink: 0 }}>{exIdx + 1}</span>
+
+                      {/* Title + meta */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: isUnlocked ? '#1A1A18' : '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{ex.title}</p>
+                        <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', margin: 0 }}>{ex.beats}/{ex.beat_type} · {DIFFICULTY_LABEL[ex.difficulty]}</p>
+                      </div>
+
+                      {/* Status */}
+                      {!isUnlocked && <span style={{ fontSize: '13px', opacity: 0.5 }}>🔒</span>}
+                      {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: '11px', color: '#4CAF50', fontWeight: 500 }}>✓</span>}
+                      {isUnlocked && p && !p.completed && (
+                        <span style={{ fontFamily: F, fontSize: '10px', color: '#BA7517' }}>{p.best_timing}%</span>
                       )}
+                      {isCurrent && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#BA7517', flexShrink: 0 }} />}
                     </button>
                   )
                 })}
               </div>
             )}
           </div>
-        ))}
+        )
+      })}
+
+      {/* Upload — collapsible */}
+      <div style={{ marginTop: '16px' }}>
+        <button onClick={() => setShowUpload(v => !v)}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderRadius: showUpload ? '12px 12px 0 0' : '12px', border: '1px solid #D3D1C7', borderBottom: showUpload ? 'none' : '1px solid #D3D1C7', background: 'white', cursor: 'pointer', textAlign: 'left' as const }}>
+          <span style={{ fontFamily: F, fontSize: '12px', color: '#888780' }}>Load custom .mxl</span>
+          <span style={{ fontFamily: F, fontSize: '11px', color: '#D3D1C7' }}>{showUpload ? '▲' : '▼'}</span>
+        </button>
+        {showUpload && (
+          <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+            style={{ border: `1px solid ${dragOver ? '#BA7517' : '#D3D1C7'}`, borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px 24px', textAlign: 'center' as const, background: dragOver ? '#FEF3E2' : 'white', transition: 'all 0.2s' }}>
+            <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#888780', marginBottom: '4px' }}>Drop .mxl here</p>
+            <p style={{ fontFamily: F, fontSize: '11px', color: '#D3D1C7' }}>Export from MuseScore</p>
+          </div>
+        )}
       </div>
 
-      {/* Drop zone */}
-      <div>
-        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Or load your own</p>
-        <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
-          style={{ border: `2px dashed ${dragOver ? '#BA7517' : '#D3D1C7'}`, borderRadius: '16px', padding: '48px 24px', textAlign: 'center' as const, background: dragOver ? '#FEF3E2' : 'white', transition: 'all 0.2s', height: '200px', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#888780', marginBottom: '6px' }}>Drop .mxl here</p>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#D3D1C7' }}>Export from MuseScore</p>
-        </div>
-        <button onClick={async () => { const { resetProgress } = await import('@/lib/rhythmLibrary'); await resetProgress(userId ?? null); onProgressReset?.() }}
-          style={{ marginTop: '12px', width: '100%', padding: '8px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '11px', cursor: 'pointer' }}>
-          Reset all progress
-        </button>
-      </div>
     </div>
   )
 }
+
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function RhythmPage() {
