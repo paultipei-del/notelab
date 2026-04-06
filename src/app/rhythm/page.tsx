@@ -704,7 +704,8 @@ export default function RhythmPage() {
       const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / beatDuration
       const beat = Math.round(beatFloat2)
       const clampedBeat = Math.max(0, Math.min(beatFloat2, totalBeats))
-      setTaps(prev => [...prev, clampedBeat])
+      const clampedBeatRounded = Math.max(0, Math.min(beat, totalBeats))
+      setTaps(prev => [...prev, clampedBeatRounded])
       // Live feedback
       const expected: number[] = []
       let pos = 0
@@ -712,7 +713,7 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
         pos += n.durationBeats
       }))
-      const isHit = expected.includes(clampedBeat)
+      const isHit = expected.includes(clampedBeatRounded)
       setLiveFeedback(isHit ? 'hit' : 'miss')
       // Real-time note coloring
       if (exercise) {
@@ -916,7 +917,8 @@ export default function RhythmPage() {
     const beatFloatP = elapsed < 0 ? 0 : elapsed / beatDuration
     const beat = Math.round(beatFloatP)
     const clampedBeat = Math.max(0, Math.min(beatFloatP, totalBeats))
-    setTaps(prev => [...prev, clampedBeat])
+    const clampedBeatRounded = Math.max(0, Math.min(beat, totalBeats))
+    setTaps(prev => [...prev, clampedBeatRounded])
     if (exercise) {
       const expected: number[] = []
       let pos = 0
@@ -924,7 +926,7 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
         pos += n.durationBeats
       }))
-      const isHit = expected.includes(clampedBeat)
+      const isHit = expected.includes(clampedBeatRounded)
       setLiveFeedback(isHit ? 'hit' : 'miss')
     // Real-time note coloring
     if (exercise) {
@@ -933,7 +935,7 @@ export default function RhythmPage() {
         let found = false
         const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
         // Find nearest note to tap position using tolerance window
-        const TOL = 0.15  // beats tolerance (< half of 16th note = 0.125)
+        const TOL = 0.13  // slightly more than half a 16th note (0.125)
         let nearest = { mi: -1, ni: -1, dist: Infinity }
         exercise.measures.forEach((m, mi) => {
           m.notes.forEach((n, ni) => {
