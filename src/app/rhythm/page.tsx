@@ -595,9 +595,12 @@ export default function RhythmPage() {
         setCountdown(countBeat)
         // Start playhead moving during last countdown beat
         const timeToStart = startTimeRef.current - ctx2.currentTime
-        // Show playhead 1 beat before exercise starts
-        if (timeToStart <= beatDuration) {
+        // Show playhead from 2 beats before downbeat
+        if (timeToStart <= beatDuration * 2) {
           setPlayhead(-timeToStart / beatDuration)
+        }
+        // Enable tap during last beat only
+        if (timeToStart <= beatDuration) {
           tapReadyRef.current = true
           setTapReady(true)
         }
