@@ -755,13 +755,28 @@ export default function RhythmPage() {
           })
         })
         console.log('NEAREST: mi='+nearest.mi+' ni='+nearest.ni+' dist='+nearest.dist.toFixed(3)+' beat='+clampedBeat.toFixed(3))
-        if (nearest.mi >= 0) {
-          const result = nearest.dist <= TOL ? 'hit' : 'miss'
-          setTapResults(prev => {
-            const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-            newResults[nearest.mi][nearest.ni] = result
-            return newResults
-          })
+        if (nearest.mi >= 0 && nearest.dist <= TOL) {
+          // Only color if this note actually contains the tap
+          let cpCheck = 0
+          let noteContainsTap = false
+          for (let miC = 0; miC < exercise.measures.length; miC++) {
+            for (let niC = 0; niC < exercise.measures[miC].notes.length; niC++) {
+              const nC = exercise.measures[miC].notes[niC]
+              if (miC === nearest.mi && niC === nearest.ni) {
+                noteContainsTap = clampedBeat >= cpCheck - 0.25 && clampedBeat < cpCheck + nC.durationBeats + 0.1
+                break
+              }
+              cpCheck += nC.durationBeats
+            }
+          }
+          if (noteContainsTap) {
+            const result = nearest.dist <= TOL ? 'hit' : 'miss'
+            setTapResults(prev => {
+              const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+              newResults[nearest.mi][nearest.ni] = result
+              return newResults
+            })
+          }
         }
       }
     }
