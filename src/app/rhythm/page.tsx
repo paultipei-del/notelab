@@ -762,7 +762,7 @@ export default function RhythmPage() {
             let posNN = 0
             for (const m of exercise.measures) {
               for (const n of m.notes) {
-                if (!n.rest && Math.abs(posNN - clampedBeat) <= 0.25) return true
+                if (!n.rest && Math.abs(posNN - clampedBeat) <= 0.5) return true
                 posNN += n.durationBeats
               }
             }
@@ -781,7 +781,7 @@ export default function RhythmPage() {
             for (let miNR = 0; miNR < exercise.measures.length; miNR++) {
               for (let niNR = 0; niNR < exercise.measures[miNR].notes.length; niNR++) {
                 const nNR = exercise.measures[miNR].notes[niNR]
-                if (!nNR.rest && Math.abs(posNR - clampedBeat) <= 0.25) {
+                if (!nNR.rest && Math.abs(posNR - clampedBeat) <= 0.5) {
                   setTapResults(prev => {
                     const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
                     newResults[miNR][niNR] = 'hit'
@@ -835,7 +835,7 @@ export default function RhythmPage() {
     }))
     // Only use taps that are NOT on a rest for note matching
     const noteTaps = taps.filter(t => {
-      const nearNoteOnset = expected.some(e => Math.abs(t - e) <= 0.25)
+      const nearNoteOnset = expected.some(e => Math.abs(t - e) <= 0.5)
       if (nearNoteOnset) return true
       return !restRangesForScoring.some(r => t >= r.start - 0.15 && t < r.end)
     })
@@ -1003,8 +1003,8 @@ export default function RhythmPage() {
       let diagCP = 0; let diagFound = 'unknown'
       for (const m of exercise.measures) {
         for (const n of m.notes) {
-          const endTolD = n.rest ? 0 : 0.1
-          if (clampedBeat >= diagCP - 0.25 && clampedBeat < diagCP + n.durationBeats + endTolD) {
+          const endTolD = n.rest ? -0.3 : 0.3
+          if (clampedBeat >= diagCP - 0.5 && clampedBeat < diagCP + n.durationBeats + endTolD) {
             diagFound = n.rest ? 'REST' : 'NOTE'
             break
           }
@@ -1013,7 +1013,7 @@ export default function RhythmPage() {
         if (diagFound !== 'unknown') break
       }
       setDiagLog(prev => [...prev, `TOUCH beat=${clampedBeat.toFixed(3)} on=${diagFound} isHit=${isHit} expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
-      const nearOnsetP = expected.some(e => Math.abs(e - clampedBeat) <= 0.25)
+      const nearOnsetP = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
       const effectiveIsHit = isHit && (diagFound !== 'REST' || nearOnsetP)
       if (effectiveIsHit) setLiveFeedback('hit')
       else if (diagFound === 'REST' || expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
@@ -1041,14 +1041,14 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expectedC.push(posEC)
         posEC += n.durationBeats
       }))
-      const nearOnsetC = expectedC.some(e => Math.abs(e - clampedBeat) <= 0.25)
+      const nearOnsetC = expectedC.some(e => Math.abs(e - clampedBeat) <= 0.5)
       // If on rest but near note onset, find the actual note
       if (cn && cn.isRest && nearOnsetC) {
         let cpN = 0
         outerN: for (let miN = 0; miN < exercise.measures.length; miN++) {
           for (let niN = 0; niN < exercise.measures[miN].notes.length; niN++) {
             const nN = exercise.measures[miN].notes[niN]
-            if (!nN.rest && expectedC.some(e => Math.abs(e - cpN) <= 0.01) && Math.abs(cpN - clampedBeat) <= 0.25) {
+            if (!nN.rest && expectedC.some(e => Math.abs(e - cpN) <= 0.01) && Math.abs(cpN - clampedBeat) <= 0.5) {
               let bpN = 0
               exercise.measures[miN].notes.slice(0, niN).forEach(nn => bpN += nn.durationBeats)
               cn = { mi: miN, ni: niN, isRest: false, beatPos: miN * (exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)) + bpN }
