@@ -1521,30 +1521,59 @@ export default function RhythmPage() {
                 )
               })}
 
-              {view === 'grid' && !isPortrait && exercise.measures.map((measure, mIdx) => (
-                <div key={mIdx} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                  <span style={{ fontFamily: F, fontSize: '10px', color: '#888780', width: '18px', flexShrink: 0 }}>{mIdx + 1}</span>
-                  <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
-                    {measure.notes.map((note, nIdx) => {
-                      const beatsPerMeasure2 = exercise.timeSignature.beats
-                      const measureStart = mIdx * beatsPerMeasure2
-                      const measureEnd = measureStart + beatsPerMeasure2
-                      const isCurrent = playhead !== null && playhead >= measureStart && playhead < measureEnd
-                      const tr: 'hit'|'miss'|'none' = tapResults[mIdx]?.[nIdx] ?? 'none'
-                      let bg = note.rest ? '#F5F2EC' : '#1A1A18'
-                      let border = '1px solid #D3D1C7'
-                      if (isCurrent) border = '2px solid #BA7517'
-                      if (tr === 'hit') bg = '#4CAF50'
-                      if (tr === 'miss' && !note.rest) bg = '#E53935'
+              {view === 'grid' && !isPortrait && (() => {
+                const qBpmG = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+                const CELL_H = 48
+                const GRID_ROW_H = CELL_H + 2
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
+                    {exercise.measures.map((measure, mIdx) => {
+                      const measureStartBeat = mIdx * qBpmG
+                      const measureEndBeat = measureStartBeat + qBpmG
+                      const playheadInMeasure = playhead !== null && playhead >= measureStartBeat && playhead < measureEndBeat
+                      const playheadPct = playheadInMeasure ? (playhead! - measureStartBeat) / qBpmG : null
                       return (
-                        <div key={nIdx} style={{ flex: note.durationBeats, height: '40px', borderRadius: '8px', background: bg, border, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '24px', transition: 'all 0.15s' }}>
-                          {note.rest && <span style={{ fontFamily: F, fontSize: '9px', color: '#888780' }}>rest</span>}
+                        <div key={mIdx} style={{ display: 'flex', alignItems: 'stretch', gap: '6px', height: GRID_ROW_H }}>
+                          {/* Measure number */}
+                          <span style={{ fontFamily: F, fontSize: '10px', color: '#888780', width: '18px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>{mIdx + 1}</span>
+                          {/* Grid row */}
+                          <div style={{ flex: 1, position: 'relative' as const, display: 'flex', gap: 0, borderRadius: '6px', overflow: 'hidden', border: '1px solid #D3D1C7' }}>
+                            {measure.notes.map((note, nIdx) => {
+                              const tr: 'hit'|'miss'|'none' = tapResults[mIdx]?.[nIdx] ?? 'none'
+                              // Colors: note=dark, rest=empty/light, hit=green, miss=red
+                              let bg = note.rest ? '#F0EDE8' : '#2A2A28'
+                              if (tr === 'hit') bg = '#4CAF50'
+                              if (tr === 'miss' && !note.rest) bg = '#E53935'
+                              // Subdivision lines inside each block
+                              const subdivisions = Math.round(note.durationBeats / (4 / exercise.timeSignature.beatType))
+                              return (
+                                <div key={nIdx} style={{ flex: note.durationBeats, position: 'relative' as const, background: bg, borderRight: nIdx < measure.notes.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none', transition: 'background 0.1s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  {/* Subdivision markers */}
+                                  {subdivisions > 1 && Array.from({ length: subdivisions - 1 }, (_, si) => (
+                                    <div key={si} style={{ position: 'absolute' as const, left: `${((si + 1) / subdivisions) * 100}%`, top: '25%', bottom: '25%', width: '1px', background: note.rest ? '#D3D1C7' : 'rgba(255,255,255,0.15)' }} />
+                                  ))}
+                                  {/* Rest label */}
+                                  {note.rest && tr === 'none' && (
+                                    <span style={{ fontFamily: F, fontSize: '9px', color: '#888780', letterSpacing: '0.05em' }}>—</span>
+                                  )}
+                                </div>
+                              )
+                            })}
+                            {/* Playhead line */}
+                            {playheadPct !== null && (
+                              <div style={{ position: 'absolute' as const, left: `${playheadPct * 100}%`, top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.85, zIndex: 10, transform: 'translateX(-1px)', pointerEvents: 'none' as const }} />
+                            )}
+                            {/* Trail in grid */}
+                            {trail.filter(t => t.beat >= measureStartBeat && t.beat < measureEndBeat).map((t, i) => (
+                              <div key={i} style={{ position: 'absolute' as const, left: `${((t.beat - measureStartBeat) / qBpmG) * 100}%`, bottom: 0, width: '2px', height: '6px', background: t.color, opacity: 0.9 }} />
+                            ))}
+                          </div>
                         </div>
                       )
                     })}
                   </div>
-                </div>
-              ))}
+                )
+              })()}
             </div>
             </div>
 
