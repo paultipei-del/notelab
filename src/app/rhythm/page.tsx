@@ -513,12 +513,12 @@ export default function RhythmPage() {
   }, [user])
 
   useEffect(() => {
-    const el = landscapeContainerRef.current || containerRef.current
+    const el = isPortrait ? containerRef.current : landscapeContainerRef.current
     if (!el) return
     const obs = new ResizeObserver(entries => setSvgWidth(entries[0].contentRect.width - 48))
     obs.observe(el)
     return () => obs.disconnect()
-  }, [exercise])
+  }, [exercise, isPortrait])
 
   const getCtx = () => {
     if (!ctxRef.current) {
