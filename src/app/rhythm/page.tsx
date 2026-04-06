@@ -704,6 +704,7 @@ export default function RhythmPage() {
       const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / beatDuration
       const beat = Math.round(beatFloat2)
       const clampedBeat = Math.max(0, Math.min(beatFloat2, totalBeats))
+      console.log('KB TAP: beatFloat='+beatFloat2.toFixed(3)+' clampedBeat='+clampedBeat.toFixed(3))
       setTaps(prev => [...prev, clampedBeat])
       // Live feedback
       const expected: number[] = []
