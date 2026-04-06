@@ -1197,12 +1197,12 @@ export default function RhythmPage() {
 {/* Beat markers */}
                       {exercise.measures.map((m, mi) =>
                         Array.from({ length: Math.round(qBeatsPerMeasure) }, (_, bi) => (
-                          <line key={'bm'+mi+'-'+bi} x1={56 + 14 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y1={STAFF_Y + 20} x2={56 + 14 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
+                          <line key={'bm'+mi+'-'+bi} x1={56 + 12 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y1={STAFF_Y + 20} x2={56 + 12 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
                         ))
                       )}
                       {/* Trail */}
                       {trail.map((t, i) => (
-                        <rect key={'t'+i} x={56 + 14 + t.beat * NOTE_W_PORTRAIT} y={STAFF_Y + 13} width={Math.max(1, NOTE_W_PORTRAIT / 20)} height={6} fill={t.color} opacity={0.9} />
+                        <rect key={'t'+i} x={56 + 12 + t.beat * NOTE_W_PORTRAIT} y={STAFF_Y + 13} width={Math.max(1, NOTE_W_PORTRAIT / 20)} height={6} fill={t.color} opacity={0.9} />
                       ))}
                     </g>
                   </svg>
@@ -1457,7 +1457,7 @@ export default function RhythmPage() {
                           {renderMeasure(measure.notes, mx, noteW, tapRes, bpm, beatUnit)}
 {/* Beat markers */}
                           {Array.from({ length: Math.round(bpm) }, (_, bi) => (
-                            <line key={'bm'+bi} x1={mx - 4 + bi * noteW} y1={STAFF_Y + 20} x2={mx - 4 + bi * noteW} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
+                            <line key={'bm'+bi} x1={mx - 6 + bi * noteW} y1={STAFF_Y + 20} x2={mx - 6 + bi * noteW} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
                           ))}
                           {/* Trail */}
                           {trail.filter(t => t.beat >= globalMeasureIdx * bpm && t.beat < (globalMeasureIdx + 1) * bpm).map((t, i) => (
