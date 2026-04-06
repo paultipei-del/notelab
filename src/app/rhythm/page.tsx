@@ -962,8 +962,6 @@ export default function RhythmPage() {
           )}
         </div>
 
-        {/* Spacer */}
-        <div style={{ flex: 1 }} />
         {/* Notation area */}
         {exercise ? (
           <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', position: 'relative' as const, flexShrink: 0 }}>
