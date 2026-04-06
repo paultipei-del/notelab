@@ -999,7 +999,8 @@ export default function RhythmPage() {
         if (diagFound !== 'unknown') break
       }
       setDiagLog(prev => [...prev, `TOUCH beat=${clampedBeat.toFixed(3)} on=${diagFound} isHit=${isHit} expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
-      const effectiveIsHit = isHit && diagFound !== 'REST'
+      const nearOnsetP = expected.some(e => Math.abs(e - clampedBeat) <= 0.25)
+      const effectiveIsHit = isHit && (diagFound !== 'REST' || nearOnsetP)
       if (effectiveIsHit) setLiveFeedback('hit')
       else if (diagFound === 'REST' || expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
     }
@@ -1018,6 +1019,29 @@ export default function RhythmPage() {
             break outerC
           }
           cpC += nC.durationBeats
+        }
+      }
+      const expectedC: number[] = []
+      let posEC = 0
+      exercise.measures.forEach(m => m.notes.forEach(n => {
+        if (!n.rest && !n.tieStop) expectedC.push(posEC)
+        posEC += n.durationBeats
+      }))
+      const nearOnsetC = expectedC.some(e => Math.abs(e - clampedBeat) <= 0.25)
+      // If on rest but near note onset, find the actual note
+      if (cn && cn.isRest && nearOnsetC) {
+        let cpN = 0
+        outerN: for (let miN = 0; miN < exercise.measures.length; miN++) {
+          for (let niN = 0; niN < exercise.measures[miN].notes.length; niN++) {
+            const nN = exercise.measures[miN].notes[niN]
+            if (!nN.rest && expectedC.some(e => Math.abs(e - cpN) <= 0.01) && Math.abs(cpN - clampedBeat) <= 0.25) {
+              let bpN = 0
+              exercise.measures[miN].notes.slice(0, niN).forEach(nn => bpN += nn.durationBeats)
+              cn = { mi: miN, ni: niN, isRest: false, beatPos: miN * (exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)) + bpN }
+              break outerN
+            }
+            cpN += nN.durationBeats
+          }
         }
       }
       if (cn && !cn.isRest) {
