@@ -822,7 +822,16 @@ export default function RhythmPage() {
 
     // Adjust hits to account for extra taps within notes
     const adjustedHits = perMeasure.flat().filter(r => r === 'hit').length
-    // Don't overwrite real-time tapResults — keep colors from during exercise
+    // Merge: keep real-time hits, fill remaining 'none' with scoring result
+    setTapResults(prev => {
+      return perMeasure.map((row, mi) =>
+        row.map((val, ni) => {
+          const rt = prev[mi]?.[ni]
+          if (rt === 'hit') return 'hit'  // keep real-time hit
+          return val  // use scoring result for missed/none
+        })
+      )
+    })
 
     // Save progress
     if (currentMeta) {
@@ -924,7 +933,7 @@ export default function RhythmPage() {
         let found = false
         const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
         // Find nearest note to tap position using tolerance window
-        const TOL = 0.3  // beats tolerance
+        const TOL = 0.15  // beats tolerance (< half of 16th note = 0.125)
         let nearest = { mi: -1, ni: -1, dist: Infinity }
         exercise.measures.forEach((m, mi) => {
           m.notes.forEach((n, ni) => {
