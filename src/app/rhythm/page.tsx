@@ -874,7 +874,7 @@ export default function RhythmPage() {
       rPos += n.durationBeats
     }))
     // Count taps that fall within rest ranges
-    const restTaps = taps.filter(t => restRanges.some(r => t >= r.start && t < r.end)).length
+    const restTaps = taps.filter(t => restRanges.some(r => t >= r.start && t < r.end) && !expected.some(e => Math.abs(e - t) <= 0.75)).length
 
     // Build note ranges for extra-tap detection
     const noteRanges: { start: number; end: number; isNote: boolean }[] = []
