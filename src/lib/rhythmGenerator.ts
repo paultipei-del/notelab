@@ -69,7 +69,7 @@ function fillMeasure(
   const notes: GeneratedNote[] = []
   let remaining = Math.round(beatsPerMeasure * 16) / 16  // work in 16ths to avoid float errors
   // Detect compound meter (top number 6, 9, or 12)
-  const isCompound = opts.timeSignature.beats % 3 === 0 && opts.timeSignature.beats > 3
+  const isCompound = opts.timeSignature.beats % 3 === 0 && opts.timeSignature.beatType >= 8
   // Beat unit in quarter note durations:
   // Simple: 4/beatType (e.g. 4/4 → 1, 3/8 → 0.5)
   // Compound: 3 * (4/beatType) (e.g. 6/8 → 1.5, 12/8 → 1.5, 9/4 → 3)
