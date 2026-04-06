@@ -982,8 +982,8 @@ export default function RhythmPage() {
               // playhead goes from -countdownBeats to totalBeats
               // at playhead=0, first note (x=56+18) should be at centerX
               // at playhead=0, first notehead (x=74) aligns with center playhead line
-              const effectivePlayhead = playhead ?? 0
-              const offsetX = centerX - 56 - effectivePlayhead * NOTE_W_PORTRAIT
+              const effectivePlayhead = playhead ?? -1
+              const offsetX = centerX - 62 - effectivePlayhead * NOTE_W_PORTRAIT
               return (
                 <div style={{ overflow: 'hidden' }}>
                   <svg width={svgWidth} height={160} style={{ display: 'block' }}>
