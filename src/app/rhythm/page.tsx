@@ -983,7 +983,11 @@ export default function RhythmPage() {
               const preRoll = 0  // offset handled by mx+18 positioning
               // playhead goes from -countdownBeats to totalBeats
               // at playhead=0, first note (x=56+18) should be at centerX
-              const offsetX = centerX - (56 + 18 + (playhead ?? 0) * NOTE_W_PORTRAIT)
+              // at playhead=0, barline at x=56 aligns with center playhead line
+              // playhead < 0 during pre-roll: content shifts right so barline arrives at center on beat 0
+              const preRollBeats = 2
+              const idlePlayhead = playhead ?? -preRollBeats
+              const offsetX = centerX - 56 - idlePlayhead * NOTE_W_PORTRAIT
               return (
                 <div style={{ overflow: 'hidden' }}>
                   <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
