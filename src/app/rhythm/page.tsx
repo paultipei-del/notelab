@@ -915,6 +915,41 @@ export default function RhythmPage() {
       }))
       const isHit = expected.includes(clampedBeat)
       setLiveFeedback(isHit ? 'hit' : 'miss')
+    // Real-time note coloring
+    if (exercise) {
+      setTapResults(prev => {
+        let pos = 0
+        let found = false
+        const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+        exercise.measures.forEach((m, mi) => {
+          m.notes.forEach((n, ni) => {
+            if (!n.rest && !n.tieStop) {
+              const noteBeat = Math.round(pos)
+              if (noteBeat === clampedBeat && !found) {
+                found = true
+                newResults[mi][ni] = 'hit'
+              }
+            }
+            pos += n.durationBeats
+          })
+        })
+        if (!found) {
+          pos = 0
+          let nearest = { mi: -1, ni: -1, dist: Infinity }
+          exercise.measures.forEach((m, mi) => {
+            m.notes.forEach((n, ni) => {
+              if (!n.rest && !n.tieStop) {
+                const d = Math.abs(Math.round(pos) - clampedBeat)
+                if (d < nearest.dist) nearest = { mi, ni, dist: d }
+              }
+              pos += n.durationBeats
+            })
+          })
+          if (nearest.mi >= 0) newResults[nearest.mi][nearest.ni] = 'miss'
+        }
+        return newResults
+      })
+    }
     }
   }, [playing, countdown, beatDuration, totalBeats, exercise])
 
