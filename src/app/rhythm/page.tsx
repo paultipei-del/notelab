@@ -639,6 +639,7 @@ export default function RhythmPage() {
     // For simple: bpm = quarter BPM, so beatDuration = 60/bpm
     const feltBeatDuration = isCompound ? 60 / bpm : beatDuration
     const compoundBeatDuration = isCompound ? feltBeatDuration / 3 : beatDuration  // eighth note duration for compound
+    console.log('COMPOUND:', isCompound, 'feltBeats:', feltBeats, 'beats:', exercise.timeSignature.beats, 'beatType:', exercise.timeSignature.beatType)
     const countdownBeats = feltBeats
     const countdownDuration = countdownBeats * feltBeatDuration
     const now = ctx.currentTime + 0.1
