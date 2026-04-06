@@ -1049,14 +1049,6 @@ export default function RhythmPage() {
           )}
         </div>
 
-        {/* TAP button */}
-        {exercise && (
-          <button ref={tapBtnRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
-            onContextMenu={e => e.preventDefault()} style={tapBtnStyle as React.CSSProperties}>
-            {countdown !== null && !tapReady ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? 'Try Again' : 'Start'}
-          </button>
-        )}
-
         {/* Bottom controls */}
         {exercise && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
@@ -1082,6 +1074,14 @@ export default function RhythmPage() {
               </button>
             )}
           </div>
+        )}
+
+        {/* TAP button */}
+        {exercise && (
+          <button ref={tapBtnRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
+            onContextMenu={e => e.preventDefault()} style={tapBtnStyle as React.CSSProperties}>
+            {countdown !== null && !tapReady ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? 'Try Again' : 'Start'}
+          </button>
         )}
 
       </div>
