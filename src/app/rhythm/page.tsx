@@ -1184,10 +1184,10 @@ export default function RhythmPage() {
                       {/* Hold duration line — drawn on staff */}
                       {/* Persisted hold bars */}
                       {holdBars.map((hb, i) => (
-                        <rect key={'hb'+i} x={56 + 18 - 18 + hb.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={hb.pct * hb.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
+                        <rect key={'hb'+i} x={56 + 18 - 15 + hb.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={hb.pct * hb.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={hb.color} opacity={0.8} />
                       ))}
                       {activeHoldBar && holdNoteRef.current && (
-                        <rect x={56 + 18 - 18 + activeHoldBar.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={activeHoldBar.pct * activeHoldBar.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
+                        <rect x={56 + 18 - 15 + activeHoldBar.beatPos * NOTE_W_PORTRAIT} y={STAFF_Y + 16} width={activeHoldBar.pct * activeHoldBar.durationBeats * NOTE_W_PORTRAIT} height={3} rx={1.5} fill={activeHoldBar.color} opacity={0.8} />
                       )}
                     </g>
                   </svg>
