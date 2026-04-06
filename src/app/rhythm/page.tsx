@@ -764,27 +764,25 @@ export default function RhythmPage() {
           }
           holdRafRef.current = requestAnimationFrame(animateKbHold)
         }
-        // Also check if tapping on a rest (always red)
-        if (nearest.dist > TOL) {
-          let rpos = 0
-          let nearestRest = { mi: -1, ni: -1, dist: Infinity, dur: 0 }
-          exercise.measures.forEach((m, mi) => {
-            m.notes.forEach((n, ni) => {
-              if (n.rest) {
-                const d = Math.abs(rpos - clampedBeat)
-                if (d < nearestRest.dist) nearestRest = { mi, ni, dist: d, dur: n.durationBeats }
+        // Override hold bar if tap actually falls within a rest
+        {
+          const qBpmKB = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+          const allNKB = exercise.measures.flatMap(m => m.notes)
+          const smallKB = allNKB.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
+          const noteWKB = Math.max(40, 32 / smallKB)
+          let cpKB = 0
+          let found = false
+          for (let miKB = 0; miKB < exercise.measures.length && !found; miKB++) {
+            for (let niKB = 0; niKB < exercise.measures[miKB].notes.length && !found; niKB++) {
+              const nKB = exercise.measures[miKB].notes[niKB]
+              if (nKB.rest && clampedBeat >= cpKB - 0.15 && clampedBeat < cpKB + nKB.durationBeats + 0.15) {
+                let bpKB = 0
+                exercise.measures[miKB].notes.slice(0, niKB).forEach(nn => bpKB += nn.durationBeats)
+                holdNoteRef.current = { x: 0, maxWidth: nKB.durationBeats * noteWKB, expectedMs: nKB.durationBeats * beatDuration * 1000, beatPos: miKB * qBpmKB + bpKB, durationBeats: nKB.durationBeats }
+                found = true
               }
-              rpos += n.durationBeats
-            })
-          })
-          if (nearestRest.dist <= TOL && nearestRest.mi >= 0) {
-            let rbp = 0
-            exercise.measures[nearestRest.mi].notes.slice(0, nearestRest.ni).forEach(n => rbp += n.durationBeats)
-            const restBeatPos = nearestRest.mi * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType) + rbp
-            const allNR = exercise.measures.flatMap(m => m.notes)
-            const smallR = allNR.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
-            const noteWR = Math.max(40, 32 / smallR)
-            holdNoteRef.current = { x: 0, maxWidth: nearestRest.dur * noteWR, expectedMs: nearestRest.dur * beatDuration * 1000, beatPos: restBeatPos, durationBeats: nearestRest.dur }
+              cpKB += nKB.durationBeats
+            }
           }
         }
       }
@@ -988,36 +986,55 @@ export default function RhythmPage() {
       const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
     }
-    // Real-time note coloring
+    // Real-time note coloring + hold bar using containing note/rest
     if (exercise) {
-      const TOL = 0.4
-      let pos = 0
-      let nearest = { mi: -1, ni: -1, dist: Infinity }
-      exercise.measures.forEach((m, mi) => {
-        m.notes.forEach((n, ni) => {
-          if (!n.rest && !n.tieStop) {
-            const d = Math.abs(pos - clampedBeat)
-            if (d < nearest.dist) nearest = { mi, ni, dist: d }
+      const qBpmH = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+      const allNH = exercise.measures.flatMap(m => m.notes)
+      const smallH = allNH.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
+      const noteWH = Math.max(40, 32 / smallH)
+
+      // Find which note/rest the tap falls within
+      let cpH = 0
+      let cn: { mi: number; ni: number; isRest: boolean; dur: number; beatPos: number } | null = null
+      outer: for (let miH = 0; miH < exercise.measures.length; miH++) {
+        for (let niH = 0; niH < exercise.measures[miH].notes.length; niH++) {
+          const nH = exercise.measures[miH].notes[niH]
+          if (clampedBeat >= cpH - 0.15 && clampedBeat < cpH + nH.durationBeats + 0.15) {
+            let bpH = 0
+            exercise.measures[miH].notes.slice(0, niH).forEach(nn => bpH += nn.durationBeats)
+            cn = { mi: miH, ni: niH, isRest: !!nH.rest, dur: nH.durationBeats, beatPos: miH * qBpmH + bpH }
+            break outer
           }
-          pos += n.durationBeats
-        })
-      })
-      if (nearest.mi >= 0) {
-        const result = nearest.dist <= TOL ? 'hit' : 'miss'
-        setTapResults(prev => {
-          const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-          newResults[nearest.mi][nearest.ni] = result
-          return newResults
-        })
-        // Start hold bar — maxWidth in pixels using NOTE_W_PORTRAIT
-        const nm = exercise.measures[nearest.mi].notes[nearest.ni]
-        const expectedMs = nm.durationBeats * beatDuration * 1000
-        const qBpmH = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-        const allNH = exercise.measures.flatMap(m => m.notes)
-        const smallH = allNH.reduce((min: number, n: {durationBeats: number}) => Math.min(min, n.durationBeats), 1)
-        const noteWH = Math.max(40, 32 / smallH)
-        const maxWidthPx = nm.durationBeats * noteWH
-        holdNoteRef.current = { x: 0, maxWidth: maxWidthPx, expectedMs, beatPos: nearest.mi * qBpmH + (() => { let p = 0; exercise.measures[nearest.mi].notes.slice(0, nearest.ni).forEach(n => p += n.durationBeats); return p })(), durationBeats: nm.durationBeats }
+          cpH += nH.durationBeats
+        }
+      }
+
+      if (cn) {
+        // Start hold bar at the containing note/rest position
+        holdNoteRef.current = { x: 0, maxWidth: cn.dur * noteWH, expectedMs: cn.dur * beatDuration * 1000, beatPos: cn.beatPos, durationBeats: cn.dur }
+        if (!cn.isRest) {
+          // Color the note hit/miss
+          const TOL = 0.4
+          let pos2 = 0
+          let nearest = { mi: -1, ni: -1, dist: Infinity }
+          exercise.measures.forEach((m, mi) => {
+            m.notes.forEach((n, ni) => {
+              if (!n.rest && !n.tieStop) {
+                const d = Math.abs(pos2 - clampedBeat)
+                if (d < nearest.dist) nearest = { mi, ni, dist: d }
+              }
+              pos2 += n.durationBeats
+            })
+          })
+          if (nearest.mi >= 0) {
+            const result = nearest.dist <= TOL ? 'hit' : 'miss'
+            setTapResults(prev => {
+              const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+              newResults[nearest.mi][nearest.ni] = result
+              return newResults
+            })
+          }
+        }
         holdStartRef.current = performance.now()
         cancelAnimationFrame(holdRafRef.current)
         const animateHold = () => {
