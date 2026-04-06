@@ -985,7 +985,8 @@ export default function RhythmPage() {
       let diagCP = 0; let diagFound = 'unknown'
       for (const m of exercise.measures) {
         for (const n of m.notes) {
-          if (clampedBeat >= diagCP - 0.25 && clampedBeat < diagCP + n.durationBeats + 0.1) {
+          const endTolD = n.rest ? 0 : 0.1
+          if (clampedBeat >= diagCP - 0.25 && clampedBeat < diagCP + n.durationBeats + endTolD) {
             diagFound = n.rest ? 'REST' : 'NOTE'
             break
           }
@@ -1005,7 +1006,8 @@ export default function RhythmPage() {
       outerC: for (let miC = 0; miC < exercise.measures.length; miC++) {
         for (let niC = 0; niC < exercise.measures[miC].notes.length; niC++) {
           const nC = exercise.measures[miC].notes[niC]
-          if (clampedBeat >= cpC - 0.25 && clampedBeat < cpC + nC.durationBeats + 0.1) {
+          const endTol = nC.rest ? 0 : 0.1  // no forward tolerance for rests
+          if (clampedBeat >= cpC - 0.25 && clampedBeat < cpC + nC.durationBeats + endTol) {
             let bpC = 0
             exercise.measures[miC].notes.slice(0, niC).forEach(nn => bpC += nn.durationBeats)
             cn = { mi: miC, ni: niC, isRest: !!nC.rest, beatPos: miC * (exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)) + bpC }
