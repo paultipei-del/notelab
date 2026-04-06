@@ -914,7 +914,7 @@ export default function RhythmPage() {
     }).length
     const durationTotal = Math.min(tapDurations.length, expectedDurations.length)
 
-    const finalScore = { hits: Math.max(0, adjustedHits - restTaps), total: expected.length, durationHits, durationTotal, restTaps }
+    const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
     setScore(finalScore)
     setDiagLog(prev => [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
   }, [playing])
