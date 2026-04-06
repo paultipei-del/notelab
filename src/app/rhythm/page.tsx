@@ -822,7 +822,7 @@ export default function RhythmPage() {
 
     // Adjust hits to account for extra taps within notes
     const adjustedHits = perMeasure.flat().filter(r => r === 'hit').length
-    setTapResults(perMeasure)
+    // Don't overwrite real-time tapResults — keep colors from during exercise
 
     // Save progress
     if (currentMeta) {
@@ -997,7 +997,7 @@ export default function RhythmPage() {
     }
 
     return (
-      <div style={{ height: '100svh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '8px 12px 8px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+      <div style={{ minHeight: '100svh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '8px 12px 8px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
 
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
