@@ -756,28 +756,42 @@ export default function RhythmPage() {
         })
         console.log('NEAREST: mi='+nearest.mi+' ni='+nearest.ni+' dist='+nearest.dist.toFixed(3)+' beat='+clampedBeat.toFixed(3))
         if (nearest.mi >= 0 && nearest.dist <= TOL) {
-          // Only color if this note actually contains the tap
-          let cpCheck = 0
-          let noteContainsTap = false
-          for (let miC = 0; miC < exercise.measures.length; miC++) {
-            for (let niC = 0; niC < exercise.measures[miC].notes.length; niC++) {
-              const nC = exercise.measures[miC].notes[niC]
-              if (miC === nearest.mi && niC === nearest.ni) {
-                noteContainsTap = clampedBeat >= cpCheck - 0.25 && clampedBeat < cpCheck + nC.durationBeats + 0.1
-                break
+          const onRestKB = (() => { let p = 0; for (const m of exercise.measures) { for (const n of m.notes) { if (n.rest && clampedBeat >= p - 0.15 && clampedBeat < p + n.durationBeats) return true; p += n.durationBeats; } } return false })()
+          // Color note if tap contains it OR if near note onset
+          const nearOnsetKB = (() => {
+            let posNN = 0
+            for (const m of exercise.measures) {
+              for (const n of m.notes) {
+                if (!n.rest && Math.abs(posNN - clampedBeat) <= 0.25) return true
+                posNN += n.durationBeats
               }
-              cpCheck += nC.durationBeats
             }
-          }
-          // Check tap is not in a rest zone
-          const onRestKB = (() => { let p = 0; for (const m of exercise.measures) { for (const n of m.notes) { if (n.rest && clampedBeat >= p - 0.15 && clampedBeat < p + n.durationBeats + 0.15) return true; p += n.durationBeats; } } return false })()
-          if (noteContainsTap && !onRestKB) {
-            const result = nearest.dist <= TOL ? 'hit' : 'miss'
+            return false
+          })()
+          if (nearOnsetKB && !onRestKB || (!onRestKB && nearest.dist <= TOL)) {
+            const result: 'hit'|'miss' = nearest.dist <= TOL ? 'hit' : 'miss'
             setTapResults(prev => {
               const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
               newResults[nearest.mi][nearest.ni] = result
               return newResults
             })
+          } else if (nearOnsetKB && onRestKB) {
+            // Find the actual note near this beat
+            let posNR = 0
+            for (let miNR = 0; miNR < exercise.measures.length; miNR++) {
+              for (let niNR = 0; niNR < exercise.measures[miNR].notes.length; niNR++) {
+                const nNR = exercise.measures[miNR].notes[niNR]
+                if (!nNR.rest && Math.abs(posNR - clampedBeat) <= 0.25) {
+                  setTapResults(prev => {
+                    const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+                    newResults[miNR][niNR] = 'hit'
+                    return newResults
+                  })
+                  break
+                }
+                posNR += nNR.durationBeats
+              }
+            }
           }
         }
       }
