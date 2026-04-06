@@ -81,7 +81,7 @@ export async function saveProgress(
   timingPct: number,
   durationPct: number
 ): Promise<void> {
-  const isCompleted = timingPct >= 90 && durationPct >= 90
+  const isCompleted = timingPct >= 90
 
   if (!userId) {
     // localStorage fallback for anonymous users
