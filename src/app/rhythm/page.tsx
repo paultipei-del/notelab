@@ -623,21 +623,32 @@ export default function RhythmPage() {
       // Paint trail — green if pressing near a note, red if pressing on rest, gray if not pressing
       let trailColor = '#D3D1C7'
       if (isPressedRef.current && exercise) {
+        // First check: is beatFloat near ANY note onset? (takes priority over rest)
         let posT = 0
-        let onRest = true
-        outerT: for (const m of exercise.measures) {
+        let nearNote = false
+        for (const m of exercise.measures) {
           for (const n of m.notes) {
-            const noteEnd = posT + n.durationBeats
-            if (!n.rest && beatFloat >= posT - 0.75 && beatFloat <= noteEnd + 0.75) {
-              onRest = false; break outerT
-            }
-            if (n.rest && beatFloat >= posT && beatFloat < noteEnd) {
-              onRest = true; break outerT
-            }
+            if (!n.rest && Math.abs(posT - beatFloat) <= 0.75) { nearNote = true; break }
             posT += n.durationBeats
           }
+          if (nearNote) break
         }
-        trailColor = onRest ? '#E53935' : '#4CAF50'
+        if (nearNote) {
+          trailColor = '#4CAF50'
+        } else {
+          // Second check: is beatFloat strictly inside a rest?
+          let posR = 0
+          let strictlyOnRest = false
+          outerR: for (const m of exercise.measures) {
+            for (const n of m.notes) {
+              if (n.rest && beatFloat >= posR && beatFloat < posR + n.durationBeats) {
+                strictlyOnRest = true; break outerR
+              }
+              posR += n.durationBeats
+            }
+          }
+          trailColor = strictlyOnRest ? '#E53935' : '#4CAF50'
+        }
       }
       trailRef.current.push({ beat: beatFloat, color: trailColor })
       if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
@@ -1163,7 +1174,7 @@ export default function RhythmPage() {
           <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', position: 'relative' as const, flexShrink: 0 }}>
             {/* Fixed playhead */}
             {playing && (countdown === null || (playhead !== null && playhead >= -1)) && (
-              <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-1px)' }} />
+              <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-3px)' }} />
             )}
             {view === 'notation' && (() => {
               const qBeatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
