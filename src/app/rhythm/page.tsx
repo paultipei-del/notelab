@@ -710,10 +710,10 @@ export default function RhythmPage() {
       const expected: number[] = []
       let pos = 0
       exercise.measures.forEach(m => m.notes.forEach(n => {
-        if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
+        if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.includes(clampedBeatRounded)
+      const isHit = expected.some(e => Math.abs(e - clampedBeatRounded) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
       // Real-time note coloring
       if (exercise) {
@@ -777,10 +777,20 @@ export default function RhythmPage() {
     const expected: number[] = []
     let pos = 0
     exercise.measures.forEach(m => m.notes.forEach(n => {
-      if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
+      if (!n.rest && !n.tieStop) expected.push(pos)
       pos += n.durationBeats
     }))
-    const hits = expected.filter(e => taps.includes(e)).length
+    // One-to-one matching with tolerance
+    const SCORE_TOL = 0.4
+    const usedTaps = new Set<number>()
+    const hits = expected.filter(e => {
+      let bestIdx = -1; let bestDist = SCORE_TOL
+      taps.forEach((t, i) => {
+        if (!usedTaps.has(i) && Math.abs(t - e) <= bestDist) { bestDist = Math.abs(t - e); bestIdx = i }
+      })
+      if (bestIdx >= 0) { usedTaps.add(bestIdx); return true }
+      return false
+    }).length
 
     // Build rest ranges for silence detection
     const restRanges: { start: number; end: number }[] = []
@@ -923,10 +933,10 @@ export default function RhythmPage() {
       const expected: number[] = []
       let pos = 0
       exercise.measures.forEach(m => m.notes.forEach(n => {
-        if (!n.rest && !n.tieStop) expected.push(Math.round(pos))
+        if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.includes(clampedBeatRounded)
+      const isHit = expected.some(e => Math.abs(e - clampedBeatRounded) <= 0.4)
       setLiveFeedback(isHit ? 'hit' : 'miss')
     // Real-time note coloring
     if (exercise) {
