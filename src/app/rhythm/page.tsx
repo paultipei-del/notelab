@@ -595,9 +595,10 @@ export default function RhythmPage() {
         setCountdown(countBeat)
         // Start playhead moving during last countdown beat
         const timeToStart = startTimeRef.current - ctx2.currentTime
-        // Show playhead and enable tap during last beat
+        // Show playhead throughout countdown for smooth pre-roll
+        setPlayhead(-timeToStart / beatDuration)
+        // Enable tap during last beat only
         if (timeToStart <= beatDuration) {
-          setPlayhead(-timeToStart / beatDuration)
           tapReadyRef.current = true
           setTapReady(true)
         }
@@ -976,9 +977,9 @@ export default function RhythmPage() {
               const centerX = svgWidth / 2
               // Pre-roll: start 1 beat before beat 0
               const preRoll = 0  // offset handled by mx+18 positioning
-              const offsetX = playhead !== null
-                ? centerX - (56 + 18 + playhead * NOTE_W_PORTRAIT)
-                : centerX - (56 + 18)
+              // playhead goes from -countdownBeats to totalBeats
+              // at playhead=0, first note (x=56+18) should be at centerX
+              const offsetX = centerX - (56 + 18 + (playhead ?? 0) * NOTE_W_PORTRAIT)
               return (
                 <div style={{ overflow: 'hidden' }}>
                   <svg width={svgWidth} height={SVG_H} style={{ display: 'block' }}>
