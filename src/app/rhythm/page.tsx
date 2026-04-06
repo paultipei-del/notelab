@@ -328,7 +328,7 @@ function renderMeasure(
 
 // ── Library panel ─────────────────────────────────────────────────────────────
 function LibraryPanel({
-  onSelect, onDrop, dragOver, setDragOver, progress, currentId
+  onSelect, onDrop, dragOver, setDragOver, progress, currentId, userId, onProgressReset
 }: {
   onSelect: (meta: RhythmExerciseMeta) => void
   onDrop: (e: React.DragEvent) => void
@@ -336,6 +336,8 @@ function LibraryPanel({
   setDragOver: (v: boolean) => void
   progress: Record<string, RhythmProgress>
   currentId?: string
+  userId?: string | null
+  onProgressReset?: () => void
 }) {
   const [library, setLibrary] = useState<Record<string, RhythmExerciseMeta[]>>({})
   const [loading, setLoading] = useState(true)
@@ -427,7 +429,7 @@ function LibraryPanel({
           <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#888780', marginBottom: '6px' }}>Drop .mxl here</p>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#D3D1C7' }}>Export from MuseScore</p>
         </div>
-        <button onClick={async () => { const { resetProgress } = await import('@/lib/rhythmLibrary'); await resetProgress(null); window.location.reload() }}
+        <button onClick={async () => { const { resetProgress } = await import('@/lib/rhythmLibrary'); await resetProgress(userId ?? null); onProgressReset?.() }}
           style={{ marginTop: '12px', width: '100%', padding: '8px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '11px', cursor: 'pointer' }}>
           Reset all progress
         </button>
@@ -1257,7 +1259,7 @@ export default function RhythmPage() {
           </div>
         ) : (
           <div ref={containerRef} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} />
+            <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} userId={user?.id} onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))} />
           </div>
         )}
 
@@ -1394,6 +1396,8 @@ export default function RhythmPage() {
             setDragOver={setDragOver}
             progress={progress}
             currentId={currentMeta?.id}
+            userId={user?.id}
+            onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))}
           />
         )}
 
