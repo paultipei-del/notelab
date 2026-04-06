@@ -984,7 +984,7 @@ export default function RhythmPage() {
               // at playhead=0, first notehead (x=74) aligns with center playhead line
               const preRollBeats = 1
               const idlePlayhead = playhead ?? -preRollBeats
-              const offsetX = centerX - 74 - idlePlayhead * NOTE_W_PORTRAIT
+              const offsetX = centerX - 60 - idlePlayhead * NOTE_W_PORTRAIT
               return (
                 <div style={{ overflow: 'hidden' }}>
                   <svg width={svgWidth} height={160} style={{ display: 'block' }}>
