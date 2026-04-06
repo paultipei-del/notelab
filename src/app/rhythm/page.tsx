@@ -441,6 +441,9 @@ export default function RhythmPage() {
   const pointerDownTimeRef = useRef<number | null>(null)
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
+  const trailRef = useRef<{ beat: number; color: string }[]>([])
+  const [trail, setTrail] = useState<{ beat: number; color: string }[]>([])
+  const isPressedRef = useRef(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
@@ -575,7 +578,7 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
     initSampler()  // load piano on first gesture
-    setTaps([]); setScore(null); setTapResults([]); setTapDurations([])
+    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; setTrail([])
     setTapReady(false)
     tapReadyRef.current = false
     setPlaying(true)
@@ -615,6 +618,24 @@ export default function RhythmPage() {
       const beatFloat = elapsed / beatDuration
       // Show playhead from -0.5 beats so student can anticipate
       setPlayhead(beatFloat)
+      // Paint trail — color depends on press state and note/rest at current position
+      let trailColor = '#D3D1C7'  // gray = not pressing
+      if (isPressedRef.current && exercise) {
+        let cp = 0
+        let onRest = false
+        for (const m of exercise.measures) {
+          for (const n of m.notes) {
+            if (beatFloat >= cp - 0.05 && beatFloat < cp + n.durationBeats + 0.05) {
+              onRest = !!n.rest; break
+            }
+            cp += n.durationBeats
+          }
+          if (cp > beatFloat + 0.5) break
+        }
+        trailColor = onRest ? '#E53935' : '#4CAF50'
+      }
+      trailRef.current.push({ beat: beatFloat, color: trailColor })
+      if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
       if (beatFloat >= totalBeats) {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null
@@ -667,6 +688,7 @@ export default function RhythmPage() {
       // Block taps until last countdown beat
       if (!tapReadyRef.current && countdown !== null) return
       keyDownTimeRef.current = performance.now()
+      isPressedRef.current = true
       const ctx = ctxRef.current; if (!ctx) return
       // Start tap tone via Tone.js sampler
       if (soundEnabledRef.current) {
@@ -743,6 +765,7 @@ export default function RhythmPage() {
 
     const onKeyUp = (e: KeyboardEvent) => {
       if (e.code !== 'Space') return
+      isPressedRef.current = false
       setLiveFeedback(null)
       // Stop tap tone
       tapNoteRef.current = null  // sound auto-decays
@@ -877,7 +900,8 @@ export default function RhythmPage() {
   }, [])
 
   const handlePointerDown = useCallback(() => {
-    initSampler()  // ensure sampler loaded on mobile gesture
+    isPressedRef.current = true
+    initSampler()
     if (!playing) return
     if (countdown !== null && !tapReadyRef.current) return
     pointerDownTimeRef.current = performance.now()
@@ -954,6 +978,7 @@ export default function RhythmPage() {
   }, [playing, countdown, beatDuration, totalBeats, exercise])
 
   const handlePointerUp = useCallback(() => {
+    isPressedRef.current = false
     setLiveFeedback(null)
     tapNoteRef.current = null  // sound auto-decays
     if (pointerDownTimeRef.current !== null) {
@@ -1091,6 +1116,10 @@ export default function RhythmPage() {
                           </g>
                         )
                       })}
+                      {/* Trail */}
+                      {trail.map((t, i) => (
+                        <rect key={'t'+i} x={56 + 18 + t.beat * NOTE_W_PORTRAIT} y={STAFF_Y + 14} width={Math.max(1, NOTE_W_PORTRAIT / 25)} height={4} fill={t.color} opacity={0.85} />
+                      ))}
                     </g>
                   </svg>
                 </div>
@@ -1338,6 +1367,9 @@ export default function RhythmPage() {
                       return (
                         <g key={mIdx}>
                           {renderMeasure(measure.notes, mx, noteW, tapRes, bpm, beatUnit)}
+                          {trail.filter(t => t.beat >= globalMeasureIdx * bpm && t.beat < (globalMeasureIdx + 1) * bpm).map((t, i) => (
+                            <rect key={'t'+i} x={mx + (t.beat - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 14} width={Math.max(1, noteW / 25)} height={4} fill={t.color} opacity={0.85} />
+                          ))}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
