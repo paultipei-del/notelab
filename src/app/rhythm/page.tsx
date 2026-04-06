@@ -444,6 +444,8 @@ export default function RhythmPage() {
   const trailRef = useRef<{ beat: number; color: string }[]>([])
   const [trail, setTrail] = useState<{ beat: number; color: string }[]>([])
   const isPressedRef = useRef(false)
+  const [diagLog, setDiagLog] = useState<string[]>([])
+  const [showDiag, setShowDiag] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
@@ -578,7 +580,7 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
     initSampler()  // load piano on first gesture
-    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; setTrail([])
+    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; setTrail([]); setDiagLog([])
     setTapReady(false)
     tapReadyRef.current = false
     setPlaying(true)
@@ -905,7 +907,9 @@ export default function RhythmPage() {
     }).length
     const durationTotal = Math.min(tapDurations.length, expectedDurations.length)
 
-    setScore({ hits: Math.max(0, adjustedHits - restTaps), total: expected.length, durationHits, durationTotal, restTaps })
+    const finalScore = { hits: Math.max(0, adjustedHits - restTaps), total: expected.length, durationHits, durationTotal, restTaps }
+    setScore(finalScore)
+    setDiagLog(prev => [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
   }, [playing])
 
   const onDrop = useCallback(async (e: React.DragEvent) => {
@@ -968,6 +972,19 @@ export default function RhythmPage() {
         pos += n.durationBeats
       }))
       const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
+      // Find containing note/rest for diag
+      let diagCP = 0; let diagFound = 'unknown'
+      for (const m of exercise.measures) {
+        for (const n of m.notes) {
+          if (clampedBeat >= diagCP - 0.25 && clampedBeat < diagCP + n.durationBeats + 0.1) {
+            diagFound = n.rest ? 'REST' : 'NOTE'
+            break
+          }
+          diagCP += n.durationBeats
+        }
+        if (diagFound !== 'unknown') break
+      }
+      setDiagLog(prev => [...prev, `TOUCH beat=${clampedBeat.toFixed(3)} on=${diagFound} isHit=${isHit} expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
       if (isHit) setLiveFeedback('hit')
       else if (expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
     }
@@ -1181,6 +1198,10 @@ export default function RhythmPage() {
             <button onClick={() => setSoundEnabled(s => !s)}
               style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
               {soundEnabled ? '♪ On' : '♪ Off'}
+            </button>
+            <button onClick={() => setShowDiag(d => !d)}
+              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+              🔍 Diag
             </button>
             {!playing ? (
               <button onClick={playing ? stop : start}
@@ -1452,6 +1473,17 @@ export default function RhythmPage() {
               ))}
             </div>
             </div>
+
+            {/* Diagnostic panel */}
+            {showDiag && (
+              <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '12px', marginBottom: '16px', maxHeight: '200px', overflowY: 'auto' as const }}>
+                <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#888780', marginBottom: '6px', letterSpacing: '0.05em' }}>DIAGNOSTIC LOG</p>
+                {diagLog.length === 0 && <p style={{ fontFamily: 'monospace', fontSize: '11px', color: '#888780' }}>No taps yet</p>}
+                {diagLog.map((line, i) => (
+                  <p key={i} style={{ fontFamily: 'monospace', fontSize: '11px', color: line.includes('REST') ? '#E53935' : line.includes('SCORE') ? '#BA7517' : '#4CAF50', margin: '2px 0' }}>{line}</p>
+                ))}
+              </div>
+            )}
 
             {/* Mobile tap button */}
             <button
