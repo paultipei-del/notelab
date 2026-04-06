@@ -1118,9 +1118,27 @@ export default function RhythmPage() {
                           </g>
                         )
                       })}
+                      {/* Rest zone shading */}
+                      {exercise.measures.map((m, mi) => {
+                        let bp = 0
+                        const measureX = 56 + 18 + mi * qBeatsPerMeasure * NOTE_W_PORTRAIT
+                        return m.notes.map((n, ni) => {
+                          const x = measureX + bp * NOTE_W_PORTRAIT
+                          const w = n.durationBeats * NOTE_W_PORTRAIT
+                          bp += n.durationBeats
+                          if (!n.rest) return null
+                          return <rect key={'rz'+mi+'-'+ni} x={x} y={STAFF_Y - 28} width={w} height={56} fill="#F5F2EC" opacity={0.4} />
+                        })
+                      })}
+                      {/* Beat markers */}
+                      {exercise.measures.map((m, mi) =>
+                        Array.from({ length: Math.round(qBeatsPerMeasure) }, (_, bi) => (
+                          <line key={'bm'+mi+'-'+bi} x1={56 + 18 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y1={STAFF_Y + 20} x2={56 + 18 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
+                        ))
+                      )}
                       {/* Trail */}
                       {trail.map((t, i) => (
-                        <rect key={'t'+i} x={56 + 18 + t.beat * NOTE_W_PORTRAIT} y={STAFF_Y + 14} width={Math.max(1, NOTE_W_PORTRAIT / 25)} height={4} fill={t.color} opacity={0.85} />
+                        <rect key={'t'+i} x={56 + 18 + t.beat * NOTE_W_PORTRAIT} y={STAFF_Y + 13} width={Math.max(1, NOTE_W_PORTRAIT / 20)} height={6} fill={t.color} opacity={0.9} />
                       ))}
                     </g>
                   </svg>
@@ -1369,8 +1387,24 @@ export default function RhythmPage() {
                       return (
                         <g key={mIdx}>
                           {renderMeasure(measure.notes, mx, noteW, tapRes, bpm, beatUnit)}
+                          {/* Rest zone shading */}
+                          {(() => {
+                            let bp = 0
+                            return measure.notes.map((n, ni) => {
+                              const x = mx + bp * noteW
+                              const w = n.durationBeats * noteW
+                              bp += n.durationBeats
+                              if (!n.rest) return null
+                              return <rect key={'rz'+ni} x={x} y={STAFF_Y - 28} width={w} height={56} fill="#F5F2EC" opacity={0.4} />
+                            })
+                          })()}
+                          {/* Beat markers */}
+                          {Array.from({ length: Math.round(bpm) }, (_, bi) => (
+                            <line key={'bm'+bi} x1={mx + bi * noteW} y1={STAFF_Y + 20} x2={mx + bi * noteW} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
+                          ))}
+                          {/* Trail */}
                           {trail.filter(t => t.beat >= globalMeasureIdx * bpm && t.beat < (globalMeasureIdx + 1) * bpm).map((t, i) => (
-                            <rect key={'t'+i} x={mx + (t.beat - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 14} width={Math.max(1, noteW / 25)} height={4} fill={t.color} opacity={0.85} />
+                            <rect key={'t'+i} x={mx + (t.beat - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 13} width={Math.max(1, noteW / 20)} height={6} fill={t.color} opacity={0.9} />
                           ))}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
