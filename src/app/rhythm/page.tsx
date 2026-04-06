@@ -628,7 +628,7 @@ export default function RhythmPage() {
         outerT: for (const m of exercise.measures) {
           for (const n of m.notes) {
             const noteEnd = posT + n.durationBeats
-            if (!n.rest && beatFloat >= posT - 0.5 && beatFloat <= noteEnd + 0.5) {
+            if (!n.rest && beatFloat >= posT - 0.75 && beatFloat <= noteEnd + 0.75) {
               onRest = false; break outerT
             }
             if (n.rest && beatFloat >= posT && beatFloat < noteEnd) {
@@ -740,7 +740,7 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
+      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.75)
             // Real-time note coloring
       if (exercise) {
         const TOL = 0.4
@@ -763,7 +763,7 @@ export default function RhythmPage() {
             let posNN = 0
             for (const m of exercise.measures) {
               for (const n of m.notes) {
-                if (!n.rest && Math.abs(posNN - clampedBeat) <= 0.5) return true
+                if (!n.rest && Math.abs(posNN - clampedBeat) <= 0.75) return true
                 posNN += n.durationBeats
               }
             }
@@ -782,7 +782,7 @@ export default function RhythmPage() {
             for (let miNR = 0; miNR < exercise.measures.length; miNR++) {
               for (let niNR = 0; niNR < exercise.measures[miNR].notes.length; niNR++) {
                 const nNR = exercise.measures[miNR].notes[niNR]
-                if (!nNR.rest && Math.abs(posNR - clampedBeat) <= 0.5) {
+                if (!nNR.rest && Math.abs(posNR - clampedBeat) <= 0.75) {
                   setTapResults(prev => {
                     const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
                     newResults[miNR][niNR] = 'hit'
@@ -836,7 +836,7 @@ export default function RhythmPage() {
     }))
     // Only use taps that are NOT on a rest for note matching
     const noteTaps = taps.filter(t => {
-      const nearNoteOnset = expected.some(e => Math.abs(t - e) <= 0.5)
+      const nearNoteOnset = expected.some(e => Math.abs(t - e) <= 0.75)
       if (nearNoteOnset) return true
       return !restRangesForScoring.some(r => t >= r.start - 0.15 && t < r.end)
     })
@@ -999,12 +999,12 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expected.push(pos)
         pos += n.durationBeats
       }))
-      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
+      const isHit = expected.some(e => Math.abs(e - clampedBeat) <= 0.75)
       // Find containing note/rest for diag
       let diagCP = 0; let diagFound = 'unknown'
       for (const m of exercise.measures) {
         for (const n of m.notes) {
-          const endTolD = n.rest ? -0.3 : 0.3
+          const endTolD = n.rest ? -0.75 : 0.3
           if (clampedBeat >= diagCP - 0.5 && clampedBeat < diagCP + n.durationBeats + endTolD) {
             diagFound = n.rest ? 'REST' : 'NOTE'
             break
@@ -1014,7 +1014,7 @@ export default function RhythmPage() {
         if (diagFound !== 'unknown') break
       }
       setDiagLog(prev => [...prev, `TOUCH beat=${clampedBeat.toFixed(3)} on=${diagFound} isHit=${isHit} expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`])
-      const nearOnsetP = expected.some(e => Math.abs(e - clampedBeat) <= 0.5)
+      const nearOnsetP = expected.some(e => Math.abs(e - clampedBeat) <= 0.75)
       const effectiveIsHit = isHit && (diagFound !== 'REST' || nearOnsetP)
       if (effectiveIsHit) setLiveFeedback('hit')
       else if (diagFound === 'REST' || expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
@@ -1042,7 +1042,7 @@ export default function RhythmPage() {
         if (!n.rest && !n.tieStop) expectedC.push(posEC)
         posEC += n.durationBeats
       }))
-      const nearOnsetC = expectedC.some(e => Math.abs(e - clampedBeat) <= 0.5)
+      const nearOnsetC = expectedC.some(e => Math.abs(e - clampedBeat) <= 0.75)
       // If on rest but near note onset, find the actual note
       if (cn && cn.isRest && nearOnsetC) {
         let cpN = 0
