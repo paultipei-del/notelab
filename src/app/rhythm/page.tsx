@@ -626,7 +626,7 @@ export default function RhythmPage() {
         let foundNote = false
         outer: for (const m of exercise.measures) {
           for (const n of m.notes) {
-            if (beatFloat >= cp - 0.05 && beatFloat < cp + n.durationBeats + 0.05) {
+            if (beatFloat >= cp - 0.15 && beatFloat < cp + n.durationBeats + 0.05) {
               foundOnRest = !!n.rest
               foundNote = true
               break outer
