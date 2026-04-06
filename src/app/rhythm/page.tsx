@@ -632,19 +632,32 @@ export default function RhythmPage() {
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
-    const countdownBeats = beatsPerMeasure
+    const isCompound = beatsPerMeasure % 3 === 0 && beatsPerMeasure > 3
+    // Felt beats for countdown: compound meters feel in groups of 3
+    const feltBeats = isCompound ? beatsPerMeasure / 3 : beatsPerMeasure
+    // Duration of one felt beat
+    const feltBeatDuration = isCompound ? beatDuration * 3 : beatDuration
+    const countdownBeats = feltBeats
+    const countdownDuration = countdownBeats * feltBeatDuration
     const now = ctx.currentTime + 0.1
-    startTimeRef.current = now + countdownBeats * beatDuration
+    startTimeRef.current = now + countdownDuration
 
-    for (let i = 0; i < countdownBeats; i++) playClick(now + i * beatDuration, i === 0)
+    // Countdown clicks: accent on felt beats, subdivision clicks in between for compound
+    for (let i = 0; i < feltBeats; i++) {
+      playClick(now + i * feltBeatDuration, i === 0)
+      if (isCompound) {
+        playClick(now + i * feltBeatDuration + beatDuration, false)
+        playClick(now + i * feltBeatDuration + beatDuration * 2, false)
+      }
+    }
     for (let i = 0; i < totalBeats; i++) playClick(startTimeRef.current + i * beatDuration, i % beatsPerMeasure === 0)
 
     const countdownStart = now
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const countdownElapsed = ctx2.currentTime - countdownStart
-      if (countdownElapsed < countdownBeats * beatDuration) {
-        const countBeat = Math.floor(countdownElapsed / beatDuration) + 1
+      if (countdownElapsed < countdownDuration) {
+        const countBeat = Math.floor(countdownElapsed / feltBeatDuration) + 1
         setCountdown(countBeat)
         // Start playhead moving during last countdown beat
         const timeToStart = startTimeRef.current - ctx2.currentTime
