@@ -441,6 +441,10 @@ export default function RhythmPage() {
   const pointerDownTimeRef = useRef<number | null>(null)
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
+  const [holdBar, setHoldBar] = useState<{ x: number; width: number; maxWidth: number; color: string } | null>(null)
+  const holdStartRef = useRef<number | null>(null)
+  const holdRafRef = useRef<number>(0)
+  const holdNoteRef = useRef<{ x: number; maxWidth: number; expectedMs: number } | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
   useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
@@ -949,6 +953,22 @@ export default function RhythmPage() {
           newResults[nearest.mi][nearest.ni] = result
           return newResults
         })
+        // Start hold bar
+        const nm = exercise.measures[nearest.mi].notes[nearest.ni]
+        const expectedMs = nm.durationBeats * beatDuration * 1000
+        holdNoteRef.current = { x: nearest.mi * 100, maxWidth: nm.durationBeats * 100, expectedMs }
+        holdStartRef.current = performance.now()
+        cancelAnimationFrame(holdRafRef.current)
+        const animateHold = () => {
+          if (!holdStartRef.current || !holdNoteRef.current) return
+          const elapsed = performance.now() - holdStartRef.current
+          const { maxWidth, expectedMs } = holdNoteRef.current
+          const pct = Math.min(elapsed / expectedMs, 1.5)
+          const color = pct > 1.1 ? '#E53935' : '#4CAF50'
+          setHoldBar({ x: 0, width: pct * maxWidth, maxWidth, color })
+          holdRafRef.current = requestAnimationFrame(animateHold)
+        }
+        holdRafRef.current = requestAnimationFrame(animateHold)
       }
     }
   }, [playing, countdown, beatDuration, totalBeats, exercise])
@@ -956,6 +976,12 @@ export default function RhythmPage() {
   const handlePointerUp = useCallback(() => {
     setLiveFeedback(null)
     tapNoteRef.current = null  // sound auto-decays
+    // Stop hold bar animation
+    cancelAnimationFrame(holdRafRef.current)
+    holdStartRef.current = null
+    holdNoteRef.current = null
+    // Fade out bar after short delay
+    setTimeout(() => setHoldBar(null), 400)
     if (pointerDownTimeRef.current !== null) {
       const duration = performance.now() - pointerDownTimeRef.current
       setTapDurations(prev => [...prev, duration])
@@ -1102,6 +1128,19 @@ export default function RhythmPage() {
             <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} />
           </div>
         )}
+
+        {/* Hold duration bar */}
+        <div style={{ height: '12px', background: 'white', borderRadius: '6px', overflow: 'hidden', flexShrink: 0, border: '1px solid #D3D1C7' }}>
+          {holdBar && (
+            <div style={{
+              height: '100%',
+              width: holdBar.maxWidth > 0 ? `${Math.min((holdBar.width / holdBar.maxWidth) * 100, 100)}%` : '0%',
+              background: holdBar.color,
+              borderRadius: '6px',
+              transition: 'background 0.1s',
+            }} />
+          )}
+        </div>
 
         {/* Countdown */}
         <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
