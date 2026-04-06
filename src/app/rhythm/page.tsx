@@ -921,7 +921,7 @@ export default function RhythmPage() {
   // ── PORTRAIT / MOBILE LAYOUT ─────────────────────────────────────────────
   if (isPortrait) {
     const tapBtnStyle: React.CSSProperties = {
-      width: '100%', height: '96px', borderRadius: '20px',
+      width: '100%', height: '80px', borderRadius: '16px',
       border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
       background: liveFeedback === 'hit' ? '#4CAF50' : liveFeedback === 'miss' ? '#E53935' : (playing && tapReady) ? '#1A1A18' : '#F5F2EC',
       color: liveFeedback ? 'white' : (playing && tapReady) ? 'white' : '#D3D1C7',
@@ -933,7 +933,7 @@ export default function RhythmPage() {
     }
 
     return (
-      <div style={{ height: '100dvh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '12px 12px 24px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+      <div style={{ height: '100dvh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '12px 12px 8px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
 
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
