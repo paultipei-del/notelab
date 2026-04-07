@@ -860,6 +860,8 @@ export default function RhythmPage() {
             const result: 'hit'|'miss' = nearest.dist <= TOL ? 'hit' : 'miss'
             setTapResults(prev => {
               const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+              const cur = newResults[nearest.mi][nearest.ni]
+              if (cur === 'hit' && result === 'miss') return newResults
               newResults[nearest.mi][nearest.ni] = result
               return newResults
             })
@@ -872,7 +874,7 @@ export default function RhythmPage() {
                 if (!nNR.rest && Math.abs(posNR - clampedBeat) <= 0.75) {
                   setTapResults(prev => {
                     const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-                    newResults[miNR][niNR] = 'hit'
+                    if (newResults[miNR][niNR] !== 'hit') newResults[miNR][niNR] = 'hit'
                     return newResults
                   })
                   break
@@ -1118,51 +1120,37 @@ export default function RhythmPage() {
       if (effectiveIsHit) setLiveFeedback('hit')
       else if (diagFound === 'REST' || expected.every(e => Math.abs(e - clampedBeat) > 0.3)) setLiveFeedback('miss')
     }
-    // Real-time note coloring — only color if tap falls within a note (not rest)
+    // Real-time note coloring — nearest note *onset* (same idea as keyboard).
+    // Span-based matching is wrong for long notes (e.g. whole in 4/4): beat 4 still lies inside
+    // the first note's [0, 4+durationTol) window, so the next measure's tap recolors the previous note red.
     if (exercise) {
-      let cpC = 0
-      let cn: { mi: number; ni: number; isRest: boolean; beatPos: number } | null = null
-      outerC: for (let miC = 0; miC < exercise.measures.length; miC++) {
-        for (let niC = 0; niC < exercise.measures[miC].notes.length; niC++) {
-          const nC = exercise.measures[miC].notes[niC]
-          const endTol = nC.rest ? 0 : 0.1  // no forward tolerance for rests
-          if (clampedBeat >= cpC - 0.25 && clampedBeat < cpC + nC.durationBeats + endTol) {
-            let bpC = 0
-            exercise.measures[miC].notes.slice(0, niC).forEach(nn => bpC += nn.durationBeats)
-            cn = { mi: miC, ni: niC, isRest: !!nC.rest, beatPos: miC * (exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)) + bpC }
-            break outerC
-          }
-          cpC += nC.durationBeats
-        }
-      }
-      const expectedC: number[] = []
-      let posEC = 0
-      exercise.measures.forEach(m => m.notes.forEach(n => {
-        if (!n.rest && !n.tieStop) expectedC.push(posEC)
-        posEC += n.durationBeats
-      }))
-      const nearOnsetC = expectedC.some(e => Math.abs(e - clampedBeat) <= 0.75)
-      // If on rest but near note onset, find the actual note
-      if (cn && cn.isRest && nearOnsetC) {
-        let cpN = 0
-        outerN: for (let miN = 0; miN < exercise.measures.length; miN++) {
-          for (let niN = 0; niN < exercise.measures[miN].notes.length; niN++) {
-            const nN = exercise.measures[miN].notes[niN]
-            if (!nN.rest && expectedC.some(e => Math.abs(e - cpN) <= 0.01) && Math.abs(cpN - clampedBeat) <= 0.5) {
-              let bpN = 0
-              exercise.measures[miN].notes.slice(0, niN).forEach(nn => bpN += nn.durationBeats)
-              cn = { mi: miN, ni: niN, isRest: false, beatPos: miN * (exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)) + bpN }
-              break outerN
-            }
-            cpN += nN.durationBeats
+      const ONSET_MATCH = 0.75
+      const HIT_TOL = 0.4
+      const qPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+      let nearestTouch: { mi: number; ni: number; onset: number; dist: number } | null = null
+      for (let mi = 0; mi < exercise.measures.length; mi++) {
+        for (let ni = 0; ni < exercise.measures[mi].notes.length; ni++) {
+          const n = exercise.measures[mi].notes[ni]
+          const onsetGlobal = mi * qPerMeasure + (() => {
+            let bp = 0
+            exercise.measures[mi].notes.slice(0, ni).forEach(nn => { bp += nn.durationBeats })
+            return bp
+          })()
+          if (n.rest || n.tieStop) continue
+          const d = Math.abs(onsetGlobal - clampedBeat)
+          if (d <= ONSET_MATCH && (!nearestTouch || d < nearestTouch.dist)) {
+            nearestTouch = { mi, ni, onset: onsetGlobal, dist: d }
           }
         }
       }
-      if (cn && !cn.isRest) {
-        const result = Math.abs(cn.beatPos - clampedBeat) <= 0.4 ? 'hit' : 'miss'
+      if (nearestTouch) {
+        const result: 'hit'|'miss' = nearestTouch.dist <= HIT_TOL ? 'hit' : 'miss'
         setTapResults(prev => {
           const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-          newResults[cn!.mi][cn!.ni] = result
+          const { mi, ni } = nearestTouch!
+          const cur = newResults[mi][ni]
+          if (cur === 'hit' && result === 'miss') return newResults
+          newResults[mi][ni] = result
           return newResults
         })
       }
