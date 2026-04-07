@@ -909,9 +909,13 @@ export default function RhythmPage() {
   useEffect(() => {
     if (playing || !exercise || taps.length === 0) return
     const expected: number[] = []
+    const expectedDurationsMs: number[] = []
     let pos = 0
     exercise.measures.forEach(m => m.notes.forEach(n => {
-      if (!n.rest && !n.tieStop) expected.push(pos)
+      if (!n.rest && !n.tieStop) {
+        expected.push(pos)
+        expectedDurationsMs.push(n.durationBeats * beatDuration * 1000)
+      }
       pos += n.durationBeats
     }))
     // Build rest ranges for filtering taps
@@ -1003,24 +1007,29 @@ export default function RhythmPage() {
     }
 
     // Duration scoring — compare each tap duration to expected note duration
-    const expectedDurations = expected.map(beatIdx => {
-      let dur = beatDuration * 1000  // default quarter note
-      let pos3 = 0
-      for (const m of exercise.measures) {
-        for (const n of m.notes) {
-          if (Math.round(pos3) === beatIdx) { dur = n.durationBeats * beatDuration * 1000; break }
-          pos3 += n.durationBeats
-        }
-      }
-      return dur
-    })
-    const durationHits = tapDurations.slice(0, expectedDurations.length).filter((d, i) => {
-      const exp = expectedDurations[i]
+    const durationHits = tapDurations.slice(0, expectedDurationsMs.length).filter((d, i) => {
+      const exp = expectedDurationsMs[i]
       if (!exp) return false
+      // Tempo-aware duration scoring:
+      // At fast BPM, expected durations are very short, so a natural "human" hold tends to look like an over-hold ratio-wise.
+      // We widen the acceptable window as BPM increases, but keep it bounded.
+      // Also widen when the expected duration (ms) is small (e.g. compound meters at modest BPM where eighths still fly by).
+      const bpmNum = bpm
+      const t = Math.max(0, Math.min(1, (bpmNum - 80) / 80)) // 0 at 80bpm, 1 at 160bpm+
+      const minRatio = 0.15 - 0.05 * t // 0.15 → 0.10
+      let maxRatio = 2.0 + 1.5 * t     // 2.0 → 3.5
+
+      // If the note value is very short in absolute time, allow a larger over-hold ratio.
+      // Map expected duration 600ms→1.0 down to 150ms→~1.0 extra ratio.
+      const shortMs = Math.max(0, Math.min(1, (600 - exp) / 450))
+      maxRatio += 1.0 * shortMs        // up to +1.0 when exp is ~150ms or less
+
+      // Keep a hard cap so extremely long holds still fail.
+      maxRatio = Math.min(4.5, maxRatio)
       const ratio = d / exp
-      return ratio >= 0.15 && ratio <= 2.0  // hold at least 15% of note value, not more than 200%
+      return ratio >= minRatio && ratio <= maxRatio
     }).length
-    const durationTotal = Math.min(tapDurations.length, expectedDurations.length)
+    const durationTotal = Math.min(tapDurations.length, expectedDurationsMs.length)
 
     const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
     setScore(finalScore)
@@ -1600,7 +1609,7 @@ export default function RhythmPage() {
 
               {view === 'grid' && !isPortrait && (() => {
                 const qBpmG = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-                const CELL_H = 48
+                const CELL_H = 56
                 const GRID_ROW_H = CELL_H + 2
                 return (
                   <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
@@ -1614,25 +1623,43 @@ export default function RhythmPage() {
                           {/* Measure number */}
                           <span style={{ fontFamily: F, fontSize: '10px', color: '#888780', width: '18px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>{mIdx + 1}</span>
                           {/* Grid row */}
-                          <div style={{ flex: 1, position: 'relative' as const, display: 'flex', gap: 0, borderRadius: '6px', overflow: 'hidden', border: '1px solid #D3D1C7' }}>
+                          <div style={{ flex: 1, position: 'relative' as const, display: 'flex', gap: '1px', padding: '1px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #D3D1C7', background: '#D3D1C7' }}>
+                            {/* Active measure tint */}
+                            {playheadInMeasure && (
+                              <div style={{ position: 'absolute' as const, inset: 0, background: 'rgba(186, 117, 23, 0.04)', zIndex: 1, pointerEvents: 'none' as const }} />
+                            )}
+                            {/* Beat gridlines (subtle) */}
+                            {Array.from({ length: Math.max(0, Math.round(qBpmG) - 1) }, (_, bi) => (
+                              <div
+                                key={'bg' + bi}
+                                style={{
+                                  position: 'absolute' as const,
+                                  left: `${((bi + 1) / qBpmG) * 100}%`,
+                                  top: 0,
+                                  bottom: 0,
+                                  width: '1px',
+                                  background: '#1A1A18',
+                                  opacity: 0.06,
+                                  zIndex: 5,
+                                  transform: 'translateX(-0.5px)',
+                                  pointerEvents: 'none' as const,
+                                }}
+                              />
+                            ))}
                             {measure.notes.map((note, nIdx) => {
                               const tr: 'hit'|'miss'|'none' = tapResults[mIdx]?.[nIdx] ?? 'none'
                               // Colors: note=dark, rest=empty/light, hit=green, miss=red
-                              let bg = note.rest ? '#F0EDE8' : '#2A2A28'
+                              let bg = note.rest ? '#E8E4DE' : '#2A2A28'
                               if (tr === 'hit') bg = '#4CAF50'
                               if (tr === 'miss' && !note.rest) bg = '#E53935'
                               // Subdivision lines inside each block
                               const subdivisions = Math.round(note.durationBeats / (4 / exercise.timeSignature.beatType))
                               return (
-                                <div key={nIdx} style={{ flex: note.durationBeats, position: 'relative' as const, background: bg, borderRight: nIdx < measure.notes.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none', transition: 'background 0.1s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <div key={nIdx} style={{ flex: note.durationBeats, position: 'relative' as const, background: bg, transition: 'background 0.1s', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
                                   {/* Subdivision markers */}
                                   {subdivisions > 1 && Array.from({ length: subdivisions - 1 }, (_, si) => (
-                                    <div key={si} style={{ position: 'absolute' as const, left: `${((si + 1) / subdivisions) * 100}%`, top: '25%', bottom: '25%', width: '1px', background: note.rest ? '#D3D1C7' : 'rgba(255,255,255,0.15)' }} />
+                                    <div key={si} style={{ position: 'absolute' as const, left: `${((si + 1) / subdivisions) * 100}%`, top: '25%', bottom: '25%', width: '1px', background: note.rest ? '#D3D1C7' : 'rgba(255,255,255,0.25)' }} />
                                   ))}
-                                  {/* Rest label */}
-                                  {note.rest && tr === 'none' && (
-                                    <span style={{ fontFamily: F, fontSize: '9px', color: '#888780', letterSpacing: '0.05em' }}>—</span>
-                                  )}
                                 </div>
                               )
                             })}
@@ -1640,9 +1667,11 @@ export default function RhythmPage() {
                             {playheadPct !== null && (
                               <div style={{ position: 'absolute' as const, left: `${playheadPct * 100}%`, top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.85, zIndex: 10, transform: 'translateX(-1px)', pointerEvents: 'none' as const }} />
                             )}
+                            {/* Baseline anchor for trail */}
+                            <div style={{ position: 'absolute' as const, left: 0, right: 0, top: '85%', height: '1px', background: '#D3D1C7', opacity: 0.4, zIndex: 6, pointerEvents: 'none' as const }} />
                             {/* Trail in grid */}
                             {trail.filter(t => t.beat >= measureStartBeat && t.beat < measureEndBeat).map((t, i) => (
-                              <div key={i} style={{ position: 'absolute' as const, left: `${((t.beat - measureStartBeat) / qBpmG) * 100}%`, bottom: 0, width: '2px', height: '6px', background: t.color, opacity: 0.9 }} />
+                              <div key={i} style={{ position: 'absolute' as const, left: `${((t.beat - measureStartBeat) / qBpmG) * 100}%`, bottom: 0, width: '2px', height: '8px', background: t.color, opacity: 0.9, zIndex: 7 }} />
                             ))}
                           </div>
                         </div>
