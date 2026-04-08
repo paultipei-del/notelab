@@ -692,7 +692,15 @@ export default function RhythmPage() {
       const elapsed = ctx2.currentTime - startTimeRef.current
       // Start playhead slightly early so it arrives at first note on beat 0
       const beatFloat = elapsed / effectiveBeatDuration
-      const effectiveTotalBeats = isCompound ? totalBeats / 3 : totalBeats
+      // totalBeats is in raw time-sig numeratts
+      // effectiveTotalBeats must be in same units as beatFloat (effectiveBeatDuration units)
+      // For simple: beatFloat in quarter notes, totalBeats in quarter notes (4/4: beats=4=quarters) ✓
+      // For compound 6/8: beatFloat in dotted-quarters, totalBeats=6*m (eighth counts)
+      //   dotted-quarter = 3 eighths, so effectiveTotalBeats = totalBeats/3 * (beatType/4) ... 
+      //   simpler: total duration in seconds = measures * beats * (1/beatType) * 4 * beatDuration
+      const totalQBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+      const totalDurationSec = totalQBeats * beatDuration
+      const effectiveTotalBeats = totalDurationSec / effectiveBeatDuration
       setPlayhead(beatFloat)
       // Paint trail — green if pressing near a note, red if pressing on rest, gray if not pressing
       let trailColor = '#D3D1C7'
