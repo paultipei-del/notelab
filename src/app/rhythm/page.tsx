@@ -662,6 +662,9 @@ export default function RhythmPage() {
       const feltBeatCount = Math.round(totalBeats / 3)
       for (let i = 0; i < feltBeatCount; i++) {
         playClick(startTimeRef.current + i * feltBeatDuration, i % feltBeats === 0)
+        // subdivision clicks on beats 2 and 3 of each dotted quarter
+        playClick(startTimeRef.current + i * feltBeatDuration + compoundBeatDuration, false)
+        playClick(startTimeRef.current + i * feltBeatDuration + compoundBeatDuration * 2, false)
       }
     } else {
       for (let i = 0; i < totalBeats; i++) playClick(startTimeRef.current + i * beatDuration, i % beatsPerMeasure === 0)
