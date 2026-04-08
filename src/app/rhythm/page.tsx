@@ -1199,6 +1199,10 @@ export default function RhythmPage() {
 
   // ── PORTRAIT / MOBILE LAYOUT ─────────────────────────────────────────────
   if (isPortrait) {
+    // iOS Safari bottom toolbar can overlap content even with safe-area insets.
+    // This guard keeps the TAP dock comfortably above it on most devices.
+    const SAFARI_BOTTOM_GUARD_PX = 56
+
     const tapBtnStyle: React.CSSProperties = {
       width: '100%', height: '80px', borderRadius: '16px',
       border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
@@ -1212,7 +1216,20 @@ export default function RhythmPage() {
     }
 
     return (
-      <div style={{ height: '100svh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '8px 12px', gap: '8px', overflow: 'hidden', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+      <div
+        style={{
+          height: '100dvh',
+          background: '#F5F2EC',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '8px 12px',
+          gap: '8px',
+          overflow: 'hidden',
+          userSelect: 'none' as const,
+          WebkitUserSelect: 'none' as const,
+          WebkitTouchCallout: 'none' as const,
+        }}
+      >
 
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
@@ -1283,7 +1300,20 @@ export default function RhythmPage() {
 
         {/* Notation area */}
         {exercise ? (
-          <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', position: 'relative' as const, flexShrink: 0 }}>
+          <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+            <div
+              ref={containerRef}
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                border: '1px solid #D3D1C7',
+                overflow: 'hidden',
+                position: 'relative' as const,
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
             {/* Fixed playhead */}
             {playing && (countdown === null || (playhead !== null && playhead >= -1)) && (
               <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-3px)' }} />
@@ -1360,6 +1390,7 @@ export default function RhythmPage() {
                 </div>
               )
             })()}
+            </div>
           </div>
         ) : (
           <div ref={containerRef} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1368,7 +1399,7 @@ export default function RhythmPage() {
         )}
 
         {/* Bottom dock (keeps TAP at bottom, no scroll) */}
-        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: 'calc(env(safe-area-inset-bottom) + 6px)' }}>
+        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: `calc(env(safe-area-inset-bottom) + ${SAFARI_BOTTOM_GUARD_PX}px)` }}>
           {/* Countdown */}
           <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {countdown !== null && (
