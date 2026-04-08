@@ -74,6 +74,33 @@ button:not(:disabled):active {
   box-shadow: 0 14px 38px rgba(26, 26, 24, 0.14);
 }
 
+/* Mobile landscape / short viewport: avoid sticky overlays + cramped glass UI */
+@media (max-height: 520px), (max-width: 900px) {
+  .nl-rt-controlbar {
+    position: static;
+    top: auto;
+    padding: 6px 8px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(26, 26, 24, 0.08);
+  }
+
+  .nl-rt-tapbar {
+    position: static;
+    bottom: auto;
+    padding: 8px;
+    border-radius: 16px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 10px 22px rgba(26, 26, 24, 0.10);
+  }
+
+  .nl-rt-seg-btn {
+    min-width: 96px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
 @media (hover: hover) {
   .nl-rt-seg-btn:hover {
     transform: translateY(-1px);
