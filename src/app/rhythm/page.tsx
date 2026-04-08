@@ -1305,9 +1305,16 @@ export default function RhythmPage() {
                         ))
                       )}
                       {/* Trail */}
-                      {trail.map((t, i) => (
-                        <rect key={'t'+i} x={56 + 10 + t.beat * NOTE_W_PORTRAIT} y={STAFF_Y + 13} width={Math.max(1, NOTE_W_PORTRAIT / 20)} height={6} fill={t.color} opacity={0.9} />
-                      ))}
+                      <rect x={56 + 10 - 0.5} y={STAFF_Y + 18} width={totalBeatsAll * NOTE_W_PORTRAIT} height={2} fill="rgba(211,209,199,0.6)" />
+                      {trail.map((t, i) => {
+                        const w = Math.max(1, NOTE_W_PORTRAIT / 18)
+                        const h = 8
+                        const y = STAFF_Y + 14
+                        const fade = trail.length <= 1 ? 0.9 : (0.35 + 0.55 * (i / (trail.length - 1)))
+                        return (
+                          <rect key={'t'+i} x={56 + 10 + t.beat * NOTE_W_PORTRAIT - w / 2 - 1 - 0.5} y={y} width={w} height={h} fill={t.color} opacity={fade} />
+                        )
+                      })}
                     </g>
                   </svg>
                 </div>
@@ -1376,11 +1383,11 @@ export default function RhythmPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '32px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+    <div style={{ minHeight: 'calc(100svh - 64px)', background: '#F5F2EC', padding: '20px 24px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
       <div style={{ maxWidth: '900px', margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px' }}>
           <div>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '4px' }}>Rhythm Trainer</h1>
             {exercise && currentMeta && (
@@ -1388,6 +1395,11 @@ export default function RhythmPage() {
                 <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', background: DIFFICULTY_COLORS[currentMeta.difficulty], color: DIFFICULTY_TEXT[currentMeta.difficulty] }}>
                   {DIFFICULTY_LABEL[currentMeta.difficulty]}
                 </span>
+                {currentExIdx >= 0 && (
+                  <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, padding: '2px 8px', borderRadius: '20px', border: '1px solid #D3D1C7', background: 'rgba(255,255,255,0.7)', color: '#888780' }}>
+                    #{currentExIdx + 1}
+                  </span>
+                )}
                 <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>
                   {currentMeta.category} · {exercise.timeSignature.beats}/{exercise.timeSignature.beatType} · {bpm} BPM
                 </span>
@@ -1403,11 +1415,11 @@ export default function RhythmPage() {
             <div style={{ display: 'flex', gap: '6px' }}>
               <button onClick={() => prevEx && loadExercise(prevEx)} disabled={!prevEx}
                 style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid #D3D1C7', background: prevEx ? 'white' : '#F5F2EC', color: prevEx ? '#1A1A18' : '#D3D1C7', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: prevEx ? 'pointer' : 'default' }}>
-                ←
+                ← Prev
               </button>
               <button onClick={() => nextEx && loadExercise(nextEx)} disabled={!nextEx}
                 style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#D3D1C7'), background: nextEx ? '#1A1A18' : '#F5F2EC', color: nextEx ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: nextEx ? 'pointer' : 'default' }}>
-                →
+                Next →
               </button>
             </div>
           )}
@@ -1420,7 +1432,7 @@ export default function RhythmPage() {
               {soundEnabled && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '4px 12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Metro</span>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Click</span>
                     <input type="range" min={0} max={100} value={Math.round(metroVol * 100)}
                       onChange={e => setMetroVol(Number(e.target.value) / 100)}
                       style={{ width: '60px', accentColor: '#1A1A18' }} />
@@ -1466,50 +1478,121 @@ export default function RhythmPage() {
         {exercise && !loadingExercise && (
           <>
             {/* Controls */}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' as const }}>
-              {(['notation', 'grid'] as const).map(v => (
-                <button key={v} onClick={() => setView(v)}
-                  style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid ' + (view === v ? '#1A1A18' : '#D3D1C7'), background: view === v ? '#1A1A18' : 'white', color: view === v ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                  {v === 'notation' ? '𝄞 Notation' : '⊞ Grid'}
+            <div className="nl-rt-controlbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', gap: '10px', flexWrap: 'wrap' as const }}>
+              {/* View */}
+              <div className="nl-rt-seg" style={{ position: 'relative' as const, display: 'flex', alignItems: 'center', padding: '3px', borderRadius: '999px', border: '1px solid rgba(211,209,199,0.9)', background: 'rgba(255,255,255,0.65)', overflow: 'hidden' }}>
+                <div
+                  className="nl-rt-seg-thumb"
+                  style={{
+                    position: 'absolute' as const,
+                    top: '3px',
+                    bottom: '3px',
+                    left: view === 'notation' ? '3px' : 'calc(50% + 2px)',
+                    width: 'calc(50% - 5px)',
+                    borderRadius: '999px',
+                    background: '#1A1A18',
+                    boxShadow: '0 6px 18px rgba(26,26,24,0.14)',
+                    transition: 'left 180ms ease',
+                    pointerEvents: 'none' as const,
+                  }}
+                />
+                <button
+                  onClick={() => setView('notation')}
+                  className="nl-rt-seg-btn"
+                  style={{
+                    position: 'relative' as const,
+                    zIndex: 2,
+                    flex: 1,
+                    padding: '6px 14px',
+                    borderRadius: '999px',
+                    border: '1px solid transparent',
+                    background: 'transparent',
+                    color: view === 'notation' ? 'white' : '#888780',
+                    fontFamily: F,
+                    fontSize: '12px',
+                    fontWeight: 300,
+                    cursor: 'pointer',
+                    transition: 'color 180ms ease, transform 120ms ease',
+                    minWidth: '120px',
+                  }}
+                >
+                  𝄞 Notation
                 </button>
-              ))}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '8px' }}>
-                <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
-                  style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '16px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1 }}>−</button>
-                <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', minWidth: '54px', textAlign: 'center' as const }}>{bpm} BPM</span>
-                <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
-                  style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '16px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1 }}>+</button>
+                <button
+                  onClick={() => setView('grid')}
+                  className="nl-rt-seg-btn"
+                  style={{
+                    position: 'relative' as const,
+                    zIndex: 2,
+                    flex: 1,
+                    padding: '6px 14px',
+                    borderRadius: '999px',
+                    border: '1px solid transparent',
+                    background: 'transparent',
+                    color: view === 'grid' ? 'white' : '#888780',
+                    fontFamily: F,
+                    fontSize: '12px',
+                    fontWeight: 300,
+                    cursor: 'pointer',
+                    transition: 'color 180ms ease, transform 120ms ease',
+                    minWidth: '120px',
+                  }}
+                >
+                  ⊞ Grid
+                </button>
               </div>
-              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {score && !playing && (
-                  <div style={{ textAlign: 'right' as const }}>
-                    <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: pct === 100 ? '#4CAF50' : '#1A1A18', marginBottom: '2px' }}>
-                      {score.hits}/{score.total} · {pct}%
-                    </p>
-                    {score.durationTotal > 0 && (
-                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780' }}>
-                        Duration: {score.durationHits}/{score.durationTotal} · {Math.round(score.durationHits/score.durationTotal*100)}%
-                      </p>
-                    )}
-                    {score.restTaps > 0 && (
-                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#E53935' }}>
-                        {score.restTaps} tap{score.restTaps > 1 ? 's' : ''} on rests
-                      </p>
-                    )}
-                  </div>
-                )}
-                {!playing ? (
-                  <button onClick={start}
-                    onKeyDown={e => e.code === 'Space' && e.preventDefault()}
-                    style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                    {score ? 'Try Again' : 'Start'}
-                  </button>
-                ) : (
-                  <button onClick={stop}
-                    onKeyDown={e => e.code === 'Space' && e.preventDefault()}
-                    style={{ background: 'none', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                    Stop
-                  </button>
+
+              {/* Tempo */}
+              <div className="nl-rt-tempo" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 10px', borderRadius: '999px', border: '1px solid rgba(211,209,199,0.9)', background: 'rgba(255,255,255,0.65)' }}>
+                <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
+                  style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(211,209,199,0.9)', background: 'rgba(255,255,255,0.9)', color: '#888780', fontFamily: F, fontSize: '16px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, transition: 'transform 120ms ease' }}>−</button>
+                <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', minWidth: '60px', textAlign: 'center' as const, fontVariantNumeric: 'tabular-nums' as any }}>{bpm} BPM</span>
+                <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
+                  style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(211,209,199,0.9)', background: 'rgba(255,255,255,0.9)', color: '#888780', fontFamily: F, fontSize: '16px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, transition: 'transform 120ms ease' }}>+</button>
+              </div>
+
+              {/* Score (secondary) */}
+              <div style={{ minWidth: '240px', minHeight: '46px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
+                {(() => {
+                  const labelW = '74px'
+                  const valueFont = {
+                    fontFamily: F,
+                    fontSize: '12px',
+                    fontVariantNumeric: 'tabular-nums' as any,
+                    lineHeight: 1.25,
+                    letterSpacing: '0.01em',
+                  } as const
+                  const labelStyle = {
+                    ...valueFont,
+                    width: labelW,
+                    color: score && !playing ? '#888780' : '#D3D1C7',
+                    fontWeight: 300,
+                    flexShrink: 0,
+                    textAlign: 'right' as const,
+                    paddingRight: '6px',
+                  } as const
+                  const accValue = score && !playing ? `${score.hits}/${score.total} · ${pct}%` : '—'
+                  const durValue = score && !playing && score.durationTotal > 0
+                    ? `${score.durationHits}/${score.durationTotal} · ${Math.round(score.durationHits / score.durationTotal * 100)}%`
+                    : '—'
+                  const accColor = score && !playing ? (pct === 100 ? '#4CAF50' : '#1A1A18') : '#D3D1C7'
+                  return (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
+                        <span style={{ ...labelStyle, color: score && !playing ? accColor : labelStyle.color, fontWeight: 400 }}>Accuracy:</span>
+                        <span style={{ ...valueFont, color: accColor, fontWeight: 400 }}>{accValue}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
+                        <span style={labelStyle}>Duration:</span>
+                        <span style={{ ...valueFont, color: score && !playing ? '#888780' : '#D3D1C7', fontWeight: 300 }}>{durValue}</span>
+                      </div>
+                    </>
+                  )
+                })()}
+                {score && !playing && score.restTaps > 0 && (
+                  <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#E53935', margin: '2px 0 0', lineHeight: 1.2, textAlign: 'center' as const }}>
+                    {score.restTaps} tap{score.restTaps > 1 ? 's' : ''} on rests
+                  </p>
                 )}
               </div>
             </div>
@@ -1566,9 +1649,25 @@ export default function RhythmPage() {
                             <line key={'bm'+bi} x1={mx - 8 + bi * noteW} y1={STAFF_Y + 20} x2={mx - 8 + bi * noteW} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
                           ))}
                           {/* Trail */}
-                          {trail.filter(t => t.beat >= globalMeasureIdx * bpm && t.beat < (globalMeasureIdx + 1) * bpm).map((t, i) => (
-                            <rect key={'t'+i} x={mx - 8 + (t.beat - globalMeasureIdx * bpm) * noteW} y={STAFF_Y + 13} width={Math.max(1, noteW / 20)} height={6} fill={t.color} opacity={0.9} />
-                          ))}
+                          {(() => {
+                            const trailInMeasure = trail.filter(t => t.beat >= globalMeasureIdx * bpm && t.beat < (globalMeasureIdx + 1) * bpm)
+                            const trackX = mx - 8
+                            const trackW = bpm * noteW
+                            return (
+                              <>
+                                <rect x={trackX - 0.5} y={STAFF_Y + 18} width={trackW} height={2} fill="rgba(211,209,199,0.6)" />
+                                {trailInMeasure.map((t, i) => {
+                                  const w = Math.max(1, noteW / 18)
+                                  const h = 8
+                                  const y = STAFF_Y + 14
+                                  const fade = trailInMeasure.length <= 1 ? 0.9 : (0.35 + 0.55 * (i / (trailInMeasure.length - 1)))
+                                  return (
+                                    <rect key={'t'+i} x={trackX + (t.beat - globalMeasureIdx * bpm) * noteW - w / 2 - 1 - 0.5} y={y} width={w} height={h} fill={t.color} opacity={fade} />
+                                  )
+                                })}
+                              </>
+                            )
+                          })()}
                           {!isLastMeasure && (
                             <line x1={barlineX} y1={STAFF_Y - 28} x2={barlineX} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                           )}
@@ -1686,29 +1785,47 @@ export default function RhythmPage() {
               </div>
             )}
 
-            {/* Mobile tap button */}
-            <button
-              ref={tapBtnRef}
-              onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
-              onContextMenu={e => e.preventDefault()}
-              className="rhythm-tap-btn"
-              disabled={false}
-              style={{
-                width: '100%', height: '72px', borderRadius: '16px',
-                border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
-                background: liveFeedback === 'hit' ? '#4CAF50' : liveFeedback === 'miss' ? '#E53935' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F5F2EC',
-                color: liveFeedback ? 'white' : (playing && (countdown === null || tapReady)) ? 'white' : '#D3D1C7',
-                fontFamily: F, fontSize: '15px', fontWeight: 300,
-                cursor: (playing && (countdown === null || tapReady)) ? 'pointer' : 'default',
-                transition: 'background 0.1s, border 0.1s',
-                letterSpacing: '0.08em',
-                userSelect: 'none' as const,
-                WebkitUserSelect: 'none' as const,
-                touchAction: 'none' as const,
-                WebkitTouchCallout: 'none' as const
-              }}>
-              {(countdown !== null && !tapReady) ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
-            </button>
+            {/* Sticky bottom: Start/Stop + TAP (desktop/landscape only; portrait unchanged) */}
+            <div className="nl-rt-tapbar">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                {!playing ? (
+                  <button onClick={start}
+                    onKeyDown={e => e.code === 'Space' && e.preventDefault()}
+                    style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                    {score ? 'Try Again' : 'Start'}
+                  </button>
+                ) : (
+                  <button onClick={stop}
+                    onKeyDown={e => e.code === 'Space' && e.preventDefault()}
+                    style={{ background: 'none', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer', backgroundColor: 'rgba(255,255,255,0.7)' }}>
+                    Stop
+                  </button>
+                )}
+              </div>
+
+              <button
+                ref={tapBtnRef}
+                onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
+                onContextMenu={e => e.preventDefault()}
+                className="rhythm-tap-btn"
+                disabled={false}
+                style={{
+                  width: '100%', height: '72px', borderRadius: '16px',
+                  border: liveFeedback === 'hit' ? '2px solid #4CAF50' : liveFeedback === 'miss' ? '2px solid #E53935' : '2px solid #D3D1C7',
+                  background: liveFeedback === 'hit' ? '#4CAF50' : liveFeedback === 'miss' ? '#E53935' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F5F2EC',
+                  color: liveFeedback ? 'white' : (playing && (countdown === null || tapReady)) ? 'white' : '#D3D1C7',
+                  fontFamily: F, fontSize: '15px', fontWeight: 300,
+                  cursor: (playing && (countdown === null || tapReady)) ? 'pointer' : 'default',
+                  transition: 'background 0.1s, border 0.1s',
+                  letterSpacing: '0.08em',
+                  userSelect: 'none' as const,
+                  WebkitUserSelect: 'none' as const,
+                  touchAction: 'none' as const,
+                  WebkitTouchCallout: 'none' as const
+                }}>
+                {(countdown !== null && !tapReady) ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
+              </button>
+            </div>
           </>
         )}
       </div>
