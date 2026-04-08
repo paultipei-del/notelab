@@ -912,17 +912,32 @@ export default function RhythmPage() {
   useEffect(() => {
     if (playing || !exercise || taps.length === 0) return
     const expected: number[] = []
-    const expectedDurationsMs: number[] = []
+    const expectedEndMs: number[] = []
     const expectedDurationBeats: number[] = []
     let pos = 0
-    exercise.measures.forEach(m => m.notes.forEach(n => {
+    const flatNotes = exercise.measures.flatMap(m => m.notes)
+    const quarterMs = (effectiveBeatDurationRef.current || beatDuration) * 1000
+    // Build expected onsets and expected end times (including ties).
+    for (let i = 0; i < flatNotes.length; i++) {
+      const n = flatNotes[i]
+      const onsetBeats = pos
       if (!n.rest && !n.tieStop) {
-        expected.push(pos)
-        expectedDurationsMs.push(n.durationBeats * beatDuration * 1000)
-        expectedDurationBeats.push(n.durationBeats)
+        // If note is tied, duration is the whole tie chain.
+        let tiedDurBeats = n.durationBeats
+        if (n.tieStart) {
+          for (let j = i + 1; j < flatNotes.length; j++) {
+            const nj = flatNotes[j]
+            if (!nj.tieStop) break
+            tiedDurBeats += nj.durationBeats
+            if (!nj.tieStart) break
+          }
+        }
+        expected.push(onsetBeats)
+        expectedDurationBeats.push(tiedDurBeats)
+        expectedEndMs.push(tiedDurBeats * quarterMs)
       }
       pos += n.durationBeats
-    }))
+    }
     // Build rest ranges for filtering taps
     const restRangesForScoring: { start: number; end: number }[] = []
     let rPosS = 0
@@ -1013,20 +1028,36 @@ export default function RhythmPage() {
 
     // Duration scoring — compare each tap duration to expected note duration
     // Only score duration for quarter notes and longer (durationBeats >= 1.0).
-    const scorableDurations = expectedDurationsMs
+    const scorableDurations = expectedEndMs
       .map((expMs, i) => ({ expMs, durationBeats: expectedDurationBeats[i] ?? 0, tapIdx: i }))
       .filter(x => x.durationBeats >= 1.0)
 
     const durationTotal = scorableDurations.length === 0 ? 0 : scorableDurations.length
     const durationHits = durationTotal === 0 ? 0 : scorableDurations.filter(({ expMs, tapIdx }) => {
-      const d = tapDurations[tapIdx]
-      if (typeof d !== 'number') return false
+      const heldMs = tapDurations[tapIdx]
+      if (typeof heldMs !== 'number') return false
+
+      // More "musical" duration scoring:
+      // - evaluate absolute release-timing error in ms
+      // - stricter for releasing early, more forgiving for holding slightly long
+      // - include a small fixed ms slack so it feels human across tempos
       const bpmNum = bpm
       const tBpm = Math.max(0, Math.min(1, (bpmNum - 80) / 80)) // 0 at 80bpm, 1 at 160bpm+
-      const shortMs = Math.max(0, Math.min(1, (600 - expMs) / 450)) // 0 at 600ms, 1 at ~150ms
-      const tol = Math.min(0.85, 0.35 + 0.30 * tBpm + 0.25 * shortMs)
-      const ratio = d / expMs
-      return ratio >= (1 - tol) && ratio <= (1 + tol)
+
+      const errMs = heldMs - expMs // negative = early release, positive = late release
+      const absSlack = 85 + 35 * tBpm // 85ms → 120ms
+
+      // Fractional slack based on expected duration
+      // Early: allow up to ~35–55% + absolute slack
+      // Late:  allow up to ~55–80% + absolute slack
+      const earlyFrac = 0.35 + 0.20 * tBpm
+      const lateFrac = 0.55 + 0.25 * tBpm
+
+      const earlyLimit = absSlack + earlyFrac * expMs
+      const lateLimit = absSlack + lateFrac * expMs
+
+      if (errMs < 0) return (-errMs) <= earlyLimit
+      return errMs <= lateLimit
     }).length
 
     const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
