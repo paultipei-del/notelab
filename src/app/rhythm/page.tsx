@@ -1013,24 +1013,17 @@ export default function RhythmPage() {
     const durationHits = tapDurations.slice(0, expectedDurationsMs.length).filter((d, i) => {
       const exp = expectedDurationsMs[i]
       if (!exp) return false
-      // Tempo-aware duration scoring:
-      // At fast BPM, expected durations are very short, so a natural "human" hold tends to look like an over-hold ratio-wise.
-      // We widen the acceptable window as BPM increases, but keep it bounded.
-      // Also widen when the expected duration (ms) is small (e.g. compound meters at modest BPM where eighths still fly by).
+      // Duration scoring (symmetric tolerance around expected).
+      // The old wide min/max ratio window was too forgiving and could yield 100% duration too easily.
       const bpmNum = bpm
-      const t = Math.max(0, Math.min(1, (bpmNum - 80) / 80)) // 0 at 80bpm, 1 at 160bpm+
-      const minRatio = 0.15 - 0.05 * t // 0.15 → 0.10
-      let maxRatio = 2.0 + 1.5 * t     // 2.0 → 3.5
+      const tBpm = Math.max(0, Math.min(1, (bpmNum - 80) / 80)) // 0 at 80bpm, 1 at 160bpm+
+      const shortMs = Math.max(0, Math.min(1, (600 - exp) / 450)) // 0 at 600ms, 1 at ~150ms
 
-      // If the note value is very short in absolute time, allow a larger over-hold ratio.
-      // Map expected duration 600ms→1.0 down to 150ms→~1.0 extra ratio.
-      const shortMs = Math.max(0, Math.min(1, (600 - exp) / 450))
-      maxRatio += 1.0 * shortMs        // up to +1.0 when exp is ~150ms or less
-
-      // Keep a hard cap so extremely long holds still fail.
-      maxRatio = Math.min(4.5, maxRatio)
+      // Base tolerance ±25% at ~80bpm, loosening to ±45% at very fast tempos.
+      // Add up to +15% for very short note values (eighth/sixteenth at moderate bpm).
+      const tol = Math.min(0.65, 0.25 + 0.20 * tBpm + 0.15 * shortMs)
       const ratio = d / exp
-      return ratio >= minRatio && ratio <= maxRatio
+      return ratio >= (1 - tol) && ratio <= (1 + tol)
     }).length
     const durationTotal = Math.min(tapDurations.length, expectedDurationsMs.length)
 
