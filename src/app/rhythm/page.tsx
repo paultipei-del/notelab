@@ -817,7 +817,7 @@ export default function RhythmPage() {
       for (const measure of exercise.measures) {
         for (const note of measure.notes) {
           if (!note.rest) {
-            const noteTime = startTimeRef.current + beatPos * beatDuration
+            const noteTime = startTimeRef.current + beatPos * effectiveBeatDuration
             const source = ctx.createBufferSource()
             const gain = ctx.createGain()
             source.buffer = pianoBufferRef.current
@@ -825,9 +825,9 @@ export default function RhythmPage() {
             const dest = pianoGain ?? ctx.destination
             source.connect(gain); gain.connect(dest)
             gain.gain.setValueAtTime(1.0, noteTime)
-            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + note.durationBeats * beatDuration * 0.9)
+            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + note.durationBeats * effectiveBeatDuration * 0.9)
             source.start(noteTime)
-            source.stop(noteTime + note.durationBeats * beatDuration)
+            source.stop(noteTime + note.durationBeats * effectiveBeatDuration)
           }
           beatPos += note.durationBeats
         }
