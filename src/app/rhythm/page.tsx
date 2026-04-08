@@ -646,7 +646,7 @@ export default function RhythmPage() {
     const compoundBeatDuration = isCompound ? feltBeatDuration / 3 : beatDuration  // eighth note duration for compound
     const countdownBeats = feltBeats
     const countdownDuration = countdownBeats * feltBeatDuration
-    const now = ctx.currentTime + 0.1
+    const now = ctx.currentTime + 0.3  // extra buffer for async setup
     startTimeRef.current = now + countdownDuration
     // For compound: actual quarter note duration differs from beatDuration
     const effectiveBeatDuration = isCompound ? compoundBeatDuration * 2 : beatDuration
@@ -788,7 +788,7 @@ export default function RhythmPage() {
     const beatsPerMeasure = exercise.timeSignature.beats
     const totalQBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
 
-    const now = ctx.currentTime + 0.1
+    const now = ctx.currentTime + 0.3  // extra buffer for async setup
     startTimeRef.current = now
 
     // Schedule metronome clicks
@@ -803,7 +803,8 @@ export default function RhythmPage() {
       for (let i = 0; i < totalBeats; i++) playClick(startTimeRef.current + i * beatDuration, i % beatsPerMeasure === 0)
     }
 
-    // Schedule piano notes
+    // Schedule piano notes - wait for gain node to be ready
+    const pianoGain = pianoGainRef.current
     if (pianoBufferRef.current && soundEnabledRef.current) {
       let beatPos = 0
       for (const measure of exercise.measures) {
@@ -814,7 +815,7 @@ export default function RhythmPage() {
             const gain = ctx.createGain()
             source.buffer = pianoBufferRef.current
             source.playbackRate.value = 261.63 / 392
-            const dest = pianoGainRef.current ?? ctx.destination
+            const dest = pianoGain ?? ctx.destination
             source.connect(gain); gain.connect(dest)
             gain.gain.setValueAtTime(1.0, noteTime)
             gain.gain.exponentialRampToValueAtTime(0.001, noteTime + note.durationBeats * beatDuration * 0.9)
@@ -1429,7 +1430,7 @@ export default function RhythmPage() {
               }}
             >
             {/* Fixed playhead */}
-            {playing && (countdown === null || (playhead !== null && playhead >= -1)) && (
+            {(playing || previewing) && (countdown === null || (playhead !== null && playhead >= -1)) && (
               <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-3px)' }} />
             )}
             {view === 'notation' && (() => {
