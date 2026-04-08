@@ -692,7 +692,7 @@ export default function RhythmPage() {
       const elapsed = ctx2.currentTime - startTimeRef.current
       // Start playhead slightly early so it arrives at first note on beat 0
       const beatFloat = elapsed / effectiveBeatDuration
-      // Show playhead from -0.5 beats so student can anticipate
+      const effectiveTotalBeats = isCompound ? totalBeats / 3 : totalBeats
       setPlayhead(beatFloat)
       // Paint trail — green if pressing near a note, red if pressing on rest, gray if not pressing
       let trailColor = '#D3D1C7'
@@ -726,7 +726,7 @@ export default function RhythmPage() {
       }
       trailRef.current.push({ beat: beatFloat, color: trailColor })
       if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
-      if (beatFloat >= totalBeats) {
+      if (beatFloat >= effectiveTotalBeats) {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null
         // Close AudioContext to cancel any remaining scheduled clicks
