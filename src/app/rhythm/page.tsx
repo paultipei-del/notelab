@@ -1201,7 +1201,7 @@ export default function RhythmPage() {
   if (isPortrait) {
     // iOS Safari bottom toolbar can overlap content even with safe-area insets.
     // This guard keeps the TAP dock comfortably above it on most devices.
-    const SAFARI_BOTTOM_GUARD_PX = 56
+    const SAFARI_BOTTOM_GUARD_PX = 58
 
     const tapBtnStyle: React.CSSProperties = {
       width: '100%', height: '80px', borderRadius: '16px',
