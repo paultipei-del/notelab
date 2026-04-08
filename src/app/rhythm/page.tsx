@@ -730,6 +730,7 @@ export default function RhythmPage() {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null
         // Close AudioContext to cancel any remaining scheduled clicks
+        isPressedRef.current = false
         if (ctxRef.current) {
           ctxRef.current.close()
           ctxRef.current = null
