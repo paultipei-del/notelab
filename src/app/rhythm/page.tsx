@@ -1320,11 +1320,11 @@ export default function RhythmPage() {
     return 1
   })()
   const numRows = exercise ? Math.ceil(exercise.measures.length / MEASURES_PER_ROW) : 1
-  // Scale SVG_H so all rows fit within ~60vh (leaving room for controls)
-  const MAX_NOTATION_H = typeof window !== 'undefined' ? window.innerHeight * 0.55 : 400
-  const SVG_H = Math.min(130, Math.max(72, Math.floor(MAX_NOTATION_H / numRows)))
-  // Scale STAFF_Y proportionally with SVG_H (at SVG_H=130, STAFF_Y=52 = 40%)
-  const STAFF_Y_DESKTOP = Math.round(SVG_H * 0.40)
+  // Fit all rows within available viewport height
+  // Available = viewport - header - controls - padding ~300px
+  const availableH = typeof window !== 'undefined' ? Math.max(200, window.innerHeight - 300) : 400
+  const rowGap = 8
+  const SVG_H = Math.min(130, Math.max(60, Math.floor((availableH - rowGap * (numRows - 1)) / numRows)))
   const rows = exercise
     ? Array.from({ length: Math.ceil(exercise.measures.length / MEASURES_PER_ROW) },
         (_, i) => exercise.measures.slice(i * MEASURES_PER_ROW, (i + 1) * MEASURES_PER_ROW))
@@ -1857,7 +1857,7 @@ export default function RhythmPage() {
                 const isLastRow = rowIdx === rows.length - 1
                 const lastBarlineX = 56 + rowMeasures.length * measureW
                 return (
-                  <svg key={rowIdx} width="100%" viewBox={`0 0 ${actualSvgW} ${SVG_H}`} style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? '8px' : 0 }} preserveAspectRatio="xMinYMin meet">
+                  <svg key={rowIdx} width="100%" height={SVG_H} viewBox={`0 0 ${actualSvgW} 130`} style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? '8px' : 0 }} preserveAspectRatio="xMinYMin meet">
                     {rowIdx === 0 && (
                       <>
                         <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
