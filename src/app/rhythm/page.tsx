@@ -1319,7 +1319,12 @@ export default function RhythmPage() {
     }
     return 1
   })()
-  const SVG_H = 130
+  const numRows = exercise ? Math.ceil(exercise.measures.length / MEASURES_PER_ROW) : 1
+  // Scale SVG_H so all rows fit within ~60vh (leaving room for controls)
+  const MAX_NOTATION_H = typeof window !== 'undefined' ? window.innerHeight * 0.55 : 400
+  const SVG_H = Math.min(130, Math.max(72, Math.floor(MAX_NOTATION_H / numRows)))
+  // Scale STAFF_Y proportionally with SVG_H (at SVG_H=130, STAFF_Y=52 = 40%)
+  const STAFF_Y_DESKTOP = Math.round(SVG_H * 0.40)
   const rows = exercise
     ? Array.from({ length: Math.ceil(exercise.measures.length / MEASURES_PER_ROW) },
         (_, i) => exercise.measures.slice(i * MEASURES_PER_ROW, (i + 1) * MEASURES_PER_ROW))
@@ -1841,7 +1846,7 @@ export default function RhythmPage() {
 
             {/* Notation / Grid */}
             <div style={{ position: 'relative' as const, marginBottom: '20px' }}>
-            <div ref={landscapeContainerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', overflow: 'hidden', position: 'relative' as const }}>
+            <div ref={landscapeContainerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', overflow: 'hidden', position: 'relative' as const, maxHeight: 'calc(100svh - 280px)' }}>
 
               {/* LANDSCAPE/DESKTOP: row-based notation */}
               {view === 'notation' && !isPortrait && rows.map((rowMeasures, rowIdx) => {
