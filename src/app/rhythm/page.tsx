@@ -1019,9 +1019,9 @@ export default function RhythmPage() {
       const tBpm = Math.max(0, Math.min(1, (bpmNum - 80) / 80)) // 0 at 80bpm, 1 at 160bpm+
       const shortMs = Math.max(0, Math.min(1, (600 - exp) / 450)) // 0 at 600ms, 1 at ~150ms
 
-      // Base tolerance ±25% at ~80bpm, loosening to ±45% at very fast tempos.
-      // Add up to +15% for very short note values (eighth/sixteenth at moderate bpm).
-      const tol = Math.min(0.65, 0.25 + 0.20 * tBpm + 0.15 * shortMs)
+      // Base tolerance ±30% at ~80bpm, loosening to ±55% at very fast tempos.
+      // Add up to +20% for very short note values (eighth/sixteenth at moderate bpm).
+      const tol = Math.min(0.75, 0.30 + 0.25 * tBpm + 0.20 * shortMs)
       const ratio = d / exp
       return ratio >= (1 - tol) && ratio <= (1 + tol)
     }).length
