@@ -492,6 +492,7 @@ export default function RhythmPage() {
   const isPressedRef = useRef(false)
   const effectiveBeatDurationRef = useRef(60 / 72)  // updated on start
   const [diagLog, setDiagLog] = useState<string[]>([])
+  const DEBUG_TAPS = false
   const [showDiag, setShowDiag] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const soundEnabledRef = useRef(true)
@@ -815,7 +816,7 @@ export default function RhythmPage() {
       const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / effectiveBeatDurationRef.current
       const beat = Math.round(beatFloat2)
       const clampedBeat = Math.max(0, Math.min(beatFloat2, totalBeats))
-      console.log('KB TAP: beatFloat='+beatFloat2.toFixed(3)+' clampedBeat='+clampedBeat.toFixed(3))
+      if (DEBUG_TAPS) console.log('KB TAP: beatFloat='+beatFloat2.toFixed(3)+' clampedBeat='+clampedBeat.toFixed(3))
       setTaps(prev => [...prev, clampedBeat])
       // Live feedback
       const expected: number[] = []
@@ -1058,7 +1059,7 @@ export default function RhythmPage() {
     pointerDownTimeRef.current = performance.now()
     const ctx = getCtx(); if (!ctx) return
     void ctx.resume()
-    console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current)
+    if (DEBUG_TAPS) console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current)
     if (soundEnabledRef.current) {
       if (pianoBufferRef.current) {
         // Real piano sample
@@ -1129,18 +1130,17 @@ export default function RhythmPage() {
       const qPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
       let nearestTouch: { mi: number; ni: number; onset: number; dist: number } | null = null
       for (let mi = 0; mi < exercise.measures.length; mi++) {
+        let bp = 0
         for (let ni = 0; ni < exercise.measures[mi].notes.length; ni++) {
           const n = exercise.measures[mi].notes[ni]
-          const onsetGlobal = mi * qPerMeasure + (() => {
-            let bp = 0
-            exercise.measures[mi].notes.slice(0, ni).forEach(nn => { bp += nn.durationBeats })
-            return bp
-          })()
-          if (n.rest || n.tieStop) continue
-          const d = Math.abs(onsetGlobal - clampedBeat)
-          if (d <= ONSET_MATCH && (!nearestTouch || d < nearestTouch.dist)) {
-            nearestTouch = { mi, ni, onset: onsetGlobal, dist: d }
+          const onsetGlobal = mi * qPerMeasure + bp
+          if (!(n.rest || n.tieStop)) {
+            const d = Math.abs(onsetGlobal - clampedBeat)
+            if (d <= ONSET_MATCH && (!nearestTouch || d < nearestTouch.dist)) {
+              nearestTouch = { mi, ni, onset: onsetGlobal, dist: d }
+            }
           }
+          bp += n.durationBeats
         }
       }
       if (nearestTouch) {
