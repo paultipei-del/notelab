@@ -824,10 +824,11 @@ export default function RhythmPage() {
             source.playbackRate.value = 261.63 / 392
             const dest = pianoGain ?? ctx.destination
             source.connect(gain); gain.connect(dest)
+            const noteDur = Math.max(0.3, note.durationBeats * effectiveBeatDuration)
             gain.gain.setValueAtTime(1.0, noteTime)
-            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + note.durationBeats * effectiveBeatDuration * 0.9)
+            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + noteDur * 1.5)
             source.start(noteTime)
-            source.stop(noteTime + note.durationBeats * effectiveBeatDuration)
+            source.stop(noteTime + noteDur * 1.5 + 0.1)
           }
           beatPos += note.durationBeats
         }
