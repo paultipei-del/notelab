@@ -724,8 +724,10 @@ export default function RhythmPage() {
           trailColor = strictlyOnRest ? '#E53935' : '#4CAF50'
         }
       }
-      trailRef.current.push({ beat: beatFloat, color: trailColor })
-      if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
+      if (beatFloat < effectiveTotalBeats) {
+        trailRef.current.push({ beat: beatFloat, color: trailColor })
+        if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
+      }
       if (beatFloat >= effectiveTotalBeats) {
         setPlayhead(null); setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null
