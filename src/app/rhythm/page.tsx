@@ -476,6 +476,7 @@ export default function RhythmPage() {
   const [view, setView] = useState<'notation' | 'grid'>('notation')
   const [bpm, setBpm] = useState(72)
   const [playing, setPlaying] = useState(false)
+  const [previewing, setPreviewing] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
   const [tapReady, setTapReady] = useState(false)
   const tapReadyRef = useRef(false)
@@ -764,6 +765,85 @@ export default function RhythmPage() {
     setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
     tapNoteRef.current = null  // sound auto-decays
   }
+
+
+  const startPreview = useCallback(async () => {
+    if (!exercise) return
+    const ctx = await getCtx()
+    if (!ctx) return
+    cancelAnimationFrame(rafRef.current)
+    setPreviewing(true)
+    setPlaying(false)
+    setPlayhead(null)
+    setCountdown(null)
+
+    const isCompound = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3
+    const feltBeats = isCompound ? exercise.timeSignature.beats / 3 : exercise.timeSignature.beats
+    const feltBeatDuration = isCompound ? 60 / bpm : beatDuration
+    const compoundBeatDuration = isCompound ? feltBeatDuration / 3 : beatDuration
+    const effectiveBeatDuration = isCompound ? compoundBeatDuration * 2 : beatDuration
+    effectiveBeatDurationRef.current = effectiveBeatDuration
+    const beatsPerMeasure = exercise.timeSignature.beats
+    const totalQBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+
+    const now = ctx.currentTime + 0.1
+    startTimeRef.current = now
+
+    // Schedule metronome clicks
+    if (isCompound) {
+      const feltBeatCount = Math.round(totalBeats / 3)
+      for (let i = 0; i < feltBeatCount; i++) {
+        playClick(startTimeRef.current + i * feltBeatDuration, i % feltBeats === 0)
+        playClick(startTimeRef.current + i * feltBeatDuration + compoundBeatDuration, false)
+        playClick(startTimeRef.current + i * feltBeatDuration + compoundBeatDuration * 2, false)
+      }
+    } else {
+      for (let i = 0; i < totalBeats; i++) playClick(startTimeRef.current + i * beatDuration, i % beatsPerMeasure === 0)
+    }
+
+    // Schedule piano notes
+    if (pianoBufferRef.current && soundEnabledRef.current) {
+      let beatPos = 0
+      for (const measure of exercise.measures) {
+        for (const note of measure.notes) {
+          if (!note.rest) {
+            const noteTime = startTimeRef.current + beatPos * beatDuration
+            const source = ctx.createBufferSource()
+            const gain = ctx.createGain()
+            source.buffer = pianoBufferRef.current
+            source.playbackRate.value = 261.63 / 392
+            const dest = pianoGainRef.current ?? ctx.destination
+            source.connect(gain); gain.connect(dest)
+            gain.gain.setValueAtTime(1.0, noteTime)
+            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + note.durationBeats * beatDuration * 0.9)
+            source.start(noteTime)
+            source.stop(noteTime + note.durationBeats * beatDuration)
+          }
+          beatPos += note.durationBeats
+        }
+      }
+    }
+
+    const tick = () => {
+      const ctx2 = ctxRef.current; if (!ctx2) return
+      const elapsed = ctx2.currentTime - startTimeRef.current
+      const beatFloat = elapsed / effectiveBeatDuration
+      const effectiveTotalBeats = totalQBeats
+      setPlayhead(beatFloat)
+      if (beatFloat >= effectiveTotalBeats) {
+        setPlayhead(null); setPreviewing(false)
+        if (ctxRef.current) {
+          ctxRef.current.close()
+          ctxRef.current = null
+          metroGainRef.current = null
+          pianoGainRef.current = null
+        }
+        return
+      }
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+  }, [exercise, totalBeats, beatDuration, bpm])
 
   // Prevent space from scrolling or triggering buttons always when exercise loaded
   useEffect(() => {
