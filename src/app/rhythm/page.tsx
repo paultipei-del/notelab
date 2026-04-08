@@ -1212,7 +1212,7 @@ export default function RhythmPage() {
     }
 
     return (
-      <div style={{ minHeight: '100svh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '8px 12px 8px', gap: '8px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
+      <div style={{ height: '100svh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', padding: '8px 12px', gap: '8px', overflow: 'hidden', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
 
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
@@ -1367,56 +1367,59 @@ export default function RhythmPage() {
           </div>
         )}
 
-        {/* Countdown */}
-        <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          {countdown !== null && (
-            <span style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
-          )}
-          {score && !playing && !countdown && (
-            <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: pct >= 80 ? '#4CAF50' : '#1A1A18', margin: 0 }}>
-              {score.hits}/{score.total} · {pct}% timing · {durationPct}% duration
-            </p>
-          )}
-        </div>
-
-        {/* Bottom controls */}
-        {exercise && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
-              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>−</button>
-            <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', minWidth: '54px', textAlign: 'center' as const }}>{bpm} BPM</span>
-            <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
-              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
-            <div style={{ flex: 1 }} />
-            <button onClick={() => setShowMixer(v => !v)}
-              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-              Mixer
-            </button>
-            <button onClick={() => setShowDiag(d => !d)}
-              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-              🔍 Diag
-            </button>
-            {!playing ? (
-              <button onClick={playing ? stop : start}
-                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                {score ? 'Try Again' : 'Start'}
-              </button>
-            ) : (
-              <button onClick={stop}
-                style={{ background: 'none', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                Stop
-              </button>
+        {/* Bottom dock (keeps TAP at bottom, no scroll) */}
+        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: 'calc(env(safe-area-inset-bottom) + 6px)' }}>
+          {/* Countdown */}
+          <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            {countdown !== null && (
+              <span style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
+            )}
+            {score && !playing && !countdown && (
+              <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: pct >= 80 ? '#4CAF50' : '#1A1A18', margin: 0 }}>
+                {score.hits}/{score.total} · {pct}% timing · {durationPct}% duration
+              </p>
             )}
           </div>
-        )}
 
-        {/* TAP button */}
-        {exercise && (
-          <button ref={tapBtnRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
-            onContextMenu={e => e.preventDefault()} style={tapBtnStyle as React.CSSProperties}>
-            {countdown !== null && !tapReady ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? 'Try Again' : 'Start'}
-          </button>
-        )}
+          {/* Bottom controls */}
+          {exercise && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+              <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
+                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>−</button>
+              <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', minWidth: '54px', textAlign: 'center' as const }}>{bpm} BPM</span>
+              <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
+                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
+              <div style={{ flex: 1 }} />
+              <button onClick={() => setShowMixer(v => !v)}
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                Mixer
+              </button>
+              <button onClick={() => setShowDiag(d => !d)}
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                🔍 Diag
+              </button>
+              {!playing ? (
+                <button onClick={playing ? stop : start}
+                  style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                  {score ? 'Try Again' : 'Start'}
+                </button>
+              ) : (
+                <button onClick={stop}
+                  style={{ background: 'none', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                  Stop
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* TAP button */}
+          {exercise && (
+            <button ref={tapBtnRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
+              onContextMenu={e => e.preventDefault()} style={tapBtnStyle as React.CSSProperties}>
+              {countdown !== null && !tapReady ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? 'Try Again' : 'Start'}
+            </button>
+          )}
+        </div>
 
       </div>
     )
