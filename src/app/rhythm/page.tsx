@@ -494,9 +494,9 @@ export default function RhythmPage() {
   const [diagLog, setDiagLog] = useState<string[]>([])
   const DEBUG_TAPS = false
   const [showDiag, setShowDiag] = useState(false)
-  const [soundEnabled, setSoundEnabled] = useState(true)
+  // Audio is always enabled in Rhythm Trainer (volumes control the mix).
   const soundEnabledRef = useRef(true)
-  useEffect(() => { soundEnabledRef.current = soundEnabled }, [soundEnabled])
+  const [showMixer, setShowMixer] = useState(false)
   const [metroVol, setMetroVol] = useState(0.7)
   const metroVolRef = useRef(0.7)
   useEffect(() => { metroVolRef.current = metroVol; if (metroGainRef.current) metroGainRef.current.gain.value = metroVol }, [metroVol])
@@ -1239,7 +1239,47 @@ export default function RhythmPage() {
                 style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#D3D1C7'), background: nextEx ? '#1A1A18' : '#F5F2EC', color: nextEx ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: nextEx ? 'pointer' : 'default' }}>→</button>
             </div>
           )}
+          {exercise && (
+            <button onClick={() => setShowMixer(v => !v)}
+              style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : '#F5F2EC', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', flexShrink: 0 }}>
+              Mixer
+            </button>
+          )}
         </div>
+
+        {/* Mixer sheet (portrait) */}
+        {showMixer && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 200 }}
+            onClick={e => e.target === e.currentTarget && setShowMixer(false)}>
+            <div style={{ position: 'absolute' as const, inset: 0, background: 'rgba(26,26,24,0.35)' }} />
+            <div style={{ position: 'absolute' as const, left: 0, right: 0, bottom: 0, background: 'rgba(245,242,236,0.98)', borderTop: '1px solid #D3D1C7', borderTopLeftRadius: '18px', borderTopRightRadius: '18px', padding: '14px 14px 18px', boxShadow: '0 -14px 34px rgba(26,26,24,0.18)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', margin: 0 }}>Mixer</p>
+                <button onClick={() => setShowMixer(false)} style={{ border: '1px solid #D3D1C7', background: 'white', color: '#888780', borderRadius: '20px', padding: '6px 10px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Done</button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#1A1A18' }}>Click</span>
+                    <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', fontVariantNumeric: 'tabular-nums' as any }}>{Math.round(metroVol * 100)}%</span>
+                  </div>
+                  <input type="range" min={0} max={100} value={Math.round(metroVol * 100)}
+                    onChange={e => setMetroVol(Number(e.target.value) / 100)}
+                    style={{ width: '100%', accentColor: '#1A1A18' }} />
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#1A1A18' }}>Piano</span>
+                    <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', fontVariantNumeric: 'tabular-nums' as any }}>{Math.round(pianoVol * 100)}%</span>
+                  </div>
+                  <input type="range" min={0} max={100} value={Math.round(pianoVol * 100)}
+                    onChange={e => setPianoVol(Number(e.target.value) / 100)}
+                    style={{ width: '100%', accentColor: '#1A1A18' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Notation area */}
         {exercise ? (
@@ -1348,9 +1388,9 @@ export default function RhythmPage() {
             <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
               style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
             <div style={{ flex: 1 }} />
-            <button onClick={() => setSoundEnabled(s => !s)}
-              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-              {soundEnabled ? '♪ On' : '♪ Off'}
+            <button onClick={() => setShowMixer(v => !v)}
+              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+              Mixer
             </button>
             <button onClick={() => setShowDiag(d => !d)}
               style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
@@ -1425,27 +1465,10 @@ export default function RhythmPage() {
           )}
           {exercise && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' as const }}>
-              <button onClick={() => setSoundEnabled((s: boolean) => !s)}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (soundEnabled ? '#1A1A18' : '#D3D1C7'), background: soundEnabled ? '#1A1A18' : 'white', color: soundEnabled ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                {soundEnabled ? '♪ On' : '♪ Off'}
+              <button onClick={() => setShowMixer(v => !v)}
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                Mixer
               </button>
-              {soundEnabled && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'white', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '4px 12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Click</span>
-                    <input type="range" min={0} max={100} value={Math.round(metroVol * 100)}
-                      onChange={e => setMetroVol(Number(e.target.value) / 100)}
-                      style={{ width: '60px', accentColor: '#1A1A18' }} />
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>Piano</span>
-                    <input type="range" min={0} max={100} value={Math.round(pianoVol * 100)}
-                      onChange={e => setPianoVol(Number(e.target.value) / 100)}
-                      style={{ width: '60px', accentColor: '#1A1A18' }} />
-                  </div>
-
-                </div>
-              )}
             </div>
           )}
           {exercise && (
@@ -1477,6 +1500,40 @@ export default function RhythmPage() {
         {/* Exercise view */}
         {exercise && !loadingExercise && (
           <>
+            {/* Mixer popover (desktop/landscape) */}
+            {showMixer && (
+              <div style={{ position: 'fixed', inset: 0, zIndex: 120 }}
+                onClick={e => e.target === e.currentTarget && setShowMixer(false)}>
+                <div style={{ position: 'absolute' as const, inset: 0, background: 'rgba(26,26,24,0.18)' }} />
+                <div style={{ position: 'absolute' as const, top: '88px', right: '24px', width: '320px', maxWidth: 'calc(100vw - 48px)', background: 'rgba(255,255,255,0.92)', border: '1px solid rgba(211,209,199,0.9)', borderRadius: '16px', padding: '14px', boxShadow: '0 18px 44px rgba(26,26,24,0.16)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' as any }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', margin: 0 }}>Mixer</p>
+                    <button onClick={() => setShowMixer(false)} style={{ border: '1px solid #D3D1C7', background: 'white', color: '#888780', borderRadius: '20px', padding: '6px 10px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Done</button>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#1A1A18' }}>Click</span>
+                        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', fontVariantNumeric: 'tabular-nums' as any }}>{Math.round(metroVol * 100)}%</span>
+                      </div>
+                      <input type="range" min={0} max={100} value={Math.round(metroVol * 100)}
+                        onChange={e => setMetroVol(Number(e.target.value) / 100)}
+                        style={{ width: '100%', accentColor: '#1A1A18' }} />
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#1A1A18' }}>Piano</span>
+                        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', fontVariantNumeric: 'tabular-nums' as any }}>{Math.round(pianoVol * 100)}%</span>
+                      </div>
+                      <input type="range" min={0} max={100} value={Math.round(pianoVol * 100)}
+                        onChange={e => setPianoVol(Number(e.target.value) / 100)}
+                        style={{ width: '100%', accentColor: '#1A1A18' }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Controls */}
             <div className="nl-rt-controlbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', gap: '10px', flexWrap: 'wrap' as const }}>
               {/* View */}
