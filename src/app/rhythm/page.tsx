@@ -626,6 +626,8 @@ export default function RhythmPage() {
 
   const start = useCallback(async () => {
     if (!exercise) return
+    cancelAnimationFrame(rafRef.current)
+    setPreviewing(false)
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
     initSampler()  // load piano on first gesture
@@ -1993,9 +1995,33 @@ export default function RhythmPage() {
               </div>
             )}
 
-            {/* Sticky bottom: Start/Stop + TAP (desktop/landscape only; portrait unchanged) */}
+            {/* Sticky bottom: Preview + Start/Stop + TAP (desktop/landscape; matches portrait) */}
             <div className="nl-rt-tapbar">
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                <button
+                  type="button"
+                  onClick={startPreview}
+                  disabled={playing || previewing}
+                  title="Preview rhythm"
+                  onKeyDown={e => e.code === 'Space' && e.preventDefault()}
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    border: '1px solid ' + (previewing ? '#BA7517' : '#D3D1C7'),
+                    background: previewing ? '#BA7517' : 'white',
+                    color: previewing ? 'white' : '#888780',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    opacity: playing ? 0.4 : 1,
+                  }}
+                >
+                  ▶
+                </button>
                 {!playing ? (
                   <button onClick={start}
                     onKeyDown={e => e.code === 'Space' && e.preventDefault()}
