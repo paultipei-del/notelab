@@ -1552,7 +1552,7 @@ export default function RhythmPage() {
               </div>
 
               {/* Score (secondary) */}
-              <div style={{ minWidth: '240px', minHeight: '46px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
+              <div className="nl-rt-score" style={{ minWidth: '240px', minHeight: '46px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
                 {(() => {
                   const labelW = '74px'
                   const valueFont = {
