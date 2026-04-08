@@ -841,6 +841,19 @@ export default function RhythmPage() {
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = totalQBeats
       setPlayhead(beatFloat)
+      // Color notes green as they sound
+      if (exercise) {
+        const newResults: ('hit'|'miss'|'none')[][] = exercise.measures.map((measure, mIdx) => {
+          let bp = 0
+          return measure.notes.map(note => {
+            const globalBeat = mIdx * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType) + bp
+            const result = (!note.rest && beatFloat >= globalBeat) ? 'hit' : 'none'
+            bp += note.durationBeats
+            return result as 'hit'|'miss'|'none'
+          })
+        })
+        setTapResults(newResults)
+      }
       if (beatFloat >= effectiveTotalBeats) {
         setPlayhead(null); setPreviewing(false)
         if (ctxRef.current) {
