@@ -1283,7 +1283,19 @@ export default function RhythmPage() {
 
         {/* Notation area */}
         {exercise ? (
-          <div ref={containerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', position: 'relative' as const, flexShrink: 0 }}>
+          <div
+            ref={containerRef}
+            style={{
+              background: 'white',
+              borderRadius: '16px',
+              border: '1px solid #D3D1C7',
+              overflowX: (playing || countdown !== null) ? 'hidden' : 'auto',
+              overflowY: 'hidden',
+              WebkitOverflowScrolling: 'touch',
+              position: 'relative' as const,
+              flexShrink: 0,
+            }}
+          >
             {/* Fixed playhead */}
             {playing && (countdown === null || (playhead !== null && playhead >= -1)) && (
               <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-3px)' }} />
@@ -1301,11 +1313,13 @@ export default function RhythmPage() {
               // playhead goes from -countdownBeats to totalBeats
               // at playhead=0, first note (x=56+18) should be at centerX
               // at playhead=0, first notehead (x=74) aligns with center playhead line
-              const effectivePlayhead = playhead ?? -1
-              const offsetX = centerX - 52 - effectivePlayhead * NOTE_W_PORTRAIT
+              const followPlayhead = playing || countdown !== null
+              const effectivePlayhead = followPlayhead ? (playhead ?? -1) : 0
+              const offsetX = followPlayhead ? (centerX - 52 - effectivePlayhead * NOTE_W_PORTRAIT) : 0
+              const svgRenderW = followPlayhead ? svgWidth : Math.max(svgWidth, totalW)
               return (
                 <div style={{ overflow: 'hidden' }}>
-                  <svg width={svgWidth} height={160} style={{ display: 'block' }}>
+                  <svg width={svgRenderW} height={160} style={{ display: 'block' }}>
                     <g transform={`translate(${offsetX}, 28)`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
