@@ -1322,7 +1322,8 @@ export default function RhythmPage() {
   const numRows = exercise ? Math.ceil(exercise.measures.length / MEASURES_PER_ROW) : 1
   // Fit all rows within available viewport height
   // Available = viewport - header - controls - padding ~300px
-  const availableH = typeof window !== 'undefined' ? Math.max(200, window.innerHeight - 300) : 400
+  // 64px global nav + 20px page padding + 96px h1 + 16px margin + 68px controls + 20px margin + 68px sound controls + 20px margin + 24px card padding + 24px card padding bottom + 20px margin
+  const availableH = typeof window !== 'undefined' ? Math.max(200, window.innerHeight - 440) : 300
   const rowGap = 8
   const SVG_H = Math.min(130, Math.max(60, Math.floor((availableH - rowGap * (numRows - 1)) / numRows)))
   const rows = exercise
