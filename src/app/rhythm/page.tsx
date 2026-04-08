@@ -803,7 +803,14 @@ export default function RhythmPage() {
       for (let i = 0; i < totalBeats; i++) playClick(startTimeRef.current + i * beatDuration, i % beatsPerMeasure === 0)
     }
 
-    // Schedule piano notes - wait for gain node to be ready
+    // Ensure piano buffer is loaded
+    if (!pianoBufferRef.current) {
+      try {
+        const resp = await fetch('/samples/piano-g4.wav')
+        const ab = await resp.arrayBuffer()
+        pianoBufferRef.current = await ctx.decodeAudioData(ab)
+      } catch(e) { console.error('preview buffer load failed', e) }
+    }
     const pianoGain = pianoGainRef.current
     if (pianoBufferRef.current && soundEnabledRef.current) {
       let beatPos = 0
@@ -1893,7 +1900,7 @@ export default function RhythmPage() {
                     })}
                     {/* Playhead */}
                     {(() => {
-                      if (playhead === null || (!playing && countdown === null)) return null
+                      if (playhead === null || (!playing && !previewing && countdown === null)) return null
                       const rowStartBeat = rowIdx * MEASURES_PER_ROW * bpm
                       const rowEndBeat = rowStartBeat + rowMeasures.length * bpm
                       if (playhead < rowStartBeat - 1 || playhead >= rowEndBeat) return null
