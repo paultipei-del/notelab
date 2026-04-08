@@ -913,11 +913,13 @@ export default function RhythmPage() {
     if (playing || !exercise || taps.length === 0) return
     const expected: number[] = []
     const expectedDurationsMs: number[] = []
+    const expectedDurationBeats: number[] = []
     let pos = 0
     exercise.measures.forEach(m => m.notes.forEach(n => {
       if (!n.rest && !n.tieStop) {
         expected.push(pos)
         expectedDurationsMs.push(n.durationBeats * beatDuration * 1000)
+        expectedDurationBeats.push(n.durationBeats)
       }
       pos += n.durationBeats
     }))
@@ -1010,22 +1012,22 @@ export default function RhythmPage() {
     }
 
     // Duration scoring — compare each tap duration to expected note duration
-    const durationHits = tapDurations.slice(0, expectedDurationsMs.length).filter((d, i) => {
-      const exp = expectedDurationsMs[i]
-      if (!exp) return false
-      // Duration scoring (symmetric tolerance around expected).
-      // The old wide min/max ratio window was too forgiving and could yield 100% duration too easily.
+    // Only score duration for quarter notes and longer (durationBeats >= 1.0).
+    const scorableDurations = expectedDurationsMs
+      .map((expMs, i) => ({ expMs, durationBeats: expectedDurationBeats[i] ?? 0, tapIdx: i }))
+      .filter(x => x.durationBeats >= 1.0)
+
+    const durationTotal = scorableDurations.length === 0 ? 0 : scorableDurations.length
+    const durationHits = durationTotal === 0 ? 0 : scorableDurations.filter(({ expMs, tapIdx }) => {
+      const d = tapDurations[tapIdx]
+      if (typeof d !== 'number') return false
       const bpmNum = bpm
       const tBpm = Math.max(0, Math.min(1, (bpmNum - 80) / 80)) // 0 at 80bpm, 1 at 160bpm+
-      const shortMs = Math.max(0, Math.min(1, (600 - exp) / 450)) // 0 at 600ms, 1 at ~150ms
-
-      // Base tolerance ±35% at ~80bpm, loosening to ±65% at very fast tempos.
-      // Add up to +25% for very short note values (eighth/sixteenth at moderate bpm).
+      const shortMs = Math.max(0, Math.min(1, (600 - expMs) / 450)) // 0 at 600ms, 1 at ~150ms
       const tol = Math.min(0.85, 0.35 + 0.30 * tBpm + 0.25 * shortMs)
-      const ratio = d / exp
+      const ratio = d / expMs
       return ratio >= (1 - tol) && ratio <= (1 + tol)
     }).length
-    const durationTotal = Math.min(tapDurations.length, expectedDurationsMs.length)
 
     const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
     setScore(finalScore)
@@ -1495,6 +1497,10 @@ export default function RhythmPage() {
               <button onClick={() => setShowMixer(v => !v)}
                 style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                 Mixer
+              </button>
+              <button onClick={() => setShowDiag(d => !d)}
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                🔍 Diag
               </button>
             </div>
           )}

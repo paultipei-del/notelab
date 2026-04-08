@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { getSupabaseClient } from '@/lib/supabase'
 import type { GeneratorOptions, NoteValue } from '@/lib/rhythmGenerator'
 import type { RhythmExercise } from '@/lib/parseMXL'
@@ -8,7 +8,7 @@ import type { RhythmExercise } from '@/lib/parseMXL'
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 
-const CATEGORIES = ['Quarter & Half Notes', 'Rests', 'Dotted Notes', 'Ties', 'Eighth Notes', 'Mixed']
+const DEFAULT_CATEGORIES = ['Quarter & Half Notes', 'Rests', 'Dotted Notes', 'Ties', 'Eighth Notes', 'Mixed'] as const
 const DIFFICULTY_LABEL: Record<number, string> = { 1: 'Beginner', 2: 'Elementary', 3: 'Intermediate', 4: 'Advanced', 5: 'Expert' }
 const ALL_NOTE_VALUES: NoteValue[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth']
 
@@ -281,7 +281,8 @@ export default function GeneratePage() {
   const [opts, setOpts] = useState<GeneratorOptions>(DEFAULT_OPTS)
   const [preview, setPreview] = useState<RhythmExercise | null>(null)
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState(CATEGORIES[0])
+  const [categories, setCategories] = useState<string[]>([...DEFAULT_CATEGORIES])
+  const [category, setCategory] = useState<string>(DEFAULT_CATEGORIES[0])
   const [difficulty, setDifficulty] = useState(1)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null)
@@ -296,6 +297,25 @@ export default function GeneratePage() {
     setPreview(ex as unknown as RhythmExercise)
     setMessage(null)
   }, [opts])
+
+  useEffect(() => {
+    let cancelled = false
+    import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
+      fetchExercisesByCategory().then(grouped => {
+        if (cancelled) return
+        const fetched = Object.keys(grouped ?? {})
+        const merged = Array.from(new Set([...DEFAULT_CATEGORIES, ...fetched])).filter(Boolean)
+        setCategories(merged)
+        if (!merged.includes(category)) setCategory(merged[0] ?? DEFAULT_CATEGORIES[0])
+      }).catch(() => {
+        // keep fallback categories
+      })
+    }).catch(() => {
+      // keep fallback categories
+    })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const save = useCallback(async () => {
     if (!preview || !title.trim()) { setMessage({ text: 'Generate an exercise and enter a title first.', ok: false }); return }
@@ -453,16 +473,16 @@ export default function GeneratePage() {
               <div>
                 <label style={lbl}>Category</label>
                 <select
-                  value={CATEGORIES.includes(category) ? category : '__custom__'}
+                  value={categories.includes(category) ? category : '__custom__'}
                   onChange={e => {
                     if (e.target.value === '__custom__') setCategory('')
                     else setCategory(e.target.value)
                   }}
                   style={{ ...inp, marginBottom: '6px' }}>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
                   <option value="__custom__">+ New category…</option>
                 </select>
-                {!CATEGORIES.includes(category) && (
+                {!categories.includes(category) && (
                   <input
                     value={category}
                     onChange={e => setCategory(e.target.value)}

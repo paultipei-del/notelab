@@ -26,6 +26,34 @@ const DURATION_MAP: Record<string, number> = {
   whole: 4, half: 2, quarter: 1, eighth: 0.5, sixteenth: 0.25,
 }
 
+function normalizeNoteType(raw: string): NoteValue {
+  // MusicXML commonly uses "8th" / "16th" strings.
+  if (raw === '8th') return 'eighth'
+  if (raw === '16th') return 'sixteenth'
+  // Fall back to expected NoteValue literals.
+  return (raw as NoteValue) ?? 'quarter'
+}
+
+function inferNoteTypeFromDuration(durationBeats: number, dot: boolean): NoteValue {
+  // durationBeats is in quarter-note units.
+  // If dotted, normalize back to the base note value.
+  const base = dot ? durationBeats / 1.5 : durationBeats
+  const candidates: { type: NoteValue; beats: number }[] = [
+    { type: 'whole', beats: 4 },
+    { type: 'half', beats: 2 },
+    { type: 'quarter', beats: 1 },
+    { type: 'eighth', beats: 0.5 },
+    { type: 'sixteenth', beats: 0.25 },
+  ]
+  let best = candidates[2] // quarter
+  let bestDist = Infinity
+  for (const c of candidates) {
+    const dist = Math.abs(c.beats - base)
+    if (dist < bestDist) { best = c; bestDist = dist }
+  }
+  return best.type
+}
+
 export async function parseMXL(buffer: ArrayBuffer): Promise<RhythmExercise> {
   const zip = await JSZip.loadAsync(buffer)
   
@@ -52,7 +80,7 @@ export async function parseMXL(buffer: ArrayBuffer): Promise<RhythmExercise> {
   doc.querySelectorAll('measure').forEach(measure => {
     const notes: RhythmNote[] = []
     measure.querySelectorAll('note').forEach(note => {
-      const type = (note.querySelector('type')?.textContent || 'quarter') as NoteValue
+      const rawType = note.querySelector('type')?.textContent || ''
       const duration = parseInt(note.querySelector('duration')?.textContent || '1')
       const rest = !!note.querySelector('rest')
       const dot = !!note.querySelector('dot')
@@ -60,6 +88,11 @@ export async function parseMXL(buffer: ArrayBuffer): Promise<RhythmExercise> {
       const tieStart = ties.some(t => t.getAttribute('type') === 'start')
       const tieStop = ties.some(t => t.getAttribute('type') === 'stop')
       const durationBeats = (duration / divisions) * (4 / beatType)
+      const normalizedType = rawType ? normalizeNoteType(rawType) : 'quarter'
+      // Some sources omit or mislabel <type>. Use duration as a fallback to keep rendering correct (e.g. 16th beams).
+      const type: NoteValue = (rawType && DURATION_MAP[normalizedType] !== undefined)
+        ? normalizedType
+        : inferNoteTypeFromDuration(durationBeats, dot)
       notes.push({ type, rest, dot, tieStart, tieStop, durationBeats })
     })
     if (notes.length > 0) measures.push({ notes })
