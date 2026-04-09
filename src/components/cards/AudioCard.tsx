@@ -100,6 +100,23 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
         sharedSampler.triggerAttackRelease(note, '8n', now + i * 0.35)
       })
       totalDuration = notes.length * 350 + 600
+    } else if (pattern === 'interval-ascending') {
+      // 72 BPM: quarter = 0.833s, half = 1.667s
+      // root (Q) → top (Q) → [root, top] blocked (H)
+      const Q = 60 / 72
+      const H = 2 * Q
+      sharedSampler.triggerAttackRelease(notes[0], Q, now)
+      sharedSampler.triggerAttackRelease(notes[1], Q, now + Q)
+      sharedSampler.triggerAttackRelease([notes[0], notes[1]], H, now + 2 * Q)
+      totalDuration = Math.round((3 * Q + H + 0.5) * 1000)
+    } else if (pattern === 'interval-descending') {
+      // top (Q) → root (Q) → [root, top] blocked (H)
+      const Q = 60 / 72
+      const H = 2 * Q
+      sharedSampler.triggerAttackRelease(notes[1], Q, now)
+      sharedSampler.triggerAttackRelease(notes[0], Q, now + Q)
+      sharedSampler.triggerAttackRelease([notes[0], notes[1]], H, now + 2 * Q)
+      totalDuration = Math.round((3 * Q + H + 0.5) * 1000)
     }
 
     timeoutRef.current = setTimeout(() => setPlayState('ready'), totalDuration)

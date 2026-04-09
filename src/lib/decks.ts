@@ -1,7 +1,7 @@
 import { Deck } from './types'
 import { SIGHT_READ_DECKS, SIGHT_READ_PRO_IDS } from './sightReadDecks'
 import { GRAND_STAFF_DECKS, GRAND_STAFF_PRO_IDS } from './grandStaffDecks'
-import { EAR_TRAINING_INTERVALS, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
+import { EAR_TRAINING_INTERVALS, EAR_TRAINING_INTERVALS_II, EAR_TRAINING_INTERVALS_III, EAR_TRAINING_INTERVALS_REF, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { REPEAT_SYMBOL_CARDS } from './cm-content/symbols-repeats'
 import { CLEF_SYMBOL_CARDS } from './cm-content/symbols-clefs'
@@ -147,10 +147,31 @@ export const DECKS: Deck[] = [
   },
   {
     id: 'ear-intervals',
-    title: 'Ear Training — Intervals',
+    title: 'Intervals I',
     description: 'Listen and identify all intervals from minor 2nd to octave, ascending.',
     tag: 'free',
     cards: EAR_TRAINING_INTERVALS,
+  },
+  {
+    id: 'ear-intervals-ii',
+    title: 'Intervals II',
+    description: 'Compound intervals — minor 9th through double octave, ascending.',
+    tag: 'free',
+    cards: EAR_TRAINING_INTERVALS_II,
+  },
+  {
+    id: 'ear-intervals-iii',
+    title: 'Intervals III — Advanced',
+    description: 'All intervals descending, with varied roots. Sharpen your ear both ways.',
+    tag: 'free',
+    cards: EAR_TRAINING_INTERVALS_III,
+  },
+  {
+    id: 'ear-intervals-ref',
+    title: 'Intervals — Reference',
+    description: 'Semitone-to-interval table: drill interval names, abbreviations, and qualities.',
+    tag: 'free',
+    cards: EAR_TRAINING_INTERVALS_REF,
   },
   {
     id: 'ear-triads',
