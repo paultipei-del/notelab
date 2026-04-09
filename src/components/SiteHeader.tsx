@@ -121,15 +121,27 @@ export default function SiteHeader() {
                     boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                     minWidth: '180px', zIndex: 100,
                   }}>
-                    <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', padding: '8px 12px 10px', margin: 0, borderBottom: '1px solid #EDE8DF', wordBreak: 'break-all' }}>
+                    <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', padding: '8px 12px 10px', margin: 0, borderBottom: '1px solid #EDE8DF', wordBreak: 'break-all' as const }}>
                       {user.email}
                     </p>
+                    <Link href="/account" onClick={() => setShowUserMenu(false)} style={{ textDecoration: 'none', display: 'block' }}>
+                      <div style={{
+                        borderRadius: '8px', padding: '9px 12px', marginTop: '4px',
+                        fontFamily: F, fontSize: '13px', fontWeight: 300,
+                        color: '#1A1A18', cursor: 'pointer',
+                      }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#F5F2EC')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                      >
+                        Account settings
+                      </div>
+                    </Link>
                     <button onClick={handleSignOut} style={{
                       display: 'block', width: '100%', textAlign: 'left' as const,
                       background: 'none', border: 'none', borderRadius: '8px',
-                      padding: '9px 12px', marginTop: '4px',
+                      padding: '9px 12px',
                       fontFamily: F, fontSize: '13px', fontWeight: 300,
-                      color: '#1A1A18', cursor: 'pointer',
+                      color: '#888780', cursor: 'pointer', borderTop: '1px solid #EDE8DF', marginTop: '4px',
                     }}
                       onMouseEnter={e => (e.currentTarget.style.background = '#F5F2EC')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'none')}
