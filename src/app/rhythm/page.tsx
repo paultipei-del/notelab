@@ -285,7 +285,7 @@ function renderMeasure(
   notes.forEach((note, i) => {
     const x = mx + bp * noteW  // notehead position
     const tr = tapResult[i]
-    const noteColor = tr === 'hit' ? '#28C840' : tr === 'miss' ? '#FF5F57' : '#1A1A18'
+    const noteColor = tr === 'hit' ? '#65C366' : tr === 'miss' ? '#FF5F57' : '#1A1A18'
 
     // Active beat highlight (driven by playhead — handled outside)
 
@@ -428,7 +428,7 @@ function LibraryPanel({
               </span>
               {/* Progress bar */}
               <div style={{ width: '48px', height: '3px', background: isOpen ? 'rgba(255,255,255,0.2)' : '#F0EDE8', borderRadius: '2px', overflow: 'hidden' }}>
-                <div style={{ width: `${(categoryCompleted / categoryTotal) * 100}%`, height: '100%', background: isOpen ? '#28C840' : '#28C840', borderRadius: '2px' }} />
+                <div style={{ width: `${(categoryCompleted / categoryTotal) * 100}%`, height: '100%', background: isOpen ? '#65C366' : '#65C366', borderRadius: '2px' }} />
               </div>
               <span style={{ fontFamily: F, fontSize: '12px', color: isOpen ? 'rgba(255,255,255,0.6)' : '#888780' }}>{isOpen ? '▲' : '▼'}</span>
             </button>
@@ -469,7 +469,7 @@ function LibraryPanel({
 
                       {/* Status */}
                       {!isUnlocked && <span style={{ fontSize: '13px', opacity: 0.5 }}>🔒</span>}
-                      {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: '11px', color: '#28C840', fontWeight: 500 }}>✓</span>}
+                      {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: '11px', color: '#65C366', fontWeight: 500 }}>✓</span>}
                       {isUnlocked && p && !p.completed && (
                         <span style={{ fontFamily: F, fontSize: '10px', color: '#BA7517' }}>{p.best_timing}%</span>
                       )}
@@ -946,7 +946,7 @@ export default function RhythmPage() {
           if (nearNote) break
         }
         if (nearNote) {
-          trailColor = '#28C840'
+          trailColor = '#65C366'
         } else {
           // Second check: is beatFloat strictly inside a rest?
           let posR = 0
@@ -959,7 +959,7 @@ export default function RhythmPage() {
               posR += n.durationBeats
             }
           }
-          trailColor = strictlyOnRest ? '#FF5F57' : '#28C840'
+          trailColor = strictlyOnRest ? '#FF5F57' : '#65C366'
         }
       }
       trailRef.current.push({ beat: beatFloat, color: trailColor })
@@ -1398,7 +1398,7 @@ export default function RhythmPage() {
     const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
     setScore(finalScore)
     setDiagLog(prev => {
-      const trailSummary = trailRef.current.filter((_, i) => i % 10 === 0).map(t => `${t.beat.toFixed(2)}:${t.color === '#28C840' ? 'G' : t.color === '#FF5F57' ? 'R' : '_'}`).join(' ')
+      const trailSummary = trailRef.current.filter((_, i) => i % 10 === 0).map(t => `${t.beat.toFixed(2)}:${t.color === '#65C366' ? 'G' : t.color === '#FF5F57' ? 'R' : '_'}`).join(' ')
       return [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} noteTaps=[${noteTaps.map(t=>t.toFixed(2)).join(',')}] taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`, `TRAIL(every10): ${trailSummary}`]
     })
   }, [playing])
@@ -1548,8 +1548,8 @@ export default function RhythmPage() {
 
     const tapBtnStyle: React.CSSProperties = {
       width: '100%', height: '80px', borderRadius: '16px',
-      border: liveFeedback === 'hit' ? '2px solid #28C840' : liveFeedback === 'miss' ? '2px solid #FF5F57' : '2px solid #D3D1C7',
-      background: liveFeedback === 'hit' ? '#28C840' : liveFeedback === 'miss' ? '#FF5F57' : (playing && tapReady) ? '#1A1A18' : '#F5F2EC',
+      border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #FF5F57' : '2px solid #D3D1C7',
+      background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#FF5F57' : (playing && tapReady) ? '#1A1A18' : '#F5F2EC',
       color: liveFeedback ? 'white' : (playing && tapReady) ? 'white' : '#D3D1C7',
       fontFamily: F, fontSize: '18px', fontWeight: 300,
       cursor: 'pointer', transition: 'background 0.1s, border 0.1s',
@@ -1768,7 +1768,7 @@ export default function RhythmPage() {
           {/* Score */}
           <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {score && !playing && !countdown && (
-              <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: pct >= 80 ? '#28C840' : '#1A1A18', margin: 0 }}>
+              <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: pct >= 80 ? '#65C366' : '#1A1A18', margin: 0 }}>
                 {score.hits}/{score.total} · {pct}% timing · {durationPct}% duration
               </p>
             )}
@@ -2059,7 +2059,7 @@ export default function RhythmPage() {
                   const durValue = score && !playing && score.durationTotal > 0
                     ? `${score.durationHits}/${score.durationTotal} · ${Math.round(score.durationHits / score.durationTotal * 100)}%`
                     : '—'
-                  const accColor = score && !playing ? (pct === 100 ? '#28C840' : '#1A1A18') : '#D3D1C7'
+                  const accColor = score && !playing ? (pct === 100 ? '#65C366' : '#1A1A18') : '#D3D1C7'
                   return (
                     <>
                       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
@@ -2202,13 +2202,13 @@ export default function RhythmPage() {
                                   const x1 = trackX + (run.beats[0] - globalMeasureIdx * bpm) * noteW
                                   const x2 = trackX + (run.beats[run.beats.length - 1] - globalMeasureIdx * bpm) * noteW
                                   const w = Math.max(TH, x2 - x1 + noteW / 16)
-                                  const isGreen = run.color === '#28C840'
+                                  const isGreen = run.color === '#65C366'
                                   const isRed = run.color === '#FF5F57'
                                   const isGray = !isGreen && !isRed
                                   // Gray = silence, skip rendering
                                   if (isGray) return null
-                                  const fill = isGreen ? '#28C840' : '#FF5F57'
-                                  const fillBg = isGreen ? 'rgba(40,200,64,0.12)' : 'rgba(255,95,87,0.12)'
+                                  const fill = isGreen ? '#65C366' : '#FF5F57'
+                                  const fillBg = isGreen ? 'rgba(101,195,102,0.12)' : 'rgba(255,95,87,0.12)'
                                   const isDot = w <= TH + 2
                                   return (
                                     <g key={i}>
@@ -2334,7 +2334,7 @@ export default function RhythmPage() {
                               const tr: 'hit'|'miss'|'none' = tapResults[mIdx]?.[nIdx] ?? 'none'
                               // Colors: note=dark, rest=empty/light, hit=green, miss=red
                               let bg = note.rest ? '#E8E4DE' : '#2A2A28'
-                              if (tr === 'hit') bg = '#28C840'
+                              if (tr === 'hit') bg = '#65C366'
                               if (tr === 'miss' && !note.rest) bg = '#FF5F57'
                               // Subdivision lines inside each block
                               const subdivisions = Math.round(note.durationBeats / (4 / exercise.timeSignature.beatType))
@@ -2377,7 +2377,7 @@ export default function RhythmPage() {
                 </div>
                 {diagLog.length === 0 && <p style={{ fontFamily: 'monospace', fontSize: '11px', color: '#888780' }}>No taps yet</p>}
                 {diagLog.map((line, i) => (
-                  <p key={i} style={{ fontFamily: 'monospace', fontSize: '11px', color: line.includes('REST') ? '#FF5F57' : line.includes('SCORE') ? '#BA7517' : '#28C840', margin: '2px 0' }}>{line}</p>
+                  <p key={i} style={{ fontFamily: 'monospace', fontSize: '11px', color: line.includes('REST') ? '#FF5F57' : line.includes('SCORE') ? '#BA7517' : '#65C366', margin: '2px 0' }}>{line}</p>
                 ))}
               </div>
             )}
@@ -2433,8 +2433,8 @@ export default function RhythmPage() {
                 disabled={false}
                 style={{
                   width: '100%', height: '72px', borderRadius: '16px',
-                  border: liveFeedback === 'hit' ? '2px solid #28C840' : liveFeedback === 'miss' ? '2px solid #FF5F57' : '2px solid #D3D1C7',
-                  background: liveFeedback === 'hit' ? '#28C840' : liveFeedback === 'miss' ? '#FF5F57' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F5F2EC',
+                  border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #FF5F57' : '2px solid #D3D1C7',
+                  background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#FF5F57' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F5F2EC',
                   color: liveFeedback ? 'white' : (playing && (countdown === null || tapReady)) ? 'white' : '#D3D1C7',
                   fontFamily: F, fontSize: '15px', fontWeight: 300,
                   cursor: (playing && (countdown === null || tapReady)) ? 'pointer' : 'default',
