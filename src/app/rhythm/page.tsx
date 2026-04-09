@@ -1633,12 +1633,7 @@ export default function RhythmPage() {
                 style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#D3D1C7'), background: nextEx ? '#1A1A18' : '#F5F2EC', color: nextEx ? 'white' : '#D3D1C7', fontFamily: F, fontSize: '12px', cursor: nextEx ? 'pointer' : 'default' }}>→</button>
             </div>
           )}
-          {exercise && (
-            <button onClick={() => setShowMixer(v => !v)}
-              style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : '#F5F2EC', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', flexShrink: 0 }}>
-              Mixer
-            </button>
-          )}
+          {/* Mixer control lives in the bottom tap dock on mobile. */}
         </div>
 
         {/* Mixer sheet (portrait) */}
