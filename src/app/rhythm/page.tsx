@@ -996,7 +996,7 @@ export default function RhythmPage() {
     const smallestDur2 = allNotes2.reduce((min: number, n: any) => Math.min(min, n.durationBeats), 1)
     const noteW2 = Math.max(40, 32 / smallestDur2)
     const leadPx2 = NOTATION_PAGE_SCROLL_LEAD_BEATS * noteW2
-    const target = Math.max(0, playhead * noteW - leadPx2)
+    const target = leadPx2 + playhead * noteW  // at beat -0.5: target=0, at beat 0: target=leadPx2 (first note at center)
     el.scrollLeft = target
   }, [playhead, playing, countdown, frozenScrollLeft, exercise])
 
