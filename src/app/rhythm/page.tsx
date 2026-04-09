@@ -566,8 +566,6 @@ export default function RhythmPage() {
   const landscapeContainerRef = useRef<HTMLDivElement>(null)
   /** Scrollable notation stack (desktop two-up); not used when fewer than 4 systems. */
   const notationScrollRef = useRef<HTMLDivElement>(null)
-  /** Mobile portrait notation: horizontal scroll container (manual after playback). */
-  const mobileStaffScrollRef = useRef<HTMLDivElement>(null)
   const lastNotationPairScrollIdxRef = useRef(-1)
   const [isPortrait, setIsPortrait] = useState(false)
   const [isMobileLandscape, setIsMobileLandscape] = useState(false)
@@ -680,25 +678,6 @@ export default function RhythmPage() {
       if (el) el.scrollTop = 0
     })
   }, [])
-
-  const scrollMobileStaffToBeat = useCallback((beat: number, behavior: ScrollBehavior = 'auto') => {
-    if (!exercise) return
-    if (!isPortrait) return
-    if (view !== 'notation') return
-    const scroller = mobileStaffScrollRef.current
-    if (!scroller) return
-    const allNotesFlat = exercise.measures.flatMap(m => m.notes)
-    const smallestDur = allNotesFlat.reduce((min: number, n: { durationBeats: number }) => Math.min(min, n.durationBeats), 1)
-    const NOTE_W_PORTRAIT = Math.max(40, 32 / smallestDur)
-    const qBeatsPerMeasure = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-    const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
-    const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
-    const x = 74 + beat * NOTE_W_PORTRAIT
-    const target = x - scroller.clientWidth / 2
-    const maxScroll = Math.max(0, totalW - scroller.clientWidth)
-    const next = Math.max(0, Math.min(maxScroll, target))
-    scroller.scrollTo({ left: next, behavior })
-  }, [exercise, isPortrait, view])
 
   useEffect(() => {
     const checkOrientation = () => {
@@ -941,14 +920,7 @@ export default function RhythmPage() {
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
       if (beatFloat >= effectiveTotalBeats) {
         setTrail([...trailRef.current])
-        // Mobile portrait: keep the staff parked at the end so users can manually scroll back.
-        if (isPortrait) {
-          scrollMobileStaffToBeat(effectiveTotalBeats, 'auto')
-          setPlayhead(effectiveTotalBeats)
-        } else {
-          setPlayhead(null)
-        }
-        setPlaying(false); setLiveFeedback(null)
+        setPlayhead(null); setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null
         // Close AudioContext to cancel any remaining scheduled clicks
         isPressedRef.current = false
@@ -997,11 +969,10 @@ export default function RhythmPage() {
         setTrail([...trailRef.current])
       }
       setPlayhead(beatFloat)
-      if (isPortrait) scrollMobileStaffToBeat(beatFloat, 'auto')
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
-  }, [exercise, totalBeats, beatDuration, resetNotationScroll, isPortrait, scrollMobileStaffToBeat])
+  }, [exercise, totalBeats, beatDuration, resetNotationScroll])
 
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
@@ -1717,22 +1688,20 @@ export default function RhythmPage() {
               const NOTE_W_PORTRAIT = Math.max(40, 32 / smallestDur)
               const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
               const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
+              const centerX = svgWidth / 2
               const staffSvgH = Math.max(110, Math.min(190, Math.floor(mobileNotationCardH > 0 ? mobileNotationCardH : 160)))
               const staffYOffset = Math.max(12, Math.floor((staffSvgH - 130) / 2))
-              const manualScrollEnabled = isPortrait && !playing && !previewing && countdown === null
+              // Pre-roll: start 1 beat before beat 0
+              const preRoll = 0  // offset handled by mx+18 positioning
+              // playhead goes from -countdownBeats to totalBeats
+              // at playhead=0, first note (x=56+18) should be at centerX
+              // at playhead=0, first notehead (x=74) aligns with center playhead line
+              const effectivePlayhead = playhead !== null ? playhead : 0
+              const offsetX = centerX - 74 - effectivePlayhead * NOTE_W_PORTRAIT
               return (
-                <div
-                  ref={mobileStaffScrollRef}
-                  style={{
-                    width: '100%',
-                    overflowX: manualScrollEnabled ? 'auto' : 'hidden',
-                    overflowY: 'hidden',
-                    WebkitOverflowScrolling: 'touch',
-                    overscrollBehaviorX: 'contain',
-                  }}
-                >
-                  <svg className="nl-notation-staff" width={totalW} height={staffSvgH} style={{ display: 'block' }}>
-                    <g transform={`translate(0, ${staffYOffset})`}>
+                <div style={{ overflow: 'hidden' }}>
+                  <svg className="nl-notation-staff" width={svgWidth} height={staffSvgH} style={{ display: 'block' }}>
+                    <g transform={`translate(${offsetX}, ${staffYOffset})`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
