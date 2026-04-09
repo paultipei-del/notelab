@@ -109,7 +109,7 @@ export default function RhythmTest() {
       <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '8px' }}>Rhythm Trainer</h1>
       <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '48px' }}>{pattern.label} · {pattern.bpm} BPM · tap Space</p>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '48px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '48px', padding: '24px', background: 'white', borderRadius: '20px', border: '1px solid #D3D1C7' }}>
         {pattern.taps.map((expected, i) => {
           const isDownbeat = i % pattern.subdivisions === 0
           const isCurrent = i === currentSlot
