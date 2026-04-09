@@ -25,7 +25,6 @@ function CollectionContent() {
   const [checkingOut, setCheckingOut] = useState(false)
 
   const decks = tag === 'ear' ? DECKS.filter(d => d.id.startsWith('ear-')) : tag === 'symbols' ? DECKS.filter(d => d.id.startsWith('symbols-')) : DECKS.filter(d => d.tag === tag)
-  const tagStyle = TAG_COLORS[tag] || TAG_COLORS.free
 
   const titles: Record<string, string> = {
     cm: 'CM Collection',
@@ -89,9 +88,6 @@ function CollectionContent() {
 
       {/* Hero */}
       <div style={{ padding: '48px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
-        <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '16px', background: tagStyle.bg, color: tagStyle.color }}>
-          {tag}
-        </span>
         <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#1A1A18', marginBottom: '12px', letterSpacing: '0.02em' }}>
           {titles[tag] ?? tag}
         </h1>
@@ -136,20 +132,35 @@ function CollectionContent() {
             return groups.map(({ label, decks: groupDecks }) => (
               <div key={label} style={{ marginBottom: '40px' }}>
                 <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888780', marginBottom: '16px' }}>{label}</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', alignItems: 'stretch' }}>
                   {groupDecks.map(deck => (
-                    <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                    <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
                       <div
-                        style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '24px', cursor: 'pointer', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', transition: 'all 0.2s' }}
+                        style={{
+                          background: 'white',
+                          border: '1px solid #D3D1C7',
+                          borderRadius: '16px',
+                          padding: '24px',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 12px rgba(26,26,24,0.06)',
+                          transition: 'all 0.2s',
+                          width: '100%',
+                          height: '100%',
+                          boxSizing: 'border-box',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                        }}
                         onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
                         onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                        <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: TAG_COLORS.free.bg, color: TAG_COLORS.free.color, fontFamily: 'var(--font-jost), sans-serif', width: 'fit-content' }}>Free</span>
+                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
+                        <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '16px', gap: '12px' }}>
                           <span style={{ fontSize: '11px', fontWeight: 300, color: '#888780' }}>{deck.cards.length} cards</span>
+                          <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517', flexShrink: 0 }}>Start →</span>
                         </div>
-                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '6px' }}>{deck.title}</h3>
-                        <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780', lineHeight: 1.6, marginBottom: '16px' }}>{deck.description}</p>
-                        <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517' }}>Start →</span>
                       </div>
                     </Link>
                   ))}

@@ -152,6 +152,7 @@ export default function Home() {
   }
 
   const freeDecks = DECKS.filter(d => d.tag === 'free' && !d.id.startsWith('sight-read') && d.id !== 'notes-treble' && d.id !== 'dynamics')
+  const earDecks = DECKS.filter(d => d.id.startsWith('ear-'))
   const cmCount = DECKS.filter(d => d.tag === 'cm').length
   const cmUnlocked = hasPurchased(CM_BUNDLE_PRICE_ID) || hasSubscription()
 
@@ -244,36 +245,86 @@ export default function Home() {
           {/* Free decks grid */}
             {/* ── Notation & Terms ─────────────────────────────────── */}
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '10px' }}>Notation &amp; Terms</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px', marginBottom: '28px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', marginBottom: '28px', alignItems: 'stretch' }}>
             {freeDecks.filter(d => ['tempo', 'intervals'].includes(d.id)).map(deck => (
-              <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
-                <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}>
-                  <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '10px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F }}>Free</span>
-                  <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>{deck.title}</h3>
-                  <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>{deck.cards.length} cards</p>
+              <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
+                <div
+                  style={{
+                    background: 'white',
+                    border: '1px solid #D3D1C7',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    width: '100%',
+                    height: '100%',
+                    boxSizing: 'border-box' as const,
+                    display: 'flex',
+                    flexDirection: 'column' as const,
+                    alignItems: 'flex-start' as const,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+                >
+                  <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
+                  <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
+                  <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
                 </div>
               </Link>
             ))}
-            <Link href="/collection?tag=symbols" style={{ textDecoration: 'none' }}>
-              <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}>
-                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '10px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F }}>Free</span>
-                <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>Music Symbols</h3>
-                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>Dynamics, articulation, accidentals, note values</p>
+            <Link href="/collection?tag=symbols" style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
+              <div
+                style={{
+                  background: 'white',
+                  border: '1px solid #D3D1C7',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  width: '100%',
+                  height: '100%',
+                  boxSizing: 'border-box' as const,
+                  display: 'flex',
+                  flexDirection: 'column' as const,
+                  alignItems: 'flex-start' as const,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+              >
+                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
+                <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>Music Symbols</h3>
+                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>Dynamics, articulation, accidentals, note values</p>
               </div>
             </Link>
           </div>
 
-          {/* ── Ear Training ────────────────────────────────────────── */}
+          {/* ── Ear Training (grouped on collection page) ─────────────── */}
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '10px' }}>Ear Training</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px', marginBottom: '28px' }}>
-            <Link href="/collection?tag=ear" style={{ textDecoration: 'none' }}>
-              <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}>
-                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '10px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F }}>Free</span>
-                <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '18px', color: '#1A1A18', marginBottom: '4px' }}>Ear Training</h3>
-                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>Intervals, triads, cadences, scales</p>
-              </div>
-            </Link>
-          </div>
+          <Link href="/collection?tag=ear" style={{ textDecoration: 'none', display: 'block', marginBottom: '28px' }}>
+            <div
+              style={{
+                background: 'white',
+                border: '1px solid #D3D1C7',
+                borderRadius: '16px',
+                padding: '24px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxSizing: 'border-box' as const,
+                display: 'flex',
+                flexDirection: 'column' as const,
+                alignItems: 'flex-start' as const,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+            >
+              <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
+              <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>Ear Training Library</h3>
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, margin: 0, maxWidth: '560px' }}>
+                {earDecks.length} piano-audio topics — intervals, triads, seventh chords, cadences, scales, and more — organized by topic on the next page.
+              </p>
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#BA7517', margin: '14px 0 0', lineHeight: 1.55 }}>Open Ear Training →</p>
+            </div>
+          </Link>
 
         </div>
           {/* ── My Decks ─────────────────────────────────────────────────── */}
