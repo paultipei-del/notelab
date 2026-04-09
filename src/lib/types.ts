@@ -31,6 +31,7 @@ export interface Deck {
   tag: DeckTag
   cards: Card[]
   browseCards?: Card[] // optional override for browse view
+  group?: string       // optional section label for grouped collection views
 }
 
 export interface CardProgress {

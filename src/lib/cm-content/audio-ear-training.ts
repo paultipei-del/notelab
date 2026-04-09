@@ -91,15 +91,36 @@ function makeCompoundIntervalCards(): Card[] {
 
 export const EAR_TRAINING_INTERVALS_II: Card[] = makeCompoundIntervalCards()
 
-// ── Intervals III — Descending, random roots ───────────────────────────────────
+// ── Intervals III — All intervals m2–P15, ascending AND descending, random roots ─
 
-function makeDescendingIntervalCards(): Card[] {
-  const shuffledRoots = [...ROOTS].sort(() => Math.random() - 0.5)
-  return INTERVALS.map((interval, i) => {
-    const root = shuffledRoots[i % shuffledRoots.length]
-    const top = addSemitones(root, interval.semitones)
+const ALL_INTERVALS = [...INTERVALS, ...COMPOUND_INTERVALS]
+const ALL_ROOTS = ['C3','D3','E3','F3','G3','A3','C4']
+
+function makeAdvancedIntervalCards(): Card[] {
+  // Use a stable-ish root assignment so ascending and descending of the same
+  // interval get different roots (more varied ear training).
+  const rootsAsc  = [...ALL_ROOTS].sort(() => Math.random() - 0.5)
+  const rootsDesc = [...ALL_ROOTS].sort(() => Math.random() - 0.5)
+  const ascending: Card[] = ALL_INTERVALS.map((interval, i) => {
+    const root = rootsAsc[i % rootsAsc.length]
+    const top  = addSemitones(root, interval.semitones)
     return {
       id: i + 1,
+      type: 'audio' as const,
+      front: 'interval',
+      back: `${interval.name} (${interval.abbrev}) — ${interval.desc}`,
+      audioNotes: [root, top],
+      audioPattern: 'interval-ascending' as const,
+      audioLabel: 'What interval is this?',
+      audioHint: 'Ascending',
+      symbolName: `${interval.name} — ${interval.abbrev}`,
+    }
+  })
+  const descending: Card[] = ALL_INTERVALS.map((interval, i) => {
+    const root = rootsDesc[i % rootsDesc.length]
+    const top  = addSemitones(root, interval.semitones)
+    return {
+      id: ALL_INTERVALS.length + i + 1,
       type: 'audio' as const,
       front: 'interval',
       back: `${interval.name} (${interval.abbrev}) — ${interval.desc}`,
@@ -110,34 +131,10 @@ function makeDescendingIntervalCards(): Card[] {
       symbolName: `${interval.name} — ${interval.abbrev}`,
     }
   })
+  return [...ascending, ...descending]
 }
 
-export const EAR_TRAINING_INTERVALS_III: Card[] = makeDescendingIntervalCards()
-
-// ── Intervals Reference — Handout (no audio) ───────────────────────────────────
-
-const INTERVAL_TABLE = [
-  { semitones: 1,  name: 'Minor 2nd',  abbrev: 'm2',  alt: '(semitone)',             desc: 'tense, dissonant — smallest step in Western music' },
-  { semitones: 2,  name: 'Major 2nd',  abbrev: 'M2',  alt: '(whole tone)',            desc: 'neutral, stepwise — standard scale step' },
-  { semitones: 3,  name: 'Minor 3rd',  abbrev: 'm3',  alt: '',                        desc: 'dark, introspective — minor triad bottom' },
-  { semitones: 4,  name: 'Major 3rd',  abbrev: 'M3',  alt: '',                        desc: 'bright, stable — major triad bottom' },
-  { semitones: 5,  name: 'Perfect 4th',abbrev: 'P4',  alt: '',                        desc: 'open, stable — inverts to P5' },
-  { semitones: 6,  name: 'Tritone',    abbrev: 'TT',  alt: 'Aug. 4th / Dim. 5th',    desc: 'tense, unstable — divides octave exactly in half' },
-  { semitones: 7,  name: 'Perfect 5th',abbrev: 'P5',  alt: '',                        desc: 'open, consonant — inverts to P4' },
-  { semitones: 8,  name: 'Minor 6th',  abbrev: 'm6',  alt: 'or Aug. 5th',             desc: 'somewhat dark — inverts to M3' },
-  { semitones: 9,  name: 'Major 6th',  abbrev: 'M6',  alt: 'or Dim. 7th',             desc: 'warm, open — inverts to m3' },
-  { semitones: 10, name: 'Minor 7th',  abbrev: 'm7',  alt: '',                        desc: 'bluesy, unresolved — dominant 7th chord tone' },
-  { semitones: 11, name: 'Major 7th',  abbrev: 'M7',  alt: '',                        desc: 'tense, wants to resolve up — inverts to m2' },
-  { semitones: 12, name: 'Octave',     abbrev: 'P8',  alt: '',                        desc: 'same pitch class, higher register — perfectly consonant' },
-]
-
-export const EAR_TRAINING_INTERVALS_REF: Card[] = INTERVAL_TABLE.map((row, i) => ({
-  id: i + 1,
-  type: 'text' as const,
-  front: `${row.semitones} semitone${row.semitones > 1 ? 's' : ''}${row.alt ? ' — ' + row.alt : ''}`,
-  back: `${row.name} (${row.abbrev}) — ${row.desc}`,
-  symbolName: `${row.name} — ${row.abbrev}`,
-}))
+export const EAR_TRAINING_INTERVALS_III: Card[] = makeAdvancedIntervalCards()
 
 export const EAR_TRAINING_TRIADS: Card[] = [
   { id: 1, type: 'audio', front: 'triad', back: 'Major triad — bright, stable', audioNotes: ['C4','E4','G4'], audioPattern: 'harmonic', audioLabel: 'Major or minor?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Major' },

@@ -1,7 +1,7 @@
 import { Deck } from './types'
 import { SIGHT_READ_DECKS, SIGHT_READ_PRO_IDS } from './sightReadDecks'
 import { GRAND_STAFF_DECKS, GRAND_STAFF_PRO_IDS } from './grandStaffDecks'
-import { EAR_TRAINING_INTERVALS, EAR_TRAINING_INTERVALS_II, EAR_TRAINING_INTERVALS_III, EAR_TRAINING_INTERVALS_REF, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
+import { EAR_TRAINING_INTERVALS, EAR_TRAINING_INTERVALS_II, EAR_TRAINING_INTERVALS_III, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { REPEAT_SYMBOL_CARDS } from './cm-content/symbols-repeats'
 import { CLEF_SYMBOL_CARDS } from './cm-content/symbols-clefs'
@@ -150,6 +150,7 @@ export const DECKS: Deck[] = [
     title: 'Intervals I',
     description: 'Listen and identify all intervals from minor 2nd to octave, ascending.',
     tag: 'free',
+    group: 'Intervals',
     cards: EAR_TRAINING_INTERVALS,
   },
   {
@@ -157,42 +158,40 @@ export const DECKS: Deck[] = [
     title: 'Intervals II',
     description: 'Compound intervals — minor 9th through double octave, ascending.',
     tag: 'free',
+    group: 'Intervals',
     cards: EAR_TRAINING_INTERVALS_II,
   },
   {
     id: 'ear-intervals-iii',
     title: 'Intervals III — Advanced',
-    description: 'All intervals descending, with varied roots. Sharpen your ear both ways.',
+    description: 'All intervals m2–P15, ascending and descending, varied roots.',
     tag: 'free',
+    group: 'Intervals',
     cards: EAR_TRAINING_INTERVALS_III,
   },
   {
-    id: 'ear-intervals-ref',
-    title: 'Intervals — Reference',
-    description: 'Semitone-to-interval table: drill interval names, abbreviations, and qualities.',
-    tag: 'free',
-    cards: EAR_TRAINING_INTERVALS_REF,
-  },
-  {
     id: 'ear-triads',
-    title: 'Ear Training — Triads',
+    title: 'Triads',
     description: 'Identify major, minor, diminished and augmented triads by ear.',
     tag: 'free',
+    group: 'Chords & Harmony',
     cards: EAR_TRAINING_TRIADS,
     browseCards: EAR_TRAINING_TRIADS_BROWSE,
   },
   {
     id: 'ear-cadences',
-    title: 'Ear Training — Cadences',
+    title: 'Cadences',
     description: 'Identify authentic, half, plagal, and deceptive cadences by ear.',
     tag: 'free',
+    group: 'Chords & Harmony',
     cards: EAR_TRAINING_CADENCES,
   },
   {
     id: 'ear-scales',
-    title: 'Ear Training — Scales',
+    title: 'Scales',
     description: 'Identify major, natural minor, harmonic minor, and melodic minor scales.',
     tag: 'free',
+    group: 'Scales',
     cards: EAR_TRAINING_SCALES,
   },
 

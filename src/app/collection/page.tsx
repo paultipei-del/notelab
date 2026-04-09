@@ -122,6 +122,43 @@ function CollectionContent() {
       </div>
 
       {/* Deck grid */}
+      {tag === 'ear' ? (
+        // Grouped layout for ear training
+        <div style={{ padding: '0 32px 64px', maxWidth: '960px', margin: '0 auto' }}>
+          {(() => {
+            const groups: { label: string; decks: typeof decks }[] = []
+            decks.forEach(deck => {
+              const label = deck.group ?? 'Other'
+              const existing = groups.find(g => g.label === label)
+              if (existing) existing.decks.push(deck)
+              else groups.push({ label, decks: [deck] })
+            })
+            return groups.map(({ label, decks: groupDecks }) => (
+              <div key={label} style={{ marginBottom: '40px' }}>
+                <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#888780', marginBottom: '16px' }}>{label}</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+                  {groupDecks.map(deck => (
+                    <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                      <div
+                        style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '24px', cursor: 'pointer', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', transition: 'all 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 300, color: '#888780' }}>{deck.cards.length} cards</span>
+                        </div>
+                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '6px' }}>{deck.title}</h3>
+                        <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780', lineHeight: 1.6, marginBottom: '16px' }}>{deck.description}</p>
+                        <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517' }}>Start →</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))
+          })()}
+        </div>
+      ) : (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px', padding: '0 32px 64px', maxWidth: '960px', margin: '0 auto' }}>
         {decks.map((deck, i) => {
           const locked = !canAccessDeck(deck.id)
@@ -175,6 +212,7 @@ function CollectionContent() {
           )
         })}
       </div>
+      )}
 
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onSuccess={() => setShowAuth(false)} />}
     </div>
