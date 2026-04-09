@@ -573,6 +573,8 @@ export default function RhythmPage() {
   const [svgWidth, setSvgWidth] = useState(800)
   /** Content-box height of the desktop notation card (from ResizeObserver); drives SVG_H so the staff fits the slot. */
   const [desktopNotationContentH, setDesktopNotationContentH] = useState(0)
+  /** Content-box height of the mobile notation card; used to size the single-staff SVG (mobile landscape can be very short). */
+  const [mobileNotationCardH, setMobileNotationCardH] = useState(0)
 
   const useMobileLayout = isPortrait || isMobileLandscape
 
@@ -714,14 +716,18 @@ export default function RhythmPage() {
       const cr = entries[0].contentRect
       // Content box is already inside card padding; do not subtract again or viewBox is narrower than the real slot and staff sits left (xMin meet letterboxing).
       setSvgWidth(Math.max(0, cr.width))
-      if (!useMobileLayout) setDesktopNotationContentH(cr.height)
+      if (useMobileLayout) setMobileNotationCardH(cr.height)
+      else setDesktopNotationContentH(cr.height)
     })
     obs.observe(el)
     return () => obs.disconnect()
   }, [exercise, useMobileLayout])
 
   useEffect(() => {
-    if (!exercise) setDesktopNotationContentH(0)
+    if (!exercise) {
+      setDesktopNotationContentH(0)
+      setMobileNotationCardH(0)
+    }
   }, [exercise])
 
   // Desktop notation: smooth-scroll when playhead crosses row or row-pair boundaries.
@@ -1682,6 +1688,8 @@ export default function RhythmPage() {
               const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
               const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
               const centerX = svgWidth / 2
+              const staffSvgH = Math.max(110, Math.min(190, Math.floor(mobileNotationCardH > 0 ? mobileNotationCardH : 160)))
+              const staffYOffset = Math.max(12, Math.floor((staffSvgH - 130) / 2))
               // Pre-roll: start 1 beat before beat 0
               const preRoll = 0  // offset handled by mx+18 positioning
               // playhead goes from -countdownBeats to totalBeats
@@ -1691,8 +1699,8 @@ export default function RhythmPage() {
               const offsetX = centerX - 74 - effectivePlayhead * NOTE_W_PORTRAIT
               return (
                 <div style={{ overflow: 'hidden' }}>
-                  <svg className="nl-notation-staff" width={svgWidth} height={160} style={{ display: 'block' }}>
-                    <g transform={`translate(${offsetX}, 28)`}>
+                  <svg className="nl-notation-staff" width={svgWidth} height={staffSvgH} style={{ display: 'block' }}>
+                    <g transform={`translate(${offsetX}, ${staffYOffset})`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
