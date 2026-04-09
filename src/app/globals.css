@@ -146,13 +146,19 @@ input, select, textarea {
 .safe-top    { padding-top: env(safe-area-inset-top); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
+/* Rhythm trainer desktop notation paging — scrollport must stay usable; bar hidden (programmatic scroll). */
+.nl-notation-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* Mobile tap highlight */
 a, button {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Responsive images */
-img, svg {
+/* Responsive images — exclude notation staff SVGs (they use explicit pixel height for paging). */
+img,
+svg:not(.nl-notation-staff) {
   max-width: 100%;
   height: auto;
 }

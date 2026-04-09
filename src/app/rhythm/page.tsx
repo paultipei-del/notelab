@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import type { CSSProperties } from 'react'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
 import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
 import { useAuth } from '@/hooks/useAuth'
@@ -18,6 +19,18 @@ const BRAVURA = {
 
 const STAFF_Y = 52
 const STEM_H = 36
+
+/** Soft layered shadow + top highlight so the card reads like paper on the cream ground. */
+const RHYTHM_CARD_SHADOW =
+  'inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 1px 1px rgba(26, 24, 20, 0.03), 0 4px 12px rgba(26, 24, 20, 0.05), 0 16px 40px rgba(26, 24, 20, 0.07), 0 32px 72px rgba(26, 24, 20, 0.05)'
+const RHYTHM_CARD_BORDER = '1px solid rgba(211, 209, 199, 0.55)'
+
+/** Trail samples in ref; React state throttled for SVG performance. */
+const TRAIL_REF_CAP = 5000
+const TRAIL_UI_EVERY_N_FRAMES = 4
+
+/** Quarter-note beats before each row/pair boundary to trigger paging scroll (earlier shift; playhead space). */
+const NOTATION_PAGE_SCROLL_LEAD_BEATS = 0.5
 
 const DIFFICULTY_COLORS: Record<number, string> = {
   1: '#E1F5EE', 2: '#E8EEF9', 3: '#FEF3E2', 4: '#F9EEE8', 5: '#F3E8F9'
@@ -41,6 +54,28 @@ function buildLayout(exercise: RhythmExercise, svgW: number, rowMeasures: typeof
   const measureW = Math.max(naturalMeasureW, minMeasureW)
   const noteW = measureW / beatsPerMeasure
   return { measureW, noteW, beatsPerMeasure }
+}
+
+/** Pixel distance to scroll so the next pair of SVG rows aligns to the top (matches real layout, not only SVG_H). */
+function readPairScrollStridePx(scrollEl: HTMLDivElement | null, svgH: number, gap: number) {
+  const fallback = 2 * (svgH + gap)
+  if (!scrollEl) return fallback
+  const svgs = scrollEl.querySelectorAll(':scope > svg')
+  if (svgs.length >= 3) {
+    const t0 = (svgs[0] as HTMLElement).offsetTop
+    const t2 = (svgs[2] as HTMLElement).offsetTop
+    const measured = t2 - t0
+    // Bad layout reads (e.g. 0/1px) would freeze paging; stay close to real row geometry.
+    return measured >= fallback * 0.4 ? measured : fallback
+  }
+  if (svgs.length === 2) {
+    const t0 = (svgs[0] as HTMLElement).offsetTop
+    const t1 = (svgs[1] as HTMLElement).offsetTop
+    const step = t1 - t0
+    const doubled = step * 2
+    return doubled >= fallback * 0.4 ? doubled : fallback
+  }
+  return fallback
 }
 
 // Bravura note glyphs (SMuFL U+E1D0 range)
@@ -478,6 +513,7 @@ export default function RhythmPage() {
   const [playing, setPlaying] = useState(false)
   const [previewing, setPreviewing] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
+  const [countdownOverlayOpacity, setCountdownOverlayOpacity] = useState(1)
   const [tapReady, setTapReady] = useState(false)
   const tapReadyRef = useRef(false)
   const tapBtnRef = useRef<HTMLButtonElement>(null)
@@ -489,6 +525,7 @@ export default function RhythmPage() {
   const [tapResults, setTapResults] = useState<('hit'|'miss'|'none')[][]>([])
   const [liveFeedback, setLiveFeedback] = useState<'hit'|'miss'|null>(null)
   const trailRef = useRef<{ beat: number; color: string }[]>([])
+  const trailUiTickRef = useRef(0)
   const [trail, setTrail] = useState<{ beat: number; color: string }[]>([])
   const isPressedRef = useRef(false)
   const effectiveBeatDurationRef = useRef(60 / 72)  // updated on start
@@ -527,9 +564,14 @@ export default function RhythmPage() {
   const { user } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
   const landscapeContainerRef = useRef<HTMLDivElement>(null)
+  /** Scrollable notation stack (desktop two-up); not used when fewer than 4 systems. */
+  const notationScrollRef = useRef<HTMLDivElement>(null)
+  const lastNotationPairScrollIdxRef = useRef(-1)
   const [isPortrait, setIsPortrait] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [svgWidth, setSvgWidth] = useState(800)
+  /** Content-box height of the desktop notation card (from ResizeObserver); drives SVG_H so the staff fits the slot. */
+  const [desktopNotationContentH, setDesktopNotationContentH] = useState(0)
 
   const ctxRef = useRef<AudioContext | null>(null)
   const metroGainRef = useRef<GainNode | null>(null)
@@ -539,6 +581,96 @@ export default function RhythmPage() {
 
   const beatDuration = 60 / bpm
   const totalBeats = exercise ? exercise.timeSignature.beats * exercise.measures.length : 0
+
+  const MEASURES_PER_ROW = (() => {
+    if (!exercise) return 4
+    const total = exercise.measures.length
+    const qBpm = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+    const allN = exercise.measures.flatMap(m => m.notes)
+    const smallest = allN.reduce((min, n) => Math.min(min, n.durationBeats), 1)
+    const slotsPerMeasure = qBpm / smallest
+    const minMeasureW = slotsPerMeasure * 32
+    const cardW = svgWidth || 700
+    // Desktop + exactly 4 measures: prefer 2 measures per staff row (2 rows) so we can show 2 measures at a time and page smoothly.
+    if (!isPortrait && total === 4 && minMeasureW * 2 + 96 <= cardW) return 2
+    for (const candidate of [4, 2, 1]) {
+      if (candidate !== 1 && total % candidate !== 0) continue
+      if (minMeasureW * candidate + 96 <= cardW) return candidate
+    }
+    return 1
+  })()
+  const numRows = exercise ? Math.ceil(exercise.measures.length / MEASURES_PER_ROW) : 1
+  const availableH = typeof window !== 'undefined' ? Math.max(200, window.innerHeight - 440) : 300
+  /** Prefer measured card height on desktop so notation fits the flex slot without page scroll. */
+  const heightBudgetForSvg =
+    !isPortrait && exercise
+      ? (desktopNotationContentH > 0 ? Math.max(60, desktopNotationContentH) : availableH)
+      : availableH
+  const rowGap = 8
+  /** Four+ staff systems: show two systems at a time, smooth-scroll to the next pair when the playhead crosses. */
+  const notationTwoRowPairPaging = Boolean(
+    exercise && !isPortrait && view === 'notation' && numRows >= 4
+  )
+  /** Exactly two staff rows (e.g. four measures, two per row): page one system at a time — two measures visible. */
+  const notationSingleRowPaging = Boolean(
+    exercise &&
+      !isPortrait &&
+      view === 'notation' &&
+      !notationTwoRowPairPaging &&
+      numRows === 2 &&
+      MEASURES_PER_ROW === 2
+  )
+  const minStaffPx = 60
+  const maxStaffPx = 240
+  let SVG_H: number
+  let pairViewportPx: number
+  if (notationTwoRowPairPaging) {
+    // Fill the notation card: two equal staves + one gap; pairViewportPx must not exceed measured card height.
+    const maxPair = 2 * maxStaffPx + rowGap
+    const budget = Math.floor(heightBudgetForSvg)
+    const targetPair = Math.min(Math.max(0, budget), maxPair)
+    const rawH = Math.floor((targetPair - rowGap) / 2)
+    SVG_H =
+      rawH < minStaffPx
+        ? Math.max(40, rawH)
+        : Math.min(maxStaffPx, rawH)
+    pairViewportPx = 2 * SVG_H + rowGap
+  } else if (notationSingleRowPaging) {
+    const budget = Math.floor(heightBudgetForSvg)
+    const target = Math.min(Math.max(0, budget), maxStaffPx)
+    SVG_H = target < minStaffPx ? Math.max(40, target) : Math.min(maxStaffPx, Math.max(minStaffPx, target))
+    pairViewportPx = SVG_H
+  } else {
+    SVG_H = Math.min(130, Math.max(minStaffPx, Math.floor((heightBudgetForSvg - rowGap * Math.max(0, numRows - 1)) / Math.max(1, numRows))))
+    pairViewportPx = 2 * SVG_H + rowGap
+  }
+  const rows = exercise
+    ? Array.from({ length: Math.ceil(exercise.measures.length / MEASURES_PER_ROW) },
+        (_, i) => exercise.measures.slice(i * MEASURES_PER_ROW, (i + 1) * MEASURES_PER_ROW))
+    : []
+  /** Only used for the paging scroll wrapper: fixed height so content overflows; flex:1+maxHeight lets min-height:auto match full content and scroll never engages. */
+  const notationDesktopScrollStyle: CSSProperties = {
+    overflowX: 'hidden',
+    // Do not set scrollBehavior here — with `smooth`, some browsers couple it to programmatic scroll and animations stall mid-way.
+    flex: 'none' as const,
+    flexShrink: 0,
+    height: pairViewportPx,
+    minHeight: pairViewportPx,
+    maxHeight: pairViewportPx,
+    // `overflow: hidden` during play can prevent or clamp scrollTop on some engines; keep a real scrollport and hide the bar while playing.
+    overflowY: 'auto',
+    ...(playing || previewing
+      ? { scrollbarWidth: 'none' as const, msOverflowStyle: 'none' as const }
+      : {}),
+  }
+
+  const resetNotationScroll = useCallback(() => {
+    lastNotationPairScrollIdxRef.current = -1
+    queueMicrotask(() => {
+      const el = notationScrollRef.current
+      if (el) el.scrollTop = 0
+    })
+  }, [])
 
   useEffect(() => {
     const checkOrientation = () => {
@@ -569,10 +701,69 @@ export default function RhythmPage() {
   useEffect(() => {
     const el = isPortrait ? containerRef.current : landscapeContainerRef.current
     if (!el) return
-    const obs = new ResizeObserver(entries => setSvgWidth(entries[0].contentRect.width - 48))
+    const obs = new ResizeObserver(entries => {
+      const cr = entries[0].contentRect
+      // Content box is already inside card padding; do not subtract again or viewBox is narrower than the real slot and staff sits left (xMin meet letterboxing).
+      setSvgWidth(Math.max(0, cr.width))
+      if (!isPortrait) setDesktopNotationContentH(cr.height)
+    })
     obs.observe(el)
     return () => obs.disconnect()
   }, [exercise, isPortrait])
+
+  useEffect(() => {
+    if (!exercise) setDesktopNotationContentH(0)
+  }, [exercise])
+
+  // Desktop notation: smooth-scroll when playhead crosses row or row-pair boundaries.
+  useEffect(() => {
+    const paging = notationSingleRowPaging || notationTwoRowPairPaging
+    if (!paging || playhead === null) return
+    if (!playing && !previewing) return
+    const el = notationScrollRef.current
+    if (!el || !exercise) return
+    const qBpm = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
+
+    if (notationTwoRowPairPaging) {
+      // Playhead advances on the same qBpm grid as single-row paging; pair index must match that grid (not summed note durations).
+      const beatsPerPair = 2 * MEASURES_PER_ROW * qBpm
+      if (beatsPerPair <= 0) return
+      const maxPairIdx = Math.max(0, Math.ceil(numRows / 2) - 1)
+      const shifted = Math.max(0, playhead) + NOTATION_PAGE_SCROLL_LEAD_BEATS
+      const pairIndex = Math.min(
+        Math.max(0, Math.floor(shifted / beatsPerPair)),
+        maxPairIdx,
+      )
+      if (pairIndex === lastNotationPairScrollIdxRef.current) return
+      lastNotationPairScrollIdxRef.current = pairIndex
+      const pairStridePx = readPairScrollStridePx(el, SVG_H, rowGap)
+      el.scrollTo({ top: pairIndex * pairStridePx, behavior: 'smooth' })
+      return
+    }
+
+    if (notationSingleRowPaging) {
+      const beatsPerRow = MEASURES_PER_ROW * qBpm
+      if (beatsPerRow <= 0) return
+      const shifted = Math.max(0, playhead) + NOTATION_PAGE_SCROLL_LEAD_BEATS
+      const idx = Math.floor(shifted / beatsPerRow)
+      const maxIdx = Math.max(0, numRows - 1)
+      const rowIndex = Math.min(idx, maxIdx)
+      if (rowIndex === lastNotationPairScrollIdxRef.current) return
+      lastNotationPairScrollIdxRef.current = rowIndex
+      el.scrollTo({ top: rowIndex * (SVG_H + rowGap), behavior: 'smooth' })
+    }
+  }, [
+    notationSingleRowPaging,
+    notationTwoRowPairPaging,
+    playhead,
+    playing,
+    previewing,
+    exercise,
+    MEASURES_PER_ROW,
+    numRows,
+    SVG_H,
+    rowGap,
+  ])
 
   const getCtx = () => {
     if (!ctxRef.current) {
@@ -617,8 +808,9 @@ export default function RhythmPage() {
       const buffer = await fetchExerciseFile(meta.id)
       const ex = await parseMXL(buffer)
       setExercise(ex); setCurrentMeta(meta)
-      setScore(null); setTaps([]); setTapResults([]); setTrail([]); trailRef.current = []; setDiagLog([])
+      setScore(null); setTaps([]); setTapResults([]); setTrail([]); trailRef.current = []; trailUiTickRef.current = 0; setDiagLog([])
       setBpm(72)
+      resetNotationScroll()
     } finally {
       setLoadingExercise(false)
     }
@@ -631,9 +823,11 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
     initSampler()  // load piano on first gesture
-    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; setTrail([]); setDiagLog([])
+    setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; trailUiTickRef.current = 0; setTrail([]); setDiagLog([])
     setTapReady(false)
     tapReadyRef.current = false
+    setCountdownOverlayOpacity(1)
+    resetNotationScroll()
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -680,6 +874,13 @@ export default function RhythmPage() {
       if (countdownElapsed < countdownDuration) {
         const countBeat = Math.floor(countdownElapsed / feltBeatDuration) + 1
         setCountdown(countBeat)
+        const lastBeatStart = (feltBeats - 1) * feltBeatDuration
+        if (countdownElapsed >= lastBeatStart) {
+          const t = (countdownElapsed - lastBeatStart) / feltBeatDuration
+          setCountdownOverlayOpacity((1 - Math.min(1, Math.max(0, t))) ** 2)
+        } else {
+          setCountdownOverlayOpacity(1)
+        }
         // Start playhead moving during last countdown beat
         const timeToStart = startTimeRef.current - ctx2.currentTime
         // Show playhead from 2 beats before downbeat
@@ -695,11 +896,25 @@ export default function RhythmPage() {
         return
       }
       setCountdown(null)
+      setCountdownOverlayOpacity(1)
       const elapsed = ctx2.currentTime - startTimeRef.current
       // Start playhead slightly early so it arrives at first note on beat 0
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-      setPlayhead(beatFloat)
+      if (beatFloat >= effectiveTotalBeats) {
+        setTrail([...trailRef.current])
+        setPlayhead(null); setPlaying(false); setLiveFeedback(null)
+        tapNoteRef.current = null
+        // Close AudioContext to cancel any remaining scheduled clicks
+        isPressedRef.current = false
+        if (ctxRef.current) {
+          ctxRef.current.close()
+          ctxRef.current = null
+          metroGainRef.current = null
+          pianoGainRef.current = null
+        }
+        return
+      }
       // Paint trail — green if pressing near a note, red if pressing on rest, gray if not pressing
       let trailColor = '#D3D1C7'
       if (isPressedRef.current && exercise) {
@@ -730,28 +945,17 @@ export default function RhythmPage() {
           trailColor = strictlyOnRest ? '#E53935' : '#4CAF50'
         }
       }
-      if (beatFloat < effectiveTotalBeats) {
-        trailRef.current.push({ beat: beatFloat, color: trailColor })
-        if (trailRef.current.length % 3 === 0) setTrail([...trailRef.current])
-      }
-      if (beatFloat >= effectiveTotalBeats) {
-        setPlayhead(null); setPlaying(false); setLiveFeedback(null)
-        tapNoteRef.current = null
-        // Close AudioContext to cancel any remaining scheduled clicks
-        isPressedRef.current = false
-        if (ctxRef.current) {
-          ctxRef.current.close()
-          ctxRef.current = null
-          metroGainRef.current = null
-          pianoGainRef.current = null
-        }
-        return
+      trailRef.current.push({ beat: beatFloat, color: trailColor })
+      while (trailRef.current.length > TRAIL_REF_CAP) trailRef.current.shift()
+      trailUiTickRef.current += 1
+      if (trailUiTickRef.current % TRAIL_UI_EVERY_N_FRAMES === 0) {
+        setTrail([...trailRef.current])
       }
       setPlayhead(beatFloat)
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
-  }, [exercise, totalBeats, beatDuration])
+  }, [exercise, totalBeats, beatDuration, resetNotationScroll])
 
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
@@ -764,6 +968,8 @@ export default function RhythmPage() {
       metroGainRef.current = null
       pianoGainRef.current = null
     }
+    setTrail([...trailRef.current])
+    setCountdownOverlayOpacity(1)
     setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
     tapNoteRef.current = null  // sound auto-decays
   }
@@ -778,6 +984,8 @@ export default function RhythmPage() {
     setPlaying(false)
     setPlayhead(null)
     setCountdown(null)
+    setCountdownOverlayOpacity(1)
+    resetNotationScroll()
 
     const isCompound = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3
     const feltBeats = isCompound ? exercise.timeSignature.beats / 3 : exercise.timeSignature.beats
@@ -867,7 +1075,7 @@ export default function RhythmPage() {
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
-  }, [exercise, totalBeats, beatDuration, bpm])
+  }, [exercise, totalBeats, beatDuration, bpm, resetNotationScroll])
 
   // Prevent space from scrolling or triggering buttons always when exercise loaded
   useEffect(() => {
@@ -1184,8 +1392,9 @@ export default function RhythmPage() {
     const { parseMXL } = await import('@/lib/parseMXL')
     const ex = await parseMXL(await file.arrayBuffer())
     setExercise(ex); setCurrentMeta(null)
-    setScore(null); setTaps([]); setTapResults([])
-  }, [])
+    setScore(null); setTaps([]); setTapResults([]); setTrail([]); trailRef.current = []; trailUiTickRef.current = 0
+    resetNotationScroll()
+  }, [resetNotationScroll])
 
   const handlePointerDown = useCallback(() => {
     isPressedRef.current = true
@@ -1304,32 +1513,6 @@ export default function RhythmPage() {
     }
   }, [])
 
-    const MEASURES_PER_ROW = (() => {
-    if (!exercise) return 4
-    const total = exercise.measures.length
-    const qBpm = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
-    const allN = exercise.measures.flatMap(m => m.notes)
-    const smallest = allN.reduce((min, n) => Math.min(min, n.durationBeats), 1)
-    const slotsPerMeasure = qBpm / smallest
-    const minMeasureW = slotsPerMeasure * 32
-    const cardW = svgWidth || 700
-    for (const candidate of [4, 2, 1]) {
-      if (candidate !== 1 && total % candidate !== 0) continue
-      if (minMeasureW * candidate + 96 <= cardW) return candidate
-    }
-    return 1
-  })()
-  const numRows = exercise ? Math.ceil(exercise.measures.length / MEASURES_PER_ROW) : 1
-  // Fit all rows within available viewport height
-  // Available = viewport - header - controls - padding ~300px
-  // 64px global nav + 20px page padding + 96px h1 + 16px margin + 68px controls + 20px margin + 68px sound controls + 20px margin + 24px card padding + 24px card padding bottom + 20px margin
-  const availableH = typeof window !== 'undefined' ? Math.max(200, window.innerHeight - 440) : 300
-  const rowGap = 8
-  const SVG_H = Math.min(130, Math.max(60, Math.floor((availableH - rowGap * (numRows - 1)) / numRows)))
-  const rows = exercise
-    ? Array.from({ length: Math.ceil(exercise.measures.length / MEASURES_PER_ROW) },
-        (_, i) => exercise.measures.slice(i * MEASURES_PER_ROW, (i + 1) * MEASURES_PER_ROW))
-    : []
   const pct = score && score.total > 0 ? Math.round(score.hits / score.total * 100) : 0
   const currentExIdx = currentMeta ? allExercises.findIndex(e => e.id === currentMeta.id) : -1
   const prevEx = currentExIdx > 0 ? allExercises[currentExIdx - 1] : null
@@ -1376,7 +1559,7 @@ export default function RhythmPage() {
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {exercise && (
-            <button onClick={() => { setExercise(null); setCurrentMeta(null); stop() }}
+            <button onClick={() => { setExercise(null); setCurrentMeta(null); stop(); resetNotationScroll() }}
               style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
               ← Library
             </button>
@@ -1448,7 +1631,8 @@ export default function RhythmPage() {
               style={{
                 background: 'white',
                 borderRadius: '16px',
-                border: '1px solid #D3D1C7',
+                border: RHYTHM_CARD_BORDER,
+                boxShadow: RHYTHM_CARD_SHADOW,
                 overflow: 'hidden',
                 position: 'relative' as const,
                 flex: 1,
@@ -1477,7 +1661,7 @@ export default function RhythmPage() {
               const offsetX = centerX - 74 - effectivePlayhead * NOTE_W_PORTRAIT
               return (
                 <div style={{ overflow: 'hidden' }}>
-                  <svg width={svgWidth} height={160} style={{ display: 'block' }}>
+                  <svg className="nl-notation-staff" width={svgWidth} height={160} style={{ display: 'block' }}>
                     <g transform={`translate(${offsetX}, 28)`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
@@ -1545,7 +1729,7 @@ export default function RhythmPage() {
           {/* Countdown */}
           <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {countdown !== null && (
-              <span style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
+              <span style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#BA7517', lineHeight: 1, opacity: countdownOverlayOpacity }}>{countdown}</span>
             )}
             {score && !playing && !countdown && (
               <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: pct >= 80 ? '#4CAF50' : '#1A1A18', margin: 0 }}>
@@ -1599,12 +1783,38 @@ export default function RhythmPage() {
     )
   }
 
+  const desktopExerciseLocked = Boolean(exercise && !loadingExercise)
+
   return (
-    <div style={{ minHeight: 'calc(100svh - 64px)', background: '#F5F2EC', padding: '20px 24px', userSelect: 'none' as const, WebkitUserSelect: 'none' as const, WebkitTouchCallout: 'none' as const }}>
-      <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+    <div
+      style={{
+        minHeight: 'calc(100svh - 64px)',
+        height: 'calc(100dvh - 64px)',
+        maxHeight: 'calc(100dvh - 64px)',
+        background: '#F5F2EC',
+        padding: '20px 24px',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        userSelect: 'none' as const,
+        WebkitUserSelect: 'none' as const,
+        WebkitTouchCallout: 'none' as const,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          width: '100%',
+          ...(desktopExerciseLocked
+            ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }
+            : { flex: 1, minHeight: 0, overflow: 'auto' }),
+        }}
+      >
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
           <div>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '4px' }}>Rhythm Trainer</h1>
             {exercise && currentMeta && (
@@ -1653,7 +1863,7 @@ export default function RhythmPage() {
             </div>
           )}
           {exercise && (
-            <button onClick={() => { setExercise(null); setCurrentMeta(null); stop() }}
+            <button onClick={() => { setExercise(null); setCurrentMeta(null); stop(); resetNotationScroll() }}
               style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', background: 'none', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '6px 14px', cursor: 'pointer' }}>
               ← Library
             </button>
@@ -1680,7 +1890,7 @@ export default function RhythmPage() {
 
         {/* Exercise view */}
         {exercise && !loadingExercise && (
-          <>
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {/* Mixer popover (desktop/landscape) */}
             {showMixer && (
               <div style={{ position: 'fixed', inset: 0, zIndex: 120 }}
@@ -1716,7 +1926,7 @@ export default function RhythmPage() {
             )}
 
             {/* Controls */}
-            <div className="nl-rt-controlbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', gap: '10px', flexWrap: 'wrap' as const }}>
+            <div className="nl-rt-controlbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', gap: '10px', flexWrap: 'wrap' as const, flexShrink: 0 }}>
               {/* View */}
               <div className="nl-rt-seg" style={{ position: 'relative' as const, display: 'flex', alignItems: 'center', padding: '3px', borderRadius: '999px', border: '1px solid rgba(211,209,199,0.9)', background: 'rgba(255,255,255,0.65)', overflow: 'hidden' }}>
                 <div
@@ -1835,30 +2045,71 @@ export default function RhythmPage() {
               </div>
             </div>
 
-            {/* Countdown — overlaid on exercise area, no layout shift */}
-
-
-            {/* Countdown — fixed strip above notation */}
-            <div style={{ height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+            {/* Notation / Grid — flex:grow so staff scales to remaining viewport (no page scroll). */}
+            <div style={{ position: 'relative' as const, marginBottom: '8px', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <div
+              ref={landscapeContainerRef}
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                border: RHYTHM_CARD_BORDER,
+                boxShadow: RHYTHM_CARD_SHADOW,
+                padding: '24px',
+                overflow: view === 'grid' ? 'auto' : 'hidden',
+                overflowX: 'hidden',
+                position: 'relative' as const,
+                flex: 1,
+                minHeight: 0,
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               {countdown !== null && (
-                <span style={{ fontFamily: SERIF, fontSize: '48px', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: 'inherit',
+                    background: 'rgba(26, 26, 24, 0.14)',
+                    backdropFilter: 'blur(3px)',
+                    WebkitBackdropFilter: 'blur(3px)',
+                    zIndex: 30,
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: countdownOverlayOpacity,
+                  }}
+                >
+                  <span style={{ fontFamily: SERIF, fontSize: 'clamp(48px, 12vmin, 88px)', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
+                </div>
               )}
-            </div>
-
-            {/* Notation / Grid */}
-            <div style={{ position: 'relative' as const, marginBottom: '20px' }}>
-            <div ref={landscapeContainerRef} style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', overflow: 'hidden', position: 'relative' as const, maxHeight: 'calc(100svh - 280px)' }}>
 
               {/* LANDSCAPE/DESKTOP: row-based notation */}
-              {view === 'notation' && !isPortrait && rows.map((rowMeasures, rowIdx) => {
+              {view === 'notation' && !isPortrait && (() => {
+                const notationRowEls = rows.map((rowMeasures, rowIdx) => {
                 const { measureW, noteW, beatsPerMeasure: bpm } = buildLayout(exercise, svgWidth, rowMeasures)
                 const beatUnit = (() => { const isComp = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3; return isComp ? 3 * (4 / exercise.timeSignature.beatType) : 4 / exercise.timeSignature.beatType })()
                 const contentW = 56 + rowMeasures.length * measureW + 7
                 const actualSvgW = Math.max(svgWidth, contentW + 20)
                 const isLastRow = rowIdx === rows.length - 1
                 const lastBarlineX = 56 + rowMeasures.length * measureW
+                const staffLeftX = rowIdx === 0 ? 34 : 56
+                const staffRightX = contentW
+                const staffSpan = staffRightX - staffLeftX
+                const notationCenterTx = Math.max(0, (actualSvgW - staffSpan) / 2 - staffLeftX)
                 return (
-                  <svg key={rowIdx} width="100%" height={SVG_H} viewBox={`0 0 ${actualSvgW} 130`} style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? '8px' : 0 }} preserveAspectRatio="xMinYMin meet">
+                  <svg
+                    className="nl-notation-staff"
+                    key={rowIdx}
+                    width="100%"
+                    height={SVG_H}
+                    viewBox={`0 0 ${actualSvgW} 130`}
+                    style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? rowGap : 0 }}
+                    preserveAspectRatio="xMidYMin meet"
+                  >
+                    <g transform={`translate(${notationCenterTx}, 0)`}>
                     {rowIdx === 0 && (
                       <>
                         <text x={34} y={STAFF_Y - 18} fontSize={40} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="middle">
@@ -1928,9 +2179,34 @@ export default function RhythmPage() {
                       const x = 56 + 18 + beatInRow * noteW
                       return <line x1={x} y1={STAFF_Y - 32} x2={x} y2={STAFF_Y + 32} stroke="#BA7517" strokeWidth={1.5} opacity={0.7} style={{ pointerEvents: 'none' }} />
                     })()}
+                    </g>
                   </svg>
                 )
-              })}
+              })
+                if (notationSingleRowPaging || notationTwoRowPairPaging) {
+                  return (
+                    <div
+                      style={{
+                        flex: 1,
+                        minHeight: 0,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'stretch',
+                      }}
+                    >
+                      <div
+                        ref={notationScrollRef}
+                        className="nl-notation-scroll"
+                        style={notationDesktopScrollStyle}
+                      >
+                        {notationRowEls}
+                      </div>
+                    </div>
+                  )
+                }
+                return <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{notationRowEls}</div>
+              })()}
 
               {view === 'grid' && !isPortrait && (() => {
                 const qBpmG = exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
@@ -2010,7 +2286,7 @@ export default function RhythmPage() {
 
             {/* Diagnostic panel */}
             {showDiag && (
-              <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '12px', marginBottom: '16px', maxHeight: '200px', overflowY: 'auto' as const }}>
+              <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '12px', marginBottom: '8px', maxHeight: 'min(200px, 22vh)', overflowY: 'auto' as const, flexShrink: 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <p style={{ fontFamily: 'monospace', fontSize: '10px', color: '#888780', letterSpacing: '0.05em', margin: 0 }}>DIAGNOSTIC LOG</p>
                   <button onClick={() => navigator.clipboard.writeText(diagLog.join('\n'))}
@@ -2023,8 +2299,8 @@ export default function RhythmPage() {
               </div>
             )}
 
-            {/* Sticky bottom: Preview + Start/Stop + TAP (desktop/landscape; matches portrait) */}
-            <div className="nl-rt-tapbar">
+            {/* Bottom: Preview + Start/Stop + TAP (desktop/landscape; matches portrait) */}
+            <div className="nl-rt-tapbar" style={{ flexShrink: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                 <button
                   type="button"
@@ -2088,7 +2364,7 @@ export default function RhythmPage() {
                 {(countdown !== null && !tapReady) ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? `${pct}% · dur ${durationPct}%` : '·'}
               </button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
