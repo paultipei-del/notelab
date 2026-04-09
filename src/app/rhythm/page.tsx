@@ -597,9 +597,9 @@ export default function RhythmPage() {
     const minMeasureW = slotsPerMeasure * 32
     const cardW = svgWidth || 700
     // Desktop + exactly 4 measures: prefer 2 measures per staff row (2 rows) so we can show 2 measures at a time and page smoothly.
-    if (!useMobileLayout && total === 4 && minMeasureW * 2 + 96 <= cardW) return 2
+    // Keep this preference only if 4 measures would be cramped.
+    if (!useMobileLayout && total === 4 && !(minMeasureW * 4 + 96 <= cardW) && (minMeasureW * 2 + 96 <= cardW)) return 2
     for (const candidate of [4, 2, 1]) {
-      if (candidate !== 1 && total % candidate !== 0) continue
       if (minMeasureW * candidate + 96 <= cardW) return candidate
     }
     return 1
@@ -612,6 +612,8 @@ export default function RhythmPage() {
       ? (desktopNotationContentH > 0 ? Math.max(60, desktopNotationContentH) : availableH)
       : availableH
   const rowGap = 8
+  const minStaffPx = 60
+  const maxStaffPx = 240
   /** Four+ staff systems: show two systems at a time, smooth-scroll to the next pair when the playhead crosses. */
   const notationTwoRowPairPaging = Boolean(
     exercise && !useMobileLayout && view === 'notation' && numRows >= 4
@@ -623,10 +625,10 @@ export default function RhythmPage() {
       view === 'notation' &&
       !notationTwoRowPairPaging &&
       numRows === 2 &&
-      MEASURES_PER_ROW === 2
+      MEASURES_PER_ROW === 2 &&
+      // If the card is tall enough to show both systems, don't page one-at-a-time.
+      heightBudgetForSvg < (2 * minStaffPx + rowGap)
   )
-  const minStaffPx = 60
-  const maxStaffPx = 240
   let SVG_H: number
   let pairViewportPx: number
   if (notationTwoRowPairPaging) {
