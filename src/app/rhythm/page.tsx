@@ -1573,7 +1573,6 @@ export default function RhythmPage() {
           WebkitTouchCallout: 'none' as const,
         }}
       >
-
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {exercise && (
@@ -2144,7 +2143,7 @@ export default function RhythmPage() {
                     height={SVG_H}
                     viewBox={`0 0 ${actualSvgW} 130`}
                     style={{ display: 'block', marginBottom: rowIdx < rows.length - 1 ? rowGap : 0 }}
-                    preserveAspectRatio="xMidYMin meet"
+                    preserveAspectRatio="xMidYMid meet"
                   >
                     <g transform={`translate(${notationCenterTx}, 0)`}>
                     {rowIdx === 0 && (
@@ -2242,7 +2241,21 @@ export default function RhythmPage() {
                     </div>
                   )
                 }
-                return <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{notationRowEls}</div>
+                return (
+                  <div
+                    style={{
+                      flex: 1,
+                      minHeight: 0,
+                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'stretch',
+                    }}
+                  >
+                    {notationRowEls}
+                  </div>
+                )
               })()}
 
               {view === 'grid' && !isPortrait && (() => {
