@@ -991,6 +991,7 @@ export default function RhythmPage() {
     const allNotes = exercise ? exercise.measures.flatMap((m: any) => m.notes) : []
     const smallestDur = allNotes.reduce((min: number, n: any) => Math.min(min, n.durationBeats), 1)
     const noteW = Math.max(40, 32 / smallestDur)
+    const clientCenter = el.clientWidth / 2
     const target = Math.max(0, playhead * noteW)
     el.scrollLeft = target
   }, [playhead, playing, countdown, frozenScrollLeft, exercise])
@@ -1724,8 +1725,8 @@ export default function RhythmPage() {
                   ref={scrollRef}
                   style={{ overflowX: 'scroll', overflowY: 'hidden', WebkitOverflowScrolling: 'touch' as any, scrollbarWidth: 'none' as any, msOverflowStyle: 'none' as any }}
                 >
-                  <svg className="nl-notation-staff" width={totalW + svgWidth} height={staffSvgH} style={{ display: 'block' }}>
-                    <g transform={`translate(${svgWidth / 2}, ${staffYOffset})`}>
+                  <svg className="nl-notation-staff" width={totalW + centerX + 40} height={staffSvgH} style={{ display: 'block' }}>
+                    <g transform={`translate(${centerX - 74}, ${staffYOffset})`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
