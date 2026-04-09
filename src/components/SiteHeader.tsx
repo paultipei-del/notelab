@@ -84,7 +84,7 @@ export default function SiteHeader() {
         </Link>
 
         {/* Desktop nav — hidden on mobile via inline media-query workaround */}
-        <nav className="nl-desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <nav className="nl-desktop-nav">
           {NAV.map(item => {
             const active = item.match(pathname)
             return (
@@ -110,7 +110,7 @@ export default function SiteHeader() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
 
           {/* Mobile hamburger */}
-          <div ref={mobileRef} className="nl-mobile-nav" style={{ position: 'relative' }}>
+          <div ref={mobileRef} className="nl-mobile-nav">
             <button
               onClick={() => setShowMobileMenu(v => !v)}
               aria-label="Menu"
