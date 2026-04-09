@@ -1742,22 +1742,6 @@ export default function RhythmPage() {
               // at playhead=0, first notehead (x=74) aligns with center playhead line
               const effectivePlayhead = playhead !== null ? playhead : 0
               const leadPx = NOTATION_PAGE_SCROLL_LEAD_BEATS * NOTE_W_PORTRAIT
-              // Compute active-note highlight rect for note-by-note playhead
-              let phNoteX: number | null = null
-              let phNoteW: number | null = null
-              if (playing && playhead !== null && playhead >= 0) {
-                let gBeat = 0
-                found: for (const measure of exercise.measures) {
-                  for (const n of measure.notes) {
-                    if (effectivePlayhead >= gBeat - 0.02 && effectivePlayhead < gBeat + n.durationBeats) {
-                      phNoteX = 56 + 18 + gBeat * NOTE_W_PORTRAIT
-                      phNoteW = n.durationBeats * NOTE_W_PORTRAIT
-                      break found
-                    }
-                    gBeat += n.durationBeats
-                  }
-                }
-              }
               return (
                 <div
                   ref={scrollRef}
@@ -1765,12 +1749,6 @@ export default function RhythmPage() {
                 >
                   <svg className="nl-notation-staff" width={totalW + centerX + 40 + leadPx} height={staffSvgH} style={{ display: 'block' }}>
                     <g transform={`translate(${centerX - 74 + leadPx}, ${staffYOffset})`}>
-                      {phNoteX !== null && phNoteW !== null && (
-                        <>
-                          <rect x={phNoteX - 4} y={STAFF_Y - 34} width={phNoteW + 8} height={68} rx={5} fill="#BA7517" fillOpacity={0.22} />
-                          <rect x={phNoteX - 4} y={STAFF_Y - 34} width={phNoteW + 8} height={68} rx={5} fill="none" stroke="#BA7517" strokeWidth={1.5} strokeOpacity={0.5} />
-                        </>
-                      )}
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
