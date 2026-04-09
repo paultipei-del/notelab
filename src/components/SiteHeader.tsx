@@ -11,9 +11,9 @@ const F = 'var(--font-jost), sans-serif'
 
 const NAV = [
   { label: 'Tools',        href: '/',                   match: (p: string) => p === '/' },
+  { label: 'Programs',     href: '/programs',           match: (p: string) => p === '/programs' },
   { label: 'Ear Training', href: '/collection?tag=ear', match: (p: string) => p === '/collection' },
   { label: 'Flashcards',   href: '/collection?tag=cm',  match: (_p: string) => false },
-  { label: 'Rhythm',       href: '/rhythm',             match: (p: string) => p.startsWith('/rhythm') },
 ]
 
 function getInitials(name: string | null | undefined, email: string): string {

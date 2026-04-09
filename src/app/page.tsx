@@ -64,13 +64,6 @@ const TOOLS = [
     badge: 'Pro',
     cta: 'Browse →',
   },
-  {
-    href: '/rhythm',
-    title: 'Rhythm Trainer',
-    desc: 'Tap along to rhythm exercises in notation or grid view. Progressive library from beginner to advanced.',
-    badge: 'Free',
-    cta: 'Practice →',
-  },
 ]
 
 export default function Home() {
@@ -199,15 +192,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Flashcards ───────────────────────────────────────────────── */}
+        {/* ── Programs ─────────────────────────────────────────────────── */}
         <div style={{ marginBottom: '64px' }}>
           <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Flashcards</h2>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Spaced repetition collections for terms, symbols, and ear training</p>
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Programs</h2>
+            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Structured exam prep collections</p>
           </div>
-
-          {/* CM — featured */}
-          <Link href="/collection?tag=cm" style={{ textDecoration: 'none', display: 'block', marginBottom: '12px' }}>
+          <Link href="/programs" style={{ textDecoration: 'none', display: 'block' }}>
             <div
               style={{ background: '#1A1A18', border: '1px solid #1A1A18', borderRadius: '16px', padding: '28px 32px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
               onMouseEnter={e => { e.currentTarget.style.opacity = '0.92' }}
@@ -241,6 +232,14 @@ export default function Home() {
               </div>
             </div>
           </Link>
+        </div>
+
+        {/* ── Flashcards ───────────────────────────────────────────────── */}
+        <div style={{ marginBottom: '64px' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Flashcards</h2>
+            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Spaced repetition collections for terms, symbols, and ear training</p>
+          </div>
 
           {/* Free decks grid */}
             {/* ── Notation & Terms ─────────────────────────────────── */}
