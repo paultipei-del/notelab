@@ -87,22 +87,32 @@ function Btn({ children, onClick, variant = 'outline', disabled, danger }: {
 
 // ── Profile section ─────────────────────────────────────────────────────────────
 function ProfileSection({ user }: { user: any }) {
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [pwStatus, setPwStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [nameValue, setNameValue] = useState<string>(user.user_metadata?.display_name ?? '')
+  const [nameStatus, setNameStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const router = useRouter()
 
   const memberSince = user.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : '—'
 
+  async function saveName() {
+    if (nameValue.trim() === (user.user_metadata?.display_name ?? '')) return
+    setNameStatus('saving')
+    const supabase = getSupabaseClient()
+    const { error } = await supabase.auth.updateUser({ data: { display_name: nameValue.trim() } })
+    setNameStatus(error ? 'error' : 'saved')
+    setTimeout(() => setNameStatus('idle'), 3000)
+  }
+
   async function sendPasswordReset() {
-    setStatus('sending')
+    setPwStatus('sending')
     const supabase = getSupabaseClient()
     const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
       redirectTo: `${window.location.origin}/account`,
     })
-    setStatus(error ? 'error' : 'sent')
-    setTimeout(() => setStatus('idle'), 4000)
+    setPwStatus(error ? 'error' : 'sent')
+    setTimeout(() => setPwStatus('idle'), 4000)
   }
 
   async function handleSignOut() {
@@ -113,14 +123,39 @@ function ProfileSection({ user }: { user: any }) {
   return (
     <Section title="Profile">
       <Card>
-        <div style={{ borderBottom: '1px solid #EDE8DF' }}>
-          <Row label="Email" value={user.email} />
-          <Row label="Member since" value={memberSince} />
-          <Row label="Account" value="Standard" />
+        {/* Name field */}
+        <div style={{ paddingBottom: '20px', marginBottom: '4px', borderBottom: '1px solid #EDE8DF' }}>
+          <label style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', display: 'block', marginBottom: '8px' }}>
+            Display name
+          </label>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <input
+              value={nameValue}
+              onChange={e => { setNameValue(e.target.value); setNameStatus('idle') }}
+              onKeyDown={e => e.key === 'Enter' && saveName()}
+              placeholder="Your name"
+              style={{
+                flex: 1, background: '#F5F2EC', border: '1px solid #D3D1C7',
+                borderRadius: '10px', padding: '10px 14px',
+                fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18',
+                outline: 'none',
+              }}
+            />
+            <Btn onClick={saveName} disabled={nameStatus === 'saving'}>
+              {nameStatus === 'saving' ? 'Saving…' : nameStatus === 'saved' ? 'Saved ✓' : nameStatus === 'error' ? 'Error' : 'Save'}
+            </Btn>
+          </div>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', margin: '6px 0 0' }}>
+            Shown in the header instead of your email initials.
+          </p>
         </div>
+
+        <Row label="Email" value={user.email} />
+        <Row label="Member since" value={memberSince} />
+
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' as const, marginTop: '20px' }}>
-          <Btn onClick={sendPasswordReset} disabled={status === 'sending' || status === 'sent'}>
-            {status === 'sending' ? 'Sending…' : status === 'sent' ? 'Email sent ✓' : status === 'error' ? 'Error — try again' : 'Change password'}
+          <Btn onClick={sendPasswordReset} disabled={pwStatus === 'sending' || pwStatus === 'sent'}>
+            {pwStatus === 'sending' ? 'Sending…' : pwStatus === 'sent' ? 'Email sent ✓' : pwStatus === 'error' ? 'Error — try again' : 'Change password'}
           </Btn>
           <Btn onClick={handleSignOut} danger>Sign out</Btn>
         </div>
