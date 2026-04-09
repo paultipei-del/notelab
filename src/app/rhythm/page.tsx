@@ -1832,7 +1832,7 @@ export default function RhythmPage() {
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'clip',
+        overflow: 'visible',
         userSelect: 'none' as const,
         WebkitUserSelect: 'none' as const,
         WebkitTouchCallout: 'none' as const,
@@ -1844,7 +1844,7 @@ export default function RhythmPage() {
           margin: '0 auto',
           width: '100%',
           ...(desktopExerciseLocked
-            ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'clip' }
+            ? { flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'visible' }
             : { flex: 1, minHeight: 0, overflow: 'auto' }),
         }}
       >
