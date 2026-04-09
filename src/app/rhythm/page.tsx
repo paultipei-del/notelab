@@ -982,11 +982,19 @@ export default function RhythmPage() {
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
-    if (frozenScrollLeft !== null && !playing) {
+    if (!playing && countdown === null && frozenScrollLeft === null) return
+    if (!playing && countdown === null && frozenScrollLeft !== null) {
       el.scrollLeft = frozenScrollLeft
       return
     }
-    if (!playing && countdown === null) return
+    if (countdown !== null && !playing) {
+      // During countdown: scroll to pre-roll start position
+      const allNotes = exercise ? exercise.measures.flatMap((m: any) => m.notes) : []
+      const smallestDur = allNotes.reduce((min: number, n: any) => Math.min(min, n.durationBeats), 1)
+      const noteW = Math.max(40, 32 / smallestDur)
+      el.scrollLeft = NOTATION_PAGE_SCROLL_LEAD_BEATS * noteW
+      return
+    }
     if (playhead === null) return
     const allNotes = exercise ? exercise.measures.flatMap((m: any) => m.notes) : []
     const smallestDur = allNotes.reduce((min: number, n: any) => Math.min(min, n.durationBeats), 1)
