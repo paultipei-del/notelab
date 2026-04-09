@@ -1650,6 +1650,26 @@ export default function RhythmPage() {
                 alignItems: 'center',
               }}
             >
+            {countdown !== null && (
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: 'inherit',
+                  background: 'rgba(26, 26, 24, 0.14)',
+                  backdropFilter: 'blur(3px)',
+                  WebkitBackdropFilter: 'blur(3px)',
+                  zIndex: 30,
+                  pointerEvents: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: countdownOverlayOpacity,
+                }}
+              >
+                <span style={{ fontFamily: SERIF, fontSize: 'clamp(48px, 14vmin, 88px)', fontWeight: 300, color: '#BA7517', lineHeight: 1 }}>{countdown}</span>
+              </div>
+            )}
             {/* Fixed playhead */}
             {(playing || previewing) && (countdown === null || (playhead !== null && playhead >= -1)) && (
               <div style={{ position: 'absolute' as const, left: '50%', top: 0, bottom: 0, width: '2px', background: '#BA7517', opacity: 0.6, zIndex: 10, pointerEvents: 'none' as const, transform: 'translateX(-3px)' }} />
@@ -1736,11 +1756,8 @@ export default function RhythmPage() {
 
         {/* Bottom dock (keeps TAP at bottom, no scroll) */}
         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: `calc(env(safe-area-inset-bottom) + ${SAFARI_BOTTOM_GUARD_PX}px)` }}>
-          {/* Countdown */}
+          {/* Score */}
           <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            {countdown !== null && (
-              <span style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#BA7517', lineHeight: 1, opacity: countdownOverlayOpacity }}>{countdown}</span>
-            )}
             {score && !playing && !countdown && (
               <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: pct >= 80 ? '#4CAF50' : '#1A1A18', margin: 0 }}>
                 {score.hits}/{score.total} · {pct}% timing · {durationPct}% duration
