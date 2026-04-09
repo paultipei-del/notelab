@@ -973,6 +973,13 @@ export default function RhythmPage() {
         setTrail([...trailRef.current])
       }
       setPlayhead(beatFloat)
+      // Drive portrait scroll directly in RAF — bypass React render cycle
+      if (scrollRef.current && exercise) {
+        const allN = exercise.measures.flatMap((m: any) => m.notes)
+        const smlDur = allN.reduce((mn: number, n: any) => Math.min(mn, n.durationBeats), 1)
+        const nW = Math.max(40, 32 / smlDur)
+        scrollRef.current.scrollLeft = NOTATION_PAGE_SCROLL_LEAD_BEATS * nW + beatFloat * nW
+      }
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
@@ -1101,6 +1108,13 @@ export default function RhythmPage() {
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = totalQBeats
       setPlayhead(beatFloat)
+      // Drive portrait scroll directly in RAF
+      if (scrollRef.current && exercise) {
+        const allN = exercise.measures.flatMap((m: any) => m.notes)
+        const smlDur = allN.reduce((mn: number, n: any) => Math.min(mn, n.durationBeats), 1)
+        const nW = Math.max(40, 32 / smlDur)
+        scrollRef.current.scrollLeft = NOTATION_PAGE_SCROLL_LEAD_BEATS * nW + beatFloat * nW
+      }
       // Color notes green as they sound
       if (exercise) {
         const newResults: ('hit'|'miss'|'none')[][] = exercise.measures.map((measure, mIdx) => {
@@ -1752,7 +1766,10 @@ export default function RhythmPage() {
                   <svg className="nl-notation-staff" width={totalW + centerX + 40 + leadPx} height={staffSvgH} style={{ display: 'block' }}>
                     <g transform={`translate(${centerX - 74 + leadPx}, ${staffYOffset})`}>
                       {phNoteX !== null && phNoteW !== null && (
-                        <rect x={phNoteX - 4} y={STAFF_Y - 34} width={phNoteW + 8} height={68} rx={5} fill="#BA7517" fillOpacity={0.15} />
+                        <>
+                          <rect x={phNoteX - 4} y={STAFF_Y - 34} width={phNoteW + 8} height={68} rx={5} fill="#BA7517" fillOpacity={0.22} />
+                          <rect x={phNoteX - 4} y={STAFF_Y - 34} width={phNoteW + 8} height={68} rx={5} fill="none" stroke="#BA7517" strokeWidth={1.5} strokeOpacity={0.5} />
+                        </>
                       )}
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
