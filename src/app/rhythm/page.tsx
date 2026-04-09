@@ -846,6 +846,7 @@ export default function RhythmPage() {
     tapReadyRef.current = false
     setCountdownOverlayOpacity(1)
     resetNotationScroll()
+    setFrozenScrollLeft(null)
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -1010,7 +1011,6 @@ export default function RhythmPage() {
 
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
-    setFrozenScrollLeft(null)
     setTapReady(false)
     tapReadyRef.current = false
     // Close audio context to cancel all scheduled clicks
