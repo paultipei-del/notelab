@@ -1860,27 +1860,34 @@ export default function RhythmPage() {
 
           {/* Bottom controls */}
           {exercise && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-              <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
-                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>−</button>
-              <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', minWidth: '54px', textAlign: 'center' as const }}>{bpm} BPM</span>
-              <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
-                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
-              <div style={{ flex: 1 }} />
-              <button onClick={() => setShowMixer(v => !v)}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                Mixer
+            playing ? (
+              <button onPointerDown={stop}
+                style={{ width: '100%', height: '44px', borderRadius: '10px', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '14px', fontWeight: 300, cursor: 'pointer', flexShrink: 0, touchAction: 'manipulation' }}>
+                Stop
               </button>
-              <button onClick={() => setShowDiag(d => !d)}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                🔍 Diag
-              </button>
-              <button onClick={startPreview} disabled={playing || previewing} style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + (previewing ? '#BA7517' : '#D3D1C7'), background: previewing ? '#BA7517' : 'white', color: previewing ? 'white' : '#888780', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>▶</button>
-              <button onClick={playing ? stop : start}
-                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                {playing ? 'Stop' : score ? 'Try Again' : 'Start'}
-              </button>
-            </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                <button onClick={() => setBpm(b => Math.max(40, b - 4))}
+                  style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>−</button>
+                <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', minWidth: '54px', textAlign: 'center' as const }}>{bpm} BPM</span>
+                <button onClick={() => setBpm(b => Math.min(200, b + 4))}
+                  style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>+</button>
+                <div style={{ flex: 1 }} />
+                <button onClick={() => setShowMixer(v => !v)}
+                  style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                  Mixer
+                </button>
+                <button onClick={() => setShowDiag(d => !d)}
+                  style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                  🔍 Diag
+                </button>
+                <button onClick={startPreview} disabled={previewing} style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + (previewing ? '#BA7517' : '#D3D1C7'), background: previewing ? '#BA7517' : 'white', color: previewing ? 'white' : '#888780', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>▶</button>
+                <button onClick={start}
+                  style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                  {score ? 'Try Again' : 'Start'}
+                </button>
+              </div>
+            )
           )}
 
           {/* TAP button */}
