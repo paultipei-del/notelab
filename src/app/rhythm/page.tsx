@@ -568,10 +568,13 @@ export default function RhythmPage() {
   const notationScrollRef = useRef<HTMLDivElement>(null)
   const lastNotationPairScrollIdxRef = useRef(-1)
   const [isPortrait, setIsPortrait] = useState(false)
+  const [isMobileLandscape, setIsMobileLandscape] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const [svgWidth, setSvgWidth] = useState(800)
   /** Content-box height of the desktop notation card (from ResizeObserver); drives SVG_H so the staff fits the slot. */
   const [desktopNotationContentH, setDesktopNotationContentH] = useState(0)
+
+  const useMobileLayout = isPortrait || isMobileLandscape
 
   const ctxRef = useRef<AudioContext | null>(null)
   const metroGainRef = useRef<GainNode | null>(null)
@@ -592,7 +595,7 @@ export default function RhythmPage() {
     const minMeasureW = slotsPerMeasure * 32
     const cardW = svgWidth || 700
     // Desktop + exactly 4 measures: prefer 2 measures per staff row (2 rows) so we can show 2 measures at a time and page smoothly.
-    if (!isPortrait && total === 4 && minMeasureW * 2 + 96 <= cardW) return 2
+    if (!useMobileLayout && total === 4 && minMeasureW * 2 + 96 <= cardW) return 2
     for (const candidate of [4, 2, 1]) {
       if (candidate !== 1 && total % candidate !== 0) continue
       if (minMeasureW * candidate + 96 <= cardW) return candidate
@@ -603,18 +606,18 @@ export default function RhythmPage() {
   const availableH = typeof window !== 'undefined' ? Math.max(200, window.innerHeight - 440) : 300
   /** Prefer measured card height on desktop so notation fits the flex slot without page scroll. */
   const heightBudgetForSvg =
-    !isPortrait && exercise
+    !useMobileLayout && exercise
       ? (desktopNotationContentH > 0 ? Math.max(60, desktopNotationContentH) : availableH)
       : availableH
   const rowGap = 8
   /** Four+ staff systems: show two systems at a time, smooth-scroll to the next pair when the playhead crosses. */
   const notationTwoRowPairPaging = Boolean(
-    exercise && !isPortrait && view === 'notation' && numRows >= 4
+    exercise && !useMobileLayout && view === 'notation' && numRows >= 4
   )
   /** Exactly two staff rows (e.g. four measures, two per row): page one system at a time — two measures visible. */
   const notationSingleRowPaging = Boolean(
     exercise &&
-      !isPortrait &&
+      !useMobileLayout &&
       view === 'notation' &&
       !notationTwoRowPairPaging &&
       numRows === 2 &&
@@ -674,7 +677,13 @@ export default function RhythmPage() {
 
   useEffect(() => {
     const checkOrientation = () => {
-      setIsPortrait(window.innerHeight > window.innerWidth)
+      const w = window.innerWidth
+      const h = window.innerHeight
+      const portrait = h > w
+      setIsPortrait(portrait)
+      // Mobile landscape should mimic the portrait UI (not the desktop paging layout).
+      const mobileLandscape = !portrait && (Math.min(w, h) <= 520) && (Math.max(w, h) <= 980)
+      setIsMobileLandscape(mobileLandscape)
     }
     checkOrientation()
     window.addEventListener('resize', checkOrientation)
@@ -699,17 +708,17 @@ export default function RhythmPage() {
   }, [user])
 
   useEffect(() => {
-    const el = isPortrait ? containerRef.current : landscapeContainerRef.current
+    const el = useMobileLayout ? containerRef.current : landscapeContainerRef.current
     if (!el) return
     const obs = new ResizeObserver(entries => {
       const cr = entries[0].contentRect
       // Content box is already inside card padding; do not subtract again or viewBox is narrower than the real slot and staff sits left (xMin meet letterboxing).
       setSvgWidth(Math.max(0, cr.width))
-      if (!isPortrait) setDesktopNotationContentH(cr.height)
+      if (!useMobileLayout) setDesktopNotationContentH(cr.height)
     })
     obs.observe(el)
     return () => obs.disconnect()
-  }, [exercise, isPortrait])
+  }, [exercise, useMobileLayout])
 
   useEffect(() => {
     if (!exercise) setDesktopNotationContentH(0)
@@ -1523,7 +1532,8 @@ export default function RhythmPage() {
 
 
   // ── PORTRAIT / MOBILE LAYOUT ─────────────────────────────────────────────
-  if (isPortrait) {
+  // Mobile landscape uses the same UI as portrait (no desktop paging layout).
+  if (useMobileLayout) {
     // iOS Safari bottom toolbar can overlap content even with safe-area insets.
     // This guard keeps the TAP dock comfortably above it on most devices.
     const SAFARI_BOTTOM_GUARD_PX = 62
