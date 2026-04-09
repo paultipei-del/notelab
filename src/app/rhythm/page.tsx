@@ -285,7 +285,7 @@ function renderMeasure(
   notes.forEach((note, i) => {
     const x = mx + bp * noteW  // notehead position
     const tr = tapResult[i]
-    const noteColor = tr === 'hit' ? '#65C366' : tr === 'miss' ? '#FF5F57' : '#1A1A18'
+    const noteColor = tr === 'hit' ? '#65C366' : tr === 'miss' ? '#ED6765' : '#1A1A18'
 
     // Active beat highlight (driven by playhead — handled outside)
 
@@ -959,7 +959,7 @@ export default function RhythmPage() {
               posR += n.durationBeats
             }
           }
-          trailColor = strictlyOnRest ? '#FF5F57' : '#65C366'
+          trailColor = strictlyOnRest ? '#ED6765' : '#65C366'
         }
       }
       trailRef.current.push({ beat: beatFloat, color: trailColor })
@@ -1398,7 +1398,7 @@ export default function RhythmPage() {
     const finalScore = { hits: adjustedHits, total: expected.length, durationHits, durationTotal, restTaps }
     setScore(finalScore)
     setDiagLog(prev => {
-      const trailSummary = trailRef.current.filter((_, i) => i % 10 === 0).map(t => `${t.beat.toFixed(2)}:${t.color === '#65C366' ? 'G' : t.color === '#FF5F57' ? 'R' : '_'}`).join(' ')
+      const trailSummary = trailRef.current.filter((_, i) => i % 10 === 0).map(t => `${t.beat.toFixed(2)}:${t.color === '#65C366' ? 'G' : t.color === '#ED6765' ? 'R' : '_'}`).join(' ')
       return [...prev, `SCORE hits=${finalScore.hits}/${finalScore.total} restTaps=${restTaps} noteTaps=[${noteTaps.map(t=>t.toFixed(2)).join(',')}] taps=[${taps.map(t=>t.toFixed(2)).join(',')}] expected=[${expected.map(e=>e.toFixed(1)).join(',')}]`, `TRAIL(every10): ${trailSummary}`]
     })
   }, [playing])
@@ -1548,8 +1548,8 @@ export default function RhythmPage() {
 
     const tapBtnStyle: React.CSSProperties = {
       width: '100%', height: '80px', borderRadius: '16px',
-      border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #FF5F57' : '2px solid #D3D1C7',
-      background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#FF5F57' : (playing && tapReady) ? '#1A1A18' : '#F5F2EC',
+      border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #ED6765' : '2px solid #D3D1C7',
+      background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#ED6765' : (playing && tapReady) ? '#1A1A18' : '#F5F2EC',
       color: liveFeedback ? 'white' : (playing && tapReady) ? 'white' : '#D3D1C7',
       fontFamily: F, fontSize: '18px', fontWeight: 300,
       cursor: 'pointer', transition: 'background 0.1s, border 0.1s',
@@ -2074,7 +2074,7 @@ export default function RhythmPage() {
                   )
                 })()}
                 {score && !playing && score.restTaps > 0 && (
-                  <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#FF5F57', margin: '2px 0 0', lineHeight: 1.2, textAlign: 'center' as const }}>
+                  <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#ED6765', margin: '2px 0 0', lineHeight: 1.2, textAlign: 'center' as const }}>
                     {score.restTaps} tap{score.restTaps > 1 ? 's' : ''} on rests
                   </p>
                 )}
@@ -2203,12 +2203,12 @@ export default function RhythmPage() {
                                   const x2 = trackX + (run.beats[run.beats.length - 1] - globalMeasureIdx * bpm) * noteW
                                   const w = Math.max(TH, x2 - x1 + noteW / 16)
                                   const isGreen = run.color === '#65C366'
-                                  const isRed = run.color === '#FF5F57'
+                                  const isRed = run.color === '#ED6765'
                                   const isGray = !isGreen && !isRed
                                   // Gray = silence, skip rendering
                                   if (isGray) return null
-                                  const fill = isGreen ? '#65C366' : '#FF5F57'
-                                  const fillBg = isGreen ? 'rgba(101,195,102,0.12)' : 'rgba(255,95,87,0.12)'
+                                  const fill = isGreen ? '#65C366' : '#ED6765'
+                                  const fillBg = isGreen ? 'rgba(101,195,102,0.12)' : 'rgba(237,103,101,0.12)'
                                   const isDot = w <= TH + 2
                                   return (
                                     <g key={i}>
@@ -2335,7 +2335,7 @@ export default function RhythmPage() {
                               // Colors: note=dark, rest=empty/light, hit=green, miss=red
                               let bg = note.rest ? '#E8E4DE' : '#2A2A28'
                               if (tr === 'hit') bg = '#65C366'
-                              if (tr === 'miss' && !note.rest) bg = '#FF5F57'
+                              if (tr === 'miss' && !note.rest) bg = '#ED6765'
                               // Subdivision lines inside each block
                               const subdivisions = Math.round(note.durationBeats / (4 / exercise.timeSignature.beatType))
                               return (
@@ -2377,7 +2377,7 @@ export default function RhythmPage() {
                 </div>
                 {diagLog.length === 0 && <p style={{ fontFamily: 'monospace', fontSize: '11px', color: '#888780' }}>No taps yet</p>}
                 {diagLog.map((line, i) => (
-                  <p key={i} style={{ fontFamily: 'monospace', fontSize: '11px', color: line.includes('REST') ? '#FF5F57' : line.includes('SCORE') ? '#BA7517' : '#65C366', margin: '2px 0' }}>{line}</p>
+                  <p key={i} style={{ fontFamily: 'monospace', fontSize: '11px', color: line.includes('REST') ? '#ED6765' : line.includes('SCORE') ? '#BA7517' : '#65C366', margin: '2px 0' }}>{line}</p>
                 ))}
               </div>
             )}
@@ -2433,8 +2433,8 @@ export default function RhythmPage() {
                 disabled={false}
                 style={{
                   width: '100%', height: '72px', borderRadius: '16px',
-                  border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #FF5F57' : '2px solid #D3D1C7',
-                  background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#FF5F57' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F5F2EC',
+                  border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #ED6765' : '2px solid #D3D1C7',
+                  background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#ED6765' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F5F2EC',
                   color: liveFeedback ? 'white' : (playing && (countdown === null || tapReady)) ? 'white' : '#D3D1C7',
                   fontFamily: F, fontSize: '15px', fontWeight: 300,
                   cursor: (playing && (countdown === null || tapReady)) ? 'pointer' : 'default',
