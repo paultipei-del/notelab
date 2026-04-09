@@ -866,8 +866,6 @@ export default function RhythmPage() {
     tapReadyRef.current = false
     setCountdownOverlayOpacity(1)
     resetNotationScroll()
-    // Mobile portrait uses a real horizontal scroller; always re-center on beat 0 at start.
-    scrollMobileStaffToBeat(0, 'auto')
     setPlaying(true)
 
     const beatsPerMeasure = exercise.timeSignature.beats
@@ -925,9 +923,7 @@ export default function RhythmPage() {
         const timeToStart = startTimeRef.current - ctx2.currentTime
         // Show playhead from 2 beats before downbeat
         if (timeToStart <= beatDuration) {
-          const ph = -timeToStart / beatDuration
-          setPlayhead(ph)
-          if (isPortrait) scrollMobileStaffToBeat(ph, 'auto')
+          setPlayhead(-timeToStart / beatDuration)
         }
         // Enable tap during last beat only
         if (timeToStart <= beatDuration) {
@@ -1036,8 +1032,6 @@ export default function RhythmPage() {
     setCountdown(null)
     setCountdownOverlayOpacity(1)
     resetNotationScroll()
-    // Keep the preview start aligned with the fixed playhead line on mobile portrait.
-    scrollMobileStaffToBeat(0, 'auto')
 
     const isCompound = exercise.timeSignature.beats % 3 === 0 && exercise.timeSignature.beats > 3
     const feltBeats = isCompound ? exercise.timeSignature.beats / 3 : exercise.timeSignature.beats
