@@ -568,6 +568,7 @@ export default function RhythmPage() {
   const notationScrollRef = useRef<HTMLDivElement>(null)
   /** Mobile portrait notation: horizontal scroll container (manual after playback). */
   const mobileStaffScrollRef = useRef<HTMLDivElement>(null)
+  const [mobileStaffPadPx, setMobileStaffPadPx] = useState(0)
   const lastNotationPairScrollIdxRef = useRef(-1)
   const [isPortrait, setIsPortrait] = useState(false)
   const [isMobileLandscape, setIsMobileLandscape] = useState(false)
@@ -694,10 +695,27 @@ export default function RhythmPage() {
     const totalBeatsAll = qBeatsPerMeasure * exercise.measures.length
     const totalW = totalBeatsAll * NOTE_W_PORTRAIT + 160
     const x = 74 + beat * NOTE_W_PORTRAIT
-    const target = x - scroller.clientWidth / 2
-    const maxScroll = Math.max(0, totalW - scroller.clientWidth)
+    const paddedX = mobileStaffPadPx + x
+    const target = paddedX - scroller.clientWidth / 2
+    const totalScrollableW = totalW + 2 * mobileStaffPadPx
+    const maxScroll = Math.max(0, totalScrollableW - scroller.clientWidth)
     const next = Math.max(0, Math.min(maxScroll, target))
     scroller.scrollTo({ left: next, behavior })
+  }, [exercise, isPortrait, view, mobileStaffPadPx])
+
+  useEffect(() => {
+    if (!exercise) return
+    if (!isPortrait) return
+    if (view !== 'notation') return
+    const el = mobileStaffScrollRef.current
+    if (!el) return
+    const obs = new ResizeObserver(entries => {
+      const cr = entries[0].contentRect
+      const pad = Math.max(0, Math.floor(cr.width / 2 - 74))
+      setMobileStaffPadPx(pad)
+    })
+    obs.observe(el)
+    return () => obs.disconnect()
   }, [exercise, isPortrait, view])
 
   useEffect(() => {
@@ -1737,8 +1755,9 @@ export default function RhythmPage() {
                     overscrollBehaviorX: 'contain',
                   }}
                 >
-                  <svg className="nl-notation-staff" width={totalW} height={staffSvgH} style={{ display: 'block' }}>
-                    <g transform={`translate(0, ${staffYOffset})`}>
+                  <div style={{ paddingLeft: mobileStaffPadPx, paddingRight: mobileStaffPadPx }}>
+                    <svg className="nl-notation-staff" width={totalW} height={staffSvgH} style={{ display: 'block' }}>
+                      <g transform={`translate(0, ${staffYOffset})`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
@@ -1825,7 +1844,8 @@ export default function RhythmPage() {
                         )
                       })()}
                     </g>
-                  </svg>
+                    </svg>
+                  </div>
                 </div>
               )
             })()}
