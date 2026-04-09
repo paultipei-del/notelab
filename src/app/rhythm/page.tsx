@@ -1739,17 +1739,54 @@ export default function RhythmPage() {
                           <line key={'bm'+mi+'-'+bi} x1={56 + 10 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y1={STAFF_Y + 20} x2={56 + 10 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y2={STAFF_Y + 23} stroke="#D3D1C7" strokeWidth={1} />
                         ))
                       )}
-                      {/* Trail */}
-                      <rect x={56 + 10 - 0.5} y={STAFF_Y + 18} width={totalBeatsAll * NOTE_W_PORTRAIT} height={2} fill="rgba(211,209,199,0.6)" />
-                      {trail.map((t, i) => {
-                        const w = Math.max(1, NOTE_W_PORTRAIT / 18)
-                        const h = 8
-                        const y = STAFF_Y + 14
-                        const fade = trail.length <= 1 ? 0.9 : (0.35 + 0.55 * (i / (trail.length - 1)))
+                      {/* Trail — smooth pills */}
+                      {(() => {
+                        const TY = STAFF_Y + 20
+                        const TH = 8
+                        const R = TH / 2
+                        const originX = 56 + 10
+                        // Baseline
+                        const baseW = totalBeatsAll * NOTE_W_PORTRAIT
+                        // Group into contiguous same-color runs
+                        type Run = { beats: number[]; color: string }
+                        const runs: Run[] = []
+                        for (const t of trail) {
+                          const last = runs[runs.length - 1]
+                          if (last && last.color === t.color && t.beat - last.beats[last.beats.length - 1] < 0.09) {
+                            last.beats.push(t.beat)
+                          } else {
+                            runs.push({ beats: [t.beat], color: t.color })
+                          }
+                        }
                         return (
-                          <rect key={'t'+i} x={56 + 10 + t.beat * NOTE_W_PORTRAIT - w / 2 - 1 - 0.5} y={y} width={w} height={h} fill={t.color} opacity={fade} />
+                          <>
+                            <rect x={originX} y={TY + 1} width={baseW} height={1} fill="rgba(211,209,199,0.5)" rx={0.5} />
+                            {runs.map((run, i) => {
+                              const isGreen = run.color === '#65C366'
+                              const isRed = run.color === '#ED6765'
+                              if (!isGreen && !isRed) return null
+                              const x1 = originX + run.beats[0] * NOTE_W_PORTRAIT
+                              const x2 = originX + run.beats[run.beats.length - 1] * NOTE_W_PORTRAIT
+                              const w = Math.max(TH, x2 - x1 + NOTE_W_PORTRAIT / 16)
+                              const fill = isGreen ? '#65C366' : '#ED6765'
+                              const fillBg = isGreen ? 'rgba(101,195,102,0.12)' : 'rgba(237,103,101,0.12)'
+                              const isDot = w <= TH + 2
+                              return (
+                                <g key={i}>
+                                  {isDot ? (
+                                    <circle cx={x1} cy={TY + R} r={R} fill={fill} opacity={0.9} />
+                                  ) : (
+                                    <>
+                                      <rect x={x1 - R} y={TY} width={w} height={TH} rx={R} fill={fillBg} />
+                                      <rect x={x1 - R} y={TY} width={w} height={TH} rx={R} fill="none" stroke={fill} strokeWidth={1.5} opacity={0.95} />
+                                    </>
+                                  )}
+                                </g>
+                              )
+                            })}
+                          </>
                         )
-                      })}
+                      })()}
                     </g>
                   </svg>
                 </div>
@@ -2353,10 +2390,47 @@ export default function RhythmPage() {
                             )}
                             {/* Baseline anchor for trail */}
                             <div style={{ position: 'absolute' as const, left: 0, right: 0, top: '85%', height: '1px', background: '#D3D1C7', opacity: 0.4, zIndex: 6, pointerEvents: 'none' as const }} />
-                            {/* Trail in grid */}
-                            {trail.filter(t => t.beat >= measureStartBeat && t.beat < measureEndBeat).map((t, i) => (
-                              <div key={i} style={{ position: 'absolute' as const, left: `${((t.beat - measureStartBeat) / qBpmG) * 100}%`, bottom: 0, width: '2px', height: '8px', background: t.color, opacity: 0.9, zIndex: 7 }} />
-                            ))}
+                            {/* Trail in grid — smooth pills */}
+                            {(() => {
+                              const trailInMeasure = trail.filter(t => t.beat >= measureStartBeat && t.beat < measureEndBeat)
+                              type Run = { beats: number[]; color: string }
+                              const runs: Run[] = []
+                              for (const t of trailInMeasure) {
+                                const last = runs[runs.length - 1]
+                                if (last && last.color === t.color && t.beat - last.beats[last.beats.length - 1] < 0.09) {
+                                  last.beats.push(t.beat)
+                                } else {
+                                  runs.push({ beats: [t.beat], color: t.color })
+                                }
+                              }
+                              return runs.map((run, i) => {
+                                const isGreen = run.color === '#65C366'
+                                const isRed = run.color === '#ED6765'
+                                if (!isGreen && !isRed) return null
+                                const x1pct = ((run.beats[0] - measureStartBeat) / qBpmG) * 100
+                                const x2pct = ((run.beats[run.beats.length - 1] - measureStartBeat) / qBpmG) * 100
+                                const wpct = Math.max(1.5, x2pct - x1pct + 0.5)
+                                const fill = isGreen ? '#65C366' : '#ED6765'
+                                const fillBg = isGreen ? 'rgba(101,195,102,0.12)' : 'rgba(237,103,101,0.12)'
+                                const isDot = wpct < 2
+                                return (
+                                  <div key={i} style={{
+                                    position: 'absolute' as const,
+                                    left: `${x1pct}%`,
+                                    bottom: '2px',
+                                    width: isDot ? '7px' : `${wpct}%`,
+                                    height: isDot ? '7px' : '7px',
+                                    borderRadius: '4px',
+                                    background: isDot ? fill : fillBg,
+                                    border: isDot ? 'none' : `1.5px solid ${fill}`,
+                                    opacity: 0.95,
+                                    zIndex: 7,
+                                    pointerEvents: 'none' as const,
+                                    transform: isDot ? 'translateX(-50%)' : 'none',
+                                  }} />
+                                )
+                              })
+                            })()}
                           </div>
                         </div>
                       )
