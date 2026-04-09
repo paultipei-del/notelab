@@ -518,6 +518,7 @@ export default function RhythmPage() {
   const tapReadyRef = useRef(false)
   const tapBtnRef = useRef<HTMLButtonElement>(null)
   const [playhead, setPlayhead] = useState<number | null>(null)  // absolute beat position (float)
+  const [frozenScrollLeft, setFrozenScrollLeft] = useState<number | null>(null)
   const [taps, setTaps] = useState<number[]>([])
   const [tapDurations, setTapDurations] = useState<number[]>([])  // ms held per tap
   const keyDownTimeRef = useRef<number | null>(null)
@@ -920,7 +921,9 @@ export default function RhythmPage() {
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
       if (beatFloat >= effectiveTotalBeats) {
         setTrail([...trailRef.current])
-        setPlayhead(null); setPlaying(false); setLiveFeedback(null)
+        if (scrollRef.current) setFrozenScrollLeft(scrollRef.current.scrollLeft)
+        setPlayhead(effectiveTotalBeats)
+        setPlaying(false); setLiveFeedback(null)
         tapNoteRef.current = null
         // Close AudioContext to cancel any remaining scheduled clicks
         isPressedRef.current = false
@@ -974,8 +977,27 @@ export default function RhythmPage() {
     rafRef.current = requestAnimationFrame(tick)
   }, [exercise, totalBeats, beatDuration, resetNotationScroll])
 
+
+  // Portrait scroll: drive scrollLeft during playback, freeze at end
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    if (frozenScrollLeft !== null && !playing) {
+      el.scrollLeft = frozenScrollLeft
+      return
+    }
+    if (!playing && countdown === null) return
+    if (playhead === null) return
+    const allNotes = exercise ? exercise.measures.flatMap((m: any) => m.notes) : []
+    const smallestDur = allNotes.reduce((min: number, n: any) => Math.min(min, n.durationBeats), 1)
+    const noteW = Math.max(40, 32 / smallestDur)
+    const target = Math.max(0, playhead * noteW)
+    el.scrollLeft = target
+  }, [playhead, playing, countdown, frozenScrollLeft, exercise])
+
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
+    setFrozenScrollLeft(null)
     setTapReady(false)
     tapReadyRef.current = false
     // Close audio context to cancel all scheduled clicks
@@ -987,7 +1009,7 @@ export default function RhythmPage() {
     }
     setTrail([...trailRef.current])
     setCountdownOverlayOpacity(1)
-    setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null)
+    setPlaying(false); setPlayhead(null); setCountdown(null); setLiveFeedback(null); setFrozenScrollLeft(null)
     tapNoteRef.current = null  // sound auto-decays
   }
 
@@ -1697,11 +1719,13 @@ export default function RhythmPage() {
               // at playhead=0, first note (x=56+18) should be at centerX
               // at playhead=0, first notehead (x=74) aligns with center playhead line
               const effectivePlayhead = playhead !== null ? playhead : 0
-              const offsetX = centerX - 74 - effectivePlayhead * NOTE_W_PORTRAIT
               return (
-                <div style={{ overflow: 'hidden' }}>
-                  <svg className="nl-notation-staff" width={svgWidth} height={staffSvgH} style={{ display: 'block' }}>
-                    <g transform={`translate(${offsetX}, ${staffYOffset})`}>
+                <div
+                  ref={scrollRef}
+                  style={{ overflowX: 'scroll', overflowY: 'hidden', WebkitOverflowScrolling: 'touch' as any, scrollbarWidth: 'none' as any, msOverflowStyle: 'none' as any }}
+                >
+                  <svg className="nl-notation-staff" width={totalW + svgWidth} height={staffSvgH} style={{ display: 'block' }}>
+                    <g transform={`translate(${svgWidth / 2}, ${staffYOffset})`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
