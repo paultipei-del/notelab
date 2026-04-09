@@ -1828,7 +1828,7 @@ export default function RhythmPage() {
         height: 'calc(100dvh - 64px)',
         maxHeight: 'calc(100dvh - 64px)',
         background: '#F5F2EC',
-        padding: '20px 24px',
+        padding: '20px 32px',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
