@@ -96,8 +96,9 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
       })
       totalDuration = (card.audioChords?.length ?? 1) * 1400 + 800
     } else if (pattern === 'scale') {
+      const step = 0.35
       notes.forEach((note: string, i: number) => {
-        sharedSampler.triggerAttackRelease(note, '8n', now + i * 0.35)
+        sharedSampler.triggerAttackRelease(note, step, now + i * step)
       })
       totalDuration = notes.length * 350 + 600
     } else if (pattern === 'chord-cascade') {
