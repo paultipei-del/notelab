@@ -1,7 +1,7 @@
 import { Deck } from './types'
 import { SIGHT_READ_DECKS, SIGHT_READ_PRO_IDS } from './sightReadDecks'
 import { GRAND_STAFF_DECKS, GRAND_STAFF_PRO_IDS } from './grandStaffDecks'
-import { EAR_TRAINING_INTERVALS, EAR_TRAINING_INTERVALS_II, EAR_TRAINING_INTERVALS_III, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
+import { EAR_TRAINING_INTERVALS, EAR_TRAINING_INTERVALS_II, EAR_TRAINING_INTERVALS_III, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_TRIADS_INVERSIONS, EAR_TRAINING_SEVENTH_CHORDS, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { REPEAT_SYMBOL_CARDS } from './cm-content/symbols-repeats'
 import { CLEF_SYMBOL_CARDS } from './cm-content/symbols-clefs'
@@ -172,11 +172,27 @@ export const DECKS: Deck[] = [
   {
     id: 'ear-triads',
     title: 'Triads',
-    description: 'Identify major, minor, diminished and augmented triads by ear.',
+    description: 'Identify major, minor, diminished, and augmented triads by ear — root position.',
     tag: 'free',
     group: 'Chords & Harmony',
     cards: EAR_TRAINING_TRIADS,
     browseCards: EAR_TRAINING_TRIADS_BROWSE,
+  },
+  {
+    id: 'ear-triads-inversions',
+    title: 'Triads — Inversions',
+    description: 'Identify first and second inversions of major and minor triads by ear.',
+    tag: 'free',
+    group: 'Chords & Harmony',
+    cards: EAR_TRAINING_TRIADS_INVERSIONS,
+  },
+  {
+    id: 'ear-seventh-chords',
+    title: '7th Chords',
+    description: 'Identify m7, mM7, maj7, dom7, half-diminished, and fully diminished 7th chords by ear — root position.',
+    tag: 'free',
+    group: 'Chords & Harmony',
+    cards: EAR_TRAINING_SEVENTH_CHORDS,
   },
   {
     id: 'ear-cadences',

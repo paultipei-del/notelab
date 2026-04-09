@@ -100,6 +100,17 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
         sharedSampler.triggerAttackRelease(note, '8n', now + i * 0.35)
       })
       totalDuration = notes.length * 350 + 600
+    } else if (pattern === 'chord-cascade') {
+      // 72 BPM: Q = 60/72s. Two-bar exercise:
+      // Bar 1 — broken: note[i] attacks at beat i, sustains (4-i) beats (waterfall)
+      // Bar 2 — blocked: all notes together for 4 beats (whole note)
+      const Q = 60 / 72
+      notes.forEach((note: string, i: number) => {
+        const dur = Math.max(1, 4 - i) * Q
+        sharedSampler.triggerAttackRelease(note, dur, now + i * Q)
+      })
+      sharedSampler.triggerAttackRelease(notes, 4 * Q, now + 4 * Q)
+      totalDuration = Math.round((8 * Q + 0.8) * 1000)
     } else if (pattern === 'interval-ascending') {
       // 72 BPM: quarter = 0.833s, half = 1.667s
       // root (Q) → top (Q) → [root, top] blocked (H)

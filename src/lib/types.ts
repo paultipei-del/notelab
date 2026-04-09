@@ -18,7 +18,7 @@ export interface Card {
   // audio cards
   audioNotes?: string[]        // e.g. ['C4', 'E4', 'G4'] for harmonic playback
   audioChords?: string[][]     // e.g. [['C4','E4','G4'], ['G4','B4','D5']] for cadences
-  audioPattern?: 'harmonic' | 'ascending' | 'descending' | 'cadence' | 'scale' | 'interval-ascending' | 'interval-descending'
+  audioPattern?: 'harmonic' | 'ascending' | 'descending' | 'cadence' | 'scale' | 'interval-ascending' | 'interval-descending' | 'chord-cascade'
   audioLabel?: string          // shown on front: e.g. 'Major Triad'
   audioHint?: string           // optional hint: e.g. 'Root position, C major'
   audioDuration?: string       // Tone.js duration e.g. '4n', '2n', '1n'

@@ -137,14 +137,46 @@ function makeAdvancedIntervalCards(): Card[] {
 export const EAR_TRAINING_INTERVALS_III: Card[] = makeAdvancedIntervalCards()
 
 export const EAR_TRAINING_TRIADS: Card[] = [
-  { id: 1, type: 'audio', front: 'triad', back: 'Major triad — bright, stable', audioNotes: ['C4','E4','G4'], audioPattern: 'harmonic', audioLabel: 'Major or minor?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Major' },
-  { id: 2, type: 'audio', front: 'triad', back: 'Minor triad — dark, somber', audioNotes: ['C4','Eb4','G4'], audioPattern: 'harmonic', audioLabel: 'Major or minor?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Minor' },
-  { id: 3, type: 'audio', front: 'triad', back: 'Major triad — G major', audioNotes: ['G3','B3','D4'], audioPattern: 'harmonic', audioLabel: 'Major or minor?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Major' },
-  { id: 4, type: 'audio', front: 'triad', back: 'Minor triad — a minor', audioNotes: ['A3','C4','E4'], audioPattern: 'harmonic', audioLabel: 'Major or minor?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Minor' },
-  { id: 5, type: 'audio', front: 'triad', back: 'Major triad — F major', audioNotes: ['F3','A3','C4'], audioPattern: 'harmonic', audioLabel: 'Major or minor?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Major' },
-  { id: 6, type: 'audio', front: 'triad', back: 'Minor triad — e minor', audioNotes: ['E3','G3','B3'], audioPattern: 'harmonic', audioLabel: 'Major or minor?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Minor' },
-  { id: 7, type: 'audio', front: 'triad', back: 'Diminished triad — tense, unstable', audioNotes: ['B3','D4','F4'], audioPattern: 'harmonic', audioLabel: 'What triad quality?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Diminished' },
-  { id: 8, type: 'audio', front: 'triad', back: 'Augmented triad — tense, expanded', audioNotes: ['C4','E4','Ab4'], audioPattern: 'harmonic', audioLabel: 'What triad quality?', audioHint: 'Root position', audioDuration: '2n', symbolName: 'Augmented' },
+  { id: 1, type: 'audio', front: 'triad', back: 'Major triad — bright, stable', audioNotes: ['C4','E4','G4'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Major' },
+  { id: 2, type: 'audio', front: 'triad', back: 'Minor triad — dark, somber', audioNotes: ['C4','Eb4','G4'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Minor' },
+  { id: 3, type: 'audio', front: 'triad', back: 'Major triad — G major', audioNotes: ['G3','B3','D4'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Major' },
+  { id: 4, type: 'audio', front: 'triad', back: 'Minor triad — a minor', audioNotes: ['A3','C4','E4'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Minor' },
+  { id: 5, type: 'audio', front: 'triad', back: 'Major triad — F major', audioNotes: ['F3','A3','C4'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Major' },
+  { id: 6, type: 'audio', front: 'triad', back: 'Minor triad — e minor', audioNotes: ['E3','G3','B3'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Minor' },
+  { id: 7, type: 'audio', front: 'triad', back: 'Diminished triad — tense, unstable', audioNotes: ['B3','D4','F4'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Diminished' },
+  { id: 8, type: 'audio', front: 'triad', back: 'Augmented triad — tense, expanded', audioNotes: ['C4','E4','Ab4'], audioPattern: 'chord-cascade', audioLabel: 'What triad quality?', audioHint: 'Root position', symbolName: 'Augmented' },
+]
+
+// ── Triads — Inversions (major and minor only) ─────────────────────────────────
+
+export const EAR_TRAINING_TRIADS_INVERSIONS: Card[] = [
+  // Major — 1st inversion (3rd in bass)
+  { id: 1,  type: 'audio', front: 'triad', back: 'Major — 1st inversion — 3rd in bass', audioNotes: ['E4','G4','C5'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'C major', symbolName: 'Major — 1st inv.' },
+  { id: 2,  type: 'audio', front: 'triad', back: 'Major — 1st inversion — 3rd in bass', audioNotes: ['B3','D4','G4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'G major', symbolName: 'Major — 1st inv.' },
+  { id: 3,  type: 'audio', front: 'triad', back: 'Major — 1st inversion — 3rd in bass', audioNotes: ['A3','C4','F4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'F major', symbolName: 'Major — 1st inv.' },
+  // Major — 2nd inversion (5th in bass)
+  { id: 4,  type: 'audio', front: 'triad', back: 'Major — 2nd inversion — 5th in bass', audioNotes: ['G3','C4','E4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'C major', symbolName: 'Major — 2nd inv.' },
+  { id: 5,  type: 'audio', front: 'triad', back: 'Major — 2nd inversion — 5th in bass', audioNotes: ['D4','G4','B4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'G major', symbolName: 'Major — 2nd inv.' },
+  { id: 6,  type: 'audio', front: 'triad', back: 'Major — 2nd inversion — 5th in bass', audioNotes: ['C4','F4','A4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'F major', symbolName: 'Major — 2nd inv.' },
+  // Minor — 1st inversion (3rd in bass)
+  { id: 7,  type: 'audio', front: 'triad', back: 'Minor — 1st inversion — 3rd in bass', audioNotes: ['C4','E4','A4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'A minor', symbolName: 'Minor — 1st inv.' },
+  { id: 8,  type: 'audio', front: 'triad', back: 'Minor — 1st inversion — 3rd in bass', audioNotes: ['G3','B3','E4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'E minor', symbolName: 'Minor — 1st inv.' },
+  { id: 9,  type: 'audio', front: 'triad', back: 'Minor — 1st inversion — 3rd in bass', audioNotes: ['F3','A3','D4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'D minor', symbolName: 'Minor — 1st inv.' },
+  // Minor — 2nd inversion (5th in bass)
+  { id: 10, type: 'audio', front: 'triad', back: 'Minor — 2nd inversion — 5th in bass', audioNotes: ['E4','A4','C5'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'A minor', symbolName: 'Minor — 2nd inv.' },
+  { id: 11, type: 'audio', front: 'triad', back: 'Minor — 2nd inversion — 5th in bass', audioNotes: ['B3','E4','G4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'E minor', symbolName: 'Minor — 2nd inv.' },
+  { id: 12, type: 'audio', front: 'triad', back: 'Minor — 2nd inversion — 5th in bass', audioNotes: ['A3','D4','F4'], audioPattern: 'chord-cascade', audioLabel: 'What inversion?', audioHint: 'D minor', symbolName: 'Minor — 2nd inv.' },
+]
+
+// ── 7th Chords — Root position ─────────────────────────────────────────────────
+
+export const EAR_TRAINING_SEVENTH_CHORDS: Card[] = [
+  { id: 1, type: 'audio', front: 'chord', back: 'Minor 7th (m7) — minor triad + minor 7th — soft, bluesy', audioNotes: ['C4','Eb4','G4','Bb4'], audioPattern: 'chord-cascade', audioLabel: 'What 7th chord quality?', audioHint: 'Root position', symbolName: 'Minor 7th — m7' },
+  { id: 2, type: 'audio', front: 'chord', back: 'Minor-major 7th (mM7) — minor triad + major 7th — tense, bittersweet', audioNotes: ['A3','C4','E4','G#4'], audioPattern: 'chord-cascade', audioLabel: 'What 7th chord quality?', audioHint: 'Root position', symbolName: 'Minor-major 7th — mM7' },
+  { id: 3, type: 'audio', front: 'chord', back: 'Major 7th (maj7) — major triad + major 7th — lush, dreamy', audioNotes: ['F3','A3','C4','E4'], audioPattern: 'chord-cascade', audioLabel: 'What 7th chord quality?', audioHint: 'Root position', symbolName: 'Major 7th — maj7' },
+  { id: 4, type: 'audio', front: 'chord', back: 'Dominant 7th (dom7) — major triad + minor 7th — tense, wants to resolve', audioNotes: ['G3','B3','D4','F4'], audioPattern: 'chord-cascade', audioLabel: 'What 7th chord quality?', audioHint: 'Root position', symbolName: 'Dominant 7th — dom7' },
+  { id: 5, type: 'audio', front: 'chord', back: 'Half-diminished (ø7) — diminished triad + minor 7th — dark, unresolved', audioNotes: ['B3','D4','F4','A4'], audioPattern: 'chord-cascade', audioLabel: 'What 7th chord quality?', audioHint: 'Root position', symbolName: 'Half-diminished — ø7' },
+  { id: 6, type: 'audio', front: 'chord', back: 'Fully diminished (°7) — diminished triad + diminished 7th — very tense, unstable', audioNotes: ['B3','D4','F4','Ab4'], audioPattern: 'chord-cascade', audioLabel: 'What 7th chord quality?', audioHint: 'Root position', symbolName: 'Fully diminished — °7' },
 ]
 
 export const EAR_TRAINING_CADENCES: Card[] = [
