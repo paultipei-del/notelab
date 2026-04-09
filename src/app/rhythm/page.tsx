@@ -992,7 +992,11 @@ export default function RhythmPage() {
     const smallestDur = allNotes.reduce((min: number, n: any) => Math.min(min, n.durationBeats), 1)
     const noteW = Math.max(40, 32 / smallestDur)
     const clientCenter = el.clientWidth / 2
-    const target = Math.max(0, playhead * noteW)
+    const allNotes2 = exercise ? exercise.measures.flatMap((m: any) => m.notes) : []
+    const smallestDur2 = allNotes2.reduce((min: number, n: any) => Math.min(min, n.durationBeats), 1)
+    const noteW2 = Math.max(40, 32 / smallestDur2)
+    const leadPx2 = NOTATION_PAGE_SCROLL_LEAD_BEATS * noteW2
+    const target = Math.max(0, playhead * noteW - leadPx2)
     el.scrollLeft = target
   }, [playhead, playing, countdown, frozenScrollLeft, exercise])
 
@@ -1720,13 +1724,14 @@ export default function RhythmPage() {
               // at playhead=0, first note (x=56+18) should be at centerX
               // at playhead=0, first notehead (x=74) aligns with center playhead line
               const effectivePlayhead = playhead !== null ? playhead : 0
+              const leadPx = NOTATION_PAGE_SCROLL_LEAD_BEATS * NOTE_W_PORTRAIT
               return (
                 <div
                   ref={scrollRef}
                   style={{ overflowX: 'scroll', overflowY: 'hidden', WebkitOverflowScrolling: 'touch' as any, scrollbarWidth: 'none' as any, msOverflowStyle: 'none' as any }}
                 >
-                  <svg className="nl-notation-staff" width={totalW + centerX + 40} height={staffSvgH} style={{ display: 'block' }}>
-                    <g transform={`translate(${centerX - 74}, ${staffYOffset})`}>
+                  <svg className="nl-notation-staff" width={totalW + centerX + 40 + leadPx} height={staffSvgH} style={{ display: 'block' }}>
+                    <g transform={`translate(${centerX - 74 + leadPx}, ${staffYOffset})`}>
                       <line x1={0} y1={STAFF_Y} x2={totalW} y2={STAFF_Y} stroke="#1A1A18" strokeWidth={1.2} />
                       <line x1={56} y1={STAFF_Y - 28} x2={56} y2={STAFF_Y + 28} stroke="#1A1A18" strokeWidth={1} />
                       {exercise.measures.map((measure, mIdx) => {
