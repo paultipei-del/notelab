@@ -113,9 +113,11 @@ function ExerciseRow({
       program_slug: fields.program_slug.trim() || 'core',
       program_sort: fields.program_sort,
     }
-    const { error } = await sb.from('rhythm_exercises').update(payload).eq('id', ex.id)
+    const { data: updated, error } = await sb
+      .from('rhythm_exercises').update(payload).eq('id', ex.id).select('id')
     setSaving(false)
     if (error) { setErr('Save failed: ' + error.message); return }
+    if (!updated || updated.length === 0) { setErr('Save blocked — no rows updated (check Supabase RLS policies).'); return }
     onSaved({ ...ex, ...payload })
     setOpen(false)
   }
