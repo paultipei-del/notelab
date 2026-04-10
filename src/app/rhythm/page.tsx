@@ -84,17 +84,20 @@ function readPairScrollStridePx(scrollEl: HTMLDivElement | null, svgH: number, g
  * Safari/WebKit often buffers more than Chrome; `outputLatency` helps align UI and tap feedback.
  */
 function getAudioOutputLatencySec(ctx: AudioContext): number {
-  const ex = ctx as AudioContext & { outputLatency?: number }
-  let sec =
-    typeof ex.outputLatency === 'number' && Number.isFinite(ex.outputLatency) && ex.outputLatency > 0
-      ? ex.outputLatency
-      : 0
-  if (typeof navigator !== 'undefined' && sec <= 0) {
+  const ex = ctx as AudioContext & { outputLatency?: number; baseLatency?: number }
+  // Total audible latency = hardware output latency + AudioContext processing latency
+  const outputLat = typeof ex.outputLatency === 'number' && Number.isFinite(ex.outputLatency) && ex.outputLatency >= 0
+    ? ex.outputLatency : 0
+  const baseLat = typeof ex.baseLatency === 'number' && Number.isFinite(ex.baseLatency) && ex.baseLatency >= 0
+    ? ex.baseLatency : 0
+  let sec = outputLat + baseLat
+  if (sec <= 0 && typeof navigator !== 'undefined') {
     const ua = navigator.userAgent
     const isSafari = /safari/i.test(ua) && !/chrome|android|crios|fxios/i.test(ua)
-    if (isSafari) sec = 0.045
+    // Safari default hardware buffer is typically 128–512 frames @ 44.1kHz = 3–12ms base + ~170ms output
+    if (isSafari) sec = 0.2
   }
-  return Math.min(Math.max(0, sec), 0.12)
+  return Math.min(Math.max(0, sec), 0.4)
 }
 
 // Bravura note glyphs (SMuFL U+E1D0 range)
@@ -1019,7 +1022,7 @@ export default function RhythmPage() {
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
-      const countdownElapsed = ctx2.currentTime - countdownStart
+      const countdownElapsed = ctx2.currentTime - lat - countdownStart
       if (countdownElapsed < countdownDuration) {
         const countBeat = Math.floor(countdownElapsed / feltBeatDuration) + 1
         setCountdown(countBeat)
@@ -1031,7 +1034,7 @@ export default function RhythmPage() {
           setCountdownOverlayOpacity(1)
         }
         // Start playhead moving during last countdown beat (heard downbeat = startTime + latency)
-        const timeToHeardDownbeat = startTimeRef.current - ctx2.currentTime
+        const timeToHeardDownbeat = startTimeRef.current + lat - ctx2.currentTime
         // Show playhead from 2 beats before downbeat
         if (timeToHeardDownbeat <= beatDuration) {
           setPlayhead(-timeToHeardDownbeat / beatDuration)
@@ -1046,7 +1049,7 @@ export default function RhythmPage() {
       }
       setCountdown(null)
       setCountdownOverlayOpacity(1)
-      const elapsed = ctx2.currentTime - startTimeRef.current
+      const elapsed = ctx2.currentTime - lat - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
       if (beatFloat >= effectiveTotalBeats) {
@@ -1238,7 +1241,7 @@ export default function RhythmPage() {
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
-      const elapsed = ctx2.currentTime - startTimeRef.current
+      const elapsed = ctx2.currentTime - lat - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = totalQBeats
       setPlayhead(beatFloat)
