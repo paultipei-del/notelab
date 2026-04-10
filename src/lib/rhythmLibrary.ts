@@ -112,20 +112,24 @@ export function flattenRhythmUnlockOrder(sortedFlat: RhythmExerciseMeta[]): Rhyt
   return sortedFlat
 }
 
-export async function fetchExerciseLibrary(): Promise<{
-  flat: RhythmExerciseMeta[]
-  tree: RhythmProgramNode[]
-  unlockOrder: RhythmExerciseMeta[]
-}> {
-  const sb = getSupabaseClient()
-  const { data, error } = await sb.from('rhythm_exercises').select(RHYTHM_EXERCISE_COLUMNS)
+type LibraryResult = { flat: RhythmExerciseMeta[]; tree: RhythmProgramNode[]; unlockOrder: RhythmExerciseMeta[] }
+let _libraryCache: LibraryResult | null = null
+let _libraryPending: Promise<LibraryResult> | null = null
 
-  if (error || !data) return { flat: [], tree: [], unlockOrder: [] }
-
-  const flat = (data as Record<string, unknown>[]).map(rhythmMetaFromDbRow)
-  const sorted = sortRhythmExercises(flat)
-  const tree = buildRhythmLibraryTree(sorted)
-  return { flat: sorted, tree, unlockOrder: sorted }
+export async function fetchExerciseLibrary(): Promise<LibraryResult> {
+  if (_libraryCache) return _libraryCache
+  if (_libraryPending) return _libraryPending
+  _libraryPending = (async () => {
+    const sb = getSupabaseClient()
+    const { data, error } = await sb.from('rhythm_exercises').select(RHYTHM_EXERCISE_COLUMNS)
+    if (error || !data) return { flat: [], tree: [], unlockOrder: [] }
+    const flat = (data as Record<string, unknown>[]).map(rhythmMetaFromDbRow)
+    const sorted = sortRhythmExercises(flat)
+    const tree = buildRhythmLibraryTree(sorted)
+    _libraryCache = { flat: sorted, tree, unlockOrder: sorted }
+    return _libraryCache
+  })()
+  return _libraryPending
 }
 
 /** @deprecated Prefer `fetchExerciseLibrary` for hierarchy-aware UIs. */

@@ -388,7 +388,8 @@ function renderMeasure(
 
 // ── Library panel ─────────────────────────────────────────────────────────────
 function LibraryPanel({
-  onSelect, onDrop, dragOver, setDragOver, progress, currentId, userId, onProgressReset
+  onSelect, onDrop, dragOver, setDragOver, progress, currentId, userId, onProgressReset,
+  tree, unlockOrder, loading, isDesktop,
 }: {
   onSelect: (meta: RhythmExerciseMeta) => void
   onDrop: (e: React.DragEvent) => void
@@ -398,10 +399,11 @@ function LibraryPanel({
   currentId?: string
   userId?: string | null
   onProgressReset?: () => void
+  tree: RhythmProgramNode[]
+  unlockOrder: RhythmExerciseMeta[]
+  loading: boolean
+  isDesktop?: boolean
 }) {
-  const [tree, setTree] = useState<RhythmProgramNode[]>([])
-  const [unlockOrder, setUnlockOrder] = useState<RhythmExerciseMeta[]>([])
-  const [loading, setLoading] = useState(true)
   const [openProgramSlug, setOpenProgramSlug] = useState<string | null>(null)
   const [openCategoryKey, setOpenCategoryKey] = useState<string | null>(null)
   const [showUpload, setShowUpload] = useState(false)
@@ -412,32 +414,14 @@ function LibraryPanel({
     return m
   }, [unlockOrder])
 
+  // Auto-open first program + category when data arrives
   useEffect(() => {
-    import('@/lib/rhythmLibrary').then(({ fetchExerciseLibrary }) => {
-      fetchExerciseLibrary().then(({ tree: t, unlockOrder: order }) => {
-        setTree(t)
-        setUnlockOrder(order)
-        if (t.length === 1) {
-          const p = t[0]
-          setOpenProgramSlug(p.slug)
-          const c0 = p.categories[0]
-          if (c0) setOpenCategoryKey(`${p.slug}::${c0.name}`)
-        } else if (t[0]) {
-          setOpenProgramSlug(t[0].slug)
-          const c0 = t[0].categories[0]
-          if (c0) setOpenCategoryKey(`${t[0].slug}::${c0.name}`)
-        }
-        setLoading(false)
-      })
-    })
-  }, [])
-
-  const isExerciseUnlocked = (ex: RhythmExerciseMeta) => {
-    const idx = unlockIndexMap.get(ex.id) ?? -1
-    if (idx <= 0) return true
-    const prev = unlockOrder[idx - 1]
-    return prev ? (progress[prev.id]?.completed ?? false) : true
-  }
+    if (tree.length === 0) return
+    const p = tree[0]
+    setOpenProgramSlug(p.slug)
+    const c0 = p.categories[0]
+    if (c0) setOpenCategoryKey(`${p.slug}::${c0.name}`)
+  }, [tree])
 
   const categoryAccordionBtn = (isOpen: boolean) =>
     ({
@@ -454,20 +438,162 @@ function LibraryPanel({
       textAlign: 'left' as const,
     }) satisfies CSSProperties
 
+  const isExerciseUnlocked2 = (ex: RhythmExerciseMeta) => {
+    const idx = unlockIndexMap.get(ex.id) ?? -1
+    if (idx <= 0) return true
+    const prev = unlockOrder[idx - 1]
+    return prev ? (progress[prev.id]?.completed ?? false) : true
+  }
+
+  const renderExerciseRow = (ex: RhythmExerciseMeta, isLastRow: boolean) => {
+    const isUnlocked = isExerciseUnlocked2(ex)
+    const p = progress[ex.id]
+    const isCurrent = ex.id === currentId
+    const gIdx = (unlockIndexMap.get(ex.id) ?? 0) + 1
+    return (
+      <button key={ex.id} type="button"
+        onClick={() => isUnlocked && onSelect(ex)}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
+          padding: '11px 16px',
+          borderBottom: isLastRow ? 'none' : '1px solid #F0EDE8',
+          background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8',
+          cursor: isUnlocked ? 'pointer' : 'default',
+          textAlign: 'left' as const, transition: 'background 0.1s', border: 'none',
+          borderBottomWidth: isLastRow ? 0 : 1, borderBottomStyle: 'solid' as const, borderBottomColor: '#F0EDE8',
+        }}
+        onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#FEFCF8' }}
+        onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8' }}>
+        <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '24px', flexShrink: 0 }}>{gIdx}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: isUnlocked ? '#1A1A18' : '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{ex.title}</p>
+          <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', margin: 0 }}>{ex.beats}/{ex.beat_type} · {DIFFICULTY_LABEL[ex.difficulty]}</p>
+        </div>
+        {!isUnlocked && <span style={{ fontSize: '13px', opacity: 0.5 }}>🔒</span>}
+        {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: '11px', color: '#65C366', fontWeight: 500 }}>✓</span>}
+        {isUnlocked && p && !p.completed && <span style={{ fontFamily: F, fontSize: '10px', color: '#BA7517' }}>{p.best_timing}%</span>}
+        {isCurrent && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#BA7517', flexShrink: 0 }} />}
+      </button>
+    )
+  }
+
+  const resetBtn = (
+    <button onClick={async () => {
+      if (!confirm('Reset all progress? This will lock all exercises except the first.')) return
+      const { resetProgress } = await import('@/lib/rhythmLibrary')
+      await resetProgress(userId ?? null)
+      onProgressReset?.()
+    }} style={{ fontFamily: F, fontSize: '11px', color: '#888780', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
+      Reset progress
+    </button>
+  )
+
+  const uploadDropzone = (
+    <div style={{ marginTop: '16px' }}>
+      <button onClick={() => setShowUpload(v => !v)}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderRadius: showUpload ? '12px 12px 0 0' : '12px', border: '1px solid #D3D1C7', borderBottom: showUpload ? 'none' : '1px solid #D3D1C7', background: 'white', cursor: 'pointer', textAlign: 'left' as const }}>
+        <span style={{ fontFamily: F, fontSize: '12px', color: '#888780' }}>Load custom .mxl</span>
+        <span style={{ fontFamily: F, fontSize: '11px', color: '#D3D1C7' }}>{showUpload ? '▲' : '▼'}</span>
+      </button>
+      {showUpload && (
+        <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+          style={{ border: `1px solid ${dragOver ? '#BA7517' : '#D3D1C7'}`, borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px 24px', textAlign: 'center' as const, background: dragOver ? '#FEF3E2' : 'white', transition: 'all 0.2s' }}>
+          <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#888780', marginBottom: '4px' }}>Drop .mxl here</p>
+          <p style={{ fontFamily: F, fontSize: '11px', color: '#D3D1C7' }}>Export from MuseScore</p>
+        </div>
+      )}
+    </div>
+  )
+
+  // ── Desktop two-panel layout ──────────────────────────────────────────────
+  if (isDesktop) {
+    const activeProgram = tree.find(p => p.slug === openProgramSlug) ?? tree[0]
+    const activeCat = activeProgram?.categories.find(c => `${activeProgram.slug}::${c.name}` === openCategoryKey)
+      ?? activeProgram?.categories[0]
+
+    return (
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#1A1A18', margin: 0 }}>Exercises</h2>
+          {resetBtn}
+        </div>
+
+        {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>Loading…</p>}
+
+        {!loading && tree.length > 0 && (
+          <div style={{ display: 'flex', gap: '0', background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflow: 'hidden', minHeight: '400px' }}>
+            {/* Left nav */}
+            <div style={{ width: '200px', flexShrink: 0, borderRight: '1px solid #F0EDE8', background: '#FAFAF8', display: 'flex', flexDirection: 'column' }}>
+              {tree.map(program => {
+                const multiProgram = tree.length > 1
+                return (
+                  <div key={program.slug}>
+                    {multiProgram && (
+                      <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid #F0EDE8' }}>
+                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: '#888780', margin: 0 }}>{rhythmProgramTitle(program.slug)}</p>
+                      </div>
+                    )}
+                    {program.categories.map(cat => {
+                      const catKey = `${program.slug}::${cat.name}`
+                      const isActive = openCategoryKey === catKey
+                      const catDone = cat.levels.reduce((a, l) => a + l.exercises.filter(e => progress[e.id]?.completed).length, 0)
+                      const catTotal = cat.levels.reduce((a, l) => a + l.exercises.length, 0)
+                      return (
+                        <button key={catKey} type="button"
+                          onClick={() => { setOpenProgramSlug(program.slug); setOpenCategoryKey(catKey) }}
+                          style={{
+                            width: '100%', textAlign: 'left' as const, padding: '10px 16px',
+                            background: isActive ? '#1A1A18' : 'transparent',
+                            border: 'none', borderBottom: '1px solid #F0EDE8',
+                            cursor: 'pointer', transition: 'background 0.1s',
+                          }}
+                          onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#F0EDE8' }}
+                          onMouseLeave={e => { e.currentTarget.style.background = isActive ? '#1A1A18' : 'transparent' }}>
+                          <p style={{ fontFamily: SERIF, fontSize: '15px', fontWeight: 300, color: isActive ? 'white' : '#1A1A18', margin: '0 0 2px' }}>{cat.name}</p>
+                          <p style={{ fontFamily: F, fontSize: '10px', color: isActive ? 'rgba(255,255,255,0.5)' : '#B0AEA8', margin: 0 }}>{catDone}/{catTotal}</p>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Right content */}
+            <div style={{ flex: 1, overflowY: 'auto' as const }}>
+              {activeCat ? activeCat.levels.map((levelNode, levelIdx) => {
+                const isLastLevel = levelIdx === activeCat.levels.length - 1
+                return (
+                  <div key={levelNode.level}>
+                    <div style={{ padding: '8px 16px 6px', background: '#FAFAF8', borderBottom: '1px solid #F0EDE8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' as const, color: '#888780' }}>Level {levelNode.level}</span>
+                      <span style={{ fontFamily: F, fontSize: '10px', color: '#B0AEA8' }}>{levelNode.exercises.filter(e => progress[e.id]?.completed).length}/{levelNode.exercises.length}</span>
+                    </div>
+                    {levelNode.exercises.map((ex, exIdx) => {
+                      const isLastRow = isLastLevel && exIdx === levelNode.exercises.length - 1
+                      return renderExerciseRow(ex, isLastRow)
+                    })}
+                  </div>
+                )
+              }) : null}
+            </div>
+          </div>
+        )}
+
+        {uploadDropzone}
+      </div>
+    )
+  }
+
+  // ── Mobile accordion layout ───────────────────────────────────────────────
   return (
     <div style={{ width: '100%', maxWidth: '560px' }}>
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '24px' }}>
         <h2 style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#1A1A18', margin: 0 }}>Exercises</h2>
-        <button onClick={async () => {
-          if (!confirm('Reset all progress? This will lock all exercises except the first.')) return
-          const { resetProgress } = await import('@/lib/rhythmLibrary')
-          await resetProgress(userId ?? null)
-          onProgressReset?.()
-        }} style={{ fontFamily: F, fontSize: '11px', color: '#888780', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}>
-          Reset progress
-        </button>
+        {resetBtn}
       </div>
 
       {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>Loading…</p>}
@@ -567,41 +693,8 @@ function LibraryPanel({
                               <span style={{ fontFamily: F, fontSize: '10px', color: '#B0AEA8' }}>{levelDone}/{levelTotal}</span>
                             </div>
                             {levelNode.exercises.map((ex, exIdx) => {
-                              const isUnlocked = isExerciseUnlocked(ex)
-                              const p = progress[ex.id]
-                              const isCurrent = ex.id === currentId
                               const isLastRow = isLastLevel && exIdx === levelNode.exercises.length - 1
-                              const gIdx = (unlockIndexMap.get(ex.id) ?? 0) + 1
-
-                              return (
-                                <button key={ex.id} type="button"
-                                  onClick={() => isUnlocked && onSelect(ex)}
-                                  style={{
-                                    width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
-                                    padding: '11px 16px',
-                                    borderBottom: isLastRow ? 'none' : '1px solid #F0EDE8',
-                                    background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8',
-                                    cursor: isUnlocked ? 'pointer' : 'default',
-                                    textAlign: 'left' as const, transition: 'background 0.1s',
-                                  }}
-                                  onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#FEFCF8' }}
-                                  onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8' }}>
-
-                                  <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '24px', flexShrink: 0 }}>{gIdx}</span>
-
-                                  <div style={{ flex: 1, minWidth: 0 }}>
-                                    <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: isUnlocked ? '#1A1A18' : '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{ex.title}</p>
-                                    <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', margin: 0 }}>{ex.beats}/{ex.beat_type} · {DIFFICULTY_LABEL[ex.difficulty]}</p>
-                                  </div>
-
-                                  {!isUnlocked && <span style={{ fontSize: '13px', opacity: 0.5 }}>🔒</span>}
-                                  {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: '11px', color: '#65C366', fontWeight: 500 }}>✓</span>}
-                                  {isUnlocked && p && !p.completed && (
-                                    <span style={{ fontFamily: F, fontSize: '10px', color: '#BA7517' }}>{p.best_timing}%</span>
-                                  )}
-                                  {isCurrent && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#BA7517', flexShrink: 0 }} />}
-                                </button>
-                              )
+                              return renderExerciseRow(ex, isLastRow)
                             })}
                           </div>
                         )
@@ -615,21 +708,7 @@ function LibraryPanel({
         )
       })}
 
-      {/* Upload — collapsible */}
-      <div style={{ marginTop: '16px' }}>
-        <button onClick={() => setShowUpload(v => !v)}
-          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderRadius: showUpload ? '12px 12px 0 0' : '12px', border: '1px solid #D3D1C7', borderBottom: showUpload ? 'none' : '1px solid #D3D1C7', background: 'white', cursor: 'pointer', textAlign: 'left' as const }}>
-          <span style={{ fontFamily: F, fontSize: '12px', color: '#888780' }}>Load custom .mxl</span>
-          <span style={{ fontFamily: F, fontSize: '11px', color: '#D3D1C7' }}>{showUpload ? '▲' : '▼'}</span>
-        </button>
-        {showUpload && (
-          <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
-            style={{ border: `1px solid ${dragOver ? '#BA7517' : '#D3D1C7'}`, borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px 24px', textAlign: 'center' as const, background: dragOver ? '#FEF3E2' : 'white', transition: 'all 0.2s' }}>
-            <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#888780', marginBottom: '4px' }}>Drop .mxl here</p>
-            <p style={{ fontFamily: F, fontSize: '11px', color: '#D3D1C7' }}>Export from MuseScore</p>
-          </div>
-        )}
-      </div>
+      {uploadDropzone}
 
     </div>
   )
@@ -694,6 +773,8 @@ export default function RhythmPage() {
   const [loadingExercise, setLoadingExercise] = useState(false)
   const [progress, setProgress] = useState<Record<string, RhythmProgress>>({})
   const [allExercises, setAllExercises] = useState<RhythmExerciseMeta[]>([])
+  const [libraryTree, setLibraryTree] = useState<RhythmProgramNode[]>([])
+  const [libraryLoading, setLibraryLoading] = useState(true)
   const { user } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
   const landscapeContainerRef = useRef<HTMLDivElement>(null)
@@ -829,19 +910,17 @@ export default function RhythmPage() {
     return () => window.removeEventListener('resize', checkOrientation)
   }, [])
 
-  // Load all exercises for next/prev navigation (global unlock order)
+  // Load library + progress in parallel (library is cached after first fetch)
   useEffect(() => {
-    import('@/lib/rhythmLibrary').then(({ fetchExerciseLibrary }) => {
-      fetchExerciseLibrary().then(({ unlockOrder }) => setAllExercises(unlockOrder))
+    import('@/lib/rhythmLibrary').then(({ fetchExerciseLibrary, fetchProgress }) => {
+      Promise.all([fetchExerciseLibrary(), fetchProgress(user?.id ?? null)]).then(([lib, prog]) => {
+        setAllExercises(lib.unlockOrder)
+        setLibraryTree(lib.tree)
+        setLibraryLoading(false)
+        setProgress(prog)
+      })
     })
-  }, [])
-
-  // Load progress
-  useEffect(() => {
-    import('@/lib/rhythmLibrary').then(({ fetchProgress }) => {
-      fetchProgress(user?.id ?? null).then(setProgress)
-    })
-  }, [user])
+  }, [user?.id])
 
   useEffect(() => {
     const el = useMobileLayout ? containerRef.current : landscapeContainerRef.current
@@ -1989,8 +2068,8 @@ export default function RhythmPage() {
             </div>
           </div>
         ) : (
-          <div ref={containerRef} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} userId={user?.id} onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))} />
+          <div ref={containerRef} style={{ flex: 1, overflowY: 'auto' as const, padding: '4px 0 8px' }}>
+            <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} userId={user?.id} onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))} tree={libraryTree} unlockOrder={allExercises} loading={libraryLoading} />
           </div>
         )}
 
@@ -2136,6 +2215,10 @@ export default function RhythmPage() {
             currentId={currentMeta?.id}
             userId={user?.id}
             onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))}
+            tree={libraryTree}
+            unlockOrder={allExercises}
+            loading={libraryLoading}
+            isDesktop
           />
         )}
 
