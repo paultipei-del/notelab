@@ -284,6 +284,10 @@ export default function GeneratePage() {
   const [categories, setCategories] = useState<string[]>([...DEFAULT_CATEGORIES])
   const [category, setCategory] = useState<string>(DEFAULT_CATEGORIES[0])
   const [difficulty, setDifficulty] = useState(1)
+  const [programSlug, setProgramSlug] = useState('core')
+  const [programSort, setProgramSort] = useState(0)
+  const [categorySort, setCategorySort] = useState(0)
+  const [level, setLevel] = useState(1)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null)
   const [showDiag, setShowDiag] = useState(false)
@@ -300,16 +304,29 @@ export default function GeneratePage() {
 
   useEffect(() => {
     let cancelled = false
-    import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
-      fetchExercisesByCategory().then(grouped => {
-        if (cancelled) return
-        const fetched = Object.keys(grouped ?? {})
-        const merged = Array.from(new Set([...DEFAULT_CATEGORIES, ...fetched])).filter(Boolean)
-        setCategories(merged)
-        if (!merged.includes(category)) setCategory(merged[0] ?? DEFAULT_CATEGORIES[0])
-      }).catch(() => {
-        // keep fallback categories
-      })
+    import('@/lib/rhythmLibrary').then(({ fetchExerciseLibrary, sortRhythmExercises }) => {
+      fetchExerciseLibrary()
+        .then(({ flat }) => {
+          if (cancelled) return
+          const sorted = sortRhythmExercises(flat)
+          const ordered: string[] = []
+          const seen = new Set<string>()
+          for (const ex of sorted) {
+            if (!seen.has(ex.category)) {
+              seen.add(ex.category)
+              ordered.push(ex.category)
+            }
+          }
+          for (const d of DEFAULT_CATEGORIES) {
+            if (!seen.has(d)) ordered.push(d)
+          }
+          const merged = ordered.length ? ordered : [...DEFAULT_CATEGORIES]
+          setCategories(merged)
+          if (!merged.includes(category)) setCategory(merged[0] ?? DEFAULT_CATEGORIES[0])
+        })
+        .catch(() => {
+          // keep fallback categories
+        })
     }).catch(() => {
       // keep fallback categories
     })
@@ -330,12 +347,22 @@ export default function GeneratePage() {
       const base64 = btoa(binary)
       const safeName = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       const safeCat = category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-      const filePath = `generated/${safeCat}/${safeName}-${Date.now()}.mxl`
+      const safeProg = programSlug.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 'core'
+      const filePath = `generated/${safeProg}/${safeCat}/${safeName}-${Date.now()}.mxl`
       const sb = getSupabaseClient()
       const { error } = await sb.from('rhythm_exercises').insert({
-        title: title.trim(), category, difficulty,
-        beats: opts.timeSignature.beats, beat_type: opts.timeSignature.beatType,
-        order_index: 0, file_path: filePath, file_data: base64,
+        title: title.trim(),
+        category,
+        difficulty,
+        beats: opts.timeSignature.beats,
+        beat_type: opts.timeSignature.beatType,
+        order_index: 0,
+        program_slug: safeProg,
+        program_sort: programSort,
+        category_sort: categorySort,
+        level: Math.max(1, level),
+        file_path: filePath,
+        file_data: base64,
       })
       if (error) throw new Error(error.message)
       setMessage({ text: `✓ "${title}" saved to library.`, ok: true })
@@ -343,7 +370,7 @@ export default function GeneratePage() {
     } catch (err) {
       setMessage({ text: String(err), ok: false })
     } finally { setSaving(false) }
-  }, [preview, title, category, difficulty, opts])
+  }, [preview, title, category, difficulty, opts, programSlug, programSort, categorySort, level])
 
   const toggleNote = (n: NoteValue) => {
     const pool = opts.notePool.includes(n) ? opts.notePool.filter(x => x !== n) : [...opts.notePool, n]
@@ -497,6 +524,22 @@ export default function GeneratePage() {
                 <select value={difficulty} onChange={e => setDifficulty(Number(e.target.value))} style={inp}>
                   {[1,2,3,4,5].map(d => <option key={d} value={d}>{d} — {DIFFICULTY_LABEL[d]}</option>)}
                 </select>
+              </div>
+              <div>
+                <label style={lbl}>Program slug</label>
+                <input value={programSlug} onChange={e => setProgramSlug(e.target.value)} placeholder="core" style={inp} />
+              </div>
+              <div>
+                <label style={lbl}>Program sort</label>
+                <input type="number" value={programSort} onChange={e => setProgramSort(Number(e.target.value))} style={inp} />
+              </div>
+              <div>
+                <label style={lbl}>Category sort</label>
+                <input type="number" value={categorySort} onChange={e => setCategorySort(Number(e.target.value))} style={inp} />
+              </div>
+              <div>
+                <label style={lbl}>Level</label>
+                <input type="number" min={1} value={level} onChange={e => setLevel(Math.max(1, Number(e.target.value)))} style={inp} />
               </div>
             </div>
           </div>
