@@ -2018,9 +2018,9 @@ export default function RhythmPage() {
                 style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                 Mixer
               </button>
-              <button onClick={playing || previewing ? stop : startPreview}
-                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + ((playing || previewing) ? '#BA7517' : '#D3D1C7'), background: (playing || previewing) ? '#BA7517' : 'white', color: (playing || previewing) ? 'white' : '#888780', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {playing || previewing ? '■' : '▶'}
+              <button onClick={previewing ? stop : startPreview} disabled={playing}
+                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + (previewing ? '#BA7517' : '#D3D1C7'), background: previewing ? '#BA7517' : 'white', color: previewing ? 'white' : '#888780', fontSize: '12px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: playing ? 0.4 : 1 }}>
+                {previewing ? '■' : '▶'}
               </button>
               <button onClick={playing ? stop : start}
                 style={{ background: playing ? 'none' : '#1A1A18', color: playing ? '#888780' : 'white', border: playing ? '1px solid #D3D1C7' : 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
