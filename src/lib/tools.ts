@@ -49,6 +49,14 @@ export const TOOLS: ToolCard[] = [
     group: 'Theory',
   },
   {
+    href: '/rhythm',
+    title: 'Rhythm Trainer',
+    desc: 'Practice rhythmic patterns with a guided play-along — tap along to the beat or follow the notation.',
+    badge: 'Free',
+    cta: 'Practice →',
+    group: 'Drills',
+  },
+  {
     href: '/glossary',
     title: 'Glossary',
     desc: 'Searchable reference of musical terms — French, German, Italian, abbreviations.',
