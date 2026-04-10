@@ -10,10 +10,10 @@ import AuthModal from '@/components/AuthModal'
 const F = 'var(--font-jost), sans-serif'
 
 const NAV = [
-  { label: 'Tools',        href: '/',                   match: (p: string) => p === '/' },
-  { label: 'Programs',     href: '/programs',           match: (p: string) => p === '/programs' },
+  { label: 'Flashcards',   href: '/flashcards',         match: (p: string) => p === '/flashcards' },
   { label: 'Ear Training', href: '/collection?tag=ear', match: (p: string) => p === '/collection' },
-  { label: 'Flashcards',   href: '/collection?tag=cm',  match: (_p: string) => false },
+  { label: 'Tools',        href: '/tools',              match: (p: string) => p === '/tools' || p === '/' },
+  { label: 'Programs',     href: '/programs',           match: (p: string) => p === '/programs' },
 ]
 
 function getInitials(name: string | null | undefined, email: string): string {

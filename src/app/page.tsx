@@ -2,69 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { DECKS, deckRequiresPurchase, CM_BUNDLE_PRICE_ID, PRO_PRICE_ID } from '@/lib/decks'
+import { DECKS } from '@/lib/decks'
 import { Deck, DeckTag } from '@/lib/types'
 import { loadUserDecks, createDeck } from '@/lib/userDecks'
 import DeckEditor from '@/components/DeckEditor'
-import AuthModal from '@/components/AuthModal'
+import HomeCategoryHub from '@/components/HomeCategoryHub'
 import { useAuth } from '@/hooks/useAuth'
-import { usePurchases } from '@/hooks/usePurchases'
-import { signOut } from '@/lib/auth'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
-
-const TOOLS = [
-  {
-    href: '/sight-read',
-    title: 'Staff Recognition',
-    desc: 'Play notes on your piano as they appear on the staff. Treble, bass, and grand staff.',
-    badge: 'Free + Pro',
-    cta: 'Practice →',
-  },
-  {
-    href: '/note-id',
-    title: 'Note Identification',
-    desc: 'Identify notes by name using letter buttons or a piano keyboard.',
-    badge: 'Free + Pro',
-    cta: 'Practice →',
-  },
-  {
-    href: '/key-signatures',
-    title: 'Key Signatures',
-    desc: 'Circle of fifths explorer, staff drill, historical Affekt, and key ID quiz.',
-    badge: 'Free',
-    cta: 'Explore →',
-  },
-  {
-    href: '/scale-builder',
-    title: 'Scale Builder',
-    desc: 'Build major and minor scales from any root using whole and half steps.',
-    badge: 'Free',
-    cta: 'Build →',
-  },
-  {
-    href: '/scale-fingerings',
-    title: 'Scale Fingerings',
-    desc: 'Two-octave major and minor scale fingerings for both hands, with keyboard and staff views.',
-    badge: 'Free',
-    cta: 'Study →',
-  },
-  {
-    href: '/glossary',
-    title: 'Glossary',
-    desc: 'Searchable reference of musical terms — French, German, Italian, abbreviations.',
-    badge: 'Free',
-    cta: 'Browse →',
-  },
-  {
-    href: '/repertoire',
-    title: 'CM Repertoire',
-    desc: 'Browse the complete CM repertoire lists by level — Preparatory through Advanced. Search across all levels.',
-    badge: 'Pro',
-    cta: 'Browse →',
-  },
-]
 
 export default function Home() {
   // Early access gate — production only
@@ -75,7 +21,6 @@ export default function Home() {
   }, [])
 
   const { user, loading } = useAuth()
-  const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
 
   // Redirect logged-out users to landing page
   useEffect(() => {
@@ -87,8 +32,6 @@ export default function Home() {
   const [decksLoading, setDecksLoading] = useState(true)
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null)
   const [showNewDeck, setShowNewDeck] = useState(false)
-  const [showAuth, setShowAuth] = useState(false)
-  const [checkingOut, setCheckingOut] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const [newDesc, setNewDesc] = useState('')
   const [newTag, setNewTag] = useState<DeckTag>('free')
@@ -102,24 +45,6 @@ export default function Home() {
       setDecksLoading(false)
     })
   }, [user, loading])
-
-  async function handleBuy(priceId: string, productType: string) {
-    if (!user) { setShowAuth(true); return }
-    setCheckingOut(true)
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId, userId: user.id, userEmail: user.email, productType }),
-      })
-      const { url, error } = await res.json()
-      if (error) throw new Error(error)
-      window.location.href = url
-    } catch (err) {
-      console.error(err)
-      setCheckingOut(false)
-    }
-  }
 
   async function handleCreateDeck() {
     if (!newTitle.trim()) return
@@ -139,15 +64,8 @@ export default function Home() {
     setEditingDeck(null)
   }
 
-  async function handleSignOut() {
-    await signOut()
-    setUserDecks([])
-  }
-
-  const freeDecks = DECKS.filter(d => d.tag === 'free' && !d.id.startsWith('sight-read') && d.id !== 'notes-treble' && d.id !== 'dynamics')
-  const earDecks = DECKS.filter(d => d.id.startsWith('ear-'))
-  const cmCount = DECKS.filter(d => d.tag === 'cm').length
-  const cmUnlocked = hasPurchased(CM_BUNDLE_PRICE_ID) || hasSubscription()
+  const earTopicCount = DECKS.filter(d => d.id.startsWith('ear-')).length
+  const cmLevelCount = DECKS.filter(d => d.tag === 'cm').length
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
@@ -166,166 +84,7 @@ export default function Home() {
 
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '0 32px 80px' }}>
 
-        {/* ── Tools ───────────────────────────────────────────────────── */}
-        <div style={{ marginBottom: '64px' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Tools</h2>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Interactive exercises — no account needed</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
-            {TOOLS.map(tool => (
-              <Link key={tool.href} href={tool.href} style={{ textDecoration: 'none' }}>
-                <div
-                  style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s', height: '100%', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column' as const, justifyContent: 'space-between' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7'; e.currentTarget.style.transform = 'translateY(0)' }}
-                >
-                  <div>
-                    <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#888780', fontFamily: F }}>{tool.badge}</span>
-                    <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '6px' }}>{tool.title}</h3>
-                    <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6 }}>{tool.desc}</p>
-                  </div>
-                  <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#BA7517', marginTop: '16px' }}>{tool.cta}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Programs ─────────────────────────────────────────────────── */}
-        <div style={{ marginBottom: '64px' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Programs</h2>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Structured exam prep collections</p>
-          </div>
-          <Link href="/programs" style={{ textDecoration: 'none', display: 'block' }}>
-            <div
-              style={{ background: '#1A1A18', border: '1px solid #1A1A18', borderRadius: '16px', padding: '28px 32px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-              onMouseEnter={e => { e.currentTarget.style.opacity = '0.92' }}
-              onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
-            >
-              <div>
-                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#BA7517', color: 'white', fontFamily: F }}>
-                  {cmUnlocked ? 'Unlocked' : 'CM Collection'}
-                </span>
-                <h3 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '24px', color: 'white', marginBottom: '6px' }}>
-                  Certificate of Merit — Prep through Advanced
-                </h3>
-                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: '480px' }}>
-                  {cmCount} levels of complete exam prep — signs & terms, scales, intervals, chords, history, and ear training.
-                </p>
-              </div>
-              <div style={{ marginLeft: '24px', flexShrink: 0, textAlign: 'right' as const }}>
-                {cmUnlocked ? (
-                  <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#BA7517' }}>Browse →</span>
-                ) : (
-                  <div>
-                    <button
-                      onClick={e => { e.preventDefault(); handleBuy(CM_BUNDLE_PRICE_ID, 'cm_bundle') }}
-                      disabled={checkingOut}
-                      style={{ display: 'block', background: '#BA7517', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer', marginBottom: '8px', whiteSpace: 'nowrap' as const }}>
-                      {checkingOut ? 'Loading…' : 'Unlock Bundle'}
-                    </button>
-                    <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.4)' }}>or browse locked levels →</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Link>
-        </div>
-
-        {/* ── Flashcards ───────────────────────────────────────────────── */}
-        <div style={{ marginBottom: '64px' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Flashcards</h2>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Spaced repetition collections for terms, symbols, and ear training</p>
-          </div>
-
-          {/* Free decks grid */}
-            {/* ── Notation & Terms ─────────────────────────────────── */}
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '10px' }}>Notation &amp; Terms</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', marginBottom: '28px', alignItems: 'stretch' }}>
-            {freeDecks.filter(d => ['tempo', 'intervals'].includes(d.id)).map(deck => (
-              <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
-                <div
-                  style={{
-                    background: 'white',
-                    border: '1px solid #D3D1C7',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    width: '100%',
-                    height: '100%',
-                    boxSizing: 'border-box' as const,
-                    display: 'flex',
-                    flexDirection: 'column' as const,
-                    alignItems: 'flex-start' as const,
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
-                >
-                  <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-                  <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                  <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
-                </div>
-              </Link>
-            ))}
-            <Link href="/collection?tag=symbols" style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
-              <div
-                style={{
-                  background: 'white',
-                  border: '1px solid #D3D1C7',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  width: '100%',
-                  height: '100%',
-                  boxSizing: 'border-box' as const,
-                  display: 'flex',
-                  flexDirection: 'column' as const,
-                  alignItems: 'flex-start' as const,
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
-              >
-                <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-                <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>Music Symbols</h3>
-                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>Dynamics, articulation, accidentals, note values</p>
-              </div>
-            </Link>
-          </div>
-
-          {/* ── Ear Training (grouped on collection page) ─────────────── */}
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '10px' }}>Ear Training</p>
-          <Link href="/collection?tag=ear" style={{ textDecoration: 'none', display: 'block', marginBottom: '28px' }}>
-            <div
-              style={{
-                background: 'white',
-                border: '1px solid #D3D1C7',
-                borderRadius: '16px',
-                padding: '24px',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                boxSizing: 'border-box' as const,
-                display: 'flex',
-                flexDirection: 'column' as const,
-                alignItems: 'flex-start' as const,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
-            >
-              <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-              <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>Ear Training Library</h3>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, margin: 0, maxWidth: '560px' }}>
-                {earDecks.length} piano-audio topics — intervals, triads, seventh chords, cadences, scales, and more — organized by topic on the next page.
-              </p>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#BA7517', margin: '14px 0 0', lineHeight: 1.55 }}>Open Ear Training →</p>
-            </div>
-          </Link>
-
-        </div>
+        <HomeCategoryHub earTopicCount={earTopicCount} cmLevelCount={cmLevelCount} />
           {/* ── My Decks ─────────────────────────────────────────────────── */}
         {userDecks.length > 0 && (
           <div style={{ marginBottom: '48px' }}>
