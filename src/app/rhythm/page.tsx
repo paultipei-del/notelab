@@ -80,24 +80,27 @@ function readPairScrollStridePx(scrollEl: HTMLDivElement | null, svgH: number, g
 }
 
 /**
+ * Poll until AudioContext.currentTime > 0, which may take several frames in Safari after resume().
+ * Timeout after 500ms to avoid hanging.
+ */
+async function waitForCtxClock(ctx: AudioContext): Promise<void> {
+  const deadline = performance.now() + 500
+  while (ctx.currentTime === 0 && performance.now() < deadline) {
+    await new Promise<void>(r => requestAnimationFrame(() => r()))
+  }
+}
+
+/**
  * Approximate seconds from AudioContext time to when audio is audible at the device output.
  * Safari/WebKit often buffers more than Chrome; `outputLatency` helps align UI and tap feedback.
  */
 function getAudioOutputLatencySec(ctx: AudioContext): number {
-  const ex = ctx as AudioContext & { outputLatency?: number; baseLatency?: number }
-  // Total audible latency = hardware output latency + AudioContext processing latency
-  const outputLat = typeof ex.outputLatency === 'number' && Number.isFinite(ex.outputLatency) && ex.outputLatency >= 0
+  // Used only for tap-input scoring offset, NOT for playhead display.
+  // outputLatency already includes baseLatency per the Web Audio spec.
+  const ex = ctx as AudioContext & { outputLatency?: number }
+  const sec = typeof ex.outputLatency === 'number' && Number.isFinite(ex.outputLatency) && ex.outputLatency > 0
     ? ex.outputLatency : 0
-  const baseLat = typeof ex.baseLatency === 'number' && Number.isFinite(ex.baseLatency) && ex.baseLatency >= 0
-    ? ex.baseLatency : 0
-  let sec = outputLat + baseLat
-  if (sec <= 0 && typeof navigator !== 'undefined') {
-    const ua = navigator.userAgent
-    const isSafari = /safari/i.test(ua) && !/chrome|android|crios|fxios/i.test(ua)
-    // Safari default hardware buffer is typically 128–512 frames @ 44.1kHz = 3–12ms base + ~170ms output
-    if (isSafari) sec = 0.2
-  }
-  return Math.min(Math.max(0, sec), 0.4)
+  return Math.min(Math.max(0, sec), 0.15)
 }
 
 // Bravura note glyphs (SMuFL U+E1D0 range)
@@ -968,9 +971,9 @@ export default function RhythmPage() {
     setPreviewing(false)
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
-    // Safari: currentTime may still be 0 immediately after resume() resolves.
-    // Yield one rAF so the clock is actually ticking before we schedule.
-    await new Promise<void>(r => requestAnimationFrame(() => r()))
+    // Safari: currentTime may remain 0 for many frames after resume() resolves.
+    // Poll until the clock is actually ticking before reading currentTime.
+    await waitForCtxClock(ctx)
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; trailUiTickRef.current = 0; setTrail([]); setDiagLog([])
@@ -991,7 +994,7 @@ export default function RhythmPage() {
     const compoundBeatDuration = isCompound ? feltBeatDuration / 3 : beatDuration  // eighth note duration for compound
     const countdownBeats = feltBeats
     const countdownDuration = countdownBeats * feltBeatDuration
-    const now = ctx.currentTime + 0.3  // extra buffer for async setup
+    const now = ctx.currentTime + 0.5  // extra buffer; Safari needs more time after clock stabilizes
     startTimeRef.current = now + countdownDuration
     // For compound: actual quarter note duration differs from beatDuration
     const effectiveBeatDuration = isCompound ? compoundBeatDuration * 2 : beatDuration
@@ -1171,8 +1174,8 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (!ctx) return
     if (ctx.state === 'suspended') await ctx.resume()
-    // Safari: yield one rAF so currentTime is actually advancing before we schedule.
-    await new Promise<void>(r => requestAnimationFrame(() => r()))
+    // Safari: currentTime may remain 0 for many frames after resume() resolves.
+    await waitForCtxClock(ctx)
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     cancelAnimationFrame(rafRef.current)
     setPreviewing(true)
@@ -1191,7 +1194,7 @@ export default function RhythmPage() {
     const beatsPerMeasure = exercise.timeSignature.beats
     const totalQBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
 
-    const now = ctx.currentTime + 0.3  // extra buffer for async setup
+    const now = ctx.currentTime + 0.5  // extra buffer; Safari needs more time after clock stabilizes
     startTimeRef.current = now
 
     // Schedule metronome clicks
@@ -1307,8 +1310,9 @@ export default function RhythmPage() {
         if (ctx2) {
           if (ctx2.state === 'suspended') void ctx2.resume()
           audioOutLatencyRef.current = getAudioOutputLatencySec(ctx2)
-          const lat = audioOutLatencyRef.current
-          const when = Math.max(0, ctx2.currentTime - lat)
+          // Schedule slightly in the future — never subtract latency for tap audio,
+          // as scheduling in the past causes unpredictable buffering in Safari.
+          const when = ctx2.currentTime + 0.005
           if (pianoBufferRef.current) {
             const source = ctx2.createBufferSource()
             const gain = ctx2.createGain()
@@ -1613,8 +1617,9 @@ export default function RhythmPage() {
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     if (DEBUG_TAPS) console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current)
     if (soundEnabledRef.current) {
-      const lat = audioOutLatencyRef.current
-      const when = Math.max(0, ctx.currentTime - lat)
+      // Schedule slightly in the future — never subtract latency for tap audio,
+      // as scheduling in the past causes unpredictable buffering in Safari.
+      const when = ctx.currentTime + 0.005
       if (pianoBufferRef.current) {
         // Real piano sample
         const source = ctx.createBufferSource()
