@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import type { CSSProperties } from 'react'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
-import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
+import type { RhythmExerciseMeta, RhythmProgress, RhythmProgramNode } from '@/lib/rhythmLibrary'
+import { rhythmProgramTitle } from '@/lib/rhythmCatalog'
 import { useAuth } from '@/hooks/useAuth'
 
 const F = 'var(--font-jost), sans-serif'
@@ -392,24 +393,60 @@ function LibraryPanel({
   userId?: string | null
   onProgressReset?: () => void
 }) {
-  const [library, setLibrary] = useState<Record<string, RhythmExerciseMeta[]>>({})
+  const [tree, setTree] = useState<RhythmProgramNode[]>([])
+  const [unlockOrder, setUnlockOrder] = useState<RhythmExerciseMeta[]>([])
   const [loading, setLoading] = useState(true)
-  const [openCategory, setOpenCategory] = useState<string | null>(null)
+  const [openProgramSlug, setOpenProgramSlug] = useState<string | null>(null)
+  const [openCategoryKey, setOpenCategoryKey] = useState<string | null>(null)
   const [showUpload, setShowUpload] = useState(false)
 
-  const flatList: RhythmExerciseMeta[] = Object.values(library).flat()
-  const currentIdx = currentId ? flatList.findIndex(e => e.id === currentId) : -1
+  const unlockIndexMap = useMemo(() => {
+    const m = new Map<string, number>()
+    unlockOrder.forEach((e, i) => m.set(e.id, i))
+    return m
+  }, [unlockOrder])
 
   useEffect(() => {
-    import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
-      fetchExercisesByCategory().then(data => {
-        setLibrary(data)
-        const first = Object.keys(data)[0]
-        if (first) setOpenCategory(first)
+    import('@/lib/rhythmLibrary').then(({ fetchExerciseLibrary }) => {
+      fetchExerciseLibrary().then(({ tree: t, unlockOrder: order }) => {
+        setTree(t)
+        setUnlockOrder(order)
+        if (t.length === 1) {
+          const p = t[0]
+          setOpenProgramSlug(p.slug)
+          const c0 = p.categories[0]
+          if (c0) setOpenCategoryKey(`${p.slug}::${c0.name}`)
+        } else if (t[0]) {
+          setOpenProgramSlug(t[0].slug)
+          const c0 = t[0].categories[0]
+          if (c0) setOpenCategoryKey(`${t[0].slug}::${c0.name}`)
+        }
         setLoading(false)
       })
     })
   }, [])
+
+  const isExerciseUnlocked = (ex: RhythmExerciseMeta) => {
+    const idx = unlockIndexMap.get(ex.id) ?? -1
+    if (idx <= 0) return true
+    const prev = unlockOrder[idx - 1]
+    return prev ? (progress[prev.id]?.completed ?? false) : true
+  }
+
+  const categoryAccordionBtn = (isOpen: boolean) =>
+    ({
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      padding: '12px 16px',
+      borderRadius: isOpen ? '12px 12px 0 0' : '12px',
+      border: '1px solid' + (isOpen ? '#1A1A18' : '#D3D1C7'),
+      borderBottom: isOpen ? 'none' : '1px solid #D3D1C7',
+      background: isOpen ? '#1A1A18' : 'white',
+      cursor: 'pointer',
+      textAlign: 'left' as const,
+    }) satisfies CSSProperties
 
   return (
     <div style={{ width: '100%', maxWidth: '560px' }}>
@@ -429,74 +466,145 @@ function LibraryPanel({
 
       {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>Loading…</p>}
 
-      {/* Categories */}
-      {!loading && Object.entries(library).map(([category, exercises]) => {
-        const isOpen = openCategory === category
-        const categoryCompleted = exercises.filter(ex => progress[ex.id]?.completed).length
-        const categoryTotal = exercises.length
+      {!loading && tree.map(program => {
+        const multiProgram = tree.length > 1
+        const programOpen = !multiProgram || openProgramSlug === program.slug
+        const programTotal = program.categories.reduce(
+          (acc, c) => acc + c.levels.reduce((a, l) => a + l.exercises.length, 0),
+          0
+        )
+        const programDone = program.categories.reduce(
+          (acc, c) => acc + c.levels.reduce(
+            (a, l) => a + l.exercises.filter(e => progress[e.id]?.completed).length,
+            0
+          ),
+          0
+        )
 
         return (
-          <div key={category} style={{ marginBottom: '6px' }}>
-            {/* Category header */}
-            <button onClick={() => setOpenCategory(isOpen ? null : category)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', borderRadius: isOpen ? '12px 12px 0 0' : '12px', border: '1px solid' + (isOpen ? '#1A1A18' : '#D3D1C7'), borderBottom: isOpen ? 'none' : '1px solid #D3D1C7', background: isOpen ? '#1A1A18' : 'white', cursor: 'pointer', textAlign: 'left' as const }}>
-              <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: isOpen ? 'white' : '#1A1A18', flex: 1 }}>{category}</span>
-              <span style={{ fontFamily: F, fontSize: '10px', color: isOpen ? 'rgba(255,255,255,0.5)' : '#888780' }}>
-                {categoryCompleted}/{categoryTotal}
-              </span>
-              {/* Progress bar */}
-              <div style={{ width: '48px', height: '3px', background: isOpen ? 'rgba(255,255,255,0.2)' : '#F0EDE8', borderRadius: '2px', overflow: 'hidden' }}>
-                <div style={{ width: `${(categoryCompleted / categoryTotal) * 100}%`, height: '100%', background: isOpen ? '#65C366' : '#65C366', borderRadius: '2px' }} />
-              </div>
-              <span style={{ fontFamily: F, fontSize: '12px', color: isOpen ? 'rgba(255,255,255,0.6)' : '#888780' }}>{isOpen ? '▲' : '▼'}</span>
-            </button>
-
-            {/* Exercises list */}
-            {isOpen && (
-              <div style={{ border: '1px solid #1A1A18', borderTop: 'none', borderRadius: '0 0 12px 12px', overflow: 'hidden' }}>
-                {exercises.map((ex, exIdx) => {
-                  const prevEx = exIdx > 0 ? exercises[exIdx - 1] : null
-                  const isUnlocked = exIdx === 0 || (prevEx ? (progress[prevEx.id]?.completed ?? false) : true)
-                  const p = progress[ex.id]
-                  const isCurrent = ex.id === currentId
-                  const isLast = exIdx === exercises.length - 1
-
-                  return (
-                    <button key={ex.id}
-                      onClick={() => isUnlocked && onSelect(ex)}
-                      style={{
-                        width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
-                        padding: '11px 16px',
-                        borderBottom: isLast ? 'none' : '1px solid #F0EDE8',
-                        background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8',
-                        cursor: isUnlocked ? 'pointer' : 'default',
-                        textAlign: 'left' as const, transition: 'background 0.1s',
-
-                      }}
-                      onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#FEFCF8' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8' }}>
-
-                      {/* Index */}
-                      <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '20px', flexShrink: 0 }}>{exIdx + 1}</span>
-
-                      {/* Title + meta */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: isUnlocked ? '#1A1A18' : '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{ex.title}</p>
-                        <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', margin: 0 }}>{ex.beats}/{ex.beat_type} · {DIFFICULTY_LABEL[ex.difficulty]}</p>
-                      </div>
-
-                      {/* Status */}
-                      {!isUnlocked && <span style={{ fontSize: '13px', opacity: 0.5 }}>🔒</span>}
-                      {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: '11px', color: '#65C366', fontWeight: 500 }}>✓</span>}
-                      {isUnlocked && p && !p.completed && (
-                        <span style={{ fontFamily: F, fontSize: '10px', color: '#BA7517' }}>{p.best_timing}%</span>
-                      )}
-                      {isCurrent && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#BA7517', flexShrink: 0 }} />}
-                    </button>
-                  )
-                })}
-              </div>
+          <div key={program.slug} style={{ marginBottom: multiProgram ? '12px' : '0' }}>
+            {multiProgram && (
+              <button
+                type="button"
+                onClick={() => setOpenProgramSlug(programOpen ? null : program.slug)}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 16px',
+                  marginBottom: '6px',
+                  borderRadius: programOpen ? '12px 12px 0 0' : '12px',
+                  border: '1px solid' + (programOpen ? '#3A3A38' : '#D3D1C7'),
+                  borderBottom: programOpen ? 'none' : '1px solid #D3D1C7',
+                  background: programOpen ? '#3A3A38' : 'white',
+                  cursor: 'pointer',
+                  textAlign: 'left' as const,
+                }}
+              >
+                <span style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: programOpen ? 'white' : '#1A1A18', flex: 1 }}>
+                  {rhythmProgramTitle(program.slug)}
+                </span>
+                <span style={{ fontFamily: F, fontSize: '10px', color: programOpen ? 'rgba(255,255,255,0.5)' : '#888780' }}>
+                  {programDone}/{programTotal}
+                </span>
+                <div style={{ width: '48px', height: '3px', background: programOpen ? 'rgba(255,255,255,0.2)' : '#F0EDE8', borderRadius: '2px', overflow: 'hidden' }}>
+                  <div style={{ width: `${programTotal ? (programDone / programTotal) * 100 : 0}%`, height: '100%', background: '#65C366', borderRadius: '2px' }} />
+                </div>
+                <span style={{ fontFamily: F, fontSize: '12px', color: programOpen ? 'rgba(255,255,255,0.6)' : '#888780' }}>{programOpen ? '▲' : '▼'}</span>
+              </button>
             )}
+
+            {programOpen && program.categories.map(cat => {
+              const catKey = `${program.slug}::${cat.name}`
+              const isCatOpen = openCategoryKey === catKey
+              const catTotal = cat.levels.reduce((a, l) => a + l.exercises.length, 0)
+              const catDone = cat.levels.reduce(
+                (a, l) => a + l.exercises.filter(e => progress[e.id]?.completed).length,
+                0
+              )
+
+              return (
+                <div key={catKey} style={{ marginBottom: '6px', marginLeft: multiProgram ? '8px' : 0 }}>
+                  <button type="button" onClick={() => setOpenCategoryKey(isCatOpen ? null : catKey)} style={categoryAccordionBtn(isCatOpen)}>
+                    <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: isCatOpen ? 'white' : '#1A1A18', flex: 1 }}>{cat.name}</span>
+                    <span style={{ fontFamily: F, fontSize: '10px', color: isCatOpen ? 'rgba(255,255,255,0.5)' : '#888780' }}>
+                      {catDone}/{catTotal}
+                    </span>
+                    <div style={{ width: '48px', height: '3px', background: isCatOpen ? 'rgba(255,255,255,0.2)' : '#F0EDE8', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div style={{ width: `${catTotal ? (catDone / catTotal) * 100 : 0}%`, height: '100%', background: '#65C366', borderRadius: '2px' }} />
+                    </div>
+                    <span style={{ fontFamily: F, fontSize: '12px', color: isCatOpen ? 'rgba(255,255,255,0.6)' : '#888780' }}>{isCatOpen ? '▲' : '▼'}</span>
+                  </button>
+
+                  {isCatOpen && (
+                    <div style={{ border: '1px solid #1A1A18', borderTop: 'none', borderRadius: '0 0 12px 12px', overflow: 'hidden' }}>
+                      {cat.levels.map((levelNode, levelIdx) => {
+                        const levelTotal = levelNode.exercises.length
+                        const levelDone = levelNode.exercises.filter(e => progress[e.id]?.completed).length
+                        const isLastLevel = levelIdx === cat.levels.length - 1
+                        return (
+                          <div key={levelNode.level}>
+                            <div
+                              style={{
+                                padding: '8px 16px 6px',
+                                background: '#FAFAF8',
+                                borderBottom: '1px solid #F0EDE8',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                              }}
+                            >
+                              <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#888780' }}>
+                                Level {levelNode.level}
+                              </span>
+                              <span style={{ fontFamily: F, fontSize: '10px', color: '#B0AEA8' }}>{levelDone}/{levelTotal}</span>
+                            </div>
+                            {levelNode.exercises.map((ex, exIdx) => {
+                              const isUnlocked = isExerciseUnlocked(ex)
+                              const p = progress[ex.id]
+                              const isCurrent = ex.id === currentId
+                              const isLastRow = isLastLevel && exIdx === levelNode.exercises.length - 1
+                              const gIdx = (unlockIndexMap.get(ex.id) ?? 0) + 1
+
+                              return (
+                                <button key={ex.id} type="button"
+                                  onClick={() => isUnlocked && onSelect(ex)}
+                                  style={{
+                                    width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
+                                    padding: '11px 16px',
+                                    borderBottom: isLastRow ? 'none' : '1px solid #F0EDE8',
+                                    background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8',
+                                    cursor: isUnlocked ? 'pointer' : 'default',
+                                    textAlign: 'left' as const, transition: 'background 0.1s',
+                                  }}
+                                  onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#FEFCF8' }}
+                                  onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8' }}>
+
+                                  <span style={{ fontFamily: F, fontSize: '10px', color: '#D3D1C7', width: '24px', flexShrink: 0 }}>{gIdx}</span>
+
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: isUnlocked ? '#1A1A18' : '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{ex.title}</p>
+                                    <p style={{ fontFamily: F, fontSize: '10px', color: '#888780', margin: 0 }}>{ex.beats}/{ex.beat_type} · {DIFFICULTY_LABEL[ex.difficulty]}</p>
+                                  </div>
+
+                                  {!isUnlocked && <span style={{ fontSize: '13px', opacity: 0.5 }}>🔒</span>}
+                                  {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: '11px', color: '#65C366', fontWeight: 500 }}>✓</span>}
+                                  {isUnlocked && p && !p.completed && (
+                                    <span style={{ fontFamily: F, fontSize: '10px', color: '#BA7517' }}>{p.best_timing}%</span>
+                                  )}
+                                  {isCurrent && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#BA7517', flexShrink: 0 }} />}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )
       })}
@@ -715,13 +823,10 @@ export default function RhythmPage() {
     return () => window.removeEventListener('resize', checkOrientation)
   }, [])
 
-  // Load all exercises for next/prev navigation
+  // Load all exercises for next/prev navigation (global unlock order)
   useEffect(() => {
-    import('@/lib/rhythmLibrary').then(({ fetchExercisesByCategory }) => {
-      fetchExercisesByCategory().then(data => {
-        const flat = Object.values(data).flat()
-        setAllExercises(flat)
-      })
+    import('@/lib/rhythmLibrary').then(({ fetchExerciseLibrary }) => {
+      fetchExerciseLibrary().then(({ unlockOrder }) => setAllExercises(unlockOrder))
     })
   }, [])
 
@@ -860,6 +965,9 @@ export default function RhythmPage() {
     setPreviewing(false)
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
+    // Safari: currentTime may still be 0 immediately after resume() resolves.
+    // Yield one rAF so the clock is actually ticking before we schedule.
+    await new Promise<void>(r => requestAnimationFrame(() => r()))
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; trailUiTickRef.current = 0; setTrail([]); setDiagLog([])
@@ -1061,6 +1169,8 @@ export default function RhythmPage() {
     const ctx = getCtx()
     if (!ctx) return
     if (ctx.state === 'suspended') await ctx.resume()
+    // Safari: yield one rAF so currentTime is actually advancing before we schedule.
+    await new Promise<void>(r => requestAnimationFrame(() => r()))
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     cancelAnimationFrame(rafRef.current)
     setPreviewing(true)
