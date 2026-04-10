@@ -2018,10 +2018,6 @@ export default function RhythmPage() {
                 style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                 Mixer
               </button>
-              <button onClick={() => setShowDiag(d => !d)}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                🔍 Diag
-              </button>
               <button onClick={playing || previewing ? stop : startPreview}
                 style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + ((playing || previewing) ? '#BA7517' : '#D3D1C7'), background: (playing || previewing) ? '#BA7517' : 'white', color: (playing || previewing) ? 'white' : '#888780', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {playing || previewing ? '■' : '▶'}
@@ -2118,10 +2114,6 @@ export default function RhythmPage() {
               <button onClick={() => setShowMixer(v => !v)}
                 style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D3D1C7'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                 Mixer
-              </button>
-              <button onClick={() => setShowDiag(d => !d)}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showDiag ? '#BA7517' : '#D3D1C7'), background: showDiag ? '#BA7517' : 'white', color: showDiag ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
-                🔍 Diag
               </button>
             </div>
           )}
