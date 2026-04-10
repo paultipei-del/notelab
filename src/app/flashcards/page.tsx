@@ -19,7 +19,7 @@ export default function FlashcardsPage() {
   }, [loading, user])
 
   const freeDecks = DECKS.filter(d => d.tag === 'free' && !d.id.startsWith('sight-read') && d.id !== 'notes-treble' && d.id !== 'dynamics')
-  const earDecks = DECKS.filter(d => d.id.startsWith('ear-'))
+  const symbolDecks = DECKS.filter(d => d.id.startsWith('symbols-'))
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
@@ -28,7 +28,7 @@ export default function FlashcardsPage() {
           showPrograms={false}
           flashcardsHeadingVariant="page"
           notationDecks={freeDecks.filter(d => ['tempo', 'intervals'].includes(d.id))}
-          earDecks={earDecks}
+          symbolDecks={symbolDecks}
         />
       </div>
     </div>

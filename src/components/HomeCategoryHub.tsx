@@ -15,8 +15,8 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
     {
       href: '/flashcards',
       title: 'Flashcards',
-      subtitle: 'Spaced repetition collections — terms, symbols, and paths into ear training.',
-      chips: ['Notation & terms', 'Music symbols', 'Ear library'],
+      subtitle: 'Spaced repetition for notation, terms, and symbols — study decks only.',
+      chips: ['Notation & terms', 'Music symbols', 'Spaced repetition'],
       dark: false as const,
     },
     {

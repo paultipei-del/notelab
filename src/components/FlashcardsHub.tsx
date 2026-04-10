@@ -11,7 +11,8 @@ export type FlashcardsHubProps =
       /** Only flashcard groups — used on `/flashcards`. */
       showPrograms: false
       notationDecks: Deck[]
-      earDecks: Deck[]
+      /** Each `symbols-*` deck as its own card (not the symbols collection hub). */
+      symbolDecks: Deck[]
       /**
        * `page` — same title + intro sizes as `/collection?tag=ear` hero.
        * `section` (default) — smaller heading for the home page under Tools / Programs.
@@ -22,7 +23,8 @@ export type FlashcardsHubProps =
       /** Home: Programs (CM) + Flashcards. */
       showPrograms?: true
       notationDecks: Deck[]
-      earDecks: Deck[]
+      /** When set, each symbols deck is listed; otherwise omit or pass `[]`. */
+      symbolDecks?: Deck[]
       cmCount: number
       cmUnlocked: boolean
       checkingOut: boolean
@@ -32,7 +34,8 @@ export type FlashcardsHubProps =
 
 /** Programs (CM) + Flashcards sections — same content as the lower half of the home page. */
 export default function FlashcardsHub(props: FlashcardsHubProps) {
-  const { notationDecks, earDecks } = props
+  const { notationDecks } = props
+  const symbolDecks = 'symbolDecks' in props && props.symbolDecks ? props.symbolDecks : []
   const cm =
     props.showPrograms === false
       ? null
@@ -111,7 +114,7 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
               margin: 0,
             }}
           >
-            Spaced repetition collections for terms, symbols, and ear training
+            Spaced repetition collections for terms, symbols, and notation
           </p>
         </div>
 
@@ -143,58 +146,41 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
               </div>
             </Link>
           ))}
-          <Link href="/collection?tag=symbols" style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
-            <div
-              style={{
-                background: 'white',
-                border: '1px solid #D3D1C7',
-                borderRadius: '16px',
-                padding: '24px',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                width: '100%',
-                height: '100%',
-                boxSizing: 'border-box' as const,
-                display: 'flex',
-                flexDirection: 'column' as const,
-                alignItems: 'flex-start' as const,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
-            >
-              <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-              <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>Music Symbols</h3>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>Dynamics, articulation, accidentals, note values</p>
-            </div>
-          </Link>
         </div>
 
-        <p style={groupLabelStyle}>Ear Training</p>
-        <Link href="/collection?tag=ear" style={{ textDecoration: 'none', display: 'block', marginBottom: '28px' }}>
-          <div
-            style={{
-              background: 'white',
-              border: '1px solid #D3D1C7',
-              borderRadius: '16px',
-              padding: '24px',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              boxSizing: 'border-box' as const,
-              display: 'flex',
-              flexDirection: 'column' as const,
-              alignItems: 'flex-start' as const,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
-          >
-            <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-            <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>Ear Training Library</h3>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, margin: 0, maxWidth: '560px' }}>
-              {earDecks.length} piano-audio topics — intervals, triads, seventh chords, cadences, scales, and more — organized by topic on the next page.
-            </p>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#BA7517', margin: '14px 0 0', lineHeight: 1.55 }}>Open Ear Training →</p>
-          </div>
-        </Link>
+        {symbolDecks.length > 0 && (
+          <>
+            <p style={groupLabelStyle}>Music symbols</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', marginBottom: '28px', alignItems: 'stretch' }}>
+              {symbolDecks.map(deck => (
+                <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
+                  <div
+                    style={{
+                      background: 'white',
+                      border: '1px solid #D3D1C7',
+                      borderRadius: '16px',
+                      padding: '24px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      width: '100%',
+                      height: '100%',
+                      boxSizing: 'border-box' as const,
+                      display: 'flex',
+                      flexDirection: 'column' as const,
+                      alignItems: 'flex-start' as const,
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+                  >
+                    <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
+                    <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
+                    <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </>
   )
