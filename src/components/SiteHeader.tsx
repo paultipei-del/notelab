@@ -12,7 +12,7 @@ const F = 'var(--font-jost), sans-serif'
 const NAV = [
   { label: 'Flashcards',   href: '/flashcards',         match: (p: string) => p === '/flashcards' },
   { label: 'Ear Training', href: '/collection?tag=ear', match: (p: string) => p === '/collection' },
-  { label: 'Tools',        href: '/tools',              match: (p: string) => p === '/tools' || p === '/' },
+  { label: 'Tools',        href: '/tools',              match: (p: string) => p === '/tools' },
   { label: 'Programs',     href: '/programs',           match: (p: string) => p === '/programs' },
 ]
 

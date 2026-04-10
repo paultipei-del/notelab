@@ -1019,7 +1019,7 @@ export default function RhythmPage() {
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
-      const countdownElapsed = ctx2.currentTime - lat - countdownStart
+      const countdownElapsed = ctx2.currentTime - countdownStart
       if (countdownElapsed < countdownDuration) {
         const countBeat = Math.floor(countdownElapsed / feltBeatDuration) + 1
         setCountdown(countBeat)
@@ -1031,7 +1031,7 @@ export default function RhythmPage() {
           setCountdownOverlayOpacity(1)
         }
         // Start playhead moving during last countdown beat (heard downbeat = startTime + latency)
-        const timeToHeardDownbeat = startTimeRef.current + lat - ctx2.currentTime
+        const timeToHeardDownbeat = startTimeRef.current - ctx2.currentTime
         // Show playhead from 2 beats before downbeat
         if (timeToHeardDownbeat <= beatDuration) {
           setPlayhead(-timeToHeardDownbeat / beatDuration)
@@ -1046,8 +1046,7 @@ export default function RhythmPage() {
       }
       setCountdown(null)
       setCountdownOverlayOpacity(1)
-      const elapsed = ctx2.currentTime - lat - startTimeRef.current
-      // Start playhead slightly early so it arrives at first note on beat 0
+      const elapsed = ctx2.currentTime - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
       if (beatFloat >= effectiveTotalBeats) {
@@ -1239,7 +1238,7 @@ export default function RhythmPage() {
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
-      const elapsed = ctx2.currentTime - lat - startTimeRef.current
+      const elapsed = ctx2.currentTime - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = totalQBeats
       setPlayhead(beatFloat)
