@@ -958,7 +958,6 @@ export default function RhythmPage() {
       const ex = await parseMXL(buffer)
       setExercise(ex); setCurrentMeta(meta)
       setScore(null); setTaps([]); setTapResults([]); setTrail([]); trailRef.current = []; trailUiTickRef.current = 0; setDiagLog([])
-      setBpm(72)
       resetNotationScroll()
     } finally {
       setLoadingExercise(false)
@@ -2027,12 +2026,10 @@ export default function RhythmPage() {
                 style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + ((playing || previewing) ? '#BA7517' : '#D3D1C7'), background: (playing || previewing) ? '#BA7517' : 'white', color: (playing || previewing) ? 'white' : '#888780', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {playing || previewing ? '■' : '▶'}
               </button>
-              {!playing && (
-                <button onClick={start}
-                  style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                  {score ? 'Try Again' : 'Start'}
-                </button>
-              )}
+              <button onClick={playing ? stop : start}
+                style={{ background: playing ? 'none' : '#1A1A18', color: playing ? '#888780' : 'white', border: playing ? '1px solid #D3D1C7' : 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                {playing ? 'Stop' : score ? 'Try Again' : 'Start'}
+              </button>
             </div>
           )}
 
@@ -2040,7 +2037,7 @@ export default function RhythmPage() {
           {exercise && (
             <button ref={tapBtnRef} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}
               onContextMenu={e => e.preventDefault()} style={tapBtnStyle as React.CSSProperties}>
-              {countdown !== null && !tapReady ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : score ? 'Try Again' : 'Start'}
+              {countdown !== null && !tapReady ? String(countdown) : liveFeedback === 'hit' ? '✓' : liveFeedback === 'miss' ? '✗' : playing ? 'TAP' : '·'}
             </button>
           )}
         </div>
@@ -2655,9 +2652,9 @@ export default function RhythmPage() {
               <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                 <button
                   type="button"
-                  onClick={startPreview}
-                  disabled={playing || previewing}
-                  title="Preview rhythm"
+                  onClick={previewing ? stop : startPreview}
+                  disabled={playing}
+                  title={previewing ? 'Stop preview' : 'Preview rhythm'}
                   onKeyDown={e => e.code === 'Space' && e.preventDefault()}
                   style={{
                     width: '36px',
@@ -2667,7 +2664,7 @@ export default function RhythmPage() {
                     background: previewing ? '#BA7517' : 'white',
                     color: previewing ? 'white' : '#888780',
                     fontSize: '14px',
-                    cursor: 'pointer',
+                    cursor: playing ? 'default' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2675,7 +2672,7 @@ export default function RhythmPage() {
                     opacity: playing ? 0.4 : 1,
                   }}
                 >
-                  ▶
+                  {previewing ? '■' : '▶'}
                 </button>
                 {!playing ? (
                   <button onClick={start}
