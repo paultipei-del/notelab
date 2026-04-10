@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { getSupabaseClient } from '@/lib/supabase'
 import type { RhythmExerciseMeta } from '@/lib/rhythmLibrary'
+import { buildRhythmLibraryTree, rhythmMetaFromDbRow, sortRhythmExercises } from '@/lib/rhythmLibrary'
+import { rhythmProgramTitle } from '@/lib/rhythmCatalog'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -19,6 +21,9 @@ const DIFFICULTIES = [1, 2, 3, 4, 5]
 const DIFFICULTY_LABEL: Record<number, string> = {
   1: 'Beginner', 2: 'Elementary', 3: 'Intermediate', 4: 'Advanced', 5: 'Expert'
 }
+
+const RHYTHM_ROW_SELECT =
+  'id, title, category, order_index, difficulty, beats, beat_type, file_path, program_slug, program_sort, category_sort, level'
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -37,6 +42,8 @@ export default function AdminRhythm() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingTitle, setEditingTitle] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState(CATEGORIES[0])
@@ -44,17 +51,22 @@ export default function AdminRhythm() {
   const [beats, setBeats] = useState(4)
   const [beatType, setBeatType] = useState(4)
   const [orderIndex, setOrderIndex] = useState(0)
+  const [programSlug, setProgramSlug] = useState('core')
+  const [programSort, setProgramSort] = useState(0)
+  const [categorySort, setCategorySort] = useState(0)
+  const [level, setLevel] = useState(1)
 
   const sb = getSupabaseClient()
 
+  const libraryTree = useMemo(
+    () => buildRhythmLibraryTree(sortRhythmExercises(exercises)),
+    [exercises]
+  )
+
   async function loadExercises() {
-    const { data } = await sb
-      .from('rhythm_exercises')
-      .select('id, title, category, order_index, difficulty, beats, beat_type, file_path')
-      .order('category')
-      .order('difficulty')
-      .order('order_index')
-    setExercises(data ?? [])
+    const { data } = await sb.from('rhythm_exercises').select(RHYTHM_ROW_SELECT)
+    const rows = (data ?? []) as Record<string, unknown>[]
+    setExercises(rows.map(rhythmMetaFromDbRow))
     setLoading(false)
   }
 
@@ -71,7 +83,8 @@ export default function AdminRhythm() {
       const base64 = await fileToBase64(file)
       const safeName = title.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       const safeCat = category.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-      const filePath = `${safeCat}/${safeName}.mxl`
+      const safeProg = programSlug.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 'core'
+      const filePath = `${safeProg}/${safeCat}/${safeName}.mxl`
 
       const { error } = await sb.from('rhythm_exercises').insert({
         title: title.trim(),
@@ -80,6 +93,10 @@ export default function AdminRhythm() {
         beats,
         beat_type: beatType,
         order_index: orderIndex,
+        program_slug: safeProg,
+        program_sort: programSort,
+        category_sort: categorySort,
+        level: Math.max(1, level),
         file_path: filePath,
         file_data: base64,
       })
@@ -95,11 +112,23 @@ export default function AdminRhythm() {
     }
   }
 
-  async function handleDeleteCategory(cat: string) {
-    if (!confirm(`Delete ALL exercises in "${cat}"?`)) return
-    const exs = grouped[cat] ?? []
-    await Promise.all(exs.map(ex => sb.from('rhythm_exercises').delete().eq('id', ex.id)))
+  async function handleDeleteCategoryScope(programSlugDel: string, categoryName: string) {
+    if (!confirm(`Delete ALL exercises in "${rhythmProgramTitle(programSlugDel)}" → "${categoryName}"?`)) return
+    const targets = exercises.filter(e => e.program_slug === programSlugDel && e.category === categoryName)
+    await Promise.all(targets.map(ex => sb.from('rhythm_exercises').delete().eq('id', ex.id)))
     await loadExercises()
+  }
+
+  async function handleRenameCommit(ex: RhythmExerciseMeta) {
+    const newTitle = editingTitle.trim()
+    setEditingId(null)
+    if (!newTitle || newTitle === ex.title) return
+    const { error } = await sb.from('rhythm_exercises').update({ title: newTitle }).eq('id', ex.id)
+    if (error) {
+      setMessage({ text: 'Rename failed: ' + error.message, ok: false })
+    } else {
+      setExercises(prev => prev.map(e => e.id === ex.id ? { ...e, title: newTitle } : e))
+    }
   }
 
   async function handleDelete(ex: RhythmExerciseMeta) {
@@ -107,12 +136,6 @@ export default function AdminRhythm() {
     await sb.from('rhythm_exercises').delete().eq('id', ex.id)
     await loadExercises()
   }
-
-  const grouped: Record<string, RhythmExerciseMeta[]> = {}
-  exercises.forEach(ex => {
-    if (!grouped[ex.category]) grouped[ex.category] = []
-    grouped[ex.category].push(ex)
-  })
 
   const inp: React.CSSProperties = {
     width: '100%', padding: '10px 14px', borderRadius: '10px',
@@ -127,7 +150,7 @@ export default function AdminRhythm() {
           Rhythm Library Admin
         </h1>
         <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '40px' }}>
-          Upload and manage rhythm exercises
+          Upload and manage rhythm exercises (program → category → level)
         </p>
 
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '28px', marginBottom: '40px' }}>
@@ -140,10 +163,26 @@ export default function AdminRhythm() {
               <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Quarter Notes #1" style={inp} />
             </div>
             <div>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Program slug</label>
+              <input value={programSlug} onChange={e => setProgramSlug(e.target.value)} placeholder="core" style={inp} />
+            </div>
+            <div>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Program sort</label>
+              <input type="number" value={programSort} onChange={e => setProgramSort(Number(e.target.value))} style={inp} />
+            </div>
+            <div>
               <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Category</label>
               <select value={category} onChange={e => setCategory(e.target.value)} style={inp}>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
+            </div>
+            <div>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Category sort</label>
+              <input type="number" value={categorySort} onChange={e => setCategorySort(Number(e.target.value))} style={inp} />
+            </div>
+            <div>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Level</label>
+              <input type="number" value={level} onChange={e => setLevel(Math.max(1, Number(e.target.value)))} min={1} style={inp} />
             </div>
             <div>
               <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Difficulty</label>
@@ -164,7 +203,7 @@ export default function AdminRhythm() {
               </div>
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Order within category</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }}>Order within level</label>
               <input type="number" value={orderIndex} onChange={e => setOrderIndex(Number(e.target.value))} min={0} style={inp} />
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
@@ -196,28 +235,65 @@ export default function AdminRhythm() {
           {!loading && exercises.length === 0 && (
             <p style={{ fontFamily: F, fontSize: '13px', color: '#888780' }}>No exercises yet.</p>
           )}
-          {Object.entries(grouped).map(([cat, exs]) => (
-            <div key={cat} style={{ marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#1A1A18' }}>{cat}</p>
-                <button onClick={() => handleDeleteCategory(cat)}
-                  style={{ background: 'none', border: '1px solid #F09595', borderRadius: '8px', color: '#E53935', fontFamily: F, fontSize: '11px', padding: '2px 8px', cursor: 'pointer' }}>
-                  Delete category
-                </button>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {exs.map(ex => (
-                  <div key={ex.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', borderRadius: '10px', border: '1px solid #D3D1C7', padding: '12px 16px' }}>
-                    <span style={{ fontFamily: SERIF, fontSize: '15px', color: '#1A1A18', flex: 1 }}>{ex.title}</span>
-                    <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>{ex.beats}/{ex.beat_type}</span>
-                    <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>D{ex.difficulty}</span>
-                    <button onClick={() => handleDelete(ex)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#F09595', fontFamily: F, fontSize: '12px', padding: '4px 8px', borderRadius: '6px' }}>
-                      Delete
+          {!loading && libraryTree.map(program => (
+            <div key={program.slug} style={{ marginBottom: '28px' }}>
+              <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#1A1A18', marginBottom: '12px' }}>
+                {rhythmProgramTitle(program.slug)} <span style={{ fontFamily: F, fontSize: '12px', color: '#888780' }}>({program.slug})</span>
+              </p>
+              {program.categories.map(cat => (
+                <div key={`${program.slug}::${cat.name}`} style={{ marginBottom: '20px', marginLeft: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#1A1A18' }}>{cat.name}</p>
+                    <button type="button" onClick={() => handleDeleteCategoryScope(program.slug, cat.name)}
+                      style={{ background: 'none', border: '1px solid #F09595', borderRadius: '8px', color: '#E53935', fontFamily: F, fontSize: '11px', padding: '2px 8px', cursor: 'pointer' }}>
+                      Delete category (this program)
                     </button>
                   </div>
-                ))}
-              </div>
+                  {cat.levels.map(lvl => (
+                    <div key={lvl.level} style={{ marginBottom: '12px', marginLeft: '12px' }}>
+                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#888780', marginBottom: '6px' }}>
+                        Level {lvl.level}
+                      </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {lvl.exercises.map(ex => (
+                          <div key={ex.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', borderRadius: '10px', border: '1px solid #D3D1C7', padding: '12px 16px' }}>
+                            {editingId === ex.id ? (
+                              <input
+                                autoFocus
+                                value={editingTitle}
+                                onChange={e => setEditingTitle(e.target.value)}
+                                onBlur={() => handleRenameCommit(ex)}
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter') handleRenameCommit(ex)
+                                  if (e.key === 'Escape') setEditingId(null)
+                                }}
+                                style={{ ...inp, flex: 1, fontFamily: SERIF, fontSize: '15px', padding: '4px 8px' }}
+                              />
+                            ) : (
+                              <span
+                                onClick={() => { setEditingId(ex.id); setEditingTitle(ex.title) }}
+                                title="Click to rename"
+                                style={{ fontFamily: SERIF, fontSize: '15px', color: '#1A1A18', flex: 1, cursor: 'text', borderRadius: '6px', padding: '2px 6px', transition: 'background 0.15s' }}
+                                onMouseEnter={e => (e.currentTarget.style.background = '#F5F2EC')}
+                                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                              >
+                                {ex.title}
+                              </span>
+                            )}
+                            <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>{ex.beats}/{ex.beat_type}</span>
+                            <span style={{ fontFamily: F, fontSize: '11px', color: '#888780' }}>D{ex.difficulty}</span>
+                            <span style={{ fontFamily: F, fontSize: '10px', color: '#B0AEA8' }}>#{ex.order_index}</span>
+                            <button type="button" onClick={() => handleDelete(ex)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#F09595', fontFamily: F, fontSize: '12px', padding: '4px 8px', borderRadius: '6px' }}>
+                              Delete
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
           ))}
         </div>
