@@ -78,6 +78,24 @@ function readPairScrollStridePx(scrollEl: HTMLDivElement | null, svgH: number, g
   return fallback
 }
 
+/**
+ * Approximate seconds from AudioContext time to when audio is audible at the device output.
+ * Safari/WebKit often buffers more than Chrome; `outputLatency` helps align UI and tap feedback.
+ */
+function getAudioOutputLatencySec(ctx: AudioContext): number {
+  const ex = ctx as AudioContext & { outputLatency?: number }
+  let sec =
+    typeof ex.outputLatency === 'number' && Number.isFinite(ex.outputLatency) && ex.outputLatency > 0
+      ? ex.outputLatency
+      : 0
+  if (typeof navigator !== 'undefined' && sec <= 0) {
+    const ua = navigator.userAgent
+    const isSafari = /safari/i.test(ua) && !/chrome|android|crios|fxios/i.test(ua)
+    if (isSafari) sec = 0.045
+  }
+  return Math.min(Math.max(0, sec), 0.12)
+}
+
 // Bravura note glyphs (SMuFL U+E1D0 range)
 const BRAVURA_NOTE: Record<string, string> = {
   whole:     String.fromCodePoint(0xE1D2),  // noteWhole
@@ -584,6 +602,8 @@ export default function RhythmPage() {
   const pianoGainRef = useRef<GainNode | null>(null)
   const rafRef = useRef(0)
   const startTimeRef = useRef(0)
+  /** Subtracted from ctx.currentTime when driving playhead / tap beat so UI matches heard output (Safari). */
+  const audioOutLatencyRef = useRef(0)
 
   const beatDuration = 60 / bpm
   const totalBeats = exercise ? exercise.timeSignature.beats * exercise.measures.length : 0
@@ -840,6 +860,7 @@ export default function RhythmPage() {
     setPreviewing(false)
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
+    audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; trailUiTickRef.current = 0; setTrail([]); setDiagLog([])
     setTapReady(false)
@@ -889,7 +910,8 @@ export default function RhythmPage() {
     const countdownStart = now
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
-      const countdownElapsed = ctx2.currentTime - countdownStart
+      const lat = audioOutLatencyRef.current
+      const countdownElapsed = ctx2.currentTime - lat - countdownStart
       if (countdownElapsed < countdownDuration) {
         const countBeat = Math.floor(countdownElapsed / feltBeatDuration) + 1
         setCountdown(countBeat)
@@ -900,14 +922,14 @@ export default function RhythmPage() {
         } else {
           setCountdownOverlayOpacity(1)
         }
-        // Start playhead moving during last countdown beat
-        const timeToStart = startTimeRef.current - ctx2.currentTime
+        // Start playhead moving during last countdown beat (heard downbeat = startTime + latency)
+        const timeToHeardDownbeat = startTimeRef.current + lat - ctx2.currentTime
         // Show playhead from 2 beats before downbeat
-        if (timeToStart <= beatDuration) {
-          setPlayhead(-timeToStart / beatDuration)
+        if (timeToHeardDownbeat <= beatDuration) {
+          setPlayhead(-timeToHeardDownbeat / beatDuration)
         }
         // Enable tap during last beat only
-        if (timeToStart <= beatDuration) {
+        if (timeToHeardDownbeat <= beatDuration) {
           tapReadyRef.current = true
           setTapReady(true)
         }
@@ -916,7 +938,7 @@ export default function RhythmPage() {
       }
       setCountdown(null)
       setCountdownOverlayOpacity(1)
-      const elapsed = ctx2.currentTime - startTimeRef.current
+      const elapsed = ctx2.currentTime - lat - startTimeRef.current
       // Start playhead slightly early so it arrives at first note on beat 0
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
@@ -1036,8 +1058,10 @@ export default function RhythmPage() {
 
   const startPreview = useCallback(async () => {
     if (!exercise) return
-    const ctx = await getCtx()
+    const ctx = getCtx()
     if (!ctx) return
+    if (ctx.state === 'suspended') await ctx.resume()
+    audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     cancelAnimationFrame(rafRef.current)
     setPreviewing(true)
     setPlaying(false)
@@ -1104,7 +1128,8 @@ export default function RhythmPage() {
 
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
-      const elapsed = ctx2.currentTime - startTimeRef.current
+      const lat = audioOutLatencyRef.current
+      const elapsed = ctx2.currentTime - lat - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = totalQBeats
       setPlayhead(beatFloat)
@@ -1169,6 +1194,9 @@ export default function RhythmPage() {
         const ctx2 = ctxRef.current
         if (ctx2) {
           if (ctx2.state === 'suspended') void ctx2.resume()
+          audioOutLatencyRef.current = getAudioOutputLatencySec(ctx2)
+          const lat = audioOutLatencyRef.current
+          const when = Math.max(0, ctx2.currentTime - lat)
           if (pianoBufferRef.current) {
             const source = ctx2.createBufferSource()
             const gain = ctx2.createGain()
@@ -1176,9 +1204,9 @@ export default function RhythmPage() {
             source.playbackRate.value = 261.63 / 392  // G4 sample → C4
             const dest = pianoGainRef.current ?? ctx2.destination
             source.connect(gain); gain.connect(dest)
-            gain.gain.setValueAtTime(1.0, ctx2.currentTime)
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 2)
-            source.start(); source.stop(ctx2.currentTime + 2)
+            gain.gain.setValueAtTime(1.0, when)
+            gain.gain.exponentialRampToValueAtTime(0.001, when + 2)
+            source.start(when); source.stop(when + 2)
           } else {
             const osc1 = ctx2.createOscillator()
             const osc2 = ctx2.createOscillator()
@@ -1188,14 +1216,14 @@ export default function RhythmPage() {
             osc1.frequency.value = 261.63
             osc2.frequency.value = 523.25
             osc1.type = 'triangle'; osc2.type = 'sine'
-            gain.gain.setValueAtTime(0.4, ctx2.currentTime)
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 1.5)
-            osc1.start(); osc2.start()
-            osc1.stop(ctx2.currentTime + 1.5); osc2.stop(ctx2.currentTime + 1.5)
+            gain.gain.setValueAtTime(0.4, when)
+            gain.gain.exponentialRampToValueAtTime(0.001, when + 1.5)
+            osc1.start(when); osc2.start(when)
+            osc1.stop(when + 1.5); osc2.stop(when + 1.5)
           }
         }
       }
-      const kbElapsed = ctx.currentTime - startTimeRef.current
+      const kbElapsed = ctx.currentTime - audioOutLatencyRef.current - startTimeRef.current
       if (kbElapsed < -beatDuration * 1.5) return
       const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / effectiveBeatDurationRef.current
       const beat = Math.round(beatFloat2)
@@ -1470,8 +1498,11 @@ export default function RhythmPage() {
     pointerDownTimeRef.current = performance.now()
     const ctx = getCtx(); if (!ctx) return
     void ctx.resume()
+    audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
     if (DEBUG_TAPS) console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current)
     if (soundEnabledRef.current) {
+      const lat = audioOutLatencyRef.current
+      const when = Math.max(0, ctx.currentTime - lat)
       if (pianoBufferRef.current) {
         // Real piano sample
         const source = ctx.createBufferSource()
@@ -1480,10 +1511,10 @@ export default function RhythmPage() {
         source.playbackRate.value = 261.63 / 392  // G4 sample → C4
         const pianoDest = pianoGainRef.current ?? ctx.destination
         source.connect(gain); gain.connect(pianoDest)
-        gain.gain.setValueAtTime(1.0, ctx.currentTime)
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2)
-        source.start()
-        source.stop(ctx.currentTime + 2)
+        gain.gain.setValueAtTime(1.0, when)
+        gain.gain.exponentialRampToValueAtTime(0.001, when + 2)
+        source.start(when)
+        source.stop(when + 2)
       } else {
         // Fallback: piano-like synthesis
         const osc1 = ctx.createOscillator()
@@ -1493,13 +1524,13 @@ export default function RhythmPage() {
         osc1.frequency.value = 261.63
         osc2.frequency.value = 523.25
         osc1.type = 'triangle'; osc2.type = 'sine'
-        gain.gain.setValueAtTime(0.3, ctx.currentTime)
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5)
-        osc1.start(); osc2.start()
-        osc1.stop(ctx.currentTime + 1.5); osc2.stop(ctx.currentTime + 1.5)
+        gain.gain.setValueAtTime(0.3, when)
+        gain.gain.exponentialRampToValueAtTime(0.001, when + 1.5)
+        osc1.start(when); osc2.start(when)
+        osc1.stop(when + 1.5); osc2.stop(when + 1.5)
       }
     }
-    const elapsed = ctx.currentTime - startTimeRef.current
+    const elapsed = ctx.currentTime - audioOutLatencyRef.current - startTimeRef.current
     if (elapsed < -beatDuration * 1.5) return
     const beatFloatP = elapsed < 0 ? 0 : elapsed / effectiveBeatDurationRef.current
     const beat = Math.round(beatFloatP)
