@@ -14,81 +14,128 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
   const tiles = [
     {
       href: '/flashcards',
+      label: 'Notation & Terms',
       title: 'Flashcards',
-      subtitle: 'Spaced repetition for notation, terms, and symbols — study decks only.',
-      chips: ['Notation & terms', 'Music symbols', 'Spaced repetition'],
-      dark: false as const,
+      subtitle: 'Spaced repetition for music symbols, signs, and notation. Study at your own pace and build lasting recall.',
+      cta: 'Start studying',
+      flip: false,
+      cardBg: 'white',
+      textColor: '#1A1A18',
+      subtitleColor: '#888780',
+      labelBg: '#EDE8DF',
+      labelColor: '#888780',
+      ctaColor: '#BA7517',
+      ctaBg: 'rgba(186,117,23,0.08)',
+      ctaBorder: 'rgba(186,117,23,0.2)',
+      gradient: 'linear-gradient(145deg, #F2E2B8 0%, #D4A850 45%, #A07428 100%)',
+      symbol: '♩',
+      symbolColor: 'rgba(255,255,255,0.18)',
     },
     {
       href: '/collection?tag=ear',
+      label: `${earTopicCount} Topics`,
       title: 'Ear Training',
-      subtitle: `${earTopicCount} piano-audio topics — listen, then name what you heard.`,
-      chips: ['Intervals', 'Triads & sevenths', 'Cadences', 'Scales'],
-      dark: false as const,
+      subtitle: 'Listen to piano audio examples and identify intervals, triads, cadences, and scales by ear.',
+      cta: 'Train your ear',
+      flip: true,
+      cardBg: '#FDFAF5',
+      textColor: '#1A1A18',
+      subtitleColor: '#888780',
+      labelBg: '#EDE8DF',
+      labelColor: '#888780',
+      ctaColor: '#BA7517',
+      ctaBg: 'rgba(186,117,23,0.08)',
+      ctaBorder: 'rgba(186,117,23,0.2)',
+      gradient: 'linear-gradient(145deg, #3A2210 0%, #7A4820 45%, #B87840 100%)',
+      symbol: '♫',
+      symbolColor: 'rgba(255,255,255,0.15)',
     },
     {
       href: '/tools',
+      label: 'Interactive',
       title: 'Tools',
-      subtitle: 'Interactive drills — staff, keys, scales, glossary, and repertoire lists.',
-      chips: ['Sight-reading', 'Note ID', 'Key signatures', 'Glossary'],
-      dark: false as const,
+      subtitle: 'Staff reading drills, note identification, key signature charts, scale explorer, and repertoire lists.',
+      cta: 'Open tools',
+      flip: false,
+      cardBg: 'white',
+      textColor: '#1A1A18',
+      subtitleColor: '#888780',
+      labelBg: '#EDE8DF',
+      labelColor: '#888780',
+      ctaColor: '#BA7517',
+      ctaBg: 'rgba(186,117,23,0.08)',
+      ctaBorder: 'rgba(186,117,23,0.2)',
+      gradient: 'linear-gradient(145deg, #D8D2C4 0%, #A8A090 45%, #787068 100%)',
+      symbol: '♬',
+      symbolColor: 'rgba(255,255,255,0.18)',
     },
     {
       href: '/programs',
+      label: `${cmLevelCount} Levels`,
       title: 'Programs',
-      subtitle: `${cmLevelCount} CM levels — structured theory, history, and ear prep through Advanced.`,
-      chips: ['Prep → Advanced', 'Signs & terms', 'Scales & chords', 'History & listening'],
-      dark: true as const,
+      subtitle: 'Curriculum-aligned theory prep — Certificate of Merit and college first-year coursework, structured level by level.',
+      cta: 'View programs',
+      flip: true,
+      cardBg: '#1A1A18',
+      textColor: 'white',
+      subtitleColor: 'rgba(255,255,255,0.48)',
+      labelBg: 'rgba(186,117,23,0.2)',
+      labelColor: '#E8A84A',
+      ctaColor: '#E8A84A',
+      ctaBg: 'rgba(186,117,23,0.15)',
+      ctaBorder: 'rgba(186,117,23,0.3)',
+      gradient: 'linear-gradient(145deg, #0A0A08 0%, #1E1A10 50%, #2E2618 100%)',
+      symbol: 'CM',
+      symbolColor: 'rgba(186,117,23,0.14)',
     },
   ] as const
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
-        gap: '14px',
-        marginBottom: '48px',
-      }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '48px' }}>
       {tiles.map(tile => (
         <Link
           key={tile.href}
           href={tile.href}
           className="nl-home-category-tile"
-          style={{ textDecoration: 'none', display: 'block', borderRadius: '20px', minHeight: '200px' }}
+          style={{ textDecoration: 'none', display: 'block', borderRadius: '20px' }}
         >
           <div
+            className={`nl-cat-tile-inner${tile.flip ? ' nl-cat-flip' : ''}`}
             style={{
-              height: '100%',
-              boxSizing: 'border-box' as const,
-              borderRadius: '20px',
-              padding: '28px 24px 24px',
-              border: tile.dark ? '1px solid #1A1A18' : '1px solid #D3D1C7',
-              background: tile.dark ? '#1A1A18' : 'white',
-              boxShadow: tile.dark ? '0 8px 32px rgba(26,26,24,0.18)' : '0 2px 16px rgba(26,26,24,0.06)',
+              background: tile.cardBg,
+              border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #D3D1C7',
+              boxShadow: tile.cardBg === '#1A1A18'
+                ? '0 4px 24px rgba(26,26,24,0.22)'
+                : '0 2px 12px rgba(26,26,24,0.05)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
-              display: 'flex',
-              flexDirection: 'column' as const,
-              alignItems: 'flex-start' as const,
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.transform = 'translateY(-3px)'
-              e.currentTarget.style.boxShadow = tile.dark
-                ? '0 12px 40px rgba(26,26,24,0.28)'
-                : '0 8px 28px rgba(26,26,24,0.12)'
-              if (!tile.dark) e.currentTarget.style.borderColor = '#BA7517'
+              const el = e.currentTarget
+              el.style.transform = 'translateY(-3px)'
+              el.style.boxShadow = tile.cardBg === '#1A1A18'
+                ? '0 16px 48px rgba(26,26,24,0.35)'
+                : '0 12px 36px rgba(26,26,24,0.12)'
+              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#BA7517'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = tile.dark
-                ? '0 8px 32px rgba(26,26,24,0.18)'
-                : '0 2px 16px rgba(26,26,24,0.06)'
-              if (!tile.dark) e.currentTarget.style.borderColor = '#D3D1C7'
+              const el = e.currentTarget
+              el.style.transform = 'translateY(0)'
+              el.style.boxShadow = tile.cardBg === '#1A1A18'
+                ? '0 4px 24px rgba(26,26,24,0.22)'
+                : '0 2px 12px rgba(26,26,24,0.05)'
+              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#D3D1C7'
             }}
           >
-            <span
-              style={{
+            {/* Text side */}
+            <div style={{
+              flex: 1,
+              padding: '36px 40px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: '0',
+            }}>
+              <span style={{
                 display: 'inline-block',
                 fontFamily: F,
                 fontSize: '10px',
@@ -98,67 +145,85 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
                 padding: '4px 10px',
                 borderRadius: '20px',
                 marginBottom: '14px',
-                background: tile.dark ? '#BA7517' : '#EDE8DF',
-                color: tile.dark ? 'white' : '#888780',
-              }}
-            >
-              Open
-            </span>
-            <h2
-              style={{
+                background: tile.labelBg,
+                color: tile.labelColor,
+                width: 'fit-content',
+              }}>
+                {tile.label}
+              </span>
+
+              <h2 style={{
                 fontFamily: SERIF,
-                fontWeight: 400,
-                fontSize: 'clamp(22px, 2.5vw, 26px)',
-                color: tile.dark ? 'white' : '#1A1A18',
-                margin: '0 0 10px',
-                letterSpacing: '0.02em',
-              }}
-            >
-              {tile.title}
-            </h2>
-            <p
-              style={{
+                fontWeight: 300,
+                fontSize: 'clamp(30px, 3.2vw, 42px)',
+                color: tile.textColor,
+                margin: '0 0 12px',
+                letterSpacing: '0.01em',
+                lineHeight: 1.05,
+              }}>
+                {tile.title}
+              </h2>
+
+              <p style={{
                 fontFamily: F,
                 fontSize: '14px',
                 fontWeight: 300,
-                lineHeight: 1.55,
-                color: tile.dark ? 'rgba(255,255,255,0.65)' : '#888780',
-                margin: '0 0 16px',
-                flex: 1,
-              }}
-            >
-              {tile.subtitle}
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px', width: '100%' }}>
-              {tile.chips.map(chip => (
-                <span
-                  key={chip}
-                  style={{
-                    fontFamily: F,
-                    fontSize: '11px',
-                    fontWeight: 400,
-                    padding: '5px 10px',
-                    borderRadius: '8px',
-                    background: tile.dark ? 'rgba(255,255,255,0.08)' : '#F5F2EC',
-                    color: tile.dark ? 'rgba(255,255,255,0.85)' : '#666860',
-                    border: tile.dark ? '1px solid rgba(255,255,255,0.12)' : '1px solid #EDE8DF',
-                  }}
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
-            <span
-              style={{
+                lineHeight: 1.65,
+                color: tile.subtitleColor,
+                margin: '0 0 24px',
+                maxWidth: '380px',
+              }}>
+                {tile.subtitle}
+              </p>
+
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
                 fontFamily: F,
-                fontSize: '13px',
-                fontWeight: 300,
-                color: '#BA7517',
-                marginTop: '18px',
+                fontSize: '12px',
+                fontWeight: 400,
+                letterSpacing: '0.05em',
+                color: tile.ctaColor,
+                padding: '7px 16px',
+                borderRadius: '20px',
+                background: tile.ctaBg,
+                border: `1px solid ${tile.ctaBorder}`,
+                width: 'fit-content',
+              }}>
+                {tile.cta} →
+              </span>
+            </div>
+
+            {/* Gradient / image side */}
+            <div
+              className="nl-cat-tile-gradient"
+              style={{
+                background: tile.gradient,
+                position: 'relative',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              Continue →
-            </span>
+              {/* Decorative watermark */}
+              <span
+                aria-hidden="true"
+                style={{
+                  fontFamily: tile.symbol === 'CM' ? SERIF : 'inherit',
+                  fontSize: tile.symbol === 'CM' ? '140px' : '160px',
+                  fontWeight: tile.symbol === 'CM' ? 300 : 400,
+                  color: tile.symbolColor,
+                  lineHeight: 1,
+                  userSelect: 'none',
+                  pointerEvents: 'none',
+                  letterSpacing: tile.symbol === 'CM' ? '-0.04em' : '0',
+                }}
+              >
+                {tile.symbol}
+              </span>
+            </div>
           </div>
         </Link>
       ))}

@@ -4,6 +4,7 @@ export type ToolCard = {
   desc: string
   badge: string
   cta: string
+  group: 'Drills' | 'Theory' | 'Reference'
 }
 
 export const TOOLS: ToolCard[] = [
@@ -13,6 +14,7 @@ export const TOOLS: ToolCard[] = [
     desc: 'Play notes on your piano as they appear on the staff. Treble, bass, and grand staff.',
     badge: 'Free + Pro',
     cta: 'Practice →',
+    group: 'Drills',
   },
   {
     href: '/note-id',
@@ -20,6 +22,7 @@ export const TOOLS: ToolCard[] = [
     desc: 'Identify notes by name using letter buttons or a piano keyboard.',
     badge: 'Free + Pro',
     cta: 'Practice →',
+    group: 'Drills',
   },
   {
     href: '/key-signatures',
@@ -27,6 +30,7 @@ export const TOOLS: ToolCard[] = [
     desc: 'Circle of fifths explorer, staff drill, historical Affekt, and key ID quiz.',
     badge: 'Free',
     cta: 'Explore →',
+    group: 'Theory',
   },
   {
     href: '/scale-builder',
@@ -34,6 +38,7 @@ export const TOOLS: ToolCard[] = [
     desc: 'Build major and minor scales from any root using whole and half steps.',
     badge: 'Free',
     cta: 'Build →',
+    group: 'Theory',
   },
   {
     href: '/scale-fingerings',
@@ -41,6 +46,7 @@ export const TOOLS: ToolCard[] = [
     desc: 'Two-octave major and minor scale fingerings for both hands, with keyboard and staff views.',
     badge: 'Free',
     cta: 'Study →',
+    group: 'Theory',
   },
   {
     href: '/glossary',
@@ -48,12 +54,20 @@ export const TOOLS: ToolCard[] = [
     desc: 'Searchable reference of musical terms — French, German, Italian, abbreviations.',
     badge: 'Free',
     cta: 'Browse →',
+    group: 'Reference',
   },
   {
     href: '/repertoire',
-    title: 'CM Repertoire',
-    desc: 'Browse the complete CM repertoire lists by level — Preparatory through Advanced. Search across all levels.',
+    title: 'Repertoire Lists',
+    desc: 'Browse graded repertoire lists by level and exam board — CM, RCM, and more.',
     badge: 'Pro',
     cta: 'Browse →',
+    group: 'Reference',
   },
+]
+
+export const TOOL_GROUPS: { label: 'Drills' | 'Theory' | 'Reference'; description: string }[] = [
+  { label: 'Drills', description: 'Interactive exercises — identify and respond in real time.' },
+  { label: 'Theory', description: 'Build and explore music theory concepts hands-on.' },
+  { label: 'Reference', description: 'Look things up — terms, fingerings, repertoire.' },
 ]

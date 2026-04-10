@@ -133,6 +133,23 @@ button:not(:disabled):active {
   }
 }
 
+/* ── Home category tiles — horizontal editorial cards ────────── */
+.nl-cat-tile-inner {
+  display: flex;
+  flex-direction: row;
+  min-height: 210px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.nl-cat-tile-inner.nl-cat-flip { flex-direction: row-reverse; }
+.nl-cat-tile-gradient { width: 38%; flex-shrink: 0; }
+
+@media (max-width: 640px) {
+  .nl-cat-tile-inner,
+  .nl-cat-tile-inner.nl-cat-flip { flex-direction: column; }
+  .nl-cat-tile-gradient { width: 100%; min-height: 130px; }
+}
+
 /* ── Site header nav visibility ─────────────────────────────── */
 .nl-desktop-nav { display: flex; align-items: center; gap: 4px; }
 .nl-mobile-nav  { display: none; position: relative; }

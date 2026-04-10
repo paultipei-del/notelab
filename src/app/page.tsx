@@ -29,7 +29,7 @@ export default function Home() {
     }
   }, [loading, user])
   const [userDecks, setUserDecks] = useState<Deck[]>([])
-  const [decksLoading, setDecksLoading] = useState(true)
+  const [, setDecksLoading] = useState(true)
   const [editingDeck, setEditingDeck] = useState<Deck | null>(null)
   const [showNewDeck, setShowNewDeck] = useState(false)
   const [newTitle, setNewTitle] = useState('')
@@ -73,13 +73,24 @@ export default function Home() {
       {/* Header */}
 
       {/* Hero */}
-      <div style={{ textAlign: 'center', padding: '56px 32px 48px' }}>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 5vw, 48px)', letterSpacing: '0.02em', color: '#1A1A18', marginBottom: '12px' }}>
-          Music theory, practiced.
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '52px 32px 44px' }}>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, margin: '0', lineHeight: 1, width: 'fit-content' }}>
+          <span style={{ display: 'block', fontSize: 'clamp(38px, 5.5vw, 64px)', color: 'rgba(136,135,128,0.55)', letterSpacing: '-0.01em', fontWeight: 300, marginBottom: '-0.05em' }}>
+            Music theory,
+          </span>
+          <span style={{ display: 'block', fontSize: 'clamp(64px, 9.5vw, 110px)', color: '#1A1A18', letterSpacing: '-0.03em', lineHeight: 0.9, fontStyle: 'italic' }}>
+            practiced.
+          </span>
+          <span style={{ display: 'block', width: '100%', textAlign: 'right' as const, fontSize: 'clamp(20px, 2.2vw, 28px)', color: '#BA7517', letterSpacing: '0.01em', fontStyle: 'italic', fontWeight: 300, marginTop: '0.5em' }}>
+            reinvented.
+          </span>
         </h1>
-        <p style={{ fontSize: '15px', fontWeight: 300, color: '#888780', maxWidth: '480px', margin: '0 auto', lineHeight: 1.7 }}>
-          Interactive tools and flashcard collections for students at every level.
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '28px 0 0' }}>
+          <div style={{ width: '40px', height: '1.5px', background: '#BA7517', flexShrink: 0 }} />
+          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780', margin: 0, lineHeight: 1.7 }}>
+            Interactive tools and flashcard collections for students at every level.
+          </p>
+        </div>
       </div>
 
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '0 32px 80px' }}>

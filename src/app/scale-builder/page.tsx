@@ -464,12 +464,12 @@ if (newNotes.length === expectedLength) {
 
     if (key.black) {
       if (isRoot) return '#BA7517'
-      if (isBuilt) return '#4CAF50'
+      if (isBuilt) return '#276840'
       if (isNext && showHint) return '#6B8FD4'
       return '#1A1A18'
     } else {
       if (isRoot) return '#FAEEDA'
-      if (isBuilt) return '#E8F5E9'
+      if (isBuilt) return '#E0EDE6'
       if (isNext && showHint) return '#E8EEF9'
       return 'white'
     }
@@ -479,10 +479,20 @@ if (newNotes.length === expectedLength) {
   const step = 6
   const staffTop = 40
   const staffLeft = 20
-  const noteSpacing = 42
-  const staffWidth = Math.max(200, builtNotes.length * noteSpacing + 80)
-  const svgW = staffLeft * 2 + staffWidth
-  const svgH = 160
+  const noteSpacing = 54
+  const staffWidth = 520           // fixed — accommodates all scale types
+  const svgW = staffLeft * 2 + staffWidth   // 560
+  const noteNameY = staffTop + 9 * step + 28   // generous gap below staff
+  const stepY     = noteNameY + 20             // step/degree row below note names
+  const svgH = stepY + 16
+
+  const selectBase: React.CSSProperties = {
+    width: '100%', appearance: 'none', WebkitAppearance: 'none',
+    background: 'white', border: '1px solid #D3D1C7', borderRadius: '12px',
+    padding: '11px 36px 11px 16px',
+    fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18',
+    cursor: 'pointer', outline: 'none',
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
@@ -493,233 +503,204 @@ if (newNotes.length === expectedLength) {
         <div style={{ width: '60px' }} />
       </div>
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '16px 12px 80px' }}>
+      <div style={{ maxWidth: '860px', margin: '0 auto', padding: '20px 16px 80px' }}>
 
-        {/* Scale type selector */}
-        <div style={{ marginBottom: '32px' }}>
-          {SCALE_GROUPS.map(group => (
-            <div key={group.label} style={{ marginBottom: '12px' }}>
-              <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '8px' }}>{group.label}</p>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
-                {group.types.map(type => (
-                  <button key={type} onClick={() => { setScaleType(type); reset() }}
-                    style={{ padding: '5px 10px', borderRadius: '20px', border: '1px solid ' + (scaleType === type ? '#1A1A18' : '#D3D1C7'), background: scaleType === type ? '#1A1A18' : 'white', color: scaleType === type ? 'white' : '#888780', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
-                    {SCALE_LABELS[type]}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* ── Selectors row ── */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+          {/* Scale type */}
+          <div style={{ position: 'relative', flex: 2 }}>
+            <select
+              value={scaleType}
+              onChange={e => { setScaleType(e.target.value as ScaleType); reset() }}
+              style={selectBase}
+            >
+              {SCALE_GROUPS.map(group => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.types.map(type => (
+                    <option key={type} value={type}>{SCALE_LABELS[type]}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#888780', fontSize: '11px' }}>▾</span>
+          </div>
 
-        {/* Root note picker */}
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', marginBottom: '24px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Starting Note</p>
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
-            {['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B'].map(note => (
-              <button key={note} onClick={() => {
+          {/* Root note */}
+          <div style={{ position: 'relative', flex: 1 }}>
+            <select
+              value={selectedRoot ?? ''}
+              onChange={e => {
+                const note = e.target.value
+                if (!note) return
                 setSelectedRoot(note)
-                // Find this note on the piano and set it as root
                 const midi = noteToMidi(note, 4)
-                const builtNote = { name: note, octave: 4, midiNum: midi }
-                setBuiltNotes([builtNote])
+                setBuiltNotes([{ name: note, octave: 4, midiNum: midi }])
                 setPhase('play_note')
                 setError(null)
                 setFlash(null)
-              }} style={{
-                padding: '6px 12px', borderRadius: '8px',
-                border: '1px solid ' + (selectedRoot === note ? '#1A1A18' : '#D3D1C7'),
-                background: selectedRoot === note ? '#1A1A18' : 'white',
-                color: selectedRoot === note ? 'white' : note.includes('b') ? '#888780' : '#1A1A18',
-                fontFamily: SERIF, fontSize: '16px', fontWeight: 300,
-                cursor: 'pointer', minWidth: '36px', textAlign: 'center' as const,
-              }}>
-                {note}
-              </button>
-            ))}
+                playNote(midi)
+              }}
+              style={selectBase}
+            >
+              <option value="" disabled>Root…</option>
+              {['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B'].map(note => (
+                <option key={note} value={note}>{note}</option>
+              ))}
+            </select>
+            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#888780', fontSize: '11px' }}>▾</span>
           </div>
         </div>
 
-        {/* Pattern display */}
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', marginBottom: '24px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Pattern</p>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' as const }}>
-            {(DEGREE_LABELS[scaleType] ?? []).length > 0 ? (
-            // Show scale degrees for pentatonic/blues/WT/dim
-            DEGREE_LABELS[scaleType]!.map((deg, i) => {
-              // i=0 is the root box, rest are subsequent notes
-              const noteAtIdx = i === 0 ? builtNotes[0] : builtNotes[i]
-              const isActive = builtNotes.length === i && phase !== 'select_root' && i > 0
-              const isDone = builtNotes.length > i
-              const isLast = i === DEGREE_LABELS[scaleType]!.length - 1
-              return (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  {/* Note box with degree below */}
-                  <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' }}>
-                    <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: isDone ? '#E8F5E9' : isActive ? '#F5F2EC' : '#F5F2EC', border: '1px solid ' + (isDone ? '#4CAF50' : isActive ? '#1A1A18' : '#EDE8DF'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontFamily: SERIF, fontSize: '14px', color: isDone ? '#4CAF50' : '#D3D1C7' }}>{noteAtIdx?.name ?? '?'}</span>
-                    </div>
-                    <span style={{ fontFamily: F, fontSize: '9px', fontWeight: 300, color: isDone ? '#4CAF50' : '#D3D1C7', letterSpacing: '0.04em' }}>{deg}</span>
-                  </div>
-                  {/* Arrow between boxes (not after last) */}
-                  {!isLast && (
-                    <div style={{ width: '16px', height: '1px', background: isDone ? '#4CAF50' : '#D3D1C7' }} />
-                  )}
-                </div>
-              )
-            })
-          ) : (
-            <>
-            {/* Root box for normal scales */}
-            <div style={{ textAlign: 'center' as const }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: builtNotes.length > 0 ? '#FAEEDA' : '#F5F2EC', border: '1px solid ' + (builtNotes.length > 0 ? '#BA7517' : '#D3D1C7'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontFamily: SERIF, fontSize: '16px', color: builtNotes.length > 0 ? '#BA7517' : '#888780' }}>
-                  {builtNotes[0]?.name ?? '?'}
-                </span>
-              </div>
-            </div>
-            {pattern.map((step, i) => {
-              const noteAtStep = builtNotes[i + 1]
-              const isActive = builtNotes.length === i + 1 && phase !== 'select_root'
-              const isDone = builtNotes.length > i + 1
-              return (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {/* Step arrow */}
-                  <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '2px' }}>
-                    <span style={{ fontFamily: F, fontSize: '10px', fontWeight: isActive ? 600 : 300, color: isActive ? '#1A1A18' : isDone ? '#4CAF50' : '#D3D1C7', letterSpacing: '0.04em' }}>
-                      {step}
-                    </span>
-                    <div style={{ width: '20px', height: '1px', background: isDone ? '#4CAF50' : isActive ? '#1A1A18' : '#D3D1C7' }} />
-                  </div>
-                  {/* Note box */}
-                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: isDone ? '#E8F5E9' : isActive ? '#F5F2EC' : '#F5F2EC', border: '1px solid ' + (isDone ? '#4CAF50' : isActive ? '#D3D1C7' : '#EDE8DF'), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontFamily: SERIF, fontSize: '14px', color: isDone ? '#4CAF50' : '#D3D1C7' }}>
-                      {noteAtStep?.name ?? '?'}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}</>
-          )}
+        {/* ── Unified card: Staff + Pattern + Status ── */}
+        <div style={{
+          background: 'white', borderRadius: '16px', marginBottom: '16px',
+          border: '1px solid ' + (flash === 'correct' ? '#276840' : flash === 'wrong' ? '#C0392B' : '#D3D1C7'),
+          transition: 'border-color 0.15s', overflow: 'hidden',
+        }}>
+
+          {/* Staff + embedded note names + step labels */}
+          <div style={{ padding: '16px 20px 0', display: 'flex', justifyContent: 'center', overflowX: 'auto' }}>
+            <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
+              {/* Staff lines */}
+              {[0,2,4,6,8].map(p => (
+                <line key={p} x1={staffLeft} y1={staffTop + p*step} x2={staffLeft + staffWidth} y2={staffTop + p*step} stroke="#1A1A18" strokeWidth="1.2" />
+              ))}
+              {/* Barline */}
+              <line x1={staffLeft + staffWidth} y1={staffTop} x2={staffLeft + staffWidth} y2={staffTop + 8*step} stroke="#1A1A18" strokeWidth="2" />
+              {/* Treble clef */}
+              <text x={staffLeft} y={staffTop + 32} fontSize="50" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
+
+              {/* Notes */}
+              {builtNotes.map((note, i) => {
+                const key = note.name + note.octave
+                const pos = TREBLE_POS[key] ?? TREBLE_POS[note.name.replace('b','') + note.octave]
+                if (pos === undefined) return null
+                const nx = staffLeft + 68 + i * noteSpacing
+                const ny = staffTop + pos * step
+                const stemUp = pos >= 4
+                const notePitchClass = note.name.replace(/\d+$/, '')
+                const acc = ACC_MAP[notePitchClass]
+                const color = i === 0 ? '#B5720F' : '#276840'
+                const ledgers = []
+                for (let p = 10; p <= pos; p += 2) ledgers.push(<line key={'lb'+p} x1={nx-10} y1={staffTop+p*step} x2={nx+10} y2={staffTop+p*step} stroke="#1A1A18" strokeWidth="1.2" />)
+                for (let p = -2; p >= pos; p -= 2) ledgers.push(<line key={'la'+p} x1={nx-10} y1={staffTop+p*step} x2={nx+10} y2={staffTop+p*step} stroke="#1A1A18" strokeWidth="1.2" />)
+                return (
+                  <g key={i}>
+                    {ledgers}
+                    {acc && <text x={nx-17} y={ny} fontSize="36" fontFamily="Bravura, serif" fill={color} dominantBaseline="central" textAnchor="middle">{
+                      acc === 'double_sharp' ? String.fromCodePoint(0xE263) :
+                      acc === 'sharp' ? String.fromCodePoint(0xE262) :
+                      acc === 'double_flat' ? String.fromCodePoint(0xE264) :
+                      String.fromCodePoint(0xE260)
+                    }</text>}
+                    <text x={nx} y={ny} fontSize="46" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xE0A4)}</text>
+                    <line x1={stemUp ? nx+6 : nx-6} y1={ny} x2={stemUp ? nx+6 : nx-6} y2={stemUp ? ny-38 : ny+38} stroke={color} strokeWidth="1.5" />
+                    {/* Note name — aligned directly below note head */}
+                    <text x={nx} y={noteNameY} fontSize="22" fontFamily="var(--font-cormorant), serif" fill={color} textAnchor="middle" dominantBaseline="middle" fontWeight="400">
+                      {note.name}
+                    </text>
+                    {/* Degree label (degree-based scales only) */}
+                    {(DEGREE_LABELS[scaleType] ?? []).length > 0 && DEGREE_LABELS[scaleType]![i] && (
+                      <text x={nx} y={stepY} fontSize="12" fontFamily="var(--font-jost), sans-serif" fill={color} fillOpacity="0.65" textAnchor="middle" dominantBaseline="middle" letterSpacing="0.04em">
+                        {DEGREE_LABELS[scaleType]![i]}
+                      </text>
+                    )}
+                  </g>
+                )
+              })}
+
+              {/* Step labels + connecting lines between notes (normal scales) */}
+              {(DEGREE_LABELS[scaleType] ?? []).length === 0 && pattern.map((st, i) => {
+                const cx = staffLeft + 68 + i * noteSpacing        // left note center
+                const cx2 = staffLeft + 68 + (i + 1) * noteSpacing  // right note center
+                const mx = (cx + cx2) / 2
+                const x1 = cx + 22   // clear of note name text
+                const x2 = cx2 - 22
+                const isDone = builtNotes.length > i + 1
+                const isActive = builtNotes.length === i + 1 && phase !== 'select_root'
+                const color = isDone ? '#276840' : isActive ? '#1A1A18' : '#C8C4BA'
+                return (
+                  <text key={'st'+i} x={mx} y={stepY} fontSize="12" fontFamily="var(--font-jost), sans-serif" fill={color} textAnchor="middle" dominantBaseline="middle" fontWeight={isActive ? '500' : '300'} letterSpacing="0.06em">
+                    {st}
+                  </text>
+                )
+              })}
+            </svg>
           </div>
-        </div>
 
-        {/* Staff */}
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid ' + (flash === 'correct' ? '#4CAF50' : flash === 'wrong' ? '#E53935' : '#D3D1C7'), padding: '16px 24px', marginBottom: '24px', transition: 'border-color 0.15s' }}>
-          <svg width="100%" height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="xMidYMid meet">
-            {/* Staff lines */}
-            {[0,2,4,6,8].map(p => (
-              <line key={p} x1={staffLeft} y1={staffTop + p*step} x2={staffLeft + staffWidth} y2={staffTop + p*step} stroke="#1A1A18" strokeWidth="1.2" />
-            ))}
-            {/* Treble clef */}
-            <text x={staffLeft} y={staffTop + 36} fontSize="50" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
-            {/* Notes */}
-            {builtNotes.map((note, i) => {
-              const key = note.name + note.octave
-              const pos = TREBLE_POS[key] ?? TREBLE_POS[note.name.replace('b','') + note.octave]
-              if (pos === undefined) return null
-              const nx = staffLeft + 68 + i * noteSpacing
-              const ny = staffTop + pos * step
-              const stemUp = pos >= 4
-              const notePitchClass = note.name.replace(/\d+$/, '')
-              const acc = ACC_MAP[notePitchClass]
-              const isRoot = i === 0
-              const color = isRoot ? '#BA7517' : '#4CAF50'
+          {/* Divider */}
+          <div style={{ height: '1px', background: '#EDE8DF' }} />
 
-              // Ledger lines
-              const ledgers = []
-              for (let p = 10; p <= pos; p += 2) ledgers.push(<line key={'lb'+p} x1={nx-10} y1={staffTop+p*step} x2={nx+10} y2={staffTop+p*step} stroke="#1A1A18" strokeWidth="1.2" />)
-              for (let p = -2; p >= pos; p -= 2) ledgers.push(<line key={'la'+p} x1={nx-10} y1={staffTop+p*step} x2={nx+10} y2={staffTop+p*step} stroke="#1A1A18" strokeWidth="1.2" />)
-
-              return (
-                <g key={i}>
-                  {ledgers}
-                  {acc && <text x={nx-17} y={ny} fontSize="36" fontFamily="Bravura, serif" fill={color} dominantBaseline="central" textAnchor="middle">{
-                  acc === 'double_sharp' ? String.fromCodePoint(0xE263) :
-                  acc === 'sharp' ? String.fromCodePoint(0xE262) :
-                  acc === 'double_flat' ? String.fromCodePoint(0xE264) :
-                  String.fromCodePoint(0xE260)
-                }</text>}
-                  <text x={nx} y={ny} fontSize="46" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xE0A4)}</text>
-                  <line x1={stemUp ? nx+6 : nx-6} y1={ny} x2={stemUp ? nx+6 : nx-6} y2={stemUp ? ny-38 : ny+38} stroke={color} strokeWidth="1.5" />
-
-                </g>
-              )
-            })}
-          </svg>
-        </div>
-
-        {/* Instruction / Step confirmation */}
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '14px 16px', marginBottom: '16px', minHeight: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {phase === 'select_root' && (
-            <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780' }}>Click any key to choose your starting note.</p>
-          )}
-
-          {phase === 'play_note' && currentStep && (
-            <div style={{ width: '100%' }}>
-              <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginBottom: '4px' }}>
-                Now play a <strong>{STEP_LABELS[currentStep]}</strong> above <strong>{builtNotes[builtNotes.length-1].name}{builtNotes[builtNotes.length-1].octave}</strong>
-              </p>
-              {error && <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#E53935', marginTop: '6px' }}>✗ {error}</p>}
-            </div>
-          )}
-          {phase === 'complete' && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          {/* Status / Instruction */}
+          <div style={{ padding: '14px 20px', minHeight: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {phase === 'select_root' && (
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#B0ACA4' }}>Choose a scale type and root note above, or click any key below.</p>
+            )}
+            {phase === 'play_note' && currentStep && (
               <div>
-                <p style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#4CAF50', marginBottom: '4px' }}>
+                <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#888780' }}>
+                  Play a{' '}
+                  <span style={{ fontWeight: 500, color: '#B5720F' }}>{STEP_LABELS[currentStep]}</span>
+                  {' '}above{' '}
+                  <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#1A1A18' }}>{builtNotes[builtNotes.length-1].name}</span>
+                </p>
+                {error && <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C0392B', marginTop: '6px' }}>✗ {error}</p>}
+              </div>
+            )}
+            {phase === 'complete' && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <p style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#276840' }}>
                   {builtNotes[0]?.name} {SCALE_LABELS[scaleType]} ✓
                 </p>
-                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>Scale complete — listen to it play back</p>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => playScale(builtNotes)}
+                    style={{ background: 'transparent', color: '#1A1A18', border: '1px solid #D3D1C7', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                    ▶ Play
+                  </button>
+                  <button onClick={reset}
+                    style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                    New Scale
+                  </button>
+                </div>
               </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={() => playScale(builtNotes)}
-                  style={{ background: 'transparent', color: '#1A1A18', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '10px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                  ▶ Play
-                </button>
-                <button onClick={reset}
-                  style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-                  New Scale
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Piano */}
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px 24px', overflowX: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780' }}>Piano</p>
-            <div style={{ display: 'flex', gap: '8px' }}>
+        {/* ── Piano ── */}
+        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '16px 20px', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780' }}>Piano</p>
+            <div style={{ display: 'flex', gap: '6px' }}>
               <button onClick={() => setShowHint(!showHint)}
-                style={{ background: showHint ? '#1A1A18' : 'none', color: showHint ? 'white' : '#888780', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
-                {showHint ? 'Hint On' : 'Hint Off'}
+                style={{ background: showHint ? '#1A1A18' : 'transparent', color: showHint ? 'white' : '#888780', border: '1px solid ' + (showHint ? '#1A1A18' : '#D3D1C7'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                Hint {showHint ? 'on' : 'off'}
               </button>
               <button onClick={() => setShowNoteNames(!showNoteNames)}
-              style={{ background: 'none', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', cursor: 'pointer' }}>
-              {showNoteNames ? 'Hide' : 'Show'} Note Names
-            </button>
+                style={{ background: showNoteNames ? '#1A1A18' : 'transparent', color: showNoteNames ? 'white' : '#888780', border: '1px solid ' + (showNoteNames ? '#1A1A18' : '#D3D1C7'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                Note names
+              </button>
+              <button onClick={reset}
+                style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                Reset
+              </button>
             </div>
           </div>
-          <div style={{ overflowX: 'auto' as const, WebkitOverflowScrolling: 'touch' as const }}><div style={{ position: 'relative', height: KH + 'px', width: WHITE_KEYS.length * KW + 'px' }}>
-            {WHITE_KEYS.map((key, i) => (
-              <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
-                style={{ position: 'absolute', left: i * KW, top: 0, width: KW - 1, height: KH, background: keyBg(key), border: '1px solid #D3D1C7', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 1, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', transition: 'background 0.1s' }}>
-                {showNoteNames && <span style={{ fontSize: '9px', color: '#888780', fontFamily: F }}>{key.name}{key.octave}</span>}
-              </button>
-            ))}
-            {BLACK_KEYS.map(key => (
-              <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
-                style={{ position: 'absolute', left: key.whiteIndex * KW + KW - BW/2, top: 0, width: BW, height: BH, background: keyBg(key), borderRadius: '0 0 4px 4px', cursor: 'pointer', zIndex: 2, border: 'none', transition: 'background 0.1s' }}>
-              </button>
-            ))}
-          </div></div>
-        </div>
-
-        {/* Show/hide toggle */}
-        <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
-          <button onClick={reset} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>
-            Reset
-          </button>
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const }}>
+            <div style={{ position: 'relative', height: KH + 'px', width: WHITE_KEYS.length * KW + 'px' }}>
+              {WHITE_KEYS.map((key, i) => (
+                <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
+                  style={{ position: 'absolute', left: i * KW, top: 0, width: KW - 1, height: KH, background: keyBg(key), border: '1px solid #D3D1C7', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 1, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', transition: 'background 0.1s' }}>
+                  {showNoteNames && <span style={{ fontSize: '9px', color: '#888780', fontFamily: F }}>{key.name}{key.octave}</span>}
+                </button>
+              ))}
+              {BLACK_KEYS.map(key => (
+                <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
+                  style={{ position: 'absolute', left: key.whiteIndex * KW + KW - BW/2, top: 0, width: BW, height: BH, background: keyBg(key), borderRadius: '0 0 4px 4px', cursor: 'pointer', zIndex: 2, border: 'none', transition: 'background 0.1s' }}>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
       </div>
