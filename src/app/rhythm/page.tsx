@@ -2155,6 +2155,11 @@ export default function RhythmPage() {
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
           <div>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '4px' }}>Rhythm Trainer</h1>
+            {!exercise && (
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', margin: '0 0 0', maxWidth: '500px', lineHeight: 1.6 }}>
+                Select an exercise, then press ▶ to hear it or <strong style={{ fontWeight: 400, color: '#1A1A18' }}>Start</strong> to tap along. Hit <strong style={{ fontWeight: 400, color: '#1A1A18' }}>TAP</strong> on each note — hold for longer notes, rest for rests.
+              </p>
+            )}
             {exercise && currentMeta && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', background: DIFFICULTY_COLORS[currentMeta.difficulty], color: DIFFICULTY_TEXT[currentMeta.difficulty] }}>
