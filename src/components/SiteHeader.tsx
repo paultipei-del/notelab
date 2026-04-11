@@ -91,9 +91,9 @@ export default function SiteHeader() {
         {/* Wordmark */}
         <div className="site-header__brand">
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: F, fontSize: '18px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>
+            <span style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>
               Note<span style={{ fontWeight: 500 }}>Lab</span>
-              <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', color: '#7A7060', marginLeft: '7px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
+              <span style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.18em', color: '#7A7060', marginLeft: '8px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
             </span>
           </Link>
         </div>
@@ -107,7 +107,7 @@ export default function SiteHeader() {
             position: 'relative',
             background: 'transparent',
             borderRadius: '9999px',
-            padding: '4px',
+            padding: '5px',
             gap: '0',
           }}
           onMouseLeave={() => { if (activeIdx >= 0) movePillTo(activeIdx); else setPillRect(null) }}
@@ -118,8 +118,8 @@ export default function SiteHeader() {
               position: 'absolute',
               left: pillRect.left,
               width: pillRect.width,
-              top: '4px',
-              bottom: '4px',
+              top: '5px',
+              bottom: '5px',
               background: 'white',
               borderRadius: '9999px',
               boxShadow: '0 1px 4px rgba(42,35,24,0.12)',
@@ -140,7 +140,7 @@ export default function SiteHeader() {
                   position: 'relative', zIndex: 10,
                   background: 'transparent', border: 'none',
                   borderRadius: '9999px',
-                  padding: '6px 16px',
+                  padding: '7px 18px',
                   fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
                   color: active ? '#2A2318' : '#7A7060',
                   letterSpacing: '0.02em',
@@ -165,21 +165,21 @@ export default function SiteHeader() {
               onClick={() => setShowMobileMenu(v => !v)}
               aria-label="Menu"
               style={{
-                width: '36px', height: '36px', borderRadius: '10px',
+                width: '40px', height: '40px', borderRadius: '11px',
                 background: showMobileMenu ? '#1A1A18' : 'transparent',
                 border: '1px solid ' + (showMobileMenu ? '#1A1A18' : '#DDD8CA'),
                 cursor: 'pointer', display: 'flex', flexDirection: 'column' as const,
-                alignItems: 'center', justifyContent: 'center', gap: '5px',
+                alignItems: 'center', justifyContent: 'center', gap: '6px',
               }}
             >
               {[0,1,2].map(i => (
                 <span key={i} style={{
-                  display: 'block', width: '14px', height: '1.5px',
+                  display: 'block', width: '16px', height: '2px',
                   background: showMobileMenu ? 'white' : '#1A1A18',
                   borderRadius: '1px',
                   transition: 'all 0.15s',
                   transform: showMobileMenu
-                    ? i === 0 ? 'translateY(6.5px) rotate(45deg)' : i === 2 ? 'translateY(-6.5px) rotate(-45deg)' : 'scaleX(0)'
+                    ? i === 0 ? 'translateY(8px) rotate(45deg)' : i === 2 ? 'translateY(-8px) rotate(-45deg)' : 'scaleX(0)'
                     : 'none',
                 }} />
               ))}
@@ -191,14 +191,14 @@ export default function SiteHeader() {
                 background: '#FDFAF3', border: '1px solid #DDD8CA',
                 borderRadius: '14px', padding: '8px',
                 boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
-                minWidth: '200px', zIndex: 100,
+                minWidth: '220px', zIndex: 100,
               }}>
                 {NAV.map(item => {
                   const active = item.match(pathname)
                   return (
                     <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block' }}>
                       <div style={{
-                        padding: '11px 14px', borderRadius: '8px',
+                        padding: '12px 16px', borderRadius: '8px',
                         fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
                         color: active ? '#1A1A18' : '#7A7060',
                         background: active ? '#F2EDDF' : 'none',
@@ -224,9 +224,9 @@ export default function SiteHeader() {
                 <button
                   onClick={() => setShowUserMenu(v => !v)}
                   style={{
-                    width: '34px', height: '34px', borderRadius: '50%',
+                    width: '38px', height: '38px', borderRadius: '50%',
                     background: '#1A1A18', border: 'none',
-                    fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500,
+                    fontFamily: F, fontSize: '13px', fontWeight: 500,
                     color: 'white', cursor: 'pointer', letterSpacing: '0.04em',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
@@ -242,19 +242,19 @@ export default function SiteHeader() {
                     minWidth: '200px', zIndex: 100,
                   }}>
                     {/* Identity header */}
-                    <div style={{ padding: '8px 12px 12px', borderBottom: '1px solid #EDE8DF', marginBottom: '4px' }}>
+                    <div style={{ padding: '10px 14px 14px', borderBottom: '1px solid #EDE8DF', marginBottom: '4px' }}>
                       {displayName && (
-                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>
+                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>
                           {displayName}
                         </p>
                       )}
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0, wordBreak: 'break-all' as const }}>
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', margin: 0, wordBreak: 'break-all' as const }}>
                         {email}
                       </p>
                     </div>
 
                     <Link href="/account" onClick={() => setShowUserMenu(false)} style={{ textDecoration: 'none', display: 'block' }}>
-                      <div style={{ borderRadius: '8px', padding: '9px 12px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', cursor: 'pointer' }}
+                      <div style={{ borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', cursor: 'pointer' }}
                         onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
                         Account settings
@@ -263,8 +263,8 @@ export default function SiteHeader() {
                     <button onClick={handleSignOut} style={{
                       display: 'block', width: '100%', textAlign: 'left' as const,
                       background: 'none', border: 'none', borderRadius: '8px',
-                      padding: '9px 12px', borderTop: '1px solid #EDE8DF', marginTop: '4px',
-                      fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer',
+                      padding: '10px 14px', borderTop: '1px solid #EDE8DF', marginTop: '4px',
+                      fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', cursor: 'pointer',
                     }}
                       onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'none')}
@@ -276,8 +276,8 @@ export default function SiteHeader() {
               </div>
             ) : (
               <button onClick={() => setShowAuth(true)} style={{
-                border: '1px solid #DDD8CA', borderRadius: '20px',
-                padding: '7px 18px', fontFamily: F, fontSize: 'var(--nl-text-ui)',
+                border: '1px solid #DDD8CA', borderRadius: '22px',
+                padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-body)',
                 fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer',
               }}>
                 Sign in

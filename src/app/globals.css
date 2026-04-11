@@ -10,7 +10,7 @@
   --nl-text-meta: 13px; /* footer, card meta, desktop nav */
   --nl-text-compact: 12px; /* chips, form labels (uppercase), tight controls */
   --nl-text-badge: 11px; /* tiny pills / wordmark sublabel only */
-  --nl-site-header-h: 56px; /* keep in sync with .site-header height */
+  --nl-site-header-h: 60px; /* keep in sync with .site-header height */
   /* Smallest viewport metric so study height never exceeds visible area (avoids 1–2px body scroll) */
   --nl-viewport-h: min(100svh, 100dvh);
 }
@@ -339,7 +339,7 @@ button:not(:disabled):active {
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  height: 56px;
+  height: 60px;
   border-bottom: 1px solid #DDD8CA;
   background: #F2EDDF;
   position: sticky;
