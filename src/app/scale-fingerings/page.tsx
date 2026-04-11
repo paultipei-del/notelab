@@ -55,9 +55,9 @@ function KeyboardSVG({ notes, fingering, hand }: {
 }) {
   const startMidi = notes[0]
   const endMidi = notes[notes.length - 1]
-  // Extend display to nearest C below start and C above end for context
-  const displayStart = startMidi - (startMidi % 12)  // nearest C below
-  const displayEnd = endMidi + (12 - (endMidi % 12)) % 12  // nearest C above
+  // Extend to nearest C, but always at least C3–C6 so all scales render at the same visual scale
+  const displayStart = Math.min(startMidi - (startMidi % 12), 48)  // ≤ C3 (midi 48)
+  const displayEnd   = Math.max(endMidi + (12 - (endMidi % 12)) % 12, 84) // ≥ C6 (midi 84)
   // whiteCount calculated after allKeys is built below
   const H = WH + 32  // extra space for finger numbers
 
@@ -389,6 +389,15 @@ export default function ScaleFingeringsPage() {
     transition: 'all 0.15s',
   })
 
+  // Render a key label with accidentals sized to match capital-letter height
+  function renderKeyLabel(name: string, accSize = '0.72em'): React.ReactNode {
+    return name.split(/(♭|♯)/).map((part, i) =>
+      (part === '♭' || part === '♯')
+        ? <span key={i} style={{ fontSize: accSize, lineHeight: 1, verticalAlign: 'baseline' }}>{part}</span>
+        : <React.Fragment key={i}>{part}</React.Fragment>
+    )
+  }
+
   function changeScaleType(t: ScaleType) {
     setScaleType(t)
     setDirection('asc')
@@ -434,7 +443,7 @@ export default function ScaleFingeringsPage() {
             <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'nowrap' as const }}>
               {cofKeys.map(k => (
                 <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k, k === centerKey)}>
-                  {displayMap[k]}
+                  {renderKeyLabel(displayMap[k], '0.75em')}
                 </button>
               ))}
             </div>
@@ -444,8 +453,8 @@ export default function ScaleFingeringsPage() {
         {/* Scale title + direction toggle */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '30px', color: '#1A1A18', margin: 0 }}>
-              {displayMap[selectedKey]} {scaleLabel}
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '30px', color: '#1A1A18', margin: 0, lineHeight: 1.2 }}>
+              {renderKeyLabel(displayMap[selectedKey])} {scaleLabel}
             </h2>
             {showDirection && (
               <div style={{ display: 'inline-flex', background: '#E8E5DF', borderRadius: '20px', padding: '3px', gap: '2px' }}>
