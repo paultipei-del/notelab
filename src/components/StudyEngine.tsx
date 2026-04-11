@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Deck, StudyMode } from '@/lib/types'
 import { useStudySession } from '@/hooks/useStudySession'
 import FlipCard from '@/components/cards/FlipCard'
@@ -9,8 +9,7 @@ import SymbolCard from '@/components/cards/SymbolCard'
 import AudioCard from '@/components/cards/AudioCard'
 import AudioBrowseRow from '@/components/cards/AudioBrowseRow'
 import ExplainCard from '@/components/cards/ExplainCard'
-import PlayItCard, { stopMic as stopMicOld } from '@/components/cards/PlayItCard'
-import { stopMic as stopMicNew } from '@/components/cards/PlayItCard2'
+import { stopMic } from '@/components/cards/PlayItCard2'
 import PlayItCard2 from '@/components/cards/PlayItCard2'
 import { useRouter } from 'next/navigation'
 
@@ -62,9 +61,16 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   function goNext() { setFlipIndex(i => Math.min(i + 1, flipCards.length - 1)); setFlipRevealed(false) }
   function goPrev() { setFlipIndex(i => Math.max(i - 1, 0)); setFlipRevealed(false) }
   function goBack() {
-    if (mode === 'play') { stopMicOld(); stopMicNew() }
+    if (mode === 'play') { stopMic() }
     router.back()
   }
+
+  const [, setTick] = useState(0)
+  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  useEffect(() => {
+    tickRef.current = setInterval(() => setTick(t => t + 1), 100)
+    return () => { if (tickRef.current) clearInterval(tickRef.current) }
+  }, [])
 
   const elapsedMs = Date.now() - stats.startTime
   const elapsed = Math.round(elapsedMs / 60000)
@@ -82,7 +88,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   // Stop mic when session completes
   useEffect(() => {
     if (isComplete && isSightReadDeck) {
-      stopMicNew()
+      stopMic()
     }
   }, [isComplete])
 
@@ -141,7 +147,7 @@ return (
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => { resetSession(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Study Again</button>
               {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Reset Best</button>}
-              {!isSightReadDeck && <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Browse Cards</button>}
+              {!isSightReadDeck && <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Browse Cards</button>}
               <button onClick={goBack} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>← Back</button>
             </div>
           </div>
@@ -230,13 +236,13 @@ return (
           </div>
           {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 8px', flexWrap: 'wrap', flexShrink: 0 }}>
             {visibleModes.map(({ id, label }) => (
-              <button key={id} onClick={() => { stopMicOld(); stopMicNew(); setMode(id); if (id !== 'flip') resetSession() }}
+              <button key={id} onClick={() => { stopMic(); setMode(id); if (id !== 'flip') resetSession() }}
                 style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#DDD8CA'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', transition: 'all 0.15s' }}>{label}</button>
             ))}
             {!isSightReadDeck && <div style={{ width: '1px', height: '16px', background: '#DDD8CA', margin: '0 4px' }} />}
             <>
-            <button onClick={() => { stopMicOld(); stopMicNew(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Quiz</button>
-            <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Browse</button>
+            <button onClick={() => { stopMic(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Quiz</button>
+            <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Browse</button>
             </>
           </div>}
           <div
