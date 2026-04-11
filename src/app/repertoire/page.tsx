@@ -107,9 +107,9 @@ export default function RepertoirePage() {
       <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
                 <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Pro Feature</p>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '12px' }}>CM Repertoire Browser</h1>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '12px' }}>Repertoire Browser</h1>
           <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780', marginBottom: '32px', lineHeight: 1.7 }}>
-            Browse the complete CM repertoire lists by level — Preparatory through Advanced. Search across all levels, sort by composer or title.
+            Browse graded repertoire lists by level — Preparatory through Advanced. Search by composer or title across all levels.
           </p>
           <button onClick={() => router.push('/')}
             style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
@@ -127,9 +127,8 @@ export default function RepertoirePage() {
 
         {/* Header */}
         <div style={{ marginBottom: '32px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '6px' }}>Certificate of Merit</p>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '4px' }}>Repertoire Browser</h1>
-          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Browse or search the complete CM repertoire lists — Preparatory through Advanced.</p>
+          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Browse graded repertoire lists by level, or search by composer and title across the full catalog.</p>
         </div>
 
         {/* Tab switcher */}
