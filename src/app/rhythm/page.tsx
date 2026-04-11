@@ -568,7 +568,7 @@ function LibraryPanel({
             </div>
 
             {/* Right content */}
-            <div style={{ flex: 1, overflowY: 'auto' as const }}>
+            <div className="nl-hide-scrollbar" style={{ flex: 1, overflowY: 'auto' as const }}>
               {activeCat ? activeCat.levels.map((levelNode, levelIdx) => {
                 const isLastLevel = levelIdx === activeCat.levels.length - 1
                 return (
@@ -888,11 +888,8 @@ export default function RhythmPage() {
     height: pairViewportPx,
     minHeight: pairViewportPx,
     maxHeight: pairViewportPx,
-    // `overflow: hidden` during play can prevent or clamp scrollTop on some engines; keep a real scrollport and hide the bar while playing.
+    // `overflow: hidden` during play can prevent or clamp scrollTop on some engines; keep a real scrollport (bar hidden via .nl-notation-scroll).
     overflowY: 'auto',
-    ...(playing || previewing
-      ? { scrollbarWidth: 'none' as const, msOverflowStyle: 'none' as const }
-      : {}),
   }
 
   const resetNotationScroll = useCallback(() => {
@@ -1990,7 +1987,8 @@ export default function RhythmPage() {
               return (
                 <div
                   ref={scrollRef}
-                  style={{ overflowX: 'scroll', overflowY: 'hidden', WebkitOverflowScrolling: 'touch' as any, scrollbarWidth: 'none' as any, msOverflowStyle: 'none' as any }}
+                  className="nl-hide-scrollbar"
+                  style={{ overflowX: 'scroll', overflowY: 'hidden', WebkitOverflowScrolling: 'touch' as any }}
                 >
                   <svg className="nl-notation-staff" width={totalW + centerX + 40 + leadPx} height={staffSvgH} style={{ display: 'block' }}>
                     <g transform={`translate(${centerX - 74 + leadPx}, ${staffYOffset})`}>
@@ -2087,7 +2085,7 @@ export default function RhythmPage() {
             </div>
           </div>
         ) : (
-          <div ref={containerRef} style={{ flex: 1, overflowY: 'auto' as const, padding: '4px 0 8px' }}>
+          <div ref={containerRef} className="nl-hide-scrollbar" style={{ flex: 1, overflowY: 'auto' as const, padding: '4px 0 8px' }}>
             <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} userId={user?.id} onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))} tree={libraryTree} unlockOrder={allExercises} loading={libraryLoading} />
           </div>
         )}
@@ -2160,6 +2158,7 @@ export default function RhythmPage() {
       }}
     >
       <div
+        className={!desktopExerciseLocked ? 'nl-hide-scrollbar' : undefined}
         style={{
           maxWidth: '900px',
           margin: '0 auto',
@@ -2412,6 +2411,7 @@ export default function RhythmPage() {
             <div style={{ position: 'relative' as const, marginBottom: '8px', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
             <div
               ref={landscapeContainerRef}
+              className="nl-hide-scrollbar"
               style={{
                 background: '#FDFAF3',
                 borderRadius: '16px',
@@ -2733,7 +2733,7 @@ export default function RhythmPage() {
 
             {/* Diagnostic panel */}
             {showDiag && (
-              <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '12px', marginBottom: '8px', maxHeight: 'min(200px, 22vh)', overflowY: 'auto' as const, flexShrink: 0 }}>
+              <div className="nl-hide-scrollbar" style={{ background: '#1A1A18', borderRadius: '12px', padding: '12px', marginBottom: '8px', maxHeight: 'min(200px, 22vh)', overflowY: 'auto' as const, flexShrink: 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <p style={{ fontFamily: 'monospace', fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.05em', margin: 0 }}>DIAGNOSTIC LOG</p>
                   <button onClick={() => navigator.clipboard.writeText(diagLog.join('\n'))}

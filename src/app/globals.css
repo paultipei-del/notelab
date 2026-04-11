@@ -414,9 +414,17 @@ input, select, textarea {
 .safe-top    { padding-top: env(safe-area-inset-top); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
-/* Rhythm trainer desktop notation paging — scrollport must stay usable; bar hidden (programmatic scroll). */
-.nl-notation-scroll::-webkit-scrollbar {
+/* Rhythm trainer / scroll regions — keep scroll, hide visible bar (WebKit + Firefox + legacy Edge) */
+.nl-notation-scroll,
+.nl-hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nl-notation-scroll::-webkit-scrollbar,
+.nl-hide-scrollbar::-webkit-scrollbar {
   display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Mobile tap highlight */
