@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
+import React from 'react'
 import { useRouter } from 'next/navigation'
 import {
   MAJOR_FINGERINGS, MAJOR_SCALE_NOTES, SCALE_ORDER, SCALE_DISPLAY,
@@ -290,15 +291,25 @@ function HandPanel({ label, notes, fingering, clef }: {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 type ScaleType = 'major' | 'natural_minor' | 'harmonic_minor' | 'melodic_minor'
 
+// Keys grouped into natural / accidental rows (chromatic order within each group)
+const MAJOR_NATURAL     = ['C','D','E','F','G','A','B']
+const MAJOR_ACCIDENTAL  = ['Db','Eb','Fs','Ab','Bb']
+const MINOR_NATURAL     = ['Cm','Dm','Em','Fm','Gm','Am','Bm']
+const MINOR_ACC_KEYS    = ['Csm','Ebm','Fsm','Gsm','Bbm']
+
 export default function ScaleFingeringsPage() {
   const router = useRouter()
   const [scaleType, setScaleType] = useState<ScaleType>('major')
   const [selectedKey, setSelectedKey] = useState('C')
+  const [direction, setDirection] = useState<'asc'|'desc'>('asc')
 
   const isMajor = scaleType === 'major'
-  const isMelodicScale = scaleType === 'melodic_minor'
-  const keys = isMajor ? SCALE_ORDER : MINOR_SCALE_ORDER
+  const showDirection = scaleType === 'natural_minor' || scaleType === 'melodic_minor'
   const displayMap = isMajor ? SCALE_DISPLAY : MINOR_SCALE_DISPLAY
+
+  // Key rows for the current scale type
+  const naturalKeys    = isMajor ? MAJOR_NATURAL    : MINOR_NATURAL
+  const accidentalKeys = isMajor ? MAJOR_ACCIDENTAL : MINOR_ACC_KEYS
 
   const fingeringRaw = isMajor
     ? MAJOR_FINGERINGS[selectedKey]
@@ -308,89 +319,129 @@ export default function ScaleFingeringsPage() {
         ? MELODIC_MINOR_FINGERINGS[selectedKey]
         : NATURAL_MINOR_FINGERINGS[selectedKey]
 
-  const [melodicDirection, setMelodicDirection] = useState<'asc'|'desc'>('asc')
-
-  const fingering = isMelodicScale && fingeringRaw && 'rh_asc' in fingeringRaw
-    ? {
-        rh: melodicDirection === 'asc' ? (fingeringRaw as any).rh_asc : (fingeringRaw as any).rh_desc,
-        lh: melodicDirection === 'asc' ? (fingeringRaw as any).lh_asc : (fingeringRaw as any).lh_desc,
-      }
-    : fingeringRaw as any
+  // Resolve fingering based on direction
+  const fingering: { rh: Fingering; lh: Fingering } | null = (() => {
+    if (!fingeringRaw) return null
+    if (scaleType === 'melodic_minor' && 'rh_asc' in fingeringRaw) {
+      const f = fingeringRaw as any
+      return direction === 'asc'
+        ? { rh: f.rh_asc, lh: f.lh_asc }
+        : { rh: f.rh_desc, lh: f.lh_desc }
+    }
+    if (scaleType === 'natural_minor') {
+      const f = fingeringRaw as { rh: Fingering; lh: Fingering }
+      return direction === 'asc'
+        ? { rh: f.rh, lh: f.lh }
+        : { rh: [...f.rh].reverse() as Fingering, lh: [...f.lh].reverse() as Fingering }
+    }
+    return fingeringRaw as { rh: Fingering; lh: Fingering }
+  })()
 
   const notes = isMajor
     ? MAJOR_SCALE_NOTES[selectedKey]
     : MINOR_SCALE_NOTES[selectedKey]
 
-  // Split into RH (treble) and LH (bass) — offset by octave
   const rhNotes = notes
-  const lhNotes = notes.map(m => m - 12)  // one octave lower for LH
+  const lhNotes = notes?.map(m => m - 12)
 
   if (!fingering || !notes) return null
+
+  const scaleLabel = scaleType === 'major' ? 'Major'
+    : scaleType === 'natural_minor' ? 'Natural Minor'
+    : scaleType === 'harmonic_minor' ? 'Harmonic Minor'
+    : 'Melodic Minor'
+
+  const segBtn = (active: boolean): React.CSSProperties => ({
+    padding: '7px 16px', borderRadius: '20px', border: 'none',
+    background: active ? '#1A1A18' : 'transparent',
+    color: active ? 'white' : '#888780',
+    fontFamily: F, fontSize: '13px', fontWeight: 300,
+    cursor: 'pointer', transition: 'all 0.15s',
+  })
+
+  const keyBtn = (active: boolean): React.CSSProperties => ({
+    padding: '7px 12px', borderRadius: '10px',
+    border: '1px solid ' + (active ? '#1A1A18' : '#D3D1C7'),
+    background: active ? '#1A1A18' : 'white',
+    color: active ? 'white' : '#1A1A18',
+    fontFamily: SERIF, fontSize: '18px', fontWeight: 300,
+    cursor: 'pointer', minWidth: '44px', textAlign: 'center' as const,
+    transition: 'all 0.15s',
+  })
+
+  function changeScaleType(t: ScaleType) {
+    setScaleType(t)
+    setDirection('asc')
+    setSelectedKey(t === 'major' ? 'C' : 'Am')
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px 24px 80px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '32px', display: 'block' }}>← Back</button>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '28px', display: 'block' }}>← Back</button>
 
-        {/* Scale type toggle */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' as const }}>
-          {([['major','Major'],['natural_minor','Natural Minor'],['harmonic_minor','Harmonic Minor'],['melodic_minor','Melodic Minor']] as [ScaleType,string][]).map(([t, label]) => (
-            <button key={t} onClick={() => { setScaleType(t); setSelectedKey(t === 'major' ? 'C' : 'Am') }}
-              style={{ padding: '8px 20px', borderRadius: '20px', border: '1px solid ' + (scaleType === t ? '#1A1A18' : '#D3D1C7'), background: scaleType === t ? '#1A1A18' : 'white', color: scaleType === t ? 'white' : '#888780', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
-              {label}
-            </button>
-          ))}
-          <span style={{ fontFamily: F, fontSize: '11px', color: '#B8B5AD', alignSelf: 'center', marginLeft: '8px' }}>Harmonic &amp; Melodic — coming soon</span>
+        {/* Scale type — segmented control */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'inline-flex', background: '#E8E5DF', borderRadius: '24px', padding: '3px', gap: '2px' }}>
+            {([
+              ['major','Major'],
+              ['natural_minor','Natural Minor'],
+              ['harmonic_minor','Harmonic Minor'],
+              ['melodic_minor','Melodic Minor'],
+            ] as [ScaleType, string][]).map(([t, label]) => (
+              <button key={t} onClick={() => changeScaleType(t)} style={segBtn(scaleType === t)}>
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Key selector */}
-        <div style={{ marginBottom: '32px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Key</p>
+        {/* Key selector — two rows */}
+        <div style={{ marginBottom: '28px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '10px' }}>Key</p>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const, marginBottom: '6px' }}>
+            {naturalKeys.map(k => (
+              <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k)}>
+                {displayMap[k]}
+              </button>
+            ))}
+          </div>
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
-            {keys.map(k => (
-              <button key={k} onClick={() => setSelectedKey(k)}
-                style={{ padding: '8px 14px', borderRadius: '10px', border: '1px solid ' + (selectedKey === k ? '#1A1A18' : '#D3D1C7'), background: selectedKey === k ? '#1A1A18' : 'white', color: selectedKey === k ? 'white' : '#1A1A18', fontFamily: SERIF, fontSize: '18px', fontWeight: 300, cursor: 'pointer', minWidth: '44px', textAlign: 'center' as const }}>
+            {accidentalKeys.map(k => (
+              <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k)}>
                 {displayMap[k]}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Scale title */}
+        {/* Scale title + direction toggle */}
         <div style={{ marginBottom: '24px' }}>
-          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18' }}>
-            {displayMap[selectedKey]} {scaleType === 'major' ? 'Major' : 'Minor'}
-          </h2>
-          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginTop: '4px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', flexWrap: 'wrap' as const }}>
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', margin: 0 }}>
+              {displayMap[selectedKey]} {scaleLabel}
+            </h2>
+            {showDirection && (
+              <div style={{ display: 'inline-flex', background: '#E8E5DF', borderRadius: '20px', padding: '3px', gap: '2px' }}>
+                {(['asc','desc'] as const).map(d => (
+                  <button key={d} onClick={() => setDirection(d)}
+                    style={{ padding: '5px 14px', borderRadius: '20px', border: 'none', background: direction === d ? '#1A1A18' : 'transparent', color: direction === d ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>
+                    {d === 'asc' ? '↑ Ascending' : '↓ Descending'}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginTop: '6px' }}>
             2 octaves · <span style={{ color: '#BA7517', fontWeight: 400 }}>●</span> thumb (1)
           </p>
-          {isMelodicScale && (
-            <div style={{ display: 'flex', gap: '6px', marginTop: '12px' }}>
-              {(['asc','desc'] as const).map(d => (
-                <button key={d} onClick={() => setMelodicDirection(d)}
-                  style={{ padding: '6px 16px', borderRadius: '8px', border: '1px solid ' + (melodicDirection === d ? '#1A1A18' : '#D3D1C7'), background: melodicDirection === d ? '#1A1A18' : 'white', color: melodicDirection === d ? 'white' : '#888780', fontFamily: F, fontSize: '12px', cursor: 'pointer' }}>
-                  {d === 'asc' ? '↑ Ascending' : '↓ Descending'}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Right Hand */}
-        <HandPanel
-          label="Right Hand"
-          notes={rhNotes}
-          fingering={fingering.rh}
-          clef="treble"
-        />
+        <HandPanel label="Right Hand" notes={rhNotes} fingering={fingering.rh} clef="treble" />
 
         {/* Left Hand */}
-        <HandPanel
-          label="Left Hand"
-          notes={lhNotes}
-          fingering={fingering.lh}
-          clef="bass"
-        />
+        <HandPanel label="Left Hand" notes={lhNotes} fingering={fingering.lh} clef="bass" />
 
       </div>
     </div>
