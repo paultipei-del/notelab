@@ -48,16 +48,18 @@ function countWhiteKeys(notes: number[], startMidi: number): number {
 }
 
 // ── Keyboard SVG ─────────────────────────────────────────────────────────────
-function KeyboardSVG({ notes, fingering, hand }: {
+function KeyboardSVG({ notes, fingering, hand, displayFrom, displayTo }: {
   notes: number[]
   fingering: Fingering
   hand: 'rh' | 'lh'
+  displayFrom?: number
+  displayTo?: number
 }) {
   const startMidi = notes[0]
   const endMidi = notes[notes.length - 1]
-  // Extend to nearest C, but always at least C3–C6 so all scales render at the same visual scale
-  const displayStart = Math.min(startMidi - (startMidi % 12), 48)  // ≤ C3 (midi 48)
-  const displayEnd   = Math.max(endMidi + (12 - (endMidi % 12)) % 12, 84) // ≥ C6 (midi 84)
+  // Extend display to nearest C below start and C above end for context
+  const displayStart = displayFrom ?? (startMidi - (startMidi % 12))
+  const displayEnd   = displayTo   ?? (endMidi + (12 - (endMidi % 12)) % 12)
   // whiteCount calculated after allKeys is built below
   const H = WH + 32  // extra space for finger numbers
 
@@ -271,18 +273,20 @@ function StaffView({ notes, fingering, clef, hand }: {
 }
 
 // ── Hand Panel ────────────────────────────────────────────────────────────────
-function HandPanel({ label, notes, fingering, clef }: {
+function HandPanel({ label, notes, fingering, clef, displayFrom, displayTo }: {
   label: string
   notes: number[]
   fingering: Fingering
   clef: 'treble' | 'bass'
+  displayFrom?: number
+  displayTo?: number
 }) {
   const hand = clef === 'treble' ? 'rh' : 'lh'
   return (
     <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', marginBottom: '16px' }}>
       <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '16px' }}>{label}</p>
       <div style={{ overflowX: 'auto' }}>
-        <KeyboardSVG notes={notes} fingering={fingering} hand={hand} />
+        <KeyboardSVG notes={notes} fingering={fingering} hand={hand} displayFrom={displayFrom} displayTo={displayTo} />
       </div>
     </div>
   )
@@ -365,6 +369,14 @@ export default function ScaleFingeringsPage() {
   const lhNotes = notes?.map(m => m - 12)
 
   if (!fingering || !notes) return null
+
+  // C major starts at C4 (60) and ends at C6 (84) — add cushion: F3 (53) to E6 (88)
+  // LH is one octave lower, so F2 (41) to E5 (76)
+  const isCMajor = scaleType === 'major' && dataKey === 'C'
+  const rhDisplayFrom = isCMajor ? 53 : undefined  // F3
+  const rhDisplayTo   = isCMajor ? 88 : undefined  // E6
+  const lhDisplayFrom = isCMajor ? 41 : undefined  // F2
+  const lhDisplayTo   = isCMajor ? 76 : undefined  // E5
 
   const scaleLabel = scaleType === 'major' ? 'Major'
     : scaleType === 'natural_minor' ? 'Natural Minor'
@@ -473,10 +485,10 @@ export default function ScaleFingeringsPage() {
         </div>
 
         {/* Right Hand */}
-        <HandPanel label="Right Hand" notes={rhNotes} fingering={fingering.rh} clef="treble" />
+        <HandPanel label="Right Hand" notes={rhNotes} fingering={fingering.rh} clef="treble" displayFrom={rhDisplayFrom} displayTo={rhDisplayTo} />
 
         {/* Left Hand */}
-        <HandPanel label="Left Hand" notes={lhNotes} fingering={fingering.lh} clef="bass" />
+        <HandPanel label="Left Hand" notes={lhNotes} fingering={fingering.lh} clef="bass" displayFrom={lhDisplayFrom} displayTo={lhDisplayTo} />
 
       </div>
     </div>
