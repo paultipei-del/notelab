@@ -496,14 +496,8 @@ if (newNotes.length === expectedLength) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #D3D1C7' }}>
-        <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#1A1A18', letterSpacing: '0.02em' }}>Scale Builder</h1>
-        <div style={{ width: '60px' }} />
-      </div>
-
       <div style={{ maxWidth: '860px', margin: '0 auto', padding: '20px 16px 80px' }}>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
 
         {/* ── Selectors row ── */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>

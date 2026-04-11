@@ -475,14 +475,8 @@ export default function KeySignatures() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
-        <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#1A1A18', letterSpacing: '0.02em' }}>Key Signatures</h1>
-        <div style={{ width: '60px' }} />
-      </div>
-
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '32px 24px 80px' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 24px 80px' }}>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' as const }}>
 
           {/* Left: Circle of Fifths */}

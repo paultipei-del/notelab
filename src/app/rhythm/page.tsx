@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
 import type { RhythmExerciseMeta, RhythmProgress, RhythmProgramNode } from '@/lib/rhythmLibrary'
@@ -717,6 +718,7 @@ function LibraryPanel({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function RhythmPage() {
+  const router = useRouter()
   const [exercise, setExercise] = useState<RhythmExercise | null>(null)
   const [currentMeta, setCurrentMeta] = useState<RhythmExerciseMeta | null>(null)
   const [view, setView] = useState<'notation' | 'grid'>('notation')
@@ -2154,6 +2156,7 @@ export default function RhythmPage() {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
           <div>
+            <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '8px', display: 'block' }}>← Back</button>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '4px' }}>Rhythm Trainer</h1>
             {!exercise && (
               <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', margin: '0 0 0', maxWidth: '500px', lineHeight: 1.6 }}>

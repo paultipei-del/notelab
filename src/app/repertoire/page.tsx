@@ -127,6 +127,7 @@ export default function RepertoirePage() {
 
         {/* Header */}
         <div style={{ marginBottom: '32px' }}>
+          <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '16px', display: 'block' }}>← Back</button>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '4px' }}>Repertoire Browser</h1>
           <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Browse graded repertoire lists by level, or search by composer and title across the full catalog.</p>
         </div>

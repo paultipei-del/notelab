@@ -127,7 +127,8 @@ export default function NoteIDPage() {
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
 
       {/* Page header */}
-      <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(32px,4vw,48px) clamp(16px,4vw,32px) 0' }}>
+      <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 0' }}>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '6px' }}>Note Identification</h1>
         <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', margin: '0 0 32px', lineHeight: 1.6 }}>
           A note appears on the staff. Name it before the next one arrives. Choose your clef, pick a level, and answer with letter keys or a piano.

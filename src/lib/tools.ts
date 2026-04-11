@@ -66,7 +66,7 @@ export const TOOLS: ToolCard[] = [
   },
   {
     href: '/repertoire',
-    title: 'Repertoire Lists',
+    title: 'Repertoire Browser',
     desc: 'Browse graded repertoire lists by level and exam board — CM, RCM, and more.',
     badge: 'Pro',
     cta: 'Browse →',
