@@ -329,14 +329,8 @@ export default function ScaleFingeringsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #D3D1C7', background: '#F5F2EC', position: 'sticky' as const, top: 0, zIndex: 10 }}>
-        <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#1A1A18' }}>Scale Fingerings</h1>
-        <div style={{ width: '60px' }} />
-      </div>
-
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px 80px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px 24px 80px' }}>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '32px', display: 'block' }}>← Back</button>
 
         {/* Scale type toggle */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' as const }}>

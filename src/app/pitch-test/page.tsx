@@ -154,13 +154,8 @@ export default function PitchTest() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
-        <button onClick={() => { stopMic(); router.push('/') }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', color: '#888780' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#1A1A18' }}>Pitch Detection Diagnostic</h1>
-        <span style={{ fontFamily: F, fontSize: '12px', color: '#888780' }}>{idx + 1} / {ALL_NOTES.length}</span>
-      </div>
-
-      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '32px 24px' }}>
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 24px' }}>
+        <button onClick={() => { stopMic(); router.back() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', color: '#888780', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         {/* Current note */}
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '32px', marginBottom: '16px', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: '11px', color: '#888780', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Play this note</p>

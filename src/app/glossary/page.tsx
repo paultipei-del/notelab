@@ -53,15 +53,9 @@ export default function Glossary() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7', background: 'white', position: 'sticky' as const, top: 0, zIndex: 10 }}>
-        <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#1A1A18', letterSpacing: '0.02em' }}>Glossary</h1>
-        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>{results.length} terms</span>
-      </div>
-
       {/* Search + filters */}
-      <div style={{ background: 'white', borderBottom: '1px solid #D3D1C7', padding: '16px 32px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const, alignItems: 'center', position: 'sticky' as const, top: '61px', zIndex: 9 }}>
+      <div style={{ background: 'white', borderBottom: '1px solid #D3D1C7', padding: '12px 32px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const, alignItems: 'center', position: 'sticky' as const, top: '56px', zIndex: 9 }}>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, flexShrink: 0 }}>← Back</button>
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}

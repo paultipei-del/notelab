@@ -253,14 +253,13 @@ function NoteIDExerciseInner() {
 
   return (
     <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: '#F5F2EC', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 32px', borderBottom: '1px solid #D3D1C7' }}>
-        <button onClick={() => router.push('/note-id')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
-        <div style={{ display: 'flex', gap: '24px' }}>
+      {/* Utility bar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px' }}>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
+        <div style={{ display: 'flex', gap: '16px' }}>
           <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780' }}>Round {rounds + 1} / {stopRounds}</span>
           <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#888780' }}>{pct}%</span>
         </div>
-        <div style={{ width: '60px' }} />
       </div>
 
       {/* Progress bar */}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { DECKS, deckRequiresPurchase, CM_BUNDLE_PRICE_ID, PRO_PRICE_ID } from '@/lib/decks'
@@ -18,6 +18,7 @@ const TAG_COLORS: Record<string, { bg: string; color: string }> = {
 
 function CollectionContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const tag = searchParams.get('tag') ?? 'cm'
   const { user } = useAuth()
   const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
@@ -75,19 +76,9 @@ function CollectionContent() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      {/* Header */}
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
-        <Link href="/" style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780', textDecoration: 'none' }}>
-          ← Back
-        </Link>
-        <div style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
-          Note<span style={{ fontWeight: 400 }}>Lab</span>
-        </div>
-        <div style={{ width: '60px' }} />
-      </header>
-
       {/* Hero */}
-      <div style={{ padding: '48px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
+      <div style={{ padding: '24px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#1A1A18', marginBottom: '12px', letterSpacing: '0.02em' }}>
           {titles[tag] ?? tag}
         </h1>

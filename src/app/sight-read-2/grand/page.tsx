@@ -15,13 +15,8 @@ export default function GrandPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #D3D1C7' }}>
-        <button onClick={() => router.push('/sight-read')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780' }}>← Back</button>
-        <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '22px', color: '#1A1A18', letterSpacing: '0.02em' }}>Grand Staff</h1>
-        <div style={{ width: '60px' }} />
-      </div>
-
-      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '40px 32px 80px' }}>
+      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '24px 32px 80px' }}>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '32px', display: 'block' }}>← Back</button>
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '13px', color: '#888780', marginBottom: '24px' }}>
           10 progressive levels — read notes across both treble and bass staves simultaneously.
         </p>
