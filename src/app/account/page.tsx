@@ -53,7 +53,7 @@ function Card({ children, style }: { children: React.ReactNode; style?: React.CS
 
 function Row({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #EDE8DF' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #EDE8DF' }}>
       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', minWidth: '120px' }}>{label}</span>
       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', flex: 1, textAlign: 'right' as const }}>{value}</span>
       {children}
@@ -69,21 +69,26 @@ function Pill({ label, color = '#0F6E56', bg = '#E1F5EE' }: { label: string; col
   )
 }
 
-function Btn({ children, onClick, variant = 'outline', disabled, danger }: {
+function Btn({ children, onClick, variant = 'outline', disabled, danger, compact }: {
   children: React.ReactNode
   onClick?: () => void
   variant?: 'outline' | 'fill'
   disabled?: boolean
   danger?: boolean
+  /** Tighter padding for dense lists (e.g. disclosure rows) */
+  compact?: boolean
 }) {
+  const pad = compact ? '5px 12px' : '8px 20px'
+  const fs = compact ? 'var(--nl-text-compact)' : 'var(--nl-text-meta)'
+  const rad = compact ? '12px' : '20px'
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       style={{
-        fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: disabled ? 'default' : 'pointer',
+        fontFamily: F, fontSize: fs, fontWeight: 400, cursor: disabled ? 'default' : 'pointer',
         border: '1px solid ' + (danger ? '#ED6765' : '#DDD8CA'),
-        borderRadius: '20px', padding: '8px 20px',
+        borderRadius: rad, padding: pad,
         background: variant === 'fill' ? (danger ? '#ED6765' : '#1A1A18') : 'white',
         color: variant === 'fill' ? 'white' : (danger ? '#ED6765' : '#1A1A18'),
         opacity: disabled ? 0.4 : 1,
@@ -137,15 +142,15 @@ function ProfileSection({ user }: { user: any }) {
 
   return (
     <Section title="Profile">
-      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
         <details className="nl-account-disclosure" open>
           <summary>Account &amp; display name</summary>
           <div className="nl-account-disclosure__body">
-            <div style={{ paddingBottom: '16px' }}>
-              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '8px' }}>
+            <div style={{ paddingBottom: '10px' }}>
+              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>
                 Display name
               </label>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' as const }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' as const }}>
                 <input
                   value={nameValue}
                   onChange={e => { setNameValue(e.target.value); setNameStatus('idle') }}
@@ -153,7 +158,7 @@ function ProfileSection({ user }: { user: any }) {
                   placeholder="Your name"
                   style={{
                     flex: 1, minWidth: '200px', background: '#F2EDDF', border: '1px solid #DDD8CA',
-                    borderRadius: '10px', padding: '10px 14px',
+                    borderRadius: '8px', padding: '8px 12px',
                     fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318',
                     outline: 'none',
                   }}
@@ -166,7 +171,7 @@ function ProfileSection({ user }: { user: any }) {
                 Shown in the header instead of your email initials.
               </p>
             </div>
-            <div style={{ borderTop: '1px solid #EDE8DF', paddingTop: '12px' }}>
+            <div style={{ borderTop: '1px solid #EDE8DF', paddingTop: '8px' }}>
               <Row label="Email" value={user.email} />
               <Row label="Member since" value={memberSince} />
             </div>
@@ -176,7 +181,7 @@ function ProfileSection({ user }: { user: any }) {
         <details className="nl-account-disclosure">
           <summary>Security</summary>
           <div className="nl-account-disclosure__body">
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 14px' }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: '0 0 10px', lineHeight: 1.4 }}>
               We&apos;ll email you a link to set a new password.
             </p>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' as const }}>
@@ -206,14 +211,14 @@ function SubscriptionSection({ userId }: { userId: string }) {
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Loading…</p>
         </Card>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
           <details className="nl-account-disclosure nl-account-disclosure--stat-row" open>
             <summary>
               <span>CM Collection Bundle</span>
               {cmUnlocked ? <Pill label="Active" /> : <Pill label="Not purchased" color="#7A7060" bg="#EDE8DF" />}
             </summary>
             <div className="nl-account-disclosure__body">
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 12px' }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0, lineHeight: 1.4 }}>
                 All Certificate of Merit levels, Prep through Advanced.
               </p>
             </div>
@@ -224,7 +229,7 @@ function SubscriptionSection({ userId }: { userId: string }) {
               {proUnlocked ? <Pill label="Active" /> : <Pill label="Not active" color="#7A7060" bg="#EDE8DF" />}
             </summary>
             <div className="nl-account-disclosure__body">
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 12px' }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0, lineHeight: 1.4 }}>
                 Full catalog and future features while your plan is active.
               </p>
             </div>
@@ -402,7 +407,7 @@ function ProgressSection({ userId }: { userId: string | null }) {
   }
 
   const intro = (
-    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 16px', maxWidth: '560px' }}>
+    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: '0 0 10px', maxWidth: '560px', lineHeight: 1.45 }}>
       Progress is grouped by app. Spaced-repetition stats sync when you&apos;re signed in; rhythm syncs to your account; sight-reading, Note ID, and key drills are stored in this browser unless noted.
     </p>
   )
@@ -434,7 +439,7 @@ function ProgressSection({ userId }: { userId: string | null }) {
         </Card>
       ) : (
         <>
-          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px', marginBottom: '12px' }}>
             {/* Flashcards (SRS) */}
             <details className="nl-account-disclosure nl-account-disclosure--stat-row">
               <summary>
@@ -448,24 +453,24 @@ function ProgressSection({ userId }: { userId: string | null }) {
                   <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: 0 }}>Open a deck under Flashcards to start tracking.</p>
                 ) : (
                   <>
-                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px', marginBottom: '8px' }}>
                       {studiedDecks.map(deck => {
                         const { studied, due, total } = getDeckStats(deck)
                         const pct = Math.round((studied / total) * 100)
                         return (
-                          <div key={deck.id} style={{ background: 'white', border: '1px solid #EDE8DF', borderRadius: '12px', padding: '14px 16px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '8px' }}>
+                          <div key={deck.id} style={{ background: 'white', border: '1px solid #EDE8DF', borderRadius: '10px', padding: '10px 12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '6px' }}>
                               <div style={{ minWidth: 0 }}>
-                                <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>{deck.title}</p>
-                                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>
+                                <p style={{ fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: '#2A2318', margin: '0 0 1px', lineHeight: 1.25 }}>{deck.title}</p>
+                                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0, lineHeight: 1.3 }}>
                                   {studied}/{total} studied · {due} due
                                 </p>
                               </div>
-                              <Btn onClick={() => resetFlashDeck(deck.id)} disabled={pending === `flash:${deck.id}`} danger>
+                              <Btn compact onClick={() => resetFlashDeck(deck.id)} disabled={pending === `flash:${deck.id}`} danger>
                                 {pending === `flash:${deck.id}` ? '…' : 'Reset'}
                               </Btn>
                             </div>
-                            <div style={{ height: '4px', background: '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ height: '3px', background: '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
                               <div style={{ height: '100%', width: `${pct}%`, background: '#B5402A', borderRadius: '2px', transition: 'width 0.4s' }} />
                             </div>
                           </div>
@@ -489,21 +494,21 @@ function ProgressSection({ userId }: { userId: string | null }) {
                 </span>
               </summary>
               <div className="nl-account-disclosure__body">
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px' }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 6px', lineHeight: 1.35 }}>
                   Best times for full play-through sessions (Play It mode).
                 </p>
                 {!hasSight ? (
-                  <Link href="/sight-read/treble" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open sight-reading →</Link>
+                  <Link href="/sight-read/treble" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-meta)' }}>Open sight-reading →</Link>
                 ) : (
                   <>
-                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px', marginBottom: '12px', maxHeight: '280px', overflowY: 'auto' }} className="nl-hide-scrollbar">
+                    <div className="nl-account-disclosure__body-scroll nl-hide-scrollbar">
                       {playBests.map(({ id, value }) => {
                         const title = getDeckById(id)?.title ?? id
                         return (
                           <div key={id} className="nl-account-disclosure__body-line">
                             <span className="nl-account-disclosure__body-line-title">{title}</span>
                             <span className="nl-account-disclosure__body-line-meta">{formatPlaybackSeconds(value)}</span>
-                            <Btn onClick={() => resetPlayBest(id)} disabled={pending === `sight:${id}`} danger>
+                            <Btn compact onClick={() => resetPlayBest(id)} disabled={pending === `sight:${id}`} danger>
                               {pending === `sight:${id}` ? '…' : 'Clear'}
                             </Btn>
                           </div>
@@ -527,21 +532,21 @@ function ProgressSection({ userId }: { userId: string | null }) {
                 </span>
               </summary>
               <div className="nl-account-disclosure__body">
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px' }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 6px', lineHeight: 1.35 }}>
                   Best times from timed Note ID drills (this device).
                 </p>
                 {!hasNoteId ? (
-                  <Link href="/note-id" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open Note ID →</Link>
+                  <Link href="/note-id" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-meta)' }}>Open Note ID →</Link>
                 ) : (
                   <>
-                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px', marginBottom: '12px', maxHeight: '280px', overflowY: 'auto' }} className="nl-hide-scrollbar">
+                    <div className="nl-account-disclosure__body-scroll nl-hide-scrollbar">
                       {noteIdBests.map(({ id, value }) => {
                         const title = getDeckById(id)?.title ?? id
                         return (
                           <div key={id} className="nl-account-disclosure__body-line">
                             <span className="nl-account-disclosure__body-line-title">{title}</span>
                             <span className="nl-account-disclosure__body-line-meta">{formatPlaybackSeconds(value)}</span>
-                            <Btn onClick={() => resetNoteIdBest(id)} disabled={pending === `nid:${id}`} danger>
+                            <Btn compact onClick={() => resetNoteIdBest(id)} disabled={pending === `nid:${id}`} danger>
                               {pending === `nid:${id}` ? '…' : 'Clear'}
                             </Btn>
                           </div>
@@ -566,10 +571,10 @@ function ProgressSection({ userId }: { userId: string | null }) {
               </summary>
               <div className="nl-account-disclosure__body">
                 {!hasRhythm ? (
-                  <Link href="/rhythm" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open rhythm trainer →</Link>
+                  <Link href="/rhythm" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-meta)' }}>Open rhythm trainer →</Link>
                 ) : (
                   <>
-                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px', marginBottom: '12px', maxHeight: '280px', overflowY: 'auto' }} className="nl-hide-scrollbar">
+                    <div className="nl-account-disclosure__body-scroll nl-hide-scrollbar">
                       {rhythmEntries.map(r => {
                         const title = rhythmTitles.get(r.exercise_id) ?? r.exercise_id
                         return (
@@ -578,7 +583,7 @@ function ProgressSection({ userId }: { userId: string | null }) {
                             <span className="nl-account-disclosure__body-line-meta">
                               {Math.round(r.best_timing)}% timing · {r.completed ? 'cleared' : 'in progress'}
                             </span>
-                            <Btn onClick={() => resetRhythmOne(r.exercise_id)} disabled={pending === `rhythm:${r.exercise_id}`} danger>
+                            <Btn compact onClick={() => resetRhythmOne(r.exercise_id)} disabled={pending === `rhythm:${r.exercise_id}`} danger>
                               {pending === `rhythm:${r.exercise_id}` ? '…' : 'Reset'}
                             </Btn>
                           </div>
@@ -603,13 +608,13 @@ function ProgressSection({ userId }: { userId: string | null }) {
               </summary>
               <div className="nl-account-disclosure__body">
                 {!hasKeys ? (
-                  <Link href="/key-signatures" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open key signatures →</Link>
+                  <Link href="/key-signatures" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-meta)' }}>Open key signatures →</Link>
                 ) : (
                   <>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', margin: '0 0 12px' }}>
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#2A2318', margin: '0 0 8px', lineHeight: 1.4 }}>
                       Drill score: {keyDrill.correct} correct of {keyDrill.total} · Circle-of-fifths streak: {keyDrill.streak}
                     </p>
-                    <Btn onClick={resetKeyDrill} disabled={pending === 'keydrill'} danger>
+                    <Btn compact onClick={resetKeyDrill} disabled={pending === 'keydrill'} danger>
                       {pending === 'keydrill' ? '…' : 'Reset key drill stats'}
                     </Btn>
                   </>
@@ -618,8 +623,8 @@ function ProgressSection({ userId }: { userId: string | null }) {
             </details>
           </div>
 
-          <Card style={{ padding: '18px 22px' }}>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px' }}>
+          <Card style={{ padding: '14px 16px' }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 8px', lineHeight: 1.4 }}>
               Remove flashcard SRS (cloud), rhythm progress (cloud), and all browser-only timers and drills on this device.
             </p>
             <Btn onClick={resetEverything} disabled={pending === 'all'} danger>
