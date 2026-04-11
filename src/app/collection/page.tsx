@@ -78,11 +78,11 @@ function CollectionContent() {
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       {/* Hero */}
       <div style={{ padding: '24px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
-        {tag !== 'ear' && <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>}
+        {tag !== 'ear' && <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>}
         <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>
           {titles[tag] ?? tag}
         </h1>
-        <p style={{ fontSize: '15px', fontWeight: 300, color: '#7A7060', maxWidth: '560px', lineHeight: 1.7, marginBottom: '32px' }}>
+        <p style={{ fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060', maxWidth: '560px', lineHeight: 1.7, marginBottom: '32px' }}>
           {descriptions[tag] ?? ''}
         </p>
 
@@ -93,14 +93,14 @@ function CollectionContent() {
               <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '18px', fontWeight: 300, color: 'white', marginBottom: '2px' }}>
                 Unlock the full {titles[tag]}
               </p>
-              <p style={{ fontSize: '12px', fontWeight: 300, color: 'rgba(255,255,255,0.6)' }}>
+              <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: 'rgba(255,255,255,0.6)' }}>
                 All {decks.length} levels in one purchase
               </p>
             </div>
             <button
               onClick={() => handleBuy(CM_BUNDLE_PRICE_ID, 'cm_bundle')}
               disabled={checkingOut}
-              style={{ background: '#B5402A', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', cursor: 'pointer', whiteSpace: 'nowrap' }}
+              style={{ background: '#B5402A', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: 'var(--nl-text-meta)', fontWeight: 400, letterSpacing: '0.05em', cursor: 'pointer', whiteSpace: 'nowrap' }}
             >
               {checkingOut ? 'Loading…' : 'Unlock Bundle'}
             </button>
@@ -122,7 +122,7 @@ function CollectionContent() {
             })
             return groups.map(({ label, decks: groupDecks }) => (
               <div key={label} style={{ marginBottom: '40px' }}>
-                <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '16px' }}>{label}</h2>
+                <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '16px' }}>{label}</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', alignItems: 'stretch' }}>
                   {groupDecks.map(deck => (
                     <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
@@ -145,12 +145,12 @@ function CollectionContent() {
                         onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
                         onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
                       >
-                        <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: TAG_COLORS.free.bg, color: TAG_COLORS.free.color, fontFamily: 'var(--font-jost), sans-serif', width: 'fit-content' }}>Free</span>
+                        <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: TAG_COLORS.free.bg, color: TAG_COLORS.free.color, fontFamily: 'var(--font-jost), sans-serif', width: 'fit-content' }}>Free</span>
                         <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                        <p style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
+                        <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '16px', gap: '12px' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 300, color: '#7A7060' }}>{deck.cards.length} cards</span>
-                          <span style={{ fontSize: '12px', fontWeight: 300, color: '#B5402A', flexShrink: 0 }}>Start →</span>
+                          <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
+                          <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B5402A', flexShrink: 0 }}>Start →</span>
                         </div>
                       </div>
                     </Link>
@@ -169,13 +169,13 @@ function CollectionContent() {
               {locked ? (
                 <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px', opacity: 0.75 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 300, color: '#DDD8CA' }}>🔒</span>
-                    <span style={{ fontSize: '11px', fontWeight: 300, color: '#DDD8CA', letterSpacing: '0.05em' }}>Locked</span>
+                    <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#DDD8CA' }}>🔒</span>
+                    <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', letterSpacing: '0.05em' }}>Locked</span>
                   </div>
                   <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#7A7060', marginBottom: '6px' }}>
                     {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                   </h3>
-                  <p style={{ fontSize: '12px', fontWeight: 300, color: '#DDD8CA', lineHeight: 1.6 }}>
+                  <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', lineHeight: 1.6 }}>
                     {deck.cards.length} cards
                   </p>
                 </div>
@@ -195,18 +195,18 @@ function CollectionContent() {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#B5402A', letterSpacing: '0.05em' }}>
+                      <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B5402A', letterSpacing: '0.05em' }}>
                         {tag === 'ear' || tag === 'symbols' ? '' : `Level ${i + 1 === decks.length ? 'Advanced' : i + 1}`}
                       </span>
-                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#7A7060' }}>{deck.cards.length} cards</span>
+                      <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
                     </div>
                     <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '6px' }}>
                       {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                     </h3>
-                    <p style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060', lineHeight: 1.6, marginBottom: '16px' }}>
+                    <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', lineHeight: 1.6, marginBottom: '16px' }}>
                       {deck.description}
                     </p>
-                    <span style={{ fontSize: '12px', fontWeight: 300, color: '#B5402A' }}>Start →</span>
+                    <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B5402A' }}>Start →</span>
                   </div>
                 </Link>
               )}

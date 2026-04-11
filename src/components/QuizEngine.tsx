@@ -53,7 +53,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
           <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '8px' }}>
             Quiz Complete
           </h2>
-          <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', marginBottom: '32px' }}>
+          <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', marginBottom: '32px' }}>
             {deck.title}
           </p>
 
@@ -66,7 +66,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
             ].map(({ num, label }) => (
               <div key={label}>
                 <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#2A2318', lineHeight: 1 }}>{num}</div>
-                <div style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginTop: '4px' }}>{label}</div>
+                <div style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginTop: '4px' }}>{label}</div>
               </div>
             ))}
           </div>
@@ -74,12 +74,12 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
           {/* Actions */}
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={onExit}
-              style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.06em', cursor: 'pointer' }}>
+              style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, letterSpacing: '0.06em', cursor: 'pointer' }}>
               Back to Deck
             </button>
             {missed.length > 0 && (
               <button onClick={() => setShowMissed(v => !v)}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '12px 20px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '12px 20px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
                 {showMissed ? 'Hide' : 'Review'} Missed ({missed.length})
               </button>
             )}
@@ -98,15 +98,15 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
                   <p style={{ fontFamily: result.card.type === 'symbol' ? 'Bravura, serif' : 'var(--font-cormorant), serif', fontSize: result.card.type === 'symbol' ? '32px' : '16px', fontWeight: 400, color: '#2A2318', marginBottom: '6px', lineHeight: 1.4 }}>
                     {result.card.type === 'symbol' ? result.card.front : result.card.front}
                     {result.card.symbolName && (
-                      <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060', marginLeft: '10px' }}>
+                      <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', marginLeft: '10px' }}>
                         {result.card.symbolName}
                       </span>
                     )}
                   </p>
-                  <p style={{ fontSize: '13px', fontWeight: 300, color: '#3B6D11', marginBottom: '2px' }}>
+                  <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#3B6D11', marginBottom: '2px' }}>
                     ✓ {result.card.type === 'symbol' ? (result.card.symbolName ?? result.card.back) : result.card.back}
                   </p>
-                  <p style={{ fontSize: '12px', fontWeight: 300, color: '#A32D2D' }}>
+                  <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#A32D2D' }}>
                     ✗ {result.chosen}
                   </p>
                 </div>
@@ -129,20 +129,20 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', gap: '16px' }}>
         <button onClick={onExit}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>
+          style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>
           ← Exit Quiz
         </button>
         <div style={{ flex: 1, maxWidth: '400px', height: '4px', background: '#DDD8CA', borderRadius: '2px', overflow: 'hidden' }}>
           <div style={{ height: '100%', width: `${progressPct}%`, background: '#B5402A', borderRadius: '2px', transition: 'width 0.3s ease' }} />
         </div>
-        <span style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060', whiteSpace: 'nowrap' }}>
+        <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', whiteSpace: 'nowrap' }}>
           {index + 1} / {total}
         </span>
       </div>
 
       {/* Quiz label */}
       <div style={{ textAlign: 'center', padding: '0 32px 16px' }}>
-        <span style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#B5402A' }}>
+        <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#B5402A' }}>
           Quiz Mode
         </span>
       </div>
@@ -160,7 +160,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
                 {currentCard.front}
               </div>
               {currentCard.symbolLabel && (
-                <p style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060', marginTop: '8px' }}>{currentCard.symbolLabel}</p>
+                <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '8px' }}>{currentCard.symbolLabel}</p>
               )}
             </div>
           ) : (
@@ -195,7 +195,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
                   padding: '14px 20px',
                   textAlign: 'left',
                   fontFamily: 'var(--font-jost), sans-serif',
-                  fontSize: '14px',
+                  fontSize: 'var(--nl-text-ui)',
                   fontWeight: 300,
                   color,
                   cursor: chosen ? 'default' : 'pointer',

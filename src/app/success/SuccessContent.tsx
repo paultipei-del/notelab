@@ -20,15 +20,15 @@ export default function SuccessContent() {
         <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px', color: '#2A2318' }}>
           You're all set
         </h2>
-        <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', marginBottom: '36px', lineHeight: 1.7 }}>
+        <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', marginBottom: '36px', lineHeight: 1.7 }}>
           Your purchase is confirmed. Your new collections are ready to study.
         </p>
         {ready ? (
-          <Link href="/" style={{ display: 'inline-block', background: '#1A1A18', color: 'white', borderRadius: '8px', padding: '16px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', textDecoration: 'none' }}>
+          <Link href="/" style={{ display: 'inline-block', background: '#1A1A18', color: 'white', borderRadius: '8px', padding: '16px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, letterSpacing: '0.08em', textDecoration: 'none' }}>
             Start Studying
           </Link>
         ) : (
-          <p style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>Activating your collections…</p>
+          <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Activating your collections…</p>
         )}
       </div>
     </div>

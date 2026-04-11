@@ -169,7 +169,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
         </p>
 
         {card.audioHint && (
-          <p style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060', marginBottom: '20px' }}>
+          <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginBottom: '20px' }}>
             {card.audioHint}
           </p>
         )}
@@ -185,7 +185,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
             borderRadius: '50px',
             padding: '11px 32px',
             fontFamily: 'var(--font-jost), sans-serif',
-            fontSize: '13px',
+            fontSize: 'var(--nl-text-meta)',
             fontWeight: 300,
             letterSpacing: '0.06em',
             cursor: playState === 'loading' || playState === 'playing' ? 'default' : 'pointer',
@@ -203,7 +203,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
             {card.back.split('—')[0].trim()}
           </p>
           {card.back.includes('—') && (
-            <p style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.7 }}>
+            <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.7 }}>
               {card.back.split('—').slice(1).join('—').trim()}
             </p>
           )}
@@ -218,7 +218,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
               borderRadius: '50px',
               padding: '9px 24px',
               fontFamily: 'var(--font-jost), sans-serif',
-              fontSize: '12px',
+              fontSize: 'var(--nl-text-compact)',
               fontWeight: 300,
               color: '#7A7060',
               cursor: 'pointer',
@@ -228,7 +228,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
           </button>
         </div>
       ) : (
-        <p style={{ textAlign: 'center', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#DDD8CA', letterSpacing: '0.03em' }}>
+        <p style={{ textAlign: 'center', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', letterSpacing: '0.03em' }}>
           Press play to hear the example
         </p>
       )}

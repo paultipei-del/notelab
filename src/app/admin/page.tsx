@@ -72,12 +72,12 @@ export default function AdminPage() {
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '48px 24px' }}>
         <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>Admin</p>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>Admin</p>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#2A2318' }}>User Management</h1>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <a href="/admin/rhythm" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Library →</a>
-            <a href="/admin/rhythm/generate" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Generator →</a>
+            <a href="/admin/rhythm" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Library →</a>
+            <a href="/admin/rhythm/generate" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Generator →</a>
           </div>
         </div>
 
@@ -88,62 +88,62 @@ export default function AdminPage() {
             { label: 'Confirmed', value: users.filter(u => u.email_confirmed_at).length },
           ].map(({ label, value }) => (
             <div key={label} style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '24px' }}>
-              <p style={{ fontFamily: F, fontSize: '11px', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>{label}</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>{label}</p>
               <p style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#2A2318', lineHeight: 1 }}>{value}</p>
             </div>
           ))}
         </div>
 
         <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '28px', marginBottom: '24px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '20px' }}>Create Account</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '20px' }}>Create Account</p>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' as const, marginBottom: '16px' }}>
             <input value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="Email address"
-              style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: '13px', outline: 'none' }} />
+              style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-meta)', outline: 'none' }} />
             {!sendInvite && (
               <input value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Password (optional)" type="password"
-                style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: '13px', outline: 'none' }} />
+                style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-meta)', outline: 'none' }} />
             )}
             <button onClick={createUser} disabled={creating || !newEmail}
-              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#1A1A18', color: 'white', fontFamily: F, fontSize: '13px', cursor: creating || !newEmail ? 'not-allowed' : 'pointer', opacity: creating || !newEmail ? 0.5 : 1 }}>
+              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#1A1A18', color: 'white', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: creating || !newEmail ? 'not-allowed' : 'pointer', opacity: creating || !newEmail ? 0.5 : 1 }}>
               {creating ? 'Creating…' : sendInvite ? 'Send Invite' : 'Create Account'}
             </button>
           </div>
           <div style={{ display: 'flex', gap: '20px' }}>
             {[{value: true, label: 'Send email invite'}, {value: false, label: 'Create with password'}].map(opt => (
-              <label key={String(opt.value)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>
+              <label key={String(opt.value)} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>
                 <input type="radio" checked={sendInvite === opt.value} onChange={() => setSendInvite(opt.value)} style={{ accentColor: '#1A1A18' }} />
                 {opt.label}
               </label>
             ))}
           </div>
-          {message && <p style={{ marginTop: '12px', fontFamily: F, fontSize: '13px', color: message.type === 'success' ? '#4CAF50' : '#E53935' }}>{message.text}</p>}
+          {message && <p style={{ marginTop: '12px', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: message.type === 'success' ? '#4CAF50' : '#E53935' }}>{message.text}</p>}
         </div>
 
         <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '28px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060' }}>All Users ({users.length})</p>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060' }}>All Users ({users.length})</p>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…"
-              style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: '12px', outline: 'none', width: '180px' }} />
+              style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-compact)', outline: 'none', width: '180px' }} />
           </div>
           {usersLoading ? (
-            <p style={{ fontFamily: F, fontSize: '13px', color: '#7A7060' }}>Loading…</p>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>Loading…</p>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
                   {['Email','Signed Up','Last Sign In','Confirmed'].map(h => (
-                    <th key={h} style={{ padding: '8px 12px', textAlign: 'left' as const, fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>{h}</th>
+                    <th key={h} style={{ padding: '8px 12px', textAlign: 'left' as const, fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map(u => (
                   <tr key={u.id} style={{ borderBottom: '1px solid #F2EDDF' }}>
-                    <td style={{ padding: '10px 12px', fontFamily: F, fontSize: '13px', color: '#2A2318' }}>{u.email}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: F, fontSize: '12px', color: '#7A7060' }}>{new Date(u.created_at).toLocaleDateString()}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: F, fontSize: '12px', color: '#7A7060' }}>{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : '—'}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318' }}>{u.email}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>{new Date(u.created_at).toLocaleDateString()}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : '—'}</td>
                     <td style={{ padding: '10px 12px' }}>
-                      <span style={{ fontFamily: F, fontSize: '11px', padding: '2px 8px', borderRadius: '6px', background: u.email_confirmed_at ? '#E8F5E9' : '#FFF8E1', color: u.email_confirmed_at ? '#4CAF50' : '#F57F17' }}>
+                      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', padding: '2px 8px', borderRadius: '6px', background: u.email_confirmed_at ? '#E8F5E9' : '#FFF8E1', color: u.email_confirmed_at ? '#4CAF50' : '#F57F17' }}>
                         {u.email_confirmed_at ? '✓ Yes' : 'Pending'}
                       </span>
                     </td>

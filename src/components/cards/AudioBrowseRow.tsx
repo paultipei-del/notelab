@@ -137,7 +137,7 @@ export default function AudioBrowseRow({ card }: AudioBrowseRowProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '12px',
+          fontSize: 'var(--nl-text-compact)',
           color: playing ? '#7A7060' : 'white',
           transition: 'all 0.15s',
           flexDirection: 'column' as const,
@@ -159,7 +159,7 @@ export default function AudioBrowseRow({ card }: AudioBrowseRowProps) {
         </p>
         {detail && (
           <p style={{
-            fontSize: '12px',
+            fontSize: 'var(--nl-text-compact)',
             fontWeight: 300,
             color: '#7A7060',
             marginTop: '2px',

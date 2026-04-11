@@ -285,7 +285,7 @@ function HandPanel({ label, notes, fingering, clef, displayFrom, displayTo }: {
   const hand = clef === 'treble' ? 'rh' : 'lh'
   return (
     <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '24px', marginBottom: '16px' }}>
-      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '16px' }}>{label}</p>
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '16px' }}>{label}</p>
       <div style={{ overflowX: 'auto' }}>
         <KeyboardSVG notes={notes} fingering={fingering} hand={hand} displayFrom={displayFrom} displayTo={displayTo} />
       </div>
@@ -415,9 +415,9 @@ export default function ScaleFingeringsPage() {
       <div style={{ maxWidth: '820px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 80px' }}>
 
         {/* Back + title */}
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#2A2318', marginBottom: '6px' }}>Scale Fingerings</h1>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', margin: '0 0 28px', lineHeight: 1.6 }}>
+        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 28px', lineHeight: 1.6 }}>
           Two-octave piano fingerings for both hands. Thumb crossings highlighted in amber.
         </p>
 
@@ -439,8 +439,8 @@ export default function ScaleFingeringsPage() {
         <div style={{ marginBottom: '28px' }}>
           {/* ♭ / ♯ edge labels */}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>♭ Flats</span>
-            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>Sharps ♯</span>
+            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>♭ Flats</span>
+            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>Sharps ♯</span>
           </div>
           {/* Fixed 13-slot row — C (major) and Am (minor) sit at slot 6 (center) */}
           <div style={{ overflowX: 'auto' }}>
@@ -472,7 +472,7 @@ export default function ScaleFingeringsPage() {
               />
             )}
           </div>
-          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', marginTop: '6px' }}>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '6px' }}>
             2 octaves · <span style={{ color: '#B5402A', fontWeight: 400 }}>●</span> thumb (1)
           </p>
         </div>

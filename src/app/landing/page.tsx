@@ -44,9 +44,9 @@ export default function LandingPage() {
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px clamp(16px,4vw,48px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(245,242,236,0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(211,209,199,0.6)' }}>
         <div style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <a href="#pricing" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', textDecoration: 'none' }}>Pricing</a>
-          <button onClick={() => setShowAuth(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#2A2318', background: 'none', cursor: 'pointer' }}>Sign In</button>
-          <button onClick={() => setShowAuth(true)} style={{ border: 'none', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 400, color: 'white', background: '#1A1A18', cursor: 'pointer' }}>Get Started</button>
+          <a href="#pricing" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>Pricing</a>
+          <button onClick={() => setShowAuth(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer' }}>Sign In</button>
+          <button onClick={() => setShowAuth(true)} style={{ border: 'none', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: 'white', background: '#1A1A18', cursor: 'pointer' }}>Get Started</button>
         </div>
       </nav>
 
@@ -55,20 +55,20 @@ export default function LandingPage() {
         <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'none' : 'translateY(20px)', transition: 'all 0.7s ease' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '5px 14px', marginBottom: '32px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4CAF50', display: 'inline-block' }} />
-            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Now in Beta</span>
+            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Now in Beta</span>
           </div>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(36px,5vw,60px)', lineHeight: 1.05, color: '#2A2318', marginBottom: '24px', letterSpacing: '-0.01em' }}>
             Music theory,<br /><em>deeply</em> learned.
           </h1>
-          <p style={{ fontFamily: F, fontWeight: 300, fontSize: '16px', color: '#7A7060', lineHeight: 1.8, marginBottom: '40px', maxWidth: '440px' }}>
+          <p style={{ fontFamily: F, fontWeight: 400, fontSize: 'var(--nl-text-base)', color: '#7A7060', lineHeight: 1.8, marginBottom: '40px', maxWidth: '440px' }}>
             NoteLab Studio combines spaced repetition flashcards, real-time piano detection, and a complete reference library — built for Certificate of Merit students and serious musicians.
           </p>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button onClick={() => setShowAuth(true)}
-              style={{ border: 'none', borderRadius: '10px', padding: '14px 32px', fontFamily: F, fontSize: '14px', fontWeight: 400, color: 'white', background: '#1A1A18', cursor: 'pointer', boxShadow: '0 4px 20px rgba(26,26,24,0.2)' }}>
+              style={{ border: 'none', borderRadius: '10px', padding: '14px 32px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: 'white', background: '#1A1A18', cursor: 'pointer', boxShadow: '0 4px 20px rgba(26,26,24,0.2)' }}>
               Start for free →
             </button>
-            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#B8B5AD' }}>No credit card required</span>
+            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B8B5AD' }}>No credit card required</span>
           </div>
         </div>
 
@@ -91,9 +91,9 @@ export default function LandingPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', background: '#F2EDDF', borderRadius: '10px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4CAF50', display: 'inline-block', boxShadow: '0 0 0 3px rgba(76,175,80,0.2)' }} />
-              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>Listening for your piano…</span>
+              <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>Listening for your piano…</span>
             </div>
-            <div style={{ position: 'absolute' as const, top: '-16px', right: '-16px', background: '#B5402A', color: 'white', borderRadius: '10px', padding: '6px 14px', fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.08em', boxShadow: '0 4px 12px rgba(186,117,23,0.3)' }}>
+            <div style={{ position: 'absolute' as const, top: '-16px', right: '-16px', background: '#B5402A', color: 'white', borderRadius: '10px', padding: '6px 14px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', boxShadow: '0 4px 12px rgba(186,117,23,0.3)' }}>
               Real-time detection
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function LandingPage() {
       {/* Features */}
       <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 clamp(24px,4vw,48px) 100px' }}>
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B5402A', marginBottom: '12px' }}>What's inside</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B5402A', marginBottom: '12px' }}>What's inside</p>
           <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#2A2318', letterSpacing: '-0.01em' }}>Everything you need to practice smarter</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
@@ -111,10 +111,10 @@ export default function LandingPage() {
             <div key={i} style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '36px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <span style={{ fontSize: '32px', lineHeight: 1 }}>{f.icon}</span>
-                <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#B5402A', background: '#FDF5E6', border: '1px solid #F0D99A', borderRadius: '6px', padding: '3px 10px' }}>{f.tag}</span>
+                <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#B5402A', background: '#FDF5E6', border: '1px solid #F0D99A', borderRadius: '6px', padding: '3px 10px' }}>{f.tag}</span>
               </div>
               <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', marginBottom: '10px' }}>{f.title}</h3>
-              <p style={{ fontFamily: F, fontWeight: 300, fontSize: '13px', color: '#7A7060', lineHeight: 1.7 }}>{f.desc}</p>
+              <p style={{ fontFamily: F, fontWeight: 400, fontSize: 'var(--nl-text-meta)', color: '#7A7060', lineHeight: 1.7 }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -124,34 +124,34 @@ export default function LandingPage() {
       <section id="pricing" style={{ background: '#FDFAF3', borderTop: '1px solid #EDE8DF', borderBottom: '1px solid #EDE8DF', padding: 'clamp(60px,8vw,100px) clamp(24px,4vw,48px)' }}>
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B5402A', marginBottom: '12px' }}>Simple pricing</p>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B5402A', marginBottom: '12px' }}>Simple pricing</p>
             <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#2A2318', letterSpacing: '-0.01em' }}>Start free, upgrade when ready</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             <div style={{ background: '#F2EDDF', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '40px' }}>
-              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '16px' }}>Free</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '16px' }}>Free</p>
               <div style={{ fontFamily: SERIF, fontSize: '52px', fontWeight: 300, color: '#2A2318', lineHeight: 1, marginBottom: '8px' }}>$0</div>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginBottom: '32px' }}>Forever free</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', marginBottom: '32px' }}>Forever free</p>
               {['Note ID flashcards', 'Key signatures tool', 'Scale builder', 'Musical glossary', 'Basic decks'].map(item => (
                 <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                   <span style={{ color: '#4CAF50' }}>✓</span>
-                  <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#2A2318' }}>{item}</span>
+                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318' }}>{item}</span>
                 </div>
               ))}
-              <button onClick={() => setShowAuth(true)} style={{ marginTop: '32px', width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #1A1A18', background: 'none', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#2A2318', cursor: 'pointer' }}>Get started free</button>
+              <button onClick={() => setShowAuth(true)} style={{ marginTop: '32px', width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #1A1A18', background: 'none', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', cursor: 'pointer' }}>Get started free</button>
             </div>
             <div style={{ background: '#1A1A18', borderRadius: '20px', padding: '40px', position: 'relative' as const, overflow: 'hidden' }}>
               <div style={{ position: 'absolute' as const, top: '-60px', right: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(186,117,23,0.15)' }} />
-              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B5402A', marginBottom: '16px' }}>Pro</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B5402A', marginBottom: '16px' }}>Pro</p>
               <div style={{ fontFamily: SERIF, fontSize: '52px', fontWeight: 300, color: 'white', lineHeight: 1, marginBottom: '8px' }}>$8</div>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>per month</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>per month</p>
               {['Everything in Free', 'Staff recognition + piano mic', 'CM Repertoire browser', 'Magrath Guide access', 'All flashcard decks'].map(item => (
                 <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                   <span style={{ color: '#B5402A' }}>✓</span>
-                  <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: item === 'Everything in Free' ? 'rgba(255,255,255,0.5)' : 'white' }}>{item}</span>
+                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: item === 'Everything in Free' ? 'rgba(255,255,255,0.5)' : 'white' }}>{item}</span>
                 </div>
               ))}
-              <button onClick={() => setShowAuth(true)} style={{ marginTop: '32px', width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: '#B5402A', fontFamily: F, fontSize: '13px', fontWeight: 400, color: 'white', cursor: 'pointer', boxShadow: '0 4px 16px rgba(186,117,23,0.4)' }}>Start Pro →</button>
+              <button onClick={() => setShowAuth(true)} style={{ marginTop: '32px', width: '100%', padding: '12px', borderRadius: '10px', border: 'none', background: '#B5402A', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: 'white', cursor: 'pointer', boxShadow: '0 4px 16px rgba(186,117,23,0.4)' }}>Start Pro →</button>
             </div>
           </div>
         </div>
@@ -159,8 +159,8 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(24px,4vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontFamily: F, fontSize: '16px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
-        <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#B8B5AD' }}>Built for pianists and musicians. © {new Date().getFullYear()}</p>
+        <div style={{ fontFamily: F, fontSize: 'var(--nl-text-base)', fontWeight: 400, letterSpacing: '0.08em', color: '#2A2318' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
+        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B8B5AD' }}>Built for pianists and musicians. © {new Date().getFullYear()}</p>
       </footer>
 
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onSuccess={() => { setShowAuth(false); window.location.href = '/' }} />}

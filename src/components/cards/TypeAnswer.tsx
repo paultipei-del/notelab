@@ -47,7 +47,7 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
   const questionContent = card.type === 'staff' && card.note && card.clef ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
       <StaffCard note={card.note} clef={card.clef} />
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060' }}>Name this note</p>
+      <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060' }}>Name this note</p>
     </div>
   ) : (
     <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 48px)', textAlign: 'center', color: '#2A2318', lineHeight: 1.2 }}>
@@ -85,7 +85,7 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
         minHeight: '180px',
         justifyContent: 'center',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
+        <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
           Type your answer
         </span>
         {questionContent}
@@ -114,7 +114,7 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
             borderRadius: '12px',
             padding: '14px 24px',
             fontFamily: 'var(--font-jost), sans-serif',
-            fontSize: '13px',
+            fontSize: 'var(--nl-text-meta)',
             fontWeight: 300,
             letterSpacing: '0.08em',
             cursor: submitted || !value.trim() ? 'default' : 'pointer',
@@ -128,7 +128,7 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
       </div>
 
       {/* Feedback */}
-      <div style={{ textAlign: 'center', minHeight: '22px', fontSize: '14px', fontWeight: 300, letterSpacing: '0.02em' }}>
+      <div style={{ textAlign: 'center', minHeight: '22px', fontSize: 'var(--nl-text-ui)', fontWeight: 400, letterSpacing: '0.02em' }}>
         {submitted && (
           isCorrect
             ? <span style={{ color: '#3B6D11' }}>✓ Correct</span>

@@ -396,11 +396,11 @@ export default function GeneratePage() {
     return true
   })
 
-  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: '13px', color: '#2A2318', background: '#F2EDDF', outline: 'none', width: '100%', boxSizing: 'border-box' }
-  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#DDD8CA'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#7A7060' })
-  const lbl: React.CSSProperties = { fontFamily: F, fontSize: '11px', color: '#7A7060', display: 'block', marginBottom: '6px' }
+  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', background: '#F2EDDF', outline: 'none', width: '100%', boxSizing: 'border-box' }
+  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#DDD8CA'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#7A7060' })
+  const lbl: React.CSSProperties = { fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', display: 'block', marginBottom: '6px' }
   const card: React.CSSProperties = { background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }
-  const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '16px' }
+  const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '16px' }
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF', padding: '40px 32px' }}>
@@ -408,9 +408,9 @@ export default function GeneratePage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
           <div>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '4px' }}>Rhythm Generator</h1>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>Configure and generate rhythm exercises for the library</p>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Configure and generate rhythm exercises for the library</p>
           </div>
-          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: '12px', color: '#7A7060', textDecoration: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
+          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', textDecoration: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
@@ -476,7 +476,7 @@ export default function GeneratePage() {
               ].map(({ key, probKey, label }) => (
                 <div key={key}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontFamily: F, fontSize: '13px', color: '#2A2318' }}>{label}</span>
+                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318' }}>{label}</span>
                     <button onClick={() => set(key, !opts[key])} style={tog(!!opts[key])}>{opts[key] ? 'On' : 'Off'}</button>
                   </div>
                   {opts[key] && (
@@ -554,8 +554,8 @@ export default function GeneratePage() {
 
         {preview && showDiag && (
           <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px', marginBottom: '16px', overflowX: 'auto' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', color: '#7A7060', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
-            <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#7A7060', marginBottom: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
+            <div style={{ fontFamily: 'monospace', fontSize: 'var(--nl-text-badge)', color: '#7A7060', marginBottom: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
               <span><span style={{ border: '2px solid #4A9EFF', padding: '0 3px', borderRadius: '2px' }}>note~</span> tie start</span>
               <span><span style={{ border: '2px solid #FF9E4A', padding: '0 3px', borderRadius: '2px' }}>~note</span> tie stop</span>
               <span style={{ color: '#4CAF50' }}>● on beat</span>
@@ -570,7 +570,7 @@ export default function GeneratePage() {
               const ok = Math.abs(sum - expected) < 0.01
               return (
                 <div key={mi} style={{ marginBottom: '8px' }}>
-                  <span style={{ fontFamily: F, fontSize: '11px', color: ok ? '#4CAF50' : '#E53935', marginRight: '8px' }}>
+                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: ok ? '#4CAF50' : '#E53935', marginRight: '8px' }}>
                     M{mi+1} sum={sum.toFixed(3)} {ok ? '✓' : '✗'}
                   </span>
                   {m.notes.map((n, ni) => {
@@ -579,7 +579,7 @@ export default function GeneratePage() {
                     const onBeat = Math.abs(start % 1) < 0.01
                     return (
                       <span key={ni} style={{
-                        fontFamily: 'monospace', fontSize: '10px',
+                        fontFamily: 'monospace', fontSize: 'var(--nl-text-badge)',
                         background: n.rest ? '#333' : (onBeat ? '#2A4A2A' : '#4A2A2A'),
                         color: n.rest ? '#888' : (onBeat ? '#4CAF50' : '#FF6B6B'),
                         padding: '2px 4px', borderRadius: '3px', margin: '1px',
@@ -595,21 +595,21 @@ export default function GeneratePage() {
             })}
           </div>
         )}
-        {message && <p style={{ fontFamily: F, fontSize: '13px', color: message.ok ? '#4CAF50' : '#E53935', marginBottom: '16px' }}>{message.text}</p>}
+        {message && <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: message.ok ? '#4CAF50' : '#E53935', marginBottom: '16px' }}>{message.text}</p>}
 
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={generate} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+          <button onClick={generate} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
             {preview ? 'Regenerate' : 'Generate'}
           </button>
           {preview && (
             <button onClick={() => setShowDiag(d => !d)}
-              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               {showDiag ? 'Hide Diag' : 'Diagnose'}
             </button>
           )}
           {preview && (
             <button onClick={save} disabled={saving || !title.trim()}
-              style={{ background: saving || !title.trim() ? '#DDD8CA' : '#B5402A', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: saving || !title.trim() ? 'default' : 'pointer' }}>
+              style={{ background: saving || !title.trim() ? '#DDD8CA' : '#B5402A', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: saving || !title.trim() ? 'default' : 'pointer' }}>
               {saving ? 'Saving…' : 'Save to Library'}
             </button>
           )}

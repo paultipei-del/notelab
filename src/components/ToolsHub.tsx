@@ -32,10 +32,10 @@ export default function ToolsHub({ headingVariant = 'section' }: ToolsHubProps) 
           return (
             <div key={group.label}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid #E8E4DC' }}>
-                <h3 style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#2A2318', margin: 0 }}>
+                <h3 style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#2A2318', margin: 0 }}>
                   {group.label}
                 </h3>
-                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#B0ACA4', margin: 0 }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B0ACA4', margin: 0 }}>
                   {group.description}
                 </p>
               </div>
@@ -48,11 +48,11 @@ export default function ToolsHub({ headingVariant = 'section' }: ToolsHubProps) 
                       onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)' }}
                     >
                       <div>
-                        <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#7A7060', fontFamily: F }}>{tool.badge}</span>
+                        <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#7A7060', fontFamily: F }}>{tool.badge}</span>
                         <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '6px' }}>{tool.title}</h3>
-                        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.6 }}>{tool.desc}</p>
+                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.6 }}>{tool.desc}</p>
                       </div>
-                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#B5402A', marginTop: '16px' }}>{tool.cta}</p>
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#B5402A', marginTop: '16px' }}>{tool.cta}</p>
                     </div>
                   </Link>
                 ))}

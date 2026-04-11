@@ -39,7 +39,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
   }
 
   const labelStyle: React.CSSProperties = {
-    fontSize: '10px',
+    fontSize: 'var(--nl-text-badge)',
     fontWeight: 400,
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
@@ -50,7 +50,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
   const frontContent = card.type === 'staff' && card.note && card.clef ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
       <StaffCard note={card.note} clef={card.clef} />
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.03em' }}>
+      <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.03em' }}>
         What note is this?
       </p>
     </div>
@@ -65,7 +65,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
       <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '48px', textAlign: 'center', color: '#2A2318' }}>
         {card.front}
       </p>
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.03em', textAlign: 'center' }}>
+      <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.03em', textAlign: 'center' }}>
         {card.back}
       </p>
     </div>
@@ -94,7 +94,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
           <span style={labelStyle}>Question</span>
           {frontContent}
           {!revealed && (
-            <span style={{ position: 'absolute', bottom: '20px', fontSize: '11px', fontWeight: 300, letterSpacing: '0.08em', color: '#DDD8CA', textTransform: 'uppercase' }}>
+            <span style={{ position: 'absolute', bottom: '20px', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', color: '#DDD8CA', textTransform: 'uppercase' }}>
               tap to reveal
             </span>
           )}

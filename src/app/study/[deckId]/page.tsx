@@ -50,7 +50,7 @@ export default function StudyPage({ params }: Props) {
     return (
       <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
         <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#2A2318' }}>Deck not found</p>
-        <a href="/" style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.05em' }}>← Back to decks</a>
+        <a href="/" style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.05em' }}>← Back to decks</a>
       </div>
     )
   }

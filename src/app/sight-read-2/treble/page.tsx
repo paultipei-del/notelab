@@ -16,8 +16,8 @@ export default function TreblePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       <div style={{ maxWidth: '680px', margin: '0 auto', padding: '24px 32px 80px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060', padding: 0, marginBottom: '32px', display: 'block' }}>← Back</button>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '13px', color: '#7A7060', marginBottom: '24px' }}>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '32px', display: 'block' }}>← Back</button>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '24px' }}>
           10 progressive levels — start with anchor notes and build up to the full chromatic range.
         </p>
         <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', overflow: 'hidden' }}>
@@ -28,11 +28,11 @@ export default function TreblePage() {
                 style={{ width: '100%', background: 'transparent', border: 'none', borderBottom: i < TREBLE_LEVELS.length - 1 ? '1px solid #EDE8DF' : 'none', padding: '18px 24px', textAlign: 'left', cursor: locked ? 'default' : 'pointer', opacity: locked ? 0.5 : 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'background 0.15s' }}>
                 <div>
                   <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#2A2318', marginBottom: '2px' }}>{deck.title}</p>
-                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#7A7060' }}>{deck.description}</p>
+                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>{deck.description}</p>
                 </div>
                 {locked
-                  ? <span style={{ fontSize: '14px', color: '#DDD8CA' }}>🔒</span>
-                  : <span style={{ fontSize: '13px', fontWeight: 300, color: '#DDD8CA' }}>→</span>
+                  ? <span style={{ fontSize: 'var(--nl-text-ui)', color: '#DDD8CA' }}>🔒</span>
+                  : <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#DDD8CA' }}>→</span>
                 }
               </button>
             )

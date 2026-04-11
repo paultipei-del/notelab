@@ -227,7 +227,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
         border: `1px solid ${borderColor}`, padding: '40px 32px', textAlign: 'center',
         boxShadow: '0 4px 32px rgba(26,26,24,0.10)', transition: 'background 0.2s, border-color 0.2s',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '20px' }}>
+        <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '20px' }}>
           Play this note
         </span>
 
@@ -244,18 +244,18 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
           {status === 'listening' && (
             <>
               <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#B5402A', animation: 'pulse 1s infinite' }} />
-              <span style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.04em' }}>
                 {detected ? `Hearing: ${detected}` : 'Play the note…'}
               </span>
             </>
           )}
           {status === 'correct' && (
-            <span style={{ fontSize: '15px', fontWeight: 400, color: '#3B6D11', letterSpacing: '0.04em' }}>
+            <span style={{ fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#3B6D11', letterSpacing: '0.04em' }}>
               ✓ {detected}
             </span>
           )}
           {status === 'wrong' && detected && (
-            <span style={{ fontSize: '15px', fontWeight: 400, color: '#A32D2D', letterSpacing: '0.04em' }}>
+            <span style={{ fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#A32D2D', letterSpacing: '0.04em' }}>
               ✗ That's {detected} — try {targetNote}
             </span>
           )}
@@ -263,7 +263,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
       </div>
 
       {error && (
-        <p style={{ fontSize: '13px', fontWeight: 300, color: '#A32D2D', textAlign: 'center' }}>{error}</p>
+        <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#A32D2D', textAlign: 'center' }}>{error}</p>
       )}
 
       <style>{`

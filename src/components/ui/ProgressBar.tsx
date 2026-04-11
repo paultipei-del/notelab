@@ -14,7 +14,7 @@ export function ProgressBar({ pct, label }: ProgressBarProps) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-xs font-light text-[#888780] tracking-wide whitespace-nowrap">
+      <span className="text-sm font-normal text-[#888780] tracking-wide whitespace-nowrap">
         {label}
       </span>
     </div>

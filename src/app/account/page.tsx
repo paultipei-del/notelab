@@ -44,8 +44,8 @@ function Card({ children, style }: { children: React.ReactNode; style?: React.CS
 function Row({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #EDE8DF' }}>
-      <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', minWidth: '120px' }}>{label}</span>
-      <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318', flex: 1, textAlign: 'right' as const }}>{value}</span>
+      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', minWidth: '120px' }}>{label}</span>
+      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', flex: 1, textAlign: 'right' as const }}>{value}</span>
       {children}
     </div>
   )
@@ -53,7 +53,7 @@ function Row({ label, value, children }: { label: string; value?: string; childr
 
 function Pill({ label, color = '#0F6E56', bg = '#E1F5EE' }: { label: string; color?: string; bg?: string }) {
   return (
-    <span style={{ display: 'inline-block', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', background: bg, color }}>
+    <span style={{ display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', background: bg, color }}>
       {label}
     </span>
   )
@@ -71,7 +71,7 @@ function Btn({ children, onClick, variant = 'outline', disabled, danger }: {
       onClick={onClick}
       disabled={disabled}
       style={{
-        fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: disabled ? 'default' : 'pointer',
+        fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: disabled ? 'default' : 'pointer',
         border: '1px solid ' + (danger ? '#ED6765' : '#DDD8CA'),
         borderRadius: '20px', padding: '8px 20px',
         background: variant === 'fill' ? (danger ? '#ED6765' : '#1A1A18') : 'white',
@@ -125,7 +125,7 @@ function ProfileSection({ user }: { user: any }) {
       <Card>
         {/* Name field */}
         <div style={{ paddingBottom: '20px', marginBottom: '4px', borderBottom: '1px solid #EDE8DF' }}>
-          <label style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '8px' }}>
+          <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '8px' }}>
             Display name
           </label>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -137,7 +137,7 @@ function ProfileSection({ user }: { user: any }) {
               style={{
                 flex: 1, background: '#F2EDDF', border: '1px solid #DDD8CA',
                 borderRadius: '10px', padding: '10px 14px',
-                fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318',
+                fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318',
                 outline: 'none',
               }}
             />
@@ -145,7 +145,7 @@ function ProfileSection({ user }: { user: any }) {
               {nameStatus === 'saving' ? 'Saving…' : nameStatus === 'saved' ? 'Saved ✓' : nameStatus === 'error' ? 'Error' : 'Save'}
             </Btn>
           </div>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#7A7060', margin: '6px 0 0' }}>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: '6px 0 0' }}>
             Shown in the header instead of your email initials.
           </p>
         </div>
@@ -175,21 +175,21 @@ function SubscriptionSection({ userId }: { userId: string }) {
     <Section title="Subscription">
       <Card>
         {loading ? (
-          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>Loading…</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Loading…</p>
         ) : (
           <>
             <div style={{ borderBottom: '1px solid #EDE8DF' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #EDE8DF' }}>
                 <div>
-                  <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318', margin: '0 0 2px' }}>CM Collection Bundle</p>
-                  <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', margin: 0 }}>All Certificate of Merit levels, Prep – Advanced</p>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>CM Collection Bundle</p>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>All Certificate of Merit levels, Prep – Advanced</p>
                 </div>
                 {cmUnlocked ? <Pill label="Active" /> : <Pill label="Not purchased" color="#7A7060" bg="#EDE8DF" />}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0' }}>
                 <div>
-                  <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318', margin: '0 0 2px' }}>Pro Subscription</p>
-                  <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', margin: 0 }}>All content + future features</p>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>Pro Subscription</p>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>All content + future features</p>
                 </div>
                 {proUnlocked ? <Pill label="Active" /> : <Pill label="Not active" color="#7A7060" bg="#EDE8DF" />}
               </div>
@@ -202,7 +202,7 @@ function SubscriptionSection({ userId }: { userId: string }) {
               </div>
             )}
             {(cmUnlocked || proUnlocked) && (
-              <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', marginTop: '16px', marginBottom: 0 }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '16px', marginBottom: 0 }}>
                 To manage billing, cancel, or get a receipt — contact support.
               </p>
             )}
@@ -268,10 +268,10 @@ function ProgressSection({ userId }: { userId: string | null }) {
   return (
     <Section title="Progress">
       {loading ? (
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>Loading…</p>
+        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Loading…</p>
       ) : studiedDecks.length === 0 ? (
         <Card>
-          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#7A7060', margin: 0 }}>No study progress yet. Start a flashcard deck to track your progress here.</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', margin: 0 }}>No study progress yet. Start a flashcard deck to track your progress here.</p>
         </Card>
       ) : (
         <>
@@ -284,7 +284,7 @@ function ProgressSection({ userId }: { userId: string | null }) {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <div>
                       <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>{deck.title}</p>
-                      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', margin: 0 }}>
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>
                         {studied}/{total} studied · {due} due
                       </p>
                     </div>
@@ -329,10 +329,10 @@ function MyDecksSection({ userId }: { userId: string | null }) {
   return (
     <Section title="My Decks">
       {loading ? (
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>Loading…</p>
+        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Loading…</p>
       ) : decks.length === 0 ? (
         <Card>
-          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#7A7060', margin: 0 }}>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', margin: 0 }}>
             No custom decks yet.{' '}
             <Link href="/" style={{ color: '#B5402A', textDecoration: 'none' }}>Create one on the home page →</Link>
           </p>
@@ -343,7 +343,7 @@ function MyDecksSection({ userId }: { userId: string | null }) {
             <Card key={deck.id} style={{ padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>{deck.title}</p>
-                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', margin: 0 }}>{deck.cards.length} cards · {deck.tag}</p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>{deck.cards.length} cards · {deck.tag}</p>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
@@ -385,7 +385,7 @@ export default function AccountPage() {
 
         {/* Sidebar */}
         <aside style={{ width: '180px', flexShrink: 0, position: 'sticky' as const, top: '80px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Account</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Account</p>
           <nav style={{ display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
             {SECTIONS.map(s => (
               <button key={s.id} onClick={() => setActive(s.id)} style={{
@@ -393,21 +393,21 @@ export default function AccountPage() {
                 background: active === s.id ? 'white' : 'transparent',
                 border: active === s.id ? '1px solid #DDD8CA' : '1px solid transparent',
                 borderRadius: '10px', padding: '10px 14px',
-                fontFamily: F, fontSize: '13px', fontWeight: 300,
+                fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400,
                 color: active === s.id ? '#1A1A18' : '#7A7060',
                 cursor: 'pointer', textAlign: 'left' as const,
                 boxShadow: active === s.id ? '0 1px 4px rgba(26,26,24,0.07)' : 'none',
                 transition: 'all 0.15s',
                 width: '100%',
               }}>
-                <span style={{ fontSize: '12px', opacity: 0.6 }}>{s.icon}</span>
+                <span style={{ fontSize: 'var(--nl-text-compact)', opacity: 0.6 }}>{s.icon}</span>
                 {s.label}
               </button>
             ))}
           </nav>
           <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #DDD8CA' }}>
             <Link href="/" style={{ textDecoration: 'none' }}>
-              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>← Back to app</span>
+              <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>← Back to app</span>
             </Link>
           </div>
         </aside>

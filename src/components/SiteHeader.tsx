@@ -93,7 +93,7 @@ export default function SiteHeader() {
           <Link href="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontFamily: F, fontSize: '18px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>
               Note<span style={{ fontWeight: 500 }}>Lab</span>
-              <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', color: '#7A7060', marginLeft: '7px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
+              <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', color: '#7A7060', marginLeft: '7px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
             </span>
           </Link>
         </div>
@@ -141,7 +141,7 @@ export default function SiteHeader() {
                   background: 'transparent', border: 'none',
                   borderRadius: '9999px',
                   padding: '5px 14px',
-                  fontFamily: F, fontSize: '13px', fontWeight: 300,
+                  fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400,
                   color: active ? '#2A2318' : '#7A7060',
                   letterSpacing: '0.01em',
                   whiteSpace: 'nowrap' as const,
@@ -199,7 +199,7 @@ export default function SiteHeader() {
                     <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block' }}>
                       <div style={{
                         padding: '11px 14px', borderRadius: '8px',
-                        fontFamily: F, fontSize: '14px', fontWeight: 300,
+                        fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400,
                         color: active ? '#1A1A18' : '#7A7060',
                         background: active ? '#F2EDDF' : 'none',
                         cursor: 'pointer',
@@ -208,7 +208,7 @@ export default function SiteHeader() {
                         onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'none' }}
                       >
                         {item.label}
-                        {active && <span style={{ fontSize: '11px', color: '#B5402A', marginLeft: '8px' }}>●</span>}
+                        {active && <span style={{ fontSize: 'var(--nl-text-compact)', color: '#B5402A', marginLeft: '8px' }}>●</span>}
                       </div>
                     </Link>
                   )
@@ -226,7 +226,7 @@ export default function SiteHeader() {
                   style={{
                     width: '34px', height: '34px', borderRadius: '50%',
                     background: '#1A1A18', border: 'none',
-                    fontFamily: F, fontSize: '12px', fontWeight: 400,
+                    fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500,
                     color: 'white', cursor: 'pointer', letterSpacing: '0.04em',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
@@ -244,17 +244,17 @@ export default function SiteHeader() {
                     {/* Identity header */}
                     <div style={{ padding: '8px 12px 12px', borderBottom: '1px solid #EDE8DF', marginBottom: '4px' }}>
                       {displayName && (
-                        <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>
+                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>
                           {displayName}
                         </p>
                       )}
-                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#7A7060', margin: 0, wordBreak: 'break-all' as const }}>
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0, wordBreak: 'break-all' as const }}>
                         {email}
                       </p>
                     </div>
 
                     <Link href="/account" onClick={() => setShowUserMenu(false)} style={{ textDecoration: 'none', display: 'block' }}>
-                      <div style={{ borderRadius: '8px', padding: '9px 12px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#2A2318', cursor: 'pointer' }}
+                      <div style={{ borderRadius: '8px', padding: '9px 12px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', cursor: 'pointer' }}
                         onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
                         Account settings
@@ -264,7 +264,7 @@ export default function SiteHeader() {
                       display: 'block', width: '100%', textAlign: 'left' as const,
                       background: 'none', border: 'none', borderRadius: '8px',
                       padding: '9px 12px', borderTop: '1px solid #EDE8DF', marginTop: '4px',
-                      fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', cursor: 'pointer',
+                      fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer',
                     }}
                       onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'none')}
@@ -277,8 +277,8 @@ export default function SiteHeader() {
             ) : (
               <button onClick={() => setShowAuth(true)} style={{
                 border: '1px solid #DDD8CA', borderRadius: '20px',
-                padding: '7px 18px', fontFamily: F, fontSize: '13px',
-                fontWeight: 300, color: '#2A2318', background: 'none', cursor: 'pointer',
+                padding: '7px 18px', fontFamily: F, fontSize: 'var(--nl-text-meta)',
+                fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer',
               }}>
                 Sign in
               </button>

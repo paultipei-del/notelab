@@ -35,11 +35,11 @@ export default function ProgramsPage() {
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px' }}>
 
         <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Programs</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Programs</p>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#2A2318', marginBottom: '10px', letterSpacing: '0.02em' }}>
             Curriculum-aligned programs
           </h1>
-          <p style={{ fontSize: '15px', fontWeight: 300, color: '#7A7060', maxWidth: '480px', lineHeight: 1.7 }}>
+          <p style={{ fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060', maxWidth: '480px', lineHeight: 1.7 }}>
             Complete flashcard programs built around real curricula — Certificate of Merit and college first-year music theory, each self-contained with everything you need.
           </p>
         </div>
@@ -62,16 +62,16 @@ export default function ProgramsPage() {
                 >
                   {/* Text side */}
                   <div style={{ flex: 1, padding: '36px 40px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
-                    <span style={{ display: 'inline-block', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '4px 10px', borderRadius: '20px', background: 'rgba(186,117,23,0.2)', color: '#E8A84A', marginBottom: '14px', width: 'fit-content' }}>
+                    <span style={{ display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '4px 10px', borderRadius: '20px', background: 'rgba(186,117,23,0.2)', color: '#E8A84A', marginBottom: '14px', width: 'fit-content' }}>
                       {unlocked ? 'Unlocked' : prog.levels}
                     </span>
                     <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(30px, 3.2vw, 42px)', color: 'white', marginBottom: '12px', letterSpacing: '0.01em', lineHeight: 1.05 }}>
                       {prog.title}
                     </h2>
-                    <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: '24px', maxWidth: '380px' }}>
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: '24px', maxWidth: '380px' }}>
                       {prog.description}
                     </p>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', fontFamily: F, fontSize: '12px', fontWeight: 400, letterSpacing: '0.05em', color: '#E8A84A', padding: '7px 16px', borderRadius: '20px', background: 'rgba(186,117,23,0.15)', border: '1px solid rgba(186,117,23,0.3)', width: 'fit-content' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.05em', color: '#E8A84A', padding: '7px 16px', borderRadius: '20px', background: 'rgba(186,117,23,0.15)', border: '1px solid rgba(186,117,23,0.3)', width: 'fit-content' }}>
                       {unlocked ? 'Browse levels →' : 'View program →'}
                     </span>
                   </div>

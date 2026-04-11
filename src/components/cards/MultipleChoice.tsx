@@ -60,7 +60,7 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
       return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <StaffCard note={card.note} clef={card.clef} />
-          <p style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.05em' }}>Identify this note</p>
+          <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.05em' }}>Identify this note</p>
         </div>
       )
     }
@@ -71,7 +71,7 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
             {card.front}
           </div>
           {card.symbolLabel && (
-            <p style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.05em' }}>
+            <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.05em' }}>
               {card.symbolLabel}
             </p>
           )}
@@ -100,7 +100,7 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
         boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
         minHeight: '180px',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
+        <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
           Choose the correct answer
         </span>
         {questionContent()}

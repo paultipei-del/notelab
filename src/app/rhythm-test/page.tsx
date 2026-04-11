@@ -107,7 +107,7 @@ export default function RhythmTest() {
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
       <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '8px' }}>Rhythm Trainer</h1>
-      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginBottom: '48px' }}>{pattern.label} · {pattern.bpm} BPM · tap Space</p>
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', marginBottom: '48px' }}>{pattern.label} · {pattern.bpm} BPM · tap Space</p>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '48px', padding: '24px', background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA' }}>
         {pattern.taps.map((expected, i) => {
@@ -123,22 +123,22 @@ export default function RhythmTest() {
           if (isCurrent) border = '2px solid #B5402A'
           return (
             <div key={i} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontFamily: F, fontSize: '10px', color: isDownbeat ? '#1A1A18' : 'transparent' }}>
+              <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: isDownbeat ? '#1A1A18' : 'transparent' }}>
                 {isDownbeat ? Math.floor(i / pattern.subdivisions) + 1 : '·'}
               </span>
               <div style={{ width: isDownbeat ? '52px' : '40px', height: isDownbeat ? '52px' : '40px', borderRadius: '10px', background: bg, border, transition: 'all 0.1s', boxShadow: isCurrent ? '0 0 0 3px rgba(186,117,23,0.3)' : 'none' }} />
-              <span style={{ fontFamily: F, fontSize: '10px', color: score === 'extra' ? '#F09595' : 'transparent' }}>✗</span>
+              <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: score === 'extra' ? '#F09595' : 'transparent' }}>✗</span>
             </div>
           )
         })}
       </div>
 
       {!playing ? (
-        <button onClick={start} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: '14px', fontWeight: 300, cursor: 'pointer' }}>
+        <button onClick={start} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, cursor: 'pointer' }}>
           {scores.length > 0 ? 'Try Again' : 'Start'}
         </button>
       ) : (
-        <button onClick={stop} style={{ background: 'none', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: '14px', fontWeight: 300, cursor: 'pointer' }}>
+        <button onClick={stop} style={{ background: 'none', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, cursor: 'pointer' }}>
           Stop
         </button>
       )}

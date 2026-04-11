@@ -87,7 +87,7 @@ export default function Home() {
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '28px 0 0' }}>
           <div style={{ width: '40px', height: '1.5px', background: '#B5402A', flexShrink: 0 }} />
-          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#7A7060', margin: 0, lineHeight: 1.7 }}>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060', margin: 0, lineHeight: 1.7 }}>
             Interactive tools and flashcard collections for students at every level.
           </p>
         </div>
@@ -101,7 +101,7 @@ export default function Home() {
           <div style={{ marginBottom: '48px' }}>
             <div style={{ marginBottom: '20px' }}>
               <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#2A2318', marginBottom: '4px' }}>My Decks</h2>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>{userDecks.length} custom collection{userDecks.length !== 1 ? 's' : ''}</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>{userDecks.length} custom collection{userDecks.length !== 1 ? 's' : ''}</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
               {userDecks.map(deck => (
@@ -113,11 +113,11 @@ export default function Home() {
                       onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)' }}
                     >
                       <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '18px', color: '#2A2318', marginBottom: '4px' }}>{deck.title}</h3>
-                      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>{deck.cards.length} cards</p>
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</p>
                     </div>
                   </Link>
                   <button onClick={() => setEditingDeck(deck)}
-                    style={{ position: 'absolute', top: '10px', right: '10px', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '3px 8px', fontSize: '10px', fontWeight: 300, color: '#7A7060', cursor: 'pointer', fontFamily: F }}>
+                    style={{ position: 'absolute', top: '10px', right: '10px', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '4px 9px', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', cursor: 'pointer', fontFamily: F }}>
                     Edit
                   </button>
                 </div>
@@ -135,21 +135,21 @@ export default function Home() {
           <div style={{ background: '#F2EDDF', borderRadius: '16px', padding: '36px', width: '100%', maxWidth: '480px', boxShadow: '0 8px 48px rgba(26,26,24,0.2)' }}>
             <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', marginBottom: '24px', color: '#2A2318' }}>New Collection</h2>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Title</label>
-              <input style={{ width: '100%', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
+              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Title</label>
+              <input style={{ width: '100%', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
                 value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="e.g. My Practice Deck" autoFocus onKeyDown={e => e.key === 'Enter' && handleCreateDeck()} />
             </div>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Description</label>
-              <input style={{ width: '100%', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
+              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Description</label>
+              <input style={{ width: '100%', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
                 value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Brief description…" />
             </div>
             <div style={{ marginBottom: '28px' }}>
-              <label style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Category</label>
+              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Category</label>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
                 {(['free', 'cm', 'theory', 'repertoire'] as DeckTag[]).map(tag => (
                   <button key={tag} onClick={() => setNewTag(tag)}
-                    style={{ padding: '6px 14px', borderRadius: '20px', border: `1px solid ${newTag === tag ? '#1A1A18' : '#DDD8CA'}`, background: newTag === tag ? '#1A1A18' : 'transparent', color: newTag === tag ? 'white' : '#7A7060', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', textTransform: 'capitalize' as const }}>
+                    style={{ padding: '6px 14px', borderRadius: '20px', border: `1px solid ${newTag === tag ? '#1A1A18' : '#DDD8CA'}`, background: newTag === tag ? '#1A1A18' : 'transparent', color: newTag === tag ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', textTransform: 'capitalize' as const }}>
                     {tag}
                   </button>
                 ))}
@@ -157,11 +157,11 @@ export default function Home() {
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={handleCreateDeck} disabled={!newTitle.trim()}
-                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: newTitle.trim() ? 'pointer' : 'default', opacity: newTitle.trim() ? 1 : 0.4 }}>
+                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: newTitle.trim() ? 'pointer' : 'default', opacity: newTitle.trim() ? 1 : 0.4 }}>
                 Create & Add Cards
               </button>
               <button onClick={() => setShowNewDeck(false)}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '12px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '12px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
                 Cancel
               </button>
             </div>

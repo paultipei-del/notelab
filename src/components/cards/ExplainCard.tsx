@@ -67,7 +67,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
         textAlign: 'center',
         boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '16px' }}>
+        <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '16px' }}>
           Explain this term
         </span>
 
@@ -108,7 +108,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
               borderRadius: '14px',
               padding: '16px 18px',
               fontFamily: 'var(--font-jost), sans-serif',
-              fontSize: '15px',
+              fontSize: 'var(--nl-text-body)',
               fontWeight: 300,
               color: '#2A2318',
               lineHeight: 1.6,
@@ -119,7 +119,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
             autoFocus
           />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '11px', fontWeight: 300, color: '#DDD8CA', letterSpacing: '0.03em' }}>
+            <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', letterSpacing: '0.03em' }}>
               ⌘ + Enter to submit
             </span>
             <button
@@ -132,7 +132,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
                 borderRadius: '8px',
                 padding: '10px 24px',
                 fontFamily: 'var(--font-jost), sans-serif',
-                fontSize: '13px',
+                fontSize: 'var(--nl-text-meta)',
                 fontWeight: 300,
                 letterSpacing: '0.06em',
                 cursor: input.trim() && !loading ? 'pointer' : 'default',
@@ -158,7 +158,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
             <span style={{ fontSize: '16px' }}>{result.correct ? '✓' : '✗'}</span>
             <span style={{
               fontFamily: 'var(--font-jost), sans-serif',
-              fontSize: '13px',
+              fontSize: 'var(--nl-text-meta)',
               fontWeight: 400,
               letterSpacing: '0.05em',
               color: result.correct ? '#3B6D11' : '#A32D2D',
@@ -168,7 +168,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
           </div>
           <p style={{
             fontFamily: 'var(--font-jost), sans-serif',
-            fontSize: '14px',
+            fontSize: 'var(--nl-text-ui)',
             fontWeight: 300,
             color: result.correct ? '#3B6D11' : '#A32D2D',
             lineHeight: 1.7,
@@ -177,10 +177,10 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
             {result.feedback}
           </p>
           <div style={{ borderTop: `1px solid ${result.correct ? '#C0DD97' : '#F09595'}`, paddingTop: '12px' }}>
-            <p style={{ fontSize: '11px', fontWeight: 300, color: '#7A7060', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Official definition
             </p>
-            <p style={{ fontSize: '13px', fontWeight: 300, color: '#2A2318', lineHeight: 1.6 }}>
+            <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', lineHeight: 1.6 }}>
               {definition}
             </p>
           </div>
@@ -190,10 +190,10 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
       {/* Student's answer */}
       {result && input && (
         <div style={{ background: '#F2EDDF', borderRadius: '10px', padding: '12px 16px' }}>
-          <p style={{ fontSize: '11px', fontWeight: 300, color: '#7A7060', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             Your answer
           </p>
-          <p style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.6, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.6, fontStyle: 'italic' }}>
             "{input}"
           </p>
         </div>

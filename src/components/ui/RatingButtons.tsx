@@ -54,7 +54,7 @@ export default function RatingButtons({ visible, intervals, onRate }: RatingButt
           className={`flex flex-col items-center gap-1 px-8 py-4 rounded-xl border-[1.5px] min-w-[110px] transition-all duration-150 ${style}`}
         >
           <span className="text-[14px] font-normal tracking-wide">{label}</span>
-          <span className="text-[11px] font-light opacity-70 tracking-wide">{interval}</span>
+          <span className="text-[length:var(--nl-text-compact)] font-normal opacity-70 tracking-wide">{interval}</span>
         </button>
       ))}
     </div>

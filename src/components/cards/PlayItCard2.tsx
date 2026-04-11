@@ -199,7 +199,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
 
   return (
     <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: '40px 32px', transition: 'all 0.15s', textAlign: 'center' as const }}>
-      <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '24px' }}>
+      <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '24px' }}>
         {status === 'starting' ? 'Starting mic…' : status === 'correct' ? '✓ Correct' : 'Play this note'}
       </p>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
@@ -210,11 +210,11 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           : null}
       </div>
       {detected && status !== 'correct' && (
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: status === 'wrong' ? '#E53935' : '#7A7060' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: status === 'wrong' ? '#E53935' : '#7A7060' }}>
           {status === 'wrong' ? `Heard: ${detected} — try ${targetNoteRef.current}` : `Heard: ${detected}`}
         </p>
       )}
-      {error && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', color: '#E53935' }}>{error}</p>}
+      {error && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', color: '#E53935' }}>{error}</p>}
     </div>
   )
 }

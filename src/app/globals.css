@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Readable UI scale (Jost): prefer font-weight 400 from --nl-text-meta down */
+:root {
+  --nl-text-body: 15px; /* hero sublines, primary secondary paragraphs */
+  --nl-text-base: 16px; /* marketing hero, pickers — one step up from body */
+  --nl-text-ui: 14px; /* nav, menus, primary buttons */
+  --nl-text-meta: 13px; /* footer, card meta, desktop nav */
+  --nl-text-compact: 12px; /* chips, form labels (uppercase), tight controls */
+  --nl-text-badge: 11px; /* tiny pills / wordmark sublabel only */
+}
+
 @layer base {
   html {
     background-color: #F2EDDF;

@@ -42,7 +42,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
         {hasLabel && (
           <p style={{
             fontFamily: 'var(--font-jost), sans-serif',
-            fontSize: '13px',
+            fontSize: 'var(--nl-text-meta)',
             fontWeight: 300,
             color: '#7A7060',
             letterSpacing: '0.05em',
@@ -72,7 +72,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
           </p>
           <p style={{
             fontFamily: 'var(--font-jost), sans-serif',
-            fontSize: '14px',
+            fontSize: 'var(--nl-text-ui)',
             fontWeight: 300,
             color: '#7A7060',
             lineHeight: 1.7,
@@ -84,7 +84,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
         <div style={{ textAlign: 'center' }}>
           <p style={{
             fontFamily: 'var(--font-jost), sans-serif',
-            fontSize: '13px',
+            fontSize: 'var(--nl-text-meta)',
             fontWeight: 300,
             color: '#7A7060',
             letterSpacing: '0.05em',

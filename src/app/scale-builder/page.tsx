@@ -490,14 +490,14 @@ if (newNotes.length === expectedLength) {
     width: '100%', appearance: 'none', WebkitAppearance: 'none',
     background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '12px',
     padding: '11px 36px 11px 16px',
-    fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318',
+    fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318',
     cursor: 'pointer', outline: 'none',
   }
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       <div style={{ maxWidth: '860px', margin: '0 auto', padding: '20px 16px 80px' }}>
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
 
         {/* ── Selectors row ── */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
@@ -516,7 +516,7 @@ if (newNotes.length === expectedLength) {
                 </optgroup>
               ))}
             </select>
-            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: '11px' }}>▾</span>
+            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: 'var(--nl-text-compact)' }}>▾</span>
           </div>
 
           {/* Root note */}
@@ -541,7 +541,7 @@ if (newNotes.length === expectedLength) {
                 <option key={note} value={note}>{note}</option>
               ))}
             </select>
-            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: '11px' }}>▾</span>
+            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: 'var(--nl-text-compact)' }}>▾</span>
           </div>
         </div>
 
@@ -628,17 +628,17 @@ if (newNotes.length === expectedLength) {
           {/* Status / Instruction */}
           <div style={{ padding: '14px 20px', minHeight: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             {phase === 'select_root' && (
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#B0ACA4' }}>Choose a scale type and root note above, or click any key below.</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#B0ACA4' }}>Choose a scale type and root note above, or click any key below.</p>
             )}
             {phase === 'play_note' && currentStep && (
               <div>
-                <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#7A7060' }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060' }}>
                   Play a{' '}
                   <span style={{ fontWeight: 500, color: '#B5720F' }}>{STEP_LABELS[currentStep]}</span>
                   {' '}above{' '}
                   <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318' }}>{builtNotes[builtNotes.length-1].name}</span>
                 </p>
-                {error && <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C0392B', marginTop: '6px' }}>✗ {error}</p>}
+                {error && <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#C0392B', marginTop: '6px' }}>✗ {error}</p>}
               </div>
             )}
             {phase === 'complete' && (
@@ -648,11 +648,11 @@ if (newNotes.length === expectedLength) {
                 </p>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => playScale(builtNotes)}
-                    style={{ background: 'transparent', color: '#2A2318', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                    style={{ background: 'transparent', color: '#2A2318', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                     ▶ Play
                   </button>
                   <button onClick={reset}
-                    style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                    style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                     New Scale
                   </button>
                 </div>
@@ -664,18 +664,18 @@ if (newNotes.length === expectedLength) {
         {/* ── Piano ── */}
         <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '16px 20px', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Piano</p>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Piano</p>
             <div style={{ display: 'flex', gap: '6px' }}>
               <button onClick={() => setShowHint(!showHint)}
-                style={{ background: showHint ? '#1A1A18' : 'transparent', color: showHint ? 'white' : '#7A7060', border: '1px solid ' + (showHint ? '#1A1A18' : '#DDD8CA'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: showHint ? '#1A1A18' : 'transparent', color: showHint ? 'white' : '#7A7060', border: '1px solid ' + (showHint ? '#1A1A18' : '#DDD8CA'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                 Hint {showHint ? 'on' : 'off'}
               </button>
               <button onClick={() => setShowNoteNames(!showNoteNames)}
-                style={{ background: showNoteNames ? '#1A1A18' : 'transparent', color: showNoteNames ? 'white' : '#7A7060', border: '1px solid ' + (showNoteNames ? '#1A1A18' : '#DDD8CA'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: showNoteNames ? '#1A1A18' : 'transparent', color: showNoteNames ? 'white' : '#7A7060', border: '1px solid ' + (showNoteNames ? '#1A1A18' : '#DDD8CA'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                 Note names
               </button>
               <button onClick={reset}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                 Reset
               </button>
             </div>

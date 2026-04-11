@@ -22,13 +22,13 @@ export default function SiteFooter() {
       flexWrap: 'wrap' as const,
       gap: '12px',
     }}>
-      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>
+      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>
         © {new Date().getFullYear()} NoteLab Studio
       </span>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
         <Link href="/feedback" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}
+          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
             onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
           >
@@ -36,7 +36,7 @@ export default function SiteFooter() {
           </span>
         </Link>
         <Link href="/privacy" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}
+          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
             onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
           >

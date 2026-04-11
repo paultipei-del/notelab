@@ -138,8 +138,8 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
               <span style={{
                 display: 'inline-block',
                 fontFamily: F,
-                fontSize: '10px',
-                fontWeight: 400,
+                fontSize: 'var(--nl-text-badge)',
+                fontWeight: 500,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase' as const,
                 padding: '4px 10px',
@@ -166,8 +166,8 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
 
               <p style={{
                 fontFamily: F,
-                fontSize: '14px',
-                fontWeight: 300,
+                fontSize: 'var(--nl-text-body)',
+                fontWeight: 400,
                 lineHeight: 1.65,
                 color: tile.subtitleColor,
                 margin: '0 0 24px',
@@ -181,8 +181,8 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
                 alignItems: 'center',
                 gap: '6px',
                 fontFamily: F,
-                fontSize: '12px',
-                fontWeight: 400,
+                fontSize: 'var(--nl-text-meta)',
+                fontWeight: 500,
                 letterSpacing: '0.05em',
                 color: tile.ctaColor,
                 padding: '7px 16px',

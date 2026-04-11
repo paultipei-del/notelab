@@ -49,7 +49,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
     borderRadius: '8px',
     padding: '12px 14px',
     fontFamily: 'var(--font-jost), sans-serif',
-    fontSize: '14px',
+    fontSize: 'var(--nl-text-ui)',
     fontWeight: 300,
     color: '#2A2318',
     outline: 'none',
@@ -65,12 +65,12 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', marginBottom: '12px', color: '#2A2318' }}>
             Check your email
           </h2>
-          <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', lineHeight: 1.7, marginBottom: '28px' }}>
+          <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', lineHeight: 1.7, marginBottom: '28px' }}>
             We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account, then sign in.
           </p>
           <button
             onClick={() => { setConfirmed(false); setMode('signin') }}
-            style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.06em', cursor: 'pointer' }}
+            style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, letterSpacing: '0.06em', cursor: 'pointer' }}
           >
             Back to Sign In
           </button>
@@ -97,7 +97,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
                 background: mode === m ? 'white' : 'transparent',
                 color: mode === m ? '#1A1A18' : '#7A7060',
                 fontFamily: 'var(--font-jost), sans-serif',
-                fontSize: '13px', fontWeight: mode === m ? 400 : 300,
+                fontSize: 'var(--nl-text-meta)', fontWeight: mode === m ? 400 : 300,
                 letterSpacing: '0.04em', cursor: 'pointer',
                 boxShadow: mode === m ? '0 1px 4px rgba(26,26,24,0.08)' : 'none',
                 transition: 'all 0.15s',
@@ -113,7 +113,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         </h2>
 
         <div style={{ marginBottom: '14px' }}>
-          <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '6px' }}>
+          <label style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '6px' }}>
             Email
           </label>
           <input
@@ -128,7 +128,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         </div>
 
         <div style={{ marginBottom: '24px' }}>
-          <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '6px' }}>
+          <label style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '6px' }}>
             Password
           </label>
           <input
@@ -142,7 +142,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         </div>
 
         {error && (
-          <p style={{ fontSize: '13px', color: '#A32D2D', marginBottom: '16px', fontWeight: 300 }}>
+          <p style={{ fontSize: 'var(--nl-text-meta)', color: '#A32D2D', marginBottom: '16px', fontWeight: 400 }}>
             {error}
           </p>
         )}
@@ -153,7 +153,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           style={{
             width: '100%', background: '#1A1A18', color: 'white', border: 'none',
             borderRadius: '8px', padding: '14px',
-            fontFamily: 'var(--font-jost), sans-serif', fontSize: '14px',
+            fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)',
             fontWeight: 300, letterSpacing: '0.06em', cursor: 'pointer',
             opacity: loading || !email.trim() || !password.trim() ? 0.5 : 1,
             transition: 'opacity 0.15s',
@@ -162,11 +162,11 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           {loading ? 'Please wait…' : mode === 'signin' ? 'Sign In' : 'Create Account'}
         </button>
 
-        <p style={{ textAlign: 'center', fontSize: '12px', fontWeight: 300, color: '#7A7060', marginTop: '20px' }}>
+        <p style={{ textAlign: 'center', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '20px' }}>
           {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
           <button
             onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError('') }}
-            style={{ background: 'none', border: 'none', color: '#2A2318', cursor: 'pointer', fontSize: '12px', fontWeight: 400, textDecoration: 'underline' }}
+            style={{ background: 'none', border: 'none', color: '#2A2318', cursor: 'pointer', fontSize: 'var(--nl-text-compact)', fontWeight: 400, textDecoration: 'underline' }}
           >
             {mode === 'signin' ? 'Sign up' : 'Sign in'}
           </button>
