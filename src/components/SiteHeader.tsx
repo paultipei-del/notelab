@@ -41,11 +41,9 @@ export default function SiteHeader() {
 
   const movePillTo = useCallback((idx: number) => {
     const item = itemRefs.current[idx]
-    const nav = navRef.current
-    if (!item || !nav) return
-    const ir = item.getBoundingClientRect()
-    const nr = nav.getBoundingClientRect()
-    setPillRect({ left: ir.left - nr.left, width: ir.width })
+    if (!item) return
+    // Use offsetLeft/offsetWidth — relative to the nav container, same as the reference pattern
+    setPillRect({ left: item.offsetLeft, width: item.offsetWidth })
   }, [])
 
   // Initialise pill on active item after mount and route changes
