@@ -370,13 +370,13 @@ export default function ScaleFingeringsPage() {
 
   if (!fingering || !notes) return null
 
-  // C major starts at C4 (60) and ends at C6 (84) — add cushion: F3 (53) to E6 (88)
-  // LH is one octave lower, so F2 (41) to E5 (76)
-  const isCMajor = scaleType === 'major' && dataKey === 'C'
-  const rhDisplayFrom = isCMajor ? 53 : undefined  // F3
-  const rhDisplayTo   = isCMajor ? 89 : undefined  // F6
-  const lhDisplayFrom = isCMajor ? 41 : undefined  // F2
-  const lhDisplayTo   = isCMajor ? 77 : undefined  // F5
+  // C major/minor start at C4 (60) and end at C6 (84) — add cushion: F3 (53) to F6 (89)
+  // LH is one octave lower: F2 (41) to F5 (77)
+  const needsCushion = (isMajor && dataKey === 'C') || (!isMajor && dataKey === 'Cm')
+  const rhDisplayFrom = needsCushion ? 53 : undefined  // F3
+  const rhDisplayTo   = needsCushion ? 89 : undefined  // F6
+  const lhDisplayFrom = needsCushion ? 41 : undefined  // F2
+  const lhDisplayTo   = needsCushion ? 77 : undefined  // F5
 
   const scaleLabel = scaleType === 'major' ? 'Major'
     : scaleType === 'natural_minor' ? 'Natural Minor'
