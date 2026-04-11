@@ -5,9 +5,9 @@ import { useEffect, useRef } from 'react'
 const SPACING   = 28
 const PROXIMITY = 110
 const BASE_R    = 1
-const MAX_R     = 3
-const BASE_A    = 0.07
-const MAX_A     = 0.5
+const MAX_R     = 2
+const BASE_A    = 0.025
+const MAX_A     = 0.13
 
 export default function ParticleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
