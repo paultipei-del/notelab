@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import SlidingPills from '@/components/SlidingPills'
 
 type Clef = 'treble' | 'bass' | 'grand'
 type NoteFilter = 'lines' | 'spaces' | 'ledger'
@@ -95,13 +96,6 @@ export default function NoteIDPage() {
   const levels = GUIDED_LEVELS.filter(l => l.clef === config.clef)
 
   // ── style helpers ──
-  const segBtn = (active: boolean): React.CSSProperties => ({
-    padding: '7px 18px', borderRadius: '20px', border: 'none',
-    background: active ? '#1A1A18' : 'transparent',
-    color: active ? 'white' : '#888780',
-    fontFamily: F, fontSize: '13px', fontWeight: 300,
-    cursor: 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em',
-  })
 
   const pill = (active: boolean): React.CSSProperties => ({
     padding: '7px 16px', borderRadius: '20px',
@@ -141,29 +135,25 @@ export default function NoteIDPage() {
             {/* Clef */}
             <div>
               {sectionLabel('Clef')}
-              <div style={{ display: 'inline-flex', background: '#F5F2EC', borderRadius: '24px', padding: '3px', gap: '2px' }}>
-                {(['treble', 'bass', 'grand'] as Clef[]).map(c => (
-                  <button key={c} onClick={() => set('clef', c)} style={segBtn(config.clef === c)}>
-                    {c.charAt(0).toUpperCase() + c.slice(1)}
-                  </button>
-                ))}
-              </div>
+              <SlidingPills
+                options={(['treble', 'bass', 'grand'] as Clef[]).map(c => ({ value: c, label: c.charAt(0).toUpperCase() + c.slice(1) }))}
+                value={config.clef}
+                onChange={v => set('clef', v)}
+              />
             </div>
 
             {/* Input method */}
             <div>
               {sectionLabel('Answer with')}
-              <div style={{ display: 'inline-flex', background: '#F5F2EC', borderRadius: '24px', padding: '3px', gap: '2px' }}>
-                {([
-                  { id: 'letters', label: 'Letters' },
-                  { id: 'keyboard', label: 'Mini Piano' },
-                  { id: 'keyboard-full', label: 'Full Piano' },
-                ] as { id: InputMode; label: string }[]).map(m => (
-                  <button key={m.id} onClick={() => set('inputMode', m.id)} style={segBtn(config.inputMode === m.id)}>
-                    {m.label}
-                  </button>
-                ))}
-              </div>
+              <SlidingPills
+                options={[
+                  { value: 'letters' as InputMode, label: 'Letters' },
+                  { value: 'keyboard' as InputMode, label: 'Mini Piano' },
+                  { value: 'keyboard-full' as InputMode, label: 'Full Piano' },
+                ]}
+                value={config.inputMode}
+                onChange={v => set('inputMode', v)}
+              />
             </div>
           </div>
         </div>

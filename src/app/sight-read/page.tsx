@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import SlidingPills from '@/components/SlidingPills'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -55,13 +56,6 @@ export default function SightReadPage() {
   const [clef, setClef] = useState<Clef>('treble')
   const levels = LEVELS[clef]
 
-  const segBtn = (active: boolean): React.CSSProperties => ({
-    padding: '7px 18px', borderRadius: '20px', border: 'none',
-    background: active ? '#1A1A18' : 'transparent',
-    color: active ? 'white' : '#888780',
-    fontFamily: F, fontSize: '13px', fontWeight: 300,
-    cursor: 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em',
-  })
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
@@ -76,13 +70,11 @@ export default function SightReadPage() {
         {/* Clef selector */}
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '16px 20px', marginBottom: '20px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', margin: '0 0 10px' }}>Clef</p>
-          <div style={{ display: 'inline-flex', background: '#F5F2EC', borderRadius: '24px', padding: '3px', gap: '2px' }}>
-            {(['treble', 'bass', 'grand'] as Clef[]).map(c => (
-              <button key={c} onClick={() => setClef(c)} style={segBtn(clef === c)}>
-                {c.charAt(0).toUpperCase() + c.slice(1)}
-              </button>
-            ))}
-          </div>
+          <SlidingPills
+            options={(['treble', 'bass', 'grand'] as Clef[]).map(c => ({ value: c, label: c.charAt(0).toUpperCase() + c.slice(1) }))}
+            value={clef}
+            onChange={setClef}
+          />
         </div>
 
         {/* Levels grid */}

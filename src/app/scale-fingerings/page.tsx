@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import React from 'react'
 import { useRouter } from 'next/navigation'
+import SlidingPills from '@/components/SlidingPills'
 import {
   MAJOR_FINGERINGS, MAJOR_SCALE_NOTES,
   NATURAL_MINOR_FINGERINGS, HARMONIC_MINOR_FINGERINGS, MELODIC_MINOR_FINGERINGS,
@@ -383,13 +384,6 @@ export default function ScaleFingeringsPage() {
     : scaleType === 'harmonic_minor' ? 'Harmonic Minor'
     : 'Melodic Minor'
 
-  const segBtn = (active: boolean): React.CSSProperties => ({
-    padding: '7px 16px', borderRadius: '20px', border: 'none',
-    background: active ? '#1A1A18' : 'transparent',
-    color: active ? 'white' : '#888780',
-    fontFamily: F, fontSize: '13px', fontWeight: 300,
-    cursor: 'pointer', transition: 'all 0.15s', whiteSpace: 'nowrap' as const,
-  })
 
   const keyBtn = (active: boolean, isCenter: boolean): React.CSSProperties => ({
     width: '46px', flexShrink: 0, padding: '6px 0', borderRadius: '8px',
@@ -429,18 +423,16 @@ export default function ScaleFingeringsPage() {
 
         {/* Scale type — centered segmented control */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-          <div style={{ display: 'inline-flex', background: '#E8E5DF', borderRadius: '24px', padding: '3px', gap: '2px', flexWrap: 'wrap' as const }}>
-            {([
-              ['major','Major'],
-              ['natural_minor','Natural Minor'],
-              ['harmonic_minor','Harmonic Minor'],
-              ['melodic_minor','Melodic Minor'],
-            ] as [ScaleType, string][]).map(([t, label]) => (
-              <button key={t} onClick={() => changeScaleType(t)} style={segBtn(scaleType === t)}>
-                {label}
-              </button>
-            ))}
-          </div>
+          <SlidingPills
+            options={[
+              { value: 'major' as ScaleType, label: 'Major' },
+              { value: 'natural_minor' as ScaleType, label: 'Natural Minor' },
+              { value: 'harmonic_minor' as ScaleType, label: 'Harmonic Minor' },
+              { value: 'melodic_minor' as ScaleType, label: 'Melodic Minor' },
+            ]}
+            value={scaleType}
+            onChange={changeScaleType}
+          />
         </div>
 
         {/* Circle of fifths key selector */}
@@ -469,14 +461,15 @@ export default function ScaleFingeringsPage() {
               {renderKeyLabel(displayMap[selectedKey])} {scaleLabel}
             </h2>
             {showDirection && (
-              <div style={{ display: 'inline-flex', background: '#E8E5DF', borderRadius: '20px', padding: '3px', gap: '2px' }}>
-                {(['asc','desc'] as const).map(d => (
-                  <button key={d} onClick={() => setDirection(d)}
-                    style={{ padding: '5px 14px', borderRadius: '20px', border: 'none', background: direction === d ? '#1A1A18' : 'transparent', color: direction === d ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>
-                    {d === 'asc' ? '↑ Ascending' : '↓ Descending'}
-                  </button>
-                ))}
-              </div>
+              <SlidingPills
+                options={[
+                  { value: 'asc' as const, label: '↑ Ascending' },
+                  { value: 'desc' as const, label: '↓ Descending' },
+                ]}
+                value={direction}
+                onChange={setDirection}
+                fontSize="12px"
+              />
             )}
           </div>
           <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginTop: '6px' }}>
