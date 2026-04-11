@@ -104,7 +104,13 @@ export default function SiteHeader() {
         <nav
           ref={navRef}
           className="nl-desktop-nav"
-          style={{ position: 'relative' }}
+          style={{
+            position: 'relative',
+            background: '#EAE7E1',
+            borderRadius: '9999px',
+            padding: '3px',
+            gap: '0',
+          }}
           onMouseLeave={() => { if (activeIdx >= 0) movePillTo(activeIdx); else setPillRect(null) }}
         >
           {/* Sliding pill */}
@@ -113,13 +119,11 @@ export default function SiteHeader() {
               position: 'absolute',
               left: pillRect.left,
               width: pillRect.width,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              height: '32px',
+              top: '3px',
+              bottom: '3px',
               background: 'white',
-              borderRadius: '20px',
-              border: '1px solid #D3D1C7',
-              boxShadow: '0 1px 4px rgba(26,26,24,0.07)',
+              borderRadius: '9999px',
+              boxShadow: '0 1px 4px rgba(26,26,24,0.08)',
               transition: 'left 0.12s cubic-bezier(0.76,0,0.24,1), width 0.15s cubic-bezier(0.76,0,0.24,1)',
               pointerEvents: 'none',
               zIndex: 0,
@@ -140,8 +144,10 @@ export default function SiteHeader() {
                     fontFamily: F, fontSize: '13px', fontWeight: 300,
                     color: active ? '#1A1A18' : '#888780',
                     padding: '6px 14px',
+                    borderRadius: '9999px',
                     transition: 'color 0.15s',
                     cursor: 'pointer', letterSpacing: '0.01em',
+                    whiteSpace: 'nowrap' as const,
                   }}>
                     {item.label}
                   </span>
