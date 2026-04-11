@@ -24,7 +24,7 @@ export const viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'NoteLab',
+  title: 'NoteLab Studio',
   description: 'Music theory flashcards for CM students and musicians',
 }
 

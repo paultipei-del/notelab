@@ -61,7 +61,7 @@ export default function LandingPage() {
             Music theory,<br /><em>deeply</em> learned.
           </h1>
           <p style={{ fontFamily: F, fontWeight: 300, fontSize: '16px', color: '#888780', lineHeight: 1.8, marginBottom: '40px', maxWidth: '440px' }}>
-            NoteLab combines spaced repetition flashcards, real-time piano detection, and a complete reference library — built for Certificate of Merit students and serious musicians.
+            NoteLab Studio combines spaced repetition flashcards, real-time piano detection, and a complete reference library — built for Certificate of Merit students and serious musicians.
           </p>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button onClick={() => setShowAuth(true)}

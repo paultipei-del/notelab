@@ -23,7 +23,7 @@ export default function SiteFooter() {
       gap: '12px',
     }}>
       <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>
-        © {new Date().getFullYear()} NoteLab
+        © {new Date().getFullYear()} NoteLab Studio
       </span>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>

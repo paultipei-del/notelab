@@ -27,7 +27,7 @@ export default function PrivacyPage() {
 
         <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '32px' }}>
           <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.8, margin: 0 }}>
-            Privacy policy coming soon. NoteLab collects only the information needed to provide the service — account email and usage data. We do not sell personal data. For questions, contact us via the{' '}
+            Privacy policy coming soon. NoteLab Studio collects only the information needed to provide the service — account email and usage data. We do not sell personal data. For questions, contact us via the{' '}
             <a href="/feedback" style={{ color: '#1A1A18', textDecoration: 'underline' }}>feedback form</a>.
           </p>
         </div>

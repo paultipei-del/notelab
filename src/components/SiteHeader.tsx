@@ -79,7 +79,7 @@ export default function SiteHeader() {
         {/* Wordmark */}
         <Link href="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
           <span style={{ fontFamily: F, fontSize: '18px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
-            Note<span style={{ fontWeight: 500 }}>Lab</span>
+            Note<span style={{ fontWeight: 500 }}>Lab</span> Studio
           </span>
         </Link>
 

@@ -25,7 +25,7 @@ export default function FeedbackPage() {
           Feedback
         </h1>
         <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', margin: '0 0 32px', lineHeight: 1.6 }}>
-          Found a bug or have a suggestion? Let us know — every report helps make NoteLab better.
+          Found a bug or have a suggestion? Let us know — every report helps make NoteLab Studio better.
         </p>
 
         {/* Tally form embed — swap TALLY_URL with your form link */}
