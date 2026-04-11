@@ -374,9 +374,9 @@ export default function ScaleFingeringsPage() {
   // LH is one octave lower, so F2 (41) to E5 (76)
   const isCMajor = scaleType === 'major' && dataKey === 'C'
   const rhDisplayFrom = isCMajor ? 53 : undefined  // F3
-  const rhDisplayTo   = isCMajor ? 88 : undefined  // E6
+  const rhDisplayTo   = isCMajor ? 89 : undefined  // F6
   const lhDisplayFrom = isCMajor ? 41 : undefined  // F2
-  const lhDisplayTo   = isCMajor ? 76 : undefined  // E5
+  const lhDisplayTo   = isCMajor ? 77 : undefined  // F5
 
   const scaleLabel = scaleType === 'major' ? 'Major'
     : scaleType === 'natural_minor' ? 'Natural Minor'
