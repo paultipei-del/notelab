@@ -124,7 +124,7 @@ export default function SiteHeader() {
               borderRadius: '20px',
               border: '1px solid #D3D1C7',
               boxShadow: '0 1px 4px rgba(26,26,24,0.07)',
-              transition: 'left 0.22s cubic-bezier(0.4,0,0.2,1), width 0.22s cubic-bezier(0.4,0,0.2,1)',
+              transition: 'left 0.3s cubic-bezier(0.65,0,0.35,1), width 0.3s cubic-bezier(0.65,0,0.35,1)',
               pointerEvents: 'none',
               zIndex: 0,
             }} />
