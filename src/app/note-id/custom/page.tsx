@@ -322,17 +322,17 @@ function CustomNoteIDInner() {
 
   if (pool.length === 0) {
     return (
-      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#C4C0B8' }}>No notes match your selection.</p>
-        <button onClick={() => router.push('/note-id')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', color: '#C4C0B8' }}>← Back</button>
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#7A7060' }}>No notes match your selection.</p>
+        <button onClick={() => router.push('/note-id')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', color: '#7A7060' }}>← Back</button>
       </div>
     )
   }
 
   if (group.length === 0) {
     return (
-      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#C4C0B8' }}>Loading…</p>
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#7A7060' }}>Loading…</p>
       </div>
     )
   }
@@ -341,16 +341,16 @@ function CustomNoteIDInner() {
   const currentNote = group[activeIdx]?.note ?? ''
   const activeStatus = group[activeIdx]?.status
   const bgColor = flash === 'wrong' ? '#FFF0F0' : flash === 'correct' ? '#F0FBF4' : 'white'
-  const borderColor = flash === 'wrong' ? '#F09595' : flash === 'correct' ? '#4CAF50' : '#484542'
+  const borderColor = flash === 'wrong' ? '#F09595' : flash === 'correct' ? '#4CAF50' : '#DDD8CA'
   const progressPct = stopMode === 'exercises' ? (rounds / stopValue) * 100 : (elapsed / (stopValue * 60)) * 100
 
   if (done) {
     const finalTime = ((Date.now() - startTime) / 1000).toFixed(2)
     return (
-      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
-        <div style={{ background: '#353330', borderRadius: '20px', border: '1px solid #484542', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '12px' }}>Session Complete</p>
-          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#F7F4EF', marginBottom: '32px' }}>Custom Session</h2>
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
+        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Session Complete</p>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#2A2318', marginBottom: '32px' }}>Custom Session</h2>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '36px' }}>
             {[
               { num: pct + '%', label: 'Score' },
@@ -358,8 +358,8 @@ function CustomNoteIDInner() {
               { num: correct + '/' + total, label: 'Correct' },
             ].map(({ num, label }) => (
               <div key={label}>
-                <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#F7F4EF' }}>{num}</p>
-                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>{label}</p>
+                <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#2A2318' }}>{num}</p>
+                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>{label}</p>
               </div>
             ))}
           </div>
@@ -369,7 +369,7 @@ function CustomNoteIDInner() {
               Again
             </button>
             <button onClick={() => router.push('/note-id')}
-              style={{ background: 'transparent', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
               Back
             </button>
           </div>
@@ -379,16 +379,16 @@ function CustomNoteIDInner() {
   }
 
   return (
-    <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: '#2C2A27', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
       {/* Utility bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>← Back</button>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>← Back</button>
         <div style={{ display: 'flex', gap: '16px' }}>
           {stopMode === 'exercises'
-            ? <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>Round {rounds + 1} / {stopValue}</span>
-            : <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>{Math.max(0, stopValue * 60 - Math.floor(elapsed))}s left</span>
+            ? <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>Round {rounds + 1} / {stopValue}</span>
+            : <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>{Math.max(0, stopValue * 60 - Math.floor(elapsed))}s left</span>
           }
-          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>{pct}%</span>
+          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>{pct}%</span>
         </div>
       </div>
 
@@ -403,7 +403,7 @@ function CustomNoteIDInner() {
 
           {/* Staff side */}
           <div style={{ flex: isLandscape ? '1' : 'none', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
-            {!isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: 'clamp(4px,1vh,12px)', textAlign: 'center' as const }}>What note is this?</p>}
+            {!isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: 'clamp(4px,1vh,12px)', textAlign: 'center' as const }}>What note is this?</p>}
             <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', marginBottom: isLandscape ? '0' : '8px', maxWidth: '100%' }}>
               {groupSize === 1 ? (
                 clef === 'grand'
@@ -424,14 +424,14 @@ function CustomNoteIDInner() {
 
           {/* Input side */}
           <div style={{ flex: isLandscape ? '1' : 'none', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', gap: 'clamp(4px,1vh,8px)', minWidth: 0 }}>
-            {isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '10px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '4px', textAlign: 'center' as const }}>What note is this?</p>}
+            {isLandscape && <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '10px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '4px', textAlign: 'center' as const }}>What note is this?</p>}
             {inputMode === 'letters' ? (
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 'clamp(3px,0.8vh,6px)' }}>
                 {useAccidentals && (
                   <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                     {[null,'C#','D#',null,'F#','G#','A#'].map((s, i) => s ? (
                       <button key={s} onClick={() => handleAnswer(s)}
-                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #484542', background: '#2C2A27', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}>
+                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #DDD8CA', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
                         {s}
                       </button>
                     ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
@@ -440,7 +440,7 @@ function CustomNoteIDInner() {
                 <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
                   {NOTE_LETTERS.map(letter => (
                     <button key={letter} onClick={() => handleAnswer(letter)}
-                      style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#F7F4EF', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
+                      style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#2A2318', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
                       {letter}
                     </button>
                   ))}
@@ -449,7 +449,7 @@ function CustomNoteIDInner() {
                   <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                     {['Db','Eb',null,'Gb','Ab','Bb',null].map((note, i) => note ? (
                       <button key={note} onClick={() => handleAnswer(note)}
-                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #484542', background: '#2C2A27', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}>
+                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #DDD8CA', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
                         {note}
                       </button>
                     ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
@@ -472,7 +472,7 @@ function CustomNoteIDInner() {
                   }}>
                   {WHITE_KEY_NOTES.map((note, i) => (
                     <button key={note} onClick={() => handleAnswer(note)}
-                      style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: '#353330', border: '1px solid #484542', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
+                      style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
                   ))}
                   {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
                     <button key={note} onClick={() => handleAnswer(note)}
@@ -491,8 +491,8 @@ function CustomNoteIDInner() {
 export default function CustomNoteID() {
   return (
     <Suspense fallback={
-      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#C4C0B8' }}>Loading…</p>
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#7A7060' }}>Loading…</p>
       </div>
     }>
       <CustomNoteIDInner />

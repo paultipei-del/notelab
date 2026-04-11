@@ -11,7 +11,7 @@ import { useState } from 'react'
 
 const TAG_COLORS: Record<string, { bg: string; color: string }> = {
   free: { bg: '#E1F5EE', color: '#0F6E56' },
-  cm: { bg: '#FAEEDA', color: '#BA7517' },
+  cm: { bg: '#FAEEDA', color: '#B5402A' },
   theory: { bg: '#EEEDFE', color: '#534AB7' },
   repertoire: { bg: '#FAECE7', color: '#993C1D' },
 }
@@ -75,14 +75,14 @@ function CollectionContent() {
   const allUnlocked = decks.every(d => canAccessDeck(d.id))
 
   return (
-    <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       {/* Hero */}
       <div style={{ padding: '24px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
-        {tag !== 'ear' && <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>}
-        <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F7F4EF', marginBottom: '12px', letterSpacing: '0.02em' }}>
+        {tag !== 'ear' && <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>}
+        <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>
           {titles[tag] ?? tag}
         </h1>
-        <p style={{ fontSize: '15px', fontWeight: 300, color: '#C4C0B8', maxWidth: '560px', lineHeight: 1.7, marginBottom: '32px' }}>
+        <p style={{ fontSize: '15px', fontWeight: 300, color: '#7A7060', maxWidth: '560px', lineHeight: 1.7, marginBottom: '32px' }}>
           {descriptions[tag] ?? ''}
         </p>
 
@@ -100,7 +100,7 @@ function CollectionContent() {
             <button
               onClick={() => handleBuy(CM_BUNDLE_PRICE_ID, 'cm_bundle')}
               disabled={checkingOut}
-              style={{ background: '#BA7517', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', cursor: 'pointer', whiteSpace: 'nowrap' }}
+              style={{ background: '#B5402A', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: '13px', fontWeight: 300, letterSpacing: '0.05em', cursor: 'pointer', whiteSpace: 'nowrap' }}
             >
               {checkingOut ? 'Loading…' : 'Unlock Bundle'}
             </button>
@@ -122,14 +122,14 @@ function CollectionContent() {
             })
             return groups.map(({ label, decks: groupDecks }) => (
               <div key={label} style={{ marginBottom: '40px' }}>
-                <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '16px' }}>{label}</h2>
+                <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '16px' }}>{label}</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', alignItems: 'stretch' }}>
                   {groupDecks.map(deck => (
                     <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
                       <div
                         style={{
-                          background: '#353330',
-                          border: '1px solid #484542',
+                          background: '#FDFAF3',
+                          border: '1px solid #DDD8CA',
                           borderRadius: '16px',
                           padding: '24px',
                           cursor: 'pointer',
@@ -142,15 +142,15 @@ function CollectionContent() {
                           flexDirection: 'column',
                           alignItems: 'flex-start',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
                       >
                         <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: TAG_COLORS.free.bg, color: TAG_COLORS.free.color, fontFamily: 'var(--font-jost), sans-serif', width: 'fit-content' }}>Free</span>
-                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F7F4EF', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                        <p style={{ fontSize: '13px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
+                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
+                        <p style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '16px', gap: '12px' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 300, color: '#C4C0B8' }}>{deck.cards.length} cards</span>
-                          <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517', flexShrink: 0 }}>Start →</span>
+                          <span style={{ fontSize: '11px', fontWeight: 300, color: '#7A7060' }}>{deck.cards.length} cards</span>
+                          <span style={{ fontSize: '12px', fontWeight: 300, color: '#B5402A', flexShrink: 0 }}>Start →</span>
                         </div>
                       </div>
                     </Link>
@@ -167,46 +167,46 @@ function CollectionContent() {
           return (
             <div key={deck.id} style={{ position: 'relative' }}>
               {locked ? (
-                <div style={{ background: '#353330', border: '1px solid #484542', borderRadius: '16px', padding: '24px', opacity: 0.75 }}>
+                <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px', opacity: 0.75 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 300, color: '#484542' }}>🔒</span>
-                    <span style={{ fontSize: '11px', fontWeight: 300, color: '#484542', letterSpacing: '0.05em' }}>Locked</span>
+                    <span style={{ fontSize: '13px', fontWeight: 300, color: '#DDD8CA' }}>🔒</span>
+                    <span style={{ fontSize: '11px', fontWeight: 300, color: '#DDD8CA', letterSpacing: '0.05em' }}>Locked</span>
                   </div>
-                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#C4C0B8', marginBottom: '6px' }}>
+                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#7A7060', marginBottom: '6px' }}>
                     {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                   </h3>
-                  <p style={{ fontSize: '12px', fontWeight: 300, color: '#484542', lineHeight: 1.6 }}>
+                  <p style={{ fontSize: '12px', fontWeight: 300, color: '#DDD8CA', lineHeight: 1.6 }}>
                     {deck.cards.length} cards
                   </p>
                 </div>
               ) : (
                 <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
                   <div
-                    style={{ background: '#353330', border: '1px solid #484542', borderRadius: '16px', padding: '24px', cursor: 'pointer', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', transition: 'all 0.2s' }}
+                    style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px', cursor: 'pointer', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', transition: 'all 0.2s' }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#BA7517'
+                      e.currentTarget.style.borderColor = '#B5402A'
                       e.currentTarget.style.transform = 'translateY(-2px)'
                       e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)'
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#484542'
+                      e.currentTarget.style.borderColor = '#DDD8CA'
                       e.currentTarget.style.transform = 'translateY(0)'
                       e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#BA7517', letterSpacing: '0.05em' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#B5402A', letterSpacing: '0.05em' }}>
                         {tag === 'ear' || tag === 'symbols' ? '' : `Level ${i + 1 === decks.length ? 'Advanced' : i + 1}`}
                       </span>
-                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#C4C0B8' }}>{deck.cards.length} cards</span>
+                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#7A7060' }}>{deck.cards.length} cards</span>
                     </div>
-                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F7F4EF', marginBottom: '6px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '6px' }}>
                       {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                     </h3>
-                    <p style={{ fontSize: '12px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.6, marginBottom: '16px' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060', lineHeight: 1.6, marginBottom: '16px' }}>
                       {deck.description}
                     </p>
-                    <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517' }}>Start →</span>
+                    <span style={{ fontSize: '12px', fontWeight: 300, color: '#B5402A' }}>Start →</span>
                   </div>
                 </Link>
               )}
@@ -224,8 +224,8 @@ function CollectionContent() {
 export default function CollectionPage() {
   return (
     <Suspense fallback={
-      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#C4C0B8' }}>Loading…</p>
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#7A7060' }}>Loading…</p>
       </div>
     }>
       <CollectionContent />

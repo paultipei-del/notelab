@@ -408,11 +408,11 @@ export default function EngineDiagnostic() {
   const seq = SEQUENCES[selectedSeq]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #484542', background: '#353330' }}>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#F7F4EF' }}>Engine Diagnostic</h1>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #DDD8CA', background: '#FDFAF3' }}>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#2A2318' }}>Engine Diagnostic</h1>
         <div style={{ display: 'flex', gap: '10px' }}>
-          {running && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: F, fontSize: '13px', color: '#C4C0B8', cursor: 'pointer' }}>Abort</button>}
+          {running && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: F, fontSize: '13px', color: '#7A7060', cursor: 'pointer' }}>Abort</button>}
           {!running && <button onClick={startRun} style={{ padding: '8px 20px', borderRadius: '10px', border: 'none', background: '#1A1A18', color: 'white', fontFamily: F, fontSize: '13px', cursor: 'pointer' }}>▶ Start</button>}
         </div>
       </div>
@@ -423,28 +423,28 @@ export default function EngineDiagnostic() {
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
 
           {/* Live status */}
-          <div style={{ background: liveStatus === 'correct' ? '#EAF3DE' : liveStatus === 'wrong' ? '#FDECEA' : 'white', borderRadius: '16px', border: '1px solid ' + (liveStatus === 'correct' ? '#7EC86E' : liveStatus === 'wrong' ? '#F09595' : '#484542'), padding: '20px', textAlign: 'center' as const, transition: 'all 0.15s' }}>
-            <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>
+          <div style={{ background: liveStatus === 'correct' ? '#EAF3DE' : liveStatus === 'wrong' ? '#FDECEA' : 'white', borderRadius: '16px', border: '1px solid ' + (liveStatus === 'correct' ? '#7EC86E' : liveStatus === 'wrong' ? '#F09595' : '#DDD8CA'), padding: '20px', textAlign: 'center' as const, transition: 'all 0.15s' }}>
+            <p style={{ fontFamily: F, fontSize: '10px', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>
               {currentPhase === 'dead' ? '⏳ Dead Window' : currentPhase === 'accepting' ? '🎵 Listening' : 'Ready'}
             </p>
-            <p style={{ fontFamily: SERIF, fontSize: '52px', fontWeight: 300, color: '#F7F4EF', lineHeight: 1, marginBottom: '8px' }}>{currentNote || '—'}</p>
-            {liveDetected && <p style={{ fontFamily: F, fontSize: '14px', color: liveStatus === 'correct' ? '#4CAF50' : liveStatus === 'wrong' ? '#E53935' : '#C4C0B8' }}>Hearing: {liveDetected}</p>}
+            <p style={{ fontFamily: SERIF, fontSize: '52px', fontWeight: 300, color: '#2A2318', lineHeight: 1, marginBottom: '8px' }}>{currentNote || '—'}</p>
+            {liveDetected && <p style={{ fontFamily: F, fontSize: '14px', color: liveStatus === 'correct' ? '#4CAF50' : liveStatus === 'wrong' ? '#E53935' : '#7A7060' }}>Hearing: {liveDetected}</p>}
           </div>
 
           {/* Progress */}
           {running && (
-            <div style={{ background: '#353330', borderRadius: '8px', border: '1px solid #484542', padding: '4px' }}>
-              <div style={{ height: '6px', borderRadius: '4px', background: '#BA7517', width: `${progress * 100}%`, transition: 'width 0.3s' }} />
+            <div style={{ background: '#FDFAF3', borderRadius: '8px', border: '1px solid #DDD8CA', padding: '4px' }}>
+              <div style={{ height: '6px', borderRadius: '4px', background: '#B5402A', width: `${progress * 100}%`, transition: 'width 0.3s' }} />
             </div>
           )}
 
           {/* Sequence */}
-          <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
-            <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Sequence</p>
+          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+            <p style={{ fontFamily: F, fontSize: '10px', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Sequence</p>
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
               {Object.keys(SEQUENCES).map(s => (
                 <button key={s} onClick={() => setSelectedSeq(s)} disabled={running}
-                  style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === s ? '#1A1A18' : '#484542'), background: selectedSeq === s ? '#1A1A18' : 'white', color: selectedSeq === s ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '12px', cursor: running ? 'default' : 'pointer', textAlign: 'left' as const }}>
+                  style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === s ? '#1A1A18' : '#DDD8CA'), background: selectedSeq === s ? '#1A1A18' : 'white', color: selectedSeq === s ? 'white' : '#7A7060', fontFamily: F, fontSize: '12px', cursor: running ? 'default' : 'pointer', textAlign: 'left' as const }}>
                   {s} <span style={{ opacity: 0.5 }}>({SEQUENCES[s].length})</span>
                 </button>
               ))}
@@ -452,8 +452,8 @@ export default function EngineDiagnostic() {
           </div>
 
           {/* Params */}
-          <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
-            <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>Parameters</p>
+          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+            <p style={{ fontFamily: F, fontSize: '10px', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>Parameters</p>
             {([
               ['Window Size', windowSize, 4, 20, 1, setWindowSize],
               ['Stable Threshold (pts)', stableThreshold, 5, 30, 1, setStableThreshold],
@@ -462,12 +462,12 @@ export default function EngineDiagnostic() {
             ] as [string, number, number, number, number, (v: number) => void][]).map(([label, value, min, max, step, set]) => (
               <div key={label} style={{ marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <p style={{ fontFamily: F, fontSize: '11px', color: '#F7F4EF' }}>{label}</p>
-                  <p style={{ fontFamily: F, fontSize: '11px', color: '#BA7517', fontWeight: 400 }}>{value}</p>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: '#2A2318' }}>{label}</p>
+                  <p style={{ fontFamily: F, fontSize: '11px', color: '#B5402A', fontWeight: 400 }}>{value}</p>
                 </div>
                 <input type="range" min={min} max={max} step={step} value={value}
                   onChange={e => set(parseFloat(e.target.value))} disabled={running}
-                  style={{ width: '100%', accentColor: '#BA7517' }} />
+                  style={{ width: '100%', accentColor: '#B5402A' }} />
               </div>
             ))}
           </div>
@@ -478,22 +478,22 @@ export default function EngineDiagnostic() {
 
           {/* Live card results */}
           {currentCards.length > 0 && (
-            <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Card Results</p>
+            <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Card Results</p>
               <div style={{ overflowX: 'auto' as const }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' as const, fontSize: '12px', fontFamily: F }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
                       {['Target','Prev','Result','Detected','Latency','Total','Dead Win','Cents','First Stable','First ms','FP Dead','Wrongs'].map(h => (
-                        <th key={h} style={{ padding: '6px 8px', textAlign: 'left' as const, color: '#C4C0B8', fontWeight: 400, fontSize: '10px', textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>{h}</th>
+                        <th key={h} style={{ padding: '6px 8px', textAlign: 'left' as const, color: '#7A7060', fontWeight: 400, fontSize: '10px', textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {[...currentCards].reverse().map((c, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #2C2A27', background: c.outcome === 'correct' ? 'white' : c.outcome === 'wrong' ? '#FFF5F5' : '#FFFBF0' }}>
+                      <tr key={i} style={{ borderBottom: '1px solid #F2EDDF', background: c.outcome === 'correct' ? 'white' : c.outcome === 'wrong' ? '#FFF5F5' : '#FFFBF0' }}>
                         <td style={{ padding: '6px 8px', fontFamily: SERIF, fontSize: '15px' }}>{c.target}</td>
-                        <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{c.prevNote || '—'}</td>
+                        <td style={{ padding: '6px 8px', color: '#7A7060' }}>{c.prevNote || '—'}</td>
                         <td style={{ padding: '6px 8px' }}>
                           <span style={{ padding: '2px 6px', borderRadius: '8px', background: c.outcome === 'correct' ? '#E8F5E9' : c.outcome === 'wrong' ? '#FDECEA' : '#FFF8E1', color: c.outcome === 'correct' ? '#4CAF50' : c.outcome === 'wrong' ? '#E53935' : '#F57F17', fontSize: '11px' }}>
                             {c.outcome === 'correct' ? '✓' : c.outcome === 'wrong' ? '✗' : '⏱'}
@@ -501,13 +501,13 @@ export default function EngineDiagnostic() {
                         </td>
                         <td style={{ padding: '6px 8px', fontFamily: SERIF, fontSize: '15px', color: c.outcome === 'correct' ? '#4CAF50' : '#E53935' }}>{c.detectedAs}</td>
                         <td style={{ padding: '6px 8px', color: c.latencyMs > 500 ? '#E53935' : '#1A1A18' }}>{c.latencyMs >= 0 ? c.latencyMs+'ms' : '—'}</td>
-                        <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{c.totalTimeMs}ms</td>
-                        <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{c.deadWindowMs}ms</td>
-                        <td style={{ padding: '6px 8px', color: Math.abs(c.centsAtCorrect) > 20 ? '#E53935' : '#C4C0B8' }}>{c.centsAtCorrect ? (c.centsAtCorrect > 0 ? '+' : '')+c.centsAtCorrect+'¢' : '—'}</td>
+                        <td style={{ padding: '6px 8px', color: '#7A7060' }}>{c.totalTimeMs}ms</td>
+                        <td style={{ padding: '6px 8px', color: '#7A7060' }}>{c.deadWindowMs}ms</td>
+                        <td style={{ padding: '6px 8px', color: Math.abs(c.centsAtCorrect) > 20 ? '#E53935' : '#7A7060' }}>{c.centsAtCorrect ? (c.centsAtCorrect > 0 ? '+' : '')+c.centsAtCorrect+'¢' : '—'}</td>
                         <td style={{ padding: '6px 8px', color: pitchMatch(c.firstStableAfterDead, c.target) ? '#4CAF50' : '#E53935' }}>{c.firstStableAfterDead}</td>
-                        <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{c.firstStableMs >= 0 ? c.firstStableMs+'ms' : '—'}</td>
-                        <td style={{ padding: '6px 8px', color: c.fpDuringDead.length > 0 ? '#E53935' : '#C4C0B8', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }} title={c.fpDuringDead.join(', ')}>{c.fpDuringDead.length > 0 ? c.fpDuringDead.slice(-3).join(' ') + (c.fpDuringDead.length > 3 ? '…' : '') : '—'}</td>
-                        <td style={{ padding: '6px 8px', color: c.wrongsBeforeCorrect.length > 0 ? '#E53935' : '#C4C0B8' }}>{c.wrongsBeforeCorrect.join(' ') || '—'}</td>
+                        <td style={{ padding: '6px 8px', color: '#7A7060' }}>{c.firstStableMs >= 0 ? c.firstStableMs+'ms' : '—'}</td>
+                        <td style={{ padding: '6px 8px', color: c.fpDuringDead.length > 0 ? '#E53935' : '#7A7060', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }} title={c.fpDuringDead.join(', ')}>{c.fpDuringDead.length > 0 ? c.fpDuringDead.slice(-3).join(' ') + (c.fpDuringDead.length > 3 ? '…' : '') : '—'}</td>
+                        <td style={{ padding: '6px 8px', color: c.wrongsBeforeCorrect.length > 0 ? '#E53935' : '#7A7060' }}>{c.wrongsBeforeCorrect.join(' ') || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -518,36 +518,36 @@ export default function EngineDiagnostic() {
 
           {/* Run history */}
           {runs.length > 0 && (
-            <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
+            <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Run History</p>
+                <p style={{ fontFamily: F, fontSize: '10px', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Run History</p>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={copyAll} style={{ fontFamily: F, fontSize: '11px', color: copied ? '#4CAF50' : '#C4C0B8', background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>
+                  <button onClick={copyAll} style={{ fontFamily: F, fontSize: '11px', color: copied ? '#4CAF50' : '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>
                     {copied ? '✓ Copied' : 'Copy All'}
                   </button>
-                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>Clear</button>
+                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: '11px', color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>Clear</button>
                 </div>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse' as const, fontFamily: F, fontSize: '12px' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
                     {['Seq','Accuracy','Avg Latency','Avg Total','Wrong','Timeout','Win','Threshold','Level'].map(h => (
-                      <th key={h} style={{ padding: '6px 8px', textAlign: 'left' as const, color: '#C4C0B8', fontWeight: 400, fontSize: '10px', textTransform: 'uppercase' as const }}>{h}</th>
+                      <th key={h} style={{ padding: '6px 8px', textAlign: 'left' as const, color: '#7A7060', fontWeight: 400, fontSize: '10px', textTransform: 'uppercase' as const }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {runs.map((r, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid #2C2A27', background: i === 0 ? '#FAFAF8' : 'white' }}>
+                    <tr key={i} style={{ borderBottom: '1px solid #F2EDDF', background: i === 0 ? '#FAFAF8' : 'white' }}>
                       <td style={{ padding: '6px 8px' }}>{r.sequence}</td>
-                      <td style={{ padding: '6px 8px', color: r.accuracy >= 90 ? '#4CAF50' : r.accuracy >= 70 ? '#BA7517' : '#E53935', fontWeight: 400 }}>{r.accuracy}%</td>
+                      <td style={{ padding: '6px 8px', color: r.accuracy >= 90 ? '#4CAF50' : r.accuracy >= 70 ? '#B5402A' : '#E53935', fontWeight: 400 }}>{r.accuracy}%</td>
                       <td style={{ padding: '6px 8px', color: r.avgLatencyMs > 500 ? '#E53935' : '#1A1A18' }}>{r.avgLatencyMs}ms</td>
-                      <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{r.avgTotalTimeMs}ms</td>
-                      <td style={{ padding: '6px 8px', color: r.wrongCount > 0 ? '#E53935' : '#C4C0B8' }}>{r.wrongCount}</td>
-                      <td style={{ padding: '6px 8px', color: r.timeoutCount > 0 ? '#E53935' : '#C4C0B8' }}>{r.timeoutCount}</td>
-                      <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{r.params.windowSize}</td>
-                      <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{r.params.stableThreshold}</td>
-                      <td style={{ padding: '6px 8px', color: '#C4C0B8' }}>{r.params.levelThreshold}</td>
+                      <td style={{ padding: '6px 8px', color: '#7A7060' }}>{r.avgTotalTimeMs}ms</td>
+                      <td style={{ padding: '6px 8px', color: r.wrongCount > 0 ? '#E53935' : '#7A7060' }}>{r.wrongCount}</td>
+                      <td style={{ padding: '6px 8px', color: r.timeoutCount > 0 ? '#E53935' : '#7A7060' }}>{r.timeoutCount}</td>
+                      <td style={{ padding: '6px 8px', color: '#7A7060' }}>{r.params.windowSize}</td>
+                      <td style={{ padding: '6px 8px', color: '#7A7060' }}>{r.params.stableThreshold}</td>
+                      <td style={{ padding: '6px 8px', color: '#7A7060' }}>{r.params.levelThreshold}</td>
                     </tr>
                   ))}
                 </tbody>

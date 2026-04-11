@@ -105,22 +105,22 @@ export default function RhythmTest() {
   const expected = pattern.taps.filter(t => t === 1).length
 
   return (
-    <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
-      <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#F7F4EF', marginBottom: '8px' }}>Rhythm Trainer</h1>
-      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', marginBottom: '48px' }}>{pattern.label} · {pattern.bpm} BPM · tap Space</p>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
+      <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '8px' }}>Rhythm Trainer</h1>
+      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginBottom: '48px' }}>{pattern.label} · {pattern.bpm} BPM · tap Space</p>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '48px', padding: '24px', background: '#353330', borderRadius: '20px', border: '1px solid #484542' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '48px', padding: '24px', background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA' }}>
         {pattern.taps.map((expected, i) => {
           const isDownbeat = i % pattern.subdivisions === 0
           const isCurrent = i === currentSlot
           const score = scores[i]
           const wasTapped = taps.includes(i)
           let bg = expected === 1 ? '#1A1A18' : 'white'
-          let border = '2px solid #484542'
+          let border = '2px solid #DDD8CA'
           if (score === 'hit') { bg = '#7EC86E'; border = '2px solid #7EC86E' }
           else if (score === 'miss') { bg = '#F09595'; border = '2px solid #F09595' }
           else if (score === 'extra') { bg = '#FCEBEB'; border = '2px solid #F09595' }
-          if (isCurrent) border = '2px solid #BA7517'
+          if (isCurrent) border = '2px solid #B5402A'
           return (
             <div key={i} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '6px' }}>
               <span style={{ fontFamily: F, fontSize: '10px', color: isDownbeat ? '#1A1A18' : 'transparent' }}>
@@ -138,13 +138,13 @@ export default function RhythmTest() {
           {scores.length > 0 ? 'Try Again' : 'Start'}
         </button>
       ) : (
-        <button onClick={stop} style={{ background: 'none', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: '14px', fontWeight: 300, cursor: 'pointer' }}>
+        <button onClick={stop} style={{ background: 'none', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: '14px', fontWeight: 300, cursor: 'pointer' }}>
           Stop
         </button>
       )}
 
       {scores.length > 0 && !playing && (
-        <p style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#F7F4EF', marginTop: '32px' }}>
+        <p style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#2A2318', marginTop: '32px' }}>
           {hits}/{expected} · {Math.round(hits/expected*100)}%
         </p>
       )}

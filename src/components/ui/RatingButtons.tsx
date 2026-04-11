@@ -35,7 +35,7 @@ export default function RatingButtons({ visible, intervals, onRate }: RatingButt
       rating: 2,
       label: 'Hard',
       interval: intervals.hard,
-      style: 'bg-[#FAEEDA] border-[#FAC775] text-[#BA7517] hover:bg-[#FAC775]',
+      style: 'bg-[#FAEEDA] border-[#FAC775] text-[#B5402A] hover:bg-[#FAC775]',
     },
     {
       rating: 3,

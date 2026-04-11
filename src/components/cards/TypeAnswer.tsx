@@ -47,10 +47,10 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
   const questionContent = card.type === 'staff' && card.note && card.clef ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
       <StaffCard note={card.note} clef={card.clef} />
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8' }}>Name this note</p>
+      <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060' }}>Name this note</p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 48px)', textAlign: 'center', color: '#F7F4EF', lineHeight: 1.2 }}>
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 48px)', textAlign: 'center', color: '#2A2318', lineHeight: 1.2 }}>
       {card.front}
     </p>
   )
@@ -58,7 +58,7 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
   const inputStyle: React.CSSProperties = {
     flex: 1,
     background: submitted ? (isCorrect ? '#EAF3DE' : '#FCEBEB') : 'white',
-    border: `1.5px solid ${submitted ? (isCorrect ? '#97C459' : '#F09595') : '#484542'}`,
+    border: `1.5px solid ${submitted ? (isCorrect ? '#97C459' : '#F09595') : '#DDD8CA'}`,
     borderRadius: '12px',
     padding: '14px 20px',
     fontFamily: 'var(--font-cormorant), serif',
@@ -74,9 +74,9 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
     <div style={{ width: '100%', maxWidth: '680px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* Question card */}
       <div style={{
-        background: '#353330',
+        background: '#FDFAF3',
         borderRadius: '16px',
-        border: '1px solid #484542',
+        border: '1px solid #DDD8CA',
         boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
         padding: '40px',
         display: 'flex',
@@ -85,7 +85,7 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
         minHeight: '180px',
         justifyContent: 'center',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '20px' }}>
+        <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
           Type your answer
         </span>
         {questionContent}

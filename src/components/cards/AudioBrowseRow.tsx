@@ -138,7 +138,7 @@ export default function AudioBrowseRow({ card }: AudioBrowseRowProps) {
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '12px',
-          color: playing ? '#C4C0B8' : 'white',
+          color: playing ? '#7A7060' : 'white',
           transition: 'all 0.15s',
           flexDirection: 'column' as const,
         }}
@@ -152,7 +152,7 @@ export default function AudioBrowseRow({ card }: AudioBrowseRowProps) {
           fontFamily: 'var(--font-cormorant), serif',
           fontWeight: 400,
           fontSize: '18px',
-          color: '#F7F4EF',
+          color: '#2A2318',
           lineHeight: 1.3,
         }}>
           {name}
@@ -161,7 +161,7 @@ export default function AudioBrowseRow({ card }: AudioBrowseRowProps) {
           <p style={{
             fontSize: '12px',
             fontWeight: 300,
-            color: '#C4C0B8',
+            color: '#7A7060',
             marginTop: '2px',
             lineHeight: 1.5,
           }}>

@@ -56,7 +56,7 @@ const ACCIDENTAL_MAP: Record<string, { natural: string; acc: 'sharp' | 'flat' }>
 
 const NOTE_COLORS = {
   pending: '#1A1A18',
-  active: '#BA7517',
+  active: '#B5402A',
   correct: '#4CAF50',
   wrong: '#E53935',
 }

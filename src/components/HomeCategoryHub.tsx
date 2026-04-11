@@ -21,10 +21,10 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
       flip: false,
       cardBg: 'white',
       textColor: '#1A1A18',
-      subtitleColor: '#C4C0B8',
+      subtitleColor: '#7A7060',
       labelBg: '#EDE8DF',
-      labelColor: '#C4C0B8',
-      ctaColor: '#BA7517',
+      labelColor: '#7A7060',
+      ctaColor: '#B5402A',
       ctaBg: 'rgba(186,117,23,0.08)',
       ctaBorder: 'rgba(186,117,23,0.2)',
       gradient: 'linear-gradient(145deg, #F2E2B8 0%, #D4A850 45%, #A07428 100%)',
@@ -40,10 +40,10 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
       flip: true,
       cardBg: '#FDFAF5',
       textColor: '#1A1A18',
-      subtitleColor: '#C4C0B8',
+      subtitleColor: '#7A7060',
       labelBg: '#EDE8DF',
-      labelColor: '#C4C0B8',
-      ctaColor: '#BA7517',
+      labelColor: '#7A7060',
+      ctaColor: '#B5402A',
       ctaBg: 'rgba(186,117,23,0.08)',
       ctaBorder: 'rgba(186,117,23,0.2)',
       gradient: 'linear-gradient(145deg, #3A2210 0%, #7A4820 45%, #B87840 100%)',
@@ -59,10 +59,10 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
       flip: false,
       cardBg: 'white',
       textColor: '#1A1A18',
-      subtitleColor: '#C4C0B8',
+      subtitleColor: '#7A7060',
       labelBg: '#EDE8DF',
-      labelColor: '#C4C0B8',
-      ctaColor: '#BA7517',
+      labelColor: '#7A7060',
+      ctaColor: '#B5402A',
       ctaBg: 'rgba(186,117,23,0.08)',
       ctaBorder: 'rgba(186,117,23,0.2)',
       gradient: 'linear-gradient(145deg, #D8D2C4 0%, #A8A090 45%, #787068 100%)',
@@ -103,7 +103,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
             className={`nl-cat-tile-inner${tile.flip ? ' nl-cat-flip' : ''}`}
             style={{
               background: tile.cardBg,
-              border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #484542',
+              border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #DDD8CA',
               boxShadow: tile.cardBg === '#1A1A18'
                 ? '0 4px 24px rgba(26,26,24,0.22)'
                 : '0 2px 12px rgba(26,26,24,0.05)',
@@ -115,7 +115,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
               el.style.boxShadow = tile.cardBg === '#1A1A18'
                 ? '0 16px 48px rgba(26,26,24,0.35)'
                 : '0 12px 36px rgba(26,26,24,0.12)'
-              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#BA7517'
+              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#B5402A'
             }}
             onMouseLeave={e => {
               const el = e.currentTarget
@@ -123,7 +123,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
               el.style.boxShadow = tile.cardBg === '#1A1A18'
                 ? '0 4px 24px rgba(26,26,24,0.22)'
                 : '0 2px 12px rgba(26,26,24,0.05)'
-              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#484542'
+              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#DDD8CA'
             }}
           >
             {/* Text side */}

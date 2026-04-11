@@ -463,7 +463,7 @@ if (newNotes.length === expectedLength) {
     const isNext = expectedNextMidi === key.midi && phase === 'play_note'
 
     if (key.black) {
-      if (isRoot) return '#BA7517'
+      if (isRoot) return '#B5402A'
       if (isBuilt) return '#276840'
       if (isNext && showHint) return '#6B8FD4'
       return '#1A1A18'
@@ -488,16 +488,16 @@ if (newNotes.length === expectedLength) {
 
   const selectBase: React.CSSProperties = {
     width: '100%', appearance: 'none', WebkitAppearance: 'none',
-    background: '#353330', border: '1px solid #484542', borderRadius: '12px',
+    background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '12px',
     padding: '11px 36px 11px 16px',
-    fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#F7F4EF',
+    fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318',
     cursor: 'pointer', outline: 'none',
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       <div style={{ maxWidth: '860px', margin: '0 auto', padding: '20px 16px 80px' }}>
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
 
         {/* ── Selectors row ── */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
@@ -516,7 +516,7 @@ if (newNotes.length === expectedLength) {
                 </optgroup>
               ))}
             </select>
-            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#C4C0B8', fontSize: '11px' }}>▾</span>
+            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: '11px' }}>▾</span>
           </div>
 
           {/* Root note */}
@@ -541,14 +541,14 @@ if (newNotes.length === expectedLength) {
                 <option key={note} value={note}>{note}</option>
               ))}
             </select>
-            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#C4C0B8', fontSize: '11px' }}>▾</span>
+            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: '11px' }}>▾</span>
           </div>
         </div>
 
         {/* ── Unified card: Staff + Pattern + Status ── */}
         <div style={{
-          background: '#353330', borderRadius: '16px', marginBottom: '16px',
-          border: '1px solid ' + (flash === 'correct' ? '#276840' : flash === 'wrong' ? '#C0392B' : '#484542'),
+          background: '#FDFAF3', borderRadius: '16px', marginBottom: '16px',
+          border: '1px solid ' + (flash === 'correct' ? '#276840' : flash === 'wrong' ? '#C0392B' : '#DDD8CA'),
           transition: 'border-color 0.15s', overflow: 'hidden',
         }}>
 
@@ -632,11 +632,11 @@ if (newNotes.length === expectedLength) {
             )}
             {phase === 'play_note' && currentStep && (
               <div>
-                <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#C4C0B8' }}>
+                <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#7A7060' }}>
                   Play a{' '}
                   <span style={{ fontWeight: 500, color: '#B5720F' }}>{STEP_LABELS[currentStep]}</span>
                   {' '}above{' '}
-                  <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#F7F4EF' }}>{builtNotes[builtNotes.length-1].name}</span>
+                  <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318' }}>{builtNotes[builtNotes.length-1].name}</span>
                 </p>
                 {error && <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C0392B', marginTop: '6px' }}>✗ {error}</p>}
               </div>
@@ -648,7 +648,7 @@ if (newNotes.length === expectedLength) {
                 </p>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => playScale(builtNotes)}
-                    style={{ background: 'transparent', color: '#F7F4EF', border: '1px solid #484542', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                    style={{ background: 'transparent', color: '#2A2318', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                     ▶ Play
                   </button>
                   <button onClick={reset}
@@ -662,20 +662,20 @@ if (newNotes.length === expectedLength) {
         </div>
 
         {/* ── Piano ── */}
-        <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '16px 20px', overflow: 'hidden' }}>
+        <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '16px 20px', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#C4C0B8' }}>Piano</p>
+            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Piano</p>
             <div style={{ display: 'flex', gap: '6px' }}>
               <button onClick={() => setShowHint(!showHint)}
-                style={{ background: showHint ? '#1A1A18' : 'transparent', color: showHint ? 'white' : '#C4C0B8', border: '1px solid ' + (showHint ? '#1A1A18' : '#484542'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: showHint ? '#1A1A18' : 'transparent', color: showHint ? 'white' : '#7A7060', border: '1px solid ' + (showHint ? '#1A1A18' : '#DDD8CA'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                 Hint {showHint ? 'on' : 'off'}
               </button>
               <button onClick={() => setShowNoteNames(!showNoteNames)}
-                style={{ background: showNoteNames ? '#1A1A18' : 'transparent', color: showNoteNames ? 'white' : '#C4C0B8', border: '1px solid ' + (showNoteNames ? '#1A1A18' : '#484542'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: showNoteNames ? '#1A1A18' : 'transparent', color: showNoteNames ? 'white' : '#7A7060', border: '1px solid ' + (showNoteNames ? '#1A1A18' : '#DDD8CA'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                 Note names
               </button>
               <button onClick={reset}
-                style={{ background: 'transparent', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                 Reset
               </button>
             </div>
@@ -684,8 +684,8 @@ if (newNotes.length === expectedLength) {
             <div style={{ position: 'relative', height: KH + 'px', width: WHITE_KEYS.length * KW + 'px' }}>
               {WHITE_KEYS.map((key, i) => (
                 <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
-                  style={{ position: 'absolute', left: i * KW, top: 0, width: KW - 1, height: KH, background: keyBg(key), border: '1px solid #484542', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 1, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', transition: 'background 0.1s' }}>
-                  {showNoteNames && <span style={{ fontSize: '9px', color: '#C4C0B8', fontFamily: F }}>{key.name}{key.octave}</span>}
+                  style={{ position: 'absolute', left: i * KW, top: 0, width: KW - 1, height: KH, background: keyBg(key), border: '1px solid #DDD8CA', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 1, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', transition: 'background 0.1s' }}>
+                  {showNoteNames && <span style={{ fontSize: '9px', color: '#7A7060', fontFamily: F }}>{key.name}{key.octave}</span>}
                 </button>
               ))}
               {BLACK_KEYS.map(key => (

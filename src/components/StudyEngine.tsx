@@ -103,16 +103,16 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
 
     if (showIntro) {
     return (
-      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#353330', borderRadius: '20px', border: '1px solid #484542', padding: '56px 48px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)' }}>
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '56px 48px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)' }}>
           <div style={{ fontSize: '48px', marginBottom: '24px' }}>𝄞</div>
-          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '32px', color: '#F7F4EF', marginBottom: '12px', letterSpacing: '0.02em' }}>{deck.title}</h2>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#C4C0B8', lineHeight: 1.8, marginBottom: '8px' }}>A note will appear on the staff.</p>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#C4C0B8', lineHeight: 1.8, marginBottom: '36px' }}>Play it on your piano — the mic will detect the correct note and move to the next one automatically.</p>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#484542', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>{deck.title}</h2>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#7A7060', lineHeight: 1.8, marginBottom: '8px' }}>A note will appear on the staff.</p>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '14px', color: '#7A7060', lineHeight: 1.8, marginBottom: '36px' }}>Play it on your piano — the mic will detect the correct note and move to the next one automatically.</p>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, fontSize: '12px', color: '#DDD8CA', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
           <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); resetTimer(); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
           <div style={{ marginTop: '20px' }}>
-            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#484542' }}>← Back</button>
+            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#DDD8CA' }}>← Back</button>
           </div>
         </div>
       </div>
@@ -122,61 +122,61 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
 return (
     <>
       {isComplete && viewMode === 'study' && (
-        <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '64px 56px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.10)' }}>
+        <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '64px 56px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.10)' }}>
             {isSightReadDeck && isNewBest && typeof window !== 'undefined' && (() => { localStorage.setItem(bestTimeKey, currentTime.toString()); return null })()}
         <div style={{ fontSize: '48px', marginBottom: '24px' }}>♩</div>
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px' }}>Session Complete</h2>
-            <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
+            <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '40px' }}>
               {(isSightReadDeck
               ? [{ num: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '—', label: 'Score' }, { num: `${stats.correct}/${stats.total}`, label: 'Notes' }, { num: elapsedDisplay, label: 'Time' }, { num: prevBest > 0 ? prevBest.toFixed(2) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' }]
               : [{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }]
             ).map(({ num, label }) => (
                 <div key={label} style={{ textAlign: 'center' }}>
-                  <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '40px', color: '#F7F4EF', lineHeight: 1 }}>{num}</div>
-                  <div style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#C4C0B8', marginTop: '4px' }}>{label}</div>
+                  <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '40px', color: '#2A2318', lineHeight: 1 }}>{num}</div>
+                  <div style={{ fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginTop: '4px' }}>{label}</div>
                 </div>
               ))}
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => { resetSession(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Study Again</button>
-              {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Reset Best</button>}
-              {!isSightReadDeck && <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ background: 'transparent', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Browse Cards</button>}
-              <button onClick={goBack} style={{ background: 'transparent', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>← Back</button>
+              {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Reset Best</button>}
+              {!isSightReadDeck && <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Browse Cards</button>}
+              <button onClick={goBack} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>← Back</button>
             </div>
           </div>
         </div>
       )}
 
       {!isComplete && viewMode === 'browse' && (
-        <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #484542' }}>
-            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>← Back</button>
-            <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '20px', color: '#F7F4EF' }}>{deck.title}</div>
+        <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', borderBottom: '1px solid #DDD8CA' }}>
+            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>← Back</button>
+            <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '20px', color: '#2A2318' }}>{deck.title}</div>
             <button onClick={() => setViewMode('study')} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 18px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>Study →</button>
           </div>
           <div style={{ display: 'flex', gap: '8px', padding: '20px 32px 0' }}>
-            <button onClick={() => setViewMode('study')} style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #484542', background: 'transparent', color: '#C4C0B8', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Study</button>
+            <button onClick={() => setViewMode('study')} style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Study</button>
             <button style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #1A1A18', background: '#1A1A18', color: 'white', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Browse</button>
           </div>
           <div style={{ padding: '20px 32px 64px', maxWidth: '720px', margin: '0 auto', width: '100%' }}>
-            <p style={{ fontSize: '13px', fontWeight: 300, color: '#C4C0B8', marginBottom: '20px' }}>{deck.cards.length} cards{deck.cards[0]?.type !== 'audio' ? ' — click any card to see the answer' : ''}</p>
+            <p style={{ fontSize: '13px', fontWeight: 300, color: '#7A7060', marginBottom: '20px' }}>{deck.cards.length} cards{deck.cards[0]?.type !== 'audio' ? ' — click any card to see the answer' : ''}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {(deck.browseCards ?? deck.cards).map((card, i) => (
                 <div key={card.id} onClick={() => card.type !== 'audio' && setBrowseExpanded(browseExpanded === card.id ? null : card.id)}
-                  style={{ background: '#353330', border: `1px solid ${browseExpanded === card.id ? '#BA7517' : '#484542'}`, borderRadius: '12px', padding: '16px 20px', cursor: card.type !== 'audio' ? 'pointer' : 'default', transition: 'all 0.15s' }}>
+                  style={{ background: '#FDFAF3', border: `1px solid ${browseExpanded === card.id ? '#B5402A' : '#DDD8CA'}`, borderRadius: '12px', padding: '16px 20px', cursor: card.type !== 'audio' ? 'pointer' : 'default', transition: 'all 0.15s' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                    <span style={{ fontSize: '11px', color: '#484542', fontWeight: 300, minWidth: '24px', paddingTop: '2px' }}>{i + 1}</span>
+                    <span style={{ fontSize: '11px', color: '#DDD8CA', fontWeight: 300, minWidth: '24px', paddingTop: '2px' }}>{i + 1}</span>
                     <div style={{ flex: 1 }}>
                       {card.type === 'audio' ? <AudioBrowseRow card={card} />
                         : card.type === 'symbol' ? (
-                          <><p style={{ fontFamily: 'Bravura, serif', fontSize: '36px', color: '#F7F4EF', lineHeight: 1.4, marginBottom: browseExpanded === card.id ? '10px' : '0' }}>{card.front}{card.symbolName && <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '14px', fontWeight: 300, color: '#C4C0B8', marginLeft: '12px' }}>{card.symbolName}</span>}</p>{browseExpanded === card.id && <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.6, borderTop: '1px solid #EDE8DF', paddingTop: '10px' }}>{card.back}</p>}</>
+                          <><p style={{ fontFamily: 'Bravura, serif', fontSize: '36px', color: '#2A2318', lineHeight: 1.4, marginBottom: browseExpanded === card.id ? '10px' : '0' }}>{card.front}{card.symbolName && <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '14px', fontWeight: 300, color: '#7A7060', marginLeft: '12px' }}>{card.symbolName}</span>}</p>{browseExpanded === card.id && <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', lineHeight: 1.6, borderTop: '1px solid #EDE8DF', paddingTop: '10px' }}>{card.back}</p>}</>
                         ) : (
-                          <><p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#F7F4EF', marginBottom: browseExpanded === card.id ? '10px' : '0' }}>{card.front}</p>{browseExpanded === card.id && <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.6, borderTop: '1px solid #EDE8DF', paddingTop: '10px' }}>{card.back}</p>}</>
+                          <><p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#2A2318', marginBottom: browseExpanded === card.id ? '10px' : '0' }}>{card.front}</p>{browseExpanded === card.id && <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', lineHeight: 1.6, borderTop: '1px solid #EDE8DF', paddingTop: '10px' }}>{card.back}</p>}</>
                         )}
                     </div>
-                    {card.type !== 'audio' && <span style={{ fontSize: '12px', color: '#484542', paddingTop: '2px' }}>{browseExpanded === card.id ? '▲' : '▼'}</span>}
+                    {card.type !== 'audio' && <span style={{ fontSize: '12px', color: '#DDD8CA', paddingTop: '2px' }}>{browseExpanded === card.id ? '▲' : '▼'}</span>}
                   </div>
                 </div>
               ))}
@@ -186,21 +186,21 @@ return (
       )}
 
       {!(isComplete && viewMode === 'study') && viewMode !== 'browse' && (
-        <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', gap: '16px' }}>
-            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>← Back</button>
-            <div style={{ flex: 1, maxWidth: '400px', height: '4px', background: '#484542', borderRadius: '2px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: `${progressPct}%`, background: '#BA7517', borderRadius: '2px', transition: 'width 0.4s ease' }} />
+            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#7A7060' }}>← Back</button>
+            <div style={{ flex: 1, maxWidth: '400px', height: '4px', background: '#DDD8CA', borderRadius: '2px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${progressPct}%`, background: '#B5402A', borderRadius: '2px', transition: 'width 0.4s ease' }} />
             </div>
-            <span style={{ fontSize: '12px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{progressLabel}</span>
+            <span style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{progressLabel}</span>
           </div>
           {/* Live timer + correct/incorrect */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 32px 8px' }}>
-            <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.08em', fontVariantNumeric: 'tabular-nums' }}>
+            <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.08em', fontVariantNumeric: 'tabular-nums' }}>
               {formatTime(elapsedMs)}
             </span>
             {stats.total > 0 && (
-              <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>
+              <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>
                 <span style={{ color: '#4CAF50' }}>{stats.correct} ✓</span>
                 {stats.total - stats.correct > 0 && <span style={{ color: '#F09595', marginLeft: '8px' }}>{stats.total - stats.correct} ✗</span>}
               </span>
@@ -209,17 +209,17 @@ return (
           {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 20px', flexWrap: 'wrap' }}>
             {visibleModes.map(({ id, label }) => (
               <button key={id} onClick={() => { stopMicOld(); stopMicNew(); setMode(id); if (id !== 'flip') resetSession() }}
-                style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#484542'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#C4C0B8', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>{label}</button>
+                style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#DDD8CA'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer', transition: 'all 0.15s' }}>{label}</button>
             ))}
-            {!isSightReadDeck && <div style={{ width: '1px', height: '16px', background: '#484542', margin: '0 4px' }} />}
+            {!isSightReadDeck && <div style={{ width: '1px', height: '16px', background: '#DDD8CA', margin: '0 4px' }} />}
             <>
-            <button onClick={() => { stopMicOld(); stopMicNew(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #484542', background: 'transparent', color: '#C4C0B8', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Quiz</button>
-            <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #484542', background: 'transparent', color: '#C4C0B8', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Browse</button>
+            <button onClick={() => { stopMicOld(); stopMicNew(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Quiz</button>
+            <button onClick={() => { stopMicOld(); stopMicNew(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>Browse</button>
             </>
           </div>}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', padding: '0 32px 16px', minHeight: '22px' }}>
             {stats.streakHistory.slice(-10).map((result, i) => (
-              <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: result === 'hit' ? '#BA7517' : '#F09595' }} />
+              <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: result === 'hit' ? '#B5402A' : '#F09595' }} />
             ))}
           </div>
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px 8px' }}>
@@ -237,13 +237,13 @@ return (
             ) : null}
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '8px 32px 16px', visibility: isFlipMode ? 'visible' : 'hidden' }}>
-            <button onClick={goPrev} disabled={flipIndex === 0} style={{ background: '#353330', border: '1px solid #484542', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: flipIndex === 0 ? '#484542' : '#C4C0B8', cursor: flipIndex === 0 ? 'default' : 'pointer' }}>← Prev</button>
-            <span style={{ fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>{flipIndex + 1} / {flipCards.length}</span>
-            <button onClick={goNext} disabled={flipIndex === flipCards.length - 1} style={{ background: '#353330', border: '1px solid #484542', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: flipIndex === flipCards.length - 1 ? '#484542' : '#C4C0B8', cursor: flipIndex === flipCards.length - 1 ? 'default' : 'pointer' }}>Next →</button>
+            <button onClick={goPrev} disabled={flipIndex === 0} style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: flipIndex === 0 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === 0 ? 'default' : 'pointer' }}>← Prev</button>
+            <span style={{ fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>{flipIndex + 1} / {flipCards.length}</span>
+            <button onClick={goNext} disabled={flipIndex === flipCards.length - 1} style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: flipIndex === flipCards.length - 1 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === flipCards.length - 1 ? 'default' : 'pointer' }}>Next →</button>
           </div>
           {!isFlipMode && mode !== 'play' && (
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '12px 32px 16px', flexWrap: 'wrap', visibility: revealed ? 'visible' : 'hidden', minHeight: '80px', alignItems: 'center' }}>
-              {([{ rating: 1, label: 'Again', interval: intervals.again, bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' }, { rating: 2, label: 'Hard', interval: intervals.hard, bg: '#FAEEDA', border: '#FAC775', color: '#BA7517' }, { rating: 3, label: 'Easy', interval: intervals.easy, bg: '#EAF3DE', border: '#C0DD97', color: '#3B6D11' }] as const).map(({ rating, label, interval, bg, border, color }) => (
+              {([{ rating: 1, label: 'Again', interval: intervals.again, bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' }, { rating: 2, label: 'Hard', interval: intervals.hard, bg: '#FAEEDA', border: '#FAC775', color: '#B5402A' }, { rating: 3, label: 'Easy', interval: intervals.easy, bg: '#EAF3DE', border: '#C0DD97', color: '#3B6D11' }] as const).map(({ rating, label, interval, bg, border, color }) => (
                 <button key={rating} onClick={() => rate(rating)}
                   style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '14px 32px', borderRadius: '8px', border: `1.5px solid ${border}`, background: bg, color, cursor: 'pointer', minWidth: '120px', fontFamily: 'var(--font-jost), sans-serif', transition: 'all 0.15s' }}>
                   <span style={{ fontSize: '14px', fontWeight: 400, letterSpacing: '0.05em' }}>{label}</span>

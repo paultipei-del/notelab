@@ -24,13 +24,13 @@ export default function CMProgramPage() {
   const unlocked = hasSubscription() || hasPurchased(CM_BUNDLE_PRICE_ID)
 
   return (
-    <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
 
         {/* Breadcrumb */}
         <div style={{ marginBottom: '32px' }}>
           <Link href="/programs" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.04em' }}>
+            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.04em' }}>
               ← Programs
             </span>
           </Link>
@@ -38,13 +38,13 @@ export default function CMProgramPage() {
 
         {/* Header */}
         <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '12px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>
             Certificate of Merit · California
           </p>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F7F4EF', marginBottom: '12px', letterSpacing: '0.02em' }}>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>
             CM Theory Prep
           </h1>
-          <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#C4C0B8', maxWidth: '520px', lineHeight: 1.7, marginBottom: '0' }}>
+          <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#7A7060', maxWidth: '520px', lineHeight: 1.7, marginBottom: '0' }}>
             Complete flashcard collections for every CM level — Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training.
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function CMProgramPage() {
             <Link href="/account" style={{ textDecoration: 'none', flexShrink: 0 }}>
               <span style={{
                 display: 'inline-block', fontFamily: F, fontSize: '13px', fontWeight: 400,
-                color: '#F7F4EF', background: '#BA7517', borderRadius: '20px',
+                color: '#2A2318', background: '#B5402A', borderRadius: '20px',
                 padding: '10px 24px', letterSpacing: '0.02em',
               }}>
                 Purchase program →
@@ -88,7 +88,7 @@ export default function CMProgramPage() {
                 <div
                   key={deck.id}
                   style={{
-                    background: '#353330', border: '1px solid #484542', borderRadius: '14px',
+                    background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
                     padding: '20px', opacity: 0.6, cursor: 'default',
                     display: 'flex', flexDirection: 'column' as const,
                   }}
@@ -106,18 +106,18 @@ export default function CMProgramPage() {
               <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
                 <div
                   style={{
-                    background: '#353330', border: '1px solid #484542', borderRadius: '14px',
+                    background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
                     padding: '20px', cursor: 'pointer', transition: 'all 0.2s',
                     display: 'flex', flexDirection: 'column' as const, height: '100%',
                     boxSizing: 'border-box' as const,
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542'; e.currentTarget.style.transform = 'translateY(0)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8' }}>{deck.cards.length} cards</span>
+                    <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#7A7060' }}>{deck.cards.length} cards</span>
                   </div>
-                  <p style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '17px', color: '#F7F4EF', marginBottom: '0', lineHeight: 1.2 }}>{label}</p>
+                  <p style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '17px', color: '#2A2318', marginBottom: '0', lineHeight: 1.2 }}>{label}</p>
                 </div>
               </Link>
             )

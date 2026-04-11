@@ -25,9 +25,9 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
   const faceStyle: React.CSSProperties = {
     position: 'absolute',
     inset: 0,
-    background: '#353330',
+    background: '#FDFAF3',
     borderRadius: '16px',
-    border: '1px solid #484542',
+    border: '1px solid #DDD8CA',
     boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
     display: 'flex',
     flexDirection: 'column',
@@ -43,34 +43,34 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
     fontWeight: 400,
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
-    color: '#C4C0B8',
+    color: '#7A7060',
     marginBottom: '24px',
   }
 
   const frontContent = card.type === 'staff' && card.note && card.clef ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
       <StaffCard note={card.note} clef={card.clef} />
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.03em' }}>
+      <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.03em' }}>
         What note is this?
       </p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 52px)', textAlign: 'center', color: '#F7F4EF', letterSpacing: '0.01em', lineHeight: 1.2 }}>
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 52px)', textAlign: 'center', color: '#2A2318', letterSpacing: '0.01em', lineHeight: 1.2 }}>
       {card.front}
     </p>
   )
 
   const backContent = card.type === 'staff' ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '48px', textAlign: 'center', color: '#F7F4EF' }}>
+      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '48px', textAlign: 'center', color: '#2A2318' }}>
         {card.front}
       </p>
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.03em', textAlign: 'center' }}>
+      <p style={{ fontSize: '14px', fontWeight: 300, color: '#7A7060', letterSpacing: '0.03em', textAlign: 'center' }}>
         {card.back}
       </p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(22px, 4vw, 40px)', textAlign: 'center', color: '#F7F4EF', lineHeight: 1.3, padding: '0 16px' }}>
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(22px, 4vw, 40px)', textAlign: 'center', color: '#2A2318', lineHeight: 1.3, padding: '0 16px' }}>
       {card.back}
     </p>
   )
@@ -94,7 +94,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
           <span style={labelStyle}>Question</span>
           {frontContent}
           {!revealed && (
-            <span style={{ position: 'absolute', bottom: '20px', fontSize: '11px', fontWeight: 300, letterSpacing: '0.08em', color: '#484542', textTransform: 'uppercase' }}>
+            <span style={{ position: 'absolute', bottom: '20px', fontSize: '11px', fontWeight: 300, letterSpacing: '0.08em', color: '#DDD8CA', textTransform: 'uppercase' }}>
               tap to reveal
             </span>
           )}

@@ -26,13 +26,13 @@ export default function Unlock() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' as const, padding: '48px 32px', maxWidth: '360px', width: '100%' }}>
-        <div style={{ fontFamily: F, fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#F7F4EF', marginBottom: '48px' }}>
+        <div style={{ fontFamily: F, fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318', marginBottom: '48px' }}>
           Note<span style={{ fontWeight: 400 }}>Lab</span>
         </div>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#F7F4EF', marginBottom: '8px' }}>Early access</h1>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', marginBottom: '32px' }}>Enter your access code to continue</p>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '8px' }}>Early access</h1>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginBottom: '32px' }}>Enter your access code to continue</p>
         <input
           value={password}
           onChange={e => { setPassword(e.target.value); setError(false) }}
@@ -40,7 +40,7 @@ export default function Unlock() {
           type="password"
           placeholder="Access code"
           autoFocus
-          style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid ' + (error ? '#F09595' : '#484542'), background: '#353330', fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#F7F4EF', outline: 'none', boxSizing: 'border-box' as const, marginBottom: '12px', textAlign: 'center' as const }}
+          style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid ' + (error ? '#F09595' : '#DDD8CA'), background: '#FDFAF3', fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const, marginBottom: '12px', textAlign: 'center' as const }}
         />
         {error && <p style={{ fontFamily: F, fontSize: '12px', color: '#E53935', marginBottom: '12px' }}>Incorrect code — try again</p>}
         <button onClick={handleSubmit}

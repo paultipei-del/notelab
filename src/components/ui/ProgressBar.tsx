@@ -8,9 +8,9 @@ interface ProgressBarProps {
 export function ProgressBar({ pct, label }: ProgressBarProps) {
   return (
     <div className="flex items-center gap-4 flex-1 max-w-sm">
-      <div className="flex-1 h-1 bg-[#484542] rounded-full overflow-hidden">
+      <div className="flex-1 h-1 bg-[#DDD8CA] rounded-full overflow-hidden">
         <div
-          className="h-full bg-[#BA7517] rounded-full transition-all duration-500 ease-out"
+          className="h-full bg-[#B5402A] rounded-full transition-all duration-500 ease-out"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -35,7 +35,7 @@ export function StreakBar({ history }: StreakBarProps) {
         <div
           key={i}
           className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-            result === 'hit' ? 'bg-[#BA7517]' : 'bg-[#F09595]'
+            result === 'hit' ? 'bg-[#B5402A]' : 'bg-[#F09595]'
           }`}
         />
       ))}

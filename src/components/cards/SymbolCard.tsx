@@ -21,8 +21,8 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
     >
       {/* Symbol display */}
       <div style={{
-        background: '#353330',
-        border: '1px solid #484542',
+        background: '#FDFAF3',
+        border: '1px solid #DDD8CA',
         borderRadius: '20px',
         padding: '48px 32px',
         textAlign: 'center',
@@ -33,7 +33,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
           fontFamily: 'Bravura, serif',
           fontSize: '96px',
           lineHeight: 1.4,
-          color: '#F7F4EF',
+          color: '#2A2318',
           letterSpacing: '0.05em',
           marginBottom: hasLabel ? '16px' : '0',
         }}>
@@ -44,7 +44,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-jost), sans-serif',
             fontSize: '13px',
             fontWeight: 300,
-            color: '#C4C0B8',
+            color: '#7A7060',
             letterSpacing: '0.05em',
           }}>
             {card.symbolLabel}
@@ -65,7 +65,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-cormorant), serif',
             fontWeight: 400,
             fontSize: '22px',
-            color: '#F7F4EF',
+            color: '#2A2318',
             marginBottom: '8px',
           }}>
             {card.symbolName ?? card.back.split('—')[0].trim()}
@@ -74,7 +74,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-jost), sans-serif',
             fontSize: '14px',
             fontWeight: 300,
-            color: '#C4C0B8',
+            color: '#7A7060',
             lineHeight: 1.7,
           }}>
             {card.back}
@@ -86,7 +86,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-jost), sans-serif',
             fontSize: '13px',
             fontWeight: 300,
-            color: '#C4C0B8',
+            color: '#7A7060',
             letterSpacing: '0.05em',
           }}>
             Tap to reveal

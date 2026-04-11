@@ -13,8 +13,8 @@ export default function SiteFooter() {
 
   return (
     <footer style={{
-      borderTop: '1px solid #484542',
-      background: '#2C2A27',
+      borderTop: '1px solid #DDD8CA',
+      background: '#F2EDDF',
       padding: '20px 24px',
       display: 'flex',
       alignItems: 'center',
@@ -22,23 +22,23 @@ export default function SiteFooter() {
       flexWrap: 'wrap' as const,
       gap: '12px',
     }}>
-      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>
+      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060' }}>
         © {new Date().getFullYear()} NoteLab Studio
       </span>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
         <Link href="/feedback" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#F7F4EF')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#C4C0B8')}
+          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
           >
             Feedback
           </span>
         </Link>
         <Link href="/privacy" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#F7F4EF')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#C4C0B8')}
+          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
           >
             Privacy Policy
           </span>

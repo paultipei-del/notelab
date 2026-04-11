@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    background-color: #2C2A27;
+    background-color: #F2EDDF;
     -webkit-font-smoothing: antialiased;
   }
 }
@@ -157,8 +157,8 @@ button:not(:disabled):active {
   justify-content: space-between;
   padding: 0 24px;
   height: 56px;
-  border-bottom: 1px solid #484542;
-  background: #2C2A27;
+  border-bottom: 1px solid #DDD8CA;
+  background: #F2EDDF;
   position: sticky;
   top: 0;
   z-index: 50;
