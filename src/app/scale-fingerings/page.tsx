@@ -294,14 +294,18 @@ type ScaleType = 'major' | 'natural_minor' | 'harmonic_minor' | 'melodic_minor'
 // Circle of fifths order: flats ← C → sharps
 // Major: Gb - Db - Ab - Eb - Bb - F - C - G - D - A - E - B - Fs
 const MAJOR_COF = ['Gb','Db','Ab','Eb','Bb','F','C','G','D','A','E','B','Fs']
-// Minor: Ebm - Bbm - Fm - Cm - Gm - Dm - Am - Em - Bm - Fsm - Csm - Gsm
-const MINOR_COF = ['Ebm','Bbm','Fm','Cm','Gm','Dm','Am','Em','Bm','Fsm','Csm','Gsm']
+// Minor: Ebm - Bbm - Fm - Cm - Gm - Dm - Am - Em - Bm - Fsm - Csm - Gsm - Dsm
+const MINOR_COF = ['Ebm','Bbm','Fm','Cm','Gm','Dm','Am','Em','Bm','Fsm','Csm','Gsm','Dsm']
+
+// Dsm (D♯m) is enharmonic to Ebm — resolve to Ebm for all data lookups
+const KEY_ALIAS: Record<string, string> = { Dsm: 'Ebm' }
 
 // Single-name display (no enharmonic slash combos)
 const MAJOR_DISPLAY: Record<string, string> = {
   Gb:'G♭', Db:'D♭', Ab:'A♭', Eb:'E♭', Bb:'B♭',
   F:'F', C:'C', G:'G', D:'D', A:'A', E:'E', B:'B', Fs:'F♯',
 }
+const MINOR_DISPLAY: Record<string, string> = { ...MINOR_SCALE_DISPLAY, Dsm: 'D♯' }
 
 // Center key for each type
 const MAJOR_CENTER = 'C'
@@ -315,18 +319,21 @@ export default function ScaleFingeringsPage() {
 
   const isMajor = scaleType === 'major'
   const showDirection = scaleType === 'melodic_minor'
-  const displayMap = isMajor ? MAJOR_DISPLAY : MINOR_SCALE_DISPLAY
+  const displayMap = isMajor ? MAJOR_DISPLAY : MINOR_DISPLAY
   const cofKeys = isMajor ? MAJOR_COF : MINOR_COF
   const centerKey = isMajor ? MAJOR_CENTER : MINOR_CENTER
 
+  // Resolve enharmonic aliases (e.g. Dsm → Ebm) for data lookups
+  const dataKey = KEY_ALIAS[selectedKey] ?? selectedKey
+
   // Resolve raw fingering
   const fingeringRaw = isMajor
-    ? MAJOR_FINGERINGS[selectedKey]
+    ? MAJOR_FINGERINGS[dataKey]
     : scaleType === 'harmonic_minor'
-      ? HARMONIC_MINOR_FINGERINGS[selectedKey]
+      ? HARMONIC_MINOR_FINGERINGS[dataKey]
       : scaleType === 'melodic_minor'
-        ? MELODIC_MINOR_FINGERINGS[selectedKey]
-        : NATURAL_MINOR_FINGERINGS[selectedKey]
+        ? MELODIC_MINOR_FINGERINGS[dataKey]
+        : NATURAL_MINOR_FINGERINGS[dataKey]
 
   // Natural minor descending = ascending reversed (same scale, played downward)
   // Melodic minor descending = natural minor ascending (the classical rule)
@@ -336,7 +343,7 @@ export default function ScaleFingeringsPage() {
       const f = fingeringRaw as any
       if (direction === 'asc') return { rh: f.rh_asc, lh: f.lh_asc }
       // Descending = natural minor ascending fingering
-      const nat = NATURAL_MINOR_FINGERINGS[selectedKey]
+      const nat = NATURAL_MINOR_FINGERINGS[dataKey]
       return nat ? { rh: nat.rh, lh: nat.lh } : { rh: f.rh_asc, lh: f.lh_asc }
     }
     if (scaleType === 'natural_minor') {
@@ -347,7 +354,7 @@ export default function ScaleFingeringsPage() {
     return fingeringRaw as { rh: Fingering; lh: Fingering }
   })()
 
-  const ascNotes = isMajor ? MAJOR_SCALE_NOTES[selectedKey] : MINOR_SCALE_NOTES[selectedKey]
+  const ascNotes = isMajor ? MAJOR_SCALE_NOTES[dataKey] : MINOR_SCALE_NOTES[dataKey]
 
   // Melodic minor ascending: raise 6th (idx 5,12) and 7th (idx 6,13) by one semitone
   // Melodic minor descending: natural minor ascending (unchanged)
@@ -425,14 +432,11 @@ export default function ScaleFingeringsPage() {
           {/* Fixed 13-slot row — C (major) and Am (minor) sit at slot 6 (center) */}
           <div style={{ overflowX: 'auto' }}>
             <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'nowrap' as const }}>
-              {/* Minor gets one empty spacer on the right to stay at 13 slots */}
-              {(isMajor ? cofKeys : [...cofKeys, null]).map((k, i) =>
-                k === null
-                  ? <div key="spacer" style={{ width: '46px', flexShrink: 0 }} />
-                  : <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k, k === centerKey)}>
-                      {displayMap[k]}
-                    </button>
-              )}
+              {cofKeys.map(k => (
+                <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k, k === centerKey)}>
+                  {displayMap[k]}
+                </button>
+              ))}
             </div>
           </div>
         </div>
