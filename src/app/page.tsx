@@ -82,7 +82,7 @@ export default function Home() {
             practiced.
           </span>
           <span style={{ display: 'block', width: '100%', textAlign: 'right' as const, fontSize: 'clamp(20px, 2.2vw, 28px)', color: '#BA7517', letterSpacing: '0.01em', fontStyle: 'italic', fontWeight: 300, marginTop: '0.5em' }}>
-            reinvented.
+            reimagined.
           </span>
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '28px 0 0' }}>
