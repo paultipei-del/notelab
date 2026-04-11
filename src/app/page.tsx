@@ -108,9 +108,8 @@ export default function Home() {
                 <div key={deck.id} style={{ position: 'relative' }}>
                   <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
                     <div
-                      style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)' }}
+                      className="nl-card-surface nl-card-surface--tight"
+                      style={{ padding: '20px', cursor: 'pointer' }}
                     >
                       <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '18px', color: '#2A2318', marginBottom: '4px' }}>{deck.title}</h3>
                       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</p>

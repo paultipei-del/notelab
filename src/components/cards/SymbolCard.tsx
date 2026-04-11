@@ -20,15 +20,17 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
       onClick={!revealed ? onReveal : undefined}
     >
       {/* Symbol display */}
-      <div style={{
-        background: '#FDFAF3',
-        border: '1px solid #DDD8CA',
-        borderRadius: '20px',
-        padding: '48px 32px',
-        textAlign: 'center',
-        boxShadow: '0 4px 24px rgba(26,26,24,0.08)',
-        marginBottom: '16px',
-      }}>
+      <div
+        className="nl-study-card-hover"
+        style={{
+          background: '#FDFAF3',
+          border: '1px solid #DDD8CA',
+          borderRadius: '20px',
+          padding: '48px 32px',
+          textAlign: 'center',
+          marginBottom: '16px',
+        }}
+      >
         <div style={{
           fontFamily: 'Bravura, serif',
           fontSize: '96px',

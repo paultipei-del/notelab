@@ -61,9 +61,8 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Structured exam prep collections</p>
         </div>
         <div
-          style={{ background: '#1A1A18', border: '1px solid #1A1A18', borderRadius: '16px', padding: '28px 32px', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-          onMouseEnter={e => { e.currentTarget.style.opacity = '0.92' }}
-          onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+          className="nl-program-banner"
+          style={{ background: '#1A1A18', border: '1px solid #1A1A18', borderRadius: '16px', padding: '28px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
         >
           <Link href="/programs" style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0, marginRight: '24px' }}>
             <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#B5402A', color: 'white', fontFamily: F }}>
@@ -123,22 +122,16 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
           {notationDecks.map(deck => (
             <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
               <div
+                className="nl-card-surface"
                 style={{
-                  background: '#FDFAF3',
-                  border: '1px solid #DDD8CA',
-                  borderRadius: '16px',
                   padding: '24px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
                   width: '100%',
                   height: '100%',
-                  boxSizing: 'border-box' as const,
                   display: 'flex',
                   flexDirection: 'column' as const,
                   alignItems: 'flex-start' as const,
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA' }}
               >
                 <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
                 <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
@@ -155,22 +148,16 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
               {symbolDecks.map(deck => (
                 <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
                   <div
+                    className="nl-card-surface"
                     style={{
-                      background: '#FDFAF3',
-                      border: '1px solid #DDD8CA',
-                      borderRadius: '16px',
                       padding: '24px',
                       cursor: 'pointer',
-                      transition: 'all 0.2s',
                       width: '100%',
                       height: '100%',
-                      boxSizing: 'border-box' as const,
                       display: 'flex',
                       flexDirection: 'column' as const,
                       alignItems: 'flex-start' as const,
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA' }}
                   >
                     <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
                     <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>

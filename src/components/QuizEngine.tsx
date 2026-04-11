@@ -42,8 +42,8 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
     const gradeBg = pct >= 80 ? '#EAF3DE' : pct >= 60 ? '#FAEEDA' : '#FCEBEB'
 
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', padding: '48px 24px' }}>
-        <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '48px 40px', maxWidth: '560px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)', marginBottom: '24px' }}>
+      <div className="nl-study-viewport nl-study-scroll" style={{ alignItems: 'center', padding: '32px 24px' }}>
+        <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '40px 32px', maxWidth: '560px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)', marginBottom: '24px' }}>
 
           {/* Grade */}
           <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '80px', height: '80px', borderRadius: '50%', background: gradeBg, marginBottom: '24px' }}>
@@ -124,10 +124,10 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
   const progressPct = (index / total) * 100
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
+    <div className="nl-study-viewport">
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 32px', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 32px', gap: '16px', flexShrink: 0 }}>
         <button onClick={onExit}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>
           ← Exit Quiz
@@ -141,17 +141,17 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
       </div>
 
       {/* Quiz label */}
-      <div style={{ textAlign: 'center', padding: '0 32px 16px' }}>
+      <div style={{ textAlign: 'center', padding: '0 32px 8px', flexShrink: 0 }}>
         <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#B5402A' }}>
           Quiz Mode
         </span>
       </div>
 
       {/* Card */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
+      <div className="nl-study-main nl-study-main--stack" style={{ padding: '0 24px 12px' }}>
 
         {/* Question */}
-        <div style={{ width: '100%', maxWidth: '480px', marginBottom: '24px' }}>
+        <div style={{ width: '100%', maxWidth: '480px', marginBottom: '8px', flexShrink: 0 }}>
           {currentCard.type === 'audio' ? (
             <AudioCard card={currentCard} revealed={false} onReveal={() => {}} hideReveal />
           ) : currentCard.type === 'symbol' ? (

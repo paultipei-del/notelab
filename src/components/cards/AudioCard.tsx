@@ -153,15 +153,17 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
   return (
     <div style={{ width: '100%', maxWidth: '480px' }}>
       {/* Player */}
-      <div style={{
-        background: '#FDFAF3',
-        border: '1px solid #DDD8CA',
-        borderRadius: '20px',
-        padding: '36px 32px',
-        textAlign: 'center',
-        boxShadow: '0 4px 24px rgba(26,26,24,0.08)',
-        marginBottom: compact ? '8px' : revealed ? '12px' : '16px',
-      }}>
+      <div
+        className="nl-study-card-hover"
+        style={{
+          background: '#FDFAF3',
+          border: '1px solid #DDD8CA',
+          borderRadius: '20px',
+          padding: '36px 32px',
+          textAlign: 'center',
+          marginBottom: compact ? '8px' : revealed ? '12px' : '16px',
+        }}
+      >
         <div style={{ fontSize: '36px', marginBottom: '16px', lineHeight: 1 }}>𝄞</div>
 
         <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '20px', color: '#2A2318', marginBottom: '4px', letterSpacing: '0.02em' }}>

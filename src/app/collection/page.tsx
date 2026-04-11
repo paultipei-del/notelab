@@ -127,23 +127,16 @@ function CollectionContent() {
                   {groupDecks.map(deck => (
                     <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
                       <div
+                        className="nl-card-surface"
                         style={{
-                          background: '#FDFAF3',
-                          border: '1px solid #DDD8CA',
-                          borderRadius: '16px',
                           padding: '24px',
                           cursor: 'pointer',
-                          boxShadow: '0 2px 12px rgba(26,26,24,0.06)',
-                          transition: 'all 0.2s',
                           width: '100%',
                           height: '100%',
-                          boxSizing: 'border-box',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'flex-start',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)' }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
                       >
                         <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: TAG_COLORS.free.bg, color: TAG_COLORS.free.color, fontFamily: 'var(--font-jost), sans-serif', width: 'fit-content' }}>Free</span>
                         <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
@@ -182,17 +175,8 @@ function CollectionContent() {
               ) : (
                 <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
                   <div
-                    style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px', cursor: 'pointer', boxShadow: '0 2px 12px rgba(26,26,24,0.06)', transition: 'all 0.2s' }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#B5402A'
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = '0 4px 32px rgba(26,26,24,0.10)'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#DDD8CA'
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)'
-                    }}
+                    className="nl-card-surface"
+                    style={{ padding: '24px', cursor: 'pointer' }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                       <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B5402A', letterSpacing: '0.05em' }}>

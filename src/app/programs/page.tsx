@@ -54,11 +54,17 @@ export default function ProgramsPage() {
                   style={{
                     background: '#1A1A18',
                     border: '1px solid #2E2E2C',
-                    boxShadow: '0 4px 24px rgba(26,26,24,0.18)',
-                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.35), 0 14px 40px rgba(0,0,0,0.22)',
+                    transition: 'transform 0.24s cubic-bezier(0.33, 1, 0.68, 1), box-shadow 0.24s cubic-bezier(0.33, 1, 0.68, 1)',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 16px 48px rgba(26,26,24,0.32)' }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(26,26,24,0.18)' }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-6px) scale(1.01)'
+                    e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.45), 0 28px 72px rgba(186,117,23,0.18)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.35), 0 14px 40px rgba(0,0,0,0.22)'
+                  }}
                 >
                   {/* Text side */}
                   <div style={{ flex: 1, padding: '36px 40px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>

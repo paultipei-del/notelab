@@ -43,9 +43,8 @@ export default function ToolsHub({ headingVariant = 'section' }: ToolsHubProps) 
                 {groupTools.map(tool => (
                   <Link key={tool.href} href={tool.href} style={{ textDecoration: 'none' }}>
                     <div
-                      style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px', cursor: 'pointer', transition: 'all 0.2s', height: '100%', boxSizing: 'border-box' as const, display: 'flex', flexDirection: 'column' as const, justifyContent: 'space-between' }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)' }}
+                      className="nl-card-surface"
+                      style={{ padding: '24px', cursor: 'pointer', height: '100%', display: 'flex', flexDirection: 'column' as const, justifyContent: 'space-between' }}
                     >
                       <div>
                         <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#7A7060', fontFamily: F }}>{tool.badge}</span>

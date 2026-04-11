@@ -10,6 +10,7 @@ const HIDDEN_ON = ['/unlock', '/landing']
 export default function SiteFooter() {
   const pathname = usePathname()
   if (HIDDEN_ON.includes(pathname)) return null
+  if (pathname.startsWith('/study')) return null
 
   return (
     <footer style={{

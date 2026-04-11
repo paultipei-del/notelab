@@ -105,24 +105,24 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
               background: tile.cardBg,
               border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #DDD8CA',
               boxShadow: tile.cardBg === '#1A1A18'
-                ? '0 4px 24px rgba(26,26,24,0.22)'
-                : '0 2px 12px rgba(26,26,24,0.05)',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
+                ? '0 4px 20px rgba(0,0,0,0.35), 0 16px 44px rgba(0,0,0,0.22)'
+                : '0 1px 0 rgba(255,255,255,0.65) inset, 0 2px 8px rgba(26,26,24,0.05), 0 12px 32px rgba(26,26,24,0.08)',
+              transition: 'transform 0.24s cubic-bezier(0.33, 1, 0.68, 1), box-shadow 0.24s cubic-bezier(0.33, 1, 0.68, 1), border-color 0.2s ease',
             }}
             onMouseEnter={e => {
               const el = e.currentTarget
-              el.style.transform = 'translateY(-3px)'
+              el.style.transform = 'translateY(-7px) scale(1.01)'
               el.style.boxShadow = tile.cardBg === '#1A1A18'
-                ? '0 16px 48px rgba(26,26,24,0.35)'
-                : '0 12px 36px rgba(26,26,24,0.12)'
+                ? '0 12px 32px rgba(0,0,0,0.45), 0 32px 80px rgba(186,117,23,0.16)'
+                : '0 1px 0 rgba(255,255,255,0.92) inset, 0 8px 18px rgba(26,26,24,0.08), 0 22px 52px rgba(26,26,24,0.14), 0 40px 80px rgba(186,117,23,0.1)'
               if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#B5402A'
             }}
             onMouseLeave={e => {
               const el = e.currentTarget
-              el.style.transform = 'translateY(0)'
+              el.style.transform = 'translateY(0) scale(1)'
               el.style.boxShadow = tile.cardBg === '#1A1A18'
-                ? '0 4px 24px rgba(26,26,24,0.22)'
-                : '0 2px 12px rgba(26,26,24,0.05)'
+                ? '0 4px 20px rgba(0,0,0,0.35), 0 16px 44px rgba(0,0,0,0.22)'
+                : '0 1px 0 rgba(255,255,255,0.65) inset, 0 2px 8px rgba(26,26,24,0.05), 0 12px 32px rgba(26,26,24,0.08)'
               if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#DDD8CA'
             }}
           >

@@ -59,14 +59,16 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
     <div style={{ width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
       {/* Term card */}
-      <div style={{
-        background: '#FDFAF3',
-        borderRadius: '20px',
-        border: '1px solid #DDD8CA',
-        padding: '40px 32px',
-        textAlign: 'center',
-        boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
-      }}>
+      <div
+        className="nl-study-card-hover"
+        style={{
+          background: '#FDFAF3',
+          borderRadius: '20px',
+          border: '1px solid #DDD8CA',
+          padding: '40px 32px',
+          textAlign: 'center',
+        }}
+      >
         <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '16px' }}>
           Explain this term
         </span>

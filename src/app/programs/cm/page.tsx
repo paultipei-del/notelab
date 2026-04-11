@@ -105,14 +105,11 @@ export default function CMProgramPage() {
             return (
               <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
                 <div
+                  className="nl-card-surface nl-card-surface--tight"
                   style={{
-                    background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
-                    padding: '20px', cursor: 'pointer', transition: 'all 0.2s',
+                    padding: '20px', cursor: 'pointer',
                     display: 'flex', flexDirection: 'column' as const, height: '100%',
-                    boxSizing: 'border-box' as const,
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#B5402A'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>

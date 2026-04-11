@@ -10,6 +10,164 @@
   --nl-text-meta: 13px; /* footer, card meta, desktop nav */
   --nl-text-compact: 12px; /* chips, form labels (uppercase), tight controls */
   --nl-text-badge: 11px; /* tiny pills / wordmark sublabel only */
+  --nl-site-header-h: 56px; /* keep in sync with .site-header height */
+}
+
+/* ── Study / quiz — one screen below header (desktop, no page scroll) ─ */
+.nl-study-viewport {
+  background: #f2eddf;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  .nl-study-viewport {
+    height: calc(100dvh - var(--nl-site-header-h));
+    max-height: calc(100dvh - var(--nl-site-header-h));
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.nl-study-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 24px 4px;
+}
+
+.nl-study-main--stack {
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.nl-study-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Card surfaces — resting depth + lift on hover (deck grids, hubs) ─ */
+.nl-card-surface {
+  background: #fdfaf3;
+  border: 1px solid #ddd8ca;
+  border-radius: 16px;
+  box-sizing: border-box;
+  transform: translateZ(0);
+  transition:
+    transform 0.24s cubic-bezier(0.33, 1, 0.68, 1),
+    box-shadow 0.24s cubic-bezier(0.33, 1, 0.68, 1),
+    border-color 0.2s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 2px 6px rgba(26, 26, 24, 0.05),
+    0 10px 28px rgba(26, 26, 24, 0.07);
+}
+
+.nl-card-surface:hover {
+  border-color: #b5402a;
+  transform: translateY(-6px) scale(1.012);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.92) inset,
+    0 6px 14px rgba(26, 26, 24, 0.07),
+    0 20px 44px rgba(26, 26, 24, 0.14),
+    0 36px 72px rgba(186, 117, 23, 0.11);
+}
+
+.nl-card-surface--tight {
+  border-radius: 14px;
+}
+
+/* CM / Programs dark promo strip */
+.nl-program-banner {
+  transition:
+    transform 0.24s cubic-bezier(0.33, 1, 0.68, 1),
+    box-shadow 0.24s cubic-bezier(0.33, 1, 0.68, 1);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.nl-program-banner:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.45),
+    0 22px 56px rgba(0, 0, 0, 0.35);
+}
+
+/* Flip + study question panels */
+.nl-flip-card {
+  perspective: 1200px;
+}
+
+.nl-flip-face {
+  transition:
+    box-shadow 0.24s cubic-bezier(0.33, 1, 0.68, 1),
+    border-color 0.2s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 4px 20px rgba(26, 26, 24, 0.09),
+    0 14px 44px rgba(26, 26, 24, 0.08);
+}
+
+.nl-flip-card:hover .nl-flip-face {
+  border-color: #c8bdb0;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.78) inset,
+    0 12px 40px rgba(26, 26, 24, 0.14),
+    0 28px 64px rgba(26, 26, 24, 0.11);
+}
+
+.nl-study-card-hover {
+  transition:
+    transform 0.24s cubic-bezier(0.33, 1, 0.68, 1),
+    box-shadow 0.24s cubic-bezier(0.33, 1, 0.68, 1),
+    background 0.2s ease,
+    border-color 0.2s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 4px 24px rgba(26, 26, 24, 0.1);
+}
+
+.nl-study-card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 12px 36px rgba(26, 26, 24, 0.13),
+    0 26px 56px rgba(26, 26, 24, 0.1);
+}
+
+@media (hover: none) {
+  .nl-card-surface:hover {
+    transform: none;
+    border-color: #ddd8ca;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.65) inset,
+      0 2px 6px rgba(26, 26, 24, 0.05),
+      0 10px 28px rgba(26, 26, 24, 0.07);
+  }
+
+  .nl-program-banner:hover {
+    transform: none;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.35),
+      0 12px 32px rgba(0, 0, 0, 0.25);
+  }
+
+  .nl-study-card-hover:hover {
+    transform: none;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.45) inset,
+      0 4px 24px rgba(26, 26, 24, 0.1);
+  }
 }
 
 @layer base {

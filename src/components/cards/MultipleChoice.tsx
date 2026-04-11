@@ -88,18 +88,20 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
   return (
     <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* Question card — hidden for audio cards (AudioCard renders above) */}
-      {card.type !== 'audio' && <div style={{
-        background: '#FDFAF3',
-        borderRadius: '20px',
-        border: '1px solid #DDD8CA',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '48px 32px',
-        boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
-        minHeight: '180px',
-      }}>
+      {card.type !== 'audio' && <div
+        className="nl-study-card-hover"
+        style={{
+          background: '#FDFAF3',
+          borderRadius: '20px',
+          border: '1px solid #DDD8CA',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '48px 32px',
+          minHeight: '180px',
+        }}
+      >
         <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
           Choose the correct answer
         </span>

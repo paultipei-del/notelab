@@ -28,7 +28,6 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
     background: '#FDFAF3',
     borderRadius: '16px',
     border: '1px solid #DDD8CA',
-    boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -76,12 +75,12 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
   )
 
   return (
-    <div style={{ width: '100%', maxWidth: '680px', perspective: '1200px' }}>
+    <div className="nl-flip-card" style={{ width: '100%', maxWidth: '680px' }}>
       <div
         onClick={!revealed ? onReveal : undefined}
         style={{
           width: '100%',
-          minHeight: '340px',
+          minHeight: 'clamp(200px, 42dvh, 340px)',
           position: 'relative',
           transformStyle: 'preserve-3d',
           transform: revealed ? 'rotateY(180deg)' : 'rotateY(0deg)',
@@ -90,7 +89,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
         }}
       >
         {/* Front */}
-        <div style={faceStyle}>
+        <div className="nl-flip-face" style={faceStyle}>
           <span style={labelStyle}>Question</span>
           {frontContent}
           {!revealed && (
@@ -101,7 +100,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
         </div>
 
         {/* Back */}
-        <div style={{ ...faceStyle, transform: 'rotateY(180deg)' }}>
+        <div className="nl-flip-face" style={{ ...faceStyle, transform: 'rotateY(180deg)' }}>
           <span style={labelStyle}>Answer</span>
           {backContent}
         </div>

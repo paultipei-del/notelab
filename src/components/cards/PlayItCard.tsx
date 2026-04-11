@@ -222,11 +222,13 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
 
   return (
     <div style={{ width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-      <div style={{
-        width: '100%', background: bgColor, borderRadius: '20px',
-        border: `1px solid ${borderColor}`, padding: '40px 32px', textAlign: 'center',
-        boxShadow: '0 4px 32px rgba(26,26,24,0.10)', transition: 'background 0.2s, border-color 0.2s',
-      }}>
+      <div
+        className="nl-study-card-hover"
+        style={{
+          width: '100%', background: bgColor, borderRadius: '20px',
+          border: `1px solid ${borderColor}`, padding: '40px 32px', textAlign: 'center',
+        }}
+      >
         <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '20px' }}>
           Play this note
         </span>
