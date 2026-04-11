@@ -87,24 +87,20 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 24px', height: '56px',
-        borderBottom: '1px solid #D3D1C7',
-        background: '#F5F2EC',
-        position: 'sticky' as const, top: 0, zIndex: 50,
-        userSelect: 'none' as const, WebkitUserSelect: 'none' as const,
-      }}>
+      <header className="site-header">
 
         {/* Wordmark */}
-        <Link href="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
-          <span style={{ fontFamily: F, fontSize: '18px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
-            Note<span style={{ fontWeight: 500 }}>Lab</span>
-            <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', color: '#888780', marginLeft: '7px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
-          </span>
-        </Link>
+        <div className="site-header__brand">
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: F, fontSize: '18px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
+              Note<span style={{ fontWeight: 500 }}>Lab</span>
+              <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', color: '#888780', marginLeft: '7px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
+            </span>
+          </Link>
+        </div>
 
-        {/* Desktop nav — hidden on mobile via inline media-query workaround */}
+        {/* Desktop nav — centered in viewport; wrapper hidden on mobile */}
+        <div className="site-header__nav-wrap">
         <nav
           ref={navRef}
           className="nl-desktop-nav"
@@ -154,9 +150,10 @@ export default function SiteHeader() {
             )
           })}
         </nav>
+        </div>
 
         {/* Right side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <div className="site-header__actions">
 
           {/* Mobile hamburger */}
           <div ref={mobileRef} className="nl-mobile-nav">

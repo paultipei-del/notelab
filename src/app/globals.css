@@ -150,12 +150,65 @@ button:not(:disabled):active {
   .nl-cat-tile-gradient { width: 100%; min-height: 130px; }
 }
 
+/* ── Site header — flex row + nav viewport-centered (no grid stacking issues) ─ */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  border-bottom: 1px solid #D3D1C7;
+  background: #F5F2EC;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.site-header__brand {
+  flex-shrink: 0;
+  min-width: 0;
+  z-index: 2;
+}
+/* Center nav in the full header width; links stay one row */
+.site-header__nav-wrap {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.site-header__nav-wrap .nl-desktop-nav {
+  pointer-events: auto;
+}
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-width: 0;
+  z-index: 2;
+}
+
 /* ── Site header nav visibility ─────────────────────────────── */
-.nl-desktop-nav { display: flex; align-items: center; gap: 4px; }
+.nl-desktop-nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px;
+}
 .nl-mobile-nav  { display: none; position: relative; }
 
 @media (max-width: 680px) {
-  .nl-desktop-nav { display: none !important; }
+  .site-header__nav-wrap {
+    display: none !important;
+  }
   .nl-mobile-nav  { display: block !important; }
 }
 
