@@ -140,10 +140,10 @@ export default function SiteHeader() {
                   position: 'relative', zIndex: 10,
                   background: 'transparent', border: 'none',
                   borderRadius: '9999px',
-                  padding: '5px 14px',
-                  fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400,
+                  padding: '6px 16px',
+                  fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
                   color: active ? '#2A2318' : '#7A7060',
-                  letterSpacing: '0.01em',
+                  letterSpacing: '0.02em',
                   whiteSpace: 'nowrap' as const,
                   cursor: 'pointer',
                   transition: 'color 200ms',
@@ -199,7 +199,7 @@ export default function SiteHeader() {
                     <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'block' }}>
                       <div style={{
                         padding: '11px 14px', borderRadius: '8px',
-                        fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400,
+                        fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
                         color: active ? '#1A1A18' : '#7A7060',
                         background: active ? '#F2EDDF' : 'none',
                         cursor: 'pointer',
@@ -277,7 +277,7 @@ export default function SiteHeader() {
             ) : (
               <button onClick={() => setShowAuth(true)} style={{
                 border: '1px solid #DDD8CA', borderRadius: '20px',
-                padding: '7px 18px', fontFamily: F, fontSize: 'var(--nl-text-meta)',
+                padding: '7px 18px', fontFamily: F, fontSize: 'var(--nl-text-ui)',
                 fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer',
               }}>
                 Sign in
