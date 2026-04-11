@@ -2170,9 +2170,23 @@ export default function RhythmPage() {
       >
 
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px', flexShrink: 0 }}>
-          <div>
-            <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '8px', display: 'block' }}>← Back</button>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', marginBottom: '16px', flexShrink: 0 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <button
+              onClick={() => {
+                if (exercise) {
+                  setExercise(null)
+                  setCurrentMeta(null)
+                  stop()
+                  resetNotationScroll()
+                } else {
+                  router.push('/tools')
+                }
+              }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '8px', display: 'block' }}
+            >
+              {exercise ? '← Library' : '← Back'}
+            </button>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '4px' }}>Rhythm Trainer</h1>
             {!exercise && (
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 0', maxWidth: '500px', lineHeight: 1.6 }}>
@@ -2201,7 +2215,7 @@ export default function RhythmPage() {
             )}
           </div>
           {exercise && currentMeta && (
-            <div style={{ display: 'flex', gap: '6px' }}>
+            <div style={{ display: 'flex', gap: '6px', flexShrink: 0, paddingTop: '2px' }}>
               <button onClick={() => prevEx && loadExercise(prevEx)} disabled={!prevEx}
                 style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid #DDD8CA', background: prevEx ? 'white' : '#F2EDDF', color: prevEx ? '#1A1A18' : '#DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: prevEx ? 'pointer' : 'default' }}>
                 ← Prev
@@ -2211,20 +2225,6 @@ export default function RhythmPage() {
                 Next →
               </button>
             </div>
-          )}
-          {exercise && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' as const }}>
-              <button onClick={() => setShowMixer(v => !v)}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
-                Mixer
-              </button>
-            </div>
-          )}
-          {exercise && (
-            <button onClick={() => { setExercise(null); setCurrentMeta(null); stop(); resetNotationScroll() }}
-              style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 14px', cursor: 'pointer' }}>
-              ← Library
-            </button>
           )}
         </div>
 
@@ -2258,7 +2258,7 @@ export default function RhythmPage() {
               <div style={{ position: 'fixed', inset: 0, zIndex: 120 }}
                 onClick={e => e.target === e.currentTarget && setShowMixer(false)}>
                 <div style={{ position: 'absolute' as const, inset: 0, background: 'rgba(26,26,24,0.18)' }} />
-                <div style={{ position: 'absolute' as const, top: '88px', right: '24px', width: '320px', maxWidth: 'calc(100vw - 48px)', background: 'rgba(255,255,255,0.92)', border: '1px solid rgba(211,209,199,0.9)', borderRadius: '16px', padding: '14px', boxShadow: '0 18px 44px rgba(26,26,24,0.16)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' as any }}>
+                <div style={{ position: 'absolute' as const, left: '24px', bottom: 'calc(108px + env(safe-area-inset-bottom, 0px))', width: '320px', maxWidth: 'calc(100vw - 48px)', background: 'rgba(255,255,255,0.92)', border: '1px solid rgba(211,209,199,0.9)', borderRadius: '16px', padding: '14px', boxShadow: '0 18px 44px rgba(26,26,24,0.16)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' as any }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>Mixer</p>
                     <button onClick={() => setShowMixer(false)} style={{ border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', borderRadius: '20px', padding: '6px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Done</button>
@@ -2361,40 +2361,50 @@ export default function RhythmPage() {
                   style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(211,209,199,0.9)', background: 'rgba(255,255,255,0.9)', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-base)', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, transition: 'transform 120ms ease' }}>+</button>
               </div>
 
-              {/* Score (secondary) */}
+              {/* Score (secondary) — light text for dark glass control bar */}
               <div className="nl-rt-score" style={{ minWidth: '240px', minHeight: '46px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
                 {(() => {
                   const labelW = '74px'
+                  const bar = {
+                    label: 'rgba(255,255,255,0.82)',
+                    muted: 'rgba(255,255,255,0.45)',
+                    value: 'rgba(255,255,255,0.96)',
+                    valueSoft: 'rgba(255,255,255,0.88)',
+                    perfect: '#C8F0A8',
+                  } as const
                   const valueFont = {
                     fontFamily: F,
-                    fontSize: 'var(--nl-text-compact)',
+                    fontSize: 'var(--nl-text-meta)',
                     fontVariantNumeric: 'tabular-nums' as any,
-                    lineHeight: 1.25,
-                    letterSpacing: '0.01em',
+                    lineHeight: 1.3,
+                    letterSpacing: '0.02em',
                   } as const
                   const labelStyle = {
                     ...valueFont,
                     width: labelW,
-                    color: score && !playing ? '#7A7060' : '#DDD8CA',
-                    fontWeight: 300,
+                    fontSize: 'var(--nl-text-compact)',
+                    color: score && !playing ? bar.label : bar.muted,
+                    fontWeight: 400,
                     flexShrink: 0,
                     textAlign: 'right' as const,
                     paddingRight: '6px',
                   } as const
-                  const accValue = score && !playing ? `${score.hits}/${score.total} · ${pct}%` : '—'
-                  const durValue = score && !playing && score.durationTotal > 0
-                    ? `${score.durationHits}/${score.durationTotal} · ${Math.round(score.durationHits / score.durationTotal * 100)}%`
+                  const done = Boolean(score && !playing)
+                  const accValue = done ? `${score!.hits}/${score!.total} · ${pct}%` : '—'
+                  const durValue = done && score!.durationTotal > 0
+                    ? `${score!.durationHits}/${score!.durationTotal} · ${Math.round(score!.durationHits / score!.durationTotal * 100)}%`
                     : '—'
-                  const accColor = score && !playing ? (pct === 100 ? '#3B6D11' : '#1A1A18') : '#DDD8CA'
+                  const accValColor = !done ? bar.muted : (pct === 100 ? bar.perfect : bar.value)
+                  const durValColor = !done ? bar.muted : bar.valueSoft
                   return (
                     <>
                       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
-                        <span style={{ ...labelStyle, color: score && !playing ? accColor : labelStyle.color, fontWeight: 400 }}>Accuracy:</span>
-                        <span style={{ ...valueFont, color: accColor, fontWeight: 400 }}>{accValue}</span>
+                        <span style={labelStyle}>Accuracy:</span>
+                        <span style={{ ...valueFont, color: accValColor, fontWeight: 500 }}>{accValue}</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
                         <span style={labelStyle}>Duration:</span>
-                        <span style={{ ...valueFont, color: score && !playing ? '#7A7060' : '#DDD8CA', fontWeight: 300 }}>{durValue}</span>
+                        <span style={{ ...valueFont, color: durValColor, fontWeight: 500 }}>{durValue}</span>
                       </div>
                     </>
                   )
@@ -2747,46 +2757,66 @@ export default function RhythmPage() {
             )}
 
 
-            {/* Bottom: Preview + Start/Stop + TAP (desktop/landscape; matches portrait) */}
+            {/* Bottom: Mixer + Preview + Start/Stop + TAP (desktop) */}
             <div className="nl-rt-tapbar" style={{ flexShrink: 0 }}>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', marginBottom: '10px', width: '100%' }}>
                 <button
                   type="button"
-                  onClick={previewing ? stop : startPreview}
-                  disabled={playing}
-                  title={previewing ? 'Stop preview' : 'Preview rhythm'}
-                  onKeyDown={e => e.code === 'Space' && e.preventDefault()}
+                  onClick={() => setShowMixer(v => !v)}
                   style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    border: '1px solid ' + (previewing ? '#B5402A' : '#DDD8CA'),
-                    background: previewing ? '#B5402A' : 'white',
-                    color: previewing ? 'white' : '#7A7060',
-                    fontSize: 'var(--nl-text-ui)',
-                    cursor: playing ? 'default' : 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    padding: '8px 14px',
+                    borderRadius: '20px',
+                    border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'),
+                    background: showMixer ? '#1A1A18' : 'white',
+                    color: showMixer ? 'white' : '#7A7060',
+                    fontFamily: F,
+                    fontSize: 'var(--nl-text-compact)',
+                    fontWeight: 400,
+                    cursor: 'pointer',
                     flexShrink: 0,
-                    opacity: playing ? 0.4 : 1,
                   }}
                 >
-                  {previewing ? '■' : '▶'}
+                  Mixer
                 </button>
-                {!playing ? (
-                  <button onClick={start}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+                  <button
+                    type="button"
+                    onClick={previewing ? stop : startPreview}
+                    disabled={playing}
+                    title={previewing ? 'Stop preview' : 'Preview rhythm'}
                     onKeyDown={e => e.code === 'Space' && e.preventDefault()}
-                    style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
-                    {score ? 'Try Again' : 'Start'}
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      border: '1px solid ' + (previewing ? '#B5402A' : '#DDD8CA'),
+                      background: previewing ? '#B5402A' : 'white',
+                      color: previewing ? 'white' : '#7A7060',
+                      fontSize: 'var(--nl-text-ui)',
+                      cursor: playing ? 'default' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      opacity: playing ? 0.4 : 1,
+                    }}
+                  >
+                    {previewing ? '■' : '▶'}
                   </button>
-                ) : (
-                  <button onClick={stop}
-                    onKeyDown={e => e.code === 'Space' && e.preventDefault()}
-                    style={{ background: 'none', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer', backgroundColor: 'rgba(255,255,255,0.7)' }}>
-                    Stop
-                  </button>
-                )}
+                  {!playing ? (
+                    <button onClick={start}
+                      onKeyDown={e => e.code === 'Space' && e.preventDefault()}
+                      style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+                      {score ? 'Try Again' : 'Start'}
+                    </button>
+                  ) : (
+                    <button onClick={stop}
+                      onKeyDown={e => e.code === 'Space' && e.preventDefault()}
+                      style={{ background: 'none', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer', backgroundColor: 'rgba(255,255,255,0.7)' }}>
+                      Stop
+                    </button>
+                  )}
+                </div>
               </div>
 
               <button
