@@ -348,8 +348,12 @@ export default function ScaleFingeringsPage() {
   })()
 
   const ascNotes = isMajor ? MAJOR_SCALE_NOTES[selectedKey] : MINOR_SCALE_NOTES[selectedKey]
-  // Melodic minor descending = natural minor ascending (same notes as MINOR_SCALE_NOTES, ascending order)
-  const notes = ascNotes
+
+  // Melodic minor ascending: raise 6th (idx 5,12) and 7th (idx 6,13) by one semitone
+  // Melodic minor descending: natural minor ascending (unchanged)
+  const notes = (scaleType === 'melodic_minor' && direction === 'asc' && ascNotes)
+    ? ascNotes.map((n, i) => ([5, 6, 12, 13].includes(i) ? n + 1 : n))
+    : ascNotes
   const rhNotes = notes
   const lhNotes = notes?.map(m => m - 12)
 
@@ -369,12 +373,12 @@ export default function ScaleFingeringsPage() {
   })
 
   const keyBtn = (active: boolean, isCenter: boolean): React.CSSProperties => ({
-    padding: '6px 10px', borderRadius: '8px',
+    width: '46px', flexShrink: 0, padding: '6px 0', borderRadius: '8px',
     border: '1px solid ' + (active ? '#1A1A18' : isCenter ? '#888780' : '#D3D1C7'),
     background: active ? '#1A1A18' : 'white',
     color: active ? 'white' : '#1A1A18',
     fontFamily: SERIF, fontSize: '17px', fontWeight: isCenter ? 400 : 300,
-    cursor: 'pointer', minWidth: '38px', textAlign: 'center' as const,
+    cursor: 'pointer', textAlign: 'center' as const,
     transition: 'all 0.15s',
   })
 
@@ -412,21 +416,25 @@ export default function ScaleFingeringsPage() {
         </div>
 
         {/* Circle of fifths key selector */}
-        <div style={{ marginBottom: '28px', overflowX: 'auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'nowrap' as const, minWidth: 'max-content' }}>
-            {/* Flat side label */}
-            <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#B8B5AD', letterSpacing: '0.08em', marginRight: '4px' }}>♭</span>
-            {cofKeys.map(k => (
-              <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k, k === centerKey)}>
-                {displayMap[k]}
-              </button>
-            ))}
-            {/* Sharp side label */}
-            <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#B8B5AD', letterSpacing: '0.08em', marginLeft: '4px' }}>♯</span>
+        <div style={{ marginBottom: '28px' }}>
+          {/* ♭ / ♯ edge labels */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>♭ Flats</span>
+            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>Sharps ♯</span>
           </div>
-          <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#C0BDB7', marginTop: '6px' }}>
-            Flats ← circle of fifths → Sharps
-          </p>
+          {/* Fixed 13-slot row — C (major) and Am (minor) sit at slot 6 (center) */}
+          <div style={{ overflowX: 'auto' }}>
+            <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'nowrap' as const }}>
+              {/* Minor gets one empty spacer on the right to stay at 13 slots */}
+              {(isMajor ? cofKeys : [...cofKeys, null]).map((k, i) =>
+                k === null
+                  ? <div key="spacer" style={{ width: '46px', flexShrink: 0 }} />
+                  : <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k, k === centerKey)}>
+                      {displayMap[k]}
+                    </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Scale title + direction toggle */}
