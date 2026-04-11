@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { signOut } from '@/lib/auth'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import AuthModal from '@/components/AuthModal'
 
@@ -33,6 +33,26 @@ export default function SiteHeader() {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const mobileRef = useRef<HTMLDivElement>(null)
+  const navRef = useRef<HTMLElement>(null)
+  const itemRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const [pillRect, setPillRect] = useState<{ left: number; width: number } | null>(null)
+
+  const activeIdx = NAV.findIndex(item => item.match(pathname))
+
+  const movePillTo = useCallback((idx: number) => {
+    const item = itemRefs.current[idx]
+    const nav = navRef.current
+    if (!item || !nav) return
+    const ir = item.getBoundingClientRect()
+    const nr = nav.getBoundingClientRect()
+    setPillRect({ left: ir.left - nr.left, width: ir.width })
+  }, [])
+
+  // Initialise pill on active item after mount and route changes
+  useEffect(() => {
+    if (activeIdx >= 0) movePillTo(activeIdx)
+    else setPillRect(null)
+  }, [pathname, activeIdx, movePillTo])
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') return
@@ -85,24 +105,52 @@ export default function SiteHeader() {
         </Link>
 
         {/* Desktop nav — hidden on mobile via inline media-query workaround */}
-        <nav className="nl-desktop-nav">
-          {NAV.map(item => {
+        <nav
+          ref={navRef}
+          className="nl-desktop-nav"
+          style={{ position: 'relative' }}
+          onMouseLeave={() => { if (activeIdx >= 0) movePillTo(activeIdx); else setPillRect(null) }}
+        >
+          {/* Sliding pill */}
+          {pillRect && (
+            <div style={{
+              position: 'absolute',
+              left: pillRect.left,
+              width: pillRect.width,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              height: '32px',
+              background: 'white',
+              borderRadius: '20px',
+              border: '1px solid #D3D1C7',
+              boxShadow: '0 1px 4px rgba(26,26,24,0.07)',
+              transition: 'left 0.22s cubic-bezier(0.4,0,0.2,1), width 0.22s cubic-bezier(0.4,0,0.2,1)',
+              pointerEvents: 'none',
+              zIndex: 0,
+            }} />
+          )}
+          {NAV.map((item, idx) => {
             const active = item.match(pathname)
             return (
-              <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
-                <span style={{
-                  display: 'inline-block',
-                  fontFamily: F, fontSize: '13px', fontWeight: 300,
-                  color: active ? '#1A1A18' : '#888780',
-                  padding: '6px 14px', borderRadius: '20px',
-                  background: active ? 'white' : 'transparent',
-                  border: active ? '1px solid #D3D1C7' : '1px solid transparent',
-                  boxShadow: active ? '0 1px 4px rgba(26,26,24,0.07)' : 'none',
-                  transition: 'all 0.15s', cursor: 'pointer', letterSpacing: '0.01em',
-                }}>
-                  {item.label}
-                </span>
-              </Link>
+              <span
+                key={item.href}
+                ref={el => { itemRefs.current[idx] = el }}
+                onMouseEnter={() => movePillTo(idx)}
+                style={{ display: 'inline-block', position: 'relative', zIndex: 1 }}
+              >
+                <Link href={item.href} style={{ textDecoration: 'none' }}>
+                  <span style={{
+                    display: 'inline-block',
+                    fontFamily: F, fontSize: '13px', fontWeight: 300,
+                    color: active ? '#1A1A18' : '#888780',
+                    padding: '6px 14px',
+                    transition: 'color 0.15s',
+                    cursor: 'pointer', letterSpacing: '0.01em',
+                  }}>
+                    {item.label}
+                  </span>
+                </Link>
+              </span>
             )
           })}
         </nav>
