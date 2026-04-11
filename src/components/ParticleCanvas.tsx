@@ -2,20 +2,12 @@
 
 import { useEffect, useRef } from 'react'
 
-const PARTICLE_COUNT = 120
-const PROXIMITY = 140
-
-interface Particle {
-  x: number
-  y: number
-  vx: number
-  vy: number
-  baseAlpha: number
-}
-
-function rand(min: number, max: number) {
-  return Math.random() * (max - min) + min
-}
+const SPACING   = 28
+const PROXIMITY = 110
+const BASE_R    = 1
+const MAX_R     = 3
+const BASE_A    = 0.07
+const MAX_A     = 0.5
 
 export default function ParticleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -36,14 +28,6 @@ export default function ParticleCanvas() {
     resize()
     window.addEventListener('resize', resize)
 
-    const particles: Particle[] = Array.from({ length: PARTICLE_COUNT }, () => ({
-      x: rand(0, window.innerWidth),
-      y: rand(0, window.innerHeight),
-      vx: rand(-0.18, 0.18),
-      vy: rand(-0.18, 0.18),
-      baseAlpha: rand(0.03, 0.07),
-    }))
-
     function onMouseMove(e: MouseEvent) {
       mouse.x = e.clientX
       mouse.y = e.clientY
@@ -55,36 +39,33 @@ export default function ParticleCanvas() {
       const h = canvas!.height
       ctx!.clearRect(0, 0, w, h)
 
-      for (const p of particles) {
-        p.x += p.vx
-        p.y += p.vy
+      // Offset so grid is centered on canvas
+      const offsetX = (w % SPACING) / 2
+      const offsetY = (h % SPACING) / 2
 
-        // Wrap edges
-        if (p.x < 0) p.x += w
-        if (p.x > w) p.x -= w
-        if (p.y < 0) p.y += h
-        if (p.y > h) p.y -= h
+      for (let x = offsetX; x < w; x += SPACING) {
+        for (let y = offsetY; y < h; y += SPACING) {
+          const dx   = x - mouse.x
+          const dy   = y - mouse.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
 
-        const dx = p.x - mouse.x
-        const dy = p.y - mouse.y
-        const dist = Math.sqrt(dx * dx + dy * dy)
+          let alpha: number
+          let radius: number
 
-        let alpha: number
-        let radius: number
+          if (dist < PROXIMITY) {
+            const t = 1 - dist / PROXIMITY
+            alpha  = BASE_A + t * (MAX_A - BASE_A)
+            radius = BASE_R + t * (MAX_R - BASE_R)
+          } else {
+            alpha  = BASE_A
+            radius = BASE_R
+          }
 
-        if (dist < PROXIMITY) {
-          const t = 1 - dist / PROXIMITY
-          alpha  = p.baseAlpha + t * (0.35 - p.baseAlpha)
-          radius = 1 + t * 0.5
-        } else {
-          alpha  = p.baseAlpha
-          radius = 1
+          ctx!.beginPath()
+          ctx!.arc(x, y, radius, 0, Math.PI * 2)
+          ctx!.fillStyle = `rgba(26,26,24,${alpha})`
+          ctx!.fill()
         }
-
-        ctx!.beginPath()
-        ctx!.arc(p.x, p.y, radius, 0, Math.PI * 2)
-        ctx!.fillStyle = `rgba(26,26,24,${alpha})`
-        ctx!.fill()
       }
 
       raf = requestAnimationFrame(tick)
