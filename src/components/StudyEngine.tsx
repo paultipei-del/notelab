@@ -64,9 +64,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   function goPrev() { setFlipIndex(i => Math.max(i - 1, 0)); setFlipRevealed(false) }
   function goBack() {
     if (mode === 'play') { stopMicOld(); stopMicNew() }
-    const tag = deck.id.startsWith('cm-') ? 'cm' : deck.id.startsWith('ear-') ? 'ear' : deck.id.startsWith('symbols-') ? 'symbols' : null
-    if (deck.id.startsWith('sight-read-')) { router.push('/sight-read'); return }
-    if (tag) router.push('/collection?tag=' + tag); else router.push('/')
+    router.back()
   }
 
   const elapsedMs = Date.now() - stats.startTime
