@@ -41,10 +41,10 @@ const DESKTOP_METRO_CLICK_DELAY_SEC = 0.03
 const COUNTDOWN_DISPLAY_LEAD_SEC = 0
 
 const DIFFICULTY_COLORS: Record<number, string> = {
-  1: '#E1F5EE', 2: '#E8EEF9', 3: '#FEF3E2', 4: '#F9EEE8', 5: '#F3E8F9'
+  1: '#EDE8DF', 2: '#EDE8DF', 3: '#EDE8DF', 4: '#EDE8DF', 5: '#EDE8DF'
 }
 const DIFFICULTY_TEXT: Record<number, string> = {
-  1: '#0F6E56', 2: '#3A5A9B', 3: '#B5402A', 4: '#8A4A1A', 5: '#7A3A9B'
+  1: '#7A7060', 2: '#7A7060', 3: '#7A7060', 4: '#7A7060', 5: '#7A7060'
 }
 const DIFFICULTY_LABEL: Record<number, string> = {
   1: 'Beginner', 2: 'Elementary', 3: 'Intermediate', 4: 'Advanced', 5: 'Expert'
@@ -463,21 +463,21 @@ function LibraryPanel({
         style={{
           width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
           padding: '11px 16px',
-          borderBottom: isLastRow ? 'none' : '1px solid #F0EDE8',
-          background: isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8',
+          borderBottom: isLastRow ? 'none' : '1px solid #EDE8DF',
+          background: isCurrent ? '#F2EDDF' : isUnlocked ? 'white' : '#FDFAF3',
           cursor: isUnlocked ? 'pointer' : 'default',
           textAlign: 'left' as const, transition: 'background 0.1s', border: 'none',
-          borderBottomWidth: isLastRow ? 0 : 1, borderBottomStyle: 'solid' as const, borderBottomColor: '#F0EDE8',
+          borderBottomWidth: isLastRow ? 0 : 1, borderBottomStyle: 'solid' as const, borderBottomColor: '#EDE8DF',
         }}
-        onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#FEFCF8' }}
-        onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#FEF3E2' : isUnlocked ? 'white' : '#FAFAF8' }}>
+        onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#F2EDDF' }}
+        onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#F2EDDF' : isUnlocked ? 'white' : '#FDFAF3' }}>
         <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#DDD8CA', width: '24px', flexShrink: 0 }}>{gIdx}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: isUnlocked ? '#1A1A18' : '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{ex.title}</p>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>{ex.beats}/{ex.beat_type} · {DIFFICULTY_LABEL[ex.difficulty]}</p>
         </div>
         {!isUnlocked && <span style={{ fontSize: 'var(--nl-text-meta)', opacity: 0.5 }}>🔒</span>}
-        {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#65C366', fontWeight: 500 }}>✓</span>}
+        {isUnlocked && p?.completed && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#3B6D11', fontWeight: 500 }}>✓</span>}
         {isUnlocked && p && !p.completed && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B5402A' }}>{p.best_timing}%</span>}
         {isCurrent && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#B5402A', flexShrink: 0 }} />}
       </button>
@@ -504,7 +504,7 @@ function LibraryPanel({
       </button>
       {showUpload && (
         <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
-          style={{ border: `1px solid ${dragOver ? '#B5402A' : '#DDD8CA'}`, borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px 24px', textAlign: 'center' as const, background: dragOver ? '#FEF3E2' : 'white', transition: 'all 0.2s' }}>
+          style={{ border: `1px solid ${dragOver ? '#B5402A' : '#DDD8CA'}`, borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px 24px', textAlign: 'center' as const, background: dragOver ? '#F2EDDF' : 'white', transition: 'all 0.2s' }}>
           <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#7A7060', marginBottom: '4px' }}>Drop .mxl here</p>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA' }}>Export from MuseScore</p>
         </div>
@@ -531,13 +531,13 @@ function LibraryPanel({
         {!loading && tree.length > 0 && (
           <div style={{ display: 'flex', gap: '0', background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', overflow: 'hidden', minHeight: '400px' }}>
             {/* Left nav */}
-            <div style={{ width: '200px', flexShrink: 0, borderRight: '1px solid #F0EDE8', background: '#FAFAF8', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ width: '200px', flexShrink: 0, borderRight: '1px solid #EDE8DF', background: '#FDFAF3', display: 'flex', flexDirection: 'column' }}>
               {tree.map(program => {
                 const multiProgram = tree.length > 1
                 return (
                   <div key={program.slug}>
                     {multiProgram && (
-                      <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid #F0EDE8' }}>
+                      <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid #EDE8DF' }}>
                         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>{rhythmProgramTitle(program.slug)}</p>
                       </div>
                     )}
@@ -552,10 +552,10 @@ function LibraryPanel({
                           style={{
                             width: '100%', textAlign: 'left' as const, padding: '10px 16px',
                             background: isActive ? '#1A1A18' : 'transparent',
-                            border: 'none', borderBottom: '1px solid #F0EDE8',
+                            border: 'none', borderBottom: '1px solid #EDE8DF',
                             cursor: 'pointer', transition: 'background 0.1s',
                           }}
-                          onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#F0EDE8' }}
+                          onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#EDE8DF' }}
                           onMouseLeave={e => { e.currentTarget.style.background = isActive ? '#1A1A18' : 'transparent' }}>
                           <p style={{ fontFamily: SERIF, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: isActive ? 'white' : '#1A1A18', margin: '0 0 2px' }}>{cat.name}</p>
                           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: isActive ? 'rgba(255,255,255,0.5)' : '#B0AEA8', margin: 0 }}>{catDone}/{catTotal}</p>
@@ -573,7 +573,7 @@ function LibraryPanel({
                 const isLastLevel = levelIdx === activeCat.levels.length - 1
                 return (
                   <div key={levelNode.level}>
-                    <div style={{ padding: '8px 16px 6px', background: '#FAFAF8', borderBottom: '1px solid #F0EDE8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ padding: '8px 16px 6px', background: '#FDFAF3', borderBottom: '1px solid #EDE8DF', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Level {levelNode.level}</span>
                       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0AEA8' }}>{levelNode.exercises.filter(e => progress[e.id]?.completed).length}/{levelNode.exercises.length}</span>
                     </div>
@@ -634,9 +634,9 @@ function LibraryPanel({
                   padding: '12px 16px',
                   marginBottom: '6px',
                   borderRadius: programOpen ? '12px 12px 0 0' : '12px',
-                  border: '1px solid' + (programOpen ? '#3A3A38' : '#DDD8CA'),
+                  border: '1px solid' + (programOpen ? '#1A1A18' : '#DDD8CA'),
                   borderBottom: programOpen ? 'none' : '1px solid #DDD8CA',
-                  background: programOpen ? '#3A3A38' : 'white',
+                  background: programOpen ? '#1A1A18' : 'white',
                   cursor: 'pointer',
                   textAlign: 'left' as const,
                 }}
@@ -647,8 +647,8 @@ function LibraryPanel({
                 <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: programOpen ? 'rgba(255,255,255,0.5)' : '#7A7060' }}>
                   {programDone}/{programTotal}
                 </span>
-                <div style={{ width: '48px', height: '3px', background: programOpen ? 'rgba(255,255,255,0.2)' : '#F0EDE8', borderRadius: '2px', overflow: 'hidden' }}>
-                  <div style={{ width: `${programTotal ? (programDone / programTotal) * 100 : 0}%`, height: '100%', background: '#65C366', borderRadius: '2px' }} />
+                <div style={{ width: '48px', height: '3px', background: programOpen ? 'rgba(255,255,255,0.2)' : '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
+                  <div style={{ width: `${programTotal ? (programDone / programTotal) * 100 : 0}%`, height: '100%', background: '#B5402A', borderRadius: '2px' }} />
                 </div>
                 <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: programOpen ? 'rgba(255,255,255,0.6)' : '#7A7060' }}>{programOpen ? '▲' : '▼'}</span>
               </button>
@@ -670,8 +670,8 @@ function LibraryPanel({
                     <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: isCatOpen ? 'rgba(255,255,255,0.5)' : '#7A7060' }}>
                       {catDone}/{catTotal}
                     </span>
-                    <div style={{ width: '48px', height: '3px', background: isCatOpen ? 'rgba(255,255,255,0.2)' : '#F0EDE8', borderRadius: '2px', overflow: 'hidden' }}>
-                      <div style={{ width: `${catTotal ? (catDone / catTotal) * 100 : 0}%`, height: '100%', background: '#65C366', borderRadius: '2px' }} />
+                    <div style={{ width: '48px', height: '3px', background: isCatOpen ? 'rgba(255,255,255,0.2)' : '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div style={{ width: `${catTotal ? (catDone / catTotal) * 100 : 0}%`, height: '100%', background: '#B5402A', borderRadius: '2px' }} />
                     </div>
                     <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: isCatOpen ? 'rgba(255,255,255,0.6)' : '#7A7060' }}>{isCatOpen ? '▲' : '▼'}</span>
                   </button>
@@ -687,8 +687,8 @@ function LibraryPanel({
                             <div
                               style={{
                                 padding: '8px 16px 6px',
-                                background: '#FAFAF8',
-                                borderBottom: '1px solid #F0EDE8',
+                                background: '#FDFAF3',
+                                borderBottom: '1px solid #EDE8DF',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
@@ -2095,7 +2095,7 @@ export default function RhythmPage() {
           {/* Score */}
           <div style={{ height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {score && !playing && !countdown && (
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: pct >= 80 ? '#65C366' : '#1A1A18', margin: 0 }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: pct >= 80 ? '#3B6D11' : '#1A1A18', margin: 0 }}>
                 {score.hits}/{score.total} · {pct}% timing · {durationPct}% duration
               </p>
             )}
@@ -2385,7 +2385,7 @@ export default function RhythmPage() {
                   const durValue = score && !playing && score.durationTotal > 0
                     ? `${score.durationHits}/${score.durationTotal} · ${Math.round(score.durationHits / score.durationTotal * 100)}%`
                     : '—'
-                  const accColor = score && !playing ? (pct === 100 ? '#65C366' : '#1A1A18') : '#DDD8CA'
+                  const accColor = score && !playing ? (pct === 100 ? '#3B6D11' : '#1A1A18') : '#DDD8CA'
                   return (
                     <>
                       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
@@ -2400,7 +2400,7 @@ export default function RhythmPage() {
                   )
                 })()}
                 {score && !playing && score.restTaps > 0 && (
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#ED6765', margin: '2px 0 0', lineHeight: 1.2, textAlign: 'center' as const }}>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#A32D2D', margin: '2px 0 0', lineHeight: 1.2, textAlign: 'center' as const }}>
                     {score.restTaps} tap{score.restTaps > 1 ? 's' : ''} on rests
                   </p>
                 )}
