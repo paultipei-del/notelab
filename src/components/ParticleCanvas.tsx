@@ -2,13 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 
-const SPACING   = 28
-const PROXIMITY = 110
-const BASE_R    = 1
-const MAX_R     = 2
-const BASE_A    = 0.025
-const MAX_A     = 0.13
-
 export default function ParticleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -19,55 +12,85 @@ export default function ParticleCanvas() {
     if (!ctx) return
 
     let raf: number
-    const mouse = { x: -9999, y: -9999 }
+    let t = 0
+
+    // Normalised mouse position
+    const mouse = { x: -9999, y: -9999, weight: 0 }
+
+    // Offscreen canvas at 1/4 resolution
+    const off = document.createElement('canvas')
+    const offCtx = off.getContext('2d')!
 
     function resize() {
       canvas!.width  = window.innerWidth
       canvas!.height = window.innerHeight
+      off.width  = Math.ceil(window.innerWidth  / 4)
+      off.height = Math.ceil(window.innerHeight / 4)
     }
     resize()
     window.addEventListener('resize', resize)
 
     function onMouseMove(e: MouseEvent) {
-      mouse.x = e.clientX
-      mouse.y = e.clientY
+      mouse.x = e.clientX / window.innerWidth
+      mouse.y = e.clientY / window.innerHeight
+      mouse.weight = 1
+    }
+    function onMouseLeave() {
+      // weight decays per frame
     }
     window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseleave', onMouseLeave)
+
+    function clamp(v: number, lo: number, hi: number) {
+      return v < lo ? lo : v > hi ? hi : v
+    }
 
     function tick() {
-      const w = canvas!.width
-      const h = canvas!.height
-      ctx!.clearRect(0, 0, w, h)
+      const ow = off.width
+      const oh = off.height
+      const img = offCtx.createImageData(ow, oh)
+      const data = img.data
 
-      // Offset so grid is centered on canvas
-      const offsetX = (w % SPACING) / 2
-      const offsetY = (h % SPACING) / 2
+      // Decay mouse influence
+      if (mouse.weight > 0) mouse.weight = Math.max(0, mouse.weight - 0.02)
 
-      for (let x = offsetX; x < w; x += SPACING) {
-        for (let y = offsetY; y < h; y += SPACING) {
-          const dx   = x - mouse.x
-          const dy   = y - mouse.y
-          const dist = Math.sqrt(dx * dx + dy * dy)
+      for (let py = 0; py < oh; py++) {
+        for (let px = 0; px < ow; px++) {
+          const x = px
+          const y = py
 
-          let alpha: number
-          let radius: number
+          let n = Math.sin(x * 0.018 + t * 0.7) * Math.cos(y * 0.022 + t * 0.5) * 0.5
+                + Math.sin(x * 0.009 + y * 0.013 + t * 0.4) * 0.3
+                + Math.cos(x * 0.031 - y * 0.017 + t * 0.9) * 0.2
 
-          if (dist < PROXIMITY) {
-            const t = 1 - dist / PROXIMITY
-            alpha  = BASE_A + t * (MAX_A - BASE_A)
-            radius = BASE_R + t * (MAX_R - BASE_R)
-          } else {
-            alpha  = BASE_A
-            radius = BASE_R
+          // Mouse bulge in normalised space
+          if (mouse.weight > 0) {
+            const nx = px / ow
+            const ny = py / oh
+            const dx = nx - mouse.x
+            const dy = ny - mouse.y
+            const dist2 = dx * dx + dy * dy
+            n += Math.exp(-dist2 / 0.04) * 0.35 * mouse.weight
           }
 
-          ctx!.beginPath()
-          ctx!.arc(x, y, radius, 0, Math.PI * 2)
-          ctx!.fillStyle = `rgba(26,26,24,${alpha})`
-          ctx!.fill()
+          const alpha = clamp((n + 1) * 0.5, 0, 1) * 0.13
+          const i = (py * ow + px) * 4
+          data[i]     = 26
+          data[i + 1] = 26
+          data[i + 2] = 24
+          data[i + 3] = Math.round(alpha * 255)
         }
       }
 
+      offCtx.putImageData(img, 0, 0)
+
+      // Scale up to main canvas with smoothing
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height)
+      ctx!.imageSmoothingEnabled = true
+      ctx!.imageSmoothingQuality = 'high'
+      ctx!.drawImage(off, 0, 0, canvas!.width, canvas!.height)
+
+      t += 0.008
       raf = requestAnimationFrame(tick)
     }
 
@@ -77,6 +100,7 @@ export default function ParticleCanvas() {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseleave', onMouseLeave)
     }
   }, [])
 
