@@ -129,11 +129,11 @@ function ExerciseRow({
       {/* Row header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 14px', cursor: 'pointer' }}
         onClick={() => setOpen(o => !o)}>
-        <span style={{ fontFamily: SERIF, fontSize: '15px', color: '#F0EDE6', flex: 1 }}>{ex.title}</span>
-        <span style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92' }}>{ex.beats}/{ex.beat_type}</span>
-        <span style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92' }}>D{ex.difficulty}</span>
+        <span style={{ fontFamily: SERIF, fontSize: '15px', color: '#F7F4EF', flex: 1 }}>{ex.title}</span>
+        <span style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8' }}>{ex.beats}/{ex.beat_type}</span>
+        <span style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8' }}>D{ex.difficulty}</span>
         <span style={{ fontFamily: F, fontSize: '10px', color: '#B0AEA8' }}>Lv{ex.level} #{ex.order_index}</span>
-        <span style={{ fontFamily: F, fontSize: '11px', color: open ? '#1A1A18' : '#9E9A92' }}>{open ? '▲' : '▼'}</span>
+        <span style={{ fontFamily: F, fontSize: '11px', color: open ? '#1A1A18' : '#C4C0B8' }}>{open ? '▲' : '▼'}</span>
       </div>
 
       {/* Edit panel */}
@@ -141,51 +141,51 @@ function ExerciseRow({
         <div style={{ borderTop: '1px solid #F0EDE8', padding: '16px 14px', background: '#FAFAF8' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Title</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Title</label>
               <input value={fields.title} onChange={e => set('title', e.target.value)} style={smallInp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Category</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Category</label>
               <select value={fields.category} onChange={e => set('category', e.target.value)} style={smallInp}>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Category sort</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Category sort</label>
               <input type="number" value={fields.category_sort} onChange={e => set('category_sort', Number(e.target.value))} style={smallInp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Level</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Level</label>
               <input type="number" min={1} value={fields.level} onChange={e => set('level', Math.max(1, Number(e.target.value)))} style={smallInp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Order within level</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Order within level</label>
               <input type="number" min={0} value={fields.order_index} onChange={e => set('order_index', Number(e.target.value))} style={smallInp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Difficulty</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Difficulty</label>
               <select value={fields.difficulty} onChange={e => set('difficulty', Number(e.target.value))} style={smallInp}>
                 {DIFFICULTIES.map(d => <option key={d} value={d}>{d} — {DIFFICULTY_LABEL[d]}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Time Signature</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Time Signature</label>
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                 <select value={fields.beats} onChange={e => set('beats', Number(e.target.value))} style={{ ...smallInp, flex: 1 }}>
                   {[2,3,4,5,6,9,12].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
-                <span style={{ fontFamily: SERIF, fontSize: '18px', color: '#9E9A92' }}>/</span>
+                <span style={{ fontFamily: SERIF, fontSize: '18px', color: '#C4C0B8' }}>/</span>
                 <select value={fields.beat_type} onChange={e => set('beat_type', Number(e.target.value))} style={{ ...smallInp, flex: 1 }}>
                   {[2,4,8,16].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Program slug</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Program slug</label>
               <input value={fields.program_slug} onChange={e => set('program_slug', e.target.value)} style={smallInp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '4px' }}>Program sort</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '4px' }}>Program sort</label>
               <input type="number" value={fields.program_sort} onChange={e => set('program_sort', Number(e.target.value))} style={smallInp} />
             </div>
           </div>
@@ -199,7 +199,7 @@ function ExerciseRow({
             </button>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button type="button" onClick={() => { setOpen(false); setErr(null) }}
-                style={{ background: 'none', border: '1px solid #484542', borderRadius: '8px', color: '#9E9A92', fontFamily: F, fontSize: '12px', padding: '6px 14px', cursor: 'pointer' }}>
+                style={{ background: 'none', border: '1px solid #484542', borderRadius: '8px', color: '#C4C0B8', fontFamily: F, fontSize: '12px', padding: '6px 14px', cursor: 'pointer' }}>
                 Cancel
               </button>
               <button type="button" onClick={handleSave} disabled={saving}
@@ -307,79 +307,79 @@ export default function AdminRhythm() {
   const inp: React.CSSProperties = {
     width: '100%', padding: '10px 14px', borderRadius: '10px',
     border: '1px solid #484542', fontFamily: F, fontSize: '14px',
-    color: '#F0EDE6', background: '#2C2A27', outline: 'none', boxSizing: 'border-box'
+    color: '#F7F4EF', background: '#2C2A27', outline: 'none', boxSizing: 'border-box'
   }
 
   return (
     <div style={{ minHeight: '100vh', background: '#2C2A27', padding: '40px 32px' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#F0EDE6', marginBottom: '4px' }}>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#F7F4EF', marginBottom: '4px' }}>
           Rhythm Library Admin
         </h1>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', marginBottom: '40px' }}>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', marginBottom: '40px' }}>
           Upload and manage rhythm exercises (program → category → level)
         </p>
 
         {/* Upload */}
         <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '28px', marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '20px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '20px' }}>
             Upload Exercise
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Title</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Title</label>
               <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Quarter Notes #1" style={inp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Program slug</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Program slug</label>
               <input value={programSlug} onChange={e => setProgramSlug(e.target.value)} placeholder="core" style={inp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Program sort</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Program sort</label>
               <input type="number" value={programSort} onChange={e => setProgramSort(Number(e.target.value))} style={inp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Category</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Category</label>
               <select value={category} onChange={e => setCategory(e.target.value)} style={inp}>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Category sort</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Category sort</label>
               <input type="number" value={categorySort} onChange={e => setCategorySort(Number(e.target.value))} style={inp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Level</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Level</label>
               <input type="number" value={level} onChange={e => setLevel(Math.max(1, Number(e.target.value)))} min={1} style={inp} />
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Difficulty</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Difficulty</label>
               <select value={difficulty} onChange={e => setDifficulty(Number(e.target.value))} style={inp}>
                 {DIFFICULTIES.map(d => <option key={d} value={d}>{d} — {DIFFICULTY_LABEL[d]}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Time Signature</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Time Signature</label>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <select value={beats} onChange={e => setBeats(Number(e.target.value))} style={{ ...inp, flex: 1 }}>
                   {[2,3,4,5,6,9,12].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
-                <span style={{ fontFamily: SERIF, fontSize: '20px', color: '#9E9A92' }}>/</span>
+                <span style={{ fontFamily: SERIF, fontSize: '20px', color: '#C4C0B8' }}>/</span>
                 <select value={beatType} onChange={e => setBeatType(Number(e.target.value))} style={{ ...inp, flex: 1 }}>
                   {[2,4,8,16].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
             </div>
             <div>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>Order within level</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>Order within level</label>
               <input type="number" value={orderIndex} onChange={e => setOrderIndex(Number(e.target.value))} min={0} style={inp} />
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>MXL File</label>
+              <label style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }}>MXL File</label>
               <input type="file" accept=".mxl,.xml,.musicxml"
                 onChange={e => setFile(e.target.files?.[0] ?? null)}
-                style={{ fontFamily: F, fontSize: '13px', color: '#F0EDE6' }} />
-              {file && <p style={{ fontFamily: F, fontSize: '12px', color: '#9E9A92', marginTop: '4px' }}>{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
+                style={{ fontFamily: F, fontSize: '13px', color: '#F7F4EF' }} />
+              {file && <p style={{ fontFamily: F, fontSize: '12px', color: '#C4C0B8', marginTop: '4px' }}>{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
             </div>
           </div>
 
@@ -397,22 +397,22 @@ export default function AdminRhythm() {
 
         {/* Library */}
         <div>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '16px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '16px' }}>
             Library ({exercises.length})
           </p>
-          {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#9E9A92' }}>Loading…</p>}
+          {loading && <p style={{ fontFamily: F, fontSize: '13px', color: '#C4C0B8' }}>Loading…</p>}
           {!loading && exercises.length === 0 && (
-            <p style={{ fontFamily: F, fontSize: '13px', color: '#9E9A92' }}>No exercises yet.</p>
+            <p style={{ fontFamily: F, fontSize: '13px', color: '#C4C0B8' }}>No exercises yet.</p>
           )}
           {!loading && libraryTree.map(program => (
             <div key={program.slug} style={{ marginBottom: '28px' }}>
-              <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F0EDE6', marginBottom: '12px' }}>
-                {rhythmProgramTitle(program.slug)} <span style={{ fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>({program.slug})</span>
+              <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F7F4EF', marginBottom: '12px' }}>
+                {rhythmProgramTitle(program.slug)} <span style={{ fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>({program.slug})</span>
               </p>
               {program.categories.map(cat => (
                 <div key={`${program.slug}::${cat.name}`} style={{ marginBottom: '20px', marginLeft: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#F0EDE6', margin: 0 }}>{cat.name}</p>
+                    <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#F7F4EF', margin: 0 }}>{cat.name}</p>
                     <span style={{ fontFamily: F, fontSize: '10px', color: '#B0AEA8' }}>cat_sort={cat.category_sort}</span>
                     <button type="button" onClick={() => handleDeleteCategoryScope(program.slug, cat.name)}
                       style={{ background: 'none', border: '1px solid #F09595', borderRadius: '8px', color: '#E53935', fontFamily: F, fontSize: '11px', padding: '2px 8px', cursor: 'pointer' }}>
@@ -421,7 +421,7 @@ export default function AdminRhythm() {
                   </div>
                   {cat.levels.map(lvl => (
                     <div key={lvl.level} style={{ marginBottom: '12px', marginLeft: '12px' }}>
-                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '6px' }}>
+                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '6px' }}>
                         Level {lvl.level}
                       </p>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>

@@ -17,14 +17,14 @@ export default function FeedbackPage() {
 
         <button onClick={() => router.back()} style={{
           background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92',
+          fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8',
           padding: 0, marginBottom: '24px', display: 'block',
         }}>← Back</button>
 
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F0EDE6', marginBottom: '6px' }}>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F7F4EF', marginBottom: '6px' }}>
           Feedback
         </h1>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', margin: '0 0 32px', lineHeight: 1.6 }}>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', margin: '0 0 32px', lineHeight: 1.6 }}>
           Found a bug or have a suggestion? Let us know — every report helps make NoteLab Studio better.
         </p>
 

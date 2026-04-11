@@ -180,7 +180,7 @@ function CircleOfFifths({ selected, onSelect }: { selected: string, onSelect: (k
         const displayMinor = (k.alt && selected === k.alt) ? k.altMinor! : k.minor
         return (
           <text key={'mit-'+k.major} x={tx} y={ty} textAnchor="middle" dominantBaseline="middle"
-            fontSize="10" fontFamily={F} fill={isSelected ? 'white' : '#9E9A92'} fontWeight="300"
+            fontSize="10" fontFamily={F} fill={isSelected ? 'white' : '#C4C0B8'} fontWeight="300"
             onClick={() => onSelect(k.major)} style={{ cursor: 'pointer' }}>
             {displayMinor}
           </text>
@@ -476,12 +476,12 @@ export default function KeySignatures() {
   return (
     <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 24px 80px' }}>
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' as const }}>
 
           {/* Left: Circle of Fifths */}
           <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '16px' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92' }}>Circle of Fifths</p>
+            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8' }}>Circle of Fifths</p>
             <CircleOfFifths selected={selectedKey} onSelect={setSelectedKey} />
 
           </div>
@@ -492,22 +492,22 @@ export default function KeySignatures() {
             {/* Key name + info */}
             <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '8px' }}>
-                <h2 style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: '#F0EDE6' }}>{selectedKey} Major</h2>
-                <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>
+                <h2 style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: '#F7F4EF' }}>{selectedKey} Major</h2>
+                <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>
                   {keyInfo.sharps > 0 ? `${keyInfo.sharps} sharp${keyInfo.sharps > 1 ? 's' : ''}` :
                    keyInfo.flats > 0 ? `${keyInfo.flats} flat${keyInfo.flats > 1 ? 's' : ''}` : 'No sharps or flats'}
                 </span>
               </div>
               <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' as const }}>
                 <div>
-                  <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Relative Minor</p>
-                  <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F0EDE6' }}>{keyInfo.relativeMinor} minor</p>
+                  <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Relative Minor</p>
+                  <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F7F4EF' }}>{keyInfo.relativeMinor} minor</p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>
+                  <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>
                     {keyInfo.sharps > 0 ? 'Sharps' : keyInfo.flats > 0 ? 'Flats' : 'Notes'}
                   </p>
-                  <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#F0EDE6' }}>
+                  <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#F7F4EF' }}>
                     {keyInfo.sharps > 0 ? keyInfo.sharpNames.join('  ') :
                      keyInfo.flats > 0 ? keyInfo.flatNames.join('  ') : 'C D E F G A B'}
                   </p>
@@ -519,7 +519,7 @@ export default function KeySignatures() {
             <div style={{ display: 'flex', gap: '6px', marginBottom: '4px' }}>
               {(['signature', 'affekt', 'drill'] as const).map(tab => (
                 <button key={tab} onClick={() => setActiveTab(tab)}
-                  style={{ padding: '8px 18px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#484542'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                  style={{ padding: '8px 18px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#484542'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                   {tab === 'signature' ? 'Key Signature' : tab === 'affekt' ? 'Historical Affekt' : 'Drill'}
                 </button>
               ))}
@@ -530,11 +530,11 @@ export default function KeySignatures() {
 
             {activeTab === 'signature' && <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px 24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92' }}>Staff</p>
+                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8' }}>Staff</p>
                 <div style={{ display: 'flex', gap: '6px' }}>
                   {(['treble','bass','both'] as const).map(c => (
                     <button key={c} onClick={() => setClef(c)}
-                      style={{ padding: '4px 10px', borderRadius: '12px', border: '1px solid ' + (clef === c ? '#1A1A18' : '#484542'), background: clef === c ? '#1A1A18' : 'white', color: clef === c ? 'white' : '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                      style={{ padding: '4px 10px', borderRadius: '12px', border: '1px solid ' + (clef === c ? '#1A1A18' : '#484542'), background: clef === c ? '#1A1A18' : 'white', color: clef === c ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                       {c === 'both' ? 'Grand' : c.charAt(0).toUpperCase() + c.slice(1)}
                     </button>
                   ))}
@@ -553,46 +553,46 @@ export default function KeySignatures() {
                 <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '12px' }}>
                   {/* Source note */}
                   <div style={{ background: '#2C2A27', borderRadius: '12px', padding: '12px 16px' }}>
-                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.6 }}>
+                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.6 }}>
                       Based on C.F.D. Schubart's <em>Ideen zu einer Aestetik der Tonkunst</em> (1784) and Francesco Galeazzi's <em>Elementi teorico-pratici di musica</em> (1791). These describe the expressive character associated with each key in the Baroque and Classical eras.
                     </p>
                   </div>
                   {/* Major key */}
                   <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px 24px' }}>
-                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '12px' }}>{selectedKey} Major</p>
+                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '12px' }}>{selectedKey} Major</p>
                     {major?.schubart && (
                       <div style={{ marginBottom: '12px' }}>
                         <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#BA7517', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Schubart</p>
-                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1.7, fontStyle: 'italic' }}>"{major.schubart}"</p>
+                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#F7F4EF', lineHeight: 1.7, fontStyle: 'italic' }}>"{major.schubart}"</p>
                       </div>
                     )}
                     {major?.galeazzi && (
                       <div>
-                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#9E9A92', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
+                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#C4C0B8', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
                         <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#555', lineHeight: 1.7, fontStyle: 'italic' }}>"{major.galeazzi}"</p>
                       </div>
                     )}
                     {!major?.schubart && !major?.galeazzi && (
-                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>No historical description available for this key.</p>
+                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>No historical description available for this key.</p>
                     )}
                   </div>
                   {/* Relative minor */}
                   <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px 24px' }}>
-                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '12px' }}>{keyInfo.relativeMinor} minor (relative)</p>
+                    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '12px' }}>{keyInfo.relativeMinor} minor (relative)</p>
                     {minor?.schubart && (
                       <div style={{ marginBottom: '12px' }}>
                         <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#BA7517', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Schubart</p>
-                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1.7, fontStyle: 'italic' }}>"{minor.schubart}"</p>
+                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#F7F4EF', lineHeight: 1.7, fontStyle: 'italic' }}>"{minor.schubart}"</p>
                       </div>
                     )}
                     {minor?.galeazzi && (
                       <div>
-                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#9E9A92', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
+                        <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, color: '#C4C0B8', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
                         <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#555', lineHeight: 1.7, fontStyle: 'italic' }}>"{minor.galeazzi}"</p>
                       </div>
                     )}
                     {!minor?.schubart && !minor?.galeazzi && (
-                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>No historical description available for this key.</p>
+                      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>No historical description available for this key.</p>
                     )}
                   </div>
                 </div>
@@ -604,18 +604,18 @@ export default function KeySignatures() {
 
             {activeTab === 'signature' && <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px 24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92' }}>Piano</p>
+                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8' }}>Piano</p>
                 <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
                   <button onClick={() => { setShowScale(true); setShowRelativeOnPiano(false); playScale() }}
-                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid ' + (!showRelativeOnPiano && showScale ? '#1A1A18' : '#484542'), background: !showRelativeOnPiano && showScale ? '#1A1A18' : 'white', color: !showRelativeOnPiano && showScale ? 'white' : '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid ' + (!showRelativeOnPiano && showScale ? '#1A1A18' : '#484542'), background: !showRelativeOnPiano && showScale ? '#1A1A18' : 'white', color: !showRelativeOnPiano && showScale ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                     ▶ {selectedKey} Major
                   </button>
                   <button onClick={() => { setShowScale(true); setShowRelativeOnPiano(true); playRelativeMinor() }}
-                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid ' + (showRelativeOnPiano ? '#1A1A18' : '#484542'), background: showRelativeOnPiano ? '#1A1A18' : 'white', color: showRelativeOnPiano ? 'white' : '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid ' + (showRelativeOnPiano ? '#1A1A18' : '#484542'), background: showRelativeOnPiano ? '#1A1A18' : 'white', color: showRelativeOnPiano ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                     ▶ {keyInfo.relativeMinor} minor
                   </button>
                   <button onClick={() => setShowScale(!showScale)}
-                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid #484542', background: '#353330', color: '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid #484542', background: '#353330', color: '#C4C0B8', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
                     {showScale ? 'Hide' : 'Show'}
                   </button>
                 </div>

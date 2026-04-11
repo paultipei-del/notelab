@@ -396,21 +396,21 @@ export default function GeneratePage() {
     return true
   })
 
-  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #484542', fontFamily: F, fontSize: '13px', color: '#F0EDE6', background: '#2C2A27', outline: 'none', width: '100%', boxSizing: 'border-box' }
-  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#484542'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#9E9A92' })
-  const lbl: React.CSSProperties = { fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }
+  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #484542', fontFamily: F, fontSize: '13px', color: '#F7F4EF', background: '#2C2A27', outline: 'none', width: '100%', boxSizing: 'border-box' }
+  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#484542'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#C4C0B8' })
+  const lbl: React.CSSProperties = { fontFamily: F, fontSize: '11px', color: '#C4C0B8', display: 'block', marginBottom: '6px' }
   const card: React.CSSProperties = { background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }
-  const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '16px' }
+  const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '16px' }
 
   return (
     <div style={{ minHeight: '100vh', background: '#2C2A27', padding: '40px 32px' }}>
       <div style={{ maxWidth: '860px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
           <div>
-            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#F0EDE6', marginBottom: '4px' }}>Rhythm Generator</h1>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>Configure and generate rhythm exercises for the library</p>
+            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#F7F4EF', marginBottom: '4px' }}>Rhythm Generator</h1>
+            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>Configure and generate rhythm exercises for the library</p>
           </div>
-          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: '12px', color: '#9E9A92', textDecoration: 'none', border: '1px solid #484542', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
+          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: '12px', color: '#C4C0B8', textDecoration: 'none', border: '1px solid #484542', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
@@ -423,7 +423,7 @@ export default function GeneratePage() {
                   {[2,3,4,5,6,9,12].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
-              <span style={{ fontFamily: SERIF, fontSize: '24px', color: '#9E9A92', paddingBottom: '6px' }}>/</span>
+              <span style={{ fontFamily: SERIF, fontSize: '24px', color: '#C4C0B8', paddingBottom: '6px' }}>/</span>
               <div style={{ flex: 1 }}>
                 <label style={lbl}>Beat type</label>
                 <select value={opts.timeSignature.beatType} onChange={e => set('timeSignature', { ...opts.timeSignature, beatType: Number(e.target.value) })} style={inp}>
@@ -476,7 +476,7 @@ export default function GeneratePage() {
               ].map(({ key, probKey, label }) => (
                 <div key={key}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontFamily: F, fontSize: '13px', color: '#F0EDE6' }}>{label}</span>
+                    <span style={{ fontFamily: F, fontSize: '13px', color: '#F7F4EF' }}>{label}</span>
                     <button onClick={() => set(key, !opts[key])} style={tog(!!opts[key])}>{opts[key] ? 'On' : 'Off'}</button>
                   </div>
                   {opts[key] && (
@@ -554,8 +554,8 @@ export default function GeneratePage() {
 
         {preview && showDiag && (
           <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px', marginBottom: '16px', overflowX: 'auto' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
-            <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#9E9A92', marginBottom: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
+            <p style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
+            <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#C4C0B8', marginBottom: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
               <span><span style={{ border: '2px solid #4A9EFF', padding: '0 3px', borderRadius: '2px' }}>note~</span> tie start</span>
               <span><span style={{ border: '2px solid #FF9E4A', padding: '0 3px', borderRadius: '2px' }}>~note</span> tie stop</span>
               <span style={{ color: '#4CAF50' }}>● on beat</span>
@@ -603,7 +603,7 @@ export default function GeneratePage() {
           </button>
           {preview && (
             <button onClick={() => setShowDiag(d => !d)}
-              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#9E9A92', border: '1px solid #484542', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#C4C0B8', border: '1px solid #484542', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
               {showDiag ? 'Hide Diag' : 'Diagnose'}
             </button>
           )}

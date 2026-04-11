@@ -164,12 +164,12 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
       }}>
         <div style={{ fontSize: '36px', marginBottom: '16px', lineHeight: 1 }}>𝄞</div>
 
-        <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '20px', color: '#F0EDE6', marginBottom: '4px', letterSpacing: '0.02em' }}>
+        <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '20px', color: '#F7F4EF', marginBottom: '4px', letterSpacing: '0.02em' }}>
           {card.audioLabel ?? 'Listen and identify'}
         </p>
 
         {card.audioHint && (
-          <p style={{ fontSize: '12px', fontWeight: 300, color: '#9E9A92', marginBottom: '20px' }}>
+          <p style={{ fontSize: '12px', fontWeight: 300, color: '#C4C0B8', marginBottom: '20px' }}>
             {card.audioHint}
           </p>
         )}
@@ -180,7 +180,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
           disabled={playState === 'loading' || playState === 'playing'}
           style={{
             background: playState === 'playing' ? '#EDE8DF' : '#1A1A18',
-            color: playState === 'playing' ? '#9E9A92' : 'white',
+            color: playState === 'playing' ? '#C4C0B8' : 'white',
             border: 'none',
             borderRadius: '50px',
             padding: '11px 32px',
@@ -199,11 +199,11 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
       {/* Answer — shown after first play, toggled by reveal */}
       {revealed ? (
         <div style={{ background: '#FAEEDA', border: '1px solid #FAC775', borderRadius: '14px', padding: '20px 24px', textAlign: 'center' }}>
-          <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F0EDE6', marginBottom: '6px' }}>
+          <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F7F4EF', marginBottom: '6px' }}>
             {card.back.split('—')[0].trim()}
           </p>
           {card.back.includes('—') && (
-            <p style={{ fontSize: '13px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.7 }}>
+            <p style={{ fontSize: '13px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.7 }}>
               {card.back.split('—').slice(1).join('—').trim()}
             </p>
           )}
@@ -220,7 +220,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
               fontFamily: 'var(--font-jost), sans-serif',
               fontSize: '12px',
               fontWeight: 300,
-              color: '#9E9A92',
+              color: '#C4C0B8',
               cursor: 'pointer',
             }}
           >

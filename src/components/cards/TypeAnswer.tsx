@@ -47,10 +47,10 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
   const questionContent = card.type === 'staff' && card.note && card.clef ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
       <StaffCard note={card.note} clef={card.clef} />
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#9E9A92' }}>Name this note</p>
+      <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8' }}>Name this note</p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 48px)', textAlign: 'center', color: '#F0EDE6', lineHeight: 1.2 }}>
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 48px)', textAlign: 'center', color: '#F7F4EF', lineHeight: 1.2 }}>
       {card.front}
     </p>
   )
@@ -85,7 +85,7 @@ export default function TypeAnswer({ card, onAnswer, onReveal }: TypeAnswerProps
         minHeight: '180px',
         justifyContent: 'center',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '20px' }}>
+        <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '20px' }}>
           Type your answer
         </span>
         {questionContent}

@@ -101,7 +101,7 @@ export default function NoteIDPage() {
     padding: '7px 16px', borderRadius: '20px',
     border: '1px solid ' + (active ? '#1A1A18' : '#484542'),
     background: active ? '#1A1A18' : 'white',
-    color: active ? 'white' : '#9E9A92',
+    color: active ? 'white' : '#C4C0B8',
     fontFamily: F, fontSize: '13px', fontWeight: 300,
     cursor: 'pointer', transition: 'all 0.15s',
   })
@@ -109,12 +109,12 @@ export default function NoteIDPage() {
   const stepBtn: React.CSSProperties = {
     width: '30px', height: '30px', borderRadius: '8px',
     border: '1px solid #484542', background: '#353330',
-    cursor: 'pointer', fontSize: '16px', color: '#F0EDE6',
+    cursor: 'pointer', fontSize: '16px', color: '#F7F4EF',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
   }
 
   const sectionLabel = (text: string) => (
-    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92', margin: '0 0 10px' }}>{text}</p>
+    <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#C4C0B8', margin: '0 0 10px' }}>{text}</p>
   )
 
   return (
@@ -122,9 +122,9 @@ export default function NoteIDPage() {
 
       {/* Page header */}
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 0' }}>
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F0EDE6', marginBottom: '6px' }}>Note Identification</h1>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', margin: '0 0 32px', lineHeight: 1.6 }}>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F7F4EF', marginBottom: '6px' }}>Note Identification</h1>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', margin: '0 0 32px', lineHeight: 1.6 }}>
           A note appears on the staff. Name it before the next one arrives. Choose your clef, pick a level, and answer with letter keys or a piano.
         </p>
 
@@ -172,8 +172,8 @@ export default function NoteIDPage() {
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542' }}
               >
-                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#F0EDE6', margin: '0 0 3px' }}>{l.label}</p>
-                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>{l.desc}</p>
+                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#F7F4EF', margin: '0 0 3px' }}>{l.label}</p>
+                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8', margin: 0 }}>{l.desc}</p>
               </button>
             ))}
           </div>
@@ -190,8 +190,8 @@ export default function NoteIDPage() {
               background: '#353330', cursor: 'pointer', textAlign: 'left' as const,
             }}
           >
-            <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#F0EDE6' }}>Custom Session</span>
-            <span style={{ fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>{showCustom ? '▲' : '▼'}</span>
+            <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#F7F4EF' }}>Custom Session</span>
+            <span style={{ fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>{showCustom ? '▲' : '▼'}</span>
           </button>
 
           {showCustom && (
@@ -224,7 +224,7 @@ export default function NoteIDPage() {
                   {config.groupSize >= 4 && (
                     <>
                       <button onClick={() => set('groupSize', Math.max(4, config.groupSize - 1))} style={stepBtn}>−</button>
-                      <span style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F0EDE6', minWidth: '24px', textAlign: 'center' as const }}>{config.groupSize}</span>
+                      <span style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F7F4EF', minWidth: '24px', textAlign: 'center' as const }}>{config.groupSize}</span>
                       <button onClick={() => set('groupSize', Math.min(10, config.groupSize + 1))} style={stepBtn}>+</button>
                     </>
                   )}
@@ -242,7 +242,7 @@ export default function NoteIDPage() {
                     const val = config.stopMode === 'exercises' ? config.stopValue : config.stopMinutes
                     set(key, Math.max(1, val - 1))
                   }} style={stepBtn}>−</button>
-                  <span style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F0EDE6', minWidth: '28px', textAlign: 'center' as const }}>
+                  <span style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#F7F4EF', minWidth: '28px', textAlign: 'center' as const }}>
                     {config.stopMode === 'exercises' ? config.stopValue : config.stopMinutes}
                   </span>
                   <button onClick={() => {
@@ -250,7 +250,7 @@ export default function NoteIDPage() {
                     const val = config.stopMode === 'exercises' ? config.stopValue : config.stopMinutes
                     set(key, Math.min(config.stopMode === 'exercises' ? 100 : 60, val + 1))
                   }} style={stepBtn}>+</button>
-                  <span style={{ fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>
+                  <span style={{ fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>
                     {config.stopMode === 'exercises' ? 'rounds' : 'min'}
                   </span>
                 </div>

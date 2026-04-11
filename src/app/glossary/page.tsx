@@ -20,7 +20,7 @@ const LANG_TEXT: Record<string, string> = {
   French: '#3A5A9B',
   German: '#2E6B3E',
   Italian: '#BA7517',
-  Abbreviation: '#9E9A92',
+  Abbreviation: '#C4C0B8',
 }
 
 export default function Glossary() {
@@ -55,17 +55,17 @@ export default function Glossary() {
     <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       {/* Search + filters */}
       <div style={{ background: '#353330', borderBottom: '1px solid #484542', padding: '12px 32px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const, alignItems: 'center', position: 'sticky' as const, top: '56px', zIndex: 9 }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', padding: 0, flexShrink: 0 }}>← Back</button>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, flexShrink: 0 }}>← Back</button>
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search terms or definitions…"
-          style={{ flex: 1, minWidth: '200px', padding: '10px 16px', borderRadius: '10px', border: '1px solid #484542', background: '#2C2A27', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', outline: 'none' }}
+          style={{ flex: 1, minWidth: '200px', padding: '10px 16px', borderRadius: '10px', border: '1px solid #484542', background: '#2C2A27', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F7F4EF', outline: 'none' }}
         />
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
           {LANGUAGES.map(lang => (
             <button key={lang} onClick={() => setFilter(lang)}
-              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (filter === lang ? '#1A1A18' : '#484542'), background: filter === lang ? '#1A1A18' : 'white', color: filter === lang ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (filter === lang ? '#1A1A18' : '#484542'), background: filter === lang ? '#1A1A18' : 'white', color: filter === lang ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
               {lang}
             </button>
           ))}
@@ -75,7 +75,7 @@ export default function Glossary() {
       {/* Results */}
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px 80px' }}>
         {grouped.length === 0 ? (
-          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#9E9A92', textAlign: 'center' as const, marginTop: '48px' }}>No terms found.</p>
+          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#C4C0B8', textAlign: 'center' as const, marginTop: '48px' }}>No terms found.</p>
         ) : grouped.map(([letter, entries]) => (
           <div key={letter} style={{ marginBottom: '32px' }}>
             <div style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#484542', marginBottom: '12px', borderBottom: '1px solid #EDE8DF', paddingBottom: '4px' }}>{letter}</div>
@@ -83,7 +83,7 @@ export default function Glossary() {
               {entries.map((entry, i) => (
                 <div key={i} style={{ background: '#353330', borderRadius: i === 0 ? '12px 12px 0 0' : i === entries.length - 1 ? '0 0 12px 12px' : '0', padding: '14px 20px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                   <div style={{ flex: '0 0 auto', width: '220px' }}>
-                    <span style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#F0EDE6', fontStyle: 'italic' }}>{entry.term}</span>
+                    <span style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#F7F4EF', fontStyle: 'italic' }}>{entry.term}</span>
                     <span style={{ display: 'inline-block', marginLeft: '8px', padding: '2px 8px', borderRadius: '10px', background: LANG_COLORS[entry.language], color: LANG_TEXT[entry.language], fontFamily: F, fontSize: '10px', fontWeight: 300, verticalAlign: 'middle' }}>{entry.language}</span>
                   </div>
                   <p style={{ flex: 1, fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#555', lineHeight: 1.6, margin: 0 }}>{entry.definition}</p>

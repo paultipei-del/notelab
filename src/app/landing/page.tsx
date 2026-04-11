@@ -42,10 +42,10 @@ export default function LandingPage() {
 
       {/* Nav */}
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px clamp(16px,4vw,48px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(245,242,236,0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(211,209,199,0.6)' }}>
-        <div style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#F0EDE6' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
+        <div style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#F7F4EF' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <a href="#pricing" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', textDecoration: 'none' }}>Pricing</a>
-          <button onClick={() => setShowAuth(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', background: 'none', cursor: 'pointer' }}>Sign In</button>
+          <a href="#pricing" style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', textDecoration: 'none' }}>Pricing</a>
+          <button onClick={() => setShowAuth(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F7F4EF', background: 'none', cursor: 'pointer' }}>Sign In</button>
           <button onClick={() => setShowAuth(true)} style={{ border: 'none', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 400, color: 'white', background: '#1A1A18', cursor: 'pointer' }}>Get Started</button>
         </div>
       </nav>
@@ -55,12 +55,12 @@ export default function LandingPage() {
         <div style={{ opacity: mounted ? 1 : 0, transform: mounted ? 'none' : 'translateY(20px)', transition: 'all 0.7s ease' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#353330', border: '1px solid #484542', borderRadius: '20px', padding: '5px 14px', marginBottom: '32px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4CAF50', display: 'inline-block' }} />
-            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92' }}>Now in Beta</span>
+            <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#C4C0B8' }}>Now in Beta</span>
           </div>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(36px,5vw,60px)', lineHeight: 1.05, color: '#F0EDE6', marginBottom: '24px', letterSpacing: '-0.01em' }}>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(36px,5vw,60px)', lineHeight: 1.05, color: '#F7F4EF', marginBottom: '24px', letterSpacing: '-0.01em' }}>
             Music theory,<br /><em>deeply</em> learned.
           </h1>
-          <p style={{ fontFamily: F, fontWeight: 300, fontSize: '16px', color: '#9E9A92', lineHeight: 1.8, marginBottom: '40px', maxWidth: '440px' }}>
+          <p style={{ fontFamily: F, fontWeight: 300, fontSize: '16px', color: '#C4C0B8', lineHeight: 1.8, marginBottom: '40px', maxWidth: '440px' }}>
             NoteLab Studio combines spaced repetition flashcards, real-time piano detection, and a complete reference library — built for Certificate of Merit students and serious musicians.
           </p>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -91,7 +91,7 @@ export default function LandingPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', background: '#2C2A27', borderRadius: '10px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4CAF50', display: 'inline-block', boxShadow: '0 0 0 3px rgba(76,175,80,0.2)' }} />
-              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>Listening for your piano…</span>
+              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>Listening for your piano…</span>
             </div>
             <div style={{ position: 'absolute' as const, top: '-16px', right: '-16px', background: '#BA7517', color: 'white', borderRadius: '10px', padding: '6px 14px', fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.08em', boxShadow: '0 4px 12px rgba(186,117,23,0.3)' }}>
               Real-time detection
@@ -104,7 +104,7 @@ export default function LandingPage() {
       <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 clamp(24px,4vw,48px) 100px' }}>
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#BA7517', marginBottom: '12px' }}>What's inside</p>
-          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#F0EDE6', letterSpacing: '-0.01em' }}>Everything you need to practice smarter</h2>
+          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#F7F4EF', letterSpacing: '-0.01em' }}>Everything you need to practice smarter</h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
           {FEATURES.map((f, i) => (
@@ -113,8 +113,8 @@ export default function LandingPage() {
                 <span style={{ fontSize: '32px', lineHeight: 1 }}>{f.icon}</span>
                 <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#BA7517', background: '#FDF5E6', border: '1px solid #F0D99A', borderRadius: '6px', padding: '3px 10px' }}>{f.tag}</span>
               </div>
-              <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#F0EDE6', marginBottom: '10px' }}>{f.title}</h3>
-              <p style={{ fontFamily: F, fontWeight: 300, fontSize: '13px', color: '#9E9A92', lineHeight: 1.7 }}>{f.desc}</p>
+              <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#F7F4EF', marginBottom: '10px' }}>{f.title}</h3>
+              <p style={{ fontFamily: F, fontWeight: 300, fontSize: '13px', color: '#C4C0B8', lineHeight: 1.7 }}>{f.desc}</p>
             </div>
           ))}
         </div>
@@ -125,20 +125,20 @@ export default function LandingPage() {
         <div style={{ maxWidth: '820px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#BA7517', marginBottom: '12px' }}>Simple pricing</p>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#F0EDE6', letterSpacing: '-0.01em' }}>Start free, upgrade when ready</h2>
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '40px', color: '#F7F4EF', letterSpacing: '-0.01em' }}>Start free, upgrade when ready</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
             <div style={{ background: '#2C2A27', borderRadius: '20px', border: '1px solid #484542', padding: '40px' }}>
-              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '16px' }}>Free</p>
-              <div style={{ fontFamily: SERIF, fontSize: '52px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1, marginBottom: '8px' }}>$0</div>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', marginBottom: '32px' }}>Forever free</p>
+              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '16px' }}>Free</p>
+              <div style={{ fontFamily: SERIF, fontSize: '52px', fontWeight: 300, color: '#F7F4EF', lineHeight: 1, marginBottom: '8px' }}>$0</div>
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', marginBottom: '32px' }}>Forever free</p>
               {['Note ID flashcards', 'Key signatures tool', 'Scale builder', 'Musical glossary', 'Basic decks'].map(item => (
                 <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                   <span style={{ color: '#4CAF50' }}>✓</span>
-                  <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6' }}>{item}</span>
+                  <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F7F4EF' }}>{item}</span>
                 </div>
               ))}
-              <button onClick={() => setShowAuth(true)} style={{ marginTop: '32px', width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #1A1A18', background: 'none', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', cursor: 'pointer' }}>Get started free</button>
+              <button onClick={() => setShowAuth(true)} style={{ marginTop: '32px', width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #1A1A18', background: 'none', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F7F4EF', cursor: 'pointer' }}>Get started free</button>
             </div>
             <div style={{ background: '#1A1A18', borderRadius: '20px', padding: '40px', position: 'relative' as const, overflow: 'hidden' }}>
               <div style={{ position: 'absolute' as const, top: '-60px', right: '-60px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(186,117,23,0.15)' }} />
@@ -159,7 +159,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(24px,4vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontFamily: F, fontSize: '16px', fontWeight: 300, letterSpacing: '0.08em', color: '#F0EDE6' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
+        <div style={{ fontFamily: F, fontSize: '16px', fontWeight: 300, letterSpacing: '0.08em', color: '#F7F4EF' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
         <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#B8B5AD' }}>Built for pianists and musicians. © {new Date().getFullYear()}</p>
       </footer>
 

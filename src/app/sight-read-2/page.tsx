@@ -10,7 +10,7 @@ export default function SightRead2() {
   return (
     <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 24px', display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', padding: 0, marginBottom: '16px', display: 'block', alignSelf: 'flex-start' }}>← Back</button>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '16px', display: 'block', alignSelf: 'flex-start' }}>← Back</button>
         {[
           { href: '/sight-read-2/treble', label: 'Treble Clef', desc: 'C4 – C6' },
           { href: '/sight-read-2/bass', label: 'Bass Clef', desc: 'C2 – C4' },
@@ -18,8 +18,8 @@ export default function SightRead2() {
         ].map(({ href, label, desc }) => (
           <Link key={href} href={href} style={{ textDecoration: 'none' }}>
             <div style={{ background: '#353330', border: '1px solid #484542', borderRadius: '16px', padding: '24px 28px', cursor: 'pointer' }}>
-              <h2 style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#F0EDE6', marginBottom: '4px' }}>{label}</h2>
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>{desc}</p>
+              <h2 style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#F7F4EF', marginBottom: '4px' }}>{label}</h2>
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>{desc}</p>
             </div>
           </Link>
         ))}

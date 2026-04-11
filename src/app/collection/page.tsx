@@ -78,11 +78,11 @@ function CollectionContent() {
     <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       {/* Hero */}
       <div style={{ padding: '24px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
-        {tag !== 'ear' && <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#9E9A92', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>}
-        <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F0EDE6', marginBottom: '12px', letterSpacing: '0.02em' }}>
+        {tag !== 'ear' && <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>}
+        <h1 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F7F4EF', marginBottom: '12px', letterSpacing: '0.02em' }}>
           {titles[tag] ?? tag}
         </h1>
-        <p style={{ fontSize: '15px', fontWeight: 300, color: '#9E9A92', maxWidth: '560px', lineHeight: 1.7, marginBottom: '32px' }}>
+        <p style={{ fontSize: '15px', fontWeight: 300, color: '#C4C0B8', maxWidth: '560px', lineHeight: 1.7, marginBottom: '32px' }}>
           {descriptions[tag] ?? ''}
         </p>
 
@@ -122,7 +122,7 @@ function CollectionContent() {
             })
             return groups.map(({ label, decks: groupDecks }) => (
               <div key={label} style={{ marginBottom: '40px' }}>
-                <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '16px' }}>{label}</h2>
+                <h2 style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#C4C0B8', marginBottom: '16px' }}>{label}</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', alignItems: 'stretch' }}>
                   {groupDecks.map(deck => (
                     <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
@@ -146,10 +146,10 @@ function CollectionContent() {
                         onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(26,26,24,0.06)' }}
                       >
                         <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: TAG_COLORS.free.bg, color: TAG_COLORS.free.color, fontFamily: 'var(--font-jost), sans-serif', width: 'fit-content' }}>Free</span>
-                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F0EDE6', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                        <p style={{ fontSize: '13px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
+                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F7F4EF', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
+                        <p style={{ fontSize: '13px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '16px', gap: '12px' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 300, color: '#9E9A92' }}>{deck.cards.length} cards</span>
+                          <span style={{ fontSize: '11px', fontWeight: 300, color: '#C4C0B8' }}>{deck.cards.length} cards</span>
                           <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517', flexShrink: 0 }}>Start →</span>
                         </div>
                       </div>
@@ -172,7 +172,7 @@ function CollectionContent() {
                     <span style={{ fontSize: '13px', fontWeight: 300, color: '#484542' }}>🔒</span>
                     <span style={{ fontSize: '11px', fontWeight: 300, color: '#484542', letterSpacing: '0.05em' }}>Locked</span>
                   </div>
-                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#9E9A92', marginBottom: '6px' }}>
+                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#C4C0B8', marginBottom: '6px' }}>
                     {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                   </h3>
                   <p style={{ fontSize: '12px', fontWeight: 300, color: '#484542', lineHeight: 1.6 }}>
@@ -198,12 +198,12 @@ function CollectionContent() {
                       <span style={{ fontSize: '11px', fontWeight: 300, color: '#BA7517', letterSpacing: '0.05em' }}>
                         {tag === 'ear' || tag === 'symbols' ? '' : `Level ${i + 1 === decks.length ? 'Advanced' : i + 1}`}
                       </span>
-                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#9E9A92' }}>{deck.cards.length} cards</span>
+                      <span style={{ fontSize: '11px', fontWeight: 300, color: '#C4C0B8' }}>{deck.cards.length} cards</span>
                     </div>
-                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F0EDE6', marginBottom: '6px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#F7F4EF', marginBottom: '6px' }}>
                       {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                     </h3>
-                    <p style={{ fontSize: '12px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.6, marginBottom: '16px' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.6, marginBottom: '16px' }}>
                       {deck.description}
                     </p>
                     <span style={{ fontSize: '12px', fontWeight: 300, color: '#BA7517' }}>Start →</span>
@@ -225,7 +225,7 @@ export default function CollectionPage() {
   return (
     <Suspense fallback={
       <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#9E9A92' }}>Loading…</p>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#C4C0B8' }}>Loading…</p>
       </div>
     }>
       <CollectionContent />

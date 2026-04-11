@@ -285,7 +285,7 @@ function HandPanel({ label, notes, fingering, clef, displayFrom, displayTo }: {
   const hand = clef === 'treble' ? 'rh' : 'lh'
   return (
     <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '24px', marginBottom: '16px' }}>
-      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '16px' }}>{label}</p>
+      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '16px' }}>{label}</p>
       <div style={{ overflowX: 'auto' }}>
         <KeyboardSVG notes={notes} fingering={fingering} hand={hand} displayFrom={displayFrom} displayTo={displayTo} />
       </div>
@@ -387,9 +387,9 @@ export default function ScaleFingeringsPage() {
 
   const keyBtn = (active: boolean, isCenter: boolean): React.CSSProperties => ({
     width: '46px', flexShrink: 0, padding: '6px 0', borderRadius: '8px',
-    border: '1px solid ' + (active ? '#1A1A18' : isCenter ? '#9E9A92' : '#484542'),
-    background: active ? '#F0EDE6' : '#3A3835',
-    color: active ? '#2C2A27' : '#F0EDE6',
+    border: '1px solid ' + (active ? '#1A1A18' : isCenter ? '#C4C0B8' : '#484542'),
+    background: active ? '#F7F4EF' : '#3A3835',
+    color: active ? '#2C2A27' : '#F7F4EF',
     fontFamily: SERIF, fontSize: '17px', fontWeight: isCenter ? 400 : 300,
     cursor: 'pointer', textAlign: 'center' as const,
     transition: 'all 0.15s',
@@ -415,9 +415,9 @@ export default function ScaleFingeringsPage() {
       <div style={{ maxWidth: '820px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 80px' }}>
 
         {/* Back + title */}
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F0EDE6', marginBottom: '6px' }}>Scale Fingerings</h1>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', margin: '0 0 28px', lineHeight: 1.6 }}>
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F7F4EF', marginBottom: '6px' }}>Scale Fingerings</h1>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', margin: '0 0 28px', lineHeight: 1.6 }}>
           Two-octave piano fingerings for both hands. Thumb crossings highlighted in amber.
         </p>
 
@@ -457,7 +457,7 @@ export default function ScaleFingeringsPage() {
         {/* Scale title + direction toggle */}
         <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '30px', color: '#F0EDE6', margin: 0, lineHeight: 1.2 }}>
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '30px', color: '#F7F4EF', margin: 0, lineHeight: 1.2 }}>
               {renderKeyLabel(displayMap[selectedKey])} {scaleLabel}
             </h2>
             {showDirection && (
@@ -472,7 +472,7 @@ export default function ScaleFingeringsPage() {
               />
             )}
           </div>
-          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', marginTop: '6px' }}>
+          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8', marginTop: '6px' }}>
             2 octaves · <span style={{ color: '#BA7517', fontWeight: 400 }}>●</span> thumb (1)
           </p>
         </div>

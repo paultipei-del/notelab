@@ -60,16 +60,16 @@ export default function SightReadPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 80px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', padding: 0, marginBottom: '28px', display: 'block' }}>← Back</button>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', padding: 0, marginBottom: '28px', display: 'block' }}>← Back</button>
 
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F0EDE6', marginBottom: '6px' }}>Staff Recognition</h1>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', margin: '0 0 28px', lineHeight: 1.6 }}>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#F7F4EF', marginBottom: '6px' }}>Staff Recognition</h1>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', margin: '0 0 28px', lineHeight: 1.6 }}>
           A note appears on the staff — play it on your piano before the next one arrives. Progress through levels to build speed and range.
         </p>
 
         {/* Clef selector */}
         <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '16px 20px', marginBottom: '20px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92', margin: '0 0 10px' }}>Clef</p>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#C4C0B8', margin: '0 0 10px' }}>Clef</p>
           <SlidingPills
             options={(['treble', 'bass', 'grand'] as Clef[]).map(c => ({ value: c, label: c.charAt(0).toUpperCase() + c.slice(1) }))}
             value={clef}
@@ -89,8 +89,8 @@ export default function SightReadPage() {
               onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542' }}
             >
-              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#F0EDE6', margin: '0 0 3px' }}>{l.label}</p>
-              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>{l.desc}</p>
+              <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#F7F4EF', margin: '0 0 3px' }}>{l.label}</p>
+              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8', margin: 0 }}>{l.desc}</p>
             </button>
           ))}
         </div>

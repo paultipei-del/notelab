@@ -30,7 +30,7 @@ export default function CMProgramPage() {
         {/* Breadcrumb */}
         <div style={{ marginBottom: '32px' }}>
           <Link href="/programs" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.04em' }}>
+            <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.04em' }}>
               ← Programs
             </span>
           </Link>
@@ -38,13 +38,13 @@ export default function CMProgramPage() {
 
         {/* Header */}
         <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '12px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '12px' }}>
             Certificate of Merit · California
           </p>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F0EDE6', marginBottom: '12px', letterSpacing: '0.02em' }}>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F7F4EF', marginBottom: '12px', letterSpacing: '0.02em' }}>
             CM Theory Prep
           </h1>
-          <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#9E9A92', maxWidth: '520px', lineHeight: 1.7, marginBottom: '0' }}>
+          <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#C4C0B8', maxWidth: '520px', lineHeight: 1.7, marginBottom: '0' }}>
             Complete flashcard collections for every CM level — Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training.
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function CMProgramPage() {
             <Link href="/account" style={{ textDecoration: 'none', flexShrink: 0 }}>
               <span style={{
                 display: 'inline-block', fontFamily: F, fontSize: '13px', fontWeight: 400,
-                color: '#F0EDE6', background: '#BA7517', borderRadius: '20px',
+                color: '#F7F4EF', background: '#BA7517', borderRadius: '20px',
                 padding: '10px 24px', letterSpacing: '0.02em',
               }}>
                 Purchase program →
@@ -115,9 +115,9 @@ export default function CMProgramPage() {
                   onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92' }}>{deck.cards.length} cards</span>
+                    <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8' }}>{deck.cards.length} cards</span>
                   </div>
-                  <p style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '17px', color: '#F0EDE6', marginBottom: '0', lineHeight: 1.2 }}>{label}</p>
+                  <p style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '17px', color: '#F7F4EF', marginBottom: '0', lineHeight: 1.2 }}>{label}</p>
                 </div>
               </Link>
             )

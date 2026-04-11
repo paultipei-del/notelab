@@ -132,7 +132,7 @@ function AccidentalStaff({ sharps, flats }: { sharps: number; flats: number }) {
       <text x={staffLeft} y={staffTop+36} fontSize="50" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
       {accidentals}
       {sharps === 0 && flats === 0 && (
-        <text x={accStartX} y={staffTop+12} fontSize="13" fontFamily="var(--font-jost), sans-serif" fill="#9E9A92">no accidentals</text>
+        <text x={accStartX} y={staffTop+12} fontSize="13" fontFamily="var(--font-jost), sans-serif" fill="#C4C0B8">no accidentals</text>
       )}
     </svg>
   )
@@ -168,7 +168,7 @@ function OrderDrill() {
       <div style={{ display: 'flex', gap: '8px' }}>
         {(['sharps', 'flats'] as const).map(m => (
           <button key={m} onClick={() => { setAccMode(m); setRevealed(false) }}
-            style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid ' + (accMode === m ? '#1A1A18' : '#484542'), background: accMode === m ? '#1A1A18' : 'white', color: accMode === m ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+            style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid ' + (accMode === m ? '#1A1A18' : '#484542'), background: accMode === m ? '#1A1A18' : 'white', color: accMode === m ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
             {m === 'sharps' ? '♯ Sharps' : '♭ Flats'}
           </button>
         ))}
@@ -176,7 +176,7 @@ function OrderDrill() {
 
       {/* Reference card */}
       <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '24px', textAlign: 'center' as const }}>
-        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
+        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
           Order of {accMode === 'sharps' ? 'Sharps' : 'Flats'}
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' as const }}>
@@ -185,7 +185,7 @@ function OrderDrill() {
               <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: revealed ? '#1A1A18' : '#2C2A27', border: '1px solid #484542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontSize: '18px', color: revealed ? 'white' : '#484542', transition: 'all 0.2s' }}>
                 {revealed ? note : i + 1}
               </div>
-              <span style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92' }}>{i + 1}</span>
+              <span style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8' }}>{i + 1}</span>
             </div>
           ))}
         </div>
@@ -194,7 +194,7 @@ function OrderDrill() {
           {revealed ? 'Hide' : 'Reveal'}
         </button>
         {revealed && (
-          <p style={{ fontFamily: SERIF, fontSize: '15px', fontStyle: 'italic', color: '#9E9A92', lineHeight: 1.6, marginTop: '12px' }}>
+          <p style={{ fontFamily: SERIF, fontSize: '15px', fontStyle: 'italic', color: '#C4C0B8', lineHeight: 1.6, marginTop: '12px' }}>
             "{mnemonic}"
           </p>
         )}
@@ -204,7 +204,7 @@ function OrderDrill() {
       <div style={{ display: 'flex', gap: '8px' }}>
         {(['blank', 'sequence'] as const).map(m => (
           <button key={m} onClick={() => setDrillMode(m)}
-            style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid ' + (drillMode === m ? '#BA7517' : '#484542'), background: drillMode === m ? '#BA7517' : 'white', color: drillMode === m ? 'white' : '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+            style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid ' + (drillMode === m ? '#BA7517' : '#484542'), background: drillMode === m ? '#BA7517' : 'white', color: drillMode === m ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
             {m === 'blank' ? 'Fill in blank' : 'Full sequence'}
           </button>
         ))}
@@ -248,7 +248,7 @@ function OrderBlankDrill({ mode }: { mode: 'sharps' | 'flats' }) {
   return (
     <div style={{ background: bg, borderRadius: '16px', border: '1px solid ' + borderColor, padding: '24px', transition: 'all 0.2s' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Fill in the blank</p>
+        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Fill in the blank</p>
         {streak > 0 && <p style={{ fontFamily: F, fontSize: '11px', color: '#BA7517' }}>🔥 {streak}</p>}
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' as const }}>
@@ -258,13 +258,13 @@ function OrderBlankDrill({ mode }: { mode: 'sharps' | 'flats' }) {
               {result ? order[blankIdx] : '?'}
             </div>
           ) : (
-            <div key={i} style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#2C2A27', border: '1px solid #484542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontSize: '18px', color: '#F0EDE6' }}>
+            <div key={i} style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#2C2A27', border: '1px solid #484542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontSize: '18px', color: '#F7F4EF' }}>
               {note}
             </div>
           )
         ))}
       </div>
-      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', marginBottom: '12px', textAlign: 'center' as const }}>
+      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', marginBottom: '12px', textAlign: 'center' as const }}>
         What is {mode === 'sharps' ? 'sharp' : 'flat'} #{blankIdx + 1}?
       </p>
       {!result ? (
@@ -311,7 +311,7 @@ function OrderSequenceDrill({ mode }: { mode: 'sharps' | 'flats' }) {
 
   return (
     <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid ' + (checked ? (allCorrect ? '#7EC86E' : '#F09595') : '#484542'), padding: '24px', transition: 'all 0.2s' }}>
-      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
+      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
         Write the full {mode === 'sharps' ? 'sharp' : 'flat'} order
       </p>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginBottom: '20px', flexWrap: 'wrap' as const }}>
@@ -321,8 +321,8 @@ function OrderSequenceDrill({ mode }: { mode: 'sharps' | 'flats' }) {
               onChange={e => { const n = [...inputs]; n[i] = e.target.value; setInputs(n) }}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); checkAll() } }}
               maxLength={3}
-              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid ' + (checked ? (results[i] ? '#7EC86E' : '#F09595') : '#484542'), background: checked ? (results[i] ? '#EAF3DE' : '#FCEBEB') : '#2C2A27', fontFamily: SERIF, fontSize: '16px', textAlign: 'center' as const, outline: 'none', color: '#F0EDE6', padding: 0 }} />
-            <span style={{ fontFamily: F, fontSize: '10px', color: checked ? (results[i] ? '#4CAF50' : '#E53935') : '#9E9A92' }}>
+              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid ' + (checked ? (results[i] ? '#7EC86E' : '#F09595') : '#484542'), background: checked ? (results[i] ? '#EAF3DE' : '#FCEBEB') : '#2C2A27', fontFamily: SERIF, fontSize: '16px', textAlign: 'center' as const, outline: 'none', color: '#F7F4EF', padding: 0 }} />
+            <span style={{ fontFamily: F, fontSize: '10px', color: checked ? (results[i] ? '#4CAF50' : '#E53935') : '#C4C0B8' }}>
               {checked ? order[i] : i + 1}
             </span>
           </div>
@@ -450,14 +450,14 @@ function KeyQuiz() {
         <div style={{ display: 'flex', gap: '6px' }}>
           {(['easy','sharps','flats','all'] as Difficulty[]).map(d => (
             <button key={d} onClick={() => changeDifficulty(d)}
-              style={{ padding: '4px 12px', borderRadius: '20px', border: '1px solid ' + (difficulty === d ? '#BA7517' : '#484542'), background: difficulty === d ? '#BA7517' : 'white', color: difficulty === d ? 'white' : '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ padding: '4px 12px', borderRadius: '20px', border: '1px solid ' + (difficulty === d ? '#BA7517' : '#484542'), background: difficulty === d ? '#BA7517' : 'white', color: difficulty === d ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
               {d === 'easy' ? 'Easy' : d === 'sharps' ? '♯ only' : d === 'flats' ? '♭ only' : 'All'}
             </button>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {score.total > 0 && (
-            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>
               {score.correct}/{score.total} · {pct}%
             </p>
           )}
@@ -470,7 +470,7 @@ function KeyQuiz() {
 
       {/* Question card */}
       <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '28px 24px', textAlign: 'center' as const }}>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', marginBottom: '20px', lineHeight: 1.6 }}>{prompt}</p>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F7F4EF', marginBottom: '20px', lineHeight: 1.6 }}>{prompt}</p>
         {q.type === 'staff-to-name' && (
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
             <AccidentalStaff sharps={q.sharps} flats={q.flats} />
@@ -518,7 +518,7 @@ export default function KeyDrill() {
       <div style={{ display: 'flex', gap: '8px' }}>
         {(['order', 'quiz'] as const).map(m => (
           <button key={m} onClick={() => setMode(m)}
-            style={{ padding: '7px 18px', borderRadius: '20px', border: '1px solid ' + (mode === m ? '#BA7517' : '#484542'), background: mode === m ? '#BA7517' : 'white', color: mode === m ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+            style={{ padding: '7px 18px', borderRadius: '20px', border: '1px solid ' + (mode === m ? '#BA7517' : '#484542'), background: mode === m ? '#BA7517' : 'white', color: mode === m ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
             {m === 'order' ? '♯♭ Order' : '? Key ID'}
           </button>
         ))}

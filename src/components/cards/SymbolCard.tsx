@@ -33,7 +33,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
           fontFamily: 'Bravura, serif',
           fontSize: '96px',
           lineHeight: 1.4,
-          color: '#F0EDE6',
+          color: '#F7F4EF',
           letterSpacing: '0.05em',
           marginBottom: hasLabel ? '16px' : '0',
         }}>
@@ -44,7 +44,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-jost), sans-serif',
             fontSize: '13px',
             fontWeight: 300,
-            color: '#9E9A92',
+            color: '#C4C0B8',
             letterSpacing: '0.05em',
           }}>
             {card.symbolLabel}
@@ -65,7 +65,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-cormorant), serif',
             fontWeight: 400,
             fontSize: '22px',
-            color: '#F0EDE6',
+            color: '#F7F4EF',
             marginBottom: '8px',
           }}>
             {card.symbolName ?? card.back.split('—')[0].trim()}
@@ -74,7 +74,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-jost), sans-serif',
             fontSize: '14px',
             fontWeight: 300,
-            color: '#9E9A92',
+            color: '#C4C0B8',
             lineHeight: 1.7,
           }}>
             {card.back}
@@ -86,7 +86,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
             fontFamily: 'var(--font-jost), sans-serif',
             fontSize: '13px',
             fontWeight: 300,
-            color: '#9E9A92',
+            color: '#C4C0B8',
             letterSpacing: '0.05em',
           }}>
             Tap to reveal

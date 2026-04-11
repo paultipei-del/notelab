@@ -265,9 +265,9 @@ export default function PitchDiagnostic() {
   return (
     <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #484542', background: '#353330' }}>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#F0EDE6' }}>Pitch Detection Calibration</h1>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#F7F4EF' }}>Pitch Detection Calibration</h1>
         <div style={{ display: 'flex', gap: '10px' }}>
-          {isRunning && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: F, fontSize: '13px', color: '#9E9A92', cursor: 'pointer' }}>Abort</button>}
+          {isRunning && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: F, fontSize: '13px', color: '#C4C0B8', cursor: 'pointer' }}>Abort</button>}
           {!isRunning && <button onClick={startRun} style={{ padding: '8px 20px', borderRadius: '10px', border: 'none', background: '#1A1A18', color: 'white', fontFamily: F, fontSize: '13px', cursor: 'pointer' }}>▶ Start Test</button>}
         </div>
       </div>
@@ -281,8 +281,8 @@ export default function PitchDiagnostic() {
           <div style={{ background: isRunning ? '#FAEEDA' : 'white', borderRadius: '16px', border: '1px solid ' + (isRunning ? '#BA7517' : '#484542'), padding: '20px' }}>
             {phase === 'idle' && (
               <>
-                <p style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Instructions</p>
-                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1.7 }}>
+                <p style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Instructions</p>
+                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F7F4EF', lineHeight: 1.7 }}>
                   Set your parameters, choose a sequence, then press Start. The tool will prompt you to play each note on the piano in order. Play the note, hold it briefly, then lift. It will automatically advance.
                 </p>
               </>
@@ -292,8 +292,8 @@ export default function PitchDiagnostic() {
                 <p style={{ fontFamily: F, fontSize: '10px', color: '#BA7517', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>
                   {phase === 'dead' ? `Clearing… (${deadWindow}ms)` : 'Listening'}
                 </p>
-                <p style={{ fontFamily: SERIF, fontSize: '56px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1, marginBottom: '8px' }}>{currentNote}</p>
-                <p style={{ fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>Note {noteIdx + 1} of {seq.length}</p>
+                <p style={{ fontFamily: SERIF, fontSize: '56px', fontWeight: 300, color: '#F7F4EF', lineHeight: 1, marginBottom: '8px' }}>{currentNote}</p>
+                <p style={{ fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>Note {noteIdx + 1} of {seq.length}</p>
                 {liveDetected && (
                   <p style={{ fontFamily: F, fontSize: '13px', color: pitchMatch(liveDetected, currentNote) ? '#4CAF50' : '#E53935', marginTop: '8px' }}>
                     Hearing: {liveDetected}
@@ -304,8 +304,8 @@ export default function PitchDiagnostic() {
             {phase === 'done' && (
               <>
                 <p style={{ fontFamily: F, fontSize: '10px', color: '#4CAF50', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Complete</p>
-                <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#F0EDE6' }}>{latestRun?.accuracy}% accurate</p>
-                <p style={{ fontFamily: F, fontSize: '12px', color: '#9E9A92', marginTop: '4px' }}>Avg latency: {latestRun?.avgLatencyMs}ms</p>
+                <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#F7F4EF' }}>{latestRun?.accuracy}% accurate</p>
+                <p style={{ fontFamily: F, fontSize: '12px', color: '#C4C0B8', marginTop: '4px' }}>Avg latency: {latestRun?.avgLatencyMs}ms</p>
               </>
             )}
           </div>
@@ -319,11 +319,11 @@ export default function PitchDiagnostic() {
 
           {/* Sequence selector */}
           <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
-            <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Sequence</p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Sequence</p>
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
               {Object.keys(SEQUENCES).map(seq => (
                 <button key={seq} onClick={() => setSelectedSeq(seq)} disabled={isRunning}
-                  style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === seq ? '#1A1A18' : '#484542'), background: selectedSeq === seq ? '#1A1A18' : 'white', color: selectedSeq === seq ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', cursor: isRunning ? 'default' : 'pointer', textAlign: 'left' as const }}>
+                  style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === seq ? '#1A1A18' : '#484542'), background: selectedSeq === seq ? '#1A1A18' : 'white', color: selectedSeq === seq ? 'white' : '#C4C0B8', fontFamily: F, fontSize: '12px', cursor: isRunning ? 'default' : 'pointer', textAlign: 'left' as const }}>
                   {seq} <span style={{ opacity: 0.6 }}>({SEQUENCES[seq].join(' → ').slice(0, 20)}…)</span>
                 </button>
               ))}
@@ -332,7 +332,7 @@ export default function PitchDiagnostic() {
 
           {/* Parameters */}
           <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
-            <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>Parameters</p>
+            <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>Parameters</p>
             {([
               ['Dead Window (ms)', deadWindow, 0, 1000, 50, setDeadWindow],
               ['Window Size', windowSize, 4, 20, 1, setWindowSize],
@@ -342,7 +342,7 @@ export default function PitchDiagnostic() {
             ] as [string, number, number, number, number, (v: number) => void][]).map(([label, value, min, max, step, set]) => (
               <div key={label} style={{ marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#F0EDE6' }}>{label}</p>
+                  <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#F7F4EF' }}>{label}</p>
                   <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, color: '#BA7517' }}>{value}</p>
                 </div>
                 <input type="range" min={min} max={max} step={step} value={value}
@@ -359,13 +359,13 @@ export default function PitchDiagnostic() {
           {/* Live note results */}
           {(isRunning || isDone) && currentResults.length > 0 && (
             <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Results</p>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Results</p>
               <div style={{ overflowX: 'auto' as const }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
                       {['Target','Detected','Correct','Latency','FP Before','Bleed After','Cents'].map(h => (
-                        <th key={h} style={{ padding: '6px 10px', textAlign: 'left' as const, fontFamily: F, fontSize: '10px', color: '#9E9A92', fontWeight: 400, textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>{h}</th>
+                        <th key={h} style={{ padding: '6px 10px', textAlign: 'left' as const, fontFamily: F, fontSize: '10px', color: '#C4C0B8', fontWeight: 400, textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -380,13 +380,13 @@ export default function PitchDiagnostic() {
                           </span>
                         </td>
                         <td style={{ padding: '6px 10px', fontFamily: F, fontSize: '12px', color: r.latencyMs > 400 ? '#E53935' : '#1A1A18' }}>{r.latencyMs}ms</td>
-                        <td style={{ padding: '6px 10px', fontFamily: F, fontSize: '12px', color: r.falsePositivesBefore.length > 0 ? '#E53935' : '#9E9A92' }}>
+                        <td style={{ padding: '6px 10px', fontFamily: F, fontSize: '12px', color: r.falsePositivesBefore.length > 0 ? '#E53935' : '#C4C0B8' }}>
                           {r.falsePositivesBefore.length > 0 ? r.falsePositivesBefore.join(', ') : '—'}
                         </td>
-                        <td style={{ padding: '6px 10px', fontFamily: F, fontSize: '12px', color: r.bleedAfter.length > 0 ? '#E53935' : '#9E9A92' }}>
+                        <td style={{ padding: '6px 10px', fontFamily: F, fontSize: '12px', color: r.bleedAfter.length > 0 ? '#E53935' : '#C4C0B8' }}>
                           {r.bleedAfter.length > 0 ? r.bleedAfter.join(', ') : '—'}
                         </td>
-                        <td style={{ padding: '6px 10px', fontFamily: F, fontSize: '12px', color: Math.abs(r.cents) > 20 ? '#E53935' : '#9E9A92' }}>
+                        <td style={{ padding: '6px 10px', fontFamily: F, fontSize: '12px', color: Math.abs(r.cents) > 20 ? '#E53935' : '#C4C0B8' }}>
                           {r.cents !== 0 ? (r.cents > 0 ? '+' : '') + r.cents + '¢' : '—'}
                         </td>
                       </tr>
@@ -401,7 +401,7 @@ export default function PitchDiagnostic() {
           {runs.length > 0 && (
             <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Run History</p>
+                <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Run History</p>
                 <div style={{ display: 'flex', gap: '8px' }}>
                                     <button onClick={() => {
                     const NL = String.fromCharCode(10)
@@ -418,11 +418,11 @@ export default function PitchDiagnostic() {
                     navigator.clipboard.writeText(lines.join(NL))
                     setCopied(true)
                     setTimeout(() => setCopied(false), 2000)
-                  }} style={{ fontFamily: F, fontSize: '11px', color: copied ? '#4CAF50' : '#9E9A92', background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>
+                  }} style={{ fontFamily: F, fontSize: '11px', color: copied ? '#4CAF50' : '#C4C0B8', background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>
                     {copied ? '✓ Copied' : 'Copy All'}
                   </button>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>Clear</button>
+                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>Clear</button>
                 </div>
                 </div>
               </div>
@@ -430,7 +430,7 @@ export default function PitchDiagnostic() {
                 <thead>
                   <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
                     {['Seq','Accuracy','Avg Latency','False Pos','Bleed','Dead Win','Win Size','Stable','Level'].map(h => (
-                      <th key={h} style={{ padding: '6px 8px', textAlign: 'left' as const, fontFamily: F, fontSize: '10px', color: '#9E9A92', fontWeight: 400, textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>{h}</th>
+                      <th key={h} style={{ padding: '6px 8px', textAlign: 'left' as const, fontFamily: F, fontSize: '10px', color: '#C4C0B8', fontWeight: 400, textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -440,12 +440,12 @@ export default function PitchDiagnostic() {
                       <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px' }}>{run.sequence}</td>
                       <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', fontWeight: 400, color: run.accuracy >= 90 ? '#4CAF50' : run.accuracy >= 70 ? '#BA7517' : '#E53935' }}>{run.accuracy}%</td>
                       <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: run.avgLatencyMs > 400 ? '#E53935' : '#1A1A18' }}>{run.avgLatencyMs}ms</td>
-                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: run.falsePositiveCount > 0 ? '#E53935' : '#9E9A92' }}>{run.falsePositiveCount}</td>
-                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: run.bleedCount > 0 ? '#E53935' : '#9E9A92' }}>{run.bleedCount}</td>
-                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>{run.params.deadWindow}ms</td>
-                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>{run.params.windowSize}</td>
-                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>{run.params.stableThreshold}</td>
-                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#9E9A92' }}>{run.params.levelThreshold}</td>
+                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: run.falsePositiveCount > 0 ? '#E53935' : '#C4C0B8' }}>{run.falsePositiveCount}</td>
+                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: run.bleedCount > 0 ? '#E53935' : '#C4C0B8' }}>{run.bleedCount}</td>
+                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>{run.params.deadWindow}ms</td>
+                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>{run.params.windowSize}</td>
+                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>{run.params.stableThreshold}</td>
+                      <td style={{ padding: '6px 8px', fontFamily: F, fontSize: '12px', color: '#C4C0B8' }}>{run.params.levelThreshold}</td>
                     </tr>
                   ))}
                 </tbody>

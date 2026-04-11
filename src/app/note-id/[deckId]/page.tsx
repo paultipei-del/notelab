@@ -199,7 +199,7 @@ function NoteIDExerciseInner() {
   if (!deck || pool.length === 0 || group.length === 0) {
     return (
       <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#9E9A92' }}>Loading…</p>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#C4C0B8' }}>Loading…</p>
       </div>
     )
   }
@@ -219,8 +219,8 @@ function NoteIDExerciseInner() {
     return (
       <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
         <div style={{ background: '#353330', borderRadius: '20px', border: '1px solid #484542', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '12px' }}>Session Complete</p>
-          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#F0EDE6', marginBottom: '32px' }}>{deck.title}</h2>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: '12px' }}>Session Complete</p>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#F7F4EF', marginBottom: '32px' }}>{deck.title}</h2>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '36px' }}>
             {[
               { num: Math.round((correct / total) * 100) + '%', label: 'Score' },
@@ -228,8 +228,8 @@ function NoteIDExerciseInner() {
               { num: prevBest > 0 ? (isNewBest ? finalTime : prevBest.toFixed(2)) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' },
             ].map(({ num, label }) => (
               <div key={label}>
-                <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#F0EDE6' }}>{num}</p>
-                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>{label}</p>
+                <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#F7F4EF' }}>{num}</p>
+                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>{label}</p>
               </div>
             ))}
           </div>
@@ -239,7 +239,7 @@ function NoteIDExerciseInner() {
               Again
             </button>
             <button onClick={() => router.push('/note-id')}
-              style={{ background: 'transparent', color: '#9E9A92', border: '1px solid #484542', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ background: 'transparent', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
               Back
             </button>
           </div>
@@ -255,10 +255,10 @@ function NoteIDExerciseInner() {
     <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: '#2C2A27', display: 'flex', flexDirection: 'column' }}>
       {/* Utility bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>← Back</button>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>← Back</button>
         <div style={{ display: 'flex', gap: '16px' }}>
-          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>Round {rounds + 1} / {stopRounds}</span>
-          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>{pct}%</span>
+          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>Round {rounds + 1} / {stopRounds}</span>
+          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>{pct}%</span>
         </div>
       </div>
 
@@ -270,7 +270,7 @@ function NoteIDExerciseInner() {
       {/* Card */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(4px,1vh,12px)', overflow: 'hidden' }}>
         <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(6px,1.2vh,20px) clamp(10px,2vw,24px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, minHeight: 0 }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: 'clamp(4px,1vh,12px)' }}>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#C4C0B8', marginBottom: 'clamp(4px,1vh,12px)' }}>
             What note is this?
           </p>
 
@@ -295,7 +295,7 @@ function NoteIDExerciseInner() {
                 <>
                   <span style={{ fontSize: '36px', color: '#E53935', lineHeight: 1, marginBottom: '4px' }}>✗</span>
                   <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: '11px', fontWeight: 300, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E53935', marginBottom: '2px' }}>Correct answer</p>
-                  <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '28px', fontWeight: 300, color: '#F0EDE6' }}>
+                  <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '28px', fontWeight: 300, color: '#F7F4EF' }}>
                     {notePitchClass(currentNote)}
                   </p>
                 </>
@@ -310,7 +310,7 @@ function NoteIDExerciseInner() {
               <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                 {SHARP_ROW.map((note, i) => note ? (
                   <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #484542', background: '#2C2A27', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#9E9A92', cursor: 'pointer' }}>
+                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #484542', background: '#2C2A27', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}>
                     {note}
                   </button>
                 ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
@@ -319,7 +319,7 @@ function NoteIDExerciseInner() {
               <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                 {NOTE_LETTERS.map(letter => (
                   <button key={letter} onClick={() => handleAnswer(letter)}
-                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#F0EDE6', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
+                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#F7F4EF', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
                     {letter}
                   </button>
                 ))}
@@ -328,7 +328,7 @@ function NoteIDExerciseInner() {
               <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                 {FLAT_ROW.map((note, i) => note ? (
                   <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #484542', background: '#2C2A27', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#9E9A92', cursor: 'pointer' }}>
+                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #484542', background: '#2C2A27', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}>
                     {note}
                   </button>
                 ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
@@ -369,7 +369,7 @@ export default function NoteIDExercise() {
   return (
     <Suspense fallback={
       <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#9E9A92' }}>Loading…</p>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#C4C0B8' }}>Loading…</p>
       </div>
     }>
       <NoteIDExerciseInner />

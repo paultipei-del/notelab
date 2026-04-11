@@ -63,7 +63,7 @@ const s = {
     fontFamily: 'var(--font-jost), sans-serif',
     fontSize: '14px',
     fontWeight: 300,
-    color: '#F0EDE6',
+    color: '#F7F4EF',
     outline: 'none',
   },
   label: {
@@ -71,7 +71,7 @@ const s = {
     fontWeight: 400,
     letterSpacing: '0.1em',
     textTransform: 'uppercase' as const,
-    color: '#9E9A92',
+    color: '#C4C0B8',
     marginBottom: '6px',
     display: 'block',
   },
@@ -191,12 +191,12 @@ async function handleBulkAdd() {
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#F0EDE6' }}>
+                <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#F7F4EF' }}>
                   {localDeck.title}
                 </h2>
                 <button
                   onClick={() => setEditingTitle(true)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#9E9A92', padding: '2px 8px' }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#C4C0B8', padding: '2px 8px' }}
                 >
                   Edit
                 </button>
@@ -206,7 +206,7 @@ async function handleBulkAdd() {
             {/* Description */}
             {!editingTitle && (
               <input
-                style={{ ...s.input, marginTop: '6px', fontSize: '13px', color: '#9E9A92' }}
+                style={{ ...s.input, marginTop: '6px', fontSize: '13px', color: '#C4C0B8' }}
                 value={descVal}
                 onChange={e => setDescVal(e.target.value)}
                 onBlur={() => { updateDeck(localDeck.id, { description: descVal }, userId); syncDeck({ ...localDeck, description: descVal }) }}
@@ -241,7 +241,7 @@ async function handleBulkAdd() {
 
             <button
               onClick={onClose}
-              style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#9E9A92', padding: '4px 8px' }}
+              style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#C4C0B8', padding: '4px 8px' }}
             >
               ✕
             </button>
@@ -262,7 +262,7 @@ async function handleBulkAdd() {
                   borderRadius: '20px',
                   border: `1px solid ${entryMode === mode ? '#1A1A18' : '#484542'}`,
                   background: entryMode === mode ? '#1A1A18' : 'transparent',
-                  color: entryMode === mode ? 'white' : '#9E9A92',
+                  color: entryMode === mode ? 'white' : '#C4C0B8',
                   fontFamily: 'var(--font-jost), sans-serif',
                   fontSize: '12px',
                   fontWeight: 300,
@@ -273,7 +273,7 @@ async function handleBulkAdd() {
                 {label}
               </button>
             ))}
-            <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: 300, color: '#9E9A92', alignSelf: 'center' }}>
+            <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: 300, color: '#C4C0B8', alignSelf: 'center' }}>
               {localDeck.cards.length} card{localDeck.cards.length !== 1 ? 's' : ''}
             </span>
           </div>
@@ -282,7 +282,7 @@ async function handleBulkAdd() {
           {entryMode === 'list' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {localDeck.cards.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#9E9A92', fontSize: '14px', fontWeight: 300 }}>
+                <div style={{ textAlign: 'center', padding: '40px', color: '#C4C0B8', fontSize: '14px', fontWeight: 300 }}>
                   No cards yet. Switch to "Add One" or "Bulk Import" to get started.
                 </div>
               )}
@@ -331,7 +331,7 @@ async function handleBulkAdd() {
                 <button style={s.btn('primary')} onClick={handleAddOne}>
                   Add Card
                 </button>
-                <span style={{ fontSize: '12px', color: '#9E9A92', fontWeight: 300 }}>
+                <span style={{ fontSize: '12px', color: '#C4C0B8', fontWeight: 300 }}>
                   or Cmd+Enter
                 </span>
               </div>
@@ -343,9 +343,9 @@ async function handleBulkAdd() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {[...localDeck.cards].reverse().slice(0, 5).map(card => (
                       <div key={card.id} style={{ display: 'flex', gap: '12px', padding: '10px 14px', background: '#353330', borderRadius: '8px', border: '1px solid #484542', fontSize: '13px', fontWeight: 300 }}>
-                        <span style={{ flex: 1, color: '#F0EDE6' }}>{card.front}</span>
+                        <span style={{ flex: 1, color: '#F7F4EF' }}>{card.front}</span>
                         <span style={{ color: '#484542' }}>→</span>
-                        <span style={{ flex: 2, color: '#9E9A92' }}>{card.back}</span>
+                        <span style={{ flex: 2, color: '#C4C0B8' }}>{card.back}</span>
                       </div>
                     ))}
                   </div>
@@ -359,7 +359,7 @@ async function handleBulkAdd() {
             <div style={{ maxWidth: '640px' }}>
               <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <label style={s.label}>Paste cards — one per line, front | back</label>
-                <span style={{ fontSize: '11px', color: '#9E9A92', fontWeight: 300 }}>separated by |</span>
+                <span style={{ fontSize: '11px', color: '#C4C0B8', fontWeight: 300 }}>separated by |</span>
               </div>
               <textarea
                 style={{ ...s.input, minHeight: '240px', resize: 'vertical' as const, lineHeight: 1.8, fontFamily: 'var(--font-jost), sans-serif' }}
@@ -412,7 +412,7 @@ function CardRow({ card, index, isEditing, onEdit, onSave, onCancel, onDelete }:
         />
         <div style={{ display: 'flex', gap: '6px' }}>
           <button onClick={() => onSave(front, back)} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer' }}>Save</button>
-          <button onClick={onCancel} style={{ background: 'transparent', color: '#9E9A92', border: '1px solid #484542', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onCancel} style={{ background: 'transparent', color: '#C4C0B8', border: '1px solid #484542', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     )
@@ -421,14 +421,14 @@ function CardRow({ card, index, isEditing, onEdit, onSave, onCancel, onDelete }:
   return (
     <div
       style={{ background: '#353330', border: '1px solid #484542', borderRadius: '10px', padding: '12px 16px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}
-      onMouseEnter={e => (e.currentTarget.style.borderColor = '#9E9A92')}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = '#C4C0B8')}
       onMouseLeave={e => (e.currentTarget.style.borderColor = '#484542')}
       onClick={onEdit}
     >
       <span style={{ fontSize: '11px', color: '#484542', fontWeight: 300, minWidth: '20px' }}>{index + 1}</span>
-      <span style={{ flex: 1, fontSize: '14px', fontWeight: 300, color: '#F0EDE6' }}>{card.front}</span>
+      <span style={{ flex: 1, fontSize: '14px', fontWeight: 300, color: '#F7F4EF' }}>{card.front}</span>
       <span style={{ color: '#484542', fontSize: '12px' }}>→</span>
-      <span style={{ flex: 2, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>{card.back}</span>
+      <span style={{ flex: 2, fontSize: '13px', fontWeight: 300, color: '#C4C0B8' }}>{card.back}</span>
       <button
         onClick={e => { e.stopPropagation(); onDelete() }}
         style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#484542', fontSize: '16px', padding: '0 4px', lineHeight: 1 }}

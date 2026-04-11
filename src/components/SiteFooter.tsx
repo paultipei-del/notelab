@@ -22,23 +22,23 @@ export default function SiteFooter() {
       flexWrap: 'wrap' as const,
       gap: '12px',
     }}>
-      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>
+      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8' }}>
         © {new Date().getFullYear()} NoteLab Studio
       </span>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
         <Link href="/feedback" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#F0EDE6')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#9E9A92')}
+          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#F7F4EF')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#C4C0B8')}
           >
             Feedback
           </span>
         </Link>
         <Link href="/privacy" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#F0EDE6')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#9E9A92')}
+          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#C4C0B8', cursor: 'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#F7F4EF')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#C4C0B8')}
           >
             Privacy Policy
           </span>

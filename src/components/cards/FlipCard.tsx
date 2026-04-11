@@ -43,34 +43,34 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
     fontWeight: 400,
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
-    color: '#9E9A92',
+    color: '#C4C0B8',
     marginBottom: '24px',
   }
 
   const frontContent = card.type === 'staff' && card.note && card.clef ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
       <StaffCard note={card.note} clef={card.clef} />
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.03em' }}>
+      <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.03em' }}>
         What note is this?
       </p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 52px)', textAlign: 'center', color: '#F0EDE6', letterSpacing: '0.01em', lineHeight: 1.2 }}>
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 52px)', textAlign: 'center', color: '#F7F4EF', letterSpacing: '0.01em', lineHeight: 1.2 }}>
       {card.front}
     </p>
   )
 
   const backContent = card.type === 'staff' ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '48px', textAlign: 'center', color: '#F0EDE6' }}>
+      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '48px', textAlign: 'center', color: '#F7F4EF' }}>
         {card.front}
       </p>
-      <p style={{ fontSize: '14px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.03em', textAlign: 'center' }}>
+      <p style={{ fontSize: '14px', fontWeight: 300, color: '#C4C0B8', letterSpacing: '0.03em', textAlign: 'center' }}>
         {card.back}
       </p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(22px, 4vw, 40px)', textAlign: 'center', color: '#F0EDE6', lineHeight: 1.3, padding: '0 16px' }}>
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(22px, 4vw, 40px)', textAlign: 'center', color: '#F7F4EF', lineHeight: 1.3, padding: '0 16px' }}>
       {card.back}
     </p>
   )

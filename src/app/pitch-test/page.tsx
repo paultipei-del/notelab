@@ -155,25 +155,25 @@ export default function PitchTest() {
   return (
     <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 24px' }}>
-        <button onClick={() => { stopMic(); router.back() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', color: '#9E9A92', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <button onClick={() => { stopMic(); router.back() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', color: '#C4C0B8', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         {/* Current note */}
         <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '32px', marginBottom: '16px', textAlign: 'center' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Play this note</p>
-          <h2 style={{ fontFamily: SERIF, fontSize: '48px', fontWeight: 300, color: '#F0EDE6', marginBottom: '16px' }}>{currentNote}</h2>
+          <p style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Play this note</p>
+          <h2 style={{ fontFamily: SERIF, fontSize: '48px', fontWeight: 300, color: '#F7F4EF', marginBottom: '16px' }}>{currentNote}</h2>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
             <GrandStaffCard note={currentNote} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', alignItems: 'center' }}>
             <div style={{ textAlign: 'center' as const }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92', marginBottom: '4px' }}>YIN/MPM/ACX</p>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', marginBottom: '4px' }}>YIN/MPM/ACX</p>
               <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: detected === currentNote ? '#4CAF50' : '#E53935' }}>{detected}</p>
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92' }}>{detectedFreq > 0 ? detectedFreq + ' Hz' : ''}</p>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8' }}>{detectedFreq > 0 ? detectedFreq + ' Hz' : ''}</p>
             </div>
             <div style={{ width: '1px', height: '60px', background: '#484542' }} />
             <div style={{ textAlign: 'center' as const }}>
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92', marginBottom: '4px' }}>SAD</p>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8', marginBottom: '4px' }}>SAD</p>
               <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: detectedSAD === currentNote ? '#4CAF50' : '#E53935' }}>{detectedSAD}</p>
-              <p style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92' }}>{detectedSADFreq > 0 ? detectedSADFreq + ' Hz' : ''}</p>
+              <p style={{ fontFamily: F, fontSize: '10px', color: '#C4C0B8' }}>{detectedSADFreq > 0 ? detectedSADFreq + ' Hz' : ''}</p>
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function PitchTest() {
         {/* Controls */}
         <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
           <button onClick={prev} disabled={idx === 0}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: F, fontSize: '13px', color: '#9E9A92', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.4 : 1 }}>
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #484542', background: '#353330', fontFamily: F, fontSize: '13px', color: '#C4C0B8', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.4 : 1 }}>
             ← Prev
           </button>
           <button onClick={logAndNext}
@@ -194,11 +194,11 @@ export default function PitchTest() {
         {log.length > 0 && (
           <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <p style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Log</p>
+              <p style={{ fontFamily: F, fontSize: '11px', color: '#C4C0B8', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Log</p>
               <button onClick={() => {
                 const text = log.map(e => `${e.note} | ACX: ${e.detected} ${e.freq}Hz | SAD: ${e.detectedSAD} ${e.freqSAD}Hz`).join('\n')
                 navigator.clipboard.writeText(text)
-              }} style={{ background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '3px 10px', fontFamily: F, fontSize: '11px', color: '#9E9A92', cursor: 'pointer' }}>
+              }} style={{ background: 'none', border: '1px solid #484542', borderRadius: '6px', padding: '3px 10px', fontFamily: F, fontSize: '11px', color: '#C4C0B8', cursor: 'pointer' }}>
                 Copy
               </button>
             </div>
@@ -207,10 +207,10 @@ export default function PitchTest() {
                 <div key={i} style={{ display: 'flex', gap: '12px', fontSize: '11px' }}>
                   <span style={{ width: '40px', fontWeight: 400 }}>{entry.note}</span>
                   <span style={{ width: '70px', color: entry.note === entry.detected ? '#4CAF50' : '#E53935' }}>ACX: {entry.detected}</span>
-                  <span style={{ width: '70px', color: '#9E9A92' }}>{entry.freq}Hz</span>
+                  <span style={{ width: '70px', color: '#C4C0B8' }}>{entry.freq}Hz</span>
                   <span style={{ width: '2px', background: '#484542' }} />
                   <span style={{ width: '70px', color: entry.note === entry.detectedSAD ? '#4CAF50' : '#E53935' }}>SAD: {entry.detectedSAD}</span>
-                  <span style={{ color: '#9E9A92' }}>{entry.freqSAD}Hz</span>
+                  <span style={{ color: '#C4C0B8' }}>{entry.freqSAD}Hz</span>
                 </div>
               ))}
             </div>

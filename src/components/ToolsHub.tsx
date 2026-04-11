@@ -17,11 +17,11 @@ export default function ToolsHub({ headingVariant = 'section' }: ToolsHubProps) 
     <div style={{ marginBottom: '64px' }}>
       <div style={{ marginBottom: pageHero ? '40px' : '24px' }}>
         {pageHero ? (
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F0EDE6', marginBottom: '12px', letterSpacing: '0.02em' }}>Tools</h1>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F7F4EF', marginBottom: '12px', letterSpacing: '0.02em' }}>Tools</h1>
         ) : (
-          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#F0EDE6', marginBottom: '4px' }}>Tools</h2>
+          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#F7F4EF', marginBottom: '4px' }}>Tools</h2>
         )}
-        <p style={{ fontFamily: F, fontSize: pageHero ? '15px' : '13px', fontWeight: 300, color: '#9E9A92', lineHeight: pageHero ? 1.7 : undefined, maxWidth: pageHero ? '560px' : undefined, margin: 0 }}>
+        <p style={{ fontFamily: F, fontSize: pageHero ? '15px' : '13px', fontWeight: 300, color: '#C4C0B8', lineHeight: pageHero ? 1.7 : undefined, maxWidth: pageHero ? '560px' : undefined, margin: 0 }}>
           Interactive exercises and reference tools
         </p>
       </div>
@@ -32,7 +32,7 @@ export default function ToolsHub({ headingVariant = 'section' }: ToolsHubProps) 
           return (
             <div key={group.label}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid #E8E4DC' }}>
-                <h3 style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#F0EDE6', margin: 0 }}>
+                <h3 style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#F7F4EF', margin: 0 }}>
                   {group.label}
                 </h3>
                 <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#B0ACA4', margin: 0 }}>
@@ -48,9 +48,9 @@ export default function ToolsHub({ headingVariant = 'section' }: ToolsHubProps) 
                       onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542'; e.currentTarget.style.transform = 'translateY(0)' }}
                     >
                       <div>
-                        <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#9E9A92', fontFamily: F }}>{tool.badge}</span>
-                        <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#F0EDE6', marginBottom: '6px' }}>{tool.title}</h3>
-                        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.6 }}>{tool.desc}</p>
+                        <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '2px 8px', borderRadius: '20px', marginBottom: '12px', background: '#EDE8DF', color: '#C4C0B8', fontFamily: F }}>{tool.badge}</span>
+                        <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#F7F4EF', marginBottom: '6px' }}>{tool.title}</h3>
+                        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#C4C0B8', lineHeight: 1.6 }}>{tool.desc}</p>
                       </div>
                       <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#BA7517', marginTop: '16px' }}>{tool.cta}</p>
                     </div>
