@@ -291,11 +291,15 @@ function HandPanel({ label, notes, fingering, clef }: {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 type ScaleType = 'major' | 'natural_minor' | 'harmonic_minor' | 'melodic_minor'
 
-// Keys grouped into natural / accidental rows (chromatic order within each group)
-const MAJOR_NATURAL     = ['C','D','E','F','G','A','B']
-const MAJOR_ACCIDENTAL  = ['Db','Eb','Fs','Ab','Bb']
-const MINOR_NATURAL     = ['Cm','Dm','Em','Fm','Gm','Am','Bm']
-const MINOR_ACC_KEYS    = ['Csm','Ebm','Fsm','Gsm','Bbm']
+// Circle of fifths order: flats ← C → sharps
+// Major: Gb - Db - Ab - Eb - Bb - F - C - G - D - A - E - B - Fs
+const MAJOR_COF = ['Gb','Db','Ab','Eb','Bb','F','C','G','D','A','E','B','Fs']
+// Minor: Ebm - Bbm - Fm - Cm - Gm - Dm - Am - Em - Bm - Fsm - Csm - Gsm
+const MINOR_COF = ['Ebm','Bbm','Fm','Cm','Gm','Dm','Am','Em','Bm','Fsm','Csm','Gsm']
+
+// Center key for each type
+const MAJOR_CENTER = 'C'
+const MINOR_CENTER = 'Am'
 
 export default function ScaleFingeringsPage() {
   const router = useRouter()
@@ -306,11 +310,10 @@ export default function ScaleFingeringsPage() {
   const isMajor = scaleType === 'major'
   const showDirection = scaleType === 'natural_minor' || scaleType === 'melodic_minor'
   const displayMap = isMajor ? SCALE_DISPLAY : MINOR_SCALE_DISPLAY
+  const cofKeys = isMajor ? MAJOR_COF : MINOR_COF
+  const centerKey = isMajor ? MAJOR_CENTER : MINOR_CENTER
 
-  // Key rows for the current scale type
-  const naturalKeys    = isMajor ? MAJOR_NATURAL    : MINOR_NATURAL
-  const accidentalKeys = isMajor ? MAJOR_ACCIDENTAL : MINOR_ACC_KEYS
-
+  // Resolve raw fingering
   const fingeringRaw = isMajor
     ? MAJOR_FINGERINGS[selectedKey]
     : scaleType === 'harmonic_minor'
@@ -319,28 +322,28 @@ export default function ScaleFingeringsPage() {
         ? MELODIC_MINOR_FINGERINGS[selectedKey]
         : NATURAL_MINOR_FINGERINGS[selectedKey]
 
-  // Resolve fingering based on direction
+  // Natural minor descending = ascending reversed (same scale, played downward)
+  // Melodic minor descending = natural minor ascending (the classical rule)
   const fingering: { rh: Fingering; lh: Fingering } | null = (() => {
     if (!fingeringRaw) return null
-    if (scaleType === 'melodic_minor' && 'rh_asc' in fingeringRaw) {
+    if (scaleType === 'melodic_minor') {
       const f = fingeringRaw as any
-      return direction === 'asc'
-        ? { rh: f.rh_asc, lh: f.lh_asc }
-        : { rh: f.rh_desc, lh: f.lh_desc }
+      if (direction === 'asc') return { rh: f.rh_asc, lh: f.lh_asc }
+      // Descending = natural minor ascending fingering
+      const nat = NATURAL_MINOR_FINGERINGS[selectedKey]
+      return nat ? { rh: nat.rh, lh: nat.lh } : { rh: f.rh_asc, lh: f.lh_asc }
     }
     if (scaleType === 'natural_minor') {
       const f = fingeringRaw as { rh: Fingering; lh: Fingering }
-      return direction === 'asc'
-        ? { rh: f.rh, lh: f.lh }
-        : { rh: [...f.rh].reverse() as Fingering, lh: [...f.lh].reverse() as Fingering }
+      if (direction === 'asc') return { rh: f.rh, lh: f.lh }
+      return { rh: [...f.rh].reverse() as Fingering, lh: [...f.lh].reverse() as Fingering }
     }
     return fingeringRaw as { rh: Fingering; lh: Fingering }
   })()
 
-  const notes = isMajor
-    ? MAJOR_SCALE_NOTES[selectedKey]
-    : MINOR_SCALE_NOTES[selectedKey]
-
+  const ascNotes = isMajor ? MAJOR_SCALE_NOTES[selectedKey] : MINOR_SCALE_NOTES[selectedKey]
+  // For descending: reverse notes so staff & keyboard show high→low
+  const notes = (showDirection && direction === 'desc') ? [...(ascNotes ?? [])].reverse() : ascNotes
   const rhNotes = notes
   const lhNotes = notes?.map(m => m - 12)
 
@@ -356,16 +359,16 @@ export default function ScaleFingeringsPage() {
     background: active ? '#1A1A18' : 'transparent',
     color: active ? 'white' : '#888780',
     fontFamily: F, fontSize: '13px', fontWeight: 300,
-    cursor: 'pointer', transition: 'all 0.15s',
+    cursor: 'pointer', transition: 'all 0.15s', whiteSpace: 'nowrap' as const,
   })
 
-  const keyBtn = (active: boolean): React.CSSProperties => ({
-    padding: '7px 12px', borderRadius: '10px',
-    border: '1px solid ' + (active ? '#1A1A18' : '#D3D1C7'),
+  const keyBtn = (active: boolean, isCenter: boolean): React.CSSProperties => ({
+    padding: '6px 10px', borderRadius: '8px',
+    border: '1px solid ' + (active ? '#1A1A18' : isCenter ? '#888780' : '#D3D1C7'),
     background: active ? '#1A1A18' : 'white',
     color: active ? 'white' : '#1A1A18',
-    fontFamily: SERIF, fontSize: '18px', fontWeight: 300,
-    cursor: 'pointer', minWidth: '44px', textAlign: 'center' as const,
+    fontFamily: SERIF, fontSize: '17px', fontWeight: isCenter ? 400 : 300,
+    cursor: 'pointer', minWidth: '38px', textAlign: 'center' as const,
     transition: 'all 0.15s',
   })
 
@@ -377,12 +380,18 @@ export default function ScaleFingeringsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px 24px 80px' }}>
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '28px', display: 'block' }}>← Back</button>
+      <div style={{ maxWidth: '820px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 80px' }}>
 
-        {/* Scale type — segmented control */}
-        <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'inline-flex', background: '#E8E5DF', borderRadius: '24px', padding: '3px', gap: '2px' }}>
+        {/* Back + title */}
+        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#1A1A18', marginBottom: '6px' }}>Scale Fingerings</h1>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', margin: '0 0 28px', lineHeight: 1.6 }}>
+          Two-octave piano fingerings for both hands. Thumb crossings highlighted in amber.
+        </p>
+
+        {/* Scale type — centered segmented control */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <div style={{ display: 'inline-flex', background: '#E8E5DF', borderRadius: '24px', padding: '3px', gap: '2px', flexWrap: 'wrap' as const }}>
             {([
               ['major','Major'],
               ['natural_minor','Natural Minor'],
@@ -396,29 +405,28 @@ export default function ScaleFingeringsPage() {
           </div>
         </div>
 
-        {/* Key selector — two rows */}
+        {/* Circle of fifths key selector */}
         <div style={{ marginBottom: '28px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '10px' }}>Key</p>
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const, marginBottom: '6px' }}>
-            {naturalKeys.map(k => (
-              <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k)}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' as const }}>
+            {/* Flat side label */}
+            <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#B8B5AD', letterSpacing: '0.08em', marginRight: '4px' }}>♭</span>
+            {cofKeys.map(k => (
+              <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k, k === centerKey)}>
                 {displayMap[k]}
               </button>
             ))}
+            {/* Sharp side label */}
+            <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#B8B5AD', letterSpacing: '0.08em', marginLeft: '4px' }}>♯</span>
           </div>
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
-            {accidentalKeys.map(k => (
-              <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k)}>
-                {displayMap[k]}
-              </button>
-            ))}
-          </div>
+          <p style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#C0BDB7', marginTop: '6px' }}>
+            Flats ← circle of fifths → Sharps
+          </p>
         </div>
 
         {/* Scale title + direction toggle */}
         <div style={{ marginBottom: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', flexWrap: 'wrap' as const }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', margin: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '30px', color: '#1A1A18', margin: 0 }}>
               {displayMap[selectedKey]} {scaleLabel}
             </h2>
             {showDirection && (
