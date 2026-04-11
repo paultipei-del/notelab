@@ -4,9 +4,9 @@ import { useState } from 'react'
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  MAJOR_FINGERINGS, MAJOR_SCALE_NOTES, SCALE_ORDER, SCALE_DISPLAY,
+  MAJOR_FINGERINGS, MAJOR_SCALE_NOTES,
   NATURAL_MINOR_FINGERINGS, HARMONIC_MINOR_FINGERINGS, MELODIC_MINOR_FINGERINGS,
-  MINOR_SCALE_NOTES, MINOR_SCALE_ORDER, MINOR_SCALE_DISPLAY,
+  MINOR_SCALE_NOTES, MINOR_SCALE_DISPLAY,
   type Fingering,
 } from '@/lib/scale-fingerings'
 
@@ -297,6 +297,12 @@ const MAJOR_COF = ['Gb','Db','Ab','Eb','Bb','F','C','G','D','A','E','B','Fs']
 // Minor: Ebm - Bbm - Fm - Cm - Gm - Dm - Am - Em - Bm - Fsm - Csm - Gsm
 const MINOR_COF = ['Ebm','Bbm','Fm','Cm','Gm','Dm','Am','Em','Bm','Fsm','Csm','Gsm']
 
+// Single-name display (no enharmonic slash combos)
+const MAJOR_DISPLAY: Record<string, string> = {
+  Gb:'G♭', Db:'D♭', Ab:'A♭', Eb:'E♭', Bb:'B♭',
+  F:'F', C:'C', G:'G', D:'D', A:'A', E:'E', B:'B', Fs:'F♯',
+}
+
 // Center key for each type
 const MAJOR_CENTER = 'C'
 const MINOR_CENTER = 'Am'
@@ -308,8 +314,8 @@ export default function ScaleFingeringsPage() {
   const [direction, setDirection] = useState<'asc'|'desc'>('asc')
 
   const isMajor = scaleType === 'major'
-  const showDirection = scaleType === 'natural_minor' || scaleType === 'melodic_minor'
-  const displayMap = isMajor ? SCALE_DISPLAY : MINOR_SCALE_DISPLAY
+  const showDirection = scaleType === 'melodic_minor'
+  const displayMap = isMajor ? MAJOR_DISPLAY : MINOR_SCALE_DISPLAY
   const cofKeys = isMajor ? MAJOR_COF : MINOR_COF
   const centerKey = isMajor ? MAJOR_CENTER : MINOR_CENTER
 
@@ -342,8 +348,8 @@ export default function ScaleFingeringsPage() {
   })()
 
   const ascNotes = isMajor ? MAJOR_SCALE_NOTES[selectedKey] : MINOR_SCALE_NOTES[selectedKey]
-  // For descending: reverse notes so staff & keyboard show high→low
-  const notes = (showDirection && direction === 'desc') ? [...(ascNotes ?? [])].reverse() : ascNotes
+  // Melodic minor descending = natural minor ascending (same notes as MINOR_SCALE_NOTES, ascending order)
+  const notes = ascNotes
   const rhNotes = notes
   const lhNotes = notes?.map(m => m - 12)
 
@@ -406,8 +412,8 @@ export default function ScaleFingeringsPage() {
         </div>
 
         {/* Circle of fifths key selector */}
-        <div style={{ marginBottom: '28px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' as const }}>
+        <div style={{ marginBottom: '28px', overflowX: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'nowrap' as const, minWidth: 'max-content' }}>
             {/* Flat side label */}
             <span style={{ fontFamily: F, fontSize: '10px', fontWeight: 300, color: '#B8B5AD', letterSpacing: '0.08em', marginRight: '4px' }}>♭</span>
             {cofKeys.map(k => (
