@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
@@ -9,7 +9,17 @@ import { signOut } from '@/lib/auth'
 import { getSupabaseClient } from '@/lib/supabase'
 import { loadUserDecks, deleteDeck } from '@/lib/userDecks'
 import { loadProgress } from '@/lib/progressSync'
-import { DECKS, CM_BUNDLE_PRICE_ID, PRO_PRICE_ID } from '@/lib/decks'
+import { DECKS, CM_BUNDLE_PRICE_ID, PRO_PRICE_ID, getDeckById } from '@/lib/decks'
+import { fetchExerciseLibrary, fetchProgress, resetProgress, type RhythmProgress } from '@/lib/rhythmLibrary'
+import {
+  LS_PREFIX_NOTE_ID_BEST,
+  LS_PREFIX_PLAY_BEST,
+  readKeyDrillSnapshot,
+  readLocalStorageNumericByPrefix,
+  removeLocalStorageKeysByPrefix,
+  resetKeyDrillStorage,
+  type KeyDrillSnapshot,
+} from '@/lib/accountLocalData'
 import { Deck, ProgressStore } from '@/lib/types'
 
 const F = 'var(--font-jost), sans-serif'
@@ -85,6 +95,11 @@ function Btn({ children, onClick, variant = 'outline', disabled, danger }: {
   )
 }
 
+function formatPlaybackSeconds(sec: number): string {
+  if (!sec || sec <= 0) return '—'
+  return `${sec.toFixed(2)} s`
+}
+
 // ── Profile section ─────────────────────────────────────────────────────────────
 function ProfileSection({ user }: { user: any }) {
   const [pwStatus, setPwStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
@@ -122,44 +137,57 @@ function ProfileSection({ user }: { user: any }) {
 
   return (
     <Section title="Profile">
-      <Card>
-        {/* Name field */}
-        <div style={{ paddingBottom: '20px', marginBottom: '4px', borderBottom: '1px solid #EDE8DF' }}>
-          <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '8px' }}>
-            Display name
-          </label>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <input
-              value={nameValue}
-              onChange={e => { setNameValue(e.target.value); setNameStatus('idle') }}
-              onKeyDown={e => e.key === 'Enter' && saveName()}
-              placeholder="Your name"
-              style={{
-                flex: 1, background: '#F2EDDF', border: '1px solid #DDD8CA',
-                borderRadius: '10px', padding: '10px 14px',
-                fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318',
-                outline: 'none',
-              }}
-            />
-            <Btn onClick={saveName} disabled={nameStatus === 'saving'}>
-              {nameStatus === 'saving' ? 'Saving…' : nameStatus === 'saved' ? 'Saved ✓' : nameStatus === 'error' ? 'Error' : 'Save'}
-            </Btn>
+      <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>
+        <details className="nl-account-disclosure" open>
+          <summary>Account &amp; display name</summary>
+          <div className="nl-account-disclosure__body">
+            <div style={{ paddingBottom: '16px' }}>
+              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '8px' }}>
+                Display name
+              </label>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' as const }}>
+                <input
+                  value={nameValue}
+                  onChange={e => { setNameValue(e.target.value); setNameStatus('idle') }}
+                  onKeyDown={e => e.key === 'Enter' && saveName()}
+                  placeholder="Your name"
+                  style={{
+                    flex: 1, minWidth: '200px', background: '#F2EDDF', border: '1px solid #DDD8CA',
+                    borderRadius: '10px', padding: '10px 14px',
+                    fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318',
+                    outline: 'none',
+                  }}
+                />
+                <Btn onClick={saveName} disabled={nameStatus === 'saving'}>
+                  {nameStatus === 'saving' ? 'Saving…' : nameStatus === 'saved' ? 'Saved ✓' : nameStatus === 'error' ? 'Error' : 'Save'}
+                </Btn>
+              </div>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: '6px 0 0' }}>
+                Shown in the header instead of your email initials.
+              </p>
+            </div>
+            <div style={{ borderTop: '1px solid #EDE8DF', paddingTop: '12px' }}>
+              <Row label="Email" value={user.email} />
+              <Row label="Member since" value={memberSince} />
+            </div>
           </div>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: '6px 0 0' }}>
-            Shown in the header instead of your email initials.
-          </p>
-        </div>
+        </details>
 
-        <Row label="Email" value={user.email} />
-        <Row label="Member since" value={memberSince} />
-
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' as const, marginTop: '20px' }}>
-          <Btn onClick={sendPasswordReset} disabled={pwStatus === 'sending' || pwStatus === 'sent'}>
-            {pwStatus === 'sending' ? 'Sending…' : pwStatus === 'sent' ? 'Email sent ✓' : pwStatus === 'error' ? 'Error — try again' : 'Change password'}
-          </Btn>
-          <Btn onClick={handleSignOut} danger>Sign out</Btn>
-        </div>
-      </Card>
+        <details className="nl-account-disclosure">
+          <summary>Security</summary>
+          <div className="nl-account-disclosure__body">
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 14px' }}>
+              We&apos;ll email you a link to set a new password.
+            </p>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' as const }}>
+              <Btn onClick={sendPasswordReset} disabled={pwStatus === 'sending' || pwStatus === 'sent'}>
+                {pwStatus === 'sending' ? 'Sending…' : pwStatus === 'sent' ? 'Email sent ✓' : pwStatus === 'error' ? 'Error — try again' : 'Change password'}
+              </Btn>
+              <Btn onClick={handleSignOut} danger>Sign out</Btn>
+            </div>
+          </div>
+        </details>
+      </div>
     </Section>
   )
 }
@@ -173,42 +201,48 @@ function SubscriptionSection({ userId }: { userId: string }) {
 
   return (
     <Section title="Subscription">
-      <Card>
-        {loading ? (
+      {loading ? (
+        <Card>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Loading…</p>
-        ) : (
-          <>
-            <div style={{ borderBottom: '1px solid #EDE8DF' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #EDE8DF' }}>
-                <div>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>CM Collection Bundle</p>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>All Certificate of Merit levels, Prep – Advanced</p>
-                </div>
-                {cmUnlocked ? <Pill label="Active" /> : <Pill label="Not purchased" color="#7A7060" bg="#EDE8DF" />}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0' }}>
-                <div>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>Pro Subscription</p>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>All content + future features</p>
-                </div>
-                {proUnlocked ? <Pill label="Active" /> : <Pill label="Not active" color="#7A7060" bg="#EDE8DF" />}
-              </div>
-            </div>
-            {!cmUnlocked && !proUnlocked && (
-              <div style={{ marginTop: '20px' }}>
-                <Link href="/" style={{ textDecoration: 'none' }}>
-                  <Btn variant="fill">View plans →</Btn>
-                </Link>
-              </div>
-            )}
-            {(cmUnlocked || proUnlocked) && (
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '16px', marginBottom: 0 }}>
-                To manage billing, cancel, or get a receipt — contact support.
+        </Card>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>
+          <details className="nl-account-disclosure nl-account-disclosure--stat-row" open>
+            <summary>
+              <span>CM Collection Bundle</span>
+              {cmUnlocked ? <Pill label="Active" /> : <Pill label="Not purchased" color="#7A7060" bg="#EDE8DF" />}
+            </summary>
+            <div className="nl-account-disclosure__body">
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 12px' }}>
+                All Certificate of Merit levels, Prep through Advanced.
               </p>
-            )}
-          </>
-        )}
-      </Card>
+            </div>
+          </details>
+          <details className="nl-account-disclosure nl-account-disclosure--stat-row" open>
+            <summary>
+              <span>Pro subscription</span>
+              {proUnlocked ? <Pill label="Active" /> : <Pill label="Not active" color="#7A7060" bg="#EDE8DF" />}
+            </summary>
+            <div className="nl-account-disclosure__body">
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 12px' }}>
+                Full catalog and future features while your plan is active.
+              </p>
+            </div>
+          </details>
+          {!cmUnlocked && !proUnlocked && (
+            <div style={{ marginTop: '4px' }}>
+              <Link href="/" style={{ textDecoration: 'none' }}>
+                <Btn variant="fill">View plans →</Btn>
+              </Link>
+            </div>
+          )}
+          {(cmUnlocked || proUnlocked) && (
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: '8px 0 0' }}>
+              To manage billing, cancel, or get a receipt — contact support.
+            </p>
+          )}
+        </div>
+      )}
     </Section>
   )
 }
@@ -216,44 +250,55 @@ function SubscriptionSection({ userId }: { userId: string }) {
 // ── Progress section ────────────────────────────────────────────────────────────
 function ProgressSection({ userId }: { userId: string | null }) {
   const [progress, setProgress] = useState<ProgressStore>({})
+  const [rhythmProgress, setRhythmProgress] = useState<Record<string, RhythmProgress>>({})
+  const [rhythmTitles, setRhythmTitles] = useState<Map<string, string>>(new Map())
+  const [playBests, setPlayBests] = useState<{ id: string; value: number }[]>([])
+  const [noteIdBests, setNoteIdBests] = useState<{ id: string; value: number }[]>([])
+  const [keyDrill, setKeyDrill] = useState<KeyDrillSnapshot>({ correct: 0, total: 0, streak: 0 })
   const [loading, setLoading] = useState(true)
-  const [resetting, setResetting] = useState<string | null>(null)
-  const [resetAll, setResetAll] = useState(false)
+  const [pending, setPending] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadProgress(userId).then(p => { setProgress(p); setLoading(false) })
+  const reload = useCallback(async () => {
+    const [p, r, lib] = await Promise.all([
+      loadProgress(userId),
+      fetchProgress(userId),
+      fetchExerciseLibrary(),
+    ])
+    setProgress(p)
+    setRhythmProgress(r)
+    const titles = new Map<string, string>()
+    lib.flat.forEach(e => titles.set(e.id, e.title))
+    setRhythmTitles(titles)
+    setPlayBests(readLocalStorageNumericByPrefix(LS_PREFIX_PLAY_BEST))
+    setNoteIdBests(readLocalStorageNumericByPrefix(LS_PREFIX_NOTE_ID_BEST))
+    setKeyDrill(readKeyDrillSnapshot())
   }, [userId])
 
-  const studiedDecks = DECKS.filter(deck => {
-    return deck.cards.some(card => progress[`${deck.id}-${card.id}`] !== undefined)
-  })
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        await reload()
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [reload])
 
-  async function resetDeck(deckId: string) {
-    setResetting(deckId)
-    const supabase = getSupabaseClient()
-    if (userId) {
-      await supabase.from('progress').delete().eq('user_id', userId).eq('deck_id', deckId)
-    }
-    // Clear from localStorage
-    const local: ProgressStore = {}
-    Object.keys(progress).forEach(key => {
-      if (!key.startsWith(deckId + '-')) local[key] = progress[key]
-    })
-    localStorage.setItem('notelab-progress', JSON.stringify(local))
-    setProgress(local)
-    setResetting(null)
-  }
+  const studiedDecks = DECKS.filter(deck =>
+    deck.cards.some(card => progress[`${deck.id}-${card.id}`] !== undefined)
+  )
 
-  async function resetAllProgress() {
-    setResetAll(true)
-    const supabase = getSupabaseClient()
-    if (userId) {
-      await supabase.from('progress').delete().eq('user_id', userId)
-    }
-    localStorage.removeItem('notelab-progress')
-    setProgress({})
-    setResetAll(false)
-  }
+  const rhythmEntries = Object.values(rhythmProgress)
+  const rhythmCompleted = rhythmEntries.filter(x => x.completed).length
+
+  const hasFlash = studiedDecks.length > 0
+  const hasSight = playBests.length > 0
+  const hasNoteId = noteIdBests.length > 0
+  const hasRhythm = rhythmEntries.length > 0
+  const hasKeys = keyDrill.total > 0 || keyDrill.streak > 0 || keyDrill.correct > 0
+  const hasAnything = hasFlash || hasSight || hasNoteId || hasRhythm || hasKeys
 
   function getDeckStats(deck: typeof DECKS[0]) {
     const now = Date.now()
@@ -265,44 +310,322 @@ function ProgressSection({ userId }: { userId: string | null }) {
     return { studied, due, total: deck.cards.length }
   }
 
+  async function resetFlashDeck(deckId: string) {
+    setPending(`flash:${deckId}`)
+    const supabase = getSupabaseClient()
+    if (userId) {
+      await supabase.from('progress').delete().eq('user_id', userId).eq('deck_id', deckId)
+    }
+    const local: ProgressStore = {}
+    Object.keys(progress).forEach(key => {
+      if (!key.startsWith(deckId + '-')) local[key] = progress[key]
+    })
+    localStorage.setItem('notelab-progress', JSON.stringify(local))
+    setProgress(local)
+    setPending(null)
+  }
+
+  async function resetAllFlash() {
+    setPending('flash-all')
+    const supabase = getSupabaseClient()
+    if (userId) {
+      await supabase.from('progress').delete().eq('user_id', userId)
+    }
+    localStorage.removeItem('notelab-progress')
+    setProgress({})
+    setPending(null)
+  }
+
+  function resetPlayBest(deckId: string) {
+    setPending(`sight:${deckId}`)
+    localStorage.removeItem(LS_PREFIX_PLAY_BEST + deckId)
+    setPlayBests(readLocalStorageNumericByPrefix(LS_PREFIX_PLAY_BEST))
+    setPending(null)
+  }
+
+  function resetAllPlayBests() {
+    setPending('sight-all')
+    removeLocalStorageKeysByPrefix(LS_PREFIX_PLAY_BEST)
+    setPlayBests([])
+    setPending(null)
+  }
+
+  function resetNoteIdBest(deckId: string) {
+    setPending(`nid:${deckId}`)
+    localStorage.removeItem(LS_PREFIX_NOTE_ID_BEST + deckId)
+    setNoteIdBests(readLocalStorageNumericByPrefix(LS_PREFIX_NOTE_ID_BEST))
+    setPending(null)
+  }
+
+  function resetAllNoteId() {
+    setPending('nid-all')
+    removeLocalStorageKeysByPrefix(LS_PREFIX_NOTE_ID_BEST)
+    setNoteIdBests([])
+    setPending(null)
+  }
+
+  async function resetRhythmOne(id: string) {
+    setPending(`rhythm:${id}`)
+    await resetProgress(userId, id)
+    await reload()
+    setPending(null)
+  }
+
+  async function resetAllRhythm() {
+    setPending('rhythm-all')
+    await resetProgress(userId)
+    await reload()
+    setPending(null)
+  }
+
+  function resetKeyDrill() {
+    setPending('keydrill')
+    resetKeyDrillStorage()
+    setKeyDrill(readKeyDrillSnapshot())
+    setPending(null)
+  }
+
+  async function resetEverything() {
+    setPending('all')
+    const supabase = getSupabaseClient()
+    if (userId) {
+      await supabase.from('progress').delete().eq('user_id', userId)
+    }
+    await resetProgress(userId)
+    localStorage.removeItem('notelab-progress')
+    removeLocalStorageKeysByPrefix(LS_PREFIX_PLAY_BEST)
+    removeLocalStorageKeysByPrefix(LS_PREFIX_NOTE_ID_BEST)
+    resetKeyDrillStorage()
+    setProgress({})
+    await reload()
+    setPending(null)
+  }
+
+  const intro = (
+    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 16px', maxWidth: '560px' }}>
+      Progress is grouped by app. Spaced-repetition stats sync when you&apos;re signed in; rhythm syncs to your account; sight-reading, Note ID, and key drills are stored in this browser unless noted.
+    </p>
+  )
+
+  if (loading) {
+    return (
+      <Section title="Progress">
+        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Loading…</p>
+      </Section>
+    )
+  }
+
   return (
     <Section title="Progress">
-      {loading ? (
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Loading…</p>
-      ) : studiedDecks.length === 0 ? (
+      {intro}
+
+      {!hasAnything ? (
         <Card>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', margin: 0 }}>No study progress yet. Start a flashcard deck to track your progress here.</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', margin: '0 0 12px' }}>
+            No progress recorded yet. Explore flashcards, sight-reading, Note ID, rhythm, or key signatures to see stats here.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '10px' }}>
+            <Link href="/flashcards" style={{ textDecoration: 'none' }}><Btn>Flashcards</Btn></Link>
+            <Link href="/sight-read/treble" style={{ textDecoration: 'none' }}><Btn>Sight-reading</Btn></Link>
+            <Link href="/note-id" style={{ textDecoration: 'none' }}><Btn>Note ID</Btn></Link>
+            <Link href="/rhythm" style={{ textDecoration: 'none' }}><Btn>Rhythm</Btn></Link>
+            <Link href="/key-signatures" style={{ textDecoration: 'none' }}><Btn>Key signatures</Btn></Link>
+          </div>
         </Card>
       ) : (
         <>
-          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginBottom: '20px' }}>
-            {studiedDecks.map(deck => {
-              const { studied, due, total } = getDeckStats(deck)
-              const pct = Math.round(studied / total * 100)
-              return (
-                <Card key={deck.id} style={{ padding: '18px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <div>
-                      <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>{deck.title}</p>
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>
-                        {studied}/{total} studied · {due} due
-                      </p>
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginBottom: '16px' }}>
+            {/* Flashcards (SRS) */}
+            <details className="nl-account-disclosure nl-account-disclosure--stat-row">
+              <summary>
+                <span>Flashcards</span>
+                <span className="nl-account-disclosure__meta">
+                  {hasFlash ? `${studiedDecks.length} deck${studiedDecks.length === 1 ? '' : 's'}` : 'No data'}
+                </span>
+              </summary>
+              <div className="nl-account-disclosure__body">
+                {!hasFlash ? (
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: 0 }}>Open a deck under Flashcards to start tracking.</p>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginBottom: '12px' }}>
+                      {studiedDecks.map(deck => {
+                        const { studied, due, total } = getDeckStats(deck)
+                        const pct = Math.round((studied / total) * 100)
+                        return (
+                          <div key={deck.id} style={{ background: 'white', border: '1px solid #EDE8DF', borderRadius: '12px', padding: '14px 16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '8px' }}>
+                              <div style={{ minWidth: 0 }}>
+                                <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>{deck.title}</p>
+                                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>
+                                  {studied}/{total} studied · {due} due
+                                </p>
+                              </div>
+                              <Btn onClick={() => resetFlashDeck(deck.id)} disabled={pending === `flash:${deck.id}`} danger>
+                                {pending === `flash:${deck.id}` ? '…' : 'Reset'}
+                              </Btn>
+                            </div>
+                            <div style={{ height: '4px', background: '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${pct}%`, background: '#B5402A', borderRadius: '2px', transition: 'width 0.4s' }} />
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
-                    <Btn onClick={() => resetDeck(deck.id)} disabled={resetting === deck.id} danger>
-                      {resetting === deck.id ? 'Resetting…' : 'Reset'}
+                    <Btn onClick={resetAllFlash} disabled={pending === 'flash-all'} danger>
+                      {pending === 'flash-all' ? 'Resetting…' : 'Reset all flashcard progress'}
                     </Btn>
-                  </div>
-                  {/* Progress bar */}
-                  <div style={{ height: '4px', background: '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: pct + '%', background: '#B5402A', borderRadius: '2px', transition: 'width 0.4s' }} />
-                  </div>
-                </Card>
-              )
-            })}
+                  </>
+                )}
+              </div>
+            </details>
+
+            {/* Sight-reading — play-through best times */}
+            <details className="nl-account-disclosure nl-account-disclosure--stat-row">
+              <summary>
+                <span>Sight-reading</span>
+                <span className="nl-account-disclosure__meta">
+                  {hasSight ? `${playBests.length} best time${playBests.length === 1 ? '' : 's'}` : 'No data'}
+                </span>
+              </summary>
+              <div className="nl-account-disclosure__body">
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px' }}>
+                  Best times for full play-through sessions (Play It mode).
+                </p>
+                {!hasSight ? (
+                  <Link href="/sight-read/treble" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open sight-reading →</Link>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px', marginBottom: '12px', maxHeight: '280px', overflowY: 'auto' }} className="nl-hide-scrollbar">
+                      {playBests.map(({ id, value }) => {
+                        const title = getDeckById(id)?.title ?? id
+                        return (
+                          <div key={id} className="nl-account-disclosure__body-line">
+                            <span className="nl-account-disclosure__body-line-title">{title}</span>
+                            <span className="nl-account-disclosure__body-line-meta">{formatPlaybackSeconds(value)}</span>
+                            <Btn onClick={() => resetPlayBest(id)} disabled={pending === `sight:${id}`} danger>
+                              {pending === `sight:${id}` ? '…' : 'Clear'}
+                            </Btn>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <Btn onClick={resetAllPlayBests} disabled={pending === 'sight-all'} danger>
+                      {pending === 'sight-all' ? '…' : 'Clear all sight-reading times'}
+                    </Btn>
+                  </>
+                )}
+              </div>
+            </details>
+
+            {/* Note identification */}
+            <details className="nl-account-disclosure nl-account-disclosure--stat-row">
+              <summary>
+                <span>Note identification</span>
+                <span className="nl-account-disclosure__meta">
+                  {hasNoteId ? `${noteIdBests.length} best${noteIdBests.length === 1 ? '' : 's'}` : 'No data'}
+                </span>
+              </summary>
+              <div className="nl-account-disclosure__body">
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px' }}>
+                  Best times from timed Note ID drills (this device).
+                </p>
+                {!hasNoteId ? (
+                  <Link href="/note-id" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open Note ID →</Link>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px', marginBottom: '12px', maxHeight: '280px', overflowY: 'auto' }} className="nl-hide-scrollbar">
+                      {noteIdBests.map(({ id, value }) => {
+                        const title = getDeckById(id)?.title ?? id
+                        return (
+                          <div key={id} className="nl-account-disclosure__body-line">
+                            <span className="nl-account-disclosure__body-line-title">{title}</span>
+                            <span className="nl-account-disclosure__body-line-meta">{formatPlaybackSeconds(value)}</span>
+                            <Btn onClick={() => resetNoteIdBest(id)} disabled={pending === `nid:${id}`} danger>
+                              {pending === `nid:${id}` ? '…' : 'Clear'}
+                            </Btn>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <Btn onClick={resetAllNoteId} disabled={pending === 'nid-all'} danger>
+                      {pending === 'nid-all' ? '…' : 'Clear all Note ID times'}
+                    </Btn>
+                  </>
+                )}
+              </div>
+            </details>
+
+            {/* Rhythm */}
+            <details className="nl-account-disclosure nl-account-disclosure--stat-row">
+              <summary>
+                <span>Rhythm</span>
+                <span className="nl-account-disclosure__meta">
+                  {hasRhythm ? `${rhythmEntries.length} exercise${rhythmEntries.length === 1 ? '' : 's'} · ${rhythmCompleted} cleared` : 'No data'}
+                </span>
+              </summary>
+              <div className="nl-account-disclosure__body">
+                {!hasRhythm ? (
+                  <Link href="/rhythm" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open rhythm trainer →</Link>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '8px', marginBottom: '12px', maxHeight: '280px', overflowY: 'auto' }} className="nl-hide-scrollbar">
+                      {rhythmEntries.map(r => {
+                        const title = rhythmTitles.get(r.exercise_id) ?? r.exercise_id
+                        return (
+                          <div key={r.exercise_id} className="nl-account-disclosure__body-line">
+                            <span className="nl-account-disclosure__body-line-title">{title}</span>
+                            <span className="nl-account-disclosure__body-line-meta">
+                              {Math.round(r.best_timing)}% timing · {r.completed ? 'cleared' : 'in progress'}
+                            </span>
+                            <Btn onClick={() => resetRhythmOne(r.exercise_id)} disabled={pending === `rhythm:${r.exercise_id}`} danger>
+                              {pending === `rhythm:${r.exercise_id}` ? '…' : 'Reset'}
+                            </Btn>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <Btn onClick={resetAllRhythm} disabled={pending === 'rhythm-all'} danger>
+                      {pending === 'rhythm-all' ? 'Resetting…' : 'Reset all rhythm progress'}
+                    </Btn>
+                  </>
+                )}
+              </div>
+            </details>
+
+            {/* Key signatures drill */}
+            <details className="nl-account-disclosure nl-account-disclosure--stat-row">
+              <summary>
+                <span>Key signatures</span>
+                <span className="nl-account-disclosure__meta">
+                  {keyDrill.total > 0 ? `${keyDrill.correct}/${keyDrill.total} · streak ${keyDrill.streak}` : keyDrill.streak > 0 ? `streak ${keyDrill.streak}` : 'No data'}
+                </span>
+              </summary>
+              <div className="nl-account-disclosure__body">
+                {!hasKeys ? (
+                  <Link href="/key-signatures" style={{ color: '#B5402A', textDecoration: 'none', fontFamily: F, fontSize: 'var(--nl-text-ui)' }}>Open key signatures →</Link>
+                ) : (
+                  <>
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', margin: '0 0 12px' }}>
+                      Drill score: {keyDrill.correct} correct of {keyDrill.total} · Circle-of-fifths streak: {keyDrill.streak}
+                    </p>
+                    <Btn onClick={resetKeyDrill} disabled={pending === 'keydrill'} danger>
+                      {pending === 'keydrill' ? '…' : 'Reset key drill stats'}
+                    </Btn>
+                  </>
+                )}
+              </div>
+            </details>
           </div>
-          <Btn onClick={resetAllProgress} disabled={resetAll} danger>
-            {resetAll ? 'Resetting…' : 'Reset all progress'}
-          </Btn>
+
+          <Card style={{ padding: '18px 22px' }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px' }}>
+              Remove flashcard SRS (cloud), rhythm progress (cloud), and all browser-only timers and drills on this device.
+            </p>
+            <Btn onClick={resetEverything} disabled={pending === 'all'} danger>
+              {pending === 'all' ? 'Resetting…' : 'Reset everything'}
+            </Btn>
+          </Card>
         </>
       )}
     </Section>
