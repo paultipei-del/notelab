@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { signOut } from '@/lib/auth'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import AuthModal from '@/components/AuthModal'
 
 const F = 'var(--font-jost), sans-serif'
@@ -33,8 +33,9 @@ export default function SiteHeader() {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const mobileRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
   const navRef = useRef<HTMLElement>(null)
-  const itemRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [pillRect, setPillRect] = useState<{ left: number; width: number } | null>(null)
 
   const activeIdx = NAV.findIndex(item => item.match(pathname))
@@ -104,9 +105,9 @@ export default function SiteHeader() {
           className="nl-desktop-nav"
           style={{
             position: 'relative',
-            background: '#EAE7E1',
+            background: 'rgba(26,26,24,0.08)',
             borderRadius: '9999px',
-            padding: '3px',
+            padding: '4px',
             gap: '0',
           }}
           onMouseLeave={() => { if (activeIdx >= 0) movePillTo(activeIdx); else setPillRect(null) }}
@@ -117,12 +118,12 @@ export default function SiteHeader() {
               position: 'absolute',
               left: pillRect.left,
               width: pillRect.width,
-              top: '3px',
-              bottom: '3px',
+              top: '4px',
+              bottom: '4px',
               background: 'white',
               borderRadius: '9999px',
-              boxShadow: '0 1px 4px rgba(26,26,24,0.08)',
-              transition: 'left 0.12s cubic-bezier(0.76,0,0.24,1), width 0.15s cubic-bezier(0.76,0,0.24,1)',
+              boxShadow: '0 1px 4px rgba(26,26,24,0.1)',
+              transition: 'left 300ms ease-out, width 300ms ease-out',
               pointerEvents: 'none',
               zIndex: 0,
             }} />
@@ -130,27 +131,26 @@ export default function SiteHeader() {
           {NAV.map((item, idx) => {
             const active = item.match(pathname)
             return (
-              <span
+              <button
                 key={item.href}
                 ref={el => { itemRefs.current[idx] = el }}
+                onClick={() => router.push(item.href)}
                 onMouseEnter={() => movePillTo(idx)}
-                style={{ display: 'inline-block', position: 'relative', zIndex: 1 }}
+                style={{
+                  position: 'relative', zIndex: 10,
+                  background: 'transparent', border: 'none',
+                  borderRadius: '9999px',
+                  padding: '5px 14px',
+                  fontFamily: F, fontSize: '13px', fontWeight: 300,
+                  color: active ? '#1A1A18' : '#888780',
+                  letterSpacing: '0.01em',
+                  whiteSpace: 'nowrap' as const,
+                  cursor: 'pointer',
+                  transition: 'color 200ms',
+                }}
               >
-                <Link href={item.href} style={{ textDecoration: 'none' }}>
-                  <span style={{
-                    display: 'inline-block',
-                    fontFamily: F, fontSize: '13px', fontWeight: 300,
-                    color: active ? '#1A1A18' : '#888780',
-                    padding: '6px 14px',
-                    borderRadius: '9999px',
-                    transition: 'color 0.15s',
-                    cursor: 'pointer', letterSpacing: '0.01em',
-                    whiteSpace: 'nowrap' as const,
-                  }}>
-                    {item.label}
-                  </span>
-                </Link>
-              </span>
+                {item.label}
+              </button>
             )
           })}
         </nav>
