@@ -40,7 +40,7 @@ export default function StudyPage({ params }: Props) {
 
   if (loading || deckLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="nl-study-page-shell">
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#7A7060', letterSpacing: '0.05em' }}>Loading…</p>
       </div>
     )
@@ -48,7 +48,7 @@ export default function StudyPage({ params }: Props) {
 
   if (notFound || !deck) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+      <div className="nl-study-page-shell nl-study-page-shell--stack">
         <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#2A2318' }}>Deck not found</p>
         <a href="/" style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.05em' }}>← Back to decks</a>
       </div>

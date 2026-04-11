@@ -186,7 +186,7 @@ return (
 
       {!(isComplete && viewMode === 'study') && viewMode !== 'browse' && (
         <div className="nl-study-viewport">
-          <div style={{ position: 'relative' as const, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 32px 10px', flexShrink: 0, flexWrap: 'wrap' as const }}>
+          <div style={{ position: 'relative' as const, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '10px 32px 8px', flexShrink: 0, flexWrap: 'wrap' as const }}>
             <div style={{ position: 'relative' as const, zIndex: 1, flexShrink: 0, background: '#f2eddf', paddingRight: '12px' }}>
               <button type="button" onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: '2px 0' }}>← Back</button>
             </div>
@@ -228,7 +228,7 @@ return (
               )}
             </div>
           </div>
-          {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 10px', flexWrap: 'wrap', flexShrink: 0 }}>
+          {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 8px', flexWrap: 'wrap', flexShrink: 0 }}>
             {visibleModes.map(({ id, label }) => (
               <button key={id} onClick={() => { stopMicOld(); stopMicNew(); setMode(id); if (id !== 'flip') resetSession() }}
                 style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#DDD8CA'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', transition: 'all 0.15s' }}>{label}</button>
@@ -241,9 +241,9 @@ return (
           </div>}
           <div
             className="nl-study-main"
-            style={mode === 'mc' && currentCard && !isFlipMode ? { alignItems: 'stretch' } : undefined}
+            style={(mode === 'mc' || mode === 'explain') && currentCard && !isFlipMode ? { alignItems: 'stretch' } : undefined}
           >
-            {isFlipMode ? flipCardEl : mode === 'mc' && currentCard ? (
+            {isFlipMode ? flipCardEl : (mode === 'mc' || mode === 'explain') && currentCard ? (
               <div
                 style={{
                   alignSelf: 'stretch',
@@ -262,8 +262,10 @@ return (
                     minHeight: 0,
                     display: 'grid',
                     boxSizing: 'border-box',
-                    gridTemplateRows: 'minmax(0, 1fr) auto minmax(0, 1fr) auto',
+                    gridTemplateRows: 'minmax(4px, 0.33fr) auto minmax(2px, 0.24fr) auto',
                     justifyItems: 'stretch',
+                    alignContent: 'start',
+                    paddingTop: mode === 'explain' ? 'clamp(52px, 10vh, 98px)' : undefined,
                   }}
                 >
                   <div style={{ minHeight: 0 }} />
@@ -285,18 +287,20 @@ return (
                   </div>
                   <div style={{ minHeight: 0 }} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', minHeight: 0 }}>
-                    {currentCard.type === 'audio' && <AudioCard key={currentCard.id + '-audio'} card={currentCard} revealed={false} onReveal={() => {}} compact hideReveal />}
-                    <MultipleChoice key={currentCard.id} card={currentCard} options={mcOptions} onAnswer={recordAnswer} onReveal={reveal} />
+                    {mode === 'mc' && currentCard.type === 'audio' && <AudioCard key={currentCard.id + '-audio'} card={currentCard} revealed={false} onReveal={() => {}} compact hideReveal />}
+                    {mode === 'mc' ? (
+                      <MultipleChoice key={currentCard.id} card={currentCard} options={mcOptions} onAnswer={recordAnswer} onReveal={reveal} />
+                    ) : (
+                      <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
+                    )}
                   </div>
                 </div>
               </div>
-            ) : mode === 'explain' && currentCard ? (
-              <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
             ) : mode === 'play' && currentCard ? (
               <PlayItCard2 key={currentCard.id} card={currentCard} onCorrect={(firstTry: boolean) => { recordAnswer(firstTry); rate(3) }} onWrong={() => {}} />
             ) : null}
           </div>
-          {!(mode === 'mc' && currentCard && !isFlipMode) && (
+          {!((mode === 'mc' || mode === 'explain') && currentCard && !isFlipMode) && (
           <div
             role="group"
             aria-label="Last ten answers in this session"
@@ -313,20 +317,43 @@ return (
             ))}
           </div>
           )}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '6px 32px 10px', visibility: isFlipMode ? 'visible' : 'hidden', flexShrink: 0 }}>
+          <div style={{ display: isFlipMode ? 'flex' : 'none', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '6px 32px 10px', flexShrink: 0 }}>
             <button onClick={goPrev} disabled={flipIndex === 0} style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: flipIndex === 0 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === 0 ? 'default' : 'pointer' }}>← Prev</button>
             <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{flipIndex + 1} / {flipCards.length}</span>
             <button onClick={goNext} disabled={flipIndex === flipCards.length - 1} style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: flipIndex === flipCards.length - 1 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === flipCards.length - 1 ? 'default' : 'pointer' }}>Next →</button>
           </div>
           {!isFlipMode && mode !== 'play' && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '8px 32px 12px', flexWrap: 'wrap', visibility: revealed ? 'visible' : 'hidden', minHeight: '64px', alignItems: 'center', flexShrink: 0 }}>
-              {([{ rating: 1, label: 'Again', interval: intervals.again, bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' }, { rating: 2, label: 'Hard', interval: intervals.hard, bg: '#FAEEDA', border: '#FAC775', color: '#B5402A' }, { rating: 3, label: 'Easy', interval: intervals.easy, bg: '#EAF3DE', border: '#C0DD97', color: '#3B6D11' }] as const).map(({ rating, label, interval, bg, border, color }) => (
-                <button key={rating} onClick={() => rate(rating)}
-                  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '14px 32px', borderRadius: '8px', border: `1.5px solid ${border}`, background: bg, color, cursor: 'pointer', minWidth: '120px', fontFamily: 'var(--font-jost), sans-serif', transition: 'all 0.15s' }}>
-                  <span style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, letterSpacing: '0.05em' }}>{label}</span>
-                  <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, opacity: 0.7 }}>{interval}</span>
-                </button>
-              ))}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '64px',
+                marginTop: 'clamp(10px, 2vmin, 18px)',
+                padding: '8px 32px',
+                paddingBottom: 'max(12px, env(safe-area-inset-bottom, 0px))',
+                flexShrink: 0,
+              }}
+            >
+              <div
+                style={{
+                  visibility: revealed ? 'visible' : 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                }}
+                aria-hidden={!revealed}
+              >
+                {([{ rating: 1, label: 'Again', interval: intervals.again, bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' }, { rating: 2, label: 'Hard', interval: intervals.hard, bg: '#FAEEDA', border: '#FAC775', color: '#B5402A' }, { rating: 3, label: 'Easy', interval: intervals.easy, bg: '#EAF3DE', border: '#C0DD97', color: '#3B6D11' }] as const).map(({ rating, label, interval, bg, border, color }) => (
+                  <button key={rating} onClick={() => rate(rating)}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '14px 32px', borderRadius: '8px', border: `1.5px solid ${border}`, background: bg, color, cursor: 'pointer', minWidth: '120px', fontFamily: 'var(--font-jost), sans-serif', transition: 'all 0.15s' }}>
+                    <span style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, letterSpacing: '0.05em' }}>{label}</span>
+                    <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, opacity: 0.7 }}>{interval}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>

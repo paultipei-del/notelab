@@ -11,24 +11,39 @@
   --nl-text-compact: 12px; /* chips, form labels (uppercase), tight controls */
   --nl-text-badge: 11px; /* tiny pills / wordmark sublabel only */
   --nl-site-header-h: 56px; /* keep in sync with .site-header height */
+  /* Smallest viewport metric so study height never exceeds visible area (avoids 1–2px body scroll) */
+  --nl-viewport-h: min(100svh, 100dvh);
 }
 
-/* ── Study / quiz — one screen below header (desktop, no page scroll) ─ */
+/* ── Study / quiz — fill viewport *below* global SiteHeader (footer hidden on /study) ─ */
 .nl-study-viewport {
   background: #f2eddf;
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
-  min-height: 100vh;
+  /* SiteHeader + this must fit in --nl-viewport-h (not raw 100dvh alone) */
+  height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  max-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  overflow: hidden;
 }
 
-@media (min-width: 768px) {
-  .nl-study-viewport {
-    height: calc(100dvh - var(--nl-site-header-h));
-    max-height: calc(100dvh - var(--nl-site-header-h));
-    min-height: 0;
-    overflow: hidden;
-  }
+/* Belt-and-suspenders: no window scroll on /study when inner regions handle scrolling */
+body:has(.nl-study-viewport) {
+  overflow-y: hidden;
+  overscroll-behavior-y: none;
+}
+
+/* study/[deckId] loading + not-found — class-based only (avoids SSR/client inline style normalization mismatch) */
+.nl-study-page-shell {
+  min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  background: #f2eddf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nl-study-page-shell--stack {
+  flex-direction: column;
+  gap: 16px;
 }
 
 .nl-study-main {
@@ -38,7 +53,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 0 24px 4px;
+  padding: 0 24px 2px;
 }
 
 .nl-study-main--stack {
