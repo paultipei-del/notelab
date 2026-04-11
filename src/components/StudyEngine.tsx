@@ -192,59 +192,61 @@ return (
 
       {!(isComplete && viewMode === 'study') && viewMode !== 'browse' && (
         <div className="nl-study-viewport">
-          <div style={{ position: 'relative' as const, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '10px 32px 8px', flexShrink: 0, flexWrap: 'wrap' as const }}>
-            <div style={{ position: 'relative' as const, zIndex: 1, flexShrink: 0, background: '#f2eddf', paddingRight: '12px' }}>
-              <button type="button" onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: '2px 0' }}>← Back</button>
-            </div>
-            <div
-              aria-hidden
-              style={{
-                position: 'absolute' as const,
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 'min(400px, calc(100% - 64px))',
-                minWidth: '120px',
-                height: '4px',
-                background: '#DDD8CA',
-                borderRadius: '2px',
-                overflow: 'hidden',
-                pointerEvents: 'none' as const,
-                zIndex: 0,
-              }}
-            >
-              <div style={{ height: '100%', width: `${progressPct}%`, background: '#B5402A', borderRadius: '2px', transition: 'width 0.4s ease' }} />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'clamp(16px, 3vw, 28px)', flexShrink: 0, position: 'relative' as const, zIndex: 1, background: '#f2eddf', paddingLeft: '8px', marginLeft: 'auto' }}>
-              <div style={{ textAlign: 'right' as const }}>
-                <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B0ACA4', display: 'block', marginBottom: '2px' }}>Session time</span>
-                <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)', fontWeight: 500, color: '#2A2318', fontVariantNumeric: 'tabular-nums' }}>{formatTime(elapsedMs)}</span>
+          <header className="nl-study-topbar">
+            <div className="nl-study-topbar__row1">
+              <div className="nl-study-topbar__back">
+                <button type="button" onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: '2px 0' }}>← Back</button>
               </div>
-              <div style={{ textAlign: 'right' as const }}>
-                <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B0ACA4', display: 'block', marginBottom: '2px' }}>Answered</span>
-                <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)', fontWeight: 500, color: '#2A2318', fontVariantNumeric: 'tabular-nums' }}>
-                  {queue.length > 0 ? `${sessionCardIndex} / ${queue.length}` : '—'}
-                </span>
-              </div>
-              {stats.total > 0 && (
-                <div style={{ textAlign: 'right' as const }}>
-                  <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#B0ACA4', display: 'block', marginBottom: '2px' }}>Score</span>
-                  <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)', fontWeight: 500, color: '#2A2318', fontVariantNumeric: 'tabular-nums' }}>{stats.correct} / {stats.total}</span>
+              <div className={`nl-study-topbar__metrics${stats.total > 0 ? '' : ' nl-study-topbar__metrics--pair'}`}>
+                <div>
+                  <span className="nl-study-topbar__metric-label">Session time</span>
+                  <span className="nl-study-topbar__metric-value">{formatTime(elapsedMs)}</span>
                 </div>
-              )}
+                <div>
+                  <span className="nl-study-topbar__metric-label">Answered</span>
+                  <span className="nl-study-topbar__metric-value">
+                    {queue.length > 0 ? `${sessionCardIndex} / ${queue.length}` : '—'}
+                  </span>
+                </div>
+                {stats.total > 0 && (
+                  <div>
+                    <span className="nl-study-topbar__metric-label">Score</span>
+                    <span className="nl-study-topbar__metric-value">{stats.correct} / {stats.total}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          {!isSightReadDeck && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', padding: '0 32px 8px', flexWrap: 'wrap', flexShrink: 0 }}>
-            {visibleModes.map(({ id, label }) => (
-              <button key={id} onClick={() => { stopMic(); setMode(id); if (id !== 'flip') resetSession() }}
-                style={{ padding: '5px 14px', borderRadius: '20px', border: `1px solid ${mode === id ? '#1A1A18' : '#DDD8CA'}`, background: mode === id ? '#1A1A18' : 'transparent', color: mode === id ? 'white' : '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', transition: 'all 0.15s' }}>{label}</button>
-            ))}
-            {!isSightReadDeck && <div style={{ width: '1px', height: '16px', background: '#DDD8CA', margin: '0 4px' }} />}
-            <>
-            <button onClick={() => { stopMic(); onQuiz() }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Quiz</button>
-            <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Browse</button>
-            </>
-          </div>}
+            <div className="nl-study-progress-rail" aria-hidden>
+              <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
+            </div>
+          </header>
+          {!isSightReadDeck && (
+            <div className="nl-study-mode-toolbar">
+              <div
+                className="nl-study-mode-row nl-study-mode-row--modes"
+                data-mode-count={Math.min(visibleModes.length, 4)}
+              >
+                {visibleModes.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => { stopMic(); setMode(id); if (id !== 'flip') resetSession() }}
+                    className={`nl-study-mode-btn${mode === id ? ' nl-study-mode-btn--active' : ''}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="nl-study-mode-row nl-study-mode-row--actions">
+                <button type="button" className="nl-study-mode-btn nl-study-mode-btn--quiz" onClick={() => { stopMic(); onQuiz() }}>
+                  Quiz
+                </button>
+                <button type="button" className="nl-study-mode-btn nl-study-mode-btn--browse" onClick={() => { stopMic(); setViewMode('browse') }}>
+                  Browse
+                </button>
+              </div>
+            </div>
+          )}
           <div
             className="nl-study-main"
             style={(mode === 'mc' || mode === 'explain') && currentCard && !isFlipMode ? { alignItems: 'stretch' } : undefined}
@@ -261,31 +263,13 @@ return (
                 }}
               >
                 <div
-                  style={{
-                    width: '100%',
-                    maxWidth: '480px',
-                    flex: 1,
-                    minHeight: 0,
-                    display: 'grid',
-                    boxSizing: 'border-box',
-                    gridTemplateRows: 'minmax(4px, 0.33fr) auto minmax(2px, 0.24fr) auto',
-                    justifyItems: 'stretch',
-                    alignContent: 'start',
-                    paddingTop: mode === 'explain' ? 'clamp(52px, 10vh, 98px)' : undefined,
-                  }}
+                  className={`nl-study-mc-stack${mode === 'explain' ? ' nl-study-mc-stack--explain' : ''}`}
                 >
                   <div style={{ minHeight: 0 }} />
                   <div
                     role="group"
                     aria-label="Last ten answers in this session"
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      justifySelf: 'center',
-                      padding: '0 32px',
-                      flexShrink: 0,
-                    }}
+                    className="nl-study-mc-streak"
                   >
                     {stats.streakHistory.slice(-10).map((result, i) => (
                       <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: result === 'hit' ? '#B5402A' : '#F09595' }} />
@@ -323,38 +307,45 @@ return (
             ))}
           </div>
           )}
-          <div style={{ display: isFlipMode ? 'flex' : 'none', justifyContent: 'center', alignItems: 'center', gap: '16px', padding: '6px 32px 10px', flexShrink: 0 }}>
-            <button onClick={goPrev} disabled={flipIndex === 0} style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: flipIndex === 0 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === 0 ? 'default' : 'pointer' }}>← Prev</button>
-            <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{flipIndex + 1} / {flipCards.length}</span>
-            <button onClick={goNext} disabled={flipIndex === flipCards.length - 1} style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: flipIndex === flipCards.length - 1 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === flipCards.length - 1 ? 'default' : 'pointer' }}>Next →</button>
-          </div>
-          {!isFlipMode && mode !== 'play' && (
-            <div
+          <div className="nl-study-flip-nav" style={{ display: isFlipMode ? 'flex' : 'none' }}>
+            <button
+              type="button"
+              className="nl-study-flip-nav__btn"
+              onClick={goPrev}
+              disabled={flipIndex === 0}
+              style={{ color: flipIndex === 0 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === 0 ? 'default' : 'pointer' }}
+            >
+              ← Prev
+            </button>
+            <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', flexShrink: 0 }}>{flipIndex + 1} / {flipCards.length}</span>
+            <button
+              type="button"
+              className="nl-study-flip-nav__btn"
+              onClick={goNext}
+              disabled={flipIndex === flipCards.length - 1}
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '64px',
-                marginTop: 'clamp(10px, 2vmin, 18px)',
-                padding: '8px 32px',
-                paddingBottom: 'max(12px, env(safe-area-inset-bottom, 0px))',
-                flexShrink: 0,
+                color: flipIndex === flipCards.length - 1 ? '#DDD8CA' : '#7A7060',
+                cursor: flipIndex === flipCards.length - 1 ? 'default' : 'pointer',
               }}
             >
+              Next →
+            </button>
+          </div>
+          {!isFlipMode && mode !== 'play' && (
+            <div className="nl-study-rate-footer">
               <div
-                style={{
-                  visibility: revealed ? 'visible' : 'hidden',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '12px',
-                  flexWrap: 'wrap',
-                  alignItems: 'center',
-                }}
+                className="nl-study-rate-inner"
+                style={{ visibility: revealed ? 'visible' : 'hidden' }}
                 aria-hidden={!revealed}
               >
                 {([{ rating: 1, label: 'Again', interval: intervals.again, bg: '#FCEBEB', border: '#F09595', color: '#A32D2D' }, { rating: 2, label: 'Hard', interval: intervals.hard, bg: '#FAEEDA', border: '#FAC775', color: '#B5402A' }, { rating: 3, label: 'Easy', interval: intervals.easy, bg: '#EAF3DE', border: '#C0DD97', color: '#3B6D11' }] as const).map(({ rating, label, interval, bg, border, color }) => (
-                  <button key={rating} onClick={() => rate(rating)}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '14px 32px', borderRadius: '8px', border: `1.5px solid ${border}`, background: bg, color, cursor: 'pointer', minWidth: '120px', fontFamily: 'var(--font-jost), sans-serif', transition: 'all 0.15s' }}>
+                  <button
+                    key={rating}
+                    type="button"
+                    className="nl-study-rate-btn"
+                    onClick={() => rate(rating)}
+                    style={{ borderColor: border, background: bg, color }}
+                  >
                     <span style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, letterSpacing: '0.05em' }}>{label}</span>
                     <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, opacity: 0.7 }}>{interval}</span>
                   </button>

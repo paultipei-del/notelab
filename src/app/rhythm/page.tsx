@@ -6,7 +6,10 @@ import type { CSSProperties } from 'react'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
 import type { RhythmExerciseMeta, RhythmProgress, RhythmProgramNode } from '@/lib/rhythmLibrary'
 import { rhythmProgramTitle } from '@/lib/rhythmCatalog'
+import { canAccessRhythmProgram, getRhythmProgramEntitlement, rhythmProgramRequiresPurchase } from '@/lib/rhythmPricing'
 import { useAuth } from '@/hooks/useAuth'
+import { usePurchases } from '@/hooks/usePurchases'
+import AuthModal from '@/components/AuthModal'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -397,6 +400,9 @@ function renderMeasure(
 function LibraryPanel({
   onSelect, onDrop, dragOver, setDragOver, progress, currentId, userId, onProgressReset,
   tree, unlockOrder, loading, isDesktop,
+  canAccessProgram = () => true,
+  onUnlockCollection,
+  checkingOut,
 }: {
   onSelect: (meta: RhythmExerciseMeta) => void
   onDrop: (e: React.DragEvent) => void
@@ -410,6 +416,10 @@ function LibraryPanel({
   unlockOrder: RhythmExerciseMeta[]
   loading: boolean
   isDesktop?: boolean
+  /** Per `program_slug` — paid collections gate exercise list until purchased */
+  canAccessProgram?: (programSlug: string) => boolean
+  onUnlockCollection?: (programSlug: string) => void
+  checkingOut?: boolean
 }) {
   const [openProgramSlug, setOpenProgramSlug] = useState<string | null>(null)
   const [openCategoryKey, setOpenCategoryKey] = useState<string | null>(null)
@@ -421,14 +431,14 @@ function LibraryPanel({
     return m
   }, [unlockOrder])
 
-  // Auto-open first program + category when data arrives
+  // Auto-open first accessible program + category when data arrives
   useEffect(() => {
     if (tree.length === 0) return
-    const p = tree[0]
+    const p = tree.find(prog => canAccessProgram(prog.slug)) ?? tree[0]
     setOpenProgramSlug(p.slug)
     const c0 = p.categories[0]
-    if (c0) setOpenCategoryKey(`${p.slug}::${c0.name}`)
-  }, [tree])
+    if (c0 && canAccessProgram(p.slug)) setOpenCategoryKey(`${p.slug}::${c0.name}`)
+  }, [tree, canAccessProgram])
 
   const categoryAccordionBtn = (isOpen: boolean) =>
     ({
@@ -533,35 +543,50 @@ function LibraryPanel({
             {/* Left nav */}
             <div style={{ width: '200px', flexShrink: 0, borderRight: '1px solid #EDE8DF', background: '#FDFAF3', display: 'flex', flexDirection: 'column' }}>
               {tree.map(program => {
-                const multiProgram = tree.length > 1
+                const locked = !canAccessProgram(program.slug)
                 return (
                   <div key={program.slug}>
-                    {multiProgram && (
-                      <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid #EDE8DF' }}>
-                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>{rhythmProgramTitle(program.slug)}</p>
-                      </div>
-                    )}
-                    {program.categories.map(cat => {
-                      const catKey = `${program.slug}::${cat.name}`
-                      const isActive = openCategoryKey === catKey
-                      const catDone = cat.levels.reduce((a, l) => a + l.exercises.filter(e => progress[e.id]?.completed).length, 0)
-                      const catTotal = cat.levels.reduce((a, l) => a + l.exercises.length, 0)
-                      return (
-                        <button key={catKey} type="button"
-                          onClick={() => { setOpenProgramSlug(program.slug); setOpenCategoryKey(catKey) }}
+                    <div style={{ padding: '12px 16px 8px', borderBottom: '1px solid #EDE8DF' }}>
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>{rhythmProgramTitle(program.slug)}</p>
+                    </div>
+                    {locked ? (
+                      <div style={{ padding: '12px 16px 16px', borderBottom: '1px solid #EDE8DF' }}>
+                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 10px', lineHeight: 1.4 }}>Sold separately — unlock to browse exercises.</p>
+                        <button
+                          type="button"
+                          disabled={checkingOut}
+                          onClick={() => onUnlockCollection?.(program.slug)}
                           style={{
-                            width: '100%', textAlign: 'left' as const, padding: '10px 16px',
-                            background: isActive ? '#1A1A18' : 'transparent',
-                            border: 'none', borderBottom: '1px solid #EDE8DF',
-                            cursor: 'pointer', transition: 'background 0.1s',
+                            width: '100%', padding: '8px 12px', borderRadius: '10px', border: '1px solid #1A1A18',
+                            background: '#1A1A18', color: 'white', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: checkingOut ? 'default' : 'pointer',
                           }}
-                          onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#EDE8DF' }}
-                          onMouseLeave={e => { e.currentTarget.style.background = isActive ? '#1A1A18' : 'transparent' }}>
-                          <p style={{ fontFamily: SERIF, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: isActive ? 'white' : '#1A1A18', margin: '0 0 2px' }}>{cat.name}</p>
-                          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: isActive ? 'rgba(255,255,255,0.5)' : '#B0AEA8', margin: 0 }}>{catDone}/{catTotal}</p>
+                        >
+                          {checkingOut ? '…' : 'Unlock collection'}
                         </button>
-                      )
-                    })}
+                      </div>
+                    ) : (
+                      program.categories.map(cat => {
+                        const catKey = `${program.slug}::${cat.name}`
+                        const isActive = openCategoryKey === catKey
+                        const catDone = cat.levels.reduce((a, l) => a + l.exercises.filter(e => progress[e.id]?.completed).length, 0)
+                        const catTotal = cat.levels.reduce((a, l) => a + l.exercises.length, 0)
+                        return (
+                          <button key={catKey} type="button"
+                            onClick={() => { setOpenProgramSlug(program.slug); setOpenCategoryKey(catKey) }}
+                            style={{
+                              width: '100%', textAlign: 'left' as const, padding: '10px 16px',
+                              background: isActive ? '#1A1A18' : 'transparent',
+                              border: 'none', borderBottom: '1px solid #EDE8DF',
+                              cursor: 'pointer', transition: 'background 0.1s',
+                            }}
+                            onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#EDE8DF' }}
+                            onMouseLeave={e => { e.currentTarget.style.background = isActive ? '#1A1A18' : 'transparent' }}>
+                            <p style={{ fontFamily: SERIF, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: isActive ? 'white' : '#1A1A18', margin: '0 0 2px' }}>{cat.name}</p>
+                            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: isActive ? 'rgba(255,255,255,0.5)' : '#B0AEA8', margin: 0 }}>{catDone}/{catTotal}</p>
+                          </button>
+                        )
+                      })
+                    )}
                   </div>
                 )
               })}
@@ -569,7 +594,25 @@ function LibraryPanel({
 
             {/* Right content */}
             <div className="nl-hide-scrollbar" style={{ flex: 1, overflowY: 'auto' as const }}>
-              {activeCat ? activeCat.levels.map((levelNode, levelIdx) => {
+              {activeProgram && !canAccessProgram(activeProgram.slug) ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', textAlign: 'center', minHeight: '280px' }}>
+                  <p style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#2A2318', margin: '0 0 8px' }}>{rhythmProgramTitle(activeProgram.slug)}</p>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 20px', maxWidth: '360px', lineHeight: 1.5 }}>
+                    This collection is available as a separate purchase. Unlock it to practice these exercises.
+                  </p>
+                  <button
+                    type="button"
+                    disabled={checkingOut}
+                    onClick={() => onUnlockCollection?.(activeProgram.slug)}
+                    style={{
+                      padding: '10px 22px', borderRadius: '10px', border: '1px solid #1A1A18', background: '#1A1A18', color: 'white',
+                      fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: checkingOut ? 'default' : 'pointer',
+                    }}
+                  >
+                    {checkingOut ? '…' : 'Unlock collection'}
+                  </button>
+                </div>
+              ) : activeCat ? activeCat.levels.map((levelNode, levelIdx) => {
                 const isLastLevel = levelIdx === activeCat.levels.length - 1
                 return (
                   <div key={levelNode.level}>
@@ -598,10 +641,13 @@ function LibraryPanel({
     <div style={{ width: '100%', maxWidth: '560px' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '8px' }}>
         <h2 style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#2A2318', margin: 0 }}>Exercises</h2>
         {resetBtn}
       </div>
+      {!loading && tree.length === 1 && (
+        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 20px' }}>{rhythmProgramTitle(tree[0].slug)}</p>
+      )}
 
       {loading && <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>Loading…</p>}
 
@@ -654,7 +700,26 @@ function LibraryPanel({
               </button>
             )}
 
-            {programOpen && program.categories.map(cat => {
+            {programOpen && !canAccessProgram(program.slug) && (
+              <div style={{ marginBottom: '12px', marginLeft: multiProgram ? '8px' : 0, padding: '16px', border: '1px solid #DDD8CA', borderRadius: '12px', background: 'white' }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px', lineHeight: 1.45 }}>
+                  Purchase <strong style={{ fontWeight: 500, color: '#2A2318' }}>{rhythmProgramTitle(program.slug)}</strong> to access these exercises.
+                </p>
+                <button
+                  type="button"
+                  disabled={checkingOut}
+                  onClick={() => onUnlockCollection?.(program.slug)}
+                  style={{
+                    width: '100%', padding: '10px 16px', borderRadius: '10px', border: '1px solid #1A1A18', background: '#1A1A18', color: 'white',
+                    fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: checkingOut ? 'default' : 'pointer',
+                  }}
+                >
+                  {checkingOut ? '…' : 'Unlock collection'}
+                </button>
+              </div>
+            )}
+
+            {programOpen && canAccessProgram(program.slug) && program.categories.map(cat => {
               const catKey = `${program.slug}::${cat.name}`
               const isCatOpen = openCategoryKey === catKey
               const catTotal = cat.levels.reduce((a, l) => a + l.exercises.length, 0)
@@ -783,7 +848,51 @@ export default function RhythmPage() {
   const [allExercises, setAllExercises] = useState<RhythmExerciseMeta[]>([])
   const [libraryTree, setLibraryTree] = useState<RhythmProgramNode[]>([])
   const [libraryLoading, setLibraryLoading] = useState(true)
+  const [showAuthRhythm, setShowAuthRhythm] = useState(false)
+  const [checkingOutRhythm, setCheckingOutRhythm] = useState(false)
   const { user } = useAuth()
+  const { hasPurchased, hasSubscription, loading: purchasesLoading } = usePurchases(user?.id ?? null)
+
+  const canAccessProgram = useCallback(
+    (programSlug: string) => {
+      if (purchasesLoading && rhythmProgramRequiresPurchase(programSlug)) return false
+      return canAccessRhythmProgram(programSlug, { hasPurchased, hasSubscription })
+    },
+    [hasPurchased, hasSubscription, purchasesLoading]
+  )
+
+  const accessibleUnlockOrder = useMemo(
+    () => allExercises.filter(ex => canAccessProgram(ex.program_slug)),
+    [allExercises, canAccessProgram]
+  )
+
+  async function handleUnlockRhythmCollection(programSlug: string) {
+    const { stripePriceId } = getRhythmProgramEntitlement(programSlug)
+    if (!stripePriceId) return
+    if (!user) {
+      setShowAuthRhythm(true)
+      return
+    }
+    setCheckingOutRhythm(true)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId: stripePriceId,
+          userId: user.id,
+          userEmail: user.email,
+          productType: `rhythm_${programSlug}`,
+        }),
+      })
+      const { url, error } = await res.json()
+      if (error) throw new Error(error)
+      window.location.href = url as string
+    } catch (e) {
+      console.error(e)
+      setCheckingOutRhythm(false)
+    }
+  }
   const containerRef = useRef<HTMLDivElement>(null)
   const landscapeContainerRef = useRef<HTMLDivElement>(null)
   /** Scrollable notation stack (desktop two-up); not used when fewer than 4 systems. */
@@ -1035,6 +1144,8 @@ export default function RhythmPage() {
   }
 
   const loadExercise = async (meta: RhythmExerciseMeta) => {
+    if (purchasesLoading && rhythmProgramRequiresPurchase(meta.program_slug)) return
+    if (!canAccessProgram(meta.program_slug)) return
     setLoadingExercise(true)
     try {
       const { fetchExerciseFile } = await import('@/lib/rhythmLibrary')
@@ -1822,10 +1933,10 @@ export default function RhythmPage() {
   }, [])
 
   const pct = score && score.total > 0 ? Math.round(score.hits / score.total * 100) : 0
-  const currentExIdx = currentMeta ? allExercises.findIndex(e => e.id === currentMeta.id) : -1
-  const prevEx = currentExIdx > 0 ? allExercises[currentExIdx - 1] : null
+  const currentExIdx = currentMeta ? accessibleUnlockOrder.findIndex(e => e.id === currentMeta.id) : -1
+  const prevEx = currentExIdx > 0 ? accessibleUnlockOrder[currentExIdx - 1] : null
   const currentCompleted = currentMeta ? (progress[currentMeta.id]?.completed ?? false) : false
-  const nextExRaw = currentExIdx >= 0 && currentExIdx < allExercises.length - 1 ? allExercises[currentExIdx + 1] : null
+  const nextExRaw = currentExIdx >= 0 && currentExIdx < accessibleUnlockOrder.length - 1 ? accessibleUnlockOrder[currentExIdx + 1] : null
   const nextEx = currentCompleted ? nextExRaw : null
   const durationPct = score && score.durationTotal > 0 ? Math.round(score.durationHits / score.durationTotal * 100) : 0
 
@@ -2086,7 +2197,7 @@ export default function RhythmPage() {
           </div>
         ) : (
           <div ref={containerRef} className="nl-hide-scrollbar" style={{ flex: 1, overflowY: 'auto' as const, padding: '4px 0 8px' }}>
-            <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} userId={user?.id} onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))} tree={libraryTree} unlockOrder={allExercises} loading={libraryLoading} />
+            <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} userId={user?.id} onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))} tree={libraryTree} unlockOrder={accessibleUnlockOrder} loading={libraryLoading} canAccessProgram={canAccessProgram} onUnlockCollection={handleUnlockRhythmCollection} checkingOut={checkingOutRhythm} />
           </div>
         )}
 
@@ -2134,6 +2245,7 @@ export default function RhythmPage() {
           )}
         </div>
 
+        {showAuthRhythm && <AuthModal onClose={() => setShowAuthRhythm(false)} onSuccess={() => setShowAuthRhythm(false)} />}
       </div>
     )
   }
@@ -2240,9 +2352,12 @@ export default function RhythmPage() {
             userId={user?.id}
             onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))}
             tree={libraryTree}
-            unlockOrder={allExercises}
+            unlockOrder={accessibleUnlockOrder}
             loading={libraryLoading}
             isDesktop
+            canAccessProgram={canAccessProgram}
+            onUnlockCollection={handleUnlockRhythmCollection}
+            checkingOut={checkingOutRhythm}
           />
         )}
 
@@ -2845,6 +2960,7 @@ export default function RhythmPage() {
           </div>
         )}
       </div>
+      {showAuthRhythm && <AuthModal onClose={() => setShowAuthRhythm(false)} onSuccess={() => setShowAuthRhythm(false)} />}
     </div>
   )
 }

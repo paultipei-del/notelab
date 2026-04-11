@@ -16,6 +16,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
 
   return (
     <div
+      className="nl-study-symbol-card"
       style={{ width: '100%', maxWidth: '480px', cursor: revealed ? 'default' : 'pointer' }}
       onClick={!revealed ? onReveal : undefined}
     >
@@ -31,14 +32,17 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
           marginBottom: '16px',
         }}
       >
-        <div style={{
-          fontFamily: 'Bravura, serif',
-          fontSize: '96px',
-          lineHeight: 1.4,
-          color: '#2A2318',
-          letterSpacing: '0.05em',
-          marginBottom: hasLabel ? '16px' : '0',
-        }}>
+        <div
+          className="nl-study-symbol-glyph"
+          style={{
+            fontFamily: 'Bravura, serif',
+            fontSize: '96px',
+            lineHeight: 1.4,
+            color: '#2A2318',
+            letterSpacing: '0.05em',
+            marginBottom: hasLabel ? '16px' : '0',
+          }}
+        >
           {symbols.join(' ')}
         </div>
         {hasLabel && (
