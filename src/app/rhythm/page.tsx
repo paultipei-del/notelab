@@ -34,6 +34,12 @@ const TRAIL_UI_EVERY_N_FRAMES = 4
 /** Quarter-note beats before each row/pair boundary to trigger paging scroll (earlier shift; playhead space). */
 const NOTATION_PAGE_SCROLL_LEAD_BEATS = 0.5
 
+/** Desktop: schedule metronome clicks slightly later so heard click aligns with playhead/notation. */
+const DESKTOP_METRO_CLICK_DELAY_SEC = 0.03
+
+/** Countdown digits switch earlier by up to this many seconds; on desktop capped by metro clickDelay so it always does something. */
+const COUNTDOWN_DISPLAY_LEAD_SEC = 0
+
 const DIFFICULTY_COLORS: Record<number, string> = {
   1: '#E1F5EE', 2: '#E8EEF9', 3: '#FEF3E2', 4: '#F9EEE8', 5: '#F3E8F9'
 }
@@ -1020,14 +1026,15 @@ export default function RhythmPage() {
 
   const playClick = (time: number, accent: boolean) => {
     const ctx = getCtx()
+    const t = time + (!useMobileLayout ? DESKTOP_METRO_CLICK_DELAY_SEC : 0)
     const osc = ctx.createOscillator()
     const gain = ctx.createGain()
     const dest = metroGainRef.current ?? ctx.destination
     osc.connect(gain); gain.connect(dest)
     osc.frequency.value = accent ? 1000 : 700
-    gain.gain.setValueAtTime(accent ? 0.5 : 0.2, time)
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05)
-    osc.start(time); osc.stop(time + 0.06)
+    gain.gain.setValueAtTime(accent ? 0.5 : 0.2, t)
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05)
+    osc.start(t); osc.stop(t + 0.06)
   }
 
   const loadExercise = async (meta: RhythmExerciseMeta) => {
@@ -1105,19 +1112,29 @@ export default function RhythmPage() {
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
+      /** Desktop metronome clicks are scheduled +DESKTOP_METRO_CLICK_DELAY_SEC; align countdown UI with heard clicks. */
+      const clickDelay = !useMobileLayout ? DESKTOP_METRO_CLICK_DELAY_SEC : 0
       const countdownElapsed = ctx2.currentTime - lat - countdownStart
       if (countdownElapsed < countdownDuration) {
-        const countBeat = Math.floor(countdownElapsed / feltBeatDuration) + 1
-        setCountdown(countBeat)
-        const lastBeatStart = (feltBeats - 1) * feltBeatDuration
-        if (countdownElapsed >= lastBeatStart) {
-          const t = (countdownElapsed - lastBeatStart) / feltBeatDuration
-          setCountdownOverlayOpacity((1 - Math.min(1, Math.max(0, t))) ** 2)
+        // Heard click k ≈ countdownElapsed === clickDelay + k * feltBeatDuration. Display lead shifts all beat boundaries earlier.
+        // Cap lead to clickDelay: larger values used to collapse uiAnchor to 0 and looked identical to any big number.
+        const displayLead = Math.min(Math.max(0, COUNTDOWN_DISPLAY_LEAD_SEC), clickDelay)
+        const tAdj = countdownElapsed - clickDelay + displayLead
+        if (tAdj < 0) {
+          setCountdown(null)
+        } else {
+          const idx = Math.floor(tAdj / feltBeatDuration)
+          setCountdown(Math.min(idx + 1, feltBeats))
+        }
+        const lastBeatT = (feltBeats - 1) * feltBeatDuration
+        if (tAdj >= lastBeatT) {
+          const te = (tAdj - lastBeatT) / feltBeatDuration
+          setCountdownOverlayOpacity((1 - Math.min(1, Math.max(0, te))) ** 2)
         } else {
           setCountdownOverlayOpacity(1)
         }
-        // Start playhead moving during last countdown beat (heard downbeat = startTime + latency)
-        const timeToHeardDownbeat = startTimeRef.current + lat - ctx2.currentTime
+        // Start playhead moving during last countdown beat (heard downbeat includes click delay + output latency)
+        const timeToHeardDownbeat = startTimeRef.current + lat + clickDelay - ctx2.currentTime
         // Show playhead from 2 beats before downbeat
         if (timeToHeardDownbeat <= beatDuration) {
           setPlayhead(-timeToHeardDownbeat / beatDuration)
