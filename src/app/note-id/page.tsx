@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { usePurchases } from '@/hooks/usePurchases'
 
 type Clef = 'treble' | 'bass' | 'grand'
 type NoteFilter = 'lines' | 'spaces' | 'ledger'
@@ -35,22 +34,22 @@ const DEFAULT_CONFIG: Config = {
 }
 
 const GUIDED_LEVELS = [
-  { id: 'sight-read-treble-free', label: 'Free',    desc: 'C4–G4 anchor notes',   clef: 'treble', pro: false },
-  { id: 'sight-read-treble-1',    label: 'Level 1', desc: 'C4–G4 + ledger lines', clef: 'treble', pro: true },
-  { id: 'sight-read-treble-2',    label: 'Level 2', desc: 'Full treble staff',     clef: 'treble', pro: true },
-  { id: 'sight-read-treble-3',    label: 'Level 3', desc: 'With sharps & flats',   clef: 'treble', pro: true },
-  { id: 'sight-read-treble-4',    label: 'Level 4', desc: 'Extended range',        clef: 'treble', pro: true },
-  { id: 'sight-read-treble-5',    label: 'Level 5', desc: 'Full chromatic',        clef: 'treble', pro: true },
-  { id: 'sight-read-bass-free',   label: 'Free',    desc: 'F3–C4 anchor notes',   clef: 'bass',   pro: false },
-  { id: 'sight-read-bass-1',      label: 'Level 1', desc: 'F3–C4 + ledger lines', clef: 'bass',   pro: true },
-  { id: 'sight-read-bass-2',      label: 'Level 2', desc: 'Full bass staff',       clef: 'bass',   pro: true },
-  { id: 'sight-read-bass-3',      label: 'Level 3', desc: 'With sharps & flats',   clef: 'bass',   pro: true },
-  { id: 'sight-read-bass-4',      label: 'Level 4', desc: 'Extended range',        clef: 'bass',   pro: true },
-  { id: 'sight-read-bass-5',      label: 'Level 5', desc: 'Full chromatic',        clef: 'bass',   pro: true },
-  { id: 'sight-read-grand-free',  label: 'Free',    desc: 'Both clefs, anchor notes', clef: 'grand', pro: false },
-  { id: 'sight-read-grand-1',     label: 'Level 1', desc: 'Grand staff basics',    clef: 'grand',  pro: true },
-  { id: 'sight-read-grand-2',     label: 'Level 2', desc: 'Expanded range',        clef: 'grand',  pro: true },
-  { id: 'sight-read-grand-3',     label: 'Level 3', desc: 'Full grand staff',      clef: 'grand',  pro: true },
+  { id: 'sight-read-treble-free', label: 'Level 1', desc: 'C4–G4 anchor notes',   clef: 'treble', pro: false },
+  { id: 'sight-read-treble-1',    label: 'Level 2', desc: 'C4–G4 + ledger lines', clef: 'treble', pro: false },
+  { id: 'sight-read-treble-2',    label: 'Level 3', desc: 'Full treble staff',     clef: 'treble', pro: false },
+  { id: 'sight-read-treble-3',    label: 'Level 4', desc: 'With sharps & flats',   clef: 'treble', pro: false },
+  { id: 'sight-read-treble-4',    label: 'Level 5', desc: 'Extended range',        clef: 'treble', pro: false },
+  { id: 'sight-read-treble-5',    label: 'Level 6', desc: 'Full chromatic',        clef: 'treble', pro: false },
+  { id: 'sight-read-bass-free',   label: 'Level 1', desc: 'F3–C4 anchor notes',   clef: 'bass',   pro: false },
+  { id: 'sight-read-bass-1',      label: 'Level 2', desc: 'F3–C4 + ledger lines', clef: 'bass',   pro: false },
+  { id: 'sight-read-bass-2',      label: 'Level 3', desc: 'Full bass staff',       clef: 'bass',   pro: false },
+  { id: 'sight-read-bass-3',      label: 'Level 4', desc: 'With sharps & flats',   clef: 'bass',   pro: false },
+  { id: 'sight-read-bass-4',      label: 'Level 5', desc: 'Extended range',        clef: 'bass',   pro: false },
+  { id: 'sight-read-bass-5',      label: 'Level 6', desc: 'Full chromatic',        clef: 'bass',   pro: false },
+  { id: 'sight-read-grand-free',  label: 'Level 1', desc: 'Both clefs, anchors',   clef: 'grand',  pro: false },
+  { id: 'sight-read-grand-1',     label: 'Level 2', desc: 'Grand staff basics',    clef: 'grand',  pro: false },
+  { id: 'sight-read-grand-2',     label: 'Level 3', desc: 'Expanded range',        clef: 'grand',  pro: false },
+  { id: 'sight-read-grand-3',     label: 'Level 4', desc: 'Full grand staff',      clef: 'grand',  pro: false },
 ]
 
 const F = 'var(--font-jost), sans-serif'
@@ -59,8 +58,6 @@ const SERIF = 'var(--font-cormorant), serif'
 export default function NoteIDPage() {
   const router = useRouter()
   const { user } = useAuth()
-  const { hasSubscription } = usePurchases(user?.id ?? null)
-  const isPro = hasSubscription()
   const [config, setConfig] = useState<Config>(DEFAULT_CONFIG)
   const [showCustom, setShowCustom] = useState(false)
 
@@ -173,27 +170,21 @@ export default function NoteIDPage() {
         {/* ── Guided levels ── */}
         <div style={{ marginBottom: '24px' }}>
           {sectionLabel('Guided Levels')}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '8px' }}>
-            {levels.map(l => {
-              const locked = l.pro && !isPro
-              return (
-                <button key={l.id} onClick={() => !locked && startGuided(l.id)}
-                  style={{
-                    background: locked ? '#FAFAF8' : 'white',
-                    border: '1px solid #D3D1C7', borderRadius: '12px',
-                    padding: '14px 16px', cursor: locked ? 'default' : 'pointer',
-                    textAlign: 'left' as const, transition: 'all 0.15s',
-                  }}
-                  onMouseEnter={e => { if (!locked) e.currentTarget.style.borderColor = '#1A1A18' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
-                >
-                  <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: locked ? '#D3D1C7' : '#1A1A18', margin: '0 0 3px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    {locked && <span style={{ fontSize: '10px' }}>🔒</span>}{l.label}
-                  </p>
-                  <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: locked ? '#D3D1C7' : '#888780', margin: 0 }}>{l.desc}</p>
-                </button>
-              )
-            })}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+            {levels.map(l => (
+              <button key={l.id} onClick={() => startGuided(l.id)}
+                style={{
+                  background: 'white', border: '1px solid #D3D1C7', borderRadius: '12px',
+                  padding: '14px 16px', cursor: 'pointer',
+                  textAlign: 'left' as const, transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+              >
+                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#1A1A18', margin: '0 0 3px' }}>{l.label}</p>
+                <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', margin: 0 }}>{l.desc}</p>
+              </button>
+            ))}
           </div>
         </div>
 
