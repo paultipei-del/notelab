@@ -171,7 +171,7 @@ export default function SiteHeader() {
                 alignItems: 'center', justifyContent: 'center', gap: '6px',
               }}
             >
-              {[0,1,2].map(i => (
+              {[0, 1, 2].map(i => (
                 <span key={i} style={{
                   display: 'block', width: '16px', height: '2px',
                   background: showMobileMenu ? 'white' : '#1A1A18',
@@ -240,7 +240,6 @@ export default function SiteHeader() {
                     boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                     minWidth: '200px', zIndex: 100,
                   }}>
-                    {/* Identity header */}
                     <div style={{ padding: '10px 14px 14px', borderBottom: '1px solid #EDE8DF', marginBottom: '4px' }}>
                       {displayName && (
                         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>

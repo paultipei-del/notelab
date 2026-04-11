@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
@@ -34,10 +34,30 @@ const SECTIONS: { id: Section; label: string; icon: string }[] = [
   { id: 'mydecks',      label: 'My Decks',     icon: '⊟' },
 ]
 
+function AccountNavIcon({ id }: { id: Section }) {
+  const svg = (children: ReactNode) => (
+    <svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      {children}
+    </svg>
+  )
+  switch (id) {
+    case 'profile':
+      return svg(<><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>)
+    case 'subscription':
+      return svg(<><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 10h18" /></>)
+    case 'progress':
+      return svg(<><path d="M3 3v18h18" /><path d="M7 16l4-4 4 4 5-6" /></>)
+    case 'mydecks':
+      return svg(<><rect x="3" y="4" width="7" height="9" rx="1" /><rect x="14" y="4" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="8" rx="1" /><rect x="3" y="15" width="7" height="5" rx="1" /></>)
+    default:
+      return null
+  }
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: '40px' }}>
-      <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '26px', color: '#2A2318', marginBottom: '20px', letterSpacing: '0.01em' }}>{title}</h2>
+    <div className="nl-account-section">
+      <h2 className="nl-account-section__title">{title}</h2>
       {children}
     </div>
   )
@@ -707,16 +727,23 @@ export default function AccountPage() {
     )
   }
 
-  return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px', display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
+  const currentLabel = SECTIONS.find(s => s.id === active)?.label ?? 'Account'
 
-        {/* Sidebar */}
-        <aside style={{ width: '180px', flexShrink: 0, position: 'sticky' as const, top: '80px' }}>
+  return (
+    <div className="nl-account-page" style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+      {/* Mobile: sticky title bar (section switching via bottom tabs) */}
+      <header className="nl-account-page__mobile-header">
+        <h1 className="nl-account-page__mobile-title">{currentLabel}</h1>
+        <Link href="/" className="nl-account-page__mobile-home">Home</Link>
+      </header>
+
+      <div className="nl-account-page__shell">
+        {/* Desktop sidebar */}
+        <aside className="nl-account-page__sidebar">
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Account</p>
           <nav style={{ display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
             {SECTIONS.map(s => (
-              <button key={s.id} onClick={() => setActive(s.id)} style={{
+              <button key={s.id} type="button" onClick={() => setActive(s.id)} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 background: active === s.id ? 'white' : 'transparent',
                 border: active === s.id ? '1px solid #DDD8CA' : '1px solid transparent',
@@ -740,15 +767,29 @@ export default function AccountPage() {
           </div>
         </aside>
 
-        {/* Main content */}
-        <main style={{ flex: 1, minWidth: 0 }}>
+        <main className="nl-account-page__main">
           {active === 'profile'      && <ProfileSection user={user} />}
           {active === 'subscription' && <SubscriptionSection userId={user.id} />}
           {active === 'progress'     && <ProgressSection userId={user.id} />}
           {active === 'mydecks'      && <MyDecksSection userId={user.id} />}
         </main>
-
       </div>
+
+      {/* Mobile: icon tab bar */}
+      <nav className="nl-account-page__mobile-tabs" aria-label="Account sections">
+        {SECTIONS.map(s => (
+          <button
+            key={s.id}
+            type="button"
+            className={'nl-account-page__mobile-tab' + (active === s.id ? ' nl-account-page__mobile-tab--active' : '')}
+            onClick={() => setActive(s.id)}
+            aria-label={s.label}
+            aria-current={active === s.id ? 'page' : undefined}
+          >
+            <AccountNavIcon id={s.id} />
+          </button>
+        ))}
+      </nav>
     </div>
   )
 }
