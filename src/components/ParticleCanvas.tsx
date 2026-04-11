@@ -73,7 +73,7 @@ export default function ParticleCanvas() {
             n += Math.exp(-dist2 / 0.04) * 0.35 * mouse.weight
           }
 
-          const alpha = clamp((n + 1) * 0.5, 0, 1) * 0.13
+          const alpha = clamp((n + 1) * 0.5, 0, 1) * 0.45
           const i = (py * ow + px) * 4
           data[i]     = 26
           data[i + 1] = 26
