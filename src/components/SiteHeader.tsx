@@ -8,6 +8,12 @@ import { usePathname, useRouter } from 'next/navigation'
 import AuthModal from '@/components/AuthModal'
 
 const F = 'var(--font-jost), sans-serif'
+/** Site header controls: rounded rectangle, not full pill */
+const HDR_BTN_R = '10px'
+const NAV_TEXT_ACTIVE = '#2A2318'
+const NAV_TEXT_ACTIVE_HOVER = '#1A1712'
+const NAV_TEXT_IDLE = '#7A7060'
+const NAV_TEXT_IDLE_HOVER = '#5E574A'
 
 const NAV = [
   { label: 'Flashcards',   href: '/flashcards',         match: (p: string) => p === '/flashcards' },
@@ -37,6 +43,7 @@ export default function SiteHeader() {
   const navRef = useRef<HTMLElement>(null)
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [pillRect, setPillRect] = useState<{ left: number; width: number } | null>(null)
+  const [hoveredNavIdx, setHoveredNavIdx] = useState<number | null>(null)
 
   const activeIdx = NAV.findIndex(item => item.match(pathname))
 
@@ -105,11 +112,15 @@ export default function SiteHeader() {
           style={{
             position: 'relative',
             background: 'transparent',
-            borderRadius: '9999px',
+            borderRadius: HDR_BTN_R,
             padding: '5px',
             gap: '0',
           }}
-          onMouseLeave={() => { if (activeIdx >= 0) movePillTo(activeIdx); else setPillRect(null) }}
+          onMouseLeave={() => {
+            setHoveredNavIdx(null)
+            if (activeIdx >= 0) movePillTo(activeIdx)
+            else setPillRect(null)
+          }}
         >
           {/* Sliding pill */}
           {pillRect && (
@@ -119,9 +130,15 @@ export default function SiteHeader() {
               width: pillRect.width,
               top: '5px',
               bottom: '5px',
-              background: 'white',
-              borderRadius: '9999px',
-              boxShadow: '0 1px 4px rgba(42,35,24,0.12)',
+              borderRadius: HDR_BTN_R,
+              background: 'linear-gradient(180deg, #ffffff 0%, #faf7f2 42%, #ebe4d9 100%)',
+              border: '1px solid rgba(255,255,255,0.85)',
+              boxShadow: [
+                'inset 0 1px 0 rgba(255,255,255,0.95)',
+                'inset 0 -1px 0 rgba(42,35,24,0.07)',
+                '0 2px 4px rgba(42,35,24,0.08)',
+                '0 4px 10px rgba(42,35,24,0.1)',
+              ].join(', '),
               transition: 'left 300ms ease-out, width 300ms ease-out',
               pointerEvents: 'none',
               zIndex: 0,
@@ -129,23 +146,30 @@ export default function SiteHeader() {
           )}
           {NAV.map((item, idx) => {
             const active = item.match(pathname)
+            const hover = hoveredNavIdx === idx
+            const color = active
+              ? (hover ? NAV_TEXT_ACTIVE_HOVER : NAV_TEXT_ACTIVE)
+              : (hover ? NAV_TEXT_IDLE_HOVER : NAV_TEXT_IDLE)
             return (
               <button
                 key={item.href}
                 ref={el => { itemRefs.current[idx] = el }}
                 onClick={() => router.push(item.href)}
-                onMouseEnter={() => movePillTo(idx)}
+                onMouseEnter={() => {
+                  setHoveredNavIdx(idx)
+                  movePillTo(idx)
+                }}
                 style={{
                   position: 'relative', zIndex: 10,
                   background: 'transparent', border: 'none',
-                  borderRadius: '9999px',
+                  borderRadius: HDR_BTN_R,
                   padding: '7px 18px',
                   fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
-                  color: active ? '#2A2318' : '#7A7060',
+                  color,
                   letterSpacing: '0.02em',
                   whiteSpace: 'nowrap' as const,
                   cursor: 'pointer',
-                  transition: 'color 200ms',
+                  transition: 'color 180ms ease',
                 }}
               >
                 {item.label}
@@ -164,7 +188,7 @@ export default function SiteHeader() {
               onClick={() => setShowMobileMenu(v => !v)}
               aria-label="Menu"
               style={{
-                width: '40px', height: '40px', borderRadius: '11px',
+                width: '40px', height: '40px', borderRadius: HDR_BTN_R,
                 background: showMobileMenu ? '#1A1A18' : 'transparent',
                 border: '1px solid ' + (showMobileMenu ? '#1A1A18' : '#DDD8CA'),
                 cursor: 'pointer', display: 'flex', flexDirection: 'column' as const,
@@ -274,7 +298,7 @@ export default function SiteHeader() {
               </div>
             ) : (
               <button onClick={() => setShowAuth(true)} style={{
-                border: '1px solid #DDD8CA', borderRadius: '22px',
+                border: '1px solid #DDD8CA', borderRadius: HDR_BTN_R,
                 padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-body)',
                 fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer',
               }}>
