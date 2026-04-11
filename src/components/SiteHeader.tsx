@@ -93,7 +93,6 @@ export default function SiteHeader() {
           <Link href="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>
               Note<span style={{ fontWeight: 500 }}>Lab</span>
-              <span style={{ fontSize: '12px', fontWeight: 400, letterSpacing: '0.18em', color: '#7A7060', marginLeft: '8px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
             </span>
           </Link>
         </div>

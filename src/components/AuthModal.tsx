@@ -109,7 +109,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         </div>
 
         <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#2A2318', marginBottom: '24px' }}>
-          {mode === 'signin' ? 'Welcome back' : 'Join NoteLab Studio'}
+          {mode === 'signin' ? 'Welcome back' : 'Join NoteLab'}
         </h2>
 
         <div style={{ marginBottom: '14px' }}>
