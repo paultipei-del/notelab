@@ -234,7 +234,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
     (_, i) => exercise.measures.slice(i * measuresPerRow, (i + 1) * measuresPerRow))
 
   return (
-    <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px' }}>
+    <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }}>
       {rows.map((rowMeasures, rowIdx) => {
         const { measureW, noteW } = buildLayout(exercise, SVG_W, rowMeasures)
         const isLastRow = rowIdx === rows.length - 1
@@ -396,21 +396,21 @@ export default function GeneratePage() {
     return true
   })
 
-  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #D3D1C7', fontFamily: F, fontSize: '13px', color: '#1A1A18', background: '#F5F2EC', outline: 'none', width: '100%', boxSizing: 'border-box' }
-  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#D3D1C7'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#888780' })
-  const lbl: React.CSSProperties = { fontFamily: F, fontSize: '11px', color: '#888780', display: 'block', marginBottom: '6px' }
-  const card: React.CSSProperties = { background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '20px' }
-  const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', marginBottom: '16px' }
+  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #484542', fontFamily: F, fontSize: '13px', color: '#F0EDE6', background: '#2C2A27', outline: 'none', width: '100%', boxSizing: 'border-box' }
+  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#484542'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#9E9A92' })
+  const lbl: React.CSSProperties = { fontFamily: F, fontSize: '11px', color: '#9E9A92', display: 'block', marginBottom: '6px' }
+  const card: React.CSSProperties = { background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '20px' }
+  const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '16px' }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC', padding: '40px 32px' }}>
+    <div style={{ minHeight: '100vh', background: '#2C2A27', padding: '40px 32px' }}>
       <div style={{ maxWidth: '860px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
           <div>
-            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#1A1A18', marginBottom: '4px' }}>Rhythm Generator</h1>
-            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Configure and generate rhythm exercises for the library</p>
+            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#F0EDE6', marginBottom: '4px' }}>Rhythm Generator</h1>
+            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>Configure and generate rhythm exercises for the library</p>
           </div>
-          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: '12px', color: '#888780', textDecoration: 'none', border: '1px solid #D3D1C7', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
+          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: '12px', color: '#9E9A92', textDecoration: 'none', border: '1px solid #484542', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
@@ -423,7 +423,7 @@ export default function GeneratePage() {
                   {[2,3,4,5,6,9,12].map(n => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
-              <span style={{ fontFamily: SERIF, fontSize: '24px', color: '#888780', paddingBottom: '6px' }}>/</span>
+              <span style={{ fontFamily: SERIF, fontSize: '24px', color: '#9E9A92', paddingBottom: '6px' }}>/</span>
               <div style={{ flex: 1 }}>
                 <label style={lbl}>Beat type</label>
                 <select value={opts.timeSignature.beatType} onChange={e => set('timeSignature', { ...opts.timeSignature, beatType: Number(e.target.value) })} style={inp}>
@@ -476,7 +476,7 @@ export default function GeneratePage() {
               ].map(({ key, probKey, label }) => (
                 <div key={key}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontFamily: F, fontSize: '13px', color: '#1A1A18' }}>{label}</span>
+                    <span style={{ fontFamily: F, fontSize: '13px', color: '#F0EDE6' }}>{label}</span>
                     <button onClick={() => set(key, !opts[key])} style={tog(!!opts[key])}>{opts[key] ? 'On' : 'Off'}</button>
                   </div>
                   {opts[key] && (
@@ -554,8 +554,8 @@ export default function GeneratePage() {
 
         {preview && showDiag && (
           <div style={{ background: '#1A1A18', borderRadius: '12px', padding: '16px', marginBottom: '16px', overflowX: 'auto' }}>
-            <p style={{ fontFamily: F, fontSize: '11px', color: '#888780', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
-            <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#888780', marginBottom: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
+            <p style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', marginBottom: '8px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic — Beat Positions</p>
+            <div style={{ fontFamily: 'monospace', fontSize: '10px', color: '#9E9A92', marginBottom: '8px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
               <span><span style={{ border: '2px solid #4A9EFF', padding: '0 3px', borderRadius: '2px' }}>note~</span> tie start</span>
               <span><span style={{ border: '2px solid #FF9E4A', padding: '0 3px', borderRadius: '2px' }}>~note</span> tie stop</span>
               <span style={{ color: '#4CAF50' }}>● on beat</span>
@@ -603,13 +603,13 @@ export default function GeneratePage() {
           </button>
           {preview && (
             <button onClick={() => setShowDiag(d => !d)}
-              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#888780', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#9E9A92', border: '1px solid #484542', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
               {showDiag ? 'Hide Diag' : 'Diagnose'}
             </button>
           )}
           {preview && (
             <button onClick={save} disabled={saving || !title.trim()}
-              style={{ background: saving || !title.trim() ? '#D3D1C7' : '#BA7517', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: saving || !title.trim() ? 'default' : 'pointer' }}>
+              style={{ background: saving || !title.trim() ? '#484542' : '#BA7517', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: saving || !title.trim() ? 'default' : 'pointer' }}>
               {saving ? 'Saving…' : 'Save to Library'}
             </button>
           )}

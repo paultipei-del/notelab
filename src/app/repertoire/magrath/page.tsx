@@ -84,61 +84,61 @@ export default function MagrathBrowser() {
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
-      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Loading Magrath data…</p>
+      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>Loading Magrath data…</p>
     </div>
   )
 
   return (
     <div>
       <div style={{ marginBottom: '20px' }}>
-        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '4px' }}>Jane Magrath · Alfred Publishing, 1995</p>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>3,141 entries · 552 composers · 4 periods · Levels 1–10</p>
+        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '4px' }}>Jane Magrath · Alfred Publishing, 1995</p>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>3,141 entries · 552 composers · 4 periods · Levels 1–10</p>
       </div>
 
       {/* Search */}
       <div style={{ position: 'relative' as const, marginBottom: '24px' }}>
         <input value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search composer or title across all periods…"
-          style={{ width: '100%', padding: '12px 44px 12px 16px', borderRadius: '12px', border: '1px solid #D3D1C7', background: 'white', fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18', outline: 'none', boxSizing: 'border-box' as const }} />
-        {search && <button onClick={() => setSearch('')} style={{ position: 'absolute' as const, right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#888780', fontSize: '18px' }}>×</button>}
+          style={{ width: '100%', padding: '12px 44px 12px 16px', borderRadius: '12px', border: '1px solid #484542', background: '#353330', fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#F0EDE6', outline: 'none', boxSizing: 'border-box' as const }} />
+        {search && <button onClick={() => setSearch('')} style={{ position: 'absolute' as const, right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9E9A92', fontSize: '18px' }}>×</button>}
       </div>
 
       {search.trim() ? (
         <div>
-          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginBottom: '16px' }}>{searchResults.length} result{searchResults.length !== 1 ? 's' : ''}</p>
-          <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflowX: 'auto' as const }}>
+          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', marginBottom: '16px' }}>{searchResults.length} result{searchResults.length !== 1 ? 's' : ''}</p>
+          <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', overflowX: 'auto' as const }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
                   {['Period', 'Composer', 'Title', 'Level', ''].map(h => (
-                    <th key={h} style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', textAlign: 'left' as const }}>{h}</th>
+                    <th key={h} style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92', textAlign: 'left' as const }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {searchResults.map((r, i) => (
                   <>
-                    <tr key={i} onClick={() => setExpandedIdx(expandedIdx === i ? null : i)} style={{ borderBottom: '1px solid #F5F2EC', cursor: 'pointer' }}
+                    <tr key={i} onClick={() => setExpandedIdx(expandedIdx === i ? null : i)} style={{ borderBottom: '1px solid #2C2A27', cursor: 'pointer' }}
                       onMouseEnter={e => { e.currentTarget.style.background = '#FAFAF8' }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'white' }}>
-                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', whiteSpace: 'nowrap' as const }}>{r.period}</td>
-                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18' }}>{r.entry.composer}</td>
-                      <td style={{ padding: '10px 16px', fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: r.entry.title ? '#1A1A18' : '#888780', fontStyle: r.entry.title ? 'normal' : 'italic' as const }}>
+                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', whiteSpace: 'nowrap' as const }}>{r.period}</td>
+                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6' }}>{r.entry.composer}</td>
+                      <td style={{ padding: '10px 16px', fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: r.entry.title ? '#1A1A18' : '#9E9A92', fontStyle: r.entry.title ? 'normal' : 'italic' as const }}>
                         {r.entry.title || r.entry.description.slice(0, 60) + '…'}
                       </td>
-                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>{r.entry.level}</td>
+                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>{r.entry.level}</td>
                       <td style={{ padding: '10px 16px', textAlign: 'center' as const }}>
                         <a href={imslpUrl(r.entry.composer, r.entry.title)} target="_blank" rel="noopener noreferrer"
                           onClick={e => e.stopPropagation()}
-                          style={{ color: '#888780', fontSize: '14px', textDecoration: 'none', opacity: 0.6 }}
+                          style={{ color: '#9E9A92', fontSize: '14px', textDecoration: 'none', opacity: 0.6 }}
                           title="Search on IMSLP">↗</a>
                       </td>
                     </tr>
                     {expandedIdx === i && (
                       <tr key={`exp-${i}`}>
                         <td colSpan={4} style={{ padding: '12px 16px 20px 56px', background: '#FAFAF8', borderBottom: '1px solid #EDE8DF' }}>
-                          <p style={{ fontFamily: F, fontSize: '11px', color: '#888780', marginBottom: '6px' }}>{r.entry.composer} · {r.entry.dates} · {r.entry.country} · Level {r.entry.level}</p>
-                          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', lineHeight: 1.8, maxWidth: '700px' }}>{r.entry.description}</p>
+                          <p style={{ fontFamily: F, fontSize: '11px', color: '#9E9A92', marginBottom: '6px' }}>{r.entry.composer} · {r.entry.dates} · {r.entry.country} · Level {r.entry.level}</p>
+                          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1.8, maxWidth: '700px' }}>{r.entry.description}</p>
                         </td>
                       </tr>
                     )}
@@ -154,15 +154,15 @@ export default function MagrathBrowser() {
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '20px' }}>
             {data?.periods.map(p => (
               <button key={p.id} onClick={() => { setSelectedPeriod(p.id); setExpandedIdx(null) }}
-                style={{ padding: '7px 16px', borderRadius: '20px', border: '1px solid ' + (selectedPeriod === p.id ? '#1A1A18' : '#D3D1C7'), background: selectedPeriod === p.id ? '#1A1A18' : 'white', color: selectedPeriod === p.id ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+                style={{ padding: '7px 16px', borderRadius: '20px', border: '1px solid ' + (selectedPeriod === p.id ? '#1A1A18' : '#484542'), background: selectedPeriod === p.id ? '#1A1A18' : 'white', color: selectedPeriod === p.id ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
                 {p.label} <span style={{ opacity: 0.6 }}>({p.entries.length})</span>
               </button>
             ))}
           </div>
 
           {/* Level filter */}
-          <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #D3D1C7', padding: '14px 20px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
-            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780' }}>Level</p>
+          <div style={{ background: '#353330', borderRadius: '12px', border: '1px solid #484542', padding: '14px 20px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
+            <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92' }}>Level</p>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
               {[1,2,3,4,5,6,7,8,9,10].map(n => {
                 const active = n >= levelMin && n <= levelMax
@@ -175,29 +175,29 @@ export default function MagrathBrowser() {
                     else if (n === levelMin) setLevelMin(Math.min(n + 1, levelMax))
                     else setLevelMax(Math.max(n - 1, levelMin))
                     setExpandedIdx(null)
-                  }} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid ' + (active ? '#BA7517' : '#D3D1C7'), background: active ? '#FAEEDA' : 'white', color: active ? '#BA7517' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: active ? 400 : 300, cursor: 'pointer' }}>
+                  }} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid ' + (active ? '#BA7517' : '#484542'), background: active ? '#FAEEDA' : 'white', color: active ? '#BA7517' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: active ? 400 : 300, cursor: 'pointer' }}>
                     {n}
                   </button>
                 )
               })}
               {(levelMin > 1 || levelMax < 10) && (
-                <button onClick={() => { setLevelMin(1); setLevelMax(10) }} style={{ padding: '0 10px', height: '32px', borderRadius: '8px', border: '1px solid #D3D1C7', background: 'white', color: '#888780', fontFamily: F, fontSize: '11px', cursor: 'pointer' }}>All</button>
+                <button onClick={() => { setLevelMin(1); setLevelMax(10) }} style={{ padding: '0 10px', height: '32px', borderRadius: '8px', border: '1px solid #484542', background: '#353330', color: '#9E9A92', fontFamily: F, fontSize: '11px', cursor: 'pointer' }}>All</button>
               )}
             </div>
-            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginLeft: 'auto' }}>{filteredEntries.length} entries</p>
+            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', marginLeft: 'auto' }}>{filteredEntries.length} entries</p>
           </div>
 
           {/* Table */}
-          <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', overflowX: 'auto' as const }}>
+          <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', overflowX: 'auto' as const }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' as const, minWidth: '600px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
                   {([['level_sort', 'Level'], ['composer', 'Composer'], ['title', 'Title']] as const).map(([col, label]) => (
-                    <th key={col} onClick={() => toggleSort(col)} style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: sortCol === col ? '#BA7517' : '#888780', textAlign: 'left' as const, cursor: 'pointer', userSelect: 'none' as const, whiteSpace: 'nowrap' as const }}>
+                    <th key={col} onClick={() => toggleSort(col)} style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: sortCol === col ? '#BA7517' : '#9E9A92', textAlign: 'left' as const, cursor: 'pointer', userSelect: 'none' as const, whiteSpace: 'nowrap' as const }}>
                       {label} {sortCol === col ? (sortDir === 'asc' ? '↑' : '↓') : ''}
                     </th>
                   ))}
-                  <th style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', textAlign: 'left' as const }}>Description</th>
+                  <th style={{ padding: '12px 16px', fontFamily: F, fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92', textAlign: 'left' as const }}>Description</th>
                   <th style={{ padding: '12px 16px', width: '40px' }}></th>
                 </tr>
               </thead>
@@ -205,29 +205,29 @@ export default function MagrathBrowser() {
                 {filteredEntries.map((entry, i) => (
                   <>
                     <tr key={i} onClick={() => setExpandedIdx(expandedIdx === i ? null : i)}
-                      style={{ borderBottom: '1px solid #F5F2EC', cursor: 'pointer', background: expandedIdx === i ? '#FAFAF8' : 'white' }}
+                      style={{ borderBottom: '1px solid #2C2A27', cursor: 'pointer', background: expandedIdx === i ? '#FAFAF8' : 'white' }}
                       onMouseEnter={e => { if (expandedIdx !== i) e.currentTarget.style.background = '#FAFAF8' }}
                       onMouseLeave={e => { if (expandedIdx !== i) e.currentTarget.style.background = 'white' }}>
-                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', whiteSpace: 'nowrap' as const }}>{entry.level}</td>
-                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', whiteSpace: 'nowrap' as const }}>{entry.composer}</td>
-                      <td style={{ padding: '10px 16px', fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: entry.title ? '#1A1A18' : '#888780', fontStyle: entry.title ? 'normal' : 'italic' as const }}>
+                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', whiteSpace: 'nowrap' as const }}>{entry.level}</td>
+                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', whiteSpace: 'nowrap' as const }}>{entry.composer}</td>
+                      <td style={{ padding: '10px 16px', fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: entry.title ? '#1A1A18' : '#9E9A92', fontStyle: entry.title ? 'normal' : 'italic' as const }}>
                         {entry.title || <span style={{ fontSize: '13px' }}>{entry.description.slice(0, 50)}…</span>}
                       </td>
-                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', maxWidth: '320px' }}>
+                      <td style={{ padding: '10px 16px', fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', maxWidth: '320px' }}>
                         {expandedIdx === i ? '' : entry.description.slice(0, 80) + (entry.description.length > 80 ? '…' : '')}
                       </td>
                       <td style={{ padding: '10px 16px', textAlign: 'center' as const }}>
                         <a href={imslpUrl(entry.composer, entry.title)} target="_blank" rel="noopener noreferrer"
                           onClick={e => e.stopPropagation()}
-                          style={{ color: '#888780', fontSize: '14px', textDecoration: 'none', opacity: 0.6 }}
+                          style={{ color: '#9E9A92', fontSize: '14px', textDecoration: 'none', opacity: 0.6 }}
                           title="Search on IMSLP">↗</a>
                       </td>
                     </tr>
                     {expandedIdx === i && (
                       <tr key={`exp-${i}`}>
                         <td colSpan={4} style={{ padding: '12px 16px 20px 56px', background: '#FAFAF8', borderBottom: '1px solid #EDE8DF' }}>
-                          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', marginBottom: '8px' }}>{entry.composer} · {entry.dates} · {entry.country} · Level {entry.level}</p>
-                          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', lineHeight: 1.8, maxWidth: '700px' }}>{entry.description}</p>
+                          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', marginBottom: '8px' }}>{entry.composer} · {entry.dates} · {entry.country} · Level {entry.level}</p>
+                          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1.8, maxWidth: '700px' }}>{entry.description}</p>
                         </td>
                       </tr>
                     )}

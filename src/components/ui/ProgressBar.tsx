@@ -8,7 +8,7 @@ interface ProgressBarProps {
 export function ProgressBar({ pct, label }: ProgressBarProps) {
   return (
     <div className="flex items-center gap-4 flex-1 max-w-sm">
-      <div className="flex-1 h-1 bg-[#D3D1C7] rounded-full overflow-hidden">
+      <div className="flex-1 h-1 bg-[#484542] rounded-full overflow-hidden">
         <div
           className="h-full bg-[#BA7517] rounded-full transition-all duration-500 ease-out"
           style={{ width: `${pct}%` }}

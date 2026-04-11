@@ -44,14 +44,14 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
 
   const inputStyle = {
     width: '100%',
-    background: 'white',
-    border: '1px solid #D3D1C7',
+    background: '#353330',
+    border: '1px solid #484542',
     borderRadius: '8px',
     padding: '12px 14px',
     fontFamily: 'var(--font-jost), sans-serif',
     fontSize: '14px',
     fontWeight: 300,
-    color: '#1A1A18',
+    color: '#F0EDE6',
     outline: 'none',
     boxSizing: 'border-box' as const,
   }
@@ -60,12 +60,12 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
     return (
       <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,24,0.4)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         onClick={e => e.target === e.currentTarget && onClose()}>
-        <div style={{ background: '#F5F2EC', borderRadius: '16px', padding: '48px 40px', maxWidth: '420px', width: '90%', textAlign: 'center' }}>
+        <div style={{ background: '#2C2A27', borderRadius: '16px', padding: '48px 40px', maxWidth: '420px', width: '90%', textAlign: 'center' }}>
           <div style={{ fontSize: '36px', marginBottom: '16px' }}>✉️</div>
-          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', marginBottom: '12px', color: '#1A1A18' }}>
+          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', marginBottom: '12px', color: '#F0EDE6' }}>
             Check your email
           </h2>
-          <p style={{ fontSize: '14px', fontWeight: 300, color: '#888780', lineHeight: 1.7, marginBottom: '28px' }}>
+          <p style={{ fontSize: '14px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.7, marginBottom: '28px' }}>
             We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account, then sign in.
           </p>
           <button
@@ -84,7 +84,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
       style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,24,0.4)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div style={{ background: '#F5F2EC', borderRadius: '16px', padding: '40px', maxWidth: '420px', width: '90%', boxShadow: '0 8px 48px rgba(26,26,24,0.2)' }}>
+      <div style={{ background: '#2C2A27', borderRadius: '16px', padding: '40px', maxWidth: '420px', width: '90%', boxShadow: '0 8px 48px rgba(26,26,24,0.2)' }}>
 
         {/* Toggle */}
         <div style={{ display: 'flex', gap: '4px', background: '#EDE8DF', borderRadius: '10px', padding: '4px', marginBottom: '32px' }}>
@@ -95,7 +95,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
               style={{
                 flex: 1, padding: '8px', borderRadius: '8px', border: 'none',
                 background: mode === m ? 'white' : 'transparent',
-                color: mode === m ? '#1A1A18' : '#888780',
+                color: mode === m ? '#1A1A18' : '#9E9A92',
                 fontFamily: 'var(--font-jost), sans-serif',
                 fontSize: '13px', fontWeight: mode === m ? 400 : 300,
                 letterSpacing: '0.04em', cursor: 'pointer',
@@ -108,12 +108,12 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           ))}
         </div>
 
-        <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '24px' }}>
+        <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#F0EDE6', marginBottom: '24px' }}>
           {mode === 'signin' ? 'Welcome back' : 'Join NoteLab Studio'}
         </h2>
 
         <div style={{ marginBottom: '14px' }}>
-          <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '6px' }}>
+          <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>
             Email
           </label>
           <input
@@ -128,7 +128,7 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
         </div>
 
         <div style={{ marginBottom: '24px' }}>
-          <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '6px' }}>
+          <label style={{ fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#9E9A92', display: 'block', marginBottom: '6px' }}>
             Password
           </label>
           <input
@@ -162,11 +162,11 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
           {loading ? 'Please wait…' : mode === 'signin' ? 'Sign In' : 'Create Account'}
         </button>
 
-        <p style={{ textAlign: 'center', fontSize: '12px', fontWeight: 300, color: '#888780', marginTop: '20px' }}>
+        <p style={{ textAlign: 'center', fontSize: '12px', fontWeight: 300, color: '#9E9A92', marginTop: '20px' }}>
           {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
           <button
             onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError('') }}
-            style={{ background: 'none', border: 'none', color: '#1A1A18', cursor: 'pointer', fontSize: '12px', fontWeight: 400, textDecoration: 'underline' }}
+            style={{ background: 'none', border: 'none', color: '#F0EDE6', cursor: 'pointer', fontSize: '12px', fontWeight: 400, textDecoration: 'underline' }}
           >
             {mode === 'signin' ? 'Sign up' : 'Sign in'}
           </button>

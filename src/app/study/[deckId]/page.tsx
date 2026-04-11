@@ -40,17 +40,17 @@ export default function StudyPage({ params }: Props) {
 
   if (loading || deckLoading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>Loading…</p>
+      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.05em' }}>Loading…</p>
       </div>
     )
   }
 
   if (notFound || !deck) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-        <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#1A1A18' }}>Deck not found</p>
-        <a href="/" style={{ fontSize: '13px', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>← Back to decks</a>
+      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+        <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '28px', color: '#F0EDE6' }}>Deck not found</p>
+        <a href="/" style={{ fontSize: '13px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.05em' }}>← Back to decks</a>
       </div>
     )
   }

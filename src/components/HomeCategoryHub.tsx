@@ -21,9 +21,9 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
       flip: false,
       cardBg: 'white',
       textColor: '#1A1A18',
-      subtitleColor: '#888780',
+      subtitleColor: '#9E9A92',
       labelBg: '#EDE8DF',
-      labelColor: '#888780',
+      labelColor: '#9E9A92',
       ctaColor: '#BA7517',
       ctaBg: 'rgba(186,117,23,0.08)',
       ctaBorder: 'rgba(186,117,23,0.2)',
@@ -40,9 +40,9 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
       flip: true,
       cardBg: '#FDFAF5',
       textColor: '#1A1A18',
-      subtitleColor: '#888780',
+      subtitleColor: '#9E9A92',
       labelBg: '#EDE8DF',
-      labelColor: '#888780',
+      labelColor: '#9E9A92',
       ctaColor: '#BA7517',
       ctaBg: 'rgba(186,117,23,0.08)',
       ctaBorder: 'rgba(186,117,23,0.2)',
@@ -59,9 +59,9 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
       flip: false,
       cardBg: 'white',
       textColor: '#1A1A18',
-      subtitleColor: '#888780',
+      subtitleColor: '#9E9A92',
       labelBg: '#EDE8DF',
-      labelColor: '#888780',
+      labelColor: '#9E9A92',
       ctaColor: '#BA7517',
       ctaBg: 'rgba(186,117,23,0.08)',
       ctaBorder: 'rgba(186,117,23,0.2)',
@@ -103,7 +103,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
             className={`nl-cat-tile-inner${tile.flip ? ' nl-cat-flip' : ''}`}
             style={{
               background: tile.cardBg,
-              border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #D3D1C7',
+              border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #484542',
               boxShadow: tile.cardBg === '#1A1A18'
                 ? '0 4px 24px rgba(26,26,24,0.22)'
                 : '0 2px 12px rgba(26,26,24,0.05)',
@@ -123,7 +123,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
               el.style.boxShadow = tile.cardBg === '#1A1A18'
                 ? '0 4px 24px rgba(26,26,24,0.22)'
                 : '0 2px 12px rgba(26,26,24,0.05)'
-              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#D3D1C7'
+              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#484542'
             }}
           >
             {/* Text side */}

@@ -48,7 +48,7 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
     fontWeight: 400 as const,
     letterSpacing: flashcardsPageHero ? ('0.12em' as const) : ('0.1em' as const),
     textTransform: 'uppercase' as const,
-    color: '#888780',
+    color: '#9E9A92',
     marginBottom: flashcardsPageHero ? '16px' : '10px',
   }
 
@@ -57,8 +57,8 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
       {cm && (
       <div style={{ marginBottom: '64px' }}>
         <div style={{ marginBottom: '24px' }}>
-          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Programs</h2>
-          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Structured exam prep collections</p>
+          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#F0EDE6', marginBottom: '4px' }}>Programs</h2>
+          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>Structured exam prep collections</p>
         </div>
         <div
           style={{ background: '#1A1A18', border: '1px solid #1A1A18', borderRadius: '16px', padding: '28px 32px', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
@@ -99,16 +99,16 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
       <div style={{ marginBottom: '64px' }}>
         <div style={{ marginBottom: flashcardsPageHero ? '32px' : '24px' }}>
           {flashcardsPageHero ? (
-            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#1A1A18', marginBottom: '12px', letterSpacing: '0.02em' }}>Flashcards</h1>
+            <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F0EDE6', marginBottom: '12px', letterSpacing: '0.02em' }}>Flashcards</h1>
           ) : (
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#1A1A18', marginBottom: '4px' }}>Flashcards</h2>
+            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#F0EDE6', marginBottom: '4px' }}>Flashcards</h2>
           )}
           <p
             style={{
               fontFamily: F,
               fontSize: flashcardsPageHero ? '15px' : '13px',
               fontWeight: 300,
-              color: '#888780',
+              color: '#9E9A92',
               lineHeight: flashcardsPageHero ? 1.7 : undefined,
               maxWidth: flashcardsPageHero ? '560px' : undefined,
               margin: 0,
@@ -124,8 +124,8 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
             <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
               <div
                 style={{
-                  background: 'white',
-                  border: '1px solid #D3D1C7',
+                  background: '#353330',
+                  border: '1px solid #484542',
                   borderRadius: '16px',
                   padding: '24px',
                   cursor: 'pointer',
@@ -138,11 +138,11 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
                   alignItems: 'flex-start' as const,
                 }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542' }}
               >
                 <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-                <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
+                <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#F0EDE6', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
+                <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
               </div>
             </Link>
           ))}
@@ -156,8 +156,8 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
                 <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
                   <div
                     style={{
-                      background: 'white',
-                      border: '1px solid #D3D1C7',
+                      background: '#353330',
+                      border: '1px solid #484542',
                       borderRadius: '16px',
                       padding: '24px',
                       cursor: 'pointer',
@@ -170,11 +170,11 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
                       alignItems: 'flex-start' as const,
                     }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = '#BA7517' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#D3D1C7' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = '#484542' }}
                   >
                     <span style={{ display: 'inline-block', fontSize: '10px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-                    <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#1A1A18', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                    <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
+                    <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#F0EDE6', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
+                    <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
                   </div>
                 </Link>
               ))}

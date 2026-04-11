@@ -218,7 +218,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
     : 'white'
   const borderColor = status === 'correct' ? '#C0DD97'
     : status === 'wrong' ? '#F09595'
-    : '#D3D1C7'
+    : '#484542'
 
   return (
     <div style={{ width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
@@ -227,14 +227,14 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
         border: `1px solid ${borderColor}`, padding: '40px 32px', textAlign: 'center',
         boxShadow: '0 4px 32px rgba(26,26,24,0.10)', transition: 'background 0.2s, border-color 0.2s',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '20px' }}>
+        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9E9A92', display: 'block', marginBottom: '20px' }}>
           Play this note
         </span>
 
         {card.note && card.clef ? (
           card.clef === 'grand' ? <GrandStaffCard note={card.note} /> : <StaffCard note={card.note} clef={card.clef} />
         ) : (
-          <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#1A1A18' }}>
+          <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#F0EDE6' }}>
             {card.front}
           </p>
         )}
@@ -244,7 +244,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
           {status === 'listening' && (
             <>
               <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#BA7517', animation: 'pulse 1s infinite' }} />
-              <span style={{ fontSize: '13px', fontWeight: 300, color: '#888780', letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: '13px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.04em' }}>
                 {detected ? `Hearing: ${detected}` : 'Play the note…'}
               </span>
             </>

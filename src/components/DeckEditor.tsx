@@ -32,7 +32,7 @@ const s = {
     justifyContent: 'center',
   },
   drawer: {
-    background: '#F5F2EC',
+    background: '#2C2A27',
     borderRadius: '20px 20px 0 0',
     width: '100%',
     maxWidth: '900px',
@@ -46,8 +46,8 @@ const s = {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '24px 32px 20px',
-    borderBottom: '1px solid #D3D1C7',
-    background: '#F5F2EC',
+    borderBottom: '1px solid #484542',
+    background: '#2C2A27',
   },
   drawerBody: {
     flex: 1,
@@ -56,14 +56,14 @@ const s = {
   },
   input: {
     width: '100%',
-    background: 'white',
-    border: '1px solid #D3D1C7',
+    background: '#353330',
+    border: '1px solid #484542',
     borderRadius: '8px',
     padding: '10px 14px',
     fontFamily: 'var(--font-jost), sans-serif',
     fontSize: '14px',
     fontWeight: 300,
-    color: '#1A1A18',
+    color: '#F0EDE6',
     outline: 'none',
   },
   label: {
@@ -71,7 +71,7 @@ const s = {
     fontWeight: 400,
     letterSpacing: '0.1em',
     textTransform: 'uppercase' as const,
-    color: '#888780',
+    color: '#9E9A92',
     marginBottom: '6px',
     display: 'block',
   },
@@ -87,7 +87,7 @@ const s = {
     border: variant === 'primary' ? 'none' : '1px solid',
     background: variant === 'primary' ? '#1A1A18' : variant === 'danger' ? '#FCEBEB' : 'transparent',
     color: variant === 'primary' ? 'white' : variant === 'danger' ? '#A32D2D' : '#2C2C2A',
-    borderColor: variant === 'danger' ? '#F09595' : '#D3D1C7',
+    borderColor: variant === 'danger' ? '#F09595' : '#484542',
   }),
 }
 
@@ -191,12 +191,12 @@ async function handleBulkAdd() {
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#1A1A18' }}>
+                <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '24px', color: '#F0EDE6' }}>
                   {localDeck.title}
                 </h2>
                 <button
                   onClick={() => setEditingTitle(true)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#888780', padding: '2px 8px' }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#9E9A92', padding: '2px 8px' }}
                 >
                   Edit
                 </button>
@@ -206,7 +206,7 @@ async function handleBulkAdd() {
             {/* Description */}
             {!editingTitle && (
               <input
-                style={{ ...s.input, marginTop: '6px', fontSize: '13px', color: '#888780' }}
+                style={{ ...s.input, marginTop: '6px', fontSize: '13px', color: '#9E9A92' }}
                 value={descVal}
                 onChange={e => setDescVal(e.target.value)}
                 onBlur={() => { updateDeck(localDeck.id, { description: descVal }, userId); syncDeck({ ...localDeck, description: descVal }) }}
@@ -241,7 +241,7 @@ async function handleBulkAdd() {
 
             <button
               onClick={onClose}
-              style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888780', padding: '4px 8px' }}
+              style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#9E9A92', padding: '4px 8px' }}
             >
               ✕
             </button>
@@ -260,9 +260,9 @@ async function handleBulkAdd() {
                 style={{
                   padding: '6px 16px',
                   borderRadius: '20px',
-                  border: `1px solid ${entryMode === mode ? '#1A1A18' : '#D3D1C7'}`,
+                  border: `1px solid ${entryMode === mode ? '#1A1A18' : '#484542'}`,
                   background: entryMode === mode ? '#1A1A18' : 'transparent',
-                  color: entryMode === mode ? 'white' : '#888780',
+                  color: entryMode === mode ? 'white' : '#9E9A92',
                   fontFamily: 'var(--font-jost), sans-serif',
                   fontSize: '12px',
                   fontWeight: 300,
@@ -273,7 +273,7 @@ async function handleBulkAdd() {
                 {label}
               </button>
             ))}
-            <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: 300, color: '#888780', alignSelf: 'center' }}>
+            <span style={{ marginLeft: 'auto', fontSize: '12px', fontWeight: 300, color: '#9E9A92', alignSelf: 'center' }}>
               {localDeck.cards.length} card{localDeck.cards.length !== 1 ? 's' : ''}
             </span>
           </div>
@@ -282,7 +282,7 @@ async function handleBulkAdd() {
           {entryMode === 'list' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {localDeck.cards.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#888780', fontSize: '14px', fontWeight: 300 }}>
+                <div style={{ textAlign: 'center', padding: '40px', color: '#9E9A92', fontSize: '14px', fontWeight: 300 }}>
                   No cards yet. Switch to "Add One" or "Bulk Import" to get started.
                 </div>
               )}
@@ -331,7 +331,7 @@ async function handleBulkAdd() {
                 <button style={s.btn('primary')} onClick={handleAddOne}>
                   Add Card
                 </button>
-                <span style={{ fontSize: '12px', color: '#888780', fontWeight: 300 }}>
+                <span style={{ fontSize: '12px', color: '#9E9A92', fontWeight: 300 }}>
                   or Cmd+Enter
                 </span>
               </div>
@@ -342,10 +342,10 @@ async function handleBulkAdd() {
                   <label style={s.label}>Recently Added</label>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {[...localDeck.cards].reverse().slice(0, 5).map(card => (
-                      <div key={card.id} style={{ display: 'flex', gap: '12px', padding: '10px 14px', background: 'white', borderRadius: '8px', border: '1px solid #D3D1C7', fontSize: '13px', fontWeight: 300 }}>
-                        <span style={{ flex: 1, color: '#1A1A18' }}>{card.front}</span>
-                        <span style={{ color: '#D3D1C7' }}>→</span>
-                        <span style={{ flex: 2, color: '#888780' }}>{card.back}</span>
+                      <div key={card.id} style={{ display: 'flex', gap: '12px', padding: '10px 14px', background: '#353330', borderRadius: '8px', border: '1px solid #484542', fontSize: '13px', fontWeight: 300 }}>
+                        <span style={{ flex: 1, color: '#F0EDE6' }}>{card.front}</span>
+                        <span style={{ color: '#484542' }}>→</span>
+                        <span style={{ flex: 2, color: '#9E9A92' }}>{card.back}</span>
                       </div>
                     ))}
                   </div>
@@ -359,7 +359,7 @@ async function handleBulkAdd() {
             <div style={{ maxWidth: '640px' }}>
               <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <label style={s.label}>Paste cards — one per line, front | back</label>
-                <span style={{ fontSize: '11px', color: '#888780', fontWeight: 300 }}>separated by |</span>
+                <span style={{ fontSize: '11px', color: '#9E9A92', fontWeight: 300 }}>separated by |</span>
               </div>
               <textarea
                 style={{ ...s.input, minHeight: '240px', resize: 'vertical' as const, lineHeight: 1.8, fontFamily: 'var(--font-jost), sans-serif' }}
@@ -396,23 +396,23 @@ function CardRow({ card, index, isEditing, onEdit, onSave, onCancel, onDelete }:
 
   if (isEditing) {
     return (
-      <div style={{ background: 'white', border: '1.5px solid #BA7517', borderRadius: '10px', padding: '14px 16px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: '11px', color: '#D3D1C7', fontWeight: 300, minWidth: '20px', paddingTop: '10px' }}>{index + 1}</span>
+      <div style={{ background: '#353330', border: '1.5px solid #BA7517', borderRadius: '10px', padding: '14px 16px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+        <span style={{ fontSize: '11px', color: '#484542', fontWeight: 300, minWidth: '20px', paddingTop: '10px' }}>{index + 1}</span>
         <input
-          style={{ flex: 1, background: '#F5F2EC', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '14px', fontWeight: 300, outline: 'none' }}
+          style={{ flex: 1, background: '#2C2A27', border: '1px solid #484542', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '14px', fontWeight: 300, outline: 'none' }}
           value={front}
           onChange={e => setFront(e.target.value)}
           autoFocus
         />
         <input
-          style={{ flex: 2, background: '#F5F2EC', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '14px', fontWeight: 300, outline: 'none' }}
+          style={{ flex: 2, background: '#2C2A27', border: '1px solid #484542', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: '14px', fontWeight: 300, outline: 'none' }}
           value={back}
           onChange={e => setBack(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && onSave(front, back)}
         />
         <div style={{ display: 'flex', gap: '6px' }}>
           <button onClick={() => onSave(front, back)} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer' }}>Save</button>
-          <button onClick={onCancel} style={{ background: 'transparent', color: '#888780', border: '1px solid #D3D1C7', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onCancel} style={{ background: 'transparent', color: '#9E9A92', border: '1px solid #484542', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     )
@@ -420,18 +420,18 @@ function CardRow({ card, index, isEditing, onEdit, onSave, onCancel, onDelete }:
 
   return (
     <div
-      style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '12px 16px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}
-      onMouseEnter={e => (e.currentTarget.style.borderColor = '#888780')}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = '#D3D1C7')}
+      style={{ background: '#353330', border: '1px solid #484542', borderRadius: '10px', padding: '12px 16px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}
+      onMouseEnter={e => (e.currentTarget.style.borderColor = '#9E9A92')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = '#484542')}
       onClick={onEdit}
     >
-      <span style={{ fontSize: '11px', color: '#D3D1C7', fontWeight: 300, minWidth: '20px' }}>{index + 1}</span>
-      <span style={{ flex: 1, fontSize: '14px', fontWeight: 300, color: '#1A1A18' }}>{card.front}</span>
-      <span style={{ color: '#D3D1C7', fontSize: '12px' }}>→</span>
-      <span style={{ flex: 2, fontSize: '13px', fontWeight: 300, color: '#888780' }}>{card.back}</span>
+      <span style={{ fontSize: '11px', color: '#484542', fontWeight: 300, minWidth: '20px' }}>{index + 1}</span>
+      <span style={{ flex: 1, fontSize: '14px', fontWeight: 300, color: '#F0EDE6' }}>{card.front}</span>
+      <span style={{ color: '#484542', fontSize: '12px' }}>→</span>
+      <span style={{ flex: 2, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>{card.back}</span>
       <button
         onClick={e => { e.stopPropagation(); onDelete() }}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D3D1C7', fontSize: '16px', padding: '0 4px', lineHeight: 1 }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#484542', fontSize: '16px', padding: '0 4px', lineHeight: 1 }}
       >
         ×
       </button>

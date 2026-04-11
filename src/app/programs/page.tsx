@@ -31,15 +31,15 @@ export default function ProgramsPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
+    <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px' }}>
 
         <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Programs</p>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#1A1A18', marginBottom: '10px', letterSpacing: '0.02em' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '12px' }}>Programs</p>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#F0EDE6', marginBottom: '10px', letterSpacing: '0.02em' }}>
             Curriculum-aligned programs
           </h1>
-          <p style={{ fontSize: '15px', fontWeight: 300, color: '#888780', maxWidth: '480px', lineHeight: 1.7 }}>
+          <p style={{ fontSize: '15px', fontWeight: 300, color: '#9E9A92', maxWidth: '480px', lineHeight: 1.7 }}>
             Complete flashcard programs built around real curricula — Certificate of Merit and college first-year music theory, each self-contained with everything you need.
           </p>
         </div>

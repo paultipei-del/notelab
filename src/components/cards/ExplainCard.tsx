@@ -60,19 +60,19 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
 
       {/* Term card */}
       <div style={{
-        background: 'white',
+        background: '#353330',
         borderRadius: '20px',
-        border: '1px solid #D3D1C7',
+        border: '1px solid #484542',
         padding: '40px 32px',
         textAlign: 'center',
         boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#888780', display: 'block', marginBottom: '16px' }}>
+        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9E9A92', display: 'block', marginBottom: '16px' }}>
           Explain this term
         </span>
 
         {card.type === 'symbol' && (
-          <div style={{ fontFamily: 'Bravura, serif', fontSize: '80px', lineHeight: 1.4, color: '#1A1A18', marginBottom: '8px' }}>
+          <div style={{ fontFamily: 'Bravura, serif', fontSize: '80px', lineHeight: 1.4, color: '#F0EDE6', marginBottom: '8px' }}>
             {card.front}
           </div>
         )}
@@ -81,7 +81,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
           fontFamily: 'var(--font-cormorant), serif',
           fontWeight: 300,
           fontSize: card.type === 'symbol' ? '20px' : 'clamp(22px, 4vw, 36px)',
-          color: '#1A1A18',
+          color: '#F0EDE6',
           letterSpacing: '0.02em',
           lineHeight: 1.3,
         }}>
@@ -103,14 +103,14 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
             rows={3}
             style={{
               width: '100%',
-              background: 'white',
-              border: '1px solid #D3D1C7',
+              background: '#353330',
+              border: '1px solid #484542',
               borderRadius: '14px',
               padding: '16px 18px',
               fontFamily: 'var(--font-jost), sans-serif',
               fontSize: '15px',
               fontWeight: 300,
-              color: '#1A1A18',
+              color: '#F0EDE6',
               lineHeight: 1.6,
               resize: 'none',
               outline: 'none',
@@ -119,7 +119,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
             autoFocus
           />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '11px', fontWeight: 300, color: '#D3D1C7', letterSpacing: '0.03em' }}>
+            <span style={{ fontSize: '11px', fontWeight: 300, color: '#484542', letterSpacing: '0.03em' }}>
               ⌘ + Enter to submit
             </span>
             <button
@@ -127,7 +127,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
               disabled={!input.trim() || loading}
               style={{
                 background: input.trim() && !loading ? '#1A1A18' : '#EDE8DF',
-                color: input.trim() && !loading ? 'white' : '#888780',
+                color: input.trim() && !loading ? 'white' : '#9E9A92',
                 border: 'none',
                 borderRadius: '8px',
                 padding: '10px 24px',
@@ -177,10 +177,10 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
             {result.feedback}
           </p>
           <div style={{ borderTop: `1px solid ${result.correct ? '#C0DD97' : '#F09595'}`, paddingTop: '12px' }}>
-            <p style={{ fontSize: '11px', fontWeight: 300, color: '#888780', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <p style={{ fontSize: '11px', fontWeight: 300, color: '#9E9A92', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Official definition
             </p>
-            <p style={{ fontSize: '13px', fontWeight: 300, color: '#1A1A18', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '13px', fontWeight: 300, color: '#F0EDE6', lineHeight: 1.6 }}>
               {definition}
             </p>
           </div>
@@ -189,11 +189,11 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
 
       {/* Student's answer */}
       {result && input && (
-        <div style={{ background: '#F5F2EC', borderRadius: '10px', padding: '12px 16px' }}>
-          <p style={{ fontSize: '11px', fontWeight: 300, color: '#888780', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+        <div style={{ background: '#2C2A27', borderRadius: '10px', padding: '12px 16px' }}>
+          <p style={{ fontSize: '11px', fontWeight: 300, color: '#9E9A92', marginBottom: '4px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             Your answer
           </p>
-          <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', lineHeight: 1.6, fontStyle: 'italic' }}>
+          <p style={{ fontSize: '13px', fontWeight: 300, color: '#9E9A92', lineHeight: 1.6, fontStyle: 'italic' }}>
             "{input}"
           </p>
         </div>

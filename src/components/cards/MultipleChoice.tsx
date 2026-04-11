@@ -48,10 +48,10 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
       cursor: chosen ? 'default' : 'pointer',
       transition: 'all 0.15s',
     }
-    if (!chosen) return { ...base, background: 'white', borderColor: '#D3D1C7', color: '#1A1A18' }
+    if (!chosen) return { ...base, background: '#353330', borderColor: '#484542', color: '#F0EDE6' }
     if (option === correct) return { ...base, background: '#EAF3DE', borderColor: '#97C459', color: '#3B6D11' }
     if (option === chosen) return { ...base, background: '#FCEBEB', borderColor: '#F09595', color: '#A32D2D' }
-    return { ...base, background: 'white', borderColor: '#D3D1C7', color: '#D3D1C7' }
+    return { ...base, background: '#353330', borderColor: '#484542', color: '#484542' }
   }
 
   // Question display
@@ -60,18 +60,18 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
       return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <StaffCard note={card.note} clef={card.clef} />
-          <p style={{ fontSize: '13px', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>Identify this note</p>
+          <p style={{ fontSize: '13px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.05em' }}>Identify this note</p>
         </div>
       )
     }
     if (card.type === 'symbol') {
       return (
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'Bravura, serif', fontSize: '96px', lineHeight: 1.4, color: '#1A1A18', marginBottom: card.symbolLabel ? '12px' : '0' }}>
+          <div style={{ fontFamily: 'Bravura, serif', fontSize: '96px', lineHeight: 1.4, color: '#F0EDE6', marginBottom: card.symbolLabel ? '12px' : '0' }}>
             {card.front}
           </div>
           {card.symbolLabel && (
-            <p style={{ fontSize: '12px', fontWeight: 300, color: '#888780', letterSpacing: '0.05em' }}>
+            <p style={{ fontSize: '12px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.05em' }}>
               {card.symbolLabel}
             </p>
           )}
@@ -79,7 +79,7 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
       )
     }
     return (
-      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(24px, 4vw, 40px)', textAlign: 'center', letterSpacing: '0.01em', color: '#1A1A18', lineHeight: 1.3 }}>
+      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(24px, 4vw, 40px)', textAlign: 'center', letterSpacing: '0.01em', color: '#F0EDE6', lineHeight: 1.3 }}>
         {card.front}
       </p>
     )
@@ -89,9 +89,9 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
     <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* Question card — hidden for audio cards (AudioCard renders above) */}
       {card.type !== 'audio' && <div style={{
-        background: 'white',
+        background: '#353330',
         borderRadius: '20px',
-        border: '1px solid #D3D1C7',
+        border: '1px solid #484542',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -100,7 +100,7 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
         boxShadow: '0 4px 32px rgba(26,26,24,0.10)',
         minHeight: '180px',
       }}>
-        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#888780', marginBottom: '20px' }}>
+        <span style={{ fontSize: '10px', fontWeight: 300, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#9E9A92', marginBottom: '20px' }}>
           Choose the correct answer
         </span>
         {questionContent()}

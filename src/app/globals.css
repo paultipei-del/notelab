@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    background-color: #F5F2EC;
+    background-color: #2C2A27;
     -webkit-font-smoothing: antialiased;
   }
 }
@@ -61,7 +61,7 @@ button:not(:disabled):active {
   padding: 8px 10px;
   border-radius: 16px;
   border: 1px solid rgba(211, 209, 199, 0.85);
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(53,51,48,0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 8px 32px 8px rgba(26, 26, 24, 0.07);
@@ -74,7 +74,7 @@ button:not(:disabled):active {
   padding: 10px;
   border-radius: 18px;
   border: 1px solid rgba(211, 209, 199, 0.85);
-  background: rgba(245, 242, 236, 0.78);
+  background: rgba(44,42,39,0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 8px 32px 8px rgba(26, 26, 24, 0.07);
@@ -157,8 +157,8 @@ button:not(:disabled):active {
   justify-content: space-between;
   padding: 0 24px;
   height: 56px;
-  border-bottom: 1px solid #D3D1C7;
-  background: #F5F2EC;
+  border-bottom: 1px solid #484542;
+  background: #2C2A27;
   position: sticky;
   top: 0;
   z-index: 50;

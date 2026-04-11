@@ -22,7 +22,7 @@ export default function FlashcardsPage() {
   const symbolDecks = DECKS.filter(d => d.id.startsWith('symbols-'))
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
+    <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 64px' }}>
         <FlashcardsHub
           showPrograms={false}

@@ -75,9 +75,9 @@ export default function ParticleCanvas() {
 
           const alpha = clamp((n + 1) * 0.5, 0, 1) * 0.09
           const i = (py * ow + px) * 4
-          data[i]     = 26
-          data[i + 1] = 26
-          data[i + 2] = 24
+          data[i]     = 240
+          data[i + 1] = 237
+          data[i + 2] = 230
           data[i + 3] = Math.round(alpha * 255)
         }
       }

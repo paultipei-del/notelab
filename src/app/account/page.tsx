@@ -27,7 +27,7 @@ const SECTIONS: { id: Section; label: string; icon: string }[] = [
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: '40px' }}>
-      <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '26px', color: '#1A1A18', marginBottom: '20px', letterSpacing: '0.01em' }}>{title}</h2>
+      <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '26px', color: '#F0EDE6', marginBottom: '20px', letterSpacing: '0.01em' }}>{title}</h2>
       {children}
     </div>
   )
@@ -35,7 +35,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Card({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ background: 'white', border: '1px solid #D3D1C7', borderRadius: '16px', padding: '24px 28px', ...style }}>
+    <div style={{ background: '#353330', border: '1px solid #484542', borderRadius: '16px', padding: '24px 28px', ...style }}>
       {children}
     </div>
   )
@@ -44,8 +44,8 @@ function Card({ children, style }: { children: React.ReactNode; style?: React.CS
 function Row({ label, value, children }: { label: string; value?: string; children?: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #EDE8DF' }}>
-      <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', minWidth: '120px' }}>{label}</span>
-      <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18', flex: 1, textAlign: 'right' as const }}>{value}</span>
+      <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', minWidth: '120px' }}>{label}</span>
+      <span style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#F0EDE6', flex: 1, textAlign: 'right' as const }}>{value}</span>
       {children}
     </div>
   )
@@ -72,7 +72,7 @@ function Btn({ children, onClick, variant = 'outline', disabled, danger }: {
       disabled={disabled}
       style={{
         fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: disabled ? 'default' : 'pointer',
-        border: '1px solid ' + (danger ? '#ED6765' : '#D3D1C7'),
+        border: '1px solid ' + (danger ? '#ED6765' : '#484542'),
         borderRadius: '20px', padding: '8px 20px',
         background: variant === 'fill' ? (danger ? '#ED6765' : '#1A1A18') : 'white',
         color: variant === 'fill' ? 'white' : (danger ? '#ED6765' : '#1A1A18'),
@@ -125,7 +125,7 @@ function ProfileSection({ user }: { user: any }) {
       <Card>
         {/* Name field */}
         <div style={{ paddingBottom: '20px', marginBottom: '4px', borderBottom: '1px solid #EDE8DF' }}>
-          <label style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#888780', display: 'block', marginBottom: '8px' }}>
+          <label style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9E9A92', display: 'block', marginBottom: '8px' }}>
             Display name
           </label>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -135,9 +135,9 @@ function ProfileSection({ user }: { user: any }) {
               onKeyDown={e => e.key === 'Enter' && saveName()}
               placeholder="Your name"
               style={{
-                flex: 1, background: '#F5F2EC', border: '1px solid #D3D1C7',
+                flex: 1, background: '#2C2A27', border: '1px solid #484542',
                 borderRadius: '10px', padding: '10px 14px',
-                fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18',
+                fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#F0EDE6',
                 outline: 'none',
               }}
             />
@@ -145,7 +145,7 @@ function ProfileSection({ user }: { user: any }) {
               {nameStatus === 'saving' ? 'Saving…' : nameStatus === 'saved' ? 'Saved ✓' : nameStatus === 'error' ? 'Error' : 'Save'}
             </Btn>
           </div>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', margin: '6px 0 0' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', margin: '6px 0 0' }}>
             Shown in the header instead of your email initials.
           </p>
         </div>
@@ -175,23 +175,23 @@ function SubscriptionSection({ userId }: { userId: string }) {
     <Section title="Subscription">
       <Card>
         {loading ? (
-          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Loading…</p>
+          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>Loading…</p>
         ) : (
           <>
             <div style={{ borderBottom: '1px solid #EDE8DF' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid #EDE8DF' }}>
                 <div>
-                  <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18', margin: '0 0 2px' }}>CM Collection Bundle</p>
-                  <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', margin: 0 }}>All Certificate of Merit levels, Prep – Advanced</p>
+                  <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#F0EDE6', margin: '0 0 2px' }}>CM Collection Bundle</p>
+                  <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>All Certificate of Merit levels, Prep – Advanced</p>
                 </div>
-                {cmUnlocked ? <Pill label="Active" /> : <Pill label="Not purchased" color="#888780" bg="#EDE8DF" />}
+                {cmUnlocked ? <Pill label="Active" /> : <Pill label="Not purchased" color="#9E9A92" bg="#EDE8DF" />}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0' }}>
                 <div>
-                  <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#1A1A18', margin: '0 0 2px' }}>Pro Subscription</p>
-                  <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', margin: 0 }}>All content + future features</p>
+                  <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#F0EDE6', margin: '0 0 2px' }}>Pro Subscription</p>
+                  <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>All content + future features</p>
                 </div>
-                {proUnlocked ? <Pill label="Active" /> : <Pill label="Not active" color="#888780" bg="#EDE8DF" />}
+                {proUnlocked ? <Pill label="Active" /> : <Pill label="Not active" color="#9E9A92" bg="#EDE8DF" />}
               </div>
             </div>
             {!cmUnlocked && !proUnlocked && (
@@ -202,7 +202,7 @@ function SubscriptionSection({ userId }: { userId: string }) {
               </div>
             )}
             {(cmUnlocked || proUnlocked) && (
-              <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', marginTop: '16px', marginBottom: 0 }}>
+              <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', marginTop: '16px', marginBottom: 0 }}>
                 To manage billing, cancel, or get a receipt — contact support.
               </p>
             )}
@@ -268,10 +268,10 @@ function ProgressSection({ userId }: { userId: string | null }) {
   return (
     <Section title="Progress">
       {loading ? (
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Loading…</p>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>Loading…</p>
       ) : studiedDecks.length === 0 ? (
         <Card>
-          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780', margin: 0 }}>No study progress yet. Start a flashcard deck to track your progress here.</p>
+          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>No study progress yet. Start a flashcard deck to track your progress here.</p>
         </Card>
       ) : (
         <>
@@ -283,8 +283,8 @@ function ProgressSection({ userId }: { userId: string | null }) {
                 <Card key={deck.id} style={{ padding: '18px 24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <div>
-                      <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#1A1A18', margin: '0 0 2px' }}>{deck.title}</p>
-                      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', margin: 0 }}>
+                      <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#F0EDE6', margin: '0 0 2px' }}>{deck.title}</p>
+                      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>
                         {studied}/{total} studied · {due} due
                       </p>
                     </div>
@@ -329,10 +329,10 @@ function MyDecksSection({ userId }: { userId: string | null }) {
   return (
     <Section title="My Decks">
       {loading ? (
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780' }}>Loading…</p>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92' }}>Loading…</p>
       ) : decks.length === 0 ? (
         <Card>
-          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#888780', margin: 0 }}>
+          <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>
             No custom decks yet.{' '}
             <Link href="/" style={{ color: '#BA7517', textDecoration: 'none' }}>Create one on the home page →</Link>
           </p>
@@ -342,8 +342,8 @@ function MyDecksSection({ userId }: { userId: string | null }) {
           {decks.map(deck => (
             <Card key={deck.id} style={{ padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#1A1A18', margin: '0 0 2px' }}>{deck.title}</p>
-                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780', margin: 0 }}>{deck.cards.length} cards · {deck.tag}</p>
+                <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#F0EDE6', margin: '0 0 2px' }}>{deck.title}</p>
+                <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92', margin: 0 }}>{deck.cards.length} cards · {deck.tag}</p>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
@@ -373,28 +373,28 @@ export default function AccountPage() {
 
   if (loading || !user) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F5F2EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: F, fontWeight: 300, color: '#888780' }}>Loading…</p>
+      <div style={{ minHeight: '100vh', background: '#2C2A27', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: F, fontWeight: 300, color: '#9E9A92' }}>Loading…</p>
       </div>
     )
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F2EC' }}>
+    <div style={{ minHeight: '100vh', background: '#2C2A27' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px', display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
 
         {/* Sidebar */}
         <aside style={{ width: '180px', flexShrink: 0, position: 'sticky' as const, top: '80px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#888780', marginBottom: '12px' }}>Account</p>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#9E9A92', marginBottom: '12px' }}>Account</p>
           <nav style={{ display: 'flex', flexDirection: 'column' as const, gap: '2px' }}>
             {SECTIONS.map(s => (
               <button key={s.id} onClick={() => setActive(s.id)} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 background: active === s.id ? 'white' : 'transparent',
-                border: active === s.id ? '1px solid #D3D1C7' : '1px solid transparent',
+                border: active === s.id ? '1px solid #484542' : '1px solid transparent',
                 borderRadius: '10px', padding: '10px 14px',
                 fontFamily: F, fontSize: '13px', fontWeight: 300,
-                color: active === s.id ? '#1A1A18' : '#888780',
+                color: active === s.id ? '#1A1A18' : '#9E9A92',
                 cursor: 'pointer', textAlign: 'left' as const,
                 boxShadow: active === s.id ? '0 1px 4px rgba(26,26,24,0.07)' : 'none',
                 transition: 'all 0.15s',
@@ -405,9 +405,9 @@ export default function AccountPage() {
               </button>
             ))}
           </nav>
-          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #D3D1C7' }}>
+          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #484542' }}>
             <Link href="/" style={{ textDecoration: 'none' }}>
-              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>← Back to app</span>
+              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>← Back to app</span>
             </Link>
           </div>
         </aside>

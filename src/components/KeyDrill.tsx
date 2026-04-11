@@ -132,7 +132,7 @@ function AccidentalStaff({ sharps, flats }: { sharps: number; flats: number }) {
       <text x={staffLeft} y={staffTop+36} fontSize="50" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
       {accidentals}
       {sharps === 0 && flats === 0 && (
-        <text x={accStartX} y={staffTop+12} fontSize="13" fontFamily="var(--font-jost), sans-serif" fill="#888780">no accidentals</text>
+        <text x={accStartX} y={staffTop+12} fontSize="13" fontFamily="var(--font-jost), sans-serif" fill="#9E9A92">no accidentals</text>
       )}
     </svg>
   )
@@ -168,33 +168,33 @@ function OrderDrill() {
       <div style={{ display: 'flex', gap: '8px' }}>
         {(['sharps', 'flats'] as const).map(m => (
           <button key={m} onClick={() => { setAccMode(m); setRevealed(false) }}
-            style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid ' + (accMode === m ? '#1A1A18' : '#D3D1C7'), background: accMode === m ? '#1A1A18' : 'white', color: accMode === m ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+            style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid ' + (accMode === m ? '#1A1A18' : '#484542'), background: accMode === m ? '#1A1A18' : 'white', color: accMode === m ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
             {m === 'sharps' ? '♯ Sharps' : '♭ Flats'}
           </button>
         ))}
       </div>
 
       {/* Reference card */}
-      <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '24px', textAlign: 'center' as const }}>
-        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
+      <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '24px', textAlign: 'center' as const }}>
+        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
           Order of {accMode === 'sharps' ? 'Sharps' : 'Flats'}
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' as const }}>
           {order.map((note, i) => (
             <div key={i} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '4px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: revealed ? '#1A1A18' : '#F5F2EC', border: '1px solid #D3D1C7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontSize: '18px', color: revealed ? 'white' : '#D3D1C7', transition: 'all 0.2s' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: revealed ? '#1A1A18' : '#2C2A27', border: '1px solid #484542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontSize: '18px', color: revealed ? 'white' : '#484542', transition: 'all 0.2s' }}>
                 {revealed ? note : i + 1}
               </div>
-              <span style={{ fontFamily: F, fontSize: '10px', color: '#888780' }}>{i + 1}</span>
+              <span style={{ fontFamily: F, fontSize: '10px', color: '#9E9A92' }}>{i + 1}</span>
             </div>
           ))}
         </div>
         <button onClick={() => setRevealed(r => !r)}
-          style={{ background: revealed ? '#F5F2EC' : '#1A1A18', color: revealed ? '#1A1A18' : 'white', border: '1px solid #D3D1C7', borderRadius: '10px', padding: '9px 24px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer', marginBottom: revealed ? '16px' : 0 }}>
+          style={{ background: revealed ? '#2C2A27' : '#1A1A18', color: revealed ? '#1A1A18' : 'white', border: '1px solid #484542', borderRadius: '10px', padding: '9px 24px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer', marginBottom: revealed ? '16px' : 0 }}>
           {revealed ? 'Hide' : 'Reveal'}
         </button>
         {revealed && (
-          <p style={{ fontFamily: SERIF, fontSize: '15px', fontStyle: 'italic', color: '#888780', lineHeight: 1.6, marginTop: '12px' }}>
+          <p style={{ fontFamily: SERIF, fontSize: '15px', fontStyle: 'italic', color: '#9E9A92', lineHeight: 1.6, marginTop: '12px' }}>
             "{mnemonic}"
           </p>
         )}
@@ -204,7 +204,7 @@ function OrderDrill() {
       <div style={{ display: 'flex', gap: '8px' }}>
         {(['blank', 'sequence'] as const).map(m => (
           <button key={m} onClick={() => setDrillMode(m)}
-            style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid ' + (drillMode === m ? '#BA7517' : '#D3D1C7'), background: drillMode === m ? '#BA7517' : 'white', color: drillMode === m ? 'white' : '#888780', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+            style={{ padding: '5px 14px', borderRadius: '20px', border: '1px solid ' + (drillMode === m ? '#BA7517' : '#484542'), background: drillMode === m ? '#BA7517' : 'white', color: drillMode === m ? 'white' : '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
             {m === 'blank' ? 'Fill in blank' : 'Full sequence'}
           </button>
         ))}
@@ -243,12 +243,12 @@ function OrderBlankDrill({ mode }: { mode: 'sharps' | 'flats' }) {
   }
 
   const bg = result === 'correct' ? '#EAF3DE' : result === 'wrong' ? '#FCEBEB' : 'white'
-  const borderColor = result === 'correct' ? '#7EC86E' : result === 'wrong' ? '#F09595' : '#D3D1C7'
+  const borderColor = result === 'correct' ? '#7EC86E' : result === 'wrong' ? '#F09595' : '#484542'
 
   return (
     <div style={{ background: bg, borderRadius: '16px', border: '1px solid ' + borderColor, padding: '24px', transition: 'all 0.2s' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Fill in the blank</p>
+        <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Fill in the blank</p>
         {streak > 0 && <p style={{ fontFamily: F, fontSize: '11px', color: '#BA7517' }}>🔥 {streak}</p>}
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' as const }}>
@@ -258,13 +258,13 @@ function OrderBlankDrill({ mode }: { mode: 'sharps' | 'flats' }) {
               {result ? order[blankIdx] : '?'}
             </div>
           ) : (
-            <div key={i} style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#F5F2EC', border: '1px solid #D3D1C7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontSize: '18px', color: '#1A1A18' }}>
+            <div key={i} style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#2C2A27', border: '1px solid #484542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SERIF, fontSize: '18px', color: '#F0EDE6' }}>
               {note}
             </div>
           )
         ))}
       </div>
-      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', marginBottom: '12px', textAlign: 'center' as const }}>
+      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', marginBottom: '12px', textAlign: 'center' as const }}>
         What is {mode === 'sharps' ? 'sharp' : 'flat'} #{blankIdx + 1}?
       </p>
       {!result ? (
@@ -272,7 +272,7 @@ function OrderBlankDrill({ mode }: { mode: 'sharps' | 'flats' }) {
           <input value={answer} onChange={e => setAnswer(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && check()}
             placeholder="e.g. F" maxLength={3} autoFocus
-            style={{ width: '80px', padding: '8px 12px', borderRadius: '10px', border: '1px solid #D3D1C7', fontFamily: SERIF, fontSize: '18px', textAlign: 'center' as const, outline: 'none', background: '#F5F2EC' }} />
+            style={{ width: '80px', padding: '8px 12px', borderRadius: '10px', border: '1px solid #484542', fontFamily: SERIF, fontSize: '18px', textAlign: 'center' as const, outline: 'none', background: '#2C2A27' }} />
           <button onClick={check}
             style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: '13px', fontWeight: 300, cursor: 'pointer' }}>
             Check
@@ -310,8 +310,8 @@ function OrderSequenceDrill({ mode }: { mode: 'sharps' | 'flats' }) {
   const allCorrect = checked && results.every(Boolean)
 
   return (
-    <div style={{ background: 'white', borderRadius: '16px', border: '1px solid ' + (checked ? (allCorrect ? '#7EC86E' : '#F09595') : '#D3D1C7'), padding: '24px', transition: 'all 0.2s' }}>
-      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
+    <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid ' + (checked ? (allCorrect ? '#7EC86E' : '#F09595') : '#484542'), padding: '24px', transition: 'all 0.2s' }}>
+      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>
         Write the full {mode === 'sharps' ? 'sharp' : 'flat'} order
       </p>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginBottom: '20px', flexWrap: 'wrap' as const }}>
@@ -321,8 +321,8 @@ function OrderSequenceDrill({ mode }: { mode: 'sharps' | 'flats' }) {
               onChange={e => { const n = [...inputs]; n[i] = e.target.value; setInputs(n) }}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); checkAll() } }}
               maxLength={3}
-              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid ' + (checked ? (results[i] ? '#7EC86E' : '#F09595') : '#D3D1C7'), background: checked ? (results[i] ? '#EAF3DE' : '#FCEBEB') : '#F5F2EC', fontFamily: SERIF, fontSize: '16px', textAlign: 'center' as const, outline: 'none', color: '#1A1A18', padding: 0 }} />
-            <span style={{ fontFamily: F, fontSize: '10px', color: checked ? (results[i] ? '#4CAF50' : '#E53935') : '#888780' }}>
+              style={{ width: '36px', height: '36px', borderRadius: '50%', border: '2px solid ' + (checked ? (results[i] ? '#7EC86E' : '#F09595') : '#484542'), background: checked ? (results[i] ? '#EAF3DE' : '#FCEBEB') : '#2C2A27', fontFamily: SERIF, fontSize: '16px', textAlign: 'center' as const, outline: 'none', color: '#F0EDE6', padding: 0 }} />
+            <span style={{ fontFamily: F, fontSize: '10px', color: checked ? (results[i] ? '#4CAF50' : '#E53935') : '#9E9A92' }}>
               {checked ? order[i] : i + 1}
             </span>
           </div>
@@ -450,27 +450,27 @@ function KeyQuiz() {
         <div style={{ display: 'flex', gap: '6px' }}>
           {(['easy','sharps','flats','all'] as Difficulty[]).map(d => (
             <button key={d} onClick={() => changeDifficulty(d)}
-              style={{ padding: '4px 12px', borderRadius: '20px', border: '1px solid ' + (difficulty === d ? '#BA7517' : '#D3D1C7'), background: difficulty === d ? '#BA7517' : 'white', color: difficulty === d ? 'white' : '#888780', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
+              style={{ padding: '4px 12px', borderRadius: '20px', border: '1px solid ' + (difficulty === d ? '#BA7517' : '#484542'), background: difficulty === d ? '#BA7517' : 'white', color: difficulty === d ? 'white' : '#9E9A92', fontFamily: F, fontSize: '11px', fontWeight: 300, cursor: 'pointer' }}>
               {d === 'easy' ? 'Easy' : d === 'sharps' ? '♯ only' : d === 'flats' ? '♭ only' : 'All'}
             </button>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {score.total > 0 && (
-            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#888780' }}>
+            <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 300, color: '#9E9A92' }}>
               {score.correct}/{score.total} · {pct}%
             </p>
           )}
           <button onClick={() => { const s = {correct:0,total:0}; setScore(s); saveScore(s) }}
-            style={{ background: 'none', border: 'none', fontFamily: F, fontSize: '11px', color: '#D3D1C7', cursor: 'pointer', padding: '2px 6px' }}>
+            style={{ background: 'none', border: 'none', fontFamily: F, fontSize: '11px', color: '#484542', cursor: 'pointer', padding: '2px 6px' }}>
             reset
           </button>
         </div>
       </div>
 
       {/* Question card */}
-      <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #D3D1C7', padding: '28px 24px', textAlign: 'center' as const }}>
-        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', marginBottom: '20px', lineHeight: 1.6 }}>{prompt}</p>
+      <div style={{ background: '#353330', borderRadius: '16px', border: '1px solid #484542', padding: '28px 24px', textAlign: 'center' as const }}>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', marginBottom: '20px', lineHeight: 1.6 }}>{prompt}</p>
         {q.type === 'staff-to-name' && (
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
             <AccidentalStaff sharps={q.sharps} flats={q.flats} />
@@ -479,7 +479,7 @@ function KeyQuiz() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
           {choices.map((choice, i) => {
             const isCorrectChoice = choice === correctAnswer
-            let bg = 'white', border = '1px solid #D3D1C7', color = '#1A1A18'
+            let bg = 'white', border = '1px solid #484542', color = '#1A1A18'
             if (result && isCorrectChoice) { bg = '#EAF3DE'; border = '1px solid #7EC86E'; color = '#2E6B3E' }
             else if (result && selected === choice && !isCorrectChoice) { bg = '#FCEBEB'; border = '1px solid #F09595'; color = '#E53935' }
             return (
@@ -518,7 +518,7 @@ export default function KeyDrill() {
       <div style={{ display: 'flex', gap: '8px' }}>
         {(['order', 'quiz'] as const).map(m => (
           <button key={m} onClick={() => setMode(m)}
-            style={{ padding: '7px 18px', borderRadius: '20px', border: '1px solid ' + (mode === m ? '#BA7517' : '#D3D1C7'), background: mode === m ? '#BA7517' : 'white', color: mode === m ? 'white' : '#888780', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
+            style={{ padding: '7px 18px', borderRadius: '20px', border: '1px solid ' + (mode === m ? '#BA7517' : '#484542'), background: mode === m ? '#BA7517' : 'white', color: mode === m ? 'white' : '#9E9A92', fontFamily: F, fontSize: '12px', fontWeight: 300, cursor: 'pointer' }}>
             {m === 'order' ? '♯♭ Order' : '? Key ID'}
           </button>
         ))}

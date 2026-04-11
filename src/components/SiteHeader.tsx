@@ -91,9 +91,9 @@ export default function SiteHeader() {
         {/* Wordmark */}
         <div className="site-header__brand">
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: F, fontSize: '18px', fontWeight: 300, letterSpacing: '0.08em', color: '#1A1A18' }}>
+            <span style={{ fontFamily: F, fontSize: '18px', fontWeight: 300, letterSpacing: '0.08em', color: '#F0EDE6' }}>
               Note<span style={{ fontWeight: 500 }}>Lab</span>
-              <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', color: '#888780', marginLeft: '7px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
+              <span style={{ fontSize: '10px', fontWeight: 400, letterSpacing: '0.18em', color: '#9E9A92', marginLeft: '7px', verticalAlign: 'baseline', textTransform: 'uppercase' as const }}>Studio</span>
             </span>
           </Link>
         </div>
@@ -120,9 +120,9 @@ export default function SiteHeader() {
               width: pillRect.width,
               top: '4px',
               bottom: '4px',
-              background: 'white',
+              background: '#F0EDE6',
               borderRadius: '9999px',
-              boxShadow: '0 1px 4px rgba(26,26,24,0.1)',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
               transition: 'left 300ms ease-out, width 300ms ease-out',
               pointerEvents: 'none',
               zIndex: 0,
@@ -142,7 +142,7 @@ export default function SiteHeader() {
                   borderRadius: '9999px',
                   padding: '5px 14px',
                   fontFamily: F, fontSize: '13px', fontWeight: 300,
-                  color: active ? '#1A1A18' : '#888780',
+                  color: active ? '#2C2A27' : '#9E9A92',
                   letterSpacing: '0.01em',
                   whiteSpace: 'nowrap' as const,
                   cursor: 'pointer',
@@ -167,7 +167,7 @@ export default function SiteHeader() {
               style={{
                 width: '36px', height: '36px', borderRadius: '10px',
                 background: showMobileMenu ? '#1A1A18' : 'transparent',
-                border: '1px solid ' + (showMobileMenu ? '#1A1A18' : '#D3D1C7'),
+                border: '1px solid ' + (showMobileMenu ? '#1A1A18' : '#484542'),
                 cursor: 'pointer', display: 'flex', flexDirection: 'column' as const,
                 alignItems: 'center', justifyContent: 'center', gap: '5px',
               }}
@@ -188,7 +188,7 @@ export default function SiteHeader() {
             {showMobileMenu && (
               <div style={{
                 position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                background: 'white', border: '1px solid #D3D1C7',
+                background: '#353330', border: '1px solid #484542',
                 borderRadius: '14px', padding: '8px',
                 boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                 minWidth: '200px', zIndex: 100,
@@ -200,11 +200,11 @@ export default function SiteHeader() {
                       <div style={{
                         padding: '11px 14px', borderRadius: '8px',
                         fontFamily: F, fontSize: '14px', fontWeight: 300,
-                        color: active ? '#1A1A18' : '#888780',
-                        background: active ? '#F5F2EC' : 'none',
+                        color: active ? '#1A1A18' : '#9E9A92',
+                        background: active ? '#2C2A27' : 'none',
                         cursor: 'pointer',
                       }}
-                        onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#F5F2EC' }}
+                        onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#2C2A27' }}
                         onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'none' }}
                       >
                         {item.label}
@@ -236,7 +236,7 @@ export default function SiteHeader() {
                 {showUserMenu && (
                   <div style={{
                     position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                    background: 'white', border: '1px solid #D3D1C7',
+                    background: '#353330', border: '1px solid #484542',
                     borderRadius: '12px', padding: '8px',
                     boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                     minWidth: '200px', zIndex: 100,
@@ -244,18 +244,18 @@ export default function SiteHeader() {
                     {/* Identity header */}
                     <div style={{ padding: '8px 12px 12px', borderBottom: '1px solid #EDE8DF', marginBottom: '4px' }}>
                       {displayName && (
-                        <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 400, color: '#1A1A18', margin: '0 0 2px' }}>
+                        <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 400, color: '#F0EDE6', margin: '0 0 2px' }}>
                           {displayName}
                         </p>
                       )}
-                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#888780', margin: 0, wordBreak: 'break-all' as const }}>
+                      <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 300, color: '#9E9A92', margin: 0, wordBreak: 'break-all' as const }}>
                         {email}
                       </p>
                     </div>
 
                     <Link href="/account" onClick={() => setShowUserMenu(false)} style={{ textDecoration: 'none', display: 'block' }}>
-                      <div style={{ borderRadius: '8px', padding: '9px 12px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#1A1A18', cursor: 'pointer' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#F5F2EC')}
+                      <div style={{ borderRadius: '8px', padding: '9px 12px', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#F0EDE6', cursor: 'pointer' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#2C2A27')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
                         Account settings
                       </div>
@@ -264,9 +264,9 @@ export default function SiteHeader() {
                       display: 'block', width: '100%', textAlign: 'left' as const,
                       background: 'none', border: 'none', borderRadius: '8px',
                       padding: '9px 12px', borderTop: '1px solid #EDE8DF', marginTop: '4px',
-                      fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#888780', cursor: 'pointer',
+                      fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#9E9A92', cursor: 'pointer',
                     }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#F5F2EC')}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#2C2A27')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                     >
                       Sign out
@@ -276,9 +276,9 @@ export default function SiteHeader() {
               </div>
             ) : (
               <button onClick={() => setShowAuth(true)} style={{
-                border: '1px solid #1A1A18', borderRadius: '20px',
+                border: '1px solid #484542', borderRadius: '20px',
                 padding: '7px 18px', fontFamily: F, fontSize: '13px',
-                fontWeight: 300, color: '#1A1A18', background: 'none', cursor: 'pointer',
+                fontWeight: 300, color: '#F0EDE6', background: 'none', cursor: 'pointer',
               }}>
                 Sign in
               </button>
