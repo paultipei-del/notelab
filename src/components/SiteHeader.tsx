@@ -105,7 +105,7 @@ export default function SiteHeader() {
           className="nl-desktop-nav"
           style={{
             position: 'relative',
-            background: 'rgba(26,26,24,0.08)',
+            background: 'transparent',
             borderRadius: '9999px',
             padding: '4px',
             gap: '0',
