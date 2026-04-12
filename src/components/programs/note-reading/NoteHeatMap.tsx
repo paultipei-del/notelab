@@ -195,7 +195,7 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
           {/* Bravura filled notehead U+E0A4 */}
           <text
             x={cx} y={cy}
-            fontSize="28"
+            fontSize="44"
             fontFamily="Bravura, serif"
             fill={fill}
             textAnchor="middle"
@@ -321,7 +321,7 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
         {(Object.entries(MASTERY_COLORS) as [keyof typeof MASTERY_COLORS, string][]).map(([level, color]) => (
           <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <svg width="12" height="12" style={{ flexShrink: 0, overflow: 'visible' }}>
-              <text x="6" y="6" fontSize="14" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">
+              <text x="6" y="6" fontSize="18" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">
                 {String.fromCodePoint(0xE0A4)}
               </text>
             </svg>
