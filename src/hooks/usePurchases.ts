@@ -14,6 +14,7 @@ export function usePurchases(userId: string | null) {
       return
     }
 
+    setLoading(true)
     const supabase = getSupabaseClient()
     supabase
       .from('purchases')
