@@ -127,7 +127,7 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
 
   // SVG height
   const svgH = showBass ? bassTop + 8 * step + 56 : trebleTop + 8 * step + 56
-  const svgW = staffLeft + staffWidth + 8
+  const svgW = staffLeft + staffWidth + 40
 
   // Staff lines
   function staffLines(top: number, key: string) {
