@@ -6,6 +6,8 @@ import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import { noteToPitchClass } from '@/lib/noteDetector'
 import type { QueueCard } from '@/lib/types'
+import { Capacitor } from '@capacitor/core'
+import { NativeAudio } from '@/lib/nativeAudio'
 
 // ── Note Rush confirmed constants ─────────────────────────────────────────
 const MIN_TIME_ON_CARD_MS = 600    // default dead window
@@ -84,6 +86,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const doneRef = useRef(false)
   const targetNoteRef = useRef(card.note ?? '')
   const acceptStartRef = useRef(0)
+  const nativeListenerRef = useRef<{ remove: () => void } | null>(null)
 
   useEffect(() => {
     targetNoteRef.current = card.note ?? ''
@@ -97,41 +100,83 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
 
     async function init() {
       try {
-        // ── Init audio pipeline once, keep it running ─────────────────
-        if (!sadStream || !sadStream.active || !sadStream.getTracks().every(t => t.readyState === 'live')) {
-          sadStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-          sadCtx = null; sadAnalyser = null; sadDetector = null
+        if (Capacitor.isNativePlatform()) {
+          if (!sadDetector) sadDetector = new SADPitchDetector(44100)
+          sadDetector.clearVotes()
+          cardStartTime = Date.now()
+          setStatus('listening')
+          await NativeAudio.start()
+          nativeListenerRef.current = await NativeAudio.addListener('audioBuffer', (data) => {
+            if (doneRef.current) return
+            const samples = new Float32Array(data.samples)
+            const now = Date.now()
+            const timeOnCard = now - cardStartTime
+            if (timeOnCard < deadWindowForNote(targetNoteRef.current)) return
+            if (acceptStartRef.current === 0) acceptStartRef.current = now
+            const result = sadDetector!.update(samples)
+            if (result?.stable) {
+              setDetected(result.name)
+              const target = targetNoteRef.current
+              const timeSinceAccept = now - acceptStartRef.current
+              const targetMidiVal = noteToMidi(target)
+              const isOctaveBleed = (
+                (prevMidi >= 0 && (result.midi === prevMidi - 12 || result.midi === prevMidi + 12)) ||
+                (result.midi === targetMidiVal - 12 || result.midi === targetMidiVal + 12)
+              ) && timeSinceAccept < OCTAVE_BLEED_FILTER_MS
+              if (isOctaveBleed) return
+              if (pitchMatch(result.name, target)) {
+                if (doneRef.current) return
+                doneRef.current = true
+                prevMidi = result.midi
+                setStatus('correct')
+                setTimeout(() => onCorrect(!cardHadWrong), 200)
+              } else {
+                const detMidi = result.midi
+                const tgtMidi = noteToMidi(target)
+                const semDist = Math.abs(detMidi - tgtMidi)
+                const isOctaveOfPrev = prevMidi >= 0 && (detMidi === prevMidi + 12 || detMidi === prevMidi - 12)
+                const cooldownOk = now - lastWrongTime > WRONG_COOLDOWN_MS
+                if (semDist <= WRONG_SEMITONE_RANGE && !isOctaveOfPrev && cooldownOk) {
+                  setStatus('wrong')
+                  cardHadWrong = true
+                  lastWrongTime = now
+                  onWrong()
+                }
+              }
+            }
+          })
+        } else {
+          if (!sadStream || !sadStream.active || !sadStream.getTracks().every(t => t.readyState === 'live')) {
+            sadStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+            sadCtx = null; sadAnalyser = null; sadDetector = null
+          }
+          if (!sadCtx || sadCtx.state === 'closed') sadCtx = new AudioContext()
+          if (sadCtx.state === 'suspended') await sadCtx.resume()
+          if (!sadAnalyser) {
+            const source = sadCtx.createMediaStreamSource(sadStream!)
+            sadAnalyser = sadCtx.createAnalyser()
+            sadAnalyser.fftSize = 4096
+            source.connect(sadAnalyser)
+            sadBuf = new Float32Array(4096)
+            sadDetector = new SADPitchDetector(sadCtx.sampleRate)
+          }
+          sadDetector!.clearVotes()
+          cardStartTime = Date.now()
+          setStatus('listening')
+          cancelAnimationFrame(rafHandle)
+          rafHandle = requestAnimationFrame(tick)
         }
-        if (!sadCtx || sadCtx.state === 'closed') sadCtx = new AudioContext()
-        if (sadCtx.state === 'suspended') await sadCtx.resume()
-
-        if (!sadAnalyser) {
-          const source = sadCtx.createMediaStreamSource(sadStream!)
-          sadAnalyser = sadCtx.createAnalyser()
-          sadAnalyser.fftSize = 4096
-          source.connect(sadAnalyser)
-          sadBuf = new Float32Array(4096)
-          sadDetector = new SADPitchDetector(sadCtx.sampleRate)
-        }
-
-        // ── ClearDetectionBuffer: zero votes only, keep audio running ─
-        // This is exactly what Note Rush does in SelectNextNote()
-        sadDetector!.clearVotes()
-        cardStartTime = Date.now()
-        setStatus('listening')
-
-        // Cancel any previous RAF loop before starting new one
-        cancelAnimationFrame(rafHandle)
-        rafHandle = requestAnimationFrame(tick)
-
       } catch(e: any) {
         setError('Mic access denied.')
         setStatus('listening')
       }
     }
-
     init()
-    return () => { doneRef.current = true }
+    return () => {
+      doneRef.current = true
+      nativeListenerRef.current?.remove()
+      NativeAudio.stop().catch(() => {})
+    }
   }, [card.id])
 
   function tick() {
