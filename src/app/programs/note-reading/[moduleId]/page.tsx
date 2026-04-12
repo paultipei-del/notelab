@@ -25,7 +25,7 @@ export default function ModuleOverviewPage({ params }: Props) {
   const { moduleId } = use(params)
   const router = useRouter()
   const { user } = useAuth()
-  const { hasSubscription } = usePurchases(user?.id ?? null)
+  const { hasSubscription, loading: purchasesLoading } = usePurchases(user?.id ?? null)
   const isPro = hasSubscription()
 
   const mod = getNRModule(moduleId)
@@ -78,6 +78,7 @@ export default function ModuleOverviewPage({ params }: Props) {
     mp.identify.sessions.length > 0 || mp.play.sessions.length > 0
 
   function handleStart(tool: 'identify' | 'play') {
+    if (purchasesLoading) return
     if (!isModuleFree && !isPro) { router.push('/account'); return }
     router.push(`/programs/note-reading/${moduleId}/${tool}`)
   }
@@ -88,7 +89,9 @@ export default function ModuleOverviewPage({ params }: Props) {
     color: primary ? 'white' : '#7A7060',
     border: primary ? 'none' : '1px solid #DDD8CA',
     borderRadius: '10px', padding: '10px 20px',
-    fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400 as const, cursor: 'pointer' as const,
+    fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400 as const,
+    cursor: purchasesLoading ? 'default' as const : 'pointer' as const,
+    opacity: purchasesLoading ? 0.5 : 1,
   })
 
   return (
@@ -269,7 +272,7 @@ export default function ModuleOverviewPage({ params }: Props) {
         )}
 
         {/* Pro gate notice */}
-        {!isModuleFree && !isPro && (
+        {!isModuleFree && !purchasesLoading && !isPro && (
           <div style={{ marginTop: '8px', background: '#1A1A18', borderRadius: '14px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
               Pro access required to start sessions
