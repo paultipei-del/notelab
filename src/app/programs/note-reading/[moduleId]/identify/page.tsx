@@ -2,8 +2,15 @@
 
 import { useState, useEffect, useCallback, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { getNRModule } from '@/lib/programs/note-reading/modules'
-import { recordNRIdentifySession, isNRModuleUnlocked, loadNRProgress, nrConsecutivePassing } from '@/lib/programs/note-reading/progress'
+import { getNRModule, buildWeightedPool, NOTE_READING_MODULES } from '@/lib/programs/note-reading/modules'
+import {
+  recordNRIdentifySession,
+  isNRModuleUnlocked,
+  loadNRProgress,
+  nrConsecutivePassing,
+  getNoteStats,
+} from '@/lib/programs/note-reading/progress'
+import type { NoteResult } from '@/lib/programs/note-reading/types'
 import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import { useAuth } from '@/hooks/useAuth'
@@ -13,7 +20,6 @@ const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 const SESSION_LENGTH = 20
 
-// All letter-based answers (sharps/flats for accidental modules)
 const NATURAL_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 const ACCIDENTAL_NOTES = ['C#','Db','D#','Eb','F#','Gb','G#','Ab','A#','Bb']
 
@@ -23,24 +29,6 @@ function pitchClass(pitch: string): string {
 
 function hasAccidentals(notes: string[]): boolean {
   return notes.some(n => /[#b]/.test(n))
-}
-
-function buildQueue(notes: string[], length: number): string[] {
-  const unique = [...new Set(notes)]
-  const result: string[] = []
-  while (result.length < length) {
-    const shuffled = [...unique].sort(() => Math.random() - 0.5)
-    result.push(...shuffled)
-  }
-  const q = result.slice(0, length)
-  // Avoid consecutive same pitch class
-  for (let i = 1; i < q.length; i++) {
-    if (pitchClass(q[i]) === pitchClass(q[i - 1])) {
-      const j = Math.min(i + 1 + Math.floor(Math.random() * 3), q.length - 1)
-      if (j > i) [q[i], q[j]] = [q[j], q[i]]
-    }
-  }
-  return q
 }
 
 type AnswerState = 'idle' | 'correct' | 'wrong'
@@ -61,17 +49,15 @@ export default function IdentifySessionPage({ params }: Props) {
   const [answerState, setAnswerState] = useState<AnswerState>('idle')
   const [correctCount, setCorrectCount] = useState(0)
   const [done, setDone] = useState(false)
-  const [savedMp, setSavedMp] = useState<ReturnType<typeof recordNRIdentifySession> | null>(null)
+  const [result, setResult] = useState<{ mp: ReturnType<typeof recordNRIdentifySession>['mp']; identifyJustMastered: boolean } | null>(null)
   const processingRef = useRef(false)
-  const startRef = useRef(Date.now())
-  // Miss tracking per pitch class
-  const missMapRef = useRef<Record<string, number>>({})
+  // Per-note tracking: full pitch → {attempts, correct}
+  const noteResultsRef = useRef<Record<string, NoteResult>>({})
+  // Display misses: pitchClass → count (for summary "Missed: C, G" list)
+  const displayMissRef = useRef<Record<string, number>>({})
 
-  // Gate
   useEffect(() => {
-    if (!isFreeModule && !isPro) {
-      router.replace('/account')
-    }
+    if (!isFreeModule && !isPro) router.replace('/account')
   }, [isFreeModule, isPro])
 
   useEffect(() => {
@@ -81,9 +67,18 @@ export default function IdentifySessionPage({ params }: Props) {
       router.replace(`/programs/note-reading/${moduleId}`)
       return
     }
-    setQueue(buildQueue(mod.notes, SESSION_LENGTH))
-    startRef.current = Date.now()
-    missMapRef.current = {}
+    const stats = getNoteStats(moduleId, 'identify', store)
+    const q = buildWeightedPool(mod.notes, stats, SESSION_LENGTH)
+    // Avoid consecutive same pitch class
+    for (let i = 1; i < q.length; i++) {
+      if (pitchClass(q[i]) === pitchClass(q[i - 1])) {
+        const j = Math.min(i + 1 + Math.floor(Math.random() * 3), q.length - 1)
+        if (j > i) [q[i], q[j]] = [q[j], q[i]]
+      }
+    }
+    setQueue(q)
+    noteResultsRef.current = {}
+    displayMissRef.current = {}
   }, [moduleId])
 
   const currentPitch = queue[qIdx] ?? ''
@@ -95,7 +90,6 @@ export default function IdentifySessionPage({ params }: Props) {
     processingRef.current = true
 
     const isCorrect = answer === currentPitchClass ||
-      // Accept enharmonic for accidental modules
       (useAccidentalLayout && (
         (currentPitchClass === 'F#' && answer === 'Gb') ||
         (currentPitchClass === 'Gb' && answer === 'F#') ||
@@ -109,10 +103,15 @@ export default function IdentifySessionPage({ params }: Props) {
         (currentPitchClass === 'Bb' && answer === 'A#')
       ))
 
+    // Track per-note results (by full pitch)
+    const nr = noteResultsRef.current
+    if (!nr[currentPitch]) nr[currentPitch] = { attempts: 0, correct: 0 }
+    nr[currentPitch].attempts++
     if (isCorrect) {
+      nr[currentPitch].correct++
       setCorrectCount(c => c + 1)
     } else {
-      missMapRef.current[currentPitchClass] = (missMapRef.current[currentPitchClass] ?? 0) + 1
+      displayMissRef.current[currentPitchClass] = (displayMissRef.current[currentPitchClass] ?? 0) + 1
     }
 
     setAnswerState(isCorrect ? 'correct' : 'wrong')
@@ -129,7 +128,6 @@ export default function IdentifySessionPage({ params }: Props) {
     }, isCorrect ? 280 : 700)
   }, [currentPitch, currentPitchClass, qIdx, done, useAccidentalLayout])
 
-  // Keyboard listener
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const key = e.key.toUpperCase()
@@ -143,8 +141,8 @@ export default function IdentifySessionPage({ params }: Props) {
   useEffect(() => {
     if (!done || !mod) return
     const accuracy = correctCount / SESSION_LENGTH
-    const mp = recordNRIdentifySession(moduleId, accuracy)
-    setSavedMp(mp)
+    const res = recordNRIdentifySession(moduleId, accuracy, noteResultsRef.current)
+    setResult(res)
   }, [done])
 
   if (!mod) return null
@@ -157,19 +155,42 @@ export default function IdentifySessionPage({ params }: Props) {
   const bgColor = answerState === 'correct' ? '#EAF3DE' : answerState === 'wrong' ? '#FFF0F0' : 'white'
   const borderColor = answerState === 'correct' ? '#C0DD97' : answerState === 'wrong' ? '#F09595' : '#DDD8CA'
   const progressPct = (qIdx / SESSION_LENGTH) * 100
-  const accuracy = (correctCount / SESSION_LENGTH)
+  const accuracy = correctCount / SESSION_LENGTH
 
-  // ── Summary screen ────────────────────────────────────────────────────────
-  if (done && savedMp) {
+  // ── Summary screen ──────────────────────────────────────────────────────────
+  if (done && result) {
+    const { mp: savedMp, identifyJustMastered } = result
     const pct = Math.round(accuracy * 100)
-    const missedNotes = Object.entries(missMapRef.current)
+    const missedNotes = Object.entries(displayMissRef.current)
       .sort((a, b) => b[1] - a[1])
       .map(([note]) => note)
     const passingSessions = nrConsecutivePassing(moduleId, 'identify', loadNRProgress())
     const needed = mod.criteria.sessions
     const threshold = mod.criteria.identifyAccuracy ?? 0.9
     const passedThisSession = accuracy >= threshold
-    const canContinueToPlay = savedMp.identify.mastered && mod.tools.includes('play')
+    const showContinueToPlay = identifyJustMastered && mod.tools.includes('play')
+    const nextModule = NOTE_READING_MODULES.find(m => m.unlockAfter.includes(moduleId))
+
+    function retry() {
+      setDone(false)
+      setResult(null)
+      setQIdx(0)
+      setCorrectCount(0)
+      setAnswerState('idle')
+      processingRef.current = false
+      noteResultsRef.current = {}
+      displayMissRef.current = {}
+      const store = loadNRProgress()
+      const stats = getNoteStats(moduleId, 'identify', store)
+      const q = buildWeightedPool(mod!.notes, stats, SESSION_LENGTH)
+      for (let i = 1; i < q.length; i++) {
+        if (pitchClass(q[i]) === pitchClass(q[i - 1])) {
+          const j = Math.min(i + 1 + Math.floor(Math.random() * 3), q.length - 1)
+          if (j > i) [q[i], q[j]] = [q[j], q[i]]
+        }
+      }
+      setQueue(q)
+    }
 
     return (
       <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
@@ -184,7 +205,7 @@ export default function IdentifySessionPage({ params }: Props) {
           {/* Stats */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: '28px', marginBottom: '24px' }}>
             <div>
-              <p style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: pct >= 90 ? '#3B6D11' : '#2A2318', margin: 0 }}>{pct}%</p>
+              <p style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: pct >= Math.round(threshold * 100) ? '#3B6D11' : '#2A2318', margin: 0 }}>{pct}%</p>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: 0 }}>Accuracy</p>
             </div>
             <div>
@@ -195,14 +216,14 @@ export default function IdentifySessionPage({ params }: Props) {
 
           {/* Missed notes */}
           {missedNotes.length > 0 && (
-            <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#FCEBEB', border: '1px solid #F09595', borderRadius: '10px' }}>
+            <div style={{ marginBottom: '16px', padding: '12px 16px', background: '#FCEBEB', border: '1px solid #F09595', borderRadius: '10px' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#A32D2D', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>Missed</p>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#A32D2D', margin: 0 }}>{missedNotes.join(', ')}</p>
             </div>
           )}
 
-          {/* Progress toward completion */}
-          <div style={{ marginBottom: '28px', padding: '12px 16px', background: '#EDE8DF', borderRadius: '10px' }}>
+          {/* Progress */}
+          <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#EDE8DF', borderRadius: '10px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '0 0 4px' }}>
               {passedThisSession ? '✓ Session passed' : '✗ Accuracy below target'} · {Math.round(threshold * 100)}% needed
             </p>
@@ -211,21 +232,57 @@ export default function IdentifySessionPage({ params }: Props) {
             </p>
           </div>
 
+          {/* Module complete banner */}
+          {savedMp.completed && (
+            <div style={{ marginBottom: '20px', padding: '14px 16px', background: '#EAF3DE', border: '1px solid #C0DD97', borderRadius: '10px', textAlign: 'left' }}>
+              <p style={{ fontFamily: SERIF, fontSize: '18px', color: '#3B6D11', margin: '0 0 2px' }}>
+                ✓ {mod.title} — complete
+              </p>
+              {nextModule && (
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#3B6D11', margin: 0 }}>
+                  Next: {nextModule.title}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* CTAs */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {canContinueToPlay && (
-              <button onClick={() => router.push(`/programs/note-reading/${moduleId}/play`)}
-                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+            {savedMp.completed && nextModule ? (
+              <button
+                onClick={() => router.push(`/programs/note-reading/${nextModule.id}`)}
+                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+              >
+                Next Module →
+              </button>
+            ) : showContinueToPlay ? (
+              <button
+                onClick={() => router.push(`/programs/note-reading/${moduleId}/play`)}
+                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+              >
                 Continue to Play It →
               </button>
-            )}
-            <button onClick={() => { setDone(false); setSavedMp(null); setQIdx(0); setCorrectCount(0); setAnswerState('idle'); processingRef.current = false; missMapRef.current = {}; setQueue(buildQueue(mod.notes, SESSION_LENGTH)) }}
-              style={{ background: canContinueToPlay ? 'transparent' : '#1A1A18', color: canContinueToPlay ? '#7A7060' : 'white', border: canContinueToPlay ? '1px solid #DDD8CA' : 'none', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+            ) : null}
+            <button
+              onClick={retry}
+              style={{
+                background: (savedMp.completed && nextModule) || showContinueToPlay ? 'transparent' : '#1A1A18',
+                color: (savedMp.completed && nextModule) || showContinueToPlay ? '#7A7060' : 'white',
+                border: (savedMp.completed && nextModule) || showContinueToPlay ? '1px solid #DDD8CA' : 'none',
+                borderRadius: '10px', padding: '13px',
+                fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer',
+              }}
+            >
               Try Again
             </button>
-            <button onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
-              ← Back to module
+            <button
+              onClick={() => savedMp.completed
+                ? router.push('/programs/note-reading')
+                : router.push(`/programs/note-reading/${moduleId}`)
+              }
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+            >
+              {savedMp.completed ? '← Back to program' : '← Back to module'}
             </button>
           </div>
         </div>
@@ -233,7 +290,7 @@ export default function IdentifySessionPage({ params }: Props) {
     )
   }
 
-  // ── Session screen ─────────────────────────────────────────────────────────
+  // ── Session screen ──────────────────────────────────────────────────────────
   return (
     <div style={{ height: '100dvh', overflow: 'hidden', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
       {/* Top bar */}
@@ -278,7 +335,6 @@ export default function IdentifySessionPage({ params }: Props) {
             }
           </div>
 
-          {/* Feedback */}
           <div style={{ height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {answerState === 'correct' && (
               <span style={{ fontFamily: SERIF, fontSize: '28px', color: '#3B6D11' }}>✓ {currentPitchClass}</span>
@@ -295,7 +351,6 @@ export default function IdentifySessionPage({ params }: Props) {
         <div style={{ marginTop: 'clamp(10px,2vh,20px)', maxWidth: '600px', width: '100%' }}>
           {useAccidentalLayout ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {/* Natural row */}
               <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                 {NATURAL_LETTERS.map(letter => (
                   <button key={letter} onClick={() => handleAnswer(letter)}
@@ -312,7 +367,6 @@ export default function IdentifySessionPage({ params }: Props) {
                   </button>
                 ))}
               </div>
-              {/* Accidental rows */}
               <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 {ACCIDENTAL_NOTES.map(acc => (
                   <button key={acc} onClick={() => handleAnswer(acc)}

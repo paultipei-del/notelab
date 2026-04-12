@@ -149,3 +149,38 @@ export const NOTE_READING_MODULES: NRModuleDef[] = [
 export function getNRModule(id: string): NRModuleDef | undefined {
   return NOTE_READING_MODULES.find(m => m.id === id)
 }
+
+// SM-2 style weighted note pool.
+// Weak notes (low accuracy) appear more frequently; strong notes less.
+// noteStats is keyed by full pitch string ('C4', 'F#4').
+// All notes not in noteStats are treated as 'unseen'.
+export function buildWeightedPool(
+  notePool: string[],
+  noteStats: import('./types').NoteStats[],
+  sessionLength = 20,
+): string[] {
+  const WEIGHTS: Record<string, number> = { unseen: 3, weak: 4, developing: 2, strong: 1 }
+
+  const unique = [...new Set(notePool)]
+  const weighted: string[] = []
+  for (const note of unique) {
+    const stats = noteStats.find(s => s.noteId === note)
+    const level = stats?.masteryLevel ?? 'unseen'
+    const w = WEIGHTS[level]
+    for (let i = 0; i < w; i++) weighted.push(note)
+  }
+
+  // Fisher-Yates shuffle
+  for (let i = weighted.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[weighted[i], weighted[j]] = [weighted[j], weighted[i]]
+  }
+
+  // Allow repeats to reach sessionLength
+  const result = [...weighted]
+  while (result.length < sessionLength) {
+    result.push(...weighted.slice(0, sessionLength - result.length))
+  }
+
+  return result.slice(0, sessionLength)
+}

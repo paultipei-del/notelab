@@ -3,16 +3,18 @@
 import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { getNRModule } from '@/lib/programs/note-reading/modules'
+import { getNRModule, NOTE_READING_MODULES } from '@/lib/programs/note-reading/modules'
 import {
   getNRModuleProgress,
   isNRModuleUnlocked,
   isNRPlayUnlocked,
   nrConsecutivePassing,
   loadNRProgress,
+  getNoteStats,
 } from '@/lib/programs/note-reading/progress'
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
+import NoteHeatMap from '@/components/programs/note-reading/NoteHeatMap'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -29,11 +31,13 @@ export default function ModuleOverviewPage({ params }: Props) {
   const mod = getNRModule(moduleId)
   const [mp, setMp] = useState(getNRModuleProgress(moduleId))
   const [store, setStore] = useState(loadNRProgress())
+  const [noteStats, setNoteStats] = useState(getNoteStats(moduleId, 'both'))
 
   useEffect(() => {
     const s = loadNRProgress()
     setStore(s)
     setMp(s[moduleId] ?? { identify: { sessions: [], mastered: false }, play: { sessions: [], mastered: false }, completed: false })
+    setNoteStats(getNoteStats(moduleId, 'both', s))
   }, [moduleId])
 
   if (!mod) {
@@ -69,14 +73,23 @@ export default function ModuleOverviewPage({ params }: Props) {
   const identifyPassing = nrConsecutivePassing(moduleId, 'identify', store)
   const playPassing = nrConsecutivePassing(moduleId, 'play', store)
   const isModuleFree = moduleId === 'landmarks'
+  const nextModule = NOTE_READING_MODULES.find(m => m.unlockAfter.includes(moduleId))
+  const hasAnySessions = noteStats.some(s => s.attempts > 0) ||
+    mp.identify.sessions.length > 0 || mp.play.sessions.length > 0
 
   function handleStart(tool: 'identify' | 'play') {
-    if (!isModuleFree && !isPro) {
-      router.push('/account')
-      return
-    }
+    if (!isModuleFree && !isPro) { router.push('/account'); return }
     router.push(`/programs/note-reading/${moduleId}/${tool}`)
   }
+
+  const btnStyle = (primary: boolean) => ({
+    flexShrink: 0 as const,
+    background: primary ? '#1A1A18' : 'transparent',
+    color: primary ? 'white' : '#7A7060',
+    border: primary ? 'none' : '1px solid #DDD8CA',
+    borderRadius: '10px', padding: '10px 20px',
+    fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400 as const, cursor: 'pointer' as const,
+  })
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
@@ -89,8 +102,30 @@ export default function ModuleOverviewPage({ params }: Props) {
           </span>
         </Link>
 
+        {/* Module complete banner — top, below breadcrumb */}
+        {mp.completed && (
+          <div style={{ marginTop: '16px', background: '#EAF3DE', border: '1px solid #C0DD97', borderRadius: '12px', padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ color: '#3B6D11', fontSize: '14px' }}>✓</span>
+            <div>
+              <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 400, color: '#3B6D11', margin: 0 }}>Module complete</p>
+              {nextModule && (
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#3B6D11', margin: 0 }}>
+                  Next: {nextModule.title}
+                </p>
+              )}
+            </div>
+            {nextModule && (
+              <Link href={`/programs/note-reading/${nextModule.id}`} style={{ marginLeft: 'auto', textDecoration: 'none' }}>
+                <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#3B6D11', background: 'rgba(59,109,17,0.12)', borderRadius: '20px', padding: '4px 12px' }}>
+                  Next →
+                </span>
+              </Link>
+            )}
+          </div>
+        )}
+
         {/* Header */}
-        <div style={{ marginTop: '28px', marginBottom: '36px' }}>
+        <div style={{ marginTop: '28px', marginBottom: '28px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', marginBottom: '8px', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>
             {mod.clef === 'grand' ? 'Grand Staff' : mod.clef === 'treble' ? 'Treble Clef' : 'Bass Clef'}
           </p>
@@ -103,16 +138,15 @@ export default function ModuleOverviewPage({ params }: Props) {
         </div>
 
         {/* Notes in this module */}
-        <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '16px 20px', marginBottom: '24px' }}>
+        <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '10px' }}>
-            Note pool — {mod.notes.length} notes
+            Note pool — {[...new Set(mod.notes)].length} notes
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {[...new Set(mod.notes)].map(pitch => (
               <span key={pitch} style={{
                 fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400,
-                color: '#2A2318', background: '#EDE8DF',
-                borderRadius: '6px', padding: '3px 8px',
+                color: '#2A2318', background: '#EDE8DF', borderRadius: '6px', padding: '3px 8px',
               }}>
                 {pitch}
               </span>
@@ -121,7 +155,7 @@ export default function ModuleOverviewPage({ params }: Props) {
         </div>
 
         {/* Tool cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
 
           {hasIdentify && (
             <div style={{ background: 'white', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 24px' }}>
@@ -133,28 +167,26 @@ export default function ModuleOverviewPage({ params }: Props) {
                     </p>
                     {mp.identify.mastered && <span style={{ color: '#3B6D11', fontSize: '13px' }}>✓</span>}
                   </div>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 12px' }}>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 10px' }}>
                     See a note on the staff — type the letter name. 20 questions per session.
                   </p>
                   <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
-                    Progress: {identifyPassing} / {mod.criteria.sessions} sessions
-                    {mod.criteria.identifyAccuracy && ` · ${Math.round((mod.criteria.identifyAccuracy) * 100)}% accuracy needed`}
+                    {mp.identify.mastered
+                      ? 'Mastered'
+                      : `Progress: ${identifyPassing} / ${mod.criteria.sessions} sessions`}
+                    {!mp.identify.mastered && mod.criteria.identifyAccuracy && ` · ${Math.round(mod.criteria.identifyAccuracy * 100)}% accuracy needed`}
                   </p>
                 </div>
                 <button
                   onClick={() => handleStart('identify')}
-                  style={{
-                    flexShrink: 0, background: '#1A1A18', color: 'white', border: 'none',
-                    borderRadius: '10px', padding: '10px 20px',
-                    fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer',
-                  }}
+                  style={btnStyle(true)}
                 >
-                  {mp.identify.sessions.length > 0 ? 'Continue' : 'Start'}
+                  {mp.identify.mastered ? 'Review' : mp.identify.sessions.length > 0 ? 'Continue' : 'Start'}
                 </button>
               </div>
 
               {mp.identify.sessions.length > 0 && (
-                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #EDE8DF' }}>
+                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #EDE8DF' }}>
                   <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
                     Last session: {Math.round((mp.identify.sessions.at(-1)?.accuracy ?? 0) * 100)}%
                     {' · '}Total sessions: {mp.identify.sessions.length}
@@ -177,15 +209,17 @@ export default function ModuleOverviewPage({ params }: Props) {
                       Staff Recognition
                     </p>
                     {mp.play.mastered && <span style={{ color: '#3B6D11', fontSize: '13px' }}>✓</span>}
-                    {!playUnlocked && <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA' }}>🔒 Complete Identify first</span>}
+                    {!playUnlocked && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4' }}>🔒 Complete Identify first</span>}
                   </div>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 12px' }}>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 10px' }}>
                     See a note — play it on your piano. Mic detects pitch automatically. 20 notes per session.
                   </p>
                   <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
-                    Progress: {playPassing} / {mod.criteria.sessions} sessions
-                    {mod.criteria.playAccuracy && ` · ${Math.round(mod.criteria.playAccuracy * 100)}% accuracy needed`}
-                    {mod.criteria.playAvgResponseMs && ` · avg <${(mod.criteria.playAvgResponseMs / 1000).toFixed(1)}s`}
+                    {mp.play.mastered
+                      ? 'Mastered'
+                      : `Progress: ${playPassing} / ${mod.criteria.sessions} sessions`}
+                    {!mp.play.mastered && mod.criteria.playAccuracy && ` · ${Math.round(mod.criteria.playAccuracy * 100)}% accuracy needed`}
+                    {!mp.play.mastered && mod.criteria.playAvgResponseMs && ` · avg <${(mod.criteria.playAvgResponseMs / 1000).toFixed(1)}s`}
                   </p>
                 </div>
                 <button
@@ -200,12 +234,12 @@ export default function ModuleOverviewPage({ params }: Props) {
                     cursor: playUnlocked ? 'pointer' : 'default',
                   }}
                 >
-                  {mp.play.sessions.length > 0 ? 'Continue' : 'Start'}
+                  {mp.play.mastered ? 'Review' : mp.play.sessions.length > 0 ? 'Continue' : 'Start'}
                 </button>
               </div>
 
               {mp.play.sessions.length > 0 && (
-                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #EDE8DF' }}>
+                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #EDE8DF' }}>
                   <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
                     Last session: {Math.round((mp.play.sessions.at(-1)?.accuracy ?? 0) * 100)}%
                     {mp.play.sessions.at(-1)?.avgResponseMs !== undefined &&
@@ -218,26 +252,30 @@ export default function ModuleOverviewPage({ params }: Props) {
           )}
         </div>
 
-        {/* Module complete banner */}
-        {mp.completed && (
-          <div style={{ background: '#EAF3DE', border: '1px solid #C0DD97', borderRadius: '14px', padding: '16px 20px' }}>
-            <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#3B6D11', margin: '0 0 4px' }}>
-              Module complete
+        {/* Note Heat Map — only when sessions exist */}
+        {hasAnySessions && (
+          <div style={{ marginBottom: '28px' }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>
+              Your note map
             </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#3B6D11', margin: 0 }}>
-              You've met all the criteria for this module. The next module is now unlocked.
-            </p>
+            <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px' }}>
+              <NoteHeatMap
+                notePool={[...new Set(mod.notes)]}
+                noteStats={noteStats}
+                clef={mod.clef}
+              />
+            </div>
           </div>
         )}
 
         {/* Pro gate notice */}
         {!isModuleFree && !isPro && (
-          <div style={{ marginTop: '24px', background: '#1A1A18', borderRadius: '14px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+          <div style={{ marginTop: '8px', background: '#1A1A18', borderRadius: '14px', padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
               Pro access required to start sessions
             </p>
             <Link href="/account" style={{ textDecoration: 'none', flexShrink: 0 }}>
-              <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#1A1A18', background: '#B5402A', borderRadius: '20px', padding: '8px 18px', display: 'inline-block' }}>
+              <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: 'white', background: '#B5402A', borderRadius: '20px', padding: '8px 18px', display: 'inline-block' }}>
                 Upgrade →
               </span>
             </Link>

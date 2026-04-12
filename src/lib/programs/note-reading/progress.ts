@@ -1,22 +1,7 @@
 'use client'
 
-// Progress is stored in localStorage for fast rendering.
-// Each completed session is also written to Supabase for cross-device sync (best-effort).
-//
-// Supabase tables required (create via dashboard or migration):
-//
-// CREATE TABLE note_reading_sessions (
-//   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-//   user_id uuid REFERENCES auth.users(id),
-//   module_id text NOT NULL,
-//   tool text NOT NULL,  -- 'identify' | 'play'
-//   accuracy numeric NOT NULL,
-//   avg_response_ms numeric,
-//   note_results jsonb,  -- { [pitch]: { correct: number; total: number } }
-//   created_at timestamptz DEFAULT now()
-// );
-
 import { getNRModule } from './modules'
+import type { NoteResult, NoteStats, MasteryLevel } from './types'
 
 const STORAGE_KEY = 'notelab-nr-progress-v1'
 
@@ -24,6 +9,7 @@ export interface NRSessionRecord {
   accuracy: number
   avgResponseMs?: number
   timestamp: number
+  noteResults?: Record<string, NoteResult>  // per full-pitch: 'C4', 'F#4', etc.
 }
 
 export interface NRToolProgress {
@@ -67,62 +53,60 @@ export function getNRModuleProgress(moduleId: string): NRModuleProgress {
   return store[moduleId] ?? emptyModuleProgress()
 }
 
-// Check if a module is unlocked based on current progress
 export function isNRModuleUnlocked(moduleId: string, store?: NRProgressStore): boolean {
   const mod = getNRModule(moduleId)
   if (!mod) return false
   if (mod.unlockAfter.length === 0) return true
   const s = store ?? loadNRProgress()
-  return mod.unlockAfter.every(prereqId => {
-    const prereq = s[prereqId]
-    return prereq?.completed === true
-  })
+  return mod.unlockAfter.every(prereqId => s[prereqId]?.completed === true)
 }
 
-// Check if the play tool is unlocked within a module
-// (requires identify mastered if identify is in the tool list)
 export function isNRPlayUnlocked(moduleId: string, store?: NRProgressStore): boolean {
   const mod = getNRModule(moduleId)
   if (!mod) return false
-  if (!mod.tools.includes('identify')) return true  // play-only module
+  if (!mod.tools.includes('identify')) return true
   const s = store ?? loadNRProgress()
   return s[moduleId]?.identify?.mastered === true
 }
 
-// Record a completed identify session and recompute mastery
+// Record an identify session. Returns the updated progress and whether mastery
+// was achieved for the first time in this session.
 export function recordNRIdentifySession(
   moduleId: string,
   accuracy: number,
-): NRModuleProgress {
+  noteResults: Record<string, NoteResult> = {},
+): { mp: NRModuleProgress; identifyJustMastered: boolean } {
   const mod = getNRModule(moduleId)
-  if (!mod) return emptyModuleProgress()
+  if (!mod) return { mp: emptyModuleProgress(), identifyJustMastered: false }
 
   const store = loadNRProgress()
   const mp = store[moduleId] ?? emptyModuleProgress()
 
-  const record: NRSessionRecord = { accuracy, timestamp: Date.now() }
+  const wasMastered = mp.identify.mastered
+
+  const record: NRSessionRecord = { accuracy, timestamp: Date.now(), noteResults }
   mp.identify.sessions = [...mp.identify.sessions, record]
 
-  // Compute mastery: last N sessions all meet accuracy threshold
   const needed = mod.criteria.sessions
   const threshold = mod.criteria.identifyAccuracy ?? 0.9
   const recent = mp.identify.sessions.slice(-needed)
   mp.identify.mastered =
     recent.length >= needed && recent.every(s => s.accuracy >= threshold)
 
-  // Module complete if all tools mastered
-  mp.completed = checkModuleComplete(mod, mp)
+  const identifyJustMastered = !wasMastered && mp.identify.mastered
 
+  mp.completed = checkModuleComplete(mod, mp)
   store[moduleId] = mp
   saveNRProgress(store)
-  return mp
+  return { mp, identifyJustMastered }
 }
 
-// Record a completed play session and recompute mastery
+// Record a play session.
 export function recordNRPlaySession(
   moduleId: string,
   accuracy: number,
   avgResponseMs: number,
+  noteResults: Record<string, NoteResult> = {},
 ): NRModuleProgress {
   const mod = getNRModule(moduleId)
   if (!mod) return emptyModuleProgress()
@@ -130,7 +114,7 @@ export function recordNRPlaySession(
   const store = loadNRProgress()
   const mp = store[moduleId] ?? emptyModuleProgress()
 
-  const record: NRSessionRecord = { accuracy, avgResponseMs, timestamp: Date.now() }
+  const record: NRSessionRecord = { accuracy, avgResponseMs, timestamp: Date.now(), noteResults }
   mp.play.sessions = [...mp.play.sessions, record]
 
   const needed = mod.criteria.sessions
@@ -158,7 +142,6 @@ function checkModuleComplete(mod: ReturnType<typeof getNRModule>, mp: NRModulePr
   return true
 }
 
-// How many consecutive passing sessions do we have for a tool?
 export function nrConsecutivePassing(
   moduleId: string,
   tool: 'identify' | 'play',
@@ -191,4 +174,43 @@ export function nrConsecutivePassing(
     }
   }
   return Math.min(count, needed)
+}
+
+// Compute per-note stats by aggregating noteResults across all stored sessions.
+// tool: 'identify' | 'play' | 'both'
+export function getNoteStats(
+  moduleId: string,
+  tool: 'identify' | 'play' | 'both' = 'both',
+  store?: NRProgressStore,
+): NoteStats[] {
+  const s = store ?? loadNRProgress()
+  const mp = s[moduleId]
+  if (!mp) return []
+
+  const agg: Record<string, { attempts: number; correct: number; responseMsTotal: number }> = {}
+
+  function aggregate(sessions: NRSessionRecord[]) {
+    for (const session of sessions) {
+      if (!session.noteResults) continue
+      for (const [noteId, res] of Object.entries(session.noteResults)) {
+        if (!agg[noteId]) agg[noteId] = { attempts: 0, correct: 0, responseMsTotal: 0 }
+        agg[noteId].attempts += res.attempts
+        agg[noteId].correct += res.correct
+        agg[noteId].responseMsTotal += res.responseMsTotal ?? 0
+      }
+    }
+  }
+
+  if (tool === 'identify' || tool === 'both') aggregate(mp.identify.sessions)
+  if (tool === 'play' || tool === 'both') aggregate(mp.play.sessions)
+
+  return Object.entries(agg).map(([noteId, stats]) => {
+    const accuracy = stats.attempts > 0 ? stats.correct / stats.attempts : 0
+    const avgResponseMs = stats.attempts > 0 ? stats.responseMsTotal / stats.attempts : 0
+    const masteryLevel: MasteryLevel =
+      stats.attempts === 0 ? 'unseen' :
+      accuracy < 0.70 ? 'weak' :
+      accuracy < 0.90 ? 'developing' : 'strong'
+    return { noteId, attempts: stats.attempts, correct: stats.correct, accuracy, avgResponseMs, masteryLevel }
+  })
 }

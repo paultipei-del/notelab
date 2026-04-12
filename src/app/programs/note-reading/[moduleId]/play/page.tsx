@@ -2,8 +2,15 @@
 
 import { useState, useEffect, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { getNRModule } from '@/lib/programs/note-reading/modules'
-import { recordNRPlaySession, isNRPlayUnlocked, loadNRProgress, nrConsecutivePassing } from '@/lib/programs/note-reading/progress'
+import { getNRModule, buildWeightedPool, NOTE_READING_MODULES } from '@/lib/programs/note-reading/modules'
+import {
+  recordNRPlaySession,
+  isNRPlayUnlocked,
+  loadNRProgress,
+  nrConsecutivePassing,
+  getNoteStats,
+} from '@/lib/programs/note-reading/progress'
+import type { NoteResult } from '@/lib/programs/note-reading/types'
 import { SADPitchDetector } from '@/lib/sadDetector'
 import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
@@ -28,9 +35,10 @@ const ENHARMONICS: Record<string,string> = {
 }
 
 function noteToMidi(name: string): number {
-  const m = name.match(/^([A-G]#?)(\d)$/)
+  const m = name.match(/^([A-Gb#]+)(\d)$/)
   if (!m) return 60
-  return (parseInt(m[2]) + 1) * 12 + NOTE_NAMES.indexOf(m[1])
+  const pc = m[1].includes('b') ? ENHARMONICS[m[1]] ?? m[1] : m[1]
+  return (parseInt(m[2]) + 1) * 12 + NOTE_NAMES.indexOf(pc)
 }
 
 function pitchMatch(played: string, target: string): boolean {
@@ -84,7 +92,6 @@ export default function PlaySessionPage({ params }: Props) {
   const { user } = useAuth()
   const { hasSubscription } = usePurchases(user?.id ?? null)
   const isPro = hasSubscription()
-  const isFreeModule = false  // play is always pro-gated
 
   const mod = getNRModule(moduleId)
   const [queue, setQueue] = useState<string[]>([])
@@ -97,29 +104,27 @@ export default function PlaySessionPage({ params }: Props) {
   const [savedMp, setSavedMp] = useState<ReturnType<typeof recordNRPlaySession> | null>(null)
   const [micError, setMicError] = useState<string | null>(null)
   const [micReady, setMicReady] = useState(false)
-  const missMapRef = useRef<Record<string, number>>({})
+  // Per-note tracking
+  const noteResultsRef = useRef<Record<string, NoteResult>>({})
+  const displayMissRef = useRef<Record<string, number>>({})
+  const hadWrongThisNoteRef = useRef(false)
 
-  // Per-note state refs (shared with RAF loop)
+  // Shared refs for RAF loop
   const targetRef = useRef('')
   const cardStartRef = useRef(0)
   const acceptStartRef = useRef(0)
   const doneNoteRef = useRef(false)
   const prevMidiRef = useRef(-1)
   const lastWrongRef = useRef(0)
-  const wrongCountRef = useRef(0)
   const qIdxRef = useRef(0)
   const correctRef = useRef(0)
   const responseTimesRef = useRef<number[]>([])
   const sessionDoneRef = useRef(false)
 
-  // Gate
   useEffect(() => {
-    if (!isPro) {
-      router.replace('/account')
-    }
+    if (!isPro) router.replace('/account')
   }, [isPro])
 
-  // Init queue
   useEffect(() => {
     if (!mod) return
     const store = loadNRProgress()
@@ -127,13 +132,16 @@ export default function PlaySessionPage({ params }: Props) {
       router.replace(`/programs/note-reading/${moduleId}`)
       return
     }
-    const q = buildQueue(mod.notes, SESSION_LENGTH)
+    const stats = getNoteStats(moduleId, 'play', store)
+    const q = buildWeightedPool(mod.notes, stats, SESSION_LENGTH)
     setQueue(q)
     qIdxRef.current = 0
     correctRef.current = 0
     responseTimesRef.current = []
     sessionDoneRef.current = false
-    missMapRef.current = {}
+    noteResultsRef.current = {}
+    displayMissRef.current = {}
+    hadWrongThisNoteRef.current = false
   }, [moduleId])
 
   // Start mic + begin session when queue is ready
@@ -158,7 +166,7 @@ export default function PlaySessionPage({ params }: Props) {
         }
         setMicReady(true)
         startNote(queue[0], 0)
-      } catch(e: any) {
+      } catch {
         setMicError('Microphone access denied. Please allow microphone access and reload.')
       }
     }
@@ -174,7 +182,7 @@ export default function PlaySessionPage({ params }: Props) {
     cardStartRef.current = Date.now()
     acceptStartRef.current = 0
     doneNoteRef.current = false
-    wrongCountRef.current = 0
+    hadWrongThisNoteRef.current = false
     sadDetector?.clearVotes()
     setNoteStatus('listening')
     setDetected(null)
@@ -190,10 +198,7 @@ export default function PlaySessionPage({ params }: Props) {
     const target = targetRef.current
     const deadMs = DEAD_WINDOW_MS[target.replace(/[#b]/g, '')] ?? DEFAULT_DEAD_MS
 
-    if (timeOnCard < deadMs) {
-      rafHandle = requestAnimationFrame(tick)
-      return
-    }
+    if (timeOnCard < deadMs) { rafHandle = requestAnimationFrame(tick); return }
     if (acceptStartRef.current === 0) acceptStartRef.current = now
 
     const result = sadDetector.update(sadBuf)
@@ -206,10 +211,7 @@ export default function PlaySessionPage({ params }: Props) {
          result.midi === targetMidi - 12 || result.midi === targetMidi + 12) &&
         timeSinceAccept < OCTAVE_BLEED_MS
 
-      if (isOctaveBleed) {
-        rafHandle = requestAnimationFrame(tick)
-        return
-      }
+      if (isOctaveBleed) { rafHandle = requestAnimationFrame(tick); return }
 
       if (pitchMatch(result.name, target)) {
         if (doneNoteRef.current) return
@@ -221,6 +223,13 @@ export default function PlaySessionPage({ params }: Props) {
         setCorrectCount(correctRef.current)
         setResponseTimes([...responseTimesRef.current])
         setNoteStatus('correct')
+
+        // Record per-note result: correct=1 if no wrong detection before this, else 0
+        if (!noteResultsRef.current[target]) noteResultsRef.current[target] = { attempts: 0, correct: 0, responseMsTotal: 0 }
+        noteResultsRef.current[target].attempts++
+        noteResultsRef.current[target].correct += hadWrongThisNoteRef.current ? 0 : 1
+        noteResultsRef.current[target].responseMsTotal = (noteResultsRef.current[target].responseMsTotal ?? 0) + responseMs
+
         setTimeout(() => advanceNote(), 200)
         return
       } else {
@@ -228,10 +237,11 @@ export default function PlaySessionPage({ params }: Props) {
         const isOctOfPrev = prevMidiRef.current >= 0 &&
           (result.midi === prevMidiRef.current + 12 || result.midi === prevMidiRef.current - 12)
         if (semDist <= WRONG_SEMITONE_RANGE && !isOctOfPrev && now - lastWrongRef.current > WRONG_COOLDOWN_MS) {
+          hadWrongThisNoteRef.current = true
           setNoteStatus('wrong')
           lastWrongRef.current = now
           const pc = target.replace(/\d+$/,'')
-          missMapRef.current[pc] = (missMapRef.current[pc] ?? 0) + 1
+          displayMissRef.current[pc] = (displayMissRef.current[pc] ?? 0) + 1
         }
       }
     }
@@ -250,14 +260,13 @@ export default function PlaySessionPage({ params }: Props) {
     }
   }
 
-  // Save on done
   useEffect(() => {
     if (!done || !mod) return
     const accuracy = correctRef.current / SESSION_LENGTH
     const avgMs = responseTimesRef.current.length > 0
-      ? responseTimesRef.current.reduce((a,b) => a+b, 0) / responseTimesRef.current.length
+      ? responseTimesRef.current.reduce((a, b) => a + b, 0) / responseTimesRef.current.length
       : 9999
-    const mp = recordNRPlaySession(moduleId, accuracy, avgMs)
+    const mp = recordNRPlaySession(moduleId, accuracy, avgMs, noteResultsRef.current)
     setSavedMp(mp)
   }, [done])
 
@@ -265,20 +274,19 @@ export default function PlaySessionPage({ params }: Props) {
 
   const currentPitch = queue[qIdx] ?? ''
   const avgResponseSec = responseTimes.length > 0
-    ? (responseTimes.reduce((a,b)=>a+b,0)/responseTimes.length/1000).toFixed(1)
+    ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length / 1000).toFixed(1)
     : '—'
   const bgColor = noteStatus === 'correct' ? '#EAF3DE' : noteStatus === 'wrong' ? '#FFF0F0' : 'white'
   const borderColor = noteStatus === 'correct' ? '#C0DD97' : noteStatus === 'wrong' ? '#F09595' : '#DDD8CA'
 
-  // ── Summary ───────────────────────────────────────────────────────────────
+  // ── Summary ─────────────────────────────────────────────────────────────────
   if (done && savedMp) {
     const accuracy = correctRef.current / SESSION_LENGTH
     const pct = Math.round(accuracy * 100)
     const avgMs = responseTimesRef.current.length > 0
-      ? responseTimesRef.current.reduce((a,b)=>a+b,0)/responseTimesRef.current.length
+      ? responseTimesRef.current.reduce((a, b) => a + b, 0) / responseTimesRef.current.length
       : null
-    const missedNotes = Object.entries(missMapRef.current)
-      .sort((a,b)=>b[1]-a[1]).map(([n]) => n)
+    const missedNotes = Object.entries(displayMissRef.current).sort((a, b) => b[1] - a[1]).map(([n]) => n)
     const passingSessions = nrConsecutivePassing(moduleId, 'play', loadNRProgress())
     const needed = mod.criteria.sessions
     const threshold = mod.criteria.playAccuracy ?? 0.9
@@ -286,6 +294,20 @@ export default function PlaySessionPage({ params }: Props) {
     const passedAcc = accuracy >= threshold
     const passedMs = msThreshold === undefined || (avgMs !== null && avgMs <= msThreshold)
     const passedSession = passedAcc && passedMs
+    const nextModule = NOTE_READING_MODULES.find(m => m.unlockAfter.includes(moduleId))
+
+    function retry() {
+      setDone(false); setSavedMp(null); setQIdx(0); setCorrectCount(0)
+      setResponseTimes([]); setNoteStatus('listening'); setDetected(null)
+      noteResultsRef.current = {}; displayMissRef.current = {}
+      prevMidiRef.current = -1; sessionDoneRef.current = false
+      correctRef.current = 0; responseTimesRef.current = []
+      const store = loadNRProgress()
+      const stats = getNoteStats(moduleId, 'play', store)
+      const q = buildWeightedPool(mod!.notes, stats, SESSION_LENGTH)
+      setQueue(q)
+      setTimeout(() => startNote(q[0], 0), 50)
+    }
 
     return (
       <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
@@ -305,7 +327,7 @@ export default function PlaySessionPage({ params }: Props) {
             {avgMs !== null && (
               <div>
                 <p style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: passedMs ? '#3B6D11' : '#2A2318', margin: 0 }}>{(avgMs/1000).toFixed(1)}s</p>
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: 0 }}>Avg response</p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: 0 }}>Avg Response</p>
               </div>
             )}
           </div>
@@ -317,7 +339,7 @@ export default function PlaySessionPage({ params }: Props) {
             </div>
           )}
 
-          <div style={{ marginBottom: '28px', padding: '12px 16px', background: '#EDE8DF', borderRadius: '10px' }}>
+          <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#EDE8DF', borderRadius: '10px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '0 0 4px' }}>
               {passedSession ? '✓ Session passed' : '✗ Criteria not met'}
               {' · '}{Math.round(threshold * 100)}% accuracy needed
@@ -328,29 +350,51 @@ export default function PlaySessionPage({ params }: Props) {
             </p>
           </div>
 
+          {/* Module complete banner */}
           {savedMp.completed && (
-            <div style={{ marginBottom: '20px', padding: '14px 16px', background: '#EAF3DE', border: '1px solid #C0DD97', borderRadius: '10px' }}>
-              <p style={{ fontFamily: SERIF, fontSize: '18px', color: '#3B6D11', margin: '0 0 4px' }}>Module complete!</p>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#3B6D11', margin: 0 }}>The next module is now unlocked.</p>
+            <div style={{ marginBottom: '20px', padding: '14px 16px', background: '#EAF3DE', border: '1px solid #C0DD97', borderRadius: '10px', textAlign: 'left' }}>
+              <p style={{ fontFamily: SERIF, fontSize: '18px', color: '#3B6D11', margin: '0 0 2px' }}>
+                ✓ {mod.title} — complete
+              </p>
+              {nextModule && (
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#3B6D11', margin: 0 }}>
+                  Next: {nextModule.title}
+                </p>
+              )}
             </div>
           )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <button onClick={() => {
-              setDone(false); setSavedMp(null); setQIdx(0); setCorrectCount(0)
-              setResponseTimes([]); setNoteStatus('listening'); setDetected(null)
-              missMapRef.current = {}; prevMidiRef.current = -1; sessionDoneRef.current = false
-              correctRef.current = 0; responseTimesRef.current = []
-              const q = buildQueue(mod.notes, SESSION_LENGTH)
-              setQueue(q)
-              setTimeout(() => startNote(q[0], 0), 50)
-            }}
-              style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+            {savedMp.completed && nextModule ? (
+              <button
+                onClick={() => router.push(`/programs/note-reading/${nextModule.id}`)}
+                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+              >
+                Next Module →
+              </button>
+            ) : null}
+            <button
+              onClick={retry}
+              style={{
+                background: savedMp.completed && nextModule ? 'transparent' : '#1A1A18',
+                color: savedMp.completed && nextModule ? '#7A7060' : 'white',
+                border: savedMp.completed && nextModule ? '1px solid #DDD8CA' : 'none',
+                borderRadius: '10px', padding: '13px',
+                fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer',
+              }}
+            >
               Try Again
             </button>
-            <button onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
-              ← Back to module
+            <button
+              onClick={() => {
+                stopMic()
+                savedMp.completed
+                  ? router.push('/programs/note-reading')
+                  : router.push(`/programs/note-reading/${moduleId}`)
+              }}
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+            >
+              {savedMp.completed ? '← Back to program' : '← Back to module'}
             </button>
           </div>
         </div>
@@ -358,10 +402,9 @@ export default function PlaySessionPage({ params }: Props) {
     )
   }
 
-  // ── Session screen ─────────────────────────────────────────────────────────
+  // ── Session screen ───────────────────────────────────────────────────────────
   return (
     <div style={{ height: '100dvh', overflow: 'hidden', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
-      {/* Top bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', flexShrink: 0 }}>
         <button onClick={() => { stopMic(); router.push(`/programs/note-reading/${moduleId}`) }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>
@@ -380,12 +423,10 @@ export default function PlaySessionPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div style={{ height: '2px', background: '#EDE8DF', flexShrink: 0 }}>
         <div style={{ height: '100%', background: '#1A1A18', width: `${(qIdx / SESSION_LENGTH) * 100}%`, transition: 'width 0.3s' }} />
       </div>
 
-      {/* Card */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,20px) 16px' }}>
         {micError ? (
           <p style={{ fontFamily: F, color: '#A32D2D', textAlign: 'center', maxWidth: '360px' }}>{micError}</p>
