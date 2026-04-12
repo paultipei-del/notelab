@@ -38,9 +38,10 @@ interface Props { params: Promise<{ moduleId: string }> }
 export default function IdentifySessionPage({ params }: Props) {
   const { moduleId } = use(params)
   const router = useRouter()
-  const { user } = useAuth()
-  const { hasSubscription } = usePurchases(user?.id ?? null)
+  const { user, loading: authLoading } = useAuth()
+  const { hasSubscription, loading: purchasesLoading } = usePurchases(user?.id ?? null)
   const isPro = hasSubscription()
+  const isLoading = authLoading || purchasesLoading
   const isFreeModule = moduleId === 'landmarks'
 
   const mod = getNRModule(moduleId)
@@ -57,8 +58,8 @@ export default function IdentifySessionPage({ params }: Props) {
   const displayMissRef = useRef<Record<string, number>>({})
 
   useEffect(() => {
-    if (!isFreeModule && !isPro) router.replace('/account')
-  }, [isFreeModule, isPro])
+    if (!isLoading && !isFreeModule && !isPro) router.replace('/account')
+  }, [isLoading, isFreeModule, isPro])
 
   useEffect(() => {
     if (!mod) return

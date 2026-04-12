@@ -89,9 +89,10 @@ interface Props { params: Promise<{ moduleId: string }> }
 export default function PlaySessionPage({ params }: Props) {
   const { moduleId } = use(params)
   const router = useRouter()
-  const { user } = useAuth()
-  const { hasSubscription } = usePurchases(user?.id ?? null)
+  const { user, loading: authLoading } = useAuth()
+  const { hasSubscription, loading: purchasesLoading } = usePurchases(user?.id ?? null)
   const isPro = hasSubscription()
+  const isLoading = authLoading || purchasesLoading
 
   const mod = getNRModule(moduleId)
   const [queue, setQueue] = useState<string[]>([])
@@ -122,8 +123,8 @@ export default function PlaySessionPage({ params }: Props) {
   const sessionDoneRef = useRef(false)
 
   useEffect(() => {
-    if (!isPro) router.replace('/account')
-  }, [isPro])
+    if (!isLoading && !isPro) router.replace('/account')
+  }, [isLoading, isPro])
 
   useEffect(() => {
     if (!mod) return

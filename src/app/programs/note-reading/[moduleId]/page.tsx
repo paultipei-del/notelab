@@ -79,8 +79,7 @@ export default function ModuleOverviewPage({ params }: Props) {
     mp.identify.sessions.length > 0 || mp.play.sessions.length > 0
 
   function handleStart(tool: 'identify' | 'play') {
-    console.log('[handleStart]', { authLoading, purchasesLoading, isLoading, user: user?.id ?? null, isPro, isModuleFree })
-    if (isLoading) return
+if (isLoading) return
     if (!isModuleFree && !isPro) { router.push('/account'); return }
     router.push(`/programs/note-reading/${moduleId}/${tool}`)
   }
