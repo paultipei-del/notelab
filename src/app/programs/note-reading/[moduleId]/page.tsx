@@ -21,6 +21,7 @@ const SERIF = 'var(--font-cormorant), serif'
 
 interface Props { params: Promise<{ moduleId: string }> }
 
+
 export default function ModuleOverviewPage({ params }: Props) {
   const { moduleId } = use(params)
   const router = useRouter()

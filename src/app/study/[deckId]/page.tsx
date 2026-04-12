@@ -11,6 +11,7 @@ interface Props {
   params: Promise<{ deckId: string }>
 }
 
+
 export default function StudyPage({ params }: Props) {
   const { deckId } = use(params)
   const { user, loading } = useAuth()
