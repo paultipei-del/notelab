@@ -224,21 +224,36 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
           if ((e.target as SVGElement).tagName === 'svg') setTooltip(null)
         }}
       >
-        {/* Grand staff connecting bar */}
-        {showTreble && showBass && (
-          <line
-            x1={staffLeft} y1={trebleTop}
-            x2={staffLeft} y2={bassTop + 8 * step}
-            stroke="#1A1A18" strokeWidth="1.5" opacity="0.5"
-          />
-        )}
+        {/* Grand staff connecting bar + brace */}
+        {showTreble && showBass && (() => {
+          const braceH = bassTop + 8 * step - trebleTop
+          return (
+            <>
+              <line
+                x1={staffLeft} y1={trebleTop}
+                x2={staffLeft} y2={bassTop + 8 * step}
+                stroke="#1A1A18" strokeWidth="1.5" opacity="0.5"
+              />
+              <text
+                x={staffLeft - 8}
+                y={trebleTop + braceH}
+                fontSize={braceH}
+                fontFamily="Bravura, serif"
+                fill="#1A1A18"
+                textAnchor="middle"
+                dominantBaseline="auto"
+                opacity="0.5"
+              >{'\uE000'}</text>
+            </>
+          )
+        })()}
 
         {/* Treble staff */}
         {showTreble && (
           <>
             {staffLines(trebleTop, 't')}
             <text
-              x={staffLeft + 2} y={trebleTop + 36}
+              x={staffLeft + 6} y={trebleTop + 36}
               fontSize="44" fontFamily="Bravura, serif"
               fill="#1A1A18" dominantBaseline="auto" opacity="0.5"
             >𝄞</text>
@@ -256,7 +271,7 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
           <>
             {staffLines(bassTop, 'b')}
             <text
-              x={staffLeft + 2} y={bassTop + 13}
+              x={staffLeft + 6} y={bassTop + 13}
               fontSize="46" fontFamily="Bravura, serif"
               fill="#1A1A18" dominantBaseline="auto" opacity="0.5"
             >𝄢</text>
