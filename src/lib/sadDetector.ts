@@ -200,9 +200,9 @@ export class SADPitchDetector {
     this.sr = sampleRate
     this.sizeA = Math.floor(sampleRate * 0.100)  // 4410 @ 44100
     this.sizeB = Math.floor(sampleRate * 0.105)  // 4630 @ 44100
-    this.windowSize = config?.windowSize ?? 10
-    this.stableThreshold = config?.stableThreshold ?? 15
-    this.levelThreshold = config?.levelThreshold ?? 0.01
+    this.windowSize = config?.windowSize ?? 15
+    this.stableThreshold = config?.stableThreshold ?? 40
+    this.levelThreshold = config?.levelThreshold ?? 0.04
 
     this.loA = new Float32Array(this.sizeA); this.hiA = new Float32Array(this.sizeA)
     this.loB = new Float32Array(this.sizeB); this.hiB = new Float32Array(this.sizeB)
