@@ -4,17 +4,21 @@ import { useState, useEffect } from 'react'
 import { getSupabaseClient } from '@/lib/supabase'
 
 export function usePurchases(userId: string | null) {
-  const [purchases, setPurchases] = useState<string[]>([]) // array of price IDs
-  const [loading, setLoading] = useState(true)
+  const [purchases, setPurchases] = useState<string[]>([])
+  // undefined = haven't fetched for any userId yet
+  const [fetchedFor, setFetchedFor] = useState<string | null | undefined>(undefined)
+
+  // loading is true whenever fetchedFor doesn't match the current userId.
+  // This is synchronously true when userId changes, before the effect fires.
+  const loading = fetchedFor !== userId
 
   useEffect(() => {
     if (!userId) {
       setPurchases([])
-      setLoading(false)
+      setFetchedFor(null)
       return
     }
 
-    setLoading(true)
     const supabase = getSupabaseClient()
     supabase
       .from('purchases')
@@ -23,7 +27,7 @@ export function usePurchases(userId: string | null) {
       .eq('status', 'active')
       .then(({ data }) => {
         setPurchases(data?.map(p => p.stripe_price_id) ?? [])
-        setLoading(false)
+        setFetchedFor(userId)
       })
   }, [userId])
 
