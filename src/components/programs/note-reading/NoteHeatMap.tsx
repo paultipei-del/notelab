@@ -192,15 +192,21 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
               {accInfo.acc === 'sharp' ? '\uE262' : '\uE260'}
             </text>
           )}
-          {/* Notehead circle */}
-          <circle
-            cx={cx} cy={cy} r={R}
+          {/* Bravura filled notehead U+E0A4 */}
+          <text
+            x={cx} y={cy}
+            fontSize="28"
+            fontFamily="Bravura, serif"
             fill={fill}
-            style={{ cursor: 'pointer' }}
+            textAnchor="middle"
+            dominantBaseline="central"
+            style={{ cursor: 'pointer', userSelect: 'none' }}
             onMouseEnter={() => setTooltip({ noteId: note, x: cx, y: cy, stats })}
             onMouseLeave={() => setTooltip(null)}
             onClick={() => setTooltip(t => t?.noteId === note ? null : { noteId: note, x: cx, y: cy, stats })}
-          />
+          >
+            {String.fromCodePoint(0xE0A4)}
+          </text>
         </g>
       )
     })
@@ -313,9 +319,11 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
       {/* Legend */}
       <div style={{ display: 'flex', gap: '16px', marginTop: '12px', flexWrap: 'wrap' }}>
         {(Object.entries(MASTERY_COLORS) as [keyof typeof MASTERY_COLORS, string][]).map(([level, color]) => (
-          <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <svg width="10" height="10" style={{ flexShrink: 0 }}>
-              <circle cx="5" cy="5" r="5" fill={color} />
+          <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <svg width="12" height="12" style={{ flexShrink: 0, overflow: 'visible' }}>
+              <text x="6" y="6" fontSize="14" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">
+                {String.fromCodePoint(0xE0A4)}
+              </text>
             </svg>
             <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', textTransform: 'capitalize' as const }}>
               {level}
