@@ -13,12 +13,12 @@ const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 
 export default function Home() {
-  // Early access gate — production only
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') return
-    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted'))
-    if (!cookie) window.location.href = '/unlock'
-  }, [])
+  // Early access gate — disabled (re-enable by uncommenting)
+  // useEffect(() => {
+  //   if (process.env.NODE_ENV !== 'production') return
+  //   const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted'))
+  //   if (!cookie) window.location.href = '/unlock'
+  // }, [])
 
   const { user, loading } = useAuth()
 
