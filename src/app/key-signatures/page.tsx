@@ -112,8 +112,9 @@ function KeyStaff({ keyInfo, clef, width = 300 }: KeyStaffProps) {
   )
 }
 
-// ── Circle of Fifths ───────────────────────────────────────────────────────
-function CircleOfFifths({ selected, onSelect }: { selected: string, onSelect: (k: string) => void }) {
+// ── Circle of Fifths (vector viewBox 360×360; size from CSS frame) ───────────
+function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k: string) => void }) {
+  const [hoverPair, setHoverPair] = useState<number | null>(null)
   const size = 360
   const cx = size / 2, cy = size / 2
   const outerR = 155, innerR = 100, minorR = 65
@@ -147,78 +148,141 @@ function CircleOfFifths({ selected, onSelect }: { selected: string, onSelect: (k
   }
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {/* Inner minor ring wedges */}
-      {keys12.map((k, i) => {
-        const isSelected = selected === k.major || (k.alt && selected === k.alt)
-        return (
-          <path key={'mi-'+k.major} d={wedgePath(minorR, innerR, i)}
-            fill={isSelected ? '#3A3A38' : '#EDE8DF'}
-            stroke="white" strokeWidth="1.5"
-            onClick={() => onSelect(k.major)} style={{ cursor: 'pointer' }} />
-        )
-      })}
-      {/* Outer major ring wedges */}
-      {keys12.map((k, i) => {
-        const isSelected = selected === k.major
-        const isAltSelected = k.alt && selected === k.alt
-        return (
-          <path key={'ma-'+k.major} d={wedgePath(innerR, outerR, i)}
-            fill={(isSelected || isAltSelected) ? '#1A1A18' : '#F2EDDF'}
-            stroke="white" strokeWidth="2"
-            onClick={() => onSelect(isAltSelected ? k.alt! : k.major)} style={{ cursor: 'pointer' }} />
-        )
-      })}
-      {/* Center circle */}
+    <svg
+      width="100%"
+      height="100%"
+      viewBox={`0 0 ${size} ${size}`}
+      preserveAspectRatio="xMidYMid meet"
+      className="nl-key-sig-cof-svg"
+      aria-label="Circle of fifths — click a key"
+    >
+      <defs>
+        <filter id="nl-cof-pair-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="blur" />
+          <feOffset in="blur" dx="0" dy="4" result="off" />
+          <feFlood floodColor="#1a1a18" floodOpacity="0.22" result="fl" />
+          <feComposite in="fl" in2="off" operator="in" result="sh" />
+          <feMerge>
+            <feMergeNode in="sh" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* Center disc under wedges (fills the hub) */}
       <circle cx={cx} cy={cy} r={minorR - 2} fill="white" stroke="#DDD8CA" strokeWidth="1" />
-      {/* Minor text labels */}
+
       {keys12.map((k, i) => {
+        const pairSelected = selected === k.major || (k.alt ? selected === k.alt : false)
+        const majorSelected = selected === k.major
+        const altSelected = !!(k.alt && selected === k.alt)
+        const isHover = hoverPair === i
+
+        const innerFill = pairSelected
+          ? '#3A3A38'
+          : isHover
+            ? '#D8D0C2'
+            : '#EDE8DF'
+        const outerFill = majorSelected || altSelected
+          ? '#1A1A18'
+          : isHover
+            ? '#E8E0D2'
+            : '#F2EDDF'
+
+        const displayMinor = altSelected ? k.altMinor! : k.minor
         const angle = (i * 30 - 90) * Math.PI / 180
-        const tx = r(cx + innerTextR * Math.cos(angle))
-        const ty = r(cy + innerTextR * Math.sin(angle))
-        const isSelected = selected === k.major || (k.alt && selected === k.alt)
-        const displayMinor = (k.alt && selected === k.alt) ? k.altMinor! : k.minor
+        const mtx = r(cx + innerTextR * Math.cos(angle))
+        const mty = r(cy + innerTextR * Math.sin(angle))
+        const otx = r(cx + outerTextR * Math.cos(angle))
+        const oty = r(cy + outerTextR * Math.sin(angle))
+
         return (
-          <text key={'mit-'+k.major} x={tx} y={ty} textAnchor="middle" dominantBaseline="middle"
-            fontSize="10" fontFamily={F} fill={isSelected ? 'white' : '#7A7060'} fontWeight="300"
-            onClick={() => onSelect(k.major)} style={{ cursor: 'pointer' }}>
-            {displayMinor}
-          </text>
-        )
-      })}
-      {/* Major text labels */}
-      {keys12.map((k, i) => {
-        const angle = (i * 30 - 90) * Math.PI / 180
-        const tx = r(cx + outerTextR * Math.cos(angle))
-        const ty = r(cy + outerTextR * Math.sin(angle))
-        const isSelected = selected === k.major
-        const isAltSelected = k.alt && selected === k.alt
-        return (
-          <g key={'mat-'+k.major} style={{ cursor: 'pointer' }}>
+          <g
+            key={k.major}
+            className={'nl-key-sig-cof-pair' + (isHover ? ' nl-key-sig-cof-pair--hover' : '')}
+            style={{
+              cursor: 'pointer',
+              filter: isHover ? 'url(#nl-cof-pair-glow)' : 'none',
+            }}
+            onMouseEnter={() => setHoverPair(i)}
+            onMouseLeave={() => setHoverPair(null)}
+          >
+            <path
+              d={wedgePath(minorR, innerR, i)}
+              fill={innerFill}
+              stroke="white"
+              strokeWidth="1.5"
+              onClick={() => onSelect(k.major)}
+            />
+            <path
+              d={wedgePath(innerR, outerR, i)}
+              fill={outerFill}
+              stroke="white"
+              strokeWidth="2"
+              onClick={() => onSelect(altSelected ? k.alt! : k.major)}
+            />
+            <text
+              x={mtx}
+              y={mty}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize="10"
+              fontFamily={F}
+              fill={pairSelected ? 'white' : '#7A7060'}
+              fontWeight="300"
+              onClick={() => onSelect(k.major)}
+            >
+              {displayMinor}
+            </text>
             {k.alt ? (
               <>
-                <text x={tx} y={ty - 7} textAnchor="middle" dominantBaseline="middle"
-                  fontSize="12" fontFamily={SERIF}
-                  fill={(isSelected || isAltSelected) ? 'white' : '#1A1A18'}
-                  fontWeight="300" onClick={() => onSelect(k.major)}>
+                <text
+                  x={otx}
+                  y={oty - 7}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontSize="12"
+                  fontFamily={SERIF}
+                  fill={majorSelected || altSelected ? 'white' : '#1A1A18'}
+                  fontWeight="300"
+                  onClick={() => onSelect(k.major)}
+                >
                   F#
                 </text>
-                <line x1={tx - 8} y1={ty} x2={tx + 8} y2={ty}
-                  stroke={(isSelected || isAltSelected) ? 'rgba(255,255,255,0.4)' : '#DDD8CA'}
-                  strokeWidth="0.5" />
-                <text x={tx} y={ty + 7} textAnchor="middle" dominantBaseline="middle"
-                  fontSize="12" fontFamily={SERIF}
-                  fill={(isSelected || isAltSelected) ? 'white' : '#1A1A18'}
-                  fontWeight="300" onClick={() => onSelect(k.alt!)}>
+                <line
+                  x1={otx - 8}
+                  y1={oty}
+                  x2={otx + 8}
+                  y2={oty}
+                  stroke={majorSelected || altSelected ? 'rgba(255,255,255,0.4)' : '#DDD8CA'}
+                  strokeWidth="0.5"
+                />
+                <text
+                  x={otx}
+                  y={oty + 7}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontSize="12"
+                  fontFamily={SERIF}
+                  fill={majorSelected || altSelected ? 'white' : '#1A1A18'}
+                  fontWeight="300"
+                  onClick={() => onSelect(k.alt!)}
+                >
                   Gb
                 </text>
               </>
             ) : (
-              <text x={tx} y={ty} textAnchor="middle" dominantBaseline="middle"
-                fontSize="13" fontFamily={SERIF}
-                fill={isSelected ? 'white' : '#1A1A18'}
-                fontWeight={isSelected ? '400' : '300'}
-                onClick={() => onSelect(k.major)}>
+              <text
+                x={otx}
+                y={oty}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontSize="13"
+                fontFamily={SERIF}
+                fill={majorSelected ? 'white' : '#1A1A18'}
+                fontWeight={majorSelected ? '400' : '300'}
+                onClick={() => onSelect(k.major)}
+              >
                 {k.major}
               </text>
             )}
@@ -474,156 +538,208 @@ export default function KeySignatures() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '24px 24px 80px' }}>
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
-        <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' as const }}>
+    <div className="nl-key-sig-page">
+      <div className="nl-key-sig-inner">
+        <button type="button" className="nl-key-sig-back" onClick={() => router.push('/tools')}>
+          ← Back
+        </button>
 
-          {/* Left: Circle of Fifths */}
-          <div style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: '16px' }}>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Circle of Fifths</p>
-            <CircleOfFifths selected={selectedKey} onSelect={setSelectedKey} />
+        <div className="nl-key-sig-panel">
+          <aside className="nl-key-sig-panel__viz">
+            <p className="nl-key-sig-eyebrow">Circle of fifths</p>
+            <div className="nl-key-sig-cof-frame">
+              <CircleOfFifths selected={selectedKey} onSelect={setSelectedKey} />
+            </div>
+            <p className="nl-key-sig-viz-hint">Select a key to update the staff and details.</p>
+            <div className="nl-key-sig-viz-spacer" aria-hidden="true" />
+          </aside>
 
-          </div>
+          <div className="nl-key-sig-panel__main">
+            <header className="nl-key-sig-keyhead">
+              <h1 className="nl-key-sig-title">{selectedKey} Major</h1>
+              <p className="nl-key-sig-acc-badge">
+                {keyInfo.sharps > 0
+                  ? `${keyInfo.sharps} sharp${keyInfo.sharps > 1 ? 's' : ''}`
+                  : keyInfo.flats > 0
+                    ? `${keyInfo.flats} flat${keyInfo.flats > 1 ? 's' : ''}`
+                    : 'No sharps or flats'}
+              </p>
+            </header>
 
-          {/* Right: Key info */}
-          <div style={{ flex: 1, minWidth: '300px', display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
-
-            {/* Key name + info */}
-            <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '8px' }}>
-                <h2 style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: '#2A2318' }}>{selectedKey} Major</h2>
-                <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>
-                  {keyInfo.sharps > 0 ? `${keyInfo.sharps} sharp${keyInfo.sharps > 1 ? 's' : ''}` :
-                   keyInfo.flats > 0 ? `${keyInfo.flats} flat${keyInfo.flats > 1 ? 's' : ''}` : 'No sharps or flats'}
-                </span>
+            <div className="nl-key-sig-meta-row">
+              <div>
+                <p className="nl-key-sig-meta-label">Relative minor</p>
+                <p className="nl-key-sig-meta-value">{keyInfo.relativeMinor} minor</p>
               </div>
-              <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' as const }}>
-                <div>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Relative Minor</p>
-                  <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#2A2318' }}>{keyInfo.relativeMinor} minor</p>
-                </div>
-                <div>
-                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>
-                    {keyInfo.sharps > 0 ? 'Sharps' : keyInfo.flats > 0 ? 'Flats' : 'Notes'}
-                  </p>
-                  <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#2A2318' }}>
-                    {keyInfo.sharps > 0 ? keyInfo.sharpNames.join('  ') :
-                     keyInfo.flats > 0 ? keyInfo.flatNames.join('  ') : 'C D E F G A B'}
-                  </p>
-                </div>
+              <div>
+                <p className="nl-key-sig-meta-label">
+                  {keyInfo.sharps > 0 ? 'Sharps' : keyInfo.flats > 0 ? 'Flats' : 'Notes'}
+                </p>
+                <p className="nl-key-sig-meta-value-sm">
+                  {keyInfo.sharps > 0
+                    ? keyInfo.sharpNames.join(' · ')
+                    : keyInfo.flats > 0
+                      ? keyInfo.flatNames.join(' · ')
+                      : 'C D E F G A B'}
+                </p>
               </div>
             </div>
 
-            {/* Tabs */}
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '4px' }}>
-              {(['signature', 'affekt', 'drill'] as const).map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)}
-                  style={{ padding: '8px 18px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#DDD8CA'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
-                  {tab === 'signature' ? 'Key Signature' : tab === 'affekt' ? 'Historical Affekt' : 'Drill'}
-                </button>
-              ))}
+            <div className="nl-key-sig-tabs" role="tablist" aria-label="Key tools">
+              <div className="nl-key-sig-tabs__primary">
+                {(['signature', 'affekt'] as const).map(tab => (
+                  <button
+                    key={tab}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === tab}
+                    className={'nl-key-sig-tab' + (activeTab === tab ? ' nl-key-sig-tab--active' : '')}
+                    onClick={() => setActiveTab(tab)}
+                  >
+                    {tab === 'signature' ? 'Signature' : 'Affekt'}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'drill'}
+                className={
+                  'nl-key-sig-tab nl-key-sig-tab--study' + (activeTab === 'drill' ? ' nl-key-sig-tab--active' : '')
+                }
+                onClick={() => setActiveTab('drill')}
+              >
+                Study
+              </button>
             </div>
 
-            {/* Staff display */}
-            {activeTab === 'drill' && <KeyDrill />}
+            {activeTab === 'signature' && (
+              <div className="nl-key-sig-tab-body nl-key-sig-tab-body--signature">
+                <div className="nl-key-sig-card">
+                  <div className="nl-key-sig-card__head">
+                    <span className="nl-key-sig-card__label">Staff</span>
+                    <div className="nl-key-sig-clef-toggles">
+                      {(['treble', 'bass', 'both'] as const).map(c => (
+                        <button
+                          key={c}
+                          type="button"
+                          className={'nl-key-sig-mini-btn' + (clef === c ? ' nl-key-sig-mini-btn--on' : '')}
+                          onClick={() => setClef(c)}
+                        >
+                          {c === 'both' ? 'Grand' : c.charAt(0).toUpperCase() + c.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="nl-key-sig-staff-grid">
+                    {(clef === 'treble' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="treble" width={320} />}
+                    {(clef === 'bass' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="bass" width={320} />}
+                  </div>
+                </div>
 
-            {activeTab === 'signature' && <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px 24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Staff</p>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {(['treble','bass','both'] as const).map(c => (
-                    <button key={c} onClick={() => setClef(c)}
-                      style={{ padding: '4px 10px', borderRadius: '12px', border: '1px solid ' + (clef === c ? '#1A1A18' : '#DDD8CA'), background: clef === c ? '#1A1A18' : 'white', color: clef === c ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
-                      {c === 'both' ? 'Grand' : c.charAt(0).toUpperCase() + c.slice(1)}
-                    </button>
-                  ))}
+                <div className="nl-key-sig-card">
+                  <div className="nl-key-sig-card__head">
+                    <span className="nl-key-sig-card__label">Piano</span>
+                    <div className="nl-key-sig-clef-toggles">
+                      <button
+                        type="button"
+                        className={'nl-key-sig-mini-btn' + (!showRelativeOnPiano && showScale ? ' nl-key-sig-mini-btn--on' : '')}
+                        onClick={() => {
+                          setShowScale(true)
+                          setShowRelativeOnPiano(false)
+                          playScale()
+                        }}
+                      >
+                        ▶ {selectedKey} major
+                      </button>
+                      <button
+                        type="button"
+                        className={'nl-key-sig-mini-btn' + (showRelativeOnPiano ? ' nl-key-sig-mini-btn--on' : '')}
+                        onClick={() => {
+                          setShowScale(true)
+                          setShowRelativeOnPiano(true)
+                          playRelativeMinor()
+                        }}
+                      >
+                        ▶ {keyInfo.relativeMinor} minor
+                      </button>
+                      <button type="button" className="nl-key-sig-mini-btn nl-key-sig-mini-btn--ghost" onClick={() => setShowScale(!showScale)}>
+                        {showScale ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="nl-key-sig-piano-scroll">
+                    <KeyPiano
+                      keyInfo={keyInfo}
+                      showScale={showScale}
+                      highlightOneOctave={true}
+                      isRelativeMinor={showRelativeOnPiano}
+                      relativeMinorName={keyInfo.relativeMinor}
+                    />
+                  </div>
                 </div>
               </div>
-              {(clef === 'treble' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="treble" width={340} />}
-              {(clef === 'bass' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="bass" width={340} />}
+            )}
 
-            </div>}
-
-            {/* Affekt panel */}
             {activeTab === 'affekt' && (() => {
               const major = getAffekt(selectedKey, false)
               const minor = getAffekt(keyInfo.relativeMinor, true)
               return (
-                <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '12px' }}>
-                  {/* Source note */}
-                  <div style={{ background: '#F2EDDF', borderRadius: '12px', padding: '12px 16px' }}>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', lineHeight: 1.6 }}>
-                      Based on C.F.D. Schubart's <em>Ideen zu einer Aestetik der Tonkunst</em> (1784) and Francesco Galeazzi's <em>Elementi teorico-pratici di musica</em> (1791). These describe the expressive character associated with each key in the Baroque and Classical eras.
+                <div className="nl-key-sig-tab-body nl-key-sig-affekt">
+                  <div className="nl-key-sig-affekt-source">
+                    <p className="nl-key-sig-affekt-source__p">
+                      Based on C.F.D. Schubart&apos;s <em>Ideen zu einer Aestetik der Tonkunst</em> (1784) and Francesco
+                      Galeazzi&apos;s <em>Elementi teorico-pratici di musica</em> (1791). Expressive character in the Baroque
+                      and Classical eras.
                     </p>
                   </div>
-                  {/* Major key */}
-                  <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px 24px' }}>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>{selectedKey} Major</p>
+                  <div className="nl-key-sig-card nl-key-sig-card--tight">
+                    <p className="nl-key-sig-affekt-block-title">{selectedKey} major</p>
                     {major?.schubart && (
-                      <div style={{ marginBottom: '12px' }}>
-                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, color: '#B5402A', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Schubart</p>
-                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#2A2318', lineHeight: 1.7, fontStyle: 'italic' }}>"{major.schubart}"</p>
+                      <div className="nl-key-sig-affekt-quote-block">
+                        <p className="nl-key-sig-affekt-author">Schubart</p>
+                        <p className="nl-key-sig-affekt-quote">&ldquo;{major.schubart}&rdquo;</p>
                       </div>
                     )}
                     {major?.galeazzi && (
-                      <div>
-                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
-                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#555', lineHeight: 1.7, fontStyle: 'italic' }}>"{major.galeazzi}"</p>
+                      <div className="nl-key-sig-affekt-quote-block">
+                        <p className="nl-key-sig-affekt-author nl-key-sig-affekt-author--muted">Galeazzi</p>
+                        <p className="nl-key-sig-affekt-quote nl-key-sig-affekt-quote--muted">&ldquo;{major.galeazzi}&rdquo;</p>
                       </div>
                     )}
                     {!major?.schubart && !major?.galeazzi && (
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>No historical description available for this key.</p>
+                      <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
                     )}
                   </div>
-                  {/* Relative minor */}
-                  <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px 24px' }}>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>{keyInfo.relativeMinor} minor (relative)</p>
+                  <div className="nl-key-sig-card nl-key-sig-card--tight">
+                    <p className="nl-key-sig-affekt-block-title">{keyInfo.relativeMinor} minor (relative)</p>
                     {minor?.schubart && (
-                      <div style={{ marginBottom: '12px' }}>
-                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, color: '#B5402A', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Schubart</p>
-                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#2A2318', lineHeight: 1.7, fontStyle: 'italic' }}>"{minor.schubart}"</p>
+                      <div className="nl-key-sig-affekt-quote-block">
+                        <p className="nl-key-sig-affekt-author">Schubart</p>
+                        <p className="nl-key-sig-affekt-quote">&ldquo;{minor.schubart}&rdquo;</p>
                       </div>
                     )}
                     {minor?.galeazzi && (
-                      <div>
-                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>Galeazzi</p>
-                        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 300, color: '#555', lineHeight: 1.7, fontStyle: 'italic' }}>"{minor.galeazzi}"</p>
+                      <div className="nl-key-sig-affekt-quote-block">
+                        <p className="nl-key-sig-affekt-author nl-key-sig-affekt-author--muted">Galeazzi</p>
+                        <p className="nl-key-sig-affekt-quote nl-key-sig-affekt-quote--muted">&ldquo;{minor.galeazzi}&rdquo;</p>
                       </div>
                     )}
                     {!minor?.schubart && !minor?.galeazzi && (
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>No historical description available for this key.</p>
+                      <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
                     )}
                   </div>
                 </div>
               )
             })()}
 
-            {/* Piano */}
-            {activeTab === 'drill' && <KeyDrill />}
-
-            {activeTab === 'signature' && <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px 24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Piano</p>
-                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
-                  <button onClick={() => { setShowScale(true); setShowRelativeOnPiano(false); playScale() }}
-                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid ' + (!showRelativeOnPiano && showScale ? '#1A1A18' : '#DDD8CA'), background: !showRelativeOnPiano && showScale ? '#1A1A18' : 'white', color: !showRelativeOnPiano && showScale ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
-                    ▶ {selectedKey} Major
-                  </button>
-                  <button onClick={() => { setShowScale(true); setShowRelativeOnPiano(true); playRelativeMinor() }}
-                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid ' + (showRelativeOnPiano ? '#1A1A18' : '#DDD8CA'), background: showRelativeOnPiano ? '#1A1A18' : 'white', color: showRelativeOnPiano ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
-                    ▶ {keyInfo.relativeMinor} minor
-                  </button>
-                  <button onClick={() => setShowScale(!showScale)}
-                    style={{ padding: '4px 12px', borderRadius: '12px', border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
-                    {showScale ? 'Hide' : 'Show'}
-                  </button>
+            {activeTab === 'drill' && (
+              <div className="nl-key-sig-tab-body nl-key-sig-tab-body--drill">
+                <div className="nl-key-drill-embed">
+                  <KeyDrill />
                 </div>
               </div>
-              <div style={{ overflowX: 'auto' }}>
-            <KeyPiano keyInfo={keyInfo} showScale={showScale} highlightOneOctave={true} isRelativeMinor={showRelativeOnPiano} relativeMinorName={keyInfo.relativeMinor} />
-          </div>
-            </div>}
+            )}
 
           </div>
         </div>
