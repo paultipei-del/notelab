@@ -60,12 +60,6 @@ export default function SiteHeader() {
     else setPillRect(null)
   }, [pathname, activeIdx, movePillTo])
 
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') return
-    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted'))
-    if (!cookie) window.location.href = '/unlock'
-  }, [])
-
   // Close user menu on outside click
   useEffect(() => {
     function handle(e: MouseEvent) {

@@ -6,12 +6,6 @@ import { useAuth } from '@/hooks/useAuth'
 import FlashcardsHub from '@/components/FlashcardsHub'
 
 export default function FlashcardsPage() {
-  useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') return
-    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('nl-access=granted'))
-    if (!cookie) window.location.href = '/unlock'
-  }, [])
-
   const { user, loading } = useAuth()
 
   useEffect(() => {
