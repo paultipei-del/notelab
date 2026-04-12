@@ -100,7 +100,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
 
     async function init() {
       try {
-        const isNative = Capacitor.isNativePlatform() && typeof (window as any).Capacitor?.Plugins?.AudioPlugin !== 'undefined'
+        console.log('CAPACITOR isNative:', Capacitor.isNativePlatform(), 'plugins:', JSON.stringify(Object.keys((window as any).Capacitor?.Plugins ?? {})))
+        const isNative = Capacitor.isNativePlatform()
         if (isNative) {
           if (!sadDetector) sadDetector = new SADPitchDetector(44100)
           sadDetector.clearVotes()
