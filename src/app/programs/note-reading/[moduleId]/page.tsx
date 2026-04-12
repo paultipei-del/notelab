@@ -25,9 +25,9 @@ export default function ModuleOverviewPage({ params }: Props) {
   const { moduleId } = use(params)
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
-  const { hasSubscription, loading: isLoading } = usePurchases(user?.id ?? null)
+  const { hasSubscription, loading: purchasesLoading } = usePurchases(user?.id ?? null)
   const isPro = hasSubscription()
-  const isLoading = authLoading || isLoading
+  const isLoading = authLoading || purchasesLoading
 
   const mod = getNRModule(moduleId)
   const [mp, setMp] = useState(getNRModuleProgress(moduleId))
