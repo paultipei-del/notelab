@@ -1976,7 +1976,48 @@ button:not(:disabled):active {
 }
 .nl-mobile-nav  { display: none; position: relative; }
 
-@media (max-width: 680px) {
+.nl-mobile-nav__toggle {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.nl-mobile-nav__line {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  width: 26px;
+  height: 1.5px;
+  background: #1A1A18;
+  border-radius: 0;
+  transform-origin: center;
+  transition: transform 0.25s cubic-bezier(0.2, 0.6, 0.3, 1);
+}
+
+.nl-mobile-nav__line--top {
+  margin-top: calc(-0.75px - 4.25px);
+  transform: translateY(0) rotate(0deg);
+}
+
+.nl-mobile-nav__line--bottom {
+  margin-top: calc(-0.75px + 4.25px);
+  transform: translateY(0) rotate(0deg);
+}
+
+.nl-mobile-nav.is-open .nl-mobile-nav__line--top {
+  transform: translateY(4.25px) rotate(45deg);
+}
+
+.nl-mobile-nav.is-open .nl-mobile-nav__line--bottom {
+  transform: translateY(-4.25px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
   .site-header__nav-wrap {
     display: none !important;
   }

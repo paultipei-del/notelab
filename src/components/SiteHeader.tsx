@@ -268,32 +268,16 @@ export default function SiteHeader() {
           )}
 
           {/* Mobile hamburger */}
-          <div ref={mobileRef} className="nl-mobile-nav">
+          <div ref={mobileRef} className={`nl-mobile-nav${showMobileMenu ? ' is-open' : ''}`}>
             <button
               type="button"
               onClick={() => setShowMobileMenu(v => !v)}
               aria-label="Menu"
               aria-expanded={showMobileMenu}
-              style={{
-                width: '40px', height: '40px', borderRadius: HDR_BTN_R,
-                background: showMobileMenu ? '#1A1A18' : 'transparent',
-                border: '1px solid ' + (showMobileMenu ? '#1A1A18' : '#DDD8CA'),
-                cursor: 'pointer', display: 'flex', flexDirection: 'column' as const,
-                alignItems: 'center', justifyContent: 'center', gap: '6px',
-                touchAction: 'manipulation',
-              }}
+              className="nl-mobile-nav__toggle"
             >
-              {[0, 1, 2].map(i => (
-                <span key={i} style={{
-                  display: 'block', width: '16px', height: '2px',
-                  background: showMobileMenu ? 'white' : '#1A1A18',
-                  borderRadius: '1px',
-                  transition: 'all 0.15s',
-                  transform: showMobileMenu
-                    ? i === 0 ? 'translateY(8px) rotate(45deg)' : i === 2 ? 'translateY(-8px) rotate(-45deg)' : 'scaleX(0)'
-                    : 'none',
-                }} />
-              ))}
+              <span className="nl-mobile-nav__line nl-mobile-nav__line--top" />
+              <span className="nl-mobile-nav__line nl-mobile-nav__line--bottom" />
             </button>
 
             {showMobileMenu && (
