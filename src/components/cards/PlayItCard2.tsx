@@ -63,6 +63,9 @@ interface SessionLog {
   cards: CardLog[]
 }
 
+// ── Diagnostic mode — persists across card remounts ─────────────────────
+let diagEnabledGlobal = false
+
 // ── Shared audio pipeline ─────────────────────────────────────────────────
 let sadStream: MediaStream | null = null
 
@@ -141,7 +144,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const diagMode = searchParams?.get('dev') === 'true'
   const sessionLogRef = useRef<SessionLog>({ startedAt: new Date().toISOString(), cards: [] })
   const currentCardLogRef = useRef<CardLog | null>(null)
-  const [diagEnabled, setDiagEnabled] = useState(false)
+  const [diagEnabled, setDiagEnabled] = useState(diagEnabledGlobal)
   const [frameCount, setFrameCount] = useState(0)
   const [stableCount, setStableCount] = useState(0)
   const frameCountRef = useRef(0)
@@ -381,7 +384,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Diagnostic</span>
             <button
-              onClick={() => setDiagEnabled(v => !v)}
+              onClick={() => { diagEnabledGlobal = !diagEnabledGlobal; setDiagEnabled(diagEnabledGlobal) }}
               style={{
                 background: diagEnabled ? '#4CAF50' : '#555', border: 'none', borderRadius: '6px',
                 color: 'white', padding: '2px 8px', cursor: 'pointer', fontSize: '11px',
