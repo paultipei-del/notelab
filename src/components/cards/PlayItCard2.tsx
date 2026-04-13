@@ -100,8 +100,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
 
     async function init() {
       try {
-        const isNative = Capacitor.isNativePlatform() && typeof (window as any).Capacitor?.Plugins?.AudioPlugin !== 'undefined'
-        if (isNative) {
+        if (Capacitor.isNativePlatform()) {
           if (!sadDetector) sadDetector = new SADPitchDetector(44100)
           sadDetector.clearVotes()
           cardStartTime = Date.now()

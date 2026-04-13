@@ -5,8 +5,8 @@ const config: CapacitorConfig = {
   appName: 'NoteLab',
   webDir: 'out',
   server: {
-    url: 'https://notelab.studio',
-    cleartext: false,
+    url: 'http://192.168.1.21:3000',
+    cleartext: true,
   },
 };
 
