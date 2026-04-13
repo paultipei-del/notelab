@@ -60,14 +60,17 @@ export default function SiteHeader() {
     else setPillRect(null)
   }, [pathname, activeIdx, movePillTo])
 
-  // Close user menu on outside click
+  // Dismiss menus on outside tap. Use capture + early return (do not stopPropagation on header buttons —
+  // iOS Safari can fail to synthesize click when pointerdown propagation is stopped on those controls).
   useEffect(() => {
-    function handle(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setShowUserMenu(false)
-      if (mobileRef.current && !mobileRef.current.contains(e.target as Node)) setShowMobileMenu(false)
+    function handle(e: PointerEvent) {
+      const t = e.target as Node
+      if (menuRef.current?.contains(t) || mobileRef.current?.contains(t)) return
+      setShowUserMenu(false)
+      setShowMobileMenu(false)
     }
-    document.addEventListener('mousedown', handle)
-    return () => document.removeEventListener('mousedown', handle)
+    document.addEventListener('pointerdown', handle, true)
+    return () => document.removeEventListener('pointerdown', handle, true)
   }, [])
 
   // Close mobile menu on route change
@@ -173,20 +176,111 @@ export default function SiteHeader() {
         </nav>
         </div>
 
-        {/* Right side */}
+        {/* Right side — auth before hamburger on small screens so the avatar isn’t the first thing clipped */}
         <div className="site-header__actions">
+
+          {/* Auth (avatar / sign in) */}
+          {loading ? (
+            <div
+              className="site-header__auth-placeholder"
+              aria-hidden
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                background: 'rgba(26,26,24,0.08)',
+                flexShrink: 0,
+              }}
+            />
+          ) : (
+            user ? (
+              <div ref={menuRef} style={{ position: 'relative', flexShrink: 0 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowUserMenu(v => !v)}
+                  style={{
+                    width: '38px', height: '38px', borderRadius: '50%',
+                    background: '#1A1A18', border: 'none',
+                    fontFamily: F, fontSize: '13px', fontWeight: 500,
+                    color: 'white', cursor: 'pointer', letterSpacing: '0.04em',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    touchAction: 'manipulation',
+                  }}
+                >
+                  {initials}
+                </button>
+                {showUserMenu && (
+                  <div style={{
+                    position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                    background: '#FDFAF3', border: '1px solid #DDD8CA',
+                    borderRadius: '12px', padding: '8px',
+                    boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
+                    minWidth: '200px', zIndex: 100,
+                  }}>
+                    <div style={{ padding: '10px 14px 14px', borderBottom: '1px solid #EDE8DF', marginBottom: '4px' }}>
+                      {displayName && (
+                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>
+                          {displayName}
+                        </p>
+                      )}
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', margin: 0, wordBreak: 'break-all' as const }}>
+                        {email}
+                      </p>
+                    </div>
+
+                    <Link href="/account" onClick={() => setShowUserMenu(false)} style={{ textDecoration: 'none', display: 'block' }}>
+                      <div style={{ borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', cursor: 'pointer' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
+                        Account settings
+                      </div>
+                    </Link>
+                    <button type="button" onClick={handleSignOut} style={{
+                      display: 'block', width: '100%', textAlign: 'left' as const,
+                      background: 'none', border: 'none', borderRadius: '8px',
+                      padding: '10px 14px', borderTop: '1px solid #EDE8DF', marginTop: '4px',
+                      fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', cursor: 'pointer',
+                    }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowAuth(true)}
+                className="site-header__sign-in"
+                style={{
+                  border: '1px solid #DDD8CA', borderRadius: HDR_BTN_R,
+                  padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-body)',
+                  fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer',
+                  flexShrink: 0,
+                  touchAction: 'manipulation',
+                }}
+              >
+                Sign in
+              </button>
+            )
+          )}
 
           {/* Mobile hamburger */}
           <div ref={mobileRef} className="nl-mobile-nav">
             <button
+              type="button"
               onClick={() => setShowMobileMenu(v => !v)}
               aria-label="Menu"
+              aria-expanded={showMobileMenu}
               style={{
                 width: '40px', height: '40px', borderRadius: HDR_BTN_R,
                 background: showMobileMenu ? '#1A1A18' : 'transparent',
                 border: '1px solid ' + (showMobileMenu ? '#1A1A18' : '#DDD8CA'),
                 cursor: 'pointer', display: 'flex', flexDirection: 'column' as const,
                 alignItems: 'center', justifyContent: 'center', gap: '6px',
+                touchAction: 'manipulation',
               }}
             >
               {[0, 1, 2].map(i => (
@@ -234,72 +328,6 @@ export default function SiteHeader() {
             )}
           </div>
 
-          {/* Auth */}
-          {!loading && (
-            user ? (
-              <div ref={menuRef} style={{ position: 'relative' }}>
-                <button
-                  onClick={() => setShowUserMenu(v => !v)}
-                  style={{
-                    width: '38px', height: '38px', borderRadius: '50%',
-                    background: '#1A1A18', border: 'none',
-                    fontFamily: F, fontSize: '13px', fontWeight: 500,
-                    color: 'white', cursor: 'pointer', letterSpacing: '0.04em',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}
-                >
-                  {initials}
-                </button>
-                {showUserMenu && (
-                  <div style={{
-                    position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                    background: '#FDFAF3', border: '1px solid #DDD8CA',
-                    borderRadius: '12px', padding: '8px',
-                    boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
-                    minWidth: '200px', zIndex: 100,
-                  }}>
-                    <div style={{ padding: '10px 14px 14px', borderBottom: '1px solid #EDE8DF', marginBottom: '4px' }}>
-                      {displayName && (
-                        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', margin: '0 0 2px' }}>
-                          {displayName}
-                        </p>
-                      )}
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', margin: 0, wordBreak: 'break-all' as const }}>
-                        {email}
-                      </p>
-                    </div>
-
-                    <Link href="/account" onClick={() => setShowUserMenu(false)} style={{ textDecoration: 'none', display: 'block' }}>
-                      <div style={{ borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', cursor: 'pointer' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}>
-                        Account settings
-                      </div>
-                    </Link>
-                    <button onClick={handleSignOut} style={{
-                      display: 'block', width: '100%', textAlign: 'left' as const,
-                      background: 'none', border: 'none', borderRadius: '8px',
-                      padding: '10px 14px', borderTop: '1px solid #EDE8DF', marginTop: '4px',
-                      fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', cursor: 'pointer',
-                    }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#F2EDDF')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                    >
-                      Sign out
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button onClick={() => setShowAuth(true)} style={{
-                border: '1px solid #DDD8CA', borderRadius: HDR_BTN_R,
-                padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-body)',
-                fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer',
-              }}>
-                Sign in
-              </button>
-            )
-          )}
         </div>
       </header>
 

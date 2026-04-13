@@ -1,0 +1,10 @@
+{
+	"appId": "studio.notelab.app",
+	"appName": "NoteLab",
+	"webDir": "out",
+	"server": {
+		"url": "https://notelab.studio",
+		"cleartext": false
+	},
+	"packageClassList": []
+}

@@ -10,21 +10,45 @@ export function useAuth() {
 
   useEffect(() => {
     const supabase = getSupabaseClient()
+    let cancelled = false
 
-    // Listen for auth changes FIRST before getting session
-    // This ensures we never miss a state change
+    // Never leave the UI stuck on the gray loading chip (e.g. LAN dev, flaky network, blocked Supabase)
+    const loadingCap = window.setTimeout(() => {
+      if (!cancelled) setLoading(false)
+    }, 4500)
+
+    const clearCap = () => {
+      window.clearTimeout(loadingCap)
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (cancelled) return
       setUser(session?.user ?? null)
       setLoading(false)
+      clearCap()
     })
 
-    // Then get current session to handle the initial load
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (cancelled) return
+        setUser(session?.user ?? null)
+      })
+      .catch(() => {
+        if (!cancelled) setUser(null)
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false)
+          clearCap()
+        }
+      })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      cancelled = true
+      clearCap()
+      subscription.unsubscribe()
+    }
   }, [])
 
   return { user, loading }
