@@ -86,7 +86,6 @@ type NoteStatus = 'listening' | 'correct' | 'wrong'
 
 interface Props { params: Promise<{ moduleId: string }> }
 
-
 export default function PlaySessionPage({ params }: Props) {
   const { moduleId } = use(params)
   const router = useRouter()

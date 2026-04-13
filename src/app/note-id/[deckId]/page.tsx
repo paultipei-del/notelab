@@ -365,7 +365,6 @@ function NoteIDExerciseInner() {
   )
 }
 
-
 export default function NoteIDExercise() {
   return (
     <Suspense fallback={
