@@ -64,6 +64,7 @@ interface SessionLog {
 
 // ── Diagnostic mode — persists across card remounts ─────────────────────
 let diagEnabledGlobal = false
+const moduleSessionLog: SessionLog = { startedAt: new Date().toISOString(), cards: [] }
 
 // ── Shared audio pipeline ─────────────────────────────────────────────────
 let sadStream: MediaStream | null = null
@@ -141,7 +142,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   // ── Diagnostic ────────────────────────────────────────────────────────
   const diagMode = typeof window !== 'undefined' && window.location.search.includes('dev=true')
   const diagModeRef = useRef(diagMode)
-  const sessionLogRef = useRef<SessionLog>({ startedAt: new Date().toISOString(), cards: [] })
+  const sessionLogRef = useRef<SessionLog>(moduleSessionLog)
   const currentCardLogRef = useRef<CardLog | null>(null)
   const [diagEnabled, setDiagEnabled] = useState(diagEnabledGlobal)
   const [frameCount, setFrameCount] = useState(0)
