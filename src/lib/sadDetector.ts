@@ -195,6 +195,7 @@ export class SADPitchDetector {
   private lastMidi = -1
   private lastMidiTime = 0
   private readonly maxOctaveRate = 10
+  private coherenceStrikes = 0
 
   constructor(sampleRate: number, config?: SADConfig) {
     this.sr = sampleRate
@@ -299,11 +300,22 @@ export class SADPitchDetector {
     const midi = Math.round(midiPrecise)
     if (midi < 21 || midi > 108) return null
 
-    // Pitch coherence: if midi jumps more than 7 semitones from last detection, clear votes
-    // This prevents noise frames from diluting the vote pool across wildly different pitches
-    if (this.lastMidi >= 0 && !this.freshReset && Math.abs(midi - this.lastMidi) > 7) {
-      this.detectionWindow = []
-      this.detectionPointsWindow = []
+    // Reject known artifact: 1664 Hz is a persistent room/piano resonance artifact
+    if (hz > 1650 && hz < 1680) return null
+
+    // Pitch coherence: only clear votes after 3 consecutive outlier frames
+    // Single bad frames (harmonics, noise spikes) should not reset accumulated votes
+    if (this.lastMidi >= 0 && !this.freshReset) {
+      if (Math.abs(midi - this.lastMidi) > 7) {
+        this.coherenceStrikes++
+        if (this.coherenceStrikes >= 3) {
+          this.detectionWindow = []
+          this.detectionPointsWindow = []
+          this.coherenceStrikes = 0
+        }
+      } else {
+        this.coherenceStrikes = 0
+      }
     }
 
     // Octave rate limiter (bypass after reset)
@@ -368,6 +380,7 @@ export class SADPitchDetector {
     this.detectionWindow = []
     this.lastMidi = -1; this.lastMidiTime = 0
     this.freshReset = true
+    this.coherenceStrikes = 0
     this.warmupFrames = 20
     this.fillCountdown = 0
     this.filtersA = makeBandFilters(this.sr)
