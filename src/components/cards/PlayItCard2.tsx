@@ -169,6 +169,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   }
 
   function endCardLog(outcome: CardLog['outcome']) {
+    console.log('DIAG endCardLog', outcome, 'diagMode=', diagModeRef.current, 'cardLog=', !!currentCardLogRef.current)
     if (!diagModeRef.current || !currentCardLogRef.current) return
     const c = currentCardLogRef.current
     c.resolvedAt = Date.now()
