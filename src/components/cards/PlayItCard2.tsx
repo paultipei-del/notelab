@@ -149,6 +149,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const stableCountRef = useRef(0)
 
   function startCardLog() {
+    console.log('DIAG startCardLog called, diagMode=', diagMode, 'url=', typeof window !== 'undefined' ? window.location.search : 'SSR')
     if (!diagMode) return
     currentCardLogRef.current = {
       cardNote: card.note ?? '',
