@@ -151,7 +151,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const stableCountRef = useRef(0)
 
   function startCardLog() {
-    if (!diagEnabled) return
+    if (!diagMode) return
     currentCardLogRef.current = {
       cardNote: card.note ?? '',
       clef: card.clef ?? '',
@@ -169,7 +169,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   }
 
   function endCardLog(outcome: CardLog['outcome']) {
-    if (!diagEnabled || !currentCardLogRef.current) return
+    if (!diagMode || !currentCardLogRef.current) return
     const c = currentCardLogRef.current
     c.resolvedAt = Date.now()
     c.outcome = outcome
@@ -246,7 +246,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     const inDeadWindow = timeOnCard < deadWindowForNote(targetNoteRef.current)
 
     if (inDeadWindow) {
-      if (diagEnabled) {
+      if (diagMode) {
         frameCountRef.current++
         setFrameCount(frameCountRef.current)
       }
@@ -293,7 +293,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
       ) && timeSinceAccept < OCTAVE_BLEED_FILTER_MS
 
       if (isOctaveBleed) {
-        if (diagEnabled && currentCardLogRef.current) {
+        if (diagMode && currentCardLogRef.current) {
           currentCardLogRef.current.falseDetections.push({
             t: timeOnCard, detected: result.name, detectedMidi: result.midi,
             target, targetMidi: targetMidiVal, outcome: 'octave-bleed',
@@ -309,7 +309,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
         doneRef.current = true
         prevMidi = result.midi
         setStatus('correct')
-        if (diagEnabled && currentCardLogRef.current) {
+        if (diagMode && currentCardLogRef.current) {
           currentCardLogRef.current.correctDecision = {
             t: timeOnCard, detected: result.name, detectedMidi: result.midi,
             target, targetMidi: targetMidiVal, outcome: 'correct',
@@ -327,7 +327,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
           (detMidi === prevMidi + 12 || detMidi === prevMidi - 12)
         const cooldownOk = now - lastWrongTime > WRONG_COOLDOWN_MS
 
-        if (diagEnabled && currentCardLogRef.current) {
+        if (diagMode && currentCardLogRef.current) {
           const outcome = !cooldownOk ? 'cooldown' : semDist > WRONG_SEMITONE_RANGE ? 'range' : 'wrong'
           currentCardLogRef.current.falseDetections.push({
             t: timeOnCard, detected: result.name, detectedMidi: result.midi,
