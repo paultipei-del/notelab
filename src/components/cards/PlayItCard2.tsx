@@ -18,7 +18,10 @@ function deadWindowForNote(note: string): number {
 const WRONG_FRAMES_REQUIRED = 20
 const WRONG_COOLDOWN_MS = 1000
 const OCTAVE_BLEED_FILTER_MS = 600
-const WRONG_SEMITONE_RANGE = 25
+const WRONG_SEMITONE_RANGE = 25    // within 25 semitones of target
+const SUBHARMONIC_LOCK_MS = 1400
+const SUBHARMONIC_MIDI_MIN = 36
+const SUBHARMONIC_MIDI_MAX = 53
 
 // ── Diagnostic types ──────────────────────────────────────────────────────
 interface FrameLog {
