@@ -295,6 +295,17 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
         (result.midi === targetMidiVal - 12 || result.midi === targetMidiVal + 12)
       ) && timeSinceAccept < OCTAVE_BLEED_FILTER_MS
 
+      // Sub-harmonic lock: reject sympathetic resonance zone (C2-F3) early in card
+      const isSubharmonicLock = result.midi >= SUBHARMONIC_MIDI_MIN &&
+        result.midi <= SUBHARMONIC_MIDI_MAX &&
+        timeSinceAccept < SUBHARMONIC_LOCK_MS &&
+        noteToMidi(target) > SUBHARMONIC_MIDI_MAX + 3  // only lock if target is well above this range
+
+      if (isSubharmonicLock) {
+        rafHandle = requestAnimationFrame(tick)
+        return
+      }
+
       if (isOctaveBleed) {
         if (diagModeRef.current && currentCardLogRef.current) {
           currentCardLogRef.current.falseDetections.push({
