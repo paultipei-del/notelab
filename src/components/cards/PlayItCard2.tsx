@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { SADPitchDetector } from '@/lib/sadDetector'
 import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
@@ -140,8 +139,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   const acceptStartRef = useRef(0)
 
   // ── Diagnostic ────────────────────────────────────────────────────────
-  const searchParams = useSearchParams()
-  const diagMode = searchParams?.get('dev') === 'true'
+  const diagMode = typeof window !== 'undefined' && window.location.search.includes('dev=true')
   const sessionLogRef = useRef<SessionLog>({ startedAt: new Date().toISOString(), cards: [] })
   const currentCardLogRef = useRef<CardLog | null>(null)
   const [diagEnabled, setDiagEnabled] = useState(diagEnabledGlobal)
