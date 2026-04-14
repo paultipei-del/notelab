@@ -202,7 +202,7 @@ export class SADPitchDetector {
     this.sizeB = Math.floor(sampleRate * 0.105)  // 4630 @ 44100
     this.windowSize = config?.windowSize ?? 10
     this.stableThreshold = config?.stableThreshold ?? 15
-    this.levelThreshold = config?.levelThreshold ?? 0.01
+    this.levelThreshold = config?.levelThreshold ?? 0.05
 
     this.loA = new Float32Array(this.sizeA); this.hiA = new Float32Array(this.sizeA)
     this.loB = new Float32Array(this.sizeB); this.hiB = new Float32Array(this.sizeB)
@@ -298,6 +298,13 @@ export class SADPitchDetector {
     const midiPrecise = hzToMidiPrecise(hz)
     const midi = Math.round(midiPrecise)
     if (midi < 21 || midi > 108) return null
+
+    // Pitch coherence: if midi jumps more than 7 semitones from last detection, clear votes
+    // This prevents noise frames from diluting the vote pool across wildly different pitches
+    if (this.lastMidi >= 0 && !this.freshReset && Math.abs(midi - this.lastMidi) > 7) {
+      this.detectionWindow = []
+      this.detectionPointsWindow = []
+    }
 
     // Octave rate limiter (bypass after reset)
     const now = performance.now()
