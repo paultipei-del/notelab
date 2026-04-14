@@ -235,7 +235,8 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     init()
     return () => {
       doneRef.current = true
-      endCardLog('abandoned')
+      // Only mark abandoned if not already resolved by correct/wrong detection
+      if (currentCardLogRef.current) endCardLog('abandoned')
     }
   }, [card.id])
 
