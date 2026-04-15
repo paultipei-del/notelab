@@ -33,6 +33,18 @@ const PROGRAMS = [
     glyph: '𝄞',
     accent: { bg: 'rgba(59,109,17,0.22)', text: '#7DC44E', border: 'rgba(59,109,17,0.35)', ctaBg: 'rgba(59,109,17,0.15)', gradientGlyphColor: 'rgba(59,109,17,0.14)', gradient: 'linear-gradient(145deg, #060A04 0%, #101A08 50%, #182510 100%)' },
   },
+  {
+    id: 'rhythm',
+    href: '/programs/rhythm',
+    title: 'Rhythm Reading',
+    subtitle: 'Three structured programs',
+    description: 'Fundamentals, Personal Practice, and Conservatory Prep — 356 progressive exercises from basic note values through mixed meter and polyrhythm. Tap along with the metronome.',
+    levels: '356 exercises',
+    priceId: null,
+    free: true,
+    glyph: '𝄩',
+    accent: { bg: 'rgba(59,97,181,0.22)', text: '#7DA8E8', border: 'rgba(59,97,181,0.35)', ctaBg: 'rgba(59,97,181,0.15)', gradientGlyphColor: 'rgba(59,97,181,0.14)', gradient: 'linear-gradient(145deg, #040610 0%, #080E1E 50%, #101828 100%)' },
+  },
 ]
 
 export default function ProgramsPage() {
@@ -59,7 +71,7 @@ export default function ProgramsPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '14px' }}>
           {PROGRAMS.map(prog => {
-            const unlocked = prog.priceId ? isUnlocked(prog.priceId) : hasSubscription()
+            const unlocked = (prog as { free?: boolean }).free ? true : prog.priceId ? isUnlocked(prog.priceId) : hasSubscription()
             const a = prog.accent
             return (
               <Link key={prog.id} href={prog.href} style={{ textDecoration: 'none', borderRadius: '20px', display: 'block' }}>
@@ -83,7 +95,7 @@ export default function ProgramsPage() {
                   {/* Text side */}
                   <div style={{ flex: 1, padding: '36px 40px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
                     <span style={{ display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '4px 10px', borderRadius: '20px', background: a.bg, color: a.text, marginBottom: '14px', width: 'fit-content' }}>
-                      {unlocked ? 'Unlocked' : prog.levels}
+                      {(prog as { free?: boolean }).free ? prog.levels : unlocked ? 'Unlocked' : prog.levels}
                     </span>
                     <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(30px, 3.2vw, 42px)', color: 'white', marginBottom: '12px', letterSpacing: '0.01em', lineHeight: 1.05 }}>
                       {prog.title}

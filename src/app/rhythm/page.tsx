@@ -1,7 +1,9 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { CSSProperties } from 'react'
 import type { RhythmExercise, RhythmNote } from '@/lib/parseMXL'
 import type { RhythmExerciseMeta, RhythmProgress, RhythmProgramNode } from '@/lib/rhythmLibrary'
@@ -790,6 +792,9 @@ function LibraryPanel({
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function RhythmPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const programExerciseId = searchParams.get('exercise')
+  const returnTo = searchParams.get('returnTo')
   const [exercise, setExercise] = useState<RhythmExercise | null>(null)
   const [currentMeta, setCurrentMeta] = useState<RhythmExerciseMeta | null>(null)
   const [view, setView] = useState<'notation' | 'grid'>('notation')
@@ -1032,8 +1037,22 @@ export default function RhythmPage() {
         setLibraryTree(lib.tree)
         setLibraryLoading(false)
         setProgress(prog)
+        // Auto-load exercise from ?exercise= query param (deep link from programs)
+        if (programExerciseId) {
+          const meta = lib.unlockOrder.find(e => e.id === programExerciseId)
+          if (meta) {
+            import('@/lib/rhythmLibrary').then(({ fetchExerciseFile }) =>
+              import('@/lib/parseMXL').then(({ parseMXL }) =>
+                fetchExerciseFile(meta.id).then(buf => parseMXL(buf)).then(ex => {
+                  setExercise(ex); setCurrentMeta(meta)
+                })
+              )
+            )
+          }
+        }
       })
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id])
 
   useEffect(() => {
@@ -1977,7 +1996,13 @@ export default function RhythmPage() {
       >
         {/* Top bar: back + title + nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-          {exercise && (
+          {returnTo && (
+            <button onClick={() => router.push(returnTo)}
+              style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
+              ← Program
+            </button>
+          )}
+          {exercise && !returnTo && (
             <button onClick={() => { setExercise(null); setCurrentMeta(null); stop(); resetNotationScroll() }}
               style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
               ← Library
@@ -2286,7 +2311,9 @@ export default function RhythmPage() {
           <div style={{ flex: 1, minWidth: 0 }}>
             <button
               onClick={() => {
-                if (exercise) {
+                if (returnTo) {
+                  router.push(returnTo)
+                } else if (exercise) {
                   setExercise(null)
                   setCurrentMeta(null)
                   stop()
@@ -2297,7 +2324,7 @@ export default function RhythmPage() {
               }}
               style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '8px', display: 'block' }}
             >
-              {exercise ? '← Library' : '← Back'}
+              {returnTo ? '← Program' : exercise ? '← Library' : '← Back'}
             </button>
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '4px' }}>Rhythm Trainer</h1>
             {!exercise && (
