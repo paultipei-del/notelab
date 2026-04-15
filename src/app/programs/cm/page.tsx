@@ -103,7 +103,7 @@ export default function CMProgramPage() {
             }
 
             return (
-              <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none' }}>
+              <Link key={deck.id} href={isPrep ? '/programs/cm/prep' : `/study/${deck.id}`} style={{ textDecoration: 'none' }}>
                 <div
                   className="nl-card-surface nl-card-surface--tight"
                   style={{
