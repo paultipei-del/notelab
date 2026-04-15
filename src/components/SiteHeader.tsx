@@ -94,7 +94,8 @@ export default function SiteHeader() {
 
         {/* Wordmark */}
         <div className="site-header__brand">
-          <Link href="/" style={{ textDecoration: 'none' }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img src="/logo-dark.png" alt="NoteLab" style={{ height: '28px', width: 'auto', display: 'block' }} />
             <span style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>
               Note<span style={{ fontWeight: 500 }}>Lab</span>
             </span>

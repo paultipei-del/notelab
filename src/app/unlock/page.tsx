@@ -28,8 +28,11 @@ export default function Unlock() {
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' as const, padding: '48px 32px', maxWidth: '360px', width: '100%' }}>
-        <div style={{ fontFamily: F, fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318', marginBottom: '48px' }}>
-          Note<span style={{ fontWeight: 400 }}>Lab</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '48px' }}>
+          <img src="/logo-dark.png" alt="NoteLab" style={{ height: '28px', width: 'auto', display: 'block' }} />
+          <span style={{ fontFamily: F, fontSize: '22px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>
+            Note<span style={{ fontWeight: 400 }}>Lab</span>
+          </span>
         </div>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '8px' }}>Early access</h1>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', marginBottom: '32px' }}>Enter your access code to continue</p>

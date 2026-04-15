@@ -35,7 +35,10 @@ export default function LandingPage() {
 
       {/* Nav */}
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px clamp(16px,4vw,48px)', position: 'sticky', top: 0, zIndex: 50, background: 'rgba(245,242,236,0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(211,209,199,0.6)' }}>
-        <div style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src="/logo-dark.png" alt="NoteLab" style={{ height: '28px', width: 'auto', display: 'block' }} />
+          <span style={{ fontFamily: F, fontSize: '20px', fontWeight: 300, letterSpacing: '0.08em', color: '#2A2318' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></span>
+        </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <a href="#pricing" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>Pricing</a>
           <button onClick={() => setShowAuth(true)} style={{ border: '1px solid #1A1A18', borderRadius: '8px', padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer' }}>Sign In</button>
@@ -152,7 +155,10 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(24px,4vw,48px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontFamily: F, fontSize: 'var(--nl-text-base)', fontWeight: 400, letterSpacing: '0.08em', color: '#2A2318' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src="/logo-dark.png" alt="NoteLab" style={{ height: '24px', width: 'auto', display: 'block' }} />
+          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-base)', fontWeight: 400, letterSpacing: '0.08em', color: '#2A2318' }}>Note<span style={{ fontWeight: 500 }}>Lab</span></span>
+        </div>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B8B5AD' }}>Built for pianists and musicians. © {new Date().getFullYear()}</p>
       </footer>
 
