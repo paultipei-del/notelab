@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -31,7 +31,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Where notes sit on the staff',
     description: "A note placed directly on a staff line is a line note. A note resting between two lines sits in a space. Recognizing this instantly narrows your search to exactly half the possible names — the five line names or the four space names.",
     type: 'lesson',
-    tool: 'line-space-quiz',
+    tool: 'line-space-lesson',
     unlockAfter: 'grand-staff',
     passingScore: 0.8,
   },

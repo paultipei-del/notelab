@@ -134,56 +134,99 @@ export function GrandStaffDiagram() {
 
 // ── Lesson 2: Lines and Spaces ────────────────────────────────────────────
 export function LineSpaceDiagram() {
-  const step = 10
-  const sL = 40
-  const sR = 510
-  const tTop = 44
+  const step    = 6.5
+  const sL      = 40
+  const sR      = 350
+  const W       = sR + 20      // 370
+  const CLEF_FS = 50
+  const NH_FS   = 44           // Bravura whole-note fontSize
 
-  const notes: { pos: number; name: string; isLine: boolean }[] = [
-    { pos: 8, name: 'E4', isLine: true },
-    { pos: 7, name: 'F4', isLine: false },
-    { pos: 6, name: 'G4', isLine: true },
-    { pos: 5, name: 'A4', isLine: false },
-    { pos: 4, name: 'B4', isLine: true },
-    { pos: 3, name: 'C5', isLine: false },
-    { pos: 2, name: 'D5', isLine: true },
-    { pos: 1, name: 'E5', isLine: false },
-    { pos: 0, name: 'F5', isLine: true },
+  const tTop1   = 30
+  const tTop2   = tTop1 + 8 * step + 56   // second staff, 56 px gap
+  const totalH  = tTop2 + 8 * step + 32
+
+  // StaffLines draws lines at top + [0,2,4,6,8]*step
+  //   p=0 → line 5 (top, F5)   p=8 → line 1 (bottom, E4)
+  // Spaces sit at p=1(E5) 3(C5) 5(A4) 7(F4)
+  const lineNotes  = [
+    { p: 8, name: 'E' },
+    { p: 6, name: 'G' },
+    { p: 4, name: 'B' },
+    { p: 2, name: 'D' },
+    { p: 0, name: 'F' },
+  ]
+  const spaceNotes = [
+    { p: 7, name: 'F' },
+    { p: 5, name: 'A' },
+    { p: 3, name: 'C' },
+    { p: 1, name: 'E' },
   ]
 
-  const noteSpacing = (sR - sL - 60) / notes.length
-  const startX = sL + 58
+  const lineSpacing  = (sR - sL - 62) / 5  // 5 line notes
+  const spaceSpacing = (sR - sL - 62) / 4  // 4 space notes
+  const startX       = sL + 62
+
+  function Staff({ top }: { top: number }) {
+    return (
+      <>
+        <StaffLines x1={sL} x2={sR} top={top} step={step} />
+        <line x1={sL} y1={top}           x2={sL} y2={top + 8 * step} stroke={DARK} strokeWidth={1.5} />
+        <line x1={sR} y1={top}           x2={sR} y2={top + 8 * step} stroke={DARK} strokeWidth={1.5} />
+        {/* Treble clef: y = top + 6*step anchors the glyph on the G line (line 2 from bottom) */}
+        <text x={sL + 2} y={top + 6 * step} fontFamily="Bravura, serif" fontSize={CLEF_FS}
+          fill={DARK} dominantBaseline="auto">𝄞</text>
+      </>
+    )
+  }
 
   return (
     <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 555 175" width="100%" style={{ maxWidth: 555, display: 'block', margin: '0 auto' }}>
-        <StaffLines x1={sL} x2={sR} top={tTop} step={step} />
-        <line x1={sL} y1={tTop} x2={sL} y2={tTop + 8 * step} stroke={DARK} strokeWidth={1.5} />
-        <line x1={sR} y1={tTop} x2={sR} y2={tTop + 8 * step} stroke={DARK} strokeWidth={1.5} />
-        <text x={sL + 2} y={tTop + 44} fontFamily="Bravura, serif" fontSize={60} fill={DARK}>𝄞</text>
+      <svg viewBox={`0 0 ${W} ${totalH}`} width="100%"
+        style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
 
-        {notes.map((n, i) => {
-          const cx = startX + i * noteSpacing
-          const cy = tTop + n.pos * step
-          const color = n.isLine ? LINE_C : SPACE_C
-          // Alternate labels above / below to avoid crowding
-          const above = n.isLine
-          const labelY = above ? cy - 16 : cy + 22
+        {/* ── Staff 1: Line notes ── */}
+        <text x={(sL + sR) / 2} y={tTop1 - 10} fontFamily={F} fontSize={10} fontWeight="700"
+          fill={LINE_C} letterSpacing="0.12em" textAnchor="middle">LINE NOTES</text>
+        <Staff top={tTop1} />
 
+        {lineNotes.map((n, i) => {
+          const cx = startX + i * lineSpacing
+          const cy = tTop1 + n.p * step
+          const labelY = cy + 17
           return (
-            <g key={n.name}>
-              <NoteOval cx={cx} cy={cy} color={color} rx={9} ry={6} />
-              <text x={cx} y={labelY} fontFamily={F} fontSize={12} fill={color}
+            <g key={'l' + i}>
+              <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={NH_FS}
+                fill={LINE_C} textAnchor="middle" dominantBaseline="central">
+                {'\uE0A2'}
+              </text>
+              <rect x={cx - 8} y={labelY - 11} width={16} height={14} rx={2}
+                fill="white" opacity={0.6} />
+              <text x={cx} y={labelY} fontFamily={F} fontSize={11} fill={LINE_C}
                 textAnchor="middle" fontWeight="700">{n.name}</text>
             </g>
           )
         })}
 
-        {/* Legend */}
-        <NoteOval cx={46} cy={155} color={LINE_C} rx={8} ry={5.5} />
-        <text x={60} y={160} fontFamily={F} fontSize={13} fill={LINE_C} fontWeight="600">Line note</text>
-        <NoteOval cx={160} cy={155} color={SPACE_C} rx={8} ry={5.5} />
-        <text x={174} y={160} fontFamily={F} fontSize={13} fill={SPACE_C} fontWeight="600">Space note</text>
+        {/* ── Staff 2: Space notes ── */}
+        <text x={(sL + sR) / 2} y={tTop2 - 10} fontFamily={F} fontSize={10} fontWeight="700"
+          fill={SPACE_C} letterSpacing="0.12em" textAnchor="middle">SPACE NOTES</text>
+        <Staff top={tTop2} />
+
+        {spaceNotes.map((n, i) => {
+          const cx = startX + i * spaceSpacing
+          const cy = tTop2 + n.p * step
+          const labelY = cy + 17
+          return (
+            <g key={'s' + i}>
+              <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={NH_FS}
+                fill={SPACE_C} textAnchor="middle" dominantBaseline="central">
+                {'\uE0A2'}
+              </text>
+              <text x={cx} y={labelY} fontFamily={F} fontSize={11} fill={SPACE_C}
+                textAnchor="middle" fontWeight="700">{n.name}</text>
+            </g>
+          )
+        })}
       </svg>
     </div>
   )

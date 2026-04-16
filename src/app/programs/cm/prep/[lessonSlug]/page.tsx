@@ -13,6 +13,7 @@ import {
 } from '@/lib/programs/cm-prep/questions'
 import { CM_PREP_CARDS } from '@/lib/cm-content/preparatory'
 import GrandStaffLesson from '@/components/programs/cm-prep/GrandStaffLesson'
+import LineSpaceLesson from '@/components/programs/cm-prep/LineSpaceLesson'
 import MCQuiz from '@/components/programs/cm-prep/MCQuiz'
 import StaffNoteQuiz from '@/components/programs/cm-prep/StaffNoteQuiz'
 import LineSpaceQuiz from '@/components/programs/cm-prep/LineSpaceQuiz'
@@ -210,6 +211,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                   Practice
                 </p>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', marginBottom: '20px', lineHeight: 1.6 }}>
+                  {lesson.tool === 'line-space-lesson' && 'Five exercises: identify line and space notes, classify notes, and draw notes on the staff.'}
                   {lesson.tool === 'grand-staff-lesson' && 'Three exercises: identify missing parts, build the grand staff, and match symbols to names.'}
                   {lesson.tool === 'staff-note-quiz' && 'Identify notes on the staff. A new set of notes will be shown each session.'}
                   {lesson.tool === 'line-space-quiz' && 'Look at each note on the treble staff and decide whether it sits on a line or in a space.'}
@@ -231,7 +233,12 @@ export default function CMPrepLessonPage({ params }: Props) {
             ) : (
               <>
                 {/* Active quiz */}
-                {lesson.tool === 'grand-staff-lesson' ? (
+                {lesson.tool === 'line-space-lesson' ? (
+                  <LineSpaceLesson
+                    passingScore={lesson.passingScore}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'grand-staff-lesson' ? (
                   <GrandStaffLesson
                     passingScore={lesson.passingScore}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
