@@ -234,66 +234,112 @@ export function LineSpaceDiagram() {
 
 // ── Lesson 3: Labeled Treble Staff ────────────────────────────────────────
 export function LabeledTrebleStaff() {
-  const step = 10
-  const sL = 32
-  const sR = 530
-  const tTop = 54
+  // Matches LineSpaceLesson geometry exactly
+  const step  = 8
+  const sL    = 32
+  const sR    = 700
+  const tTop  = 54    // y of line 5 (top staff line)
+  const NH_FS = 44    // Bravura whole-note size for diagrams
 
+  // pos system: pos=10 → line 5 (F5), pos=0 → C4 ledger below
+  // y(pos) = tTop + (10 - pos) * step
+  function posY(pos: number) { return tTop + (10 - pos) * step }
+
+  // All treble notes C4 – F5, in ascending order
   const notes: { pos: number; name: string }[] = [
-    { pos: 10, name: 'C4' },
-    { pos: 8,  name: 'E4' },
-    { pos: 7,  name: 'F4' },
-    { pos: 6,  name: 'G4' },
-    { pos: 5,  name: 'A4' },
-    { pos: 4,  name: 'B4' },
-    { pos: 3,  name: 'C5' },
-    { pos: 2,  name: 'D5' },
-    { pos: 1,  name: 'E5' },
-    { pos: 0,  name: 'F5' },
+    { pos: 0,  name: 'C' },  // ledger below
+    { pos: 1,  name: 'D' },
+    { pos: 2,  name: 'E' },
+    { pos: 3,  name: 'F' },
+    { pos: 4,  name: 'G' },
+    { pos: 5,  name: 'A' },
+    { pos: 6,  name: 'B' },
+    { pos: 7,  name: 'C' },
+    { pos: 8,  name: 'D' },
+    { pos: 9,  name: 'E' },
+    { pos: 10, name: 'F' },
+    { pos: 11, name: 'G' },  // space above
+    { pos: 12, name: 'A' },  // ledger above
   ]
 
-  const noteSpacing = (sR - sL - 60) / notes.length
-  const startX = sL + 55
+  const clefEndX = sL + 68
+  const endX     = sR - 24
+  const startX   = clefEndX + 4
+  const spacing  = (endX - startX) / (notes.length - 1)
+
+  // SVG height: ledger above = tTop - 2*step, ledger below = tTop + 10*step
+  // Add 50px below for mnemonics
+  const svgH = tTop + 10 * step + 50 + 42  // 266
+  const W    = sR + 16
+
+  const lineBot = tTop + 8 * step  // y of line 1 (bottom staff line)
 
   return (
     <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 565 195" width="100%" style={{ maxWidth: 565, display: 'block', margin: '0 auto' }}>
+      <svg viewBox={`0 0 ${W} ${svgH}`} width="100%"
+        style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
+
+        {/* Staff lines */}
         <StaffLines x1={sL} x2={sR} top={tTop} step={step} />
-        <line x1={sL} y1={tTop} x2={sL} y2={tTop + 8 * step} stroke={DARK} strokeWidth={1.5} />
-        <line x1={sR} y1={tTop} x2={sR} y2={tTop + 8 * step} stroke={DARK} strokeWidth={2.5} />
-        <text x={sL + 2} y={tTop + 46} fontFamily="Bravura, serif" fontSize={62} fill={DARK}>𝄞</text>
+        <line x1={sL} y1={tTop} x2={sL} y2={lineBot} stroke={DARK} strokeWidth={1.5} />
+        <line x1={sR} y1={tTop} x2={sR} y2={lineBot} stroke={DARK} strokeWidth={STROKE_W} />
+
+        {/* Treble clef: anchored at G line (line 2) = tTop + 6*step */}
+        <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={50}
+          fill={DARK} dominantBaseline="auto">𝄞</text>
 
         {notes.map((n, i) => {
-          const cx = startX + i * noteSpacing
-          const cy = tTop + n.pos * step
-          const isLine = n.pos % 2 === 0
-          const color = n.pos === 10 ? '#9A8C7A' : isLine ? LINE_C : SPACE_C
-          // Upper half of staff → label below; lower half → label above
-          const labelAbove = n.pos >= 4
-          const labelY = labelAbove ? cy - 16 : cy + 22
+          const cx    = startX + (i / (notes.length - 1)) * (endX - startX)
+          const cy    = posY(n.pos)
+          const isLine   = n.pos % 2 === 0
+          const isLedger = n.pos === 0 || n.pos === 12
+          const color    = isLedger ? ACCENT : isLine ? LINE_C : SPACE_C
+
+          // Line notes: label below. Space notes: label above.
+          const labelY = isLine ? cy + 20 : cy - 12
 
           return (
-            <g key={n.name}>
-              {n.pos === 10 && (
-                <line x1={cx - 13} y1={cy} x2={cx + 13} y2={cy} stroke={DARK} strokeWidth={STROKE_W} />
+            <g key={n.pos}>
+              {/* Ledger line below (C4) */}
+              {n.pos === 0 && (
+                <line x1={cx - 14} y1={cy} x2={cx + 14} y2={cy}
+                  stroke={color} strokeWidth={2} />
               )}
-              <NoteOval cx={cx} cy={cy} color={color} rx={9} ry={6} />
-              <text x={cx} y={labelY} fontFamily={F} fontSize={12} fill={color}
-                textAnchor="middle" fontWeight="700">{n.name}</text>
+              {/* Ledger line above (A5) */}
+              {n.pos === 12 && (
+                <line x1={cx - 14} y1={cy} x2={cx + 14} y2={cy}
+                  stroke={color} strokeWidth={STROKE_W} />
+              )}
+
+              {/* Bravura whole-notehead */}
+              <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={NH_FS}
+                fill={color} textAnchor="middle" dominantBaseline="central">
+                {'\uE0A2'}
+              </text>
+
+              {/* Label with white backing for readability */}
+              <rect x={cx - 8} y={labelY - 11} width={16} height={14} rx={2}
+                fill="white" opacity={0.75} />
+              <text x={cx} y={labelY} fontFamily={F} fontSize={11} fontWeight="700"
+                fill={color} textAnchor="middle">{n.name}</text>
             </g>
           )
         })}
 
-        {/* Mnemonics as HTML-style text blocks below staff */}
-        <rect x={sL} y={tTop + 8 * step + 18} width={(sR - sL) * 0.52} height={34} rx={7}
+        {/* Mnemonic pills — offset below the lowest note label (C4 at y≈152) */}
+        <rect x={sL} y={lineBot + 44} width={(sR - sL) * 0.50} height={34} rx={7}
           fill="rgba(42,92,154,0.08)" stroke="rgba(42,92,154,0.25)" strokeWidth={1} />
-        <text x={sL + 10} y={tTop + 8 * step + 32} fontFamily={F} fontSize={12} fill={LINE_C} fontWeight="700">Lines (E G B D F)</text>
-        <text x={sL + 10} y={tTop + 8 * step + 46} fontFamily={F} fontSize={11} fill={LINE_C}>"Every Good Boy Does Fine"</text>
+        <text x={sL + 10} y={lineBot + 58} fontFamily={F} fontSize={12}
+          fill={LINE_C} fontWeight="700">Lines — C E G B D F A</text>
+        <text x={sL + 10} y={lineBot + 72} fontFamily={F} fontSize={10.5}
+          fill={LINE_C} fontStyle="italic">"Can Every Good Boy Do Fine Always"</text>
 
-        <rect x={sL + (sR - sL) * 0.54} y={tTop + 8 * step + 18} width={(sR - sL) * 0.46} height={34} rx={7}
-          fill="rgba(42,107,30,0.08)" stroke="rgba(42,107,30,0.25)" strokeWidth={1} />
-        <text x={sL + (sR - sL) * 0.54 + 10} y={tTop + 8 * step + 32} fontFamily={F} fontSize={12} fill={SPACE_C} fontWeight="700">Spaces (F A C E)</text>
-        <text x={sL + (sR - sL) * 0.54 + 10} y={tTop + 8 * step + 46} fontFamily={F} fontSize={11} fill={SPACE_C}>"FACE"</text>
+        <rect x={sL + (sR - sL) * 0.52} y={lineBot + 44} width={(sR - sL) * 0.48} height={34} rx={7}
+          fill="rgba(139,58,139,0.08)" stroke="rgba(139,58,139,0.2)" strokeWidth={1} />
+        <text x={sL + (sR - sL) * 0.52 + 10} y={lineBot + 58} fontFamily={F} fontSize={12}
+          fill={SPACE_C} fontWeight="700">Spaces — D F A C E G</text>
+        <text x={sL + (sR - sL) * 0.52 + 10} y={lineBot + 72} fontFamily={F} fontSize={10.5}
+          fill={SPACE_C} fontStyle="italic">"Do Funny Animals Come Every Game"</text>
       </svg>
     </div>
   )
@@ -339,7 +385,7 @@ export function LabeledBassStaff() {
           const labelY = labelAbove ? cy - 16 : cy + 22
 
           return (
-            <g key={n.name}>
+            <g key={n.pos}>
               {n.pos === -2 && (
                 <line x1={cx - 13} y1={cy} x2={cx + 13} y2={cy} stroke={DARK} strokeWidth={STROKE_W} />
               )}

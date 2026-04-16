@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -42,7 +42,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Reading notes in the upper staff',
     description: "The treble clef anchors G on the second line. Working outward from that anchor, every line and space has a letter name from A through G that cycles endlessly. Lines bottom to top: E G B D F. Spaces bottom to top: F A C E.",
     type: 'lesson',
-    tool: 'staff-note-quiz',
+    tool: 'treble-clef-lesson',
     unlockAfter: 'line-space-notes',
     passingScore: 0.8,
   },

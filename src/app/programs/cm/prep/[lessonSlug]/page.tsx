@@ -18,6 +18,7 @@ import MCQuiz from '@/components/programs/cm-prep/MCQuiz'
 import StaffNoteQuiz from '@/components/programs/cm-prep/StaffNoteQuiz'
 import LineSpaceQuiz from '@/components/programs/cm-prep/LineSpaceQuiz'
 import FlashSession from '@/components/programs/cm-prep/FlashSession'
+import TrebleClefLesson from '@/components/programs/cm-prep/TrebleClefLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -167,18 +168,36 @@ export default function CMPrepLessonPage({ params }: Props) {
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: ACCENT, marginBottom: '12px' }}>
               Treble Staff
             </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 6px', lineHeight: 1.6 }}>
-              <strong>Lines</strong> (bottom to top): E G B D F
-            </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 14px', fontStyle: 'italic' }}>
-              "Every Good Boy Does Fine"
-            </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 6px', lineHeight: 1.6 }}>
-              <strong>Spaces</strong> (bottom to top): F A C E
-            </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0, fontStyle: 'italic' }}>
-              "FACE"
-            </p>
+            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' as const }}>
+              <div style={{ flex: 1, minWidth: 160 }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Lines</strong> (5 staff lines): E G B D F
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 14px', fontStyle: 'italic' }}>
+                  "Every Good Boy Does Fine"
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Spaces</strong> (4 inner spaces): F A C E
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0, fontStyle: 'italic' }}>
+                  "FACE"
+                </p>
+              </div>
+              <div style={{ flex: 1, minWidth: 160, borderLeft: `1px solid ${ACCENT_BORDER}`, paddingLeft: '24px' }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Lines</strong> (incl. ledger lines): C E G B D F A
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 14px', fontStyle: 'italic' }}>
+                  "Can Every Good Boy Do Fine Always"
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Spaces</strong> (incl. boundary spaces): D F A C E G
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0, fontStyle: 'italic' }}>
+                  "Do Funny Animals Come Every Game"
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -211,6 +230,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                   Practice
                 </p>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', marginBottom: '20px', lineHeight: 1.6 }}>
+                  {lesson.tool === 'treble-clef-lesson' && 'Six exercises: name and place space notes, name and place line notes, then read notes that spell words.'}
                   {lesson.tool === 'line-space-lesson' && 'Five exercises: identify line and space notes, classify notes, and draw notes on the staff.'}
                   {lesson.tool === 'grand-staff-lesson' && 'Three exercises: identify missing parts, build the grand staff, and match symbols to names.'}
                   {lesson.tool === 'staff-note-quiz' && 'Identify notes on the staff. A new set of notes will be shown each session.'}
@@ -233,7 +253,12 @@ export default function CMPrepLessonPage({ params }: Props) {
             ) : (
               <>
                 {/* Active quiz */}
-                {lesson.tool === 'line-space-lesson' ? (
+                {lesson.tool === 'treble-clef-lesson' ? (
+                  <TrebleClefLesson
+                    passingScore={lesson.passingScore}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'line-space-lesson' ? (
                   <LineSpaceLesson
                     passingScore={lesson.passingScore}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
