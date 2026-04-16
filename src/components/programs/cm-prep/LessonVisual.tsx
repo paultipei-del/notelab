@@ -56,22 +56,7 @@ export default function LessonVisual({ lessonSlug }: Props) {
 function getVisual(slug: string) {
   switch (slug) {
     case 'grand-staff':
-      return (
-        <div>
-          <InteractiveGrandStaff showModeToggle={false} />
-          <div style={{ marginTop: '16px', textAlign: 'right' }}>
-            <Link href="/programs/cm/prep/grand-staff/explore" style={{ textDecoration: 'none' }}>
-              <span style={{
-                fontFamily: 'var(--font-jost), sans-serif', fontSize: 12,
-                color: '#BA7517', borderBottom: '1px solid rgba(186,117,23,0.3)',
-                paddingBottom: 1,
-              }}>
-                Open full explorer →
-              </span>
-            </Link>
-          </div>
-        </div>
-      )
+      return <InteractiveGrandStaff />
     case 'line-space-notes':
       return <LineSpaceDiagram />
     case 'treble-clef-notes':

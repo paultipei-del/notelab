@@ -43,6 +43,12 @@ const ELEMENTS = [
     shortDesc: 'The space between two bar lines',
     fullDesc: 'A measure (also called a bar) is the musical space between two bar lines. It holds a fixed number of beats determined by the time signature at the start of the piece. Every measure in a piece contains exactly the same number of beats — this regularity is what gives music its rhythmic structure.',
   },
+  {
+    id: 6 as const,
+    label: 'Double bar',
+    shortDesc: 'Thin + thick line marking the end of a section or piece',
+    fullDesc: 'The double bar line consists of a thin line followed by a thick line. It appears at the end of a section, a movement, or the entire piece. The thick bar signals finality — this is where the music ends. A double bar with repeat dots has a different meaning (go back and play again), but the plain double bar always means the end.',
+  },
 ] as const
 
 type ElementId = typeof ELEMENTS[number]['id']
@@ -173,23 +179,23 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
     return 'transparent'
   }
 
-  // Layout — scaled from GrandStaffCard (step=6) to step=10, factor ≈ 1.667
-  const step = 10
+  // Layout — step=10; wider viewBox (sR=480) makes everything appear smaller at same display width
+  const step = 7
   const sL = 76      // staffLeft: gives room for numbers + brace on left
-  const sR = 430
-  const tTop = 60    // treble top line
-  const bTop = tTop + 8 * step + 52  // bass top line — 172
-  const bBot = bTop + 8 * step        // bass bottom — 252
+  const sR = 480
+  const tTop = 34    // treble top line
+  const bTop = tTop + 8 * step + 72  // bass top line — more space between staffs
+  const bBot = bTop + 8 * step
 
   const numX = 28    // x for line number badges
 
   const tLines = [0, 2, 4, 6, 8].map(p => tTop + p * step)
   const bLines = [0, 2, 4, 6, 8].map(p => bTop + p * step)
 
-  const barX = 256
+  const barX = 286
 
   const W = sR + 20
-  const H = bBot + 32
+  const H = bBot + 48
 
   const activeEl = ELEMENTS.find(e => e.id === active)
   const quizTarget = !quizDone && mode === 'quiz' ? ELEMENTS.find(e => e.id === quizOrder[quizIdx]) : null
@@ -228,6 +234,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
         <div style={{
           background: 'white', border: '1px solid #E8E4DC',
           borderRadius: '14px', padding: '18px 22px', marginBottom: '16px',
+          minHeight: '110px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
             <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
@@ -304,10 +311,21 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
           {/* Left connecting bar */}
           <line x1={sL} y1={tTop} x2={sL} y2={bBot} stroke={DARK} strokeWidth={2} />
 
-          {/* End double bar */}
-          <line x1={sR - 3} y1={tTop} x2={sR - 3} y2={tLines[4]} stroke={DARK} strokeWidth={STROKE_W} />
-          <line x1={sR - 3} y1={bTop} x2={sR - 3} y2={bLines[4]} stroke={DARK} strokeWidth={STROKE_W} />
-          <line x1={sR} y1={tTop} x2={sR} y2={bLines[4]} stroke={DARK} strokeWidth={3.5} />
+          {/* ── Element 6: Double bar ── */}
+          <g
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleClick(6)}
+            onMouseEnter={() => setHovered(6)}
+            onMouseLeave={() => setHovered(null)}
+          >
+            {elHighlight(6) && (
+              <rect x={sR - 22} y={tTop - 8} width={30} height={bBot - tTop + 16} rx={6}
+                fill={elHighlightBg(6)} stroke={elHighlightStroke(6)} strokeWidth={1.5} />
+            )}
+            <line x1={sR - 7} y1={tTop} x2={sR - 7} y2={bBot} stroke={elFill(6)} strokeWidth={STROKE_W} />
+            <line x1={sR} y1={tTop} x2={sR} y2={bBot} stroke={elFill(6)} strokeWidth={5} />
+            <rect x={sR - 22} y={tTop - 8} width={30} height={bBot - tTop + 16} fill="transparent" />
+          </g>
 
           {/* ── Element 1: Brace ── */}
           <g
@@ -317,15 +335,15 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
             onMouseLeave={() => setHovered(null)}
           >
             {elHighlight(1) && (
-              <rect x={4} y={tTop - 10} width={sL - 8} height={bBot - tTop + 20} rx={8}
+              <rect x={40} y={tTop - 10} width={sL - 38} height={bBot - tTop + 20} rx={8}
                 fill={elHighlightBg(1)} stroke={elHighlightStroke(1)} strokeWidth={1.5} />
             )}
-            <text x={sL - 8} y={tTop + (bBot - tTop)} fontSize={bBot - tTop}
+            <text x={sL - 10} y={tTop + (bBot - tTop)} fontSize={bBot - tTop}
               fontFamily="Bravura, serif" fill={elFill(1)} textAnchor="middle" dominantBaseline="auto">
               {'\uE000'}
             </text>
-            {/* Hit zone — stops before numX area so line numbers are reachable */}
-            <rect x={sL - 28} y={tTop - 10} width={28} height={bBot - tTop + 20} fill="transparent" />
+            {/* Hit zone — extends to left edge so badge 1 is clickable */}
+            <rect x={2} y={tTop - 10} width={sL - 4} height={bBot - tTop + 20} fill="transparent" />
           </g>
 
           {/* ── Element 2: Treble clef ── */}
@@ -337,12 +355,12 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
             onMouseLeave={() => setHovered(null)}
           >
             {elHighlight(2) && (
-              <rect x={sL + 1} y={tTop - 12} width={66} height={8 * step + 22} rx={8}
+              <rect x={sL + 1} y={tTop - 22} width={78} height={8 * step + 46} rx={8}
                 fill={elHighlightBg(2)} stroke={elHighlightStroke(2)} strokeWidth={1.5} />
             )}
-            <text x={sL + 2} y={tTop + 60} fontFamily="Bravura, serif" fontSize={84}
+            <text x={sL + 6} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={56}
               fill={elFill(2)} dominantBaseline="auto">𝄞</text>
-            <rect x={sL + 1} y={tTop - 12} width={66} height={8 * step + 22} fill="transparent" />
+            <rect x={sL + 1} y={tTop - 22} width={78} height={8 * step + 46} fill="transparent" />
           </g>
 
           {/* ── Element 3: Bass clef ── */}
@@ -354,12 +372,12 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
             onMouseLeave={() => setHovered(null)}
           >
             {elHighlight(3) && (
-              <rect x={sL + 1} y={bTop - 8} width={66} height={8 * step + 16} rx={8}
+              <rect x={sL + 1} y={bTop - 18} width={78} height={8 * step + 40} rx={8}
                 fill={elHighlightBg(3)} stroke={elHighlightStroke(3)} strokeWidth={1.5} />
             )}
-            <text x={sL + 2} y={bTop + 22} fontFamily="Bravura, serif" fontSize={88}
+            <text x={sL + 6} y={bTop + 2 * step + 1} fontFamily="Bravura, serif" fontSize={56}
               fill={elFill(3)} dominantBaseline="auto">𝄢</text>
-            <rect x={sL + 1} y={bTop - 8} width={66} height={8 * step + 16} fill="transparent" />
+            <rect x={sL + 1} y={bTop - 18} width={78} height={8 * step + 40} fill="transparent" />
           </g>
 
           {/* ── Element 4: Bar line ── */}
@@ -373,8 +391,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               <rect x={barX - 18} y={tTop - 8} width={36} height={bBot - tTop + 16} rx={6}
                 fill={elHighlightBg(4)} stroke={elHighlightStroke(4)} strokeWidth={1.5} />
             )}
-            <line x1={barX} y1={tTop} x2={barX} y2={tLines[4]} stroke={elFill(4)} strokeWidth={2} />
-            <line x1={barX} y1={bTop} x2={barX} y2={bLines[4]} stroke={elFill(4)} strokeWidth={2} />
+            <line x1={barX} y1={tTop} x2={barX} y2={bBot} stroke={elFill(4)} strokeWidth={2} />
             <rect x={barX - 18} y={tTop - 8} width={36} height={bBot - tTop + 16} fill="transparent" />
           </g>
 
@@ -386,20 +403,26 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
             onMouseLeave={() => setHovered(null)}
           >
             {elHighlight(5) && (
-              <rect x={sL + 70} y={tTop - 8} width={barX - sL - 88} height={bBot - tTop + 16} rx={6}
-                fill={elHighlightBg(5)} stroke={elHighlightStroke(5)} strokeWidth={1.5} />
+              <>
+                <rect x={sL + 70} y={tTop - 8} width={barX - sL - 88} height={bBot - tTop + 16} rx={6}
+                  fill={elHighlightBg(5)} stroke={elHighlightStroke(5)} strokeWidth={1.5} />
+                <rect x={barX + 18} y={tTop - 8} width={sR - barX - 40} height={bBot - tTop + 16} rx={6}
+                  fill={elHighlightBg(5)} stroke={elHighlightStroke(5)} strokeWidth={1.5} />
+              </>
             )}
             <rect x={sL + 70} y={tTop - 8} width={barX - sL - 88} height={bBot - tTop + 16} fill="transparent" />
+            <rect x={barX + 18} y={tTop - 8} width={sR - barX - 40} height={bBot - tTop + 16} fill="transparent" />
           </g>
 
           {/* Callout badges — explore mode only */}
           {mode === 'explore' && ELEMENTS.map(el => {
             const positions: Record<number, [number, number]> = {
-              1: [sL - 20, tTop + (bBot - tTop) / 2],
-              2: [sL + 34, tTop - 20],
-              3: [sL + 34, bTop - 20],
-              4: [barX, bLines[4] + 22],
-              5: [(sL + 70 + barX - 18) / 2, bLines[4] + 22],
+              1: [43, tTop + (bBot - tTop) / 2],          // brace: between line circles and brace glyph
+              2: [sL + 62, tTop + 4 * step],              // treble: right of clef, mid-height
+              3: [sL + 62, bTop + 4 * step],              // bass: right of clef, mid-height
+              4: [barX, bLines[4] + 23],
+              5: [(sL + 70 + barX - 18) / 2, bLines[4] + 23],
+              6: [sR - 3, bLines[4] + 23],
             }
             const [cx, cy] = positions[el.id]
             const isActive = active === el.id
@@ -530,17 +553,17 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
         }}>
           <div style={{
             width: 72, height: 72, borderRadius: '50%', margin: '0 auto 16px',
-            background: correctCount === 5 ? 'rgba(42,107,30,0.10)' : 'rgba(186,117,23,0.10)',
-            border: `2px solid ${correctCount === 5 ? 'rgba(42,107,30,0.3)' : 'rgba(186,117,23,0.3)'}`,
+            background: correctCount === ELEMENTS.length ? 'rgba(42,107,30,0.10)' : 'rgba(186,117,23,0.10)',
+            border: `2px solid ${correctCount === ELEMENTS.length ? 'rgba(42,107,30,0.3)' : 'rgba(186,117,23,0.3)'}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
           }}>
-            {correctCount === 5 ? '✓' : `${correctCount}/5`}
+            {correctCount === ELEMENTS.length ? '✓' : `${correctCount}/${ELEMENTS.length}`}
           </div>
           <p style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 300, color: DARK, marginBottom: 6 }}>
-            {correctCount === 5 ? 'All correct' : `${correctCount} of 5 correct`}
+            {correctCount === ELEMENTS.length ? 'All correct' : `${correctCount} of ${ELEMENTS.length} correct`}
           </p>
           <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 24 }}>
-            {correctCount === 5 ? 'You can identify every part of the grand staff.' : 'Review the highlighted parts and try again.'}
+            {correctCount === ELEMENTS.length ? 'You can identify every part of the grand staff.' : 'Review the highlighted parts and try again.'}
           </p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={startQuiz} style={{
