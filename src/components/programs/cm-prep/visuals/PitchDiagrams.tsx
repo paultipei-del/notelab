@@ -135,60 +135,53 @@ export function AccidentalsDiagram() {
 
 // ── Lesson 6: Half Steps and Whole Steps ──────────────────────────────────
 export function StepsDiagram() {
+  const [mode, setMode] = useState<PianoMode>('half-steps')
+
+  const tabs: { mode: PianoMode; symbol: string; label: string; color: string; desc: string }[] = [
+    { mode: 'half-steps',  symbol: 'H', label: 'Half Step',  color: SHARP_C, desc: 'Adjacent keys — no key between. The smallest distance in music.' },
+    { mode: 'whole-steps', symbol: 'W', label: 'Whole Step', color: FLAT_C,  desc: 'Skips exactly one key. Equal to two half steps.' },
+  ]
+
+  const active = tabs.find(t => t.mode === mode)!
+
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 480 220" width="100%" style={{ maxWidth: 480, display: 'block', margin: '0 auto' }}>
+    <div>
+      {/* Toggle buttons */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        {tabs.map(t => {
+          const isActive = t.mode === mode
+          return (
+            <button
+              key={t.mode}
+              onClick={() => setMode(t.mode)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 16px',
+                background: isActive ? DARK : 'transparent',
+                border: `1px solid ${isActive ? DARK : '#DDD8CA'}`,
+                borderRadius: 10,
+                fontFamily: F, fontSize: 13, fontWeight: isActive ? 600 : 400,
+                color: isActive ? 'white' : '#7A7060',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+            >
+              <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: 18, lineHeight: 1, color: isActive ? 'white' : t.color }}>
+                {t.symbol}
+              </span>
+              {t.label}
+            </button>
+          )
+        })}
+      </div>
 
-        {/* === HALF STEP: E to F === */}
-        <text x={20} y={22} fontFamily={F} fontSize={11} fill={DARK} fontWeight="600">Half Step — no key between</text>
+      {/* Description */}
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 14, lineHeight: 1.6 }}>
+        {active.desc}
+      </p>
 
-        {/* Show C–E range, highlight E and F */}
-        <PianoOctave ox={20} oy={30}
-          states={{ E: 'a', F: 'b' }}
-          labels={{ C: 'C', D: 'D', E: 'E', F: 'F', G: 'G' }}
-        />
-
-        {/* Bracket under E and F */}
-        <line x1={20 + WHITE_X['E'] * WK_W + 1} y1={30 + WK_H + 6} x2={20 + WHITE_X['F'] * WK_W + WK_W - 1} y2={30 + WK_H + 6}
-          stroke={ACCENT} strokeWidth={1.5} />
-        <line x1={20 + WHITE_X['E'] * WK_W + 1} y1={30 + WK_H + 3} x2={20 + WHITE_X['E'] * WK_W + 1} y2={30 + WK_H + 9}
-          stroke={ACCENT} strokeWidth={1.5} />
-        <line x1={20 + WHITE_X['F'] * WK_W + WK_W - 1} y1={30 + WK_H + 3} x2={20 + WHITE_X['F'] * WK_W + WK_W - 1} y2={30 + WK_H + 9}
-          stroke={ACCENT} strokeWidth={1.5} />
-        <text x={20 + (WHITE_X['E'] + WHITE_X['F'] + 1) * WK_W / 2} y={30 + WK_H + 22}
-          fontFamily={F} fontSize={10} fill={ACCENT} textAnchor="middle">½ step — adjacent keys</text>
-
-        {/* Note: B→C is also a half step */}
-        <text x={20} y={30 + WK_H + 40} fontFamily={F} fontSize={10} fill={GREY}>Also: B → C is a half step (no black key between them)</text>
-
-        {/* === WHOLE STEP: C to D === */}
-        <text x={260} y={22} fontFamily={F} fontSize={11} fill={DARK} fontWeight="600">Whole Step — one key between</text>
-
-        <PianoOctave ox={260} oy={30}
-          states={{ C: 'a', D: 'b', 'C#': 'dim' }}
-          labels={{ C: 'C', D: 'D', E: 'E', 'C#': '(skip)' }}
-        />
-
-        {/* Bracket under C and D */}
-        <line x1={260 + 1} y1={30 + WK_H + 6} x2={260 + WHITE_X['D'] * WK_W + WK_W - 1} y2={30 + WK_H + 6}
-          stroke={HIGHLIGHT_B} strokeWidth={1.5} />
-        <line x1={260 + 1} y1={30 + WK_H + 3} x2={260 + 1} y2={30 + WK_H + 9}
-          stroke={HIGHLIGHT_B} strokeWidth={1.5} />
-        <line x1={260 + WHITE_X['D'] * WK_W + WK_W - 1} y1={30 + WK_H + 3} x2={260 + WHITE_X['D'] * WK_W + WK_W - 1} y2={30 + WK_H + 9}
-          stroke={HIGHLIGHT_B} strokeWidth={1.5} />
-        <text x={260 + (WHITE_X['D'] + 1) * WK_W / 2} y={30 + WK_H + 22}
-          fontFamily={F} fontSize={10} fill={HIGHLIGHT_B} textAnchor="middle">whole step = 2 half steps</text>
-
-        {/* Summary box */}
-        <rect x={20} y={158} width={440} height={50} rx={10}
-          fill="rgba(186,117,23,0.07)" stroke="rgba(186,117,23,0.2)" strokeWidth={1} />
-        <text x={240} y={178} fontFamily={F} fontSize={11} fill={DARK} textAnchor="middle">
-          Half step (H) = 1 key apart
-        </text>
-        <text x={240} y={196} fontFamily={F} fontSize={11} fill={DARK} textAnchor="middle">
-          Whole step (W) = 2 half steps = 1 key skipped
-        </text>
-      </svg>
+      {/* Keyboard */}
+      <PianoKeyboard mode={mode} />
     </div>
   )
 }
