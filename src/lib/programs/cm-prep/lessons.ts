@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -53,7 +53,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Reading notes in the lower staff',
     description: "The bass clef anchors F on the fourth line. Lines bottom to top: G B D F A. Spaces bottom to top: A C E G. Middle C sits just above the bass staff on its own short ledger line — it is the same C that sits just below the treble staff.",
     type: 'lesson',
-    tool: 'staff-note-quiz',
+    tool: 'bass-clef-lesson',
     unlockAfter: 'treble-clef-notes',
     passingScore: 0.8,
   },
@@ -75,7 +75,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Modifying pitch with accidentals',
     description: "A sharp (♯) raises a note by one half step — one key to the right on the piano. A flat (♭) lowers it by one half step — one key to the left. A natural (♮) cancels any sharp or flat, returning the note to its unaltered pitch for the rest of the measure.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'sharps-flats-lesson',
     unlockAfter: 'review-letter-names',
     passingScore: 0.8,
   },
@@ -86,7 +86,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'The building blocks of scales and patterns',
     description: "A half step is the smallest distance in Western music — from one key to the immediately adjacent key, with no keys between them. A whole step is exactly two half steps wide, skipping over one key. These two distances are the ingredients of every scale, pattern, and chord you will play.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'half-whole-lesson',
     unlockAfter: 'sharps-flats-naturals',
     passingScore: 0.8,
   },

@@ -19,6 +19,9 @@ import StaffNoteQuiz from '@/components/programs/cm-prep/StaffNoteQuiz'
 import LineSpaceQuiz from '@/components/programs/cm-prep/LineSpaceQuiz'
 import FlashSession from '@/components/programs/cm-prep/FlashSession'
 import TrebleClefLesson from '@/components/programs/cm-prep/TrebleClefLesson'
+import BassClefLesson from '@/components/programs/cm-prep/BassClefLesson'
+import SharpsFlatsLesson from '@/components/programs/cm-prep/SharpsFlatsLesson'
+import HalfWholeStepsLesson from '@/components/programs/cm-prep/HalfWholeStepsLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -206,18 +209,36 @@ export default function CMPrepLessonPage({ params }: Props) {
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: ACCENT, marginBottom: '12px' }}>
               Bass Staff
             </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 6px', lineHeight: 1.6 }}>
-              <strong>Lines</strong> (bottom to top): G B D F A
-            </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 14px', fontStyle: 'italic' }}>
-              "Good Boys Do Fine Always"
-            </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 6px', lineHeight: 1.6 }}>
-              <strong>Spaces</strong> (bottom to top): A C E G
-            </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0, fontStyle: 'italic' }}>
-              "All Cows Eat Grass"
-            </p>
+            <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' as const }}>
+              <div style={{ flex: 1, minWidth: 160 }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Lines</strong> (5 staff lines): G B D F A
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 14px', fontStyle: 'italic' }}>
+                  "Good Boys Do Fine Always"
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Spaces</strong> (4 inner spaces): A C E G
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0, fontStyle: 'italic' }}>
+                  "All Cows Eat Grass"
+                </p>
+              </div>
+              <div style={{ flex: 1, minWidth: 160, borderLeft: `1px solid ${ACCENT_BORDER}`, paddingLeft: '24px' }}>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Lines</strong> (incl. ledger lines): E G B D F A C
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 14px', fontStyle: 'italic' }}>
+                  "Every Good Boy Deserves Fudge And Candy"
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', margin: '0 0 4px', lineHeight: 1.6 }}>
+                  <strong>Spaces</strong> (incl. boundary spaces): F A C E G B
+                </p>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0, fontStyle: 'italic' }}>
+                  "Fat Alligators Can Eat Giant Bugs"
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -231,12 +252,14 @@ export default function CMPrepLessonPage({ params }: Props) {
                 </p>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', marginBottom: '20px', lineHeight: 1.6 }}>
                   {lesson.tool === 'treble-clef-lesson' && 'Six exercises: name and place space notes, name and place line notes, then read notes that spell words.'}
+                  {lesson.tool === 'bass-clef-lesson' && 'Six exercises: name and place space notes, name and place line notes, then read notes that spell words.'}
                   {lesson.tool === 'line-space-lesson' && 'Five exercises: identify line and space notes, classify notes, and draw notes on the staff.'}
                   {lesson.tool === 'grand-staff-lesson' && 'Three exercises: identify missing parts, build the grand staff, and match symbols to names.'}
                   {lesson.tool === 'staff-note-quiz' && 'Identify notes on the staff. A new set of notes will be shown each session.'}
                   {lesson.tool === 'line-space-quiz' && 'Look at each note on the treble staff and decide whether it sits on a line or in a space.'}
                   {lesson.tool === 'mc-quiz' && 'Answer multiple-choice questions about the concepts in this lesson.'}
                   {lesson.tool === 'mixed-quiz' && 'A mixed set of questions drawing from all topics covered so far.'}
+                  {lesson.tool === 'half-whole-lesson' && 'Four exercises: find half and whole steps on the keyboard, identify step types from letter names, and read steps on the staff.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -253,7 +276,12 @@ export default function CMPrepLessonPage({ params }: Props) {
             ) : (
               <>
                 {/* Active quiz */}
-                {lesson.tool === 'treble-clef-lesson' ? (
+                {lesson.tool === 'bass-clef-lesson' ? (
+                  <BassClefLesson
+                    passingScore={lesson.passingScore}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'treble-clef-lesson' ? (
                   <TrebleClefLesson
                     passingScore={lesson.passingScore}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
@@ -287,6 +315,16 @@ export default function CMPrepLessonPage({ params }: Props) {
                     pool={LINE_SPACE_POOL}
                     passingScore={lesson.passingScore}
                     accentColor={ACCENT}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'sharps-flats-lesson' ? (
+                  <SharpsFlatsLesson
+                    passingScore={lesson.passingScore}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'half-whole-lesson' ? (
+                  <HalfWholeStepsLesson
+                    passingScore={lesson.passingScore}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'flash-session' ? (

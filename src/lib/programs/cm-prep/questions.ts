@@ -197,37 +197,42 @@ export interface StaffNoteItem {
   note: string
   clef: 'treble' | 'bass'
   answer: string  // letter name only (A–G)
+  pos: number     // staff position 0–12 (posToY system)
 }
 
-// Treble: C4 (middle C ledger), D4–G5 (all natural, no ledger except C4)
+// Treble pos: 0=C4 ledger, 1=D4, 2=E4, 3=F4, 4=G4, 5=A4, 6=B4,
+//             7=C5, 8=D5, 9=E5, 10=F5, 11=G5
 export const TREBLE_NOTE_POOL: StaffNoteItem[] = [
-  { note: 'C4', clef: 'treble', answer: 'C' },
-  { note: 'D4', clef: 'treble', answer: 'D' },
-  { note: 'E4', clef: 'treble', answer: 'E' },
-  { note: 'F4', clef: 'treble', answer: 'F' },
-  { note: 'G4', clef: 'treble', answer: 'G' },
-  { note: 'A4', clef: 'treble', answer: 'A' },
-  { note: 'B4', clef: 'treble', answer: 'B' },
-  { note: 'C5', clef: 'treble', answer: 'C' },
-  { note: 'D5', clef: 'treble', answer: 'D' },
-  { note: 'E5', clef: 'treble', answer: 'E' },
-  { note: 'F5', clef: 'treble', answer: 'F' },
-  { note: 'G5', clef: 'treble', answer: 'G' },
+  { note: 'C4', clef: 'treble', answer: 'C', pos: 0  },
+  { note: 'D4', clef: 'treble', answer: 'D', pos: 1  },
+  { note: 'E4', clef: 'treble', answer: 'E', pos: 2  },
+  { note: 'F4', clef: 'treble', answer: 'F', pos: 3  },
+  { note: 'G4', clef: 'treble', answer: 'G', pos: 4  },
+  { note: 'A4', clef: 'treble', answer: 'A', pos: 5  },
+  { note: 'B4', clef: 'treble', answer: 'B', pos: 6  },
+  { note: 'C5', clef: 'treble', answer: 'C', pos: 7  },
+  { note: 'D5', clef: 'treble', answer: 'D', pos: 8  },
+  { note: 'E5', clef: 'treble', answer: 'E', pos: 9  },
+  { note: 'F5', clef: 'treble', answer: 'F', pos: 10 },
+  { note: 'G5', clef: 'treble', answer: 'G', pos: 11 },
 ]
 
-// Bass: G2–C4 (C4 = middle C on first ledger above bass staff)
+// Bass pos: 0=E2 (ledger below), 1=F2, 2=G2, 3=A2, 4=B2, 5=C3, 6=D3, 7=E3, 8=F3,
+//           9=G3, 10=A3, 11=B3, 12=C4 (Middle C ledger)
 export const BASS_NOTE_POOL: StaffNoteItem[] = [
-  { note: 'G2', clef: 'bass', answer: 'G' },
-  { note: 'A2', clef: 'bass', answer: 'A' },
-  { note: 'B2', clef: 'bass', answer: 'B' },
-  { note: 'C3', clef: 'bass', answer: 'C' },
-  { note: 'D3', clef: 'bass', answer: 'D' },
-  { note: 'E3', clef: 'bass', answer: 'E' },
-  { note: 'F3', clef: 'bass', answer: 'F' },
-  { note: 'G3', clef: 'bass', answer: 'G' },
-  { note: 'A3', clef: 'bass', answer: 'A' },
-  { note: 'B3', clef: 'bass', answer: 'B' },
-  { note: 'C4', clef: 'bass', answer: 'C' },
+  { note: 'E2', clef: 'bass', answer: 'E', pos: 0  },
+  { note: 'F2', clef: 'bass', answer: 'F', pos: 1  },
+  { note: 'G2', clef: 'bass', answer: 'G', pos: 2  },
+  { note: 'A2', clef: 'bass', answer: 'A', pos: 3  },
+  { note: 'B2', clef: 'bass', answer: 'B', pos: 4  },
+  { note: 'C3', clef: 'bass', answer: 'C', pos: 5  },
+  { note: 'D3', clef: 'bass', answer: 'D', pos: 6  },
+  { note: 'E3', clef: 'bass', answer: 'E', pos: 7  },
+  { note: 'F3', clef: 'bass', answer: 'F', pos: 8  },
+  { note: 'G3', clef: 'bass', answer: 'G', pos: 9  },
+  { note: 'A3', clef: 'bass', answer: 'A', pos: 10 },
+  { note: 'B3', clef: 'bass', answer: 'B', pos: 11 },
+  { note: 'C4', clef: 'bass', answer: 'C', pos: 12 },
 ]
 
 export const MIXED_NOTE_POOL: StaffNoteItem[] = [
