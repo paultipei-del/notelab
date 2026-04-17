@@ -1,5 +1,8 @@
 'use client'
 
+import { useState } from 'react'
+import { PianoKeyboard, type PianoMode } from '../PianoKeyboard'
+
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 const DARK = '#1A1A18'
@@ -78,63 +81,54 @@ function PianoOctave({
 
 // ── Lesson 5: Sharps, Flats, Naturals ─────────────────────────────────────
 export function AccidentalsDiagram() {
-  const octW = 7 * WK_W  // 154px per octave
+  const [mode, setMode] = useState<PianoMode>('sharps')
+
+  const tabs: { mode: PianoMode; symbol: string; label: string; color: string; desc: string }[] = [
+    { mode: 'sharps',   symbol: '♯', label: 'Sharp',   color: SHARP_C, desc: 'Raises the note by one half step — one key to the right' },
+    { mode: 'flats',    symbol: '♭', label: 'Flat',    color: FLAT_C,  desc: 'Lowers the note by one half step — one key to the left'  },
+    { mode: 'naturals', symbol: '♮', label: 'Natural', color: NAT_C,   desc: 'Cancels any sharp or flat — returns to the white key'    },
+  ]
+
+  const active = tabs.find(t => t.mode === mode)!
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 500 200" width="100%" style={{ maxWidth: 500, display: 'block', margin: '0 auto' }}>
+    <div>
+      {/* Toggle buttons */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        {tabs.map(t => {
+          const isActive = t.mode === mode
+          return (
+            <button
+              key={t.mode}
+              onClick={() => setMode(t.mode)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 16px',
+                background: isActive ? DARK : 'transparent',
+                border: `1px solid ${isActive ? DARK : '#DDD8CA'}`,
+                borderRadius: 10,
+                fontFamily: F, fontSize: 13, fontWeight: isActive ? 600 : 400,
+                color: isActive ? 'white' : '#7A7060',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+            >
+              <span style={{ fontFamily: 'Bravura, serif', fontSize: 18, lineHeight: 1, color: isActive ? 'white' : t.color }}>
+                {t.symbol}
+              </span>
+              {t.label}
+            </button>
+          )
+        })}
+      </div>
 
-        {/* Piano keyboard */}
-        <PianoOctave ox={30} oy={30}
-          states={{ C: 'a', 'C#': 'b' }}
-          labels={{ C: 'C', D: 'D', 'C#': 'C♯/D♭' }}
-        />
+      {/* Description */}
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 14, lineHeight: 1.6 }}>
+        {active.desc}
+      </p>
 
-        {/* Sharp arrow: C → C# (raise) */}
-        <path d={`M ${30 + WK_W / 2} ${30 - 8} L ${30 + BLACK_X['C#'] + BK_W / 2} ${30 - 8}`}
-          stroke={SHARP_C} strokeWidth={1.5} fill="none" markerEnd="url(#arrowGreen)" />
-        <text x={(30 + WK_W / 2 + 30 + BLACK_X['C#'] + BK_W / 2) / 2} y={30 - 15}
-          fontFamily={F} fontSize={10} fill={SHARP_C} textAnchor="middle">♯ raises ½ step</text>
-
-        {/* Flat arrow: D → Db (lower) */}
-        <PianoOctave ox={220} oy={30}
-          states={{ D: 'a', 'C#': 'b' }}
-          labels={{ C: 'C', D: 'D', 'C#': 'D♭/C♯' }}
-        />
-        <path d={`M ${220 + WHITE_X['D'] * WK_W + WK_W / 2} ${30 - 8} L ${220 + BLACK_X['C#'] + BK_W / 2} ${30 - 8}`}
-          stroke={FLAT_C} strokeWidth={1.5} fill="none" markerEnd="url(#arrowBlue)" />
-        <text x={(220 + WHITE_X['D'] * WK_W + WK_W / 2 + 220 + BLACK_X['C#'] + BK_W / 2) / 2} y={30 - 15}
-          fontFamily={F} fontSize={10} fill={FLAT_C} textAnchor="middle">♭ lowers ½ step</text>
-
-        {/* Arrows defs */}
-        <defs>
-          <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6 Z" fill={SHARP_C} />
-          </marker>
-          <marker id="arrowBlue" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M0,0 L6,3 L0,6 Z" fill={FLAT_C} />
-          </marker>
-        </defs>
-
-        {/* Symbol reference row */}
-        {/* Sharp */}
-        <rect x={30} y={130} width={120} height={55} rx={10} fill="rgba(42,92,10,0.08)" stroke="rgba(42,92,10,0.2)" strokeWidth={1} />
-        <text x={90} y={150} fontFamily="Bravura, serif" fontSize={26} fill={SHARP_C} textAnchor="middle">&#x266F;</text>
-        <text x={90} y={170} fontFamily={F} fontSize={10} fill={SHARP_C} textAnchor="middle" fontWeight="600">Sharp (♯)</text>
-        <text x={90} y={182} fontFamily={F} fontSize={9} fill={SHARP_C} textAnchor="middle">Raises by a half step</text>
-
-        {/* Flat */}
-        <rect x={190} y={130} width={120} height={55} rx={10} fill="rgba(59,109,181,0.08)" stroke="rgba(59,109,181,0.2)" strokeWidth={1} />
-        <text x={250} y={152} fontFamily="Bravura, serif" fontSize={26} fill={FLAT_C} textAnchor="middle">&#x266D;</text>
-        <text x={250} y={170} fontFamily={F} fontSize={10} fill={FLAT_C} textAnchor="middle" fontWeight="600">Flat (♭)</text>
-        <text x={250} y={182} fontFamily={F} fontSize={9} fill={FLAT_C} textAnchor="middle">Lowers by a half step</text>
-
-        {/* Natural */}
-        <rect x={350} y={130} width={120} height={55} rx={10} fill="rgba(122,112,96,0.08)" stroke="rgba(122,112,96,0.2)" strokeWidth={1} />
-        <text x={410} y={153} fontFamily="Bravura, serif" fontSize={24} fill={NAT_C} textAnchor="middle">&#x266E;</text>
-        <text x={410} y={170} fontFamily={F} fontSize={10} fill={NAT_C} textAnchor="middle" fontWeight="600">Natural (♮)</text>
-        <text x={410} y={182} fontFamily={F} fontSize={9} fill={NAT_C} textAnchor="middle">Cancels sharp or flat</text>
-      </svg>
+      {/* Keyboard */}
+      <PianoKeyboard mode={mode} />
     </div>
   )
 }

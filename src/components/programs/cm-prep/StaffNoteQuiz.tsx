@@ -1,206 +1,744 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import StaffCard from '@/components/cards/StaffCard'
 import type { StaffNoteItem } from '@/lib/programs/cm-prep/questions'
 import { shuffle } from '@/lib/programs/cm-prep/questions'
 
-const F = 'var(--font-jost), sans-serif'
+const F     = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
+const DARK  = '#1A1A18'
+const GREY  = '#7A7060'
+const STROKE = 1.3
+
+const CORRECT_C = '#2A5C0A'
+const WRONG_C   = '#B5402A'
+const ACCENT_C  = '#BA7517'
+
+// ── Single-staff geometry (Parts 1 & 2) ───────────────────────────────────────
+const step  = 8
+const sL    = 32
+const sR    = 360
+const tTop  = 54
+const svgW  = sR + 16   // 376
+const svgH  = tTop + 8 * step + 54
+
+function posToY(pos: number)  { return tTop + (10 - pos) * step }
+function lineY(n: number)     { return tTop + (5 - n) * 2 * step }
+
+// ── Grand-staff geometry (Parts 3 & 4) ────────────────────────────────────────
+// Extra gap between staves so treble Middle C ledger and bass Middle C ledger
+// are visually distinct (each sits one step from its own staff, not overlapping).
+//   Treble Middle C: y = tTop_G + 10*step_G
+//   Bass   Middle C: y = bTop_G - 2*step_G
+//   Gap between them = bTop_G - tTop_G - 12*step_G = 4*step_G = 40px
+const step_G  = 10
+const tTop_G  = 30
+const GS_GAP  = 4 * step_G                       // 40px between the two Middle C ledgers
+const bTop_G  = tTop_G + 12 * step_G + GS_GAP    // = 30 + 120 + 40 = 190
+const gsW     = svgW
+const gsH     = bTop_G + 10 * step_G + 32        // = 322 (room for E2 ledger + padding)
+// Click boundary: midpoint between the two Middle C y positions
+const GS_MID  = tTop_G + 10 * step_G + GS_GAP / 2  // = 30+100+20 = 150
+
+function gsPosToY_T(pos: number) { return tTop_G + (10 - pos) * step_G }
+function gsPosToY_B(pos: number) { return bTop_G + (10 - pos) * step_G }
+function gsLineY_T(n: number)    { return tTop_G + (5 - n) * 2 * step_G }
+function gsLineY_B(n: number)    { return bTop_G + (5 - n) * 2 * step_G }
+
+// ── Octave label (kid-friendly, replaces note names like "B3") ────────────────
+// Treble: pos=0=C4 (Middle C), pos=1–6=treble octave, pos=7–11=high octave
+// Bass:   pos=0–4=low octave (E2–B2), pos=5–11=bass octave (C3–B3), pos=12=C4 (Middle C)
+function octaveLabel(item: StaffNoteItem): string {
+  const isMiddleC = (item.clef === 'treble' && item.pos === 0) ||
+                    (item.clef === 'bass'   && item.pos === 12)
+  if (isMiddleC) return 'Middle C'
+  if (item.clef === 'treble') return item.pos >= 7 ? 'Treble C' : 'Middle C range'
+  return item.pos <= 4 ? 'Low C' : 'Bass C'
+}
+
+// ── Shared primitives ─────────────────────────────────────────────────────────
+function BravuraNote({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
+  return (
+    <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={60}
+      fill={color} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
+  )
+}
+
+function LedgerLine({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
+  return <line x1={cx - 16} y1={cy} x2={cx + 16} y2={cy} stroke={color} strokeWidth={2.5} />
+}
+
+// ── Single-staff components ───────────────────────────────────────────────────
+function StaffBase() {
+  return (
+    <>
+      {[1,2,3,4,5].map(n => (
+        <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
+          stroke={DARK} strokeWidth={STROKE} />
+      ))}
+    </>
+  )
+}
+
+function TrebleClef() {
+  return (
+    <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
+      fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+  )
+}
+
+function BassClef() {
+  return (
+    <text x={sL + 4} y={tTop + 2 * step + 2} fontFamily="Bravura, serif" fontSize={66}
+      fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>
+  )
+}
+
+// Grand-staff note (slightly larger to match step_G=10)
+function GsBravuraNote({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
+  return (
+    <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={72}
+      fill={color} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
+  )
+}
+
+function GsLedgerLine({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
+  return <line x1={cx - 20} y1={cy} x2={cx + 20} y2={cy} stroke={color} strokeWidth={2.5} />
+}
+
+// ── Grand-staff SVG shell ─────────────────────────────────────────────────────
+function GrandStaffBase() {
+  const braceH = gsLineY_B(1) - tTop_G
+  const barBot = gsLineY_B(1)
+
+  return (
+    <>
+      {[1,2,3,4,5].map(n => (
+        <line key={`t${n}`} x1={sL} y1={gsLineY_T(n)} x2={sR} y2={gsLineY_T(n)}
+          stroke={DARK} strokeWidth={STROKE} />
+      ))}
+      {[1,2,3,4,5].map(n => (
+        <line key={`b${n}`} x1={sL} y1={gsLineY_B(n)} x2={sR} y2={gsLineY_B(n)}
+          stroke={DARK} strokeWidth={STROKE} />
+      ))}
+      <line x1={sL} y1={tTop_G} x2={sL} y2={barBot} stroke={DARK} strokeWidth={1.5} />
+      <line x1={sR} y1={tTop_G} x2={sR} y2={barBot} stroke={DARK} strokeWidth={STROKE} />
+      <text x={sL - 8} y={tTop_G + braceH} fontFamily="Bravura, serif" fontSize={braceH}
+        fill={DARK} textAnchor="middle" dominantBaseline="auto">{'\uE000'}</text>
+      {/* Treble clef — anchor at G line = tTop_G + 6*step_G */}
+      <text x={sL + 4} y={tTop_G + 6 * step_G} fontFamily="Bravura, serif" fontSize={72}
+        fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+      {/* Bass clef — anchor at F line = bTop_G + 2*step_G */}
+      <text x={sL + 4} y={bTop_G + 2 * step_G + 2} fontFamily="Bravura, serif" fontSize={78}
+        fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>
+    </>
+  )
+}
+
+// ── Progress bar ──────────────────────────────────────────────────────────────
+function ProgressBar({ done, total, color }: { done: number; total: number; color: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+      <div style={{ flex: 1, height: '4px', background: '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
+        <div style={{ width: `${(done / total) * 100}%`, height: '100%', background: color,
+          borderRadius: '2px', transition: 'width 0.3s' }} />
+      </div>
+      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', whiteSpace: 'nowrap' }}>
+        {done + 1} / {total}
+      </span>
+    </div>
+  )
+}
 
 const NOTE_NAMES = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
-interface Props {
-  pool: StaffNoteItem[]
-  sessionLength?: number
-  passingScore: number
-  accentColor?: string
-  onComplete: (score: number, total: number) => void
+// ── Phase config ──────────────────────────────────────────────────────────────
+type ExType = 'name' | 'place'
+interface PhaseConfig { type: ExType; label: string; grand: boolean }
+
+const PHASES: PhaseConfig[] = [
+  { type: 'name',  label: 'Part 1 — Name the note',  grand: false },
+  { type: 'place', label: 'Part 2 — Place the note',  grand: false },
+  { type: 'name',  label: 'Part 3 — Name the note',  grand: true  },
+  { type: 'place', label: 'Part 4 — Place the note',  grand: true  },
+]
+
+// ── Name exercise (single staff) ──────────────────────────────────────────────
+function NameExercise({
+  pool, sessionLength, accentColor, label, onDone,
+}: {
+  pool: StaffNoteItem[]; sessionLength: number; accentColor: string
+  label: string; onDone: (correct: number, total: number) => void
+}) {
+  const [items] = useState<StaffNoteItem[]>(() => {
+    const exp: StaffNoteItem[] = []
+    const reps = Math.ceil(sessionLength / pool.length) + 1
+    for (let i = 0; i < reps; i++) exp.push(...pool)
+    return shuffle(exp).slice(0, sessionLength)
+  })
+  const [idx,      setIdx]      = useState(0)
+  const [feedback, setFeedback] = useState<{ chosen: string; ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const item  = items[idx]
+  const total = items.length
+
+  function handlePick(name: string) {
+    if (lockedRef.current) return
+    lockedRef.current = true
+    const ok = name === item.answer
+    if (ok) correctRef.current += 1
+    setFeedback({ chosen: name, ok })
+    setTimeout(() => {
+      const next = idx + 1
+      if (next >= total) { onDone(correctRef.current, total); return }
+      setIdx(next); setFeedback(null); lockedRef.current = false
+    }, ok ? 1200 : 2000)
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{label}</p>
+      <ProgressBar done={idx} total={total} color={accentColor} />
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — name this note
+      </p>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+        <StaffCard note={item.note} clef={item.clef} />
+      </div>
+      <NameButtons feedback={feedback} answer={item.answer} onPick={handlePick} />
+    </div>
+  )
 }
 
+// ── Name exercise (grand staff) ───────────────────────────────────────────────
+function NameExerciseGrand({
+  pool, sessionLength, accentColor, label, onDone,
+}: {
+  pool: StaffNoteItem[]; sessionLength: number; accentColor: string
+  label: string; onDone: (correct: number, total: number) => void
+}) {
+  const [items] = useState<StaffNoteItem[]>(() => {
+    const exp: StaffNoteItem[] = []
+    const reps = Math.ceil(sessionLength / pool.length) + 1
+    for (let i = 0; i < reps; i++) exp.push(...pool)
+    return shuffle(exp).slice(0, sessionLength)
+  })
+  const [idx,      setIdx]      = useState(0)
+  const [feedback, setFeedback] = useState<{ chosen: string; ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const item  = items[idx]
+  const total = items.length
+
+  const cx   = gsW / 2
+  const isTreble = item.clef === 'treble'
+  const cy   = isTreble ? gsPosToY_T(item.pos) : gsPosToY_B(item.pos)
+  // Middle C: treble pos=0 or bass pos=12 — both share a single ledger between staves
+  const isMiddleC = (isTreble && item.pos === 0) || (!isTreble && item.pos === 12)
+  const isBassE2  = !isTreble && item.pos === 0
+
+  function handlePick(name: string) {
+    if (lockedRef.current) return
+    lockedRef.current = true
+    const ok = name === item.answer
+    if (ok) correctRef.current += 1
+    setFeedback({ chosen: name, ok })
+    setTimeout(() => {
+      const next = idx + 1
+      if (next >= total) { onDone(correctRef.current, total); return }
+      setIdx(next); setFeedback(null); lockedRef.current = false
+    }, ok ? 1200 : 2000)
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{label}</p>
+      <ProgressBar done={idx} total={total} color={accentColor} />
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        Grand staff — name this note
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 20 }}>
+        <svg viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
+          style={{ maxWidth: gsW, display: 'block', margin: '0 auto' }}>
+          <GrandStaffBase />
+          {isMiddleC && <GsLedgerLine cx={cx} cy={isTreble ? gsPosToY_T(0) : gsPosToY_B(12)} color={DARK} />}
+          {isBassE2  && <GsLedgerLine cx={cx} cy={gsPosToY_B(0)} color={DARK} />}
+          <GsBravuraNote cx={cx} cy={cy} color={DARK} />
+        </svg>
+      </div>
+
+      <NameButtons feedback={feedback} answer={item.answer} onPick={handlePick} />
+    </div>
+  )
+}
+
+// ── Place exercise (single staff) ─────────────────────────────────────────────
+function PlaceExercise({
+  pool, sessionLength, accentColor, label, onDone,
+}: {
+  pool: StaffNoteItem[]; sessionLength: number; accentColor: string
+  label: string; onDone: (correct: number, total: number) => void
+}) {
+  const [items] = useState<StaffNoteItem[]>(() => {
+    const exp: StaffNoteItem[] = []
+    const reps = Math.ceil(sessionLength / pool.length) + 1
+    for (let i = 0; i < reps; i++) exp.push(...pool)
+    return shuffle(exp).slice(0, sessionLength)
+  })
+  const [idx,       setIdx]       = useState(0)
+  const [placedPos, setPlacedPos] = useState<number | null>(null)
+  const [hoverPos,  setHoverPos]  = useState<number | null>(null)
+  const [submitted, setSubmitted] = useState(false)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const svgRef     = useRef<SVGSVGElement>(null)
+  const item    = items[idx]
+  const total   = items.length
+  const cx      = svgW / 2
+  const maxPos  = item.clef === 'treble' ? 11 : 12
+
+  function clientToPos(clientY: number): number | null {
+    const svg = svgRef.current
+    if (!svg) return null
+    const r   = svg.getBoundingClientRect()
+    const sy  = (clientY - r.top) / r.height * svgH
+    const pos = Math.round(10 - (sy - tTop) / step)
+    if (pos < 0 || pos > maxPos) return null
+    return pos
+  }
+
+  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    if (submitted) return
+    setHoverPos(clientToPos(e.clientY))
+  }
+
+  function onClick() {
+    if (lockedRef.current || hoverPos === null) return
+    lockedRef.current = true
+    const ok = hoverPos === item.pos
+    if (ok) correctRef.current += 1
+    setPlacedPos(hoverPos); setSubmitted(true)
+    setTimeout(() => {
+      const next = idx + 1
+      if (next >= total) { onDone(correctRef.current, total); return }
+      setIdx(next); setPlacedPos(null); setHoverPos(null)
+      setSubmitted(false); lockedRef.current = false
+    }, ok ? 1200 : 2000)
+  }
+
+  const isCorrect = submitted && placedPos === item.pos
+
+  const renderNote = (pos: number, color: string) => {
+    const cy = posToY(pos)
+    return (
+      <g>
+        {item.clef === 'treble' && pos === 0  && <LedgerLine cx={cx} cy={cy} color={color} />}
+        {item.clef === 'bass'   && pos === 0  && <LedgerLine cx={cx} cy={cy} color={color} />}
+        {item.clef === 'bass'   && pos === 12 && <LedgerLine cx={cx} cy={cy} color={color} />}
+        <BravuraNote cx={cx} cy={cy} color={color} />
+      </g>
+    )
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{label}</p>
+      <ProgressBar done={idx} total={total} color={accentColor} />
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place this note
+      </p>
+      <div style={{ textAlign: 'center', marginBottom: 12 }}>
+        <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
+          {item.answer}
+        </span>
+        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
+          <strong>{octaveLabel(item)}</strong> — click on the staff to place it
+        </p>
+      </div>
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 12 }}>
+        <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+          style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
+            cursor: submitted ? 'default' : 'crosshair' }}
+          onMouseMove={onMouseMove}
+          onMouseLeave={() => { if (!submitted) setHoverPos(null) }}
+          onClick={onClick}
+        >
+          <StaffBase />
+          <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+          <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
+          {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
+          {!submitted && hoverPos !== null && (
+            <g opacity={0.35}>{renderNote(hoverPos, ACCENT_C)}</g>
+          )}
+          {submitted && placedPos !== null &&
+            renderNote(placedPos, isCorrect ? CORRECT_C : WRONG_C)}
+          {submitted && !isCorrect && (
+            <g opacity={0.55}>{renderNote(item.pos, CORRECT_C)}</g>
+          )}
+        </svg>
+      </div>
+      <PlaceFeedback submitted={submitted} isCorrect={isCorrect} item={item} />
+    </div>
+  )
+}
+
+// ── Place exercise (grand staff) ──────────────────────────────────────────────
+function PlaceExerciseGrand({
+  pool, sessionLength, accentColor, label, onDone,
+}: {
+  pool: StaffNoteItem[]; sessionLength: number; accentColor: string
+  label: string; onDone: (correct: number, total: number) => void
+}) {
+  const [items] = useState<StaffNoteItem[]>(() => {
+    const exp: StaffNoteItem[] = []
+    const reps = Math.ceil(sessionLength / pool.length) + 1
+    for (let i = 0; i < reps; i++) exp.push(...pool)
+    return shuffle(exp).slice(0, sessionLength)
+  })
+  const [idx,        setIdx]        = useState(0)
+  const [placedClef, setPlacedClef] = useState<'treble' | 'bass' | null>(null)
+  const [placedPos,  setPlacedPos]  = useState<number | null>(null)
+  const [hoverClef,  setHoverClef]  = useState<'treble' | 'bass' | null>(null)
+  const [hoverPos,   setHoverPos]   = useState<number | null>(null)
+  const [submitted,  setSubmitted]  = useState(false)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const svgRef     = useRef<SVGSVGElement>(null)
+  const item  = items[idx]
+  const total = items.length
+  const cx    = gsW / 2
+
+  function clientToGrandPos(clientY: number): { clef: 'treble' | 'bass'; pos: number } | null {
+    const svg = svgRef.current
+    if (!svg) return null
+    const r   = svg.getBoundingClientRect()
+    const sy  = (clientY - r.top) / r.height * gsH
+
+    if (sy < GS_MID) {
+      const pos = Math.round(10 - (sy - tTop_G) / step_G)
+      if (pos < 0 || pos > 11) return null
+      return { clef: 'treble', pos }
+    } else {
+      const pos = Math.round(10 - (sy - bTop_G) / step_G)
+      if (pos < 0 || pos > 12) return null
+      return { clef: 'bass', pos }
+    }
+  }
+
+  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    if (submitted) return
+    const result = clientToGrandPos(e.clientY)
+    if (result) { setHoverClef(result.clef); setHoverPos(result.pos) }
+    else        { setHoverClef(null); setHoverPos(null) }
+  }
+
+  function onClick() {
+    if (lockedRef.current || hoverPos === null || hoverClef === null) return
+    lockedRef.current = true
+    const ok = hoverClef === item.clef && hoverPos === item.pos
+    if (ok) correctRef.current += 1
+    setPlacedClef(hoverClef); setPlacedPos(hoverPos); setSubmitted(true)
+    setTimeout(() => {
+      const next = idx + 1
+      if (next >= total) { onDone(correctRef.current, total); return }
+      setIdx(next)
+      setPlacedClef(null); setPlacedPos(null)
+      setHoverClef(null); setHoverPos(null)
+      setSubmitted(false); lockedRef.current = false
+    }, ok ? 1200 : 2000)
+  }
+
+  const isCorrect = submitted && placedClef === item.clef && placedPos === item.pos
+
+  const renderGsNote = (clef: 'treble' | 'bass', pos: number, color: string) => {
+    const cy = clef === 'treble' ? gsPosToY_T(pos) : gsPosToY_B(pos)
+    const isMiddleC = (clef === 'treble' && pos === 0) || (clef === 'bass' && pos === 12)
+    const isBassE2  = clef === 'bass' && pos === 0
+    return (
+      <g>
+        {isMiddleC && <GsLedgerLine cx={cx} cy={clef === 'treble' ? gsPosToY_T(0) : gsPosToY_B(12)} color={color} />}
+        {isBassE2  && <GsLedgerLine cx={cx} cy={gsPosToY_B(0)} color={color} />}
+        <GsBravuraNote cx={cx} cy={cy} color={color} />
+      </g>
+    )
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{label}</p>
+      <ProgressBar done={idx} total={total} color={accentColor} />
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        Grand staff — place this note
+      </p>
+      <div style={{ textAlign: 'center', marginBottom: 12 }}>
+        <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
+          {item.answer}
+        </span>
+        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
+          <strong>{octaveLabel(item)}</strong> — click on the grand staff to place it
+        </p>
+      </div>
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 12 }}>
+        <svg ref={svgRef} viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
+          style={{ maxWidth: gsW, display: 'block', margin: '0 auto',
+            cursor: submitted ? 'default' : 'crosshair' }}
+          onMouseMove={onMouseMove}
+          onMouseLeave={() => { if (!submitted) { setHoverClef(null); setHoverPos(null) } }}
+          onClick={onClick}
+        >
+          <GrandStaffBase />
+          {/* Ghost */}
+          {!submitted && hoverClef !== null && hoverPos !== null && (
+            <g opacity={0.35}>{renderGsNote(hoverClef, hoverPos, ACCENT_C)}</g>
+          )}
+          {/* Placed */}
+          {submitted && placedClef !== null && placedPos !== null &&
+            renderGsNote(placedClef, placedPos, isCorrect ? CORRECT_C : WRONG_C)}
+          {/* Correct hint on wrong */}
+          {submitted && !isCorrect && (
+            <g opacity={0.55}>{renderGsNote(item.clef, item.pos, CORRECT_C)}</g>
+          )}
+        </svg>
+      </div>
+      <PlaceFeedback submitted={submitted} isCorrect={isCorrect} item={item} />
+    </div>
+  )
+}
+
+// ── Shared sub-components ─────────────────────────────────────────────────────
+function NameButtons({
+  feedback, answer, onPick,
+}: {
+  feedback: { chosen: string; ok: boolean } | null
+  answer: string
+  onPick: (name: string) => void
+}) {
+  return (
+    <>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', marginBottom: '16px' }}>
+        {NOTE_NAMES.map(name => {
+          const isChosen = feedback?.chosen === name
+          const isAnswer = name === answer
+          let bg = 'white', border = '#DDD8CA', color = '#2A2318'
+          if (feedback) {
+            if (isAnswer)      { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
+            else if (isChosen) { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
+          }
+          return (
+            <button key={name} onClick={() => onPick(name)} style={{
+              background: bg, border: `1px solid ${border}`, borderRadius: '10px',
+              padding: '14px 4px', fontFamily: SERIF, fontSize: '20px', fontWeight: 400,
+              color, cursor: feedback ? 'default' : 'pointer',
+              transition: 'border-color 0.12s, background 0.12s',
+            }}>{name}</button>
+          )
+        })}
+      </div>
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060',
+        margin: 0, minHeight: '1.5em' }}>
+        {feedback && !feedback.ok && (
+          <>Correct answer: <strong style={{ color: '#2A5C0A' }}>{answer}</strong></>
+        )}
+      </p>
+    </>
+  )
+}
+
+function PlaceFeedback({ submitted, isCorrect, item }: {
+  submitted: boolean; isCorrect: boolean; item: StaffNoteItem
+}) {
+  return (
+    <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      color: submitted ? (isCorrect ? CORRECT_C : WRONG_C) : '#B0ACA4' }}>
+      {!submitted
+        ? 'Click on the staff to place the note'
+        : isCorrect
+          ? '✓ Correct'
+          : `✗ ${item.note} is ${item.pos % 2 === 0 ? 'on a line' : 'in a space'}`}
+    </p>
+  )
+}
+
+// ── Transition card ───────────────────────────────────────────────────────────
+function TransitionCard({
+  completedLabel, correct, total, nextLabel, nextType, nextGrand, onNext,
+}: {
+  completedLabel: string; correct: number; total: number
+  nextLabel: string; nextType: ExType; nextGrand: boolean; onNext: () => void
+}) {
+  const pct = Math.round((correct / total) * 100)
+  return (
+    <div style={{ textAlign: 'center', padding: '32px 0' }}>
+      <p style={{ fontFamily: F, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
+        color: '#B0ACA4', marginBottom: 8 }}>{completedLabel} complete</p>
+      <p style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 300, color: DARK, marginBottom: 4 }}>
+        {correct} / {total} — {pct}%
+      </p>
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 32 }}>
+        {nextType === 'place'
+          ? `Next: place each note on the ${nextGrand ? 'grand staff' : 'staff'}.`
+          : `Next: name each note on the ${nextGrand ? 'grand staff' : 'staff'}.`}
+      </p>
+      <button onClick={onNext} style={{
+        background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px',
+        padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
+      }}>
+        Start {nextLabel} →
+      </button>
+    </div>
+  )
+}
+
+// ── Results card ──────────────────────────────────────────────────────────────
+function ResultsCard({
+  scores, passingScore, onRestart,
+}: {
+  scores: { correct: number; total: number }[]
+  passingScore: number
+  onRestart: () => void
+}) {
+  const totalCorrect = scores.reduce((s, p) => s + p.correct, 0)
+  const total        = scores.reduce((s, p) => s + p.total,   0)
+  const pct          = Math.round((totalCorrect / total) * 100)
+  const passed       = pct / 100 >= passingScore
+
+  return (
+    <div style={{ textAlign: 'center', padding: '40px 0' }}>
+      <div style={{
+        width: '80px', height: '80px', borderRadius: '50%',
+        background: passed ? '#EAF3DE' : '#FDF3ED',
+        border: `2px solid ${passed ? '#C0DD97' : '#F0C4A8'}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        margin: '0 auto 20px', fontSize: '32px',
+      }}>
+        {passed ? '✓' : '→'}
+      </div>
+      <p style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#2A2318', marginBottom: '16px' }}>
+        {passed ? 'Well done' : 'Keep going'}
+      </p>
+
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+        {PHASES.map((ph, i) => (
+          <div key={i} style={{
+            background: '#F7F4ED', borderRadius: 10, padding: '10px 14px', minWidth: 76,
+          }}>
+            <p style={{ fontFamily: F, fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase',
+              color: '#B0ACA4', margin: '0 0 2px' }}>Part {i + 1}</p>
+            <p style={{ fontFamily: F, fontSize: 10, color: '#B0ACA4', margin: '0 0 4px' }}>
+              {ph.type === 'name' ? 'Name' : 'Place'} · {ph.grand ? 'Grand' : 'Single'}
+            </p>
+            <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, margin: 0 }}>
+              {scores[i]?.correct ?? 0} / {scores[i]?.total ?? 0}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '6px' }}>
+        {totalCorrect} / {total} — {pct}%
+      </p>
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', marginBottom: '28px' }}>
+        {passed
+          ? `Passing score: ${Math.round(passingScore * 100)}% ✓`
+          : `Passing score: ${Math.round(passingScore * 100)}% — practice more`}
+      </p>
+
+      <button onClick={onRestart} style={{
+        background: passed ? 'transparent' : '#1A1A18',
+        color: passed ? '#7A7060' : 'white',
+        border: passed ? '1px solid #DDD8CA' : 'none',
+        borderRadius: '10px',
+        padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
+      }}>
+        {passed ? 'Practice more →' : 'Try again →'}
+      </button>
+    </div>
+  )
+}
+
+// ── Root ──────────────────────────────────────────────────────────────────────
 export default function StaffNoteQuiz({
   pool,
   sessionLength = 15,
   passingScore,
   accentColor = '#B5402A',
   onComplete,
-}: Props) {
-  const [items, setItems] = useState<StaffNoteItem[]>([])
-  const [idx, setIdx] = useState(0)
-  const [selected, setSelected] = useState<string | null>(null)
-  const [confirmed, setConfirmed] = useState(false)
-  const [correct, setCorrect] = useState(0)
-  const [done, setDone] = useState(false)
+}: {
+  pool: StaffNoteItem[]
+  sessionLength?: number
+  passingScore: number
+  accentColor?: string
+  onComplete: (score: number, total: number) => void
+}) {
+  const [phaseIdx,    setPhaseIdx]    = useState(0)
+  const [inTransit,   setInTransit]   = useState(false)
+  const [scores,      setScores]      = useState<{ correct: number; total: number }[]>([])
+  const [exerciseKey, setExerciseKey] = useState(0)
 
-  useEffect(() => {
-    // Expand pool so same note can appear multiple times; shuffle; limit to sessionLength
-    const expanded: StaffNoteItem[] = []
-    const reps = Math.ceil(sessionLength / pool.length) + 1
-    for (let i = 0; i < reps; i++) expanded.push(...pool)
-    setItems(shuffle(expanded).slice(0, sessionLength))
-  }, [pool, sessionLength])
+  const currentPhase = PHASES[phaseIdx]
+  const nextPhase    = PHASES[phaseIdx + 1]
 
-  if (items.length === 0) return null
-
-  const item = items[idx]
-  const total = items.length
-  const pct = Math.round((correct / total) * 100)
-  const passed = pct / 100 >= passingScore
-
-  function handleSelect(name: string) {
-    if (confirmed) return
-    setSelected(name)
-  }
-
-  function handleConfirm() {
-    if (!selected || confirmed) return
-    if (selected === item.answer) setCorrect(c => c + 1)
-    setConfirmed(true)
-  }
-
-  function handleNext() {
-    if (idx + 1 >= total) {
-      setDone(true)
-      onComplete(correct / total, total)
-      return
+  function handlePhaseDone(correct: number, total: number) {
+    const newScores = [...scores, { correct, total }]
+    setScores(newScores)
+    if (phaseIdx + 1 >= PHASES.length) {
+      const totalCorrect = newScores.reduce((s, p) => s + p.correct, 0)
+      const totalAll     = newScores.reduce((s, p) => s + p.total,   0)
+      onComplete(totalCorrect / totalAll, totalAll)
+      setPhaseIdx(PHASES.length)
+    } else {
+      setInTransit(true)
     }
-    setIdx(i => i + 1)
-    setSelected(null)
-    setConfirmed(false)
   }
 
-  if (done) {
+  function handleTransitionNext() {
+    setPhaseIdx(i => i + 1); setInTransit(false); setExerciseKey(k => k + 1)
+  }
+
+  function handleRestart() {
+    setPhaseIdx(0); setInTransit(false); setScores([]); setExerciseKey(k => k + 1)
+  }
+
+  if (phaseIdx >= PHASES.length) {
+    return <ResultsCard scores={scores} passingScore={passingScore} onRestart={handleRestart} />
+  }
+
+  if (inTransit) {
+    const last = scores[scores.length - 1]
     return (
-      <div style={{ textAlign: 'center', padding: '40px 0' }}>
-        <div style={{
-          width: '80px', height: '80px', borderRadius: '50%',
-          background: passed ? '#EAF3DE' : '#FDF3ED',
-          border: `2px solid ${passed ? '#C0DD97' : '#F0C4A8'}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 20px', fontSize: '32px',
-        }}>
-          {passed ? '✓' : '→'}
-        </div>
-        <p style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#2A2318', marginBottom: '8px' }}>
-          {passed ? 'Well done' : 'Keep going'}
-        </p>
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '6px' }}>
-          {correct} / {total} correct — {pct}%
-        </p>
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', marginBottom: '28px' }}>
-          {passed
-            ? `Passing score: ${Math.round(passingScore * 100)}% ✓`
-            : `Passing score: ${Math.round(passingScore * 100)}% — practice more to improve`}
-        </p>
-        {!passed && (
-          <button
-            onClick={() => {
-              const expanded: StaffNoteItem[] = []
-              const reps = Math.ceil(sessionLength / pool.length) + 1
-              for (let i = 0; i < reps; i++) expanded.push(...pool)
-              setItems(shuffle(expanded).slice(0, sessionLength))
-              setIdx(0); setSelected(null); setConfirmed(false); setCorrect(0); setDone(false)
-            }}
-            style={{
-              background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px',
-              padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
-            }}
-          >
-            Try again →
-          </button>
-        )}
-      </div>
+      <TransitionCard
+        completedLabel={currentPhase.label}
+        correct={last.correct} total={last.total}
+        nextLabel={nextPhase.label}
+        nextType={nextPhase.type}
+        nextGrand={nextPhase.grand}
+        onNext={handleTransitionNext}
+      />
     )
   }
 
-  return (
-    <div>
-      {/* Progress */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-        <div style={{ flex: 1, height: '4px', background: '#EDE8DF', borderRadius: '2px', overflow: 'hidden' }}>
-          <div style={{ width: `${(idx / total) * 100}%`, height: '100%', background: accentColor, borderRadius: '2px', transition: 'width 0.3s' }} />
-        </div>
-        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', whiteSpace: 'nowrap' }}>
-          {idx + 1} / {total}
-        </span>
-      </div>
+  const exProps = { pool, sessionLength, accentColor, label: currentPhase.label, onDone: handlePhaseDone }
 
-      {/* Clef label */}
-      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — name this note
-      </p>
-
-      {/* Staff */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-        <StaffCard note={item.note} clef={item.clef} />
-      </div>
-
-      {/* Note name buttons */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', marginBottom: '24px' }}>
-        {NOTE_NAMES.map(name => {
-          const isSelected = selected === name
-          const isAnswer = name === item.answer
-          let bg = 'white'
-          let border = '#DDD8CA'
-          let color = '#2A2318'
-
-          if (confirmed) {
-            if (isAnswer) { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
-            else if (isSelected && !isAnswer) { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
-          } else if (isSelected) {
-            bg = '#F7F4ED'; border = '#1A1A18'
-          }
-
-          return (
-            <button
-              key={name}
-              onClick={() => handleSelect(name)}
-              style={{
-                background: bg, border: `1px solid ${border}`, borderRadius: '10px',
-                padding: '14px 4px', fontFamily: SERIF, fontSize: '20px', fontWeight: 400,
-                color, cursor: confirmed ? 'default' : 'pointer',
-                transition: 'border-color 0.12s, background 0.12s',
-              }}
-            >
-              {name}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* Action */}
-      {!confirmed ? (
-        <button
-          onClick={handleConfirm}
-          disabled={!selected}
-          style={{
-            background: selected ? '#1A1A18' : '#EDE8DF',
-            color: selected ? 'white' : '#B0ACA4',
-            border: 'none', borderRadius: '10px',
-            padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)',
-            cursor: selected ? 'pointer' : 'default', transition: 'background 0.15s',
-          }}
-        >
-          Check answer
-        </button>
-      ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {selected !== item.answer && (
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>
-              Correct answer: <strong style={{ color: '#2A5C0A' }}>{item.answer}</strong>
-            </p>
-          )}
-          <button
-            onClick={handleNext}
-            style={{
-              background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px',
-              padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
-            }}
-          >
-            {idx + 1 >= total ? 'See results' : 'Next →'}
-          </button>
-        </div>
-      )}
-    </div>
-  )
+  if (currentPhase.type === 'name') {
+    return currentPhase.grand
+      ? <NameExerciseGrand key={exerciseKey} {...exProps} />
+      : <NameExercise key={exerciseKey} {...exProps} />
+  }
+  return currentPhase.grand
+    ? <PlaceExerciseGrand key={exerciseKey} {...exProps} />
+    : <PlaceExercise key={exerciseKey} {...exProps} />
 }
