@@ -85,6 +85,56 @@ const WHOLE_TARGET: Record<string, { note: string; isBlack: boolean } | null> = 
   B: null,                             // B + whole = C♯ in next octave — out of range
 }
 
+// Half step above each black key (= the next white key, no black between)
+const SHARP_TARGET_BK: Record<string, { note: string; isBlack: boolean }> = {
+  'C#': { note: 'D',  isBlack: false },
+  'D#': { note: 'E',  isBlack: false },
+  'F#': { note: 'G',  isBlack: false },
+  'G#': { note: 'A',  isBlack: false },
+  'A#': { note: 'B',  isBlack: false },
+}
+
+// Whole step above each black key (2 semitones)
+const WHOLE_TARGET_BK: Record<string, { note: string; isBlack: boolean } | null> = {
+  'C#': { note: 'D#', isBlack: true  },  // C# + 2 = D#
+  'D#': { note: 'F',  isBlack: false },  // D# + 2 = F (skips E)
+  'F#': { note: 'G#', isBlack: true  },  // F# + 2 = G#
+  'G#': { note: 'A#', isBlack: true  },  // G# + 2 = A#
+  'A#': null,                             // A# + 2 = C in next octave — out of range
+}
+
+// ── Descending targets ─────────────────────────────────────────────────────
+// Half step below each white key = FLAT_TARGET (already defined above, reused)
+
+// Whole step below each white key
+const WHOLE_TARGET_DOWN: Record<string, { note: string; isBlack: boolean } | null> = {
+  C: null,                              // C - 2 = A# in prev octave — out of range
+  D: { note: 'C',  isBlack: false },   // D - 2 = C
+  E: { note: 'D',  isBlack: false },   // E - 2 = D
+  F: { note: 'D#', isBlack: true  },   // F - 2 = D#
+  G: { note: 'F',  isBlack: false },   // G - 2 = F
+  A: { note: 'G',  isBlack: false },   // A - 2 = G
+  B: { note: 'A',  isBlack: false },   // B - 2 = A
+}
+
+// Half step below each black key (= adjacent white key to the left)
+const HALF_TARGET_BK_DOWN: Record<string, { note: string; isBlack: boolean }> = {
+  'C#': { note: 'C',  isBlack: false },
+  'D#': { note: 'D',  isBlack: false },
+  'F#': { note: 'F',  isBlack: false },
+  'G#': { note: 'G',  isBlack: false },
+  'A#': { note: 'A',  isBlack: false },
+}
+
+// Whole step below each black key
+const WHOLE_TARGET_BK_DOWN: Record<string, { note: string; isBlack: boolean } | null> = {
+  'C#': null,                             // C# - 2 = B in prev octave — out of range
+  'D#': { note: 'C#', isBlack: true  },  // D# - 2 = C#
+  'F#': { note: 'E',  isBlack: false },  // F# - 2 = E
+  'G#': { note: 'F#', isBlack: true  },  // G# - 2 = F#
+  'A#': { note: 'G#', isBlack: true  },  // A# - 2 = G#
+}
+
 export type PianoMode = 'sharps' | 'flats' | 'naturals' | 'half-steps' | 'whole-steps'
 
 export function PianoKeyboard({ mode }: { mode: PianoMode }) {
@@ -94,50 +144,71 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
     m === 'flats' ? 'D' : 'C'
 
   const [selected, setSelected] = useState<string>(defaultSelected(mode))
+  const [direction, setDirection] = useState<'up' | 'down'>('up')
 
   // Reset selection when mode tab changes
   useEffect(() => {
     setSelected(defaultSelected(mode))
   }, [mode])
 
+  const isStepMode = mode === 'half-steps' || mode === 'whole-steps'
+  const isBlackSelected = BLACK_NOTES.includes(selected)
+
+  // Amber = ascending steps or sharps lesson; Blue = descending steps or flats lesson
+  const useAmber = mode === 'sharps' || (isStepMode && direction === 'up')
+  const useBlue  = mode === 'flats'  || (isStepMode && direction === 'down')
+
   // What does the selected key move to?
-  const target =
-    (mode === 'sharps' || mode === 'half-steps') ? SHARP_TARGET[selected] :
-    mode === 'flats'                             ? FLAT_TARGET[selected]  :
-    mode === 'whole-steps'                       ? WHOLE_TARGET[selected] :
-    null
+  const target = (() => {
+    if (mode === 'sharps')
+      return isBlackSelected ? SHARP_TARGET_BK[selected] : SHARP_TARGET[selected]
+    if (mode === 'flats')
+      return isBlackSelected ? null : FLAT_TARGET[selected]
+    if (mode === 'half-steps')
+      return direction === 'up'
+        ? (isBlackSelected ? SHARP_TARGET_BK[selected]   : SHARP_TARGET[selected])
+        : (isBlackSelected ? HALF_TARGET_BK_DOWN[selected]: FLAT_TARGET[selected])
+    if (mode === 'whole-steps')
+      return direction === 'up'
+        ? (isBlackSelected ? WHOLE_TARGET_BK[selected]     : WHOLE_TARGET[selected])
+        : (isBlackSelected ? WHOLE_TARGET_BK_DOWN[selected]: WHOLE_TARGET_DOWN[selected])
+    return null
+  })()
 
   // ── White key fill ───────────────────────────────────────────────────────
   const wFill = (note: string) => {
     if (mode === 'naturals') return `url(#green-${uid})`
-    const isSelected = note === selected
+    const isSelected = !isBlackSelected && note === selected
     const isTarget   = target && !target.isBlack && target.note === note
-    if ((mode === 'sharps' || mode === 'half-steps') && (isSelected || isTarget)) return `url(#wAmber-${uid})`
-    if ((mode === 'flats'  || mode === 'whole-steps') && (isSelected || isTarget)) return `url(#wBlue-${uid})`
+    if (useAmber && (isSelected || isTarget)) return `url(#wAmber-${uid})`
+    if (useBlue  && (isSelected || isTarget)) return `url(#wBlue-${uid})`
     return `url(#ivory-${uid})`
   }
 
   const wLabelColor = (note: string) => {
     if (mode === 'naturals') return '#1A5C0A'
-    const isSelected = note === selected
+    const isSelected = !isBlackSelected && note === selected
     const isTarget   = target && !target.isBlack && target.note === note
-    if ((mode === 'sharps' || mode === 'half-steps') && (isSelected || isTarget)) return '#7A4800'
-    if ((mode === 'flats'  || mode === 'whole-steps') && (isSelected || isTarget)) return '#1A3A6A'
+    if (useAmber && (isSelected || isTarget)) return '#7A4800'
+    if (useBlue  && (isSelected || isTarget)) return '#1A3A6A'
     return '#7A7060'
   }
 
   // ── Black key fill ───────────────────────────────────────────────────────
   const bFill = (note: string) => {
     if (mode === 'naturals') return `url(#bGray-${uid})`
+    const isFrom   = isBlackSelected && note === selected
     const isTarget = target?.isBlack && target.note === note
-    if ((mode === 'sharps' || mode === 'half-steps') && isTarget) return `url(#bAmber-${uid})`
-    if ((mode === 'flats'  || mode === 'whole-steps') && isTarget) return `url(#bBlue-${uid})`
+    if (useAmber && (isFrom || isTarget)) return `url(#bAmber-${uid})`
+    if (useBlue  && (isFrom || isTarget)) return `url(#bBlue-${uid})`
     return `url(#bDark-${uid})`
   }
 
   const bFilter = (note: string) => {
-    if ((mode === 'sharps' || mode === 'half-steps') && target?.isBlack && target.note === note) return `url(#glowAmber-${uid})`
-    if ((mode === 'flats'  || mode === 'whole-steps') && target?.isBlack && target.note === note) return `url(#glowBlue-${uid})`
+    const isFrom   = isBlackSelected && note === selected
+    const isTarget = target?.isBlack && target.note === note
+    if (useAmber && (isFrom || isTarget)) return `url(#glowAmber-${uid})`
+    if (useBlue  && (isFrom || isTarget)) return `url(#glowBlue-${uid})`
     return `url(#bShadow-${uid})`
   }
 
@@ -148,17 +219,18 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
   }
 
   const bLabelColor = (note: string) => {
+    const isFrom   = isBlackSelected && note === selected
     const isTarget = target?.isBlack && target.note === note
-    if ((mode === 'sharps' || mode === 'half-steps') && isTarget) return '#FFE890'
-    if ((mode === 'flats'  || mode === 'whole-steps') && isTarget) return '#C0D8FF'
+    if (useAmber && (isFrom || isTarget)) return '#FFE890'
+    if (useBlue  && (isFrom || isTarget)) return '#C0D8FF'
     return '#A89870'
   }
 
   const wLabel = (note: string) => {
     if (mode === 'naturals') return note + '♮'
-    // Enharmonic white-key targets get the accidental name (e.g. F labelled E♯, E labelled F♭)
-    // Not needed for whole-steps since whole-step targets on white keys are always natural
-    if (mode !== 'whole-steps' && target && !target.isBlack && target.note === note) {
+    // Enharmonic white-key targets get the accidental name only in sharps/flats lesson (e.g. F → E♯)
+    // Half-steps and whole-steps always use the plain note name
+    if (!isBlackSelected && (mode === 'sharps' || mode === 'flats') && target && !target.isBlack && target.note === note) {
       return mode === 'flats' ? FLAT_DISPLAY[selected] : SHARP_DISPLAY[selected]
     }
     return note
@@ -168,7 +240,9 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
   const arrowY     = KEY_Y - 22
   const arrowMarkId = `arrMark-${uid}`
 
-  const fromX = WK_X[selected] + WK_W / 2
+  const fromX = isBlackSelected
+    ? BK_X[selected] + BK_W / 2
+    : WK_X[selected] + WK_W / 2
   const toX   = target
     ? target.isBlack
       ? BK_X[target.note] + BK_W / 2
@@ -177,36 +251,40 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
 
   const showArrow   = mode !== 'naturals' && target !== null
   const accentColor =
-    (mode === 'sharps' || mode === 'half-steps')  ? '#4A9E30' :
-    (mode === 'flats'  || mode === 'whole-steps') ? '#5580D8' : '#7A7060'
+    mode === 'naturals' ? '#7A7060' :
+    useAmber            ? '#4A9E30' : '#5580D8'
   const arrowLabel =
-    mode === 'sharps'      ? '♯ raises by a half step' :
-    mode === 'flats'       ? '♭ lowers by a half step' :
-    mode === 'naturals'    ? '♮ cancels any sharp or flat' :
-    mode === 'half-steps'  ? 'H — adjacent keys, no key between' :
-    /* whole-steps */        'W — skips exactly one key'
+    mode === 'sharps'   ? '♯ raises by a half step' :
+    mode === 'flats'    ? '♭ lowers by a half step' :
+    mode === 'naturals' ? '♮ cancels any sharp or flat' :
+    mode === 'half-steps'
+      ? (direction === 'up' ? 'H — adjacent keys going up' : 'H — adjacent keys going down')
+      : (direction === 'up' ? 'W — skips one key going up'  : 'W — skips one key going down')
 
-  // Result label e.g. "E → E♯", "C → D", "E → F♯"
+  // Result label e.g. "E → E♯", "C → D", "C♯ → D"
   const resultLabel = (() => {
     if (mode === 'naturals') return selected + '♮'
     if (!target) return null
+    const fromDisplay = isBlackSelected ? BK_LABELS[selected].sharp : selected
     let toName: string
-    if (mode === 'sharps' || mode === 'half-steps') {
-      toName = SHARP_DISPLAY[selected]         // e.g. E → E♯
+    if (mode === 'sharps') {
+      // Sharps lesson: use enharmonic name (E → E♯, not E → F)
+      toName = isBlackSelected ? target.note : SHARP_DISPLAY[selected]
     } else if (mode === 'flats') {
-      toName = FLAT_DISPLAY[selected]          // e.g. D → D♭
+      // Flats lesson: use enharmonic name (F → F♭, not F → E)
+      toName = FLAT_DISPLAY[selected]
     } else {
-      // whole-steps: use the actual note name (C→D, E→F♯)
+      // Half-steps and whole-steps: always use the actual note name (E → F, not E → E♯)
       toName = target.isBlack
-        ? BK_LABELS[target.note].sharp         // e.g. F♯
-        : target.note                          // e.g. D, E, G…
+        ? BK_LABELS[target.note].sharp         // e.g. F♯, D♯, G♯
+        : target.note                          // e.g. D, E, F, G, B…
     }
-    return `${selected} → ${toName}`
+    return `${fromDisplay} → ${toName}`
   })()
 
   return (
     <div style={{ width: '100%', marginBottom: 4 }}>
-      {/* Badge + result label row */}
+      {/* Badge + result label + direction toggle row */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10,
         marginBottom: 10, paddingLeft: 2,
@@ -232,6 +310,37 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
           }}>
             {resultLabel}
           </span>
+        )}
+        {isStepMode && (
+          <div style={{ display: 'flex', gap: 4, marginLeft: 'auto' }}>
+            {(['up', 'down'] as const).map(dir => {
+              const isActive = direction === dir
+              return (
+                <button
+                  key={dir}
+                  onClick={() => {
+                    setDirection(dir)
+                    // Reset to a key that is valid in the new direction
+                    setSelected(dir === 'down' ? 'D' : 'C')
+                  }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 4,
+                    padding: '4px 10px',
+                    background: isActive ? accentColor : 'transparent',
+                    border: `1px solid ${isActive ? accentColor : '#DDD8CA'}`,
+                    borderRadius: 6,
+                    fontFamily: 'var(--font-jost), sans-serif',
+                    fontSize: 12, fontWeight: isActive ? 600 : 400,
+                    color: isActive ? 'white' : '#7A7060',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {dir === 'up' ? '↑' : '↓'}
+                </button>
+              )
+            })}
+          </div>
         )}
       </div>
 
@@ -349,10 +458,9 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
         {/* ── White keys ─────────────────────────────────────────────────── */}
         {WHITE_NOTES.map(note => {
           const x = WK_X[note]
-          const isClickable = mode !== 'naturals' ||
-            (mode === 'naturals')  // all modes clickable
           const targetMap =
-            mode === 'flats' ? FLAT_TARGET :
+            mode === 'flats' || (mode === 'half-steps' && direction === 'down') ? FLAT_TARGET :
+            mode === 'whole-steps' && direction === 'down' ? WHOLE_TARGET_DOWN :
             mode === 'whole-steps' ? WHOLE_TARGET : SHARP_TARGET
           const isInactive = mode !== 'naturals' && targetMap[note] === null
           return (
@@ -389,16 +497,40 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
           )
         })}
 
-        {/* C8 sliver (rightmost partial C) */}
-        <rect x={646} y={KEY_Y} width={VW - 646 - 8} height={FACE_B - KEY_Y}
-          fill={`url(#ivory-${uid})`} rx={5} />
+        {/* C8 sliver (rightmost partial C) — grayed when B is inactive */}
+        {(() => {
+          const bInactive = mode !== 'naturals' && (() => {
+            if (mode === 'flats') return FLAT_TARGET['B'] === null  // false, B♭ is valid
+            if (mode === 'half-steps' && direction === 'down') return FLAT_TARGET['B'] === null
+            if (mode === 'whole-steps' && direction === 'down') return WHOLE_TARGET_DOWN['B'] === null
+            return SHARP_TARGET['B'] === null  // true for sharps, ascending half/whole
+          })()
+          return (
+            <g>
+              <rect x={646} y={KEY_Y} width={VW - 646 - 8} height={FACE_B - KEY_Y}
+                fill={`url(#ivory-${uid})`} rx={5} />
+              {bInactive && (
+                <rect x={646} y={KEY_Y} width={VW - 646 - 8} height={FACE_B - KEY_Y}
+                  fill="rgba(0,0,0,0.18)" rx={5} />
+              )}
+            </g>
+          )
+        })()}
 
         {/* ── Black keys ─────────────────────────────────────────────────── */}
         {BLACK_NOTES.map(note => {
           const x = BK_X[note]
           const label = bLabel(note)
+          const bkIsInactive = isStepMode && mode === 'whole-steps' && (
+            direction === 'up' ? WHOLE_TARGET_BK[note] === null : WHOLE_TARGET_BK_DOWN[note] === null
+          )
           return (
-            <g key={note} filter={bFilter(note)}>
+            <g
+              key={note}
+              filter={bFilter(note)}
+              onClick={() => isStepMode && !bkIsInactive && setSelected(note)}
+              style={{ cursor: isStepMode && !bkIsInactive ? 'pointer' : 'default' }}
+            >
               {/* Main body */}
               <rect x={x} y={KEY_Y} width={BK_W} height={BK_H}
                 fill={bFill(note)} rx={7} />
@@ -408,16 +540,33 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
               {/* Front face shadow at bottom */}
               <rect x={x + 4} y={BK_END - 22} width={BK_W - 8} height={22}
                 fill="#2A1808" opacity={0.55} rx={4} />
-              {/* Label */}
+              {/* Inactive overlay (A# in whole-steps) */}
+              {bkIsInactive && (
+                <rect x={x} y={KEY_Y} width={BK_W} height={BK_H}
+                  fill="rgba(0,0,0,0.35)" rx={7} />
+              )}
+              {/* Label — single line for sharps/flats lesson; dual for step modes */}
               {label && (
                 <text
-                  x={x + BK_W / 2} y={BK_END - 9}
+                  x={x + BK_W / 2} y={isStepMode ? BK_END - 20 : BK_END - 9}
                   fontFamily="var(--font-cormorant), serif"
-                  fontSize={15} fontWeight="700"
+                  fontSize={isStepMode ? 13 : 15} fontWeight="700"
                   fill={bLabelColor(note)}
                   textAnchor="middle" dominantBaseline="auto"
                 >
                   {label}
+                </text>
+              )}
+              {isStepMode && (
+                <text
+                  x={x + BK_W / 2} y={BK_END - 6}
+                  fontFamily="var(--font-cormorant), serif"
+                  fontSize={12} fontWeight="600"
+                  fill={bLabelColor(note)}
+                  textAnchor="middle" dominantBaseline="auto"
+                  opacity={0.7}
+                >
+                  {BK_LABELS[note].flat}
                 </text>
               )}
             </g>
