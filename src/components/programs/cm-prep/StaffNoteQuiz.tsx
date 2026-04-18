@@ -294,8 +294,8 @@ function PlaceExercise({
     return shuffle(exp).slice(0, sessionLength)
   })
   const [idx,       setIdx]       = useState(0)
+  const [stagedPos, setStagedPos] = useState<number | null>(null)
   const [placedPos, setPlacedPos] = useState<number | null>(null)
-  const [hoverPos,  setHoverPos]  = useState<number | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const correctRef = useRef(0)
   const lockedRef  = useRef(false)
@@ -305,31 +305,33 @@ function PlaceExercise({
   const cx      = svgW / 2
   const maxPos  = item.clef === 'treble' ? 11 : 12
 
-  function clientToPos(clientY: number): number | null {
+  // Clamp-snap — always returns a valid pos so taps can't "miss"
+  function clientToPos(clientY: number): number {
     const svg = svgRef.current
-    if (!svg) return null
+    if (!svg) return 0
     const r   = svg.getBoundingClientRect()
     const sy  = (clientY - r.top) / r.height * svgH
-    const pos = Math.round(10 - (sy - tTop) / step)
-    if (pos < 0 || pos > maxPos) return null
+    let pos = Math.round(10 - (sy - tTop) / step)
+    if (pos < 0) pos = 0
+    if (pos > maxPos) pos = maxPos
     return pos
   }
 
-  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-    if (submitted) return
-    setHoverPos(clientToPos(e.clientY))
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (submitted || lockedRef.current) return
+    setStagedPos(clientToPos(e.clientY))
   }
 
-  function onClick() {
-    if (lockedRef.current || hoverPos === null) return
+  function onConfirm() {
+    if (submitted || lockedRef.current || stagedPos === null) return
     lockedRef.current = true
-    const ok = hoverPos === item.pos
+    const ok = stagedPos === item.pos
     if (ok) correctRef.current += 1
-    setPlacedPos(hoverPos); setSubmitted(true)
+    setPlacedPos(stagedPos); setSubmitted(true)
     setTimeout(() => {
       const next = idx + 1
       if (next >= total) { onDone(correctRef.current, total); return }
-      setIdx(next); setPlacedPos(null); setHoverPos(null)
+      setIdx(next); setStagedPos(null); setPlacedPos(null)
       setSubmitted(false); lockedRef.current = false
     }, ok ? 1200 : 2000)
   }
@@ -362,24 +364,23 @@ function PlaceExercise({
           {item.answer}
         </span>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
-          <strong>{octaveLabel(item)}</strong> — click on the staff to place it
+          <strong>{octaveLabel(item)}</strong> — tap the staff, then press Place to confirm
         </p>
       </div>
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
-            cursor: submitted ? 'default' : 'crosshair' }}
-          onMouseMove={onMouseMove}
-          onMouseLeave={() => { if (!submitted) setHoverPos(null) }}
-          onClick={onClick}
+            cursor: submitted ? 'default' : 'crosshair',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+          onClick={onStaffClick}
         >
           <StaffBase />
           <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
           <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
           {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
-          {!submitted && hoverPos !== null && (
-            <g opacity={0.35}>{renderNote(hoverPos, ACCENT_C)}</g>
+          {!submitted && stagedPos !== null && (
+            <g opacity={0.55}>{renderNote(stagedPos, ACCENT_C)}</g>
           )}
           {submitted && placedPos !== null &&
             renderNote(placedPos, isCorrect ? CORRECT_C : WRONG_C)}
@@ -387,6 +388,21 @@ function PlaceExercise({
             <g opacity={0.55}>{renderNote(item.pos, CORRECT_C)}</g>
           )}
         </svg>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+        <button
+          onClick={onConfirm}
+          disabled={submitted || stagedPos === null}
+          style={{
+            padding: '10px 28px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: submitted || stagedPos === null ? 'default' : 'pointer',
+            background: submitted || stagedPos === null ? '#EDE8DF' : DARK,
+            color: submitted || stagedPos === null ? '#B0ACA4' : 'white',
+          }}
+        >
+          Place
+        </button>
       </div>
       <PlaceFeedback submitted={submitted} isCorrect={isCorrect} item={item} />
     </div>
@@ -407,10 +423,10 @@ function PlaceExerciseGrand({
     return shuffle(exp).slice(0, sessionLength)
   })
   const [idx,        setIdx]        = useState(0)
+  const [stagedClef, setStagedClef] = useState<'treble' | 'bass' | null>(null)
+  const [stagedPos,  setStagedPos]  = useState<number | null>(null)
   const [placedClef, setPlacedClef] = useState<'treble' | 'bass' | null>(null)
   const [placedPos,  setPlacedPos]  = useState<number | null>(null)
-  const [hoverClef,  setHoverClef]  = useState<'treble' | 'bass' | null>(null)
-  const [hoverPos,   setHoverPos]   = useState<number | null>(null)
   const [submitted,  setSubmitted]  = useState(false)
   const correctRef = useRef(0)
   const lockedRef  = useRef(false)
@@ -419,28 +435,24 @@ function PlaceExerciseGrand({
   const total = items.length
   const cx    = gsW / 2
 
-  function clientToGrandPos(clientY: number): { clef: 'treble' | 'bass'; pos: number } | null {
+  // Clamp-snap — always returns a valid placement so taps can't "miss"
+  function clientToGrandPos(clientY: number): { clef: 'treble' | 'bass'; pos: number } {
     const svg = svgRef.current
-    if (!svg) return null
+    if (!svg) return { clef: 'treble', pos: 0 }
     const r   = svg.getBoundingClientRect()
     const sy  = (clientY - r.top) / r.height * gsH
 
     if (sy < GS_MID) {
-      const pos = Math.round(10 - (sy - tTop_G) / step_G)
-      if (pos < 0 || pos > 11) return null
+      let pos = Math.round(10 - (sy - tTop_G) / step_G)
+      if (pos < 0) pos = 0
+      if (pos > 11) pos = 11
       return { clef: 'treble', pos }
     } else {
-      const pos = Math.round(10 - (sy - bTop_G) / step_G)
-      if (pos < 0 || pos > 12) return null
+      let pos = Math.round(10 - (sy - bTop_G) / step_G)
+      if (pos < 0) pos = 0
+      if (pos > 12) pos = 12
       return { clef: 'bass', pos }
     }
-  }
-
-  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-    if (submitted) return
-    const result = clientToGrandPos(e.clientY)
-    if (result) { setHoverClef(result.clef); setHoverPos(result.pos) }
-    else        { setHoverClef(null); setHoverPos(null) }
   }
 
   // Middle C is valid on either staff — treble pos=0 or bass pos=12
@@ -453,18 +465,24 @@ function PlaceExerciseGrand({
     return clef === item.clef && pos === item.pos
   }
 
-  function onClick() {
-    if (lockedRef.current || hoverPos === null || hoverClef === null) return
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (submitted || lockedRef.current) return
+    const result = clientToGrandPos(e.clientY)
+    setStagedClef(result.clef); setStagedPos(result.pos)
+  }
+
+  function onConfirm() {
+    if (submitted || lockedRef.current || stagedPos === null || stagedClef === null) return
     lockedRef.current = true
-    const ok = isPlacementCorrect(hoverClef, hoverPos)
+    const ok = isPlacementCorrect(stagedClef, stagedPos)
     if (ok) correctRef.current += 1
-    setPlacedClef(hoverClef); setPlacedPos(hoverPos); setSubmitted(true)
+    setPlacedClef(stagedClef); setPlacedPos(stagedPos); setSubmitted(true)
     setTimeout(() => {
       const next = idx + 1
       if (next >= total) { onDone(correctRef.current, total); return }
       setIdx(next)
+      setStagedClef(null); setStagedPos(null)
       setPlacedClef(null); setPlacedPos(null)
-      setHoverClef(null); setHoverPos(null)
       setSubmitted(false); lockedRef.current = false
     }, ok ? 1200 : 2000)
   }
@@ -499,7 +517,7 @@ function PlaceExerciseGrand({
           {item.answer}
         </span>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
-          <strong>{octaveLabel(item)}</strong> — click on the grand staff to place it
+          <strong>{octaveLabel(item)}</strong> — tap the staff, then press Place to confirm
           {itemIsMiddleC && <span style={{ color: '#B0ACA4' }}> (either staff accepted)</span>}
         </p>
       </div>
@@ -507,15 +525,14 @@ function PlaceExerciseGrand({
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
           style={{ maxWidth: gsW, display: 'block', margin: '0 auto',
-            cursor: submitted ? 'default' : 'crosshair' }}
-          onMouseMove={onMouseMove}
-          onMouseLeave={() => { if (!submitted) { setHoverClef(null); setHoverPos(null) } }}
-          onClick={onClick}
+            cursor: submitted ? 'default' : 'crosshair',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+          onClick={onStaffClick}
         >
           <GrandStaffBase />
-          {/* Ghost */}
-          {!submitted && hoverClef !== null && hoverPos !== null && (
-            <g opacity={0.35}>{renderGsNote(hoverClef, hoverPos, ACCENT_C)}</g>
+          {/* Staged ghost */}
+          {!submitted && stagedClef !== null && stagedPos !== null && (
+            <g opacity={0.55}>{renderGsNote(stagedClef, stagedPos, ACCENT_C)}</g>
           )}
           {/* Placed */}
           {submitted && placedClef !== null && placedPos !== null &&
@@ -525,6 +542,21 @@ function PlaceExerciseGrand({
             <g opacity={0.55}>{renderGsNote(item.clef, item.pos, CORRECT_C)}</g>
           )}
         </svg>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+        <button
+          onClick={onConfirm}
+          disabled={submitted || stagedPos === null}
+          style={{
+            padding: '10px 28px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: submitted || stagedPos === null ? 'default' : 'pointer',
+            background: submitted || stagedPos === null ? '#EDE8DF' : DARK,
+            color: submitted || stagedPos === null ? '#B0ACA4' : 'white',
+          }}
+        >
+          Place
+        </button>
       </div>
       <PlaceFeedback submitted={submitted} isCorrect={isCorrect} item={item} />
     </div>

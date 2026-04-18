@@ -320,11 +320,9 @@ function DrawAccidentalEx({
   }, [])
 
   const [idx,       setIdx]       = useState(0)
-  const [hoverX,    setHoverX]    = useState<number | null>(null)
-  const [hoverPos,  setHoverPos]  = useState<number | null>(null)
+  const [stagedX,   setStagedX]   = useState<number | null>(null)
+  const [stagedPos, setStagedPos] = useState<number | null>(null)
   const [state,     setState]     = useState<'idle' | 'correct' | 'wrong-side' | 'wrong-pos'>('idle')
-  const [wrongX,    setWrongX]    = useState<number | null>(null)
-  const [wrongPos,  setWrongPos]  = useState<number | null>(null)
   const svgRef    = useRef<SVGSVGElement>(null)
   const lockedRef = useRef(false)
 
@@ -334,54 +332,50 @@ function DrawAccidentalEx({
   const noteX  = NOTE_X + noteXOffset
   const accX   = noteX - 26
 
-  function svgCoords(e: React.MouseEvent<SVGSVGElement>): { x: number; pos: number } | null {
+  // Clamp-snap — always returns valid coords so taps can't "miss"
+  function svgCoords(e: React.MouseEvent<SVGSVGElement>): { x: number; pos: number } {
     const svg = svgRef.current
-    if (!svg) return null
+    if (!svg) return { x: 0, pos: 0 }
     const r   = svg.getBoundingClientRect()
     const x   = (e.clientX - r.left) / r.width  * svgW
-    const sy  = (e.clientY - r.top)  / r.height * svgH
-    const pos = Math.min(12, Math.max(0, Math.round(10 - (sy - tTop) / step)))
+    const pos = Math.min(12, Math.max(0, Math.round(10 - ((e.clientY - r.top) / r.height * svgH - tTop) / step)))
     return { x, pos }
   }
 
-  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-    if (lockedRef.current) return
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (lockedRef.current || state !== 'idle') return
     const c = svgCoords(e)
-    if (!c) return
-    setHoverX(c.x); setHoverPos(c.pos)
+    setStagedX(c.x); setStagedPos(c.pos)
   }
 
-  function onClick(e: React.MouseEvent<SVGSVGElement>) {
-    if (lockedRef.current) return
-    const c = svgCoords(e)
-    if (!c) return
+  function onConfirm() {
+    if (lockedRef.current || stagedX === null || stagedPos === null) return
     lockedRef.current = true
 
-    const leftOfNote = c.x < noteX - 5
-    const rightPos   = c.pos === item.pos
+    const leftOfNote = stagedX < noteX - 5
+    const rightPos   = stagedPos === item.pos
 
     if (leftOfNote && rightPos) {
       setState('correct')
       setTimeout(() => {
         const next = idx + 1
         if (next >= total) { onDone(); return }
-        setIdx(next); setState('idle'); setHoverX(null); setHoverPos(null)
+        setIdx(next); setState('idle')
+        setStagedX(null); setStagedPos(null)
         lockedRef.current = false
       }, 1200)
     } else {
-      setWrongX(c.x); setWrongPos(c.pos)
       setState(leftOfNote ? 'wrong-pos' : 'wrong-side')
       setTimeout(() => {
-        setState('idle'); setHoverX(null); setHoverPos(null)
-        setWrongX(null); setWrongPos(null)
+        setState('idle')
+        setStagedX(null); setStagedPos(null)
         lockedRef.current = false
       }, 2000)
     }
   }
 
-  const showGhost  = state === 'idle' && hoverX !== null && hoverPos !== null
-  const ghostCy    = hoverPos !== null ? posToY(hoverPos) : noteCy
-  const ghostX     = hoverX ?? accX
+  const stagedCy = stagedPos !== null ? posToY(stagedPos) : noteCy
+  const stagedIsLeft = stagedX !== null && stagedX < noteX - 5
 
   return (
     <div>
@@ -389,17 +383,16 @@ function DrawAccidentalEx({
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
       <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
-        Click to the <strong>left</strong> of the note, on the <strong>same line or space</strong>, to place the {accWord(acc)} ({accSymbol(acc)}).
+        Tap to the <strong>left</strong> of the note, on the <strong>same line or space</strong>, then press Place to confirm the {accWord(acc)} ({accSymbol(acc)}).
       </p>
 
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
-            cursor: state !== 'idle' ? 'default' : 'crosshair' }}
-          onMouseMove={onMouseMove}
-          onMouseLeave={() => { if (!lockedRef.current) { setHoverX(null); setHoverPos(null) } }}
-          onClick={onClick}
+            cursor: state !== 'idle' ? 'default' : 'crosshair',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
+          onClick={onStaffClick}
         >
           <StaffBase />
           <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
@@ -408,27 +401,45 @@ function DrawAccidentalEx({
           {ledger && <LedgerLine cx={noteX} cy={noteCy} />}
           <BravuraNote cx={noteX} cy={noteCy} />
 
-          {/* Ghost follows mouse */}
-          {showGhost && (
-            <BravuraAcc cx={ghostX} cy={ghostCy} acc={acc}
-              color={ghostX < noteX - 5 ? ACCENT : '#C8C4BA'} />
+          {/* Staged ghost — amber if on left side, grey if on right */}
+          {state === 'idle' && stagedX !== null && stagedPos !== null && (
+            <BravuraAcc cx={stagedX} cy={stagedCy} acc={acc}
+              color={stagedIsLeft ? ACCENT : '#C8C4BA'} />
           )}
 
-          {/* Correct result */}
+          {/* Correct result — snap to canonical accX */}
           {state === 'correct' && (
             <BravuraAcc cx={accX} cy={noteCy} acc={acc} color={CORRECT} />
           )}
 
-          {/* Wrong placement — show where they put it */}
-          {(state === 'wrong-side' || state === 'wrong-pos') && wrongX !== null && wrongPos !== null && (
-            <BravuraAcc cx={wrongX} cy={posToY(wrongPos)} acc={acc} color={WRONG} />
+          {/* Wrong placement — show what the student chose */}
+          {(state === 'wrong-side' || state === 'wrong-pos') && stagedX !== null && stagedPos !== null && (
+            <BravuraAcc cx={stagedX} cy={stagedCy} acc={acc} color={WRONG} />
           )}
         </svg>
       </div>
 
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+        <button
+          onClick={onConfirm}
+          disabled={state !== 'idle' || stagedX === null}
+          style={{
+            padding: '10px 28px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: state !== 'idle' || stagedX === null ? 'default' : 'pointer',
+            background: state !== 'idle' || stagedX === null ? '#EDE8DF' : DARK,
+            color: state !== 'idle' || stagedX === null ? '#B0ACA4' : 'white',
+          }}
+        >
+          Place
+        </button>
+      </div>
+
       <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: state === 'idle' ? '#B0ACA4' : state === 'correct' ? CORRECT : WRONG }}>
-        {state === 'idle'       && `Click to the left of the note on the correct line or space`}
+        {state === 'idle'       && (stagedX === null
+          ? `Tap the staff to position the ${accSymbol(acc)}`
+          : `Press Place to confirm — or tap elsewhere to re-position`)}
         {state === 'correct'    && `✓ Correct — ${accSymbol(acc)} is to the left, on the same line/space`}
         {state === 'wrong-side' && `✗ The ${accSymbol(acc)} goes to the LEFT of the note`}
         {state === 'wrong-pos'  && `✗ The ${accSymbol(acc)} must be on the SAME line or space as the note`}
@@ -640,8 +651,7 @@ function WriteAccidentalEx({
   }, [])
 
   const [idx,        setIdx]        = useState(0)
-  const [hoverPos,   setHoverPos]   = useState<number | null>(null)
-  const [placedPos,  setPlacedPos]  = useState<number | null>(null)
+  const [stagedPos,  setStagedPos]  = useState<number | null>(null)
   const [pickedAcc,  setPickedAcc]  = useState<AccType | null>(null)
   const [submitted,  setSubmitted]  = useState(false)
   const correctRef = useRef(0)
@@ -651,44 +661,41 @@ function WriteAccidentalEx({
   const item   = items[idx]
   const total_ = items.length
   const cx     = svgW / 2
-  const step2  = placedPos !== null && !submitted  // waiting for accidental pick
-  const posOk  = placedPos === item.pos
+  const step2  = stagedPos !== null && !submitted  // waiting for accidental pick
+  const posOk  = stagedPos === item.pos
   const accOk  = pickedAcc === item.acc
   const isCorrect = submitted && posOk && accOk
 
-  function clientToPos(clientY: number): number | null {
+  // Clamp-snap — always returns a valid pos so taps can't "miss"
+  function clientToPos(clientY: number): number {
     const svg = svgRef.current
-    if (!svg) return null
+    if (!svg) return 0
     const r   = svg.getBoundingClientRect()
     const sy  = (clientY - r.top) / r.height * svgH
-    const pos = Math.round(10 - (sy - tTop) / step)
     const maxPos = item.clef === 'treble' ? 11 : 12
-    if (pos < 0 || pos > maxPos) return null
+    let pos = Math.round(10 - (sy - tTop) / step)
+    if (pos < 0) pos = 0
+    if (pos > maxPos) pos = maxPos
     return pos
   }
 
-  function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
-    if (placedPos !== null) return
-    setHoverPos(clientToPos(e.clientY))
-  }
-
-  function onStaffClick() {
-    if (placedPos !== null || lockedRef.current || hoverPos === null) return
-    setPlacedPos(hoverPos)
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (lockedRef.current || submitted) return
+    setStagedPos(clientToPos(e.clientY))
   }
 
   function onPickAcc(a: AccType) {
-    if (lockedRef.current || placedPos === null) return
+    if (lockedRef.current || stagedPos === null) return
     lockedRef.current = true
     setPickedAcc(a)
     setSubmitted(true)
-    const ok = placedPos === item.pos && a === item.acc
+    const ok = stagedPos === item.pos && a === item.acc
     if (ok) correctRef.current += 1
     setTimeout(() => {
       const next = idx + 1
       if (next >= total_) { onDone(correctRef.current, total_); return }
-      setIdx(next); setPlacedPos(null); setPickedAcc(null)
-      setHoverPos(null); setSubmitted(false); lockedRef.current = false
+      setIdx(next); setStagedPos(null); setPickedAcc(null)
+      setSubmitted(false); lockedRef.current = false
     }, ok ? 1200 : 2000)
   }
 
@@ -720,8 +727,8 @@ function WriteAccidentalEx({
         </span>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
           <strong>{octaveLabel(item)}</strong>
-          {!step2 && !submitted && ' — click on the staff to place the note'}
-          {step2 && ' — now pick the accidental below'}
+          {!step2 && !submitted && ' — tap the staff to position the note'}
+          {step2 && ' — pick the accidental below to confirm'}
         </p>
       </div>
 
@@ -729,9 +736,8 @@ function WriteAccidentalEx({
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
-            cursor: placedPos !== null ? 'default' : 'crosshair' }}
-          onMouseMove={onMouseMove}
-          onMouseLeave={() => { if (!placedPos) setHoverPos(null) }}
+            cursor: submitted ? 'default' : 'crosshair',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
           onClick={onStaffClick}
         >
           <StaffBase />
@@ -739,16 +745,12 @@ function WriteAccidentalEx({
           <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
           {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
 
-          {/* Ghost */}
-          {placedPos === null && hoverPos !== null && (
-            <g opacity={0.3}>{renderNote(hoverPos, null, ACCENT)}</g>
-          )}
-          {/* Placed note (waiting for accidental) */}
-          {step2 && placedPos !== null &&
-            renderNote(placedPos, null, ACCENT)}
+          {/* Staged note (before accidental picked) */}
+          {step2 && stagedPos !== null &&
+            renderNote(stagedPos, null, ACCENT)}
           {/* Submitted */}
-          {submitted && placedPos !== null &&
-            renderNote(placedPos, pickedAcc, posOk && accOk ? CORRECT : WRONG)}
+          {submitted && stagedPos !== null &&
+            renderNote(stagedPos, pickedAcc, posOk && accOk ? CORRECT : WRONG)}
           {/* Correct position hint */}
           {submitted && !(posOk && accOk) && (
             <g opacity={0.55}>{renderNote(item.pos, item.acc, CORRECT)}</g>

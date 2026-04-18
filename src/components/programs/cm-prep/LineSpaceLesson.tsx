@@ -632,16 +632,21 @@ function DrawNotes({
   const noteSpacing   = (noteAreaEnd - noteAreaStart) / (total - 1)
   function slotX(idx: number) { return noteAreaStart + idx * noteSpacing }
 
-  // Map client y to nearest staff position (pos 1–11)
+  // Map client y to the nearest *valid* target (line or space) — lets the user be
+  // imprecise on mobile and still land on the intended target type.
   function clientToPos(clientY: number): number | null {
     const svg = svgRef.current
     if (!svg) return null
     const r    = svg.getBoundingClientRect()
     const svgY = (clientY - r.top) / r.height * svgH
     const raw  = (tTop + 8 * step - svgY) / step + 2
-    const pos  = Math.round(raw)
-    if (pos < 1 || pos > 11) return null
-    return pos
+    let nearest = targets[0]
+    let bestDist = Math.abs(raw - targets[0])
+    for (const v of targets) {
+      const d = Math.abs(raw - v)
+      if (d < bestDist) { nearest = v; bestDist = d }
+    }
+    return nearest
   }
 
   function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {

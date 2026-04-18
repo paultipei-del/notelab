@@ -456,18 +456,22 @@ function PlaceNoteEx({
   const item    = items[idx]
   const cx      = svgW / 2
 
+  // Snap to the nearest *valid* target (line or space) — lets mobile users
+  // be imprecise and still land on the intended target type.
   function clientToPos(clientY: number): number | null {
     const svg = svgRef.current
     if (!svg) return null
     const r    = svg.getBoundingClientRect()
     const svgY = (clientY - r.top) / r.height * svgH
     const raw  = 10 - (svgY - tTop) / step
-    let pos    = Math.round(raw)
-    if (pos < 0 || pos > 12) return null
-    if (spaceOnly && pos % 2 === 0) pos = pos === 0 ? 1 : pos - 1
-    if (!spaceOnly && pos % 2 !== 0) pos = pos - 1
-    if (pos < 0 || pos > 12) return null
-    return pos
+    const valid = spaceOnly ? [1, 3, 5, 7, 9, 11] : [0, 2, 4, 6, 8, 10, 12]
+    let nearest = valid[0]
+    let bestDist = Math.abs(raw - valid[0])
+    for (const v of valid) {
+      const d = Math.abs(raw - v)
+      if (d < bestDist) { nearest = v; bestDist = d }
+    }
+    return nearest
   }
 
   function onMouseMove(e: React.MouseEvent<SVGSVGElement>) {
