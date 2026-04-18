@@ -103,7 +103,7 @@ const WHOLE_TARGET_BK: Record<string, { note: string; isBlack: boolean } | null>
   'D#': { note: 'F',  isBlack: false },  // D# + 2 = F (skips E)
   'F#': { note: 'G#', isBlack: true  },  // F# + 2 = G#
   'G#': { note: 'A#', isBlack: true  },  // G# + 2 = A#
-  'A#': null,                             // A# + 2 = C in next octave — out of range
+  'A#': { note: 'C5', isBlack: false },  // A# + 2 = C5 (the C above B)
 }
 
 // ── Descending targets ─────────────────────────────────────────────────────
