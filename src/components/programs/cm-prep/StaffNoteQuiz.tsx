@@ -47,14 +47,14 @@ function gsLineY_T(n: number)    { return tTop_G + (5 - n) * 2 * step_G }
 function gsLineY_B(n: number)    { return bTop_G + (5 - n) * 2 * step_G }
 
 // ── Octave label (kid-friendly, replaces note names like "B3") ────────────────
-// Treble: pos=0=C4 (Middle C), pos=1–6=treble octave, pos=7–11=high octave
-// Bass:   pos=0–4=low octave (E2–B2), pos=5–11=bass octave (C3–B3), pos=12=C4 (Middle C)
+// Treble: pos=0=C4 (Middle C), pos=1–7=treble (D4–C5), pos=8–11=high (D5–A5)
+// Bass:   pos=0–4=low (E2–B2), pos=5–11=bass (C3–B3), pos=12=C4 (Middle C)
 function octaveLabel(item: StaffNoteItem): string {
   const isMiddleC = (item.clef === 'treble' && item.pos === 0) ||
                     (item.clef === 'bass'   && item.pos === 12)
   if (isMiddleC) return 'Middle C'
-  if (item.clef === 'treble') return item.pos >= 7 ? 'Treble C' : 'Middle C range'
-  return item.pos <= 4 ? 'Low C' : 'Bass C'
+  if (item.clef === 'treble') return item.pos >= 8 ? 'high (D5–A5)' : 'treble (D4–C5)'
+  return item.pos <= 4 ? 'low (E2–B2)' : 'bass (C3–B3)'
 }
 
 // ── Shared primitives ─────────────────────────────────────────────────────────
@@ -443,10 +443,20 @@ function PlaceExerciseGrand({
     else        { setHoverClef(null); setHoverPos(null) }
   }
 
+  // Middle C is valid on either staff — treble pos=0 or bass pos=12
+  const itemIsMiddleC = item.answer === 'C' &&
+    ((item.clef === 'treble' && item.pos === 0) || (item.clef === 'bass' && item.pos === 12))
+
+  function isPlacementCorrect(clef: 'treble' | 'bass', pos: number): boolean {
+    if (itemIsMiddleC)
+      return (clef === 'treble' && pos === 0) || (clef === 'bass' && pos === 12)
+    return clef === item.clef && pos === item.pos
+  }
+
   function onClick() {
     if (lockedRef.current || hoverPos === null || hoverClef === null) return
     lockedRef.current = true
-    const ok = hoverClef === item.clef && hoverPos === item.pos
+    const ok = isPlacementCorrect(hoverClef, hoverPos)
     if (ok) correctRef.current += 1
     setPlacedClef(hoverClef); setPlacedPos(hoverPos); setSubmitted(true)
     setTimeout(() => {
@@ -459,7 +469,8 @@ function PlaceExerciseGrand({
     }, ok ? 1200 : 2000)
   }
 
-  const isCorrect = submitted && placedClef === item.clef && placedPos === item.pos
+  const isCorrect = submitted && placedClef !== null && placedPos !== null &&
+    isPlacementCorrect(placedClef, placedPos)
 
   const renderGsNote = (clef: 'treble' | 'bass', pos: number, color: string) => {
     const cy = clef === 'treble' ? gsPosToY_T(pos) : gsPosToY_B(pos)
@@ -489,6 +500,7 @@ function PlaceExerciseGrand({
         </span>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
           <strong>{octaveLabel(item)}</strong> — click on the grand staff to place it
+          {itemIsMiddleC && <span style={{ color: '#B0ACA4' }}> (either staff accepted)</span>}
         </p>
       </div>
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,

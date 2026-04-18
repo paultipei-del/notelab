@@ -130,7 +130,8 @@ const WHOLE_POOL: StepQuestion[] = [
 ]
 
 const LETTER_POOL: { from: string; to: string; type: 'H' | 'W' }[] = [
-  { from: 'E',  to: 'F',  type: 'H' },  // given
+  { from: 'E',  to: 'F',  type: 'H' },  // given — ascending natural H
+  // Ascending
   { from: 'F',  to: 'G',  type: 'W' },
   { from: 'B',  to: 'C',  type: 'H' },
   { from: 'C',  to: 'D',  type: 'W' },
@@ -142,18 +143,55 @@ const LETTER_POOL: { from: string; to: string; type: 'H' | 'W' }[] = [
   { from: 'G',  to: 'A',  type: 'W' },
   { from: 'A',  to: 'B',  type: 'W' },
   { from: 'B♭', to: 'B',  type: 'H' },
+  // Descending
+  { from: 'F',  to: 'E',  type: 'H' },
+  { from: 'C',  to: 'B',  type: 'H' },
+  { from: 'G',  to: 'F♯', type: 'H' },
+  { from: 'B♭', to: 'A',  type: 'H' },
+  { from: 'D♭', to: 'C',  type: 'H' },
+  { from: 'D',  to: 'C',  type: 'W' },
+  { from: 'E',  to: 'D',  type: 'W' },
+  { from: 'A',  to: 'G',  type: 'W' },
+  { from: 'B',  to: 'A',  type: 'W' },
+  { from: 'F♯', to: 'E',  type: 'W' },
+  { from: 'G♯', to: 'F♯', type: 'W' },
 ]
 
-// pos: treble clef (0=C4,1=D4,2=E4,3=F4,4=G4,5=A4,6=B4,7=C5,8=D5,9=E5,10=F5,11=G5)
-const STAFF_POOL: { pos1: number; pos2: number; name1: string; name2: string; type: 'H' | 'W' }[] = [
-  { pos1: 2,  pos2: 3,  name1: 'E', name2: 'F',  type: 'H' },  // given
-  { pos1: 1,  pos2: 2,  name1: 'D', name2: 'E',  type: 'W' },
-  { pos1: 6,  pos2: 7,  name1: 'B', name2: 'C',  type: 'H' },
-  { pos1: 3,  pos2: 4,  name1: 'F', name2: 'G',  type: 'W' },
-  { pos1: 4,  pos2: 5,  name1: 'G', name2: 'A',  type: 'W' },
-  { pos1: 5,  pos2: 6,  name1: 'A', name2: 'B',  type: 'W' },
-  { pos1: 7,  pos2: 8,  name1: 'C', name2: 'D',  type: 'W' },
-  { pos1: 9,  pos2: 10, name1: 'E', name2: 'F',  type: 'H' },
+// pos: treble clef (0=C4,1=D4,2=E4,3=F4,4=G4,5=A4,6=B4,7=C5)
+// acc: 'sharp' | 'flat' | null — accidental on that note
+interface StaffPairItem {
+  pos1: number; pos2: number
+  acc1: 'sharp' | 'flat' | null
+  acc2: 'sharp' | 'flat' | null
+  name1: string; name2: string
+  type: 'H' | 'W'
+}
+
+const STAFF_POOL: StaffPairItem[] = [
+  // given — ascending natural H
+  { pos1: 2, pos2: 3, acc1: null,    acc2: null,    name1: 'E',  name2: 'F',  type: 'H' },
+  // Ascending half steps
+  { pos1: 3, pos2: 4, acc1: 'sharp', acc2: null,    name1: 'F♯', name2: 'G',  type: 'H' },
+  { pos1: 4, pos2: 5, acc1: 'sharp', acc2: null,    name1: 'G♯', name2: 'A',  type: 'H' },
+  { pos1: 5, pos2: 6, acc1: null,    acc2: 'flat',  name1: 'A',  name2: 'B♭', type: 'H' },
+  { pos1: 6, pos2: 7, acc1: null,    acc2: null,    name1: 'B',  name2: 'C',  type: 'H' },
+  // Descending half steps
+  { pos1: 4, pos2: 3, acc1: null,    acc2: 'sharp', name1: 'G',  name2: 'F♯', type: 'H' },
+  { pos1: 6, pos2: 5, acc1: 'flat',  acc2: null,    name1: 'B♭', name2: 'A',  type: 'H' },
+  { pos1: 3, pos2: 2, acc1: null,    acc2: null,    name1: 'F',  name2: 'E',  type: 'H' },
+  { pos1: 5, pos2: 4, acc1: null,    acc2: 'sharp', name1: 'A',  name2: 'G♯', type: 'H' },
+  // Ascending whole steps
+  { pos1: 1, pos2: 2, acc1: null,    acc2: null,    name1: 'D',  name2: 'E',  type: 'W' },
+  { pos1: 4, pos2: 5, acc1: null,    acc2: null,    name1: 'G',  name2: 'A',  type: 'W' },
+  { pos1: 2, pos2: 3, acc1: null,    acc2: 'sharp', name1: 'E',  name2: 'F♯', type: 'W' },
+  { pos1: 3, pos2: 4, acc1: null,    acc2: null,    name1: 'F',  name2: 'G',  type: 'W' },
+  { pos1: 5, pos2: 6, acc1: null,    acc2: null,    name1: 'A',  name2: 'B',  type: 'W' },
+  // Descending whole steps
+  { pos1: 2, pos2: 1, acc1: null,    acc2: null,    name1: 'E',  name2: 'D',  type: 'W' },
+  { pos1: 4, pos2: 3, acc1: null,    acc2: null,    name1: 'G',  name2: 'F',  type: 'W' },
+  { pos1: 5, pos2: 4, acc1: null,    acc2: null,    name1: 'A',  name2: 'G',  type: 'W' },
+  { pos1: 3, pos2: 2, acc1: 'sharp', acc2: null,    name1: 'F♯', name2: 'E',  type: 'W' },
+  { pos1: 6, pos2: 5, acc1: null,    acc2: null,    name1: 'B',  name2: 'A',  type: 'W' },
 ]
 
 // ── Phase definitions ─────────────────────────────────────────────────────────
@@ -691,23 +729,33 @@ const NOTE1_X = 150
 const NOTE2_X = 240
 const BRACKET_Y = 152
 
+const ACC_SHARP = '\uE262'
+const ACC_FLAT  = '\uE260'
+
+function Accidental({ cx, cy, type }: { cx: number; cy: number; type: 'sharp' | 'flat' }) {
+  return (
+    <text x={cx - 18} y={cy}
+      fontFamily="Bravura, serif" fontSize={48}
+      fill={DARK} textAnchor="middle" dominantBaseline="central">
+      {type === 'sharp' ? ACC_SHARP : ACC_FLAT}
+    </text>
+  )
+}
+
 function StaffPairSVG({
   item,
   showAnswer,
   answered,
 }: {
-  item: typeof STAFF_POOL[0]
+  item: StaffPairItem
   showAnswer: boolean
   answered: 'H' | 'W' | null
 }) {
   const cy1 = posToY(item.pos1)
   const cy2 = posToY(item.pos2)
 
-  const noteColor1 = (() => {
-    if (showAnswer || answered === null) return DARK
-    return DARK
-  })()
-  const noteColor2 = noteColor1
+  const noteColor1 = DARK
+  const noteColor2 = DARK
 
   const bracketColor = (() => {
     if (answered === null && !showAnswer) return GREY
@@ -739,7 +787,9 @@ function StaffPairSVG({
       {item.pos1 === 0 && <LedgerLine cx={NOTE1_X} cy={cy1} />}
       {item.pos2 === 0 && <LedgerLine cx={NOTE2_X} cy={cy2} />}
 
+      {item.acc1 && <Accidental cx={NOTE1_X} cy={cy1} type={item.acc1} />}
       <BravuraNote cx={NOTE1_X} cy={cy1} color={noteColor1} />
+      {item.acc2 && <Accidental cx={NOTE2_X} cy={cy2} type={item.acc2} />}
       <BravuraNote cx={NOTE2_X} cy={cy2} color={noteColor2} />
 
       {/* Note name labels */}
