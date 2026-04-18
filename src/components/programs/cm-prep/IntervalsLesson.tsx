@@ -336,26 +336,33 @@ interface BuildIntervalItem {
   clef: 'treble' | 'bass'
   givenPos: number
   size: 2 | 3 | 4 | 5
+  direction: 'up' | 'down'
 }
 
-// 7 treble + 7 bass. Given note fixed, student places a note a 2nd/3rd/4th/5th above.
+// Mix of ascending / descending intervals, 2nd–5th, across both clefs.
+// Given note fixed; student places the second note.
 const EX2_POOL: BuildIntervalItem[] = [
-  // Treble — pos 0 (C4) to 12 (A5), target = givenPos + size - 1 ≤ 12
-  { clef: 'treble', givenPos: 1, size: 3 },   // D4 → F4
-  { clef: 'treble', givenPos: 2, size: 2 },   // E4 → F4
-  { clef: 'treble', givenPos: 4, size: 4 },   // G4 → C5
-  { clef: 'treble', givenPos: 5, size: 5 },   // A4 → E5
-  { clef: 'treble', givenPos: 6, size: 3 },   // B4 → D5
-  { clef: 'treble', givenPos: 7, size: 4 },   // C5 → F5
-  { clef: 'treble', givenPos: 8, size: 2 },   // D5 → E5
-  // Bass — pos 0 (E2) to 12 (C4)
-  { clef: 'bass',   givenPos: 1, size: 3 },   // F2 → A2
-  { clef: 'bass',   givenPos: 2, size: 4 },   // G2 → C3
-  { clef: 'bass',   givenPos: 3, size: 5 },   // A2 → E3
-  { clef: 'bass',   givenPos: 4, size: 2 },   // B2 → C3
-  { clef: 'bass',   givenPos: 6, size: 3 },   // D3 → F3
-  { clef: 'bass',   givenPos: 7, size: 4 },   // E3 → A3
-  { clef: 'bass',   givenPos: 9, size: 2 },   // G3 → A3
+  // Treble ascending (pos range 0–12)
+  { clef: 'treble', givenPos: 1, size: 3, direction: 'up' },   // D4 up  → F4
+  { clef: 'treble', givenPos: 2, size: 2, direction: 'up' },   // E4 up  → F4
+  { clef: 'treble', givenPos: 4, size: 4, direction: 'up' },   // G4 up  → C5
+  { clef: 'treble', givenPos: 5, size: 5, direction: 'up' },   // A4 up  → E5
+  { clef: 'treble', givenPos: 7, size: 3, direction: 'up' },   // C5 up  → E5
+  // Treble descending
+  { clef: 'treble', givenPos: 8,  size: 4, direction: 'down' }, // D5 down → A4
+  { clef: 'treble', givenPos: 9,  size: 3, direction: 'down' }, // E5 down → C5
+  { clef: 'treble', givenPos: 10, size: 2, direction: 'down' }, // F5 down → E5
+  { clef: 'treble', givenPos: 11, size: 5, direction: 'down' }, // G5 down → C5
+  // Bass ascending (pos range 0–12)
+  { clef: 'bass',   givenPos: 2, size: 4, direction: 'up' },   // G2 up  → C3
+  { clef: 'bass',   givenPos: 3, size: 5, direction: 'up' },   // A2 up  → E3
+  { clef: 'bass',   givenPos: 4, size: 2, direction: 'up' },   // B2 up  → C3
+  { clef: 'bass',   givenPos: 6, size: 3, direction: 'up' },   // D3 up  → F3
+  // Bass descending
+  { clef: 'bass',   givenPos: 9,  size: 4, direction: 'down' }, // G3 down → D3
+  { clef: 'bass',   givenPos: 10, size: 5, direction: 'down' }, // A3 down → D3
+  { clef: 'bass',   givenPos: 11, size: 2, direction: 'down' }, // B3 down → A3
+  { clef: 'bass',   givenPos: 8,  size: 3, direction: 'down' }, // F3 down → D3
 ]
 
 const EX2_NOTE1_X = 140   // given note x
@@ -382,7 +389,9 @@ function BuildIntervalEx({
   const svgRef     = useRef<SVGSVGElement | null>(null)
 
   const item      = items[idx]
-  const targetPos = item.givenPos + item.size - 1
+  const targetPos = item.direction === 'up'
+    ? item.givenPos + item.size - 1
+    : item.givenPos - (item.size - 1)
   const isCorrect = submitted && placedPos === targetPos
 
   // Clamp-snap — any pos 0..12 is a valid target
@@ -431,7 +440,8 @@ function BuildIntervalEx({
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place a note a{' '}
-        <strong style={{ color: ACCENT }}>{sizeLabel(item.size)}</strong> above
+        <strong style={{ color: ACCENT }}>{sizeLabel(item.size)}</strong>{' '}
+        {item.direction === 'up' ? 'above' : 'below'}
       </p>
 
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -509,7 +519,8 @@ function BuildIntervalEx({
         {submitted && isCorrect  && '✓ Correct'}
         {submitted && !isCorrect && (
           <>The correct note is a <strong style={{ color: CORRECT }}>
-            {sizeLabel(item.size)}</strong> above — shown in green</>
+            {sizeLabel(item.size)}</strong>{' '}{item.direction === 'up' ? 'above' : 'below'} —
+            shown in green</>
         )}
       </p>
     </div>
@@ -817,73 +828,141 @@ interface Ex4Item {
   beamPairs: [number, number][]
 }
 
+// Treble pos:  C4=0 D4=1 E4=2 F4=3 G4=4 A4=5 B4=6 C5=7 D5=8 E5=9 F5=10 G5=11 A5=12
+// Bass   pos:  E2=0 F2=1 G2=2 A2=3 B2=4 C3=5 D3=6 E3=7 F3=8 G3=9 A3=10 B3=11 C4=12
 const EX4_POOL: Ex4Item[] = [
-  // 1. Treble: F4 B4 F4 — all quarters → 4ths
-  {
-    clef: 'treble', answer: 4, beamPairs: [],
-    notes: [
-      { pos: 3, duration: 'quarter' },
-      { pos: 6, duration: 'quarter' },
-      { pos: 3, duration: 'quarter' },
-    ],
-  },
-  // 2. Treble: C5 quarter, B4 eighth, A4 eighth, G4 quarter → 2nds
-  {
-    clef: 'treble', answer: 2, beamPairs: [[1, 2]],
-    notes: [
-      { pos: 7, duration: 'quarter' },
-      { pos: 6, duration: 'eighth'  },
-      { pos: 5, duration: 'eighth'  },
-      { pos: 4, duration: 'quarter' },
-    ],
-  },
-  // 3. Treble: D4 F4 A4 F4 — all quarters → 3rds
-  {
-    clef: 'treble', answer: 3, beamPairs: [],
-    notes: [
-      { pos: 1, duration: 'quarter' },
-      { pos: 3, duration: 'quarter' },
-      { pos: 5, duration: 'quarter' },
-      { pos: 3, duration: 'quarter' },
-    ],
-  },
-  // 4. Bass: F3 half, A3 half → 3rd
-  {
-    clef: 'bass', answer: 3, beamPairs: [],
-    notes: [
-      { pos: 8, duration: 'half' },
-      { pos: 10, duration: 'half' },
-    ],
-  },
+  // ── 2nds ──────────────────────────────────────────────────────────────
+  // Treble: E4 F4 G4 A4 — all quarters, step-wise up
+  { clef: 'treble', answer: 2, beamPairs: [], notes: [
+    { pos: 2, duration: 'quarter' }, { pos: 3, duration: 'quarter' },
+    { pos: 4, duration: 'quarter' }, { pos: 5, duration: 'quarter' },
+  ]},
+  // Treble: C5 B4(e) A4(e) G4 — 2nd example from spec
+  { clef: 'treble', answer: 2, beamPairs: [[1, 2]], notes: [
+    { pos: 7, duration: 'quarter' }, { pos: 6, duration: 'eighth' },
+    { pos: 5, duration: 'eighth'  }, { pos: 4, duration: 'quarter' },
+  ]},
+  // Treble: A4 half, B4 half — simple step
+  { clef: 'treble', answer: 2, beamPairs: [], notes: [
+    { pos: 5, duration: 'half' }, { pos: 6, duration: 'half' },
+  ]},
+  // Treble: D4(e) E4(e) F4(e) G4(e) — two beamed pairs
+  { clef: 'treble', answer: 2, beamPairs: [[0, 1], [2, 3]], notes: [
+    { pos: 1, duration: 'eighth' }, { pos: 2, duration: 'eighth' },
+    { pos: 3, duration: 'eighth' }, { pos: 4, duration: 'eighth' },
+  ]},
+  // Bass: C3 D3 E3 F3 — quarters up
+  { clef: 'bass', answer: 2, beamPairs: [], notes: [
+    { pos: 5, duration: 'quarter' }, { pos: 6, duration: 'quarter' },
+    { pos: 7, duration: 'quarter' }, { pos: 8, duration: 'quarter' },
+  ]},
+  // Bass: B3 A3 G3 F3 — quarters down
+  { clef: 'bass', answer: 2, beamPairs: [], notes: [
+    { pos: 11, duration: 'quarter' }, { pos: 10, duration: 'quarter' },
+    { pos: 9,  duration: 'quarter' }, { pos: 8,  duration: 'quarter' },
+  ]},
+
+  // ── 3rds ──────────────────────────────────────────────────────────────
+  // Treble: F4 B4 F4 — quarters (spec example, 4th originally; adjusted)
+  { clef: 'treble', answer: 4, beamPairs: [], notes: [
+    { pos: 3, duration: 'quarter' }, { pos: 6, duration: 'quarter' },
+    { pos: 3, duration: 'quarter' },
+  ]},
+  // Treble: C4 E4 G4 E4 — stacked thirds
+  { clef: 'treble', answer: 3, beamPairs: [], notes: [
+    { pos: 0, duration: 'quarter' }, { pos: 2, duration: 'quarter' },
+    { pos: 4, duration: 'quarter' }, { pos: 2, duration: 'quarter' },
+  ]},
+  // Treble: D4 F4 A4 — half, quarter, quarter
+  { clef: 'treble', answer: 3, beamPairs: [], notes: [
+    { pos: 1, duration: 'half' }, { pos: 3, duration: 'quarter' },
+    { pos: 5, duration: 'quarter' },
+  ]},
+  // Treble: F4 A4 C5 A4 — quarters
+  { clef: 'treble', answer: 3, beamPairs: [], notes: [
+    { pos: 3, duration: 'quarter' }, { pos: 5, duration: 'quarter' },
+    { pos: 7, duration: 'quarter' }, { pos: 5, duration: 'quarter' },
+  ]},
+  // Bass: E2 G2 B2 G2 — quarters
+  { clef: 'bass', answer: 3, beamPairs: [], notes: [
+    { pos: 0, duration: 'quarter' }, { pos: 2, duration: 'quarter' },
+    { pos: 4, duration: 'quarter' }, { pos: 2, duration: 'quarter' },
+  ]},
+  // Bass: F3 half, A3 half — as before
+  { clef: 'bass', answer: 3, beamPairs: [], notes: [
+    { pos: 8, duration: 'half' }, { pos: 10, duration: 'half' },
+  ]},
+
+  // ── 4ths ──────────────────────────────────────────────────────────────
+  // Treble: C4 F4 C4 F4 — quarters
+  { clef: 'treble', answer: 4, beamPairs: [], notes: [
+    { pos: 0, duration: 'quarter' }, { pos: 3, duration: 'quarter' },
+    { pos: 0, duration: 'quarter' }, { pos: 3, duration: 'quarter' },
+  ]},
+  // Treble: D4 G4 — halves
+  { clef: 'treble', answer: 4, beamPairs: [], notes: [
+    { pos: 1, duration: 'half' }, { pos: 4, duration: 'half' },
+  ]},
+  // Bass: A2 D3 A2 — quarters
+  { clef: 'bass', answer: 4, beamPairs: [], notes: [
+    { pos: 3, duration: 'quarter' }, { pos: 6, duration: 'quarter' },
+    { pos: 3, duration: 'quarter' },
+  ]},
+  // Bass: E2 A2 E2 — halves, half
+  { clef: 'bass', answer: 4, beamPairs: [], notes: [
+    { pos: 0, duration: 'quarter' }, { pos: 3, duration: 'quarter' },
+    { pos: 0, duration: 'half' },
+  ]},
+
+  // ── 5ths ──────────────────────────────────────────────────────────────
+  // Treble: C4 G4 C4 — quarter, quarter, half
+  { clef: 'treble', answer: 5, beamPairs: [], notes: [
+    { pos: 0, duration: 'quarter' }, { pos: 4, duration: 'quarter' },
+    { pos: 0, duration: 'half' },
+  ]},
+  // Treble: D4 A4 — halves
+  { clef: 'treble', answer: 5, beamPairs: [], notes: [
+    { pos: 1, duration: 'half' }, { pos: 5, duration: 'half' },
+  ]},
+  // Bass: C3 G3 C3 — quarters
+  { clef: 'bass', answer: 5, beamPairs: [], notes: [
+    { pos: 5, duration: 'quarter' }, { pos: 9, duration: 'quarter' },
+    { pos: 5, duration: 'quarter' },
+  ]},
+  // Bass: G2 D3 G2 — halves, quarter
+  { clef: 'bass', answer: 5, beamPairs: [], notes: [
+    { pos: 2, duration: 'half' }, { pos: 6, duration: 'half' },
+  ]},
 ]
 
-// Render a quarter or eighth note with stem; eighth may be flagged or left
-// unflagged (when it's part of a beam group handled separately)
+// Shared rhythm-note dimensions — match every other Bravura notehead in the program.
+const NH_FS    = 60   // notehead glyph size (same as BravuraNote whole-notes)
+const NH_OFF   = 8    // half-notehead width (horizontal stem offset)
+const STEM_LEN = 47   // standard stem length
+
+// Render a quarter, half, or eighth note with stem. Eighths get a flag unless
+// they're part of a beamed group (beams are drawn separately in PhraseStaff).
 function RhythmNote({
   cx, cy, duration, stemUp, color = DARK, suppressFlag = false,
 }: {
   cx: number; cy: number; duration: Duration; stemUp: boolean
   color?: string; suppressFlag?: boolean
 }) {
-  const NH_OFF = 8
-  const STEM_LEN = 40
-  const isWhole = false // not used here
   const isHollow = duration === 'half'
-  const headGlyph = isHollow ? '\uE0A3' : '\uE0A4'  // half or quarter/eighth black notehead
-  const stemX = stemUp ? cx + NH_OFF : cx - NH_OFF
+  const headGlyph = isHollow ? '\uE0A3' : '\uE0A4'   // half or quarter/eighth (black) head
+  const stemX  = stemUp ? cx + NH_OFF : cx - NH_OFF
   const stemY2 = stemUp ? cy - STEM_LEN : cy + STEM_LEN
   return (
     <g>
-      <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={42}
+      <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={NH_FS}
         fill={color} textAnchor="middle" dominantBaseline="central">{headGlyph}</text>
       <line x1={stemX} y1={cy} x2={stemX} y2={stemY2} stroke={color} strokeWidth={1.5} />
       {duration === 'eighth' && !suppressFlag && (
-        <text x={stemX} y={stemY2} fontFamily="Bravura, serif" fontSize={42}
-          fill={color} textAnchor={stemUp ? 'start' : 'start'} dominantBaseline="central">
+        <text x={stemX} y={stemY2} fontFamily="Bravura, serif" fontSize={NH_FS}
+          fill={color} textAnchor="start" dominantBaseline="central">
           {stemUp ? '\uE240' : '\uE241'}
         </text>
       )}
-      {isWhole && null /* whole note would omit stem; unused here */}
     </g>
   )
 }
@@ -904,9 +983,6 @@ function PhraseStaff({ item }: { item: Ex4Item }) {
   const MID = 6
   const stemDir = (pos: number) => pos < MID
 
-  const NH_OFF = 8
-  const STEM_LEN = 40
-
   return (
     <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
       style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -915,28 +991,26 @@ function PhraseStaff({ item }: { item: Ex4Item }) {
       <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
       {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
 
-      {/* Notes — beams drawn first so the notehead/stem sits on top */}
+      {/* Beams — drawn before noteheads so heads sit above the bar */}
       {item.beamPairs.map(([a, b], i) => {
         const ax = noteX(a), bx = noteX(b)
         const ay = posToY(item.notes[a].pos), by = posToY(item.notes[b].pos)
-        // Pick a common stem direction for the pair based on the group's average pos
+        // Common stem direction for the pair based on the group's average pos
         const avg = (item.notes[a].pos + item.notes[b].pos) / 2
         const up = avg < MID
         const stemAx = up ? ax + NH_OFF : ax - NH_OFF
         const stemBx = up ? bx + NH_OFF : bx - NH_OFF
-        // Beam y: past the higher of the two stem tips so beam is flush
+        // Beam bar y: flush with the farthest-from-head stem tip
         const beamY = up
           ? Math.min(ay, by) - STEM_LEN
           : Math.max(ay, by) + STEM_LEN
         return (
           <g key={`beam-${i}`}>
-            {/* Stems */}
             <line x1={stemAx} y1={ay} x2={stemAx} y2={beamY}
               stroke={DARK} strokeWidth={1.5} />
             <line x1={stemBx} y1={by} x2={stemBx} y2={beamY}
               stroke={DARK} strokeWidth={1.5} />
-            {/* Beam bar */}
-            <rect x={stemAx - 0.75} y={beamY - 4} width={stemBx - stemAx + 1.5} height={5}
+            <rect x={stemAx - 0.75} y={beamY - 3} width={stemBx - stemAx + 1.5} height={6}
               fill={DARK} />
           </g>
         )
@@ -949,15 +1023,11 @@ function PhraseStaff({ item }: { item: Ex4Item }) {
         if (isBeamedEighth) {
           return (
             <text key={i} x={noteX(i)} y={posToY(n.pos)}
-              fontFamily="Bravura, serif" fontSize={42}
+              fontFamily="Bravura, serif" fontSize={NH_FS}
               fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A4'}</text>
           )
         }
-        return (
-          <g key={i}>
-            <RhythmNote cx={noteX(i)} cy={posToY(n.pos)} duration={n.duration} stemUp={up} />
-          </g>
-        )
+        return <RhythmNote key={i} cx={noteX(i)} cy={posToY(n.pos)} duration={n.duration} stemUp={up} />
       })}
     </svg>
   )
@@ -968,7 +1038,9 @@ function PhraseIntervalEx({
 }: {
   onDone: (correct: number, total: number) => void
 }) {
-  const items = useMemo(() => shuffled(EX4_POOL), [])
+  // Draw a random subset each session so repeat play stays fresh.
+  const SESSION_SIZE = 10
+  const items = useMemo(() => shuffled(EX4_POOL).slice(0, SESSION_SIZE), [])
   const total = items.length
 
   const [idx,      setIdx]      = useState(0)
