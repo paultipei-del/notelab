@@ -985,9 +985,13 @@ function NavBar({ canBack, canForward, onBack, onForward }: {
 }) {
   if (!canBack && !canForward) return null
   return (
-    <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 12 }}>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
       {canBack && <BackButton onClick={onBack} />}
-      {canForward && <ForwardButton onClick={onForward} />}
+      {canForward && (
+        <div style={{ marginLeft: 'auto' }}>
+          <ForwardButton onClick={onForward} />
+        </div>
+      )}
     </div>
   )
 }
