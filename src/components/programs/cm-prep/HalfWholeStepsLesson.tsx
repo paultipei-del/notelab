@@ -24,7 +24,7 @@ function posToY(pos: number) { return tTop + (10 - pos) * step }
 function lineY(n: number)    { return tTop + (5 - n) * 2 * step }
 
 // ── Piano keyboard geometry ───────────────────────────────────────────────────
-const VW = 680
+const VW = 740   // extended to include a full C above B (was 680 with a C sliver)
 const VH = 480
 const KEY_Y  = 69
 const KEY_END = 441
@@ -34,9 +34,9 @@ const BK_H    = BK_END - KEY_Y   // 232
 const WK_W = 86
 const BK_W = 51
 
-const WK_X: Record<string, number> = { C: 30, D: 118, E: 206, F: 294, G: 382, A: 470, B: 558 }
+const WK_X: Record<string, number> = { C: 30, D: 118, E: 206, F: 294, G: 382, A: 470, B: 558, C5: 646 }
 const BK_X: Record<string, number> = { 'C#': 82, 'D#': 175, 'F#': 343, 'G#': 437, 'A#': 531 }
-const WHITE_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+const WHITE_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C5']
 const BLACK_NOTES = ['C#', 'D#', 'F#', 'G#', 'A#']
 
 const BK_LABELS: Record<string, string> = {
@@ -292,7 +292,7 @@ function StepKeyboard({
   const arrowMarkId = `arrMark-${uid}`
   const arrowY = KEY_Y - 22
 
-  const isWhiteNote = (n: string) => WHITE_NOTES.includes(n) || n === 'C5'
+  const isWhiteNote = (n: string) => WHITE_NOTES.includes(n)
 
   const wFill = (note: string) => {
     const isFrom   = note === fromNote
@@ -321,11 +321,11 @@ function StepKeyboard({
 
   // Arrow geometry
   const fromX = isWhiteNote(fromNote)
-    ? (fromNote === 'C5' ? 646 + 13 : WK_X[fromNote] + WK_W / 2)
+    ? WK_X[fromNote] + WK_W / 2
     : BK_X[fromNote] + BK_W / 2
-  const toX = answer === 'C5'
-    ? 646 + 13
-    : (WHITE_NOTES.includes(answer) ? WK_X[answer] + WK_W / 2 : BK_X[answer] + BK_W / 2)
+  const toX = WHITE_NOTES.includes(answer)
+    ? WK_X[answer] + WK_W / 2
+    : BK_X[answer] + BK_W / 2
 
   return (
     <svg viewBox={`0 0 ${VW} ${VH}`} width="100%" style={{ display: 'block' }}>
@@ -454,37 +454,11 @@ function StepKeyboard({
               fill={GREY}
               textAnchor="middle" dominantBaseline="auto"
             >
-              {note}
+              {note === 'C5' ? 'C' : note}
             </text>
           </g>
         )
       })}
-
-      {/* C5 sliver */}
-      {(() => {
-        const sliverX = 646
-        const sliverW = VW - 646 - 8
-        const isFrom   = fromNote === 'C5'
-        const isAnswer = answer === 'C5'
-        const sliverFill = kbState === 'correct' && (isFrom || isAnswer)
-          ? '#88C060'
-          : kbState === 'wrong' && wrongNote === 'C5'
-          ? '#F08070'
-          : `url(#ivory-${uid})`
-        return (
-          <g
-            onClick={() => !isFrom && onKeyClick('C5')}
-            style={{ cursor: isFrom ? 'not-allowed' : 'pointer' }}
-          >
-            <rect x={sliverX} y={KEY_Y} width={sliverW} height={FACE_B - KEY_Y}
-              fill={sliverFill} rx={5} />
-            <rect x={sliverX} y={KEY_Y + 6} width={14} height={FACE_B - KEY_Y - 6}
-              fill={`url(#lEdge-${uid})`} />
-            <rect x={sliverX} y={KEY_Y} width={sliverW} height={28}
-              fill="white" opacity={0.12} rx={5} />
-          </g>
-        )
-      })()}
 
       {/* Black keys */}
       {BLACK_NOTES.map(note => {

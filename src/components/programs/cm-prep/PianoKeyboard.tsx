@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react'
 // Black key: 51px wide, 232px tall
 // Asymmetric black key offsets match real hammer spacing
 
-const VW = 680
+const VW = 740  // extended to include a full C above B (was 680 with a C sliver)
 const VH = 480
 
 const KEY_Y   = 69   // top of keys
@@ -25,7 +25,7 @@ const BK_W = 51  // black key width (≈ 58% of 88)
 
 // White key left-edge x positions
 const WK_X: Record<string, number> = {
-  C: 30, D: 118, E: 206, F: 294, G: 382, A: 470, B: 558,
+  C: 30, D: 118, E: 206, F: 294, G: 382, A: 470, B: 558, C5: 646,
 }
 
 // Black key left-edge x positions — asymmetric, matching real piano hammer spacing
@@ -33,7 +33,7 @@ const BK_X: Record<string, number> = {
   'C#': 82, 'D#': 175, 'F#': 343, 'G#': 437, 'A#': 531,
 }
 
-const WHITE_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+const WHITE_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C5']
 const BLACK_NOTES = ['C#', 'D#', 'F#', 'G#', 'A#']
 
 const BK_LABELS: Record<string, { sharp: string; flat: string }> = {
@@ -52,7 +52,8 @@ const SHARP_TARGET: Record<string, { note: string; isBlack: boolean } | null> = 
   F: { note: 'F#', isBlack: true  },
   G: { note: 'G#', isBlack: true  },
   A: { note: 'A#', isBlack: true  },
-  B: null,                             // B♯ = C in next octave — out of range
+  B: { note: 'C5', isBlack: false },  // B♯ = C (the C above)
+  C5: null,                            // C5♯ = C#5 in next octave — out of range
 }
 
 // Flat of each white key (within this octave)
@@ -64,14 +65,15 @@ const FLAT_TARGET: Record<string, { note: string; isBlack: boolean } | null> = {
   G: { note: 'F#', isBlack: true  },  // G♭ = F#
   A: { note: 'G#', isBlack: true  },  // A♭ = G#
   B: { note: 'A#', isBlack: true  },  // B♭ = A#
+  C5: { note: 'B', isBlack: false },  // C5♭ = B (the B below)
 }
 
 // Accidental display names — always use the selected note's letter, not the enharmonic
 const SHARP_DISPLAY: Record<string, string> = {
-  C: 'C♯', D: 'D♯', E: 'E♯', F: 'F♯', G: 'G♯', A: 'A♯', B: 'B♯',
+  C: 'C♯', D: 'D♯', E: 'E♯', F: 'F♯', G: 'G♯', A: 'A♯', B: 'B♯', C5: 'C♯',
 }
 const FLAT_DISPLAY: Record<string, string> = {
-  C: 'C♭', D: 'D♭', E: 'E♭', F: 'F♭', G: 'G♭', A: 'A♭', B: 'B♭',
+  C: 'C♭', D: 'D♭', E: 'E♭', F: 'F♭', G: 'G♭', A: 'A♭', B: 'B♭', C5: 'C♭',
 }
 
 // Whole step above each white key (2 semitones; B is out of range for this octave)
@@ -82,7 +84,8 @@ const WHOLE_TARGET: Record<string, { note: string; isBlack: boolean } | null> = 
   F: { note: 'G',  isBlack: false },
   G: { note: 'A',  isBlack: false },
   A: { note: 'B',  isBlack: false },
-  B: null,                             // B + whole = C♯ in next octave — out of range
+  B: null,                             // B + whole = C♯5 — no C♯5 on this keyboard
+  C5: null,                            // C5 + whole = D5 — out of range
 }
 
 // Half step above each black key (= the next white key, no black between)
@@ -115,6 +118,7 @@ const WHOLE_TARGET_DOWN: Record<string, { note: string; isBlack: boolean } | nul
   G: { note: 'F',  isBlack: false },   // G - 2 = F
   A: { note: 'G',  isBlack: false },   // A - 2 = G
   B: { note: 'A',  isBlack: false },   // B - 2 = A
+  C5: { note: 'A#', isBlack: true  },  // C5 - 2 = A#
 }
 
 // Half step below each black key (= adjacent white key to the left)
@@ -227,13 +231,14 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
   }
 
   const wLabel = (note: string) => {
-    if (mode === 'naturals') return note + '♮'
+    const display = note === 'C5' ? 'C' : note
+    if (mode === 'naturals') return display + '♮'
     // Enharmonic white-key targets get the accidental name only in sharps/flats lesson (e.g. F → E♯)
     // Half-steps and whole-steps always use the plain note name
     if (!isBlackSelected && (mode === 'sharps' || mode === 'flats') && target && !target.isBlack && target.note === note) {
       return mode === 'flats' ? FLAT_DISPLAY[selected] : SHARP_DISPLAY[selected]
     }
-    return note
+    return display
   }
 
   // ── Arrow geometry — dynamic based on selection ──────────────────────────
@@ -262,14 +267,15 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
       : (direction === 'up' ? 'W — skips one key going up'  : 'W — skips one key going down')
 
   // Result label e.g. "E → E♯", "C → D", "C♯ → D"
+  const plain = (n: string) => n === 'C5' ? 'C' : n
   const resultLabel = (() => {
-    if (mode === 'naturals') return selected + '♮'
+    if (mode === 'naturals') return plain(selected) + '♮'
     if (!target) return null
-    const fromDisplay = isBlackSelected ? BK_LABELS[selected].sharp : selected
+    const fromDisplay = isBlackSelected ? BK_LABELS[selected].sharp : plain(selected)
     let toName: string
     if (mode === 'sharps') {
       // Sharps lesson: use enharmonic name (E → E♯, not E → F)
-      toName = isBlackSelected ? target.note : SHARP_DISPLAY[selected]
+      toName = isBlackSelected ? plain(target.note) : SHARP_DISPLAY[selected]
     } else if (mode === 'flats') {
       // Flats lesson: use enharmonic name (F → F♭, not F → E)
       toName = FLAT_DISPLAY[selected]
@@ -277,7 +283,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
       // Half-steps and whole-steps: always use the actual note name (E → F, not E → E♯)
       toName = target.isBlack
         ? BK_LABELS[target.note].sharp         // e.g. F♯, D♯, G♯
-        : target.note                          // e.g. D, E, F, G, B…
+        : plain(target.note)                   // e.g. D, E, F, G, B, C
     }
     return `${fromDisplay} → ${toName}`
   })()
@@ -496,26 +502,6 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
             </g>
           )
         })}
-
-        {/* C8 sliver (rightmost partial C) — grayed when B is inactive */}
-        {(() => {
-          const bInactive = mode !== 'naturals' && (() => {
-            if (mode === 'flats') return FLAT_TARGET['B'] === null  // false, B♭ is valid
-            if (mode === 'half-steps' && direction === 'down') return FLAT_TARGET['B'] === null
-            if (mode === 'whole-steps' && direction === 'down') return WHOLE_TARGET_DOWN['B'] === null
-            return SHARP_TARGET['B'] === null  // true for sharps, ascending half/whole
-          })()
-          return (
-            <g>
-              <rect x={646} y={KEY_Y} width={VW - 646 - 8} height={FACE_B - KEY_Y}
-                fill={`url(#ivory-${uid})`} rx={5} />
-              {bInactive && (
-                <rect x={646} y={KEY_Y} width={VW - 646 - 8} height={FACE_B - KEY_Y}
-                  fill="rgba(0,0,0,0.18)" rx={5} />
-              )}
-            </g>
-          )
-        })()}
 
         {/* ── Black keys ─────────────────────────────────────────────────── */}
         {BLACK_NOTES.map(note => {
