@@ -809,7 +809,11 @@ type Phase = 'note-shapes' | 'line-intro' | 'space-intro' |
   'd1' | 'd2' | 'd3' | 'd4' | 'd5' | 'd6' |
   'dn-repeat'
 
-interface Props { passingScore: number; onComplete: (score: number, total: number) => void }
+interface Props {
+  passingScore: number
+  previouslyCompleted?: boolean
+  onComplete: (score: number, total: number) => void
+}
 
 // Linear progression — excludes retry pause phases (gs-repeat, dn-repeat)
 const PHASE_ORDER: Phase[] = [
@@ -821,10 +825,12 @@ const PHASE_ORDER: Phase[] = [
 const GS_ROUNDS: Phase[] = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6']
 const DN_ROUNDS: Phase[] = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6']
 
-export default function LineSpaceLesson({ passingScore, onComplete }: Props) {
+export default function LineSpaceLesson({ passingScore, previouslyCompleted = false, onComplete }: Props) {
   const [phase,       setPhase]       = useState<Phase>('note-shapes')
   const [key,         setKey]         = useState(0)
-  const [furthestIdx, setFurthestIdx] = useState(0)
+  const [furthestIdx, setFurthestIdx] = useState(
+    previouslyCompleted ? Math.max(0, PHASE_ORDER.length - 1) : 0
+  )
   const [gsRatio, setGsRatio] = useState(0)
   const [dnRatio, setDnRatio] = useState(0)
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())

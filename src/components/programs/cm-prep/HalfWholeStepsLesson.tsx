@@ -926,14 +926,18 @@ function StaffPairEx({
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function HalfWholeStepsLesson({
   passingScore,
+  previouslyCompleted = false,
   onComplete,
 }: {
   passingScore: number
+  previouslyCompleted?: boolean
   onComplete: (score: number, total: number) => void
 }) {
   const [phase,       setPhase]       = useState<Phase>('intro')
   const [key,         setKey]         = useState(0)
-  const [furthestIdx, setFurthestIdx] = useState(0)
+  const [furthestIdx, setFurthestIdx] = useState(
+    previouslyCompleted ? Math.max(0, PHASE_ORDER.length - 1) : 0
+  )
   // Per-phase score map — redo overwrites via .set(), so back/forward keep scores.
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 

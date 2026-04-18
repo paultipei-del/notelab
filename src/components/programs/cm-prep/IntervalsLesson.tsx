@@ -1151,14 +1151,20 @@ const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4']
 
 export default function IntervalsLesson({
   passingScore,
+  previouslyCompleted = false,
   onComplete,
 }: {
   passingScore: number
+  previouslyCompleted?: boolean
   onComplete: (score: number, total: number) => void
 }) {
   const [phase,       setPhase]       = useState<Phase>('ex1')
   const [key,         setKey]         = useState(0)
-  const [furthestIdx, setFurthestIdx] = useState(0)
+  // When the lesson has been completed before, unlock full navigation so the
+  // student can jump around on a replay without redoing earlier exercises.
+  const [furthestIdx, setFurthestIdx] = useState(
+    previouslyCompleted ? Math.max(0, PHASE_ORDER.length - 1) : 0
+  )
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
   function goToPhase(p: Phase) {

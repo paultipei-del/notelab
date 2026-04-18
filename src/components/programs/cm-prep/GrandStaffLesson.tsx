@@ -1826,13 +1826,16 @@ const PHASE_ORDER: Phase[] = [
 
 interface Props {
   passingScore: number
+  previouslyCompleted?: boolean
   onComplete: (score: number, total: number) => void
 }
 
-export default function GrandStaffLesson({ passingScore, onComplete }: Props) {
+export default function GrandStaffLesson({ passingScore, previouslyCompleted = false, onComplete }: Props) {
   const [phase,       setPhase]       = useState<Phase>('staff-intro')
   const [key,         setKey]         = useState(0)
-  const [furthestIdx, setFurthestIdx] = useState(0)
+  const [furthestIdx, setFurthestIdx] = useState(
+    previouslyCompleted ? Math.max(0, PHASE_ORDER.length - 1) : 0
+  )
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
   function goToPhase(p: Phase) {

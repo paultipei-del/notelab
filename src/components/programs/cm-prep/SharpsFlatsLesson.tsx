@@ -815,14 +815,17 @@ const PHASE_ORDER: Phase[] = [
 ]
 
 export default function SharpsFlatsLesson({
-  passingScore, onComplete,
+  passingScore, previouslyCompleted = false, onComplete,
 }: {
   passingScore: number
+  previouslyCompleted?: boolean
   onComplete: (score: number, total: number) => void
 }) {
   const [phase,       setPhase]       = useState<Phase>('sharps-intro')
   const [key,         setKey]         = useState(0)
-  const [furthestIdx, setFurthestIdx] = useState(0)
+  const [furthestIdx, setFurthestIdx] = useState(
+    previouslyCompleted ? Math.max(0, PHASE_ORDER.length - 1) : 0
+  )
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
   function goToPhase(p: Phase) {

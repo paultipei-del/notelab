@@ -297,21 +297,25 @@ export default function CMPrepLessonPage({ params }: Props) {
                 {lesson.tool === 'bass-clef-lesson' ? (
                   <BassClefLesson
                     passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'treble-clef-lesson' ? (
                   <TrebleClefLesson
                     passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'line-space-lesson' ? (
                   <LineSpaceLesson
                     passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'grand-staff-lesson' ? (
                   <GrandStaffLesson
                     passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'mc-quiz' || lesson.tool === 'mixed-quiz' ? (
@@ -338,16 +342,19 @@ export default function CMPrepLessonPage({ params }: Props) {
                 ) : lesson.tool === 'sharps-flats-lesson' ? (
                   <SharpsFlatsLesson
                     passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'half-whole-lesson' ? (
                   <HalfWholeStepsLesson
                     passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'intervals-lesson' ? (
                   <IntervalsLesson
                     passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
                 ) : lesson.tool === 'flash-session' ? (

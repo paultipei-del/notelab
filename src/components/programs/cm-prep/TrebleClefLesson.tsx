@@ -852,12 +852,18 @@ type Phase =
 
 const PHASE_ORDER: Phase[] = ['space-intro', 'ex1', 'ex2', 'line-intro', 'ex3', 'ex4', 'word-game']
 
-interface Props { passingScore: number; onComplete: (score: number, total: number) => void }
+interface Props {
+  passingScore: number
+  previouslyCompleted?: boolean
+  onComplete: (score: number, total: number) => void
+}
 
-export default function TrebleClefLesson({ passingScore, onComplete }: Props) {
+export default function TrebleClefLesson({ passingScore, previouslyCompleted = false, onComplete }: Props) {
   const [phase,       setPhase]       = useState<Phase>('space-intro')
   const [key,         setKey]         = useState(0)
-  const [furthestIdx, setFurthestIdx] = useState(0)
+  const [furthestIdx, setFurthestIdx] = useState(
+    previouslyCompleted ? Math.max(0, PHASE_ORDER.length - 1) : 0
+  )
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
   function goToPhase(p: Phase) {
