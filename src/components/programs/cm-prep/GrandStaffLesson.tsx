@@ -215,24 +215,28 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
 
   const [idx, setIdx] = useState(0)
   const [chosen, setChosen] = useState<number | null>(null)
-  const [score, setScore] = useState(0)
   const [results, setResults] = useState<boolean[]>([])
+  const lockedRef = useRef(false)
 
   const q = questions[idx]
   const total = questions.length
 
   function pick(opt: number) {
-    if (chosen !== null) return
+    if (chosen !== null || lockedRef.current) return
+    lockedRef.current = true
     const ok = opt === q.n
     setChosen(opt)
-    if (ok) setScore(s => s + 1)
     setResults(r => [...r, ok])
-  }
-
-  function next() {
-    if (idx + 1 >= total) { onDone(score / total, total); return }
-    setIdx(i => i + 1)
-    setChosen(null)
+    setTimeout(() => {
+      if (idx + 1 >= total) {
+        const correctCount = results.filter(Boolean).length + (ok ? 1 : 0)
+        onDone(correctCount / total, total)
+        return
+      }
+      setIdx(i => i + 1)
+      setChosen(null)
+      lockedRef.current = false
+    }, ok ? 1000 : 1800)
   }
 
   // Highlight the target line/space
@@ -298,12 +302,10 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
       </div>
 
       {chosen !== null && (
-        <FeedbackRow
-          result={chosen === q.n}
-          correctLabel={`This is ${q.type} ${q.n}`}
-          onNext={next}
-          nextLabel={idx + 1 >= total ? 'Finish →' : 'Next →'}
-        />
+        <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0,
+          color: chosen === q.n ? CORRECT : WRONG }}>
+          {chosen === q.n ? '✓ Correct' : `✗ This is ${q.type} ${q.n}`}
+        </p>
       )}
     </div>
   )
