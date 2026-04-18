@@ -1815,6 +1815,13 @@ type Phase =
   | 'grand-ex1' | 'grand-ex2' | 'grand-ex3'
   | 'done'
 
+const PHASE_ORDER: Phase[] = [
+  'staff-intro', 'staff-ex',
+  'treble-intro', 'treble-ex1', 'treble-ex2',
+  'bass-intro', 'bass-ex1', 'bass-ex2',
+  'grand-ex1', 'grand-ex2', 'grand-ex3',
+]
+
 interface Props {
   passingScore: number
   onComplete: (score: number, total: number) => void
@@ -1822,36 +1829,70 @@ interface Props {
 
 export default function GrandStaffLesson({ passingScore, onComplete }: Props) {
   const [phase, setPhase] = useState<Phase>('staff-intro')
-  // Accumulate scored results: [score_fraction, total_items]
-  const [scored, setScored] = useState<Array<[number, number]>>([])
+  const [key,   setKey]   = useState(0)
+  const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
-  function addScore(s: number, t: number) {
-    setScored(prev => [...prev, [s, t]])
+  function goToPhase(p: Phase) {
+    setPhase(p)
+    setKey(k => k + 1)
   }
 
-  function finish(s: number, t: number) {
-    const all = [...scored, [s, t]] as Array<[number, number]>
-    const totalItems = all.reduce((a, [, t]) => a + t, 0)
-    const totalCorrect = all.reduce((a, [s, t]) => a + s * t, 0)
-    onComplete(totalCorrect / totalItems, totalItems)
-    setPhase('done')
+  function next() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx + 1 >= PHASE_ORDER.length) {
+      let correct = 0, total = 0
+      for (const v of phaseScoresRef.current.values()) { correct += v.correct; total += v.total }
+      onComplete(total > 0 ? correct / total : 1, total)
+      setPhase('done')
+      return
+    }
+    goToPhase(PHASE_ORDER[idx + 1])
+  }
+
+  function back() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx > 0) {
+      const prev = PHASE_ORDER[idx - 1]
+      phaseScoresRef.current.delete(prev)
+      goToPhase(prev)
+    }
+  }
+
+  function scored(s: number, t: number) {
+    phaseScoresRef.current.set(phase, { correct: Math.round(s * t), total: t })
+    next()
   }
 
   if (phase === 'done') return null
 
+  const canGoBack = PHASE_ORDER.indexOf(phase) > 0
+
   return (
     <div>
-      {phase === 'staff-intro'  && <StaffIntro   onNext={() => setPhase('staff-ex')} />}
-      {phase === 'staff-ex'     && <StaffEx       onDone={(s, t) => { addScore(s, t); setPhase('treble-intro') }} />}
-      {phase === 'treble-intro' && <TrebleIntro   onNext={() => setPhase('treble-ex1')} />}
-      {phase === 'treble-ex1'   && <TrebleEx1     onDone={(s, t) => { addScore(s, t); setPhase('treble-ex2') }} />}
-      {phase === 'treble-ex2'   && <TrebleEx2     onDone={() => setPhase('bass-intro')} />}
-      {phase === 'bass-intro'   && <BassIntro     onNext={() => setPhase('bass-ex1')} />}
-      {phase === 'bass-ex1'     && <BassEx1       onDone={(s, t) => { addScore(s, t); setPhase('bass-ex2') }} />}
-      {phase === 'bass-ex2'     && <BassEx2       onDone={() => setPhase('grand-ex1')} />}
-      {phase === 'grand-ex1'    && <GrandEx1      onDone={(s, t) => { addScore(s, t); setPhase('grand-ex2') }} />}
-      {phase === 'grand-ex2'    && <GrandEx2      onDone={() => setPhase('grand-ex3')} />}
-      {phase === 'grand-ex3'    && <GrandEx3      onDone={(s, t) => finish(s, t)} />}
+      {canGoBack && <BackButton onClick={back} />}
+      {phase === 'staff-intro'  && <StaffIntro   key={key} onNext={next} />}
+      {phase === 'staff-ex'     && <StaffEx      key={key} onDone={scored} />}
+      {phase === 'treble-intro' && <TrebleIntro  key={key} onNext={next} />}
+      {phase === 'treble-ex1'   && <TrebleEx1    key={key} onDone={scored} />}
+      {phase === 'treble-ex2'   && <TrebleEx2    key={key} onDone={next} />}
+      {phase === 'bass-intro'   && <BassIntro    key={key} onNext={next} />}
+      {phase === 'bass-ex1'     && <BassEx1      key={key} onDone={scored} />}
+      {phase === 'bass-ex2'     && <BassEx2      key={key} onDone={next} />}
+      {phase === 'grand-ex1'    && <GrandEx1     key={key} onDone={scored} />}
+      {phase === 'grand-ex2'    && <GrandEx2     key={key} onDone={next} />}
+      {phase === 'grand-ex3'    && <GrandEx3     key={key} onDone={scored} />}
     </div>
+  )
+}
+
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: 'var(--font-jost), sans-serif', fontSize: 12, color: '#7A7060',
+      padding: '4px 0', marginBottom: 12,
+    }}>
+      ← Back to previous exercise
+    </button>
   )
 }

@@ -101,6 +101,18 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
   )
 }
 
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: F, fontSize: 12, color: '#7A7060',
+      padding: '4px 0', marginBottom: 12,
+    }}>
+      ← Back to previous exercise
+    </button>
+  )
+}
+
 // ── Pool types ────────────────────────────────────────────────────────────────
 interface StepQuestion {
   from: string
@@ -913,68 +925,81 @@ export default function HalfWholeStepsLesson({
 }) {
   const [phase, setPhase] = useState<Phase>('intro')
   const [key,   setKey]   = useState(0)
-  const scoreRef = useRef({ correct: 0, total: 0 })
+  // Per-phase score map — going back clears the entry so redo replaces it
+  const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
+
+  function goToPhase(p: Phase) {
+    setPhase(p)
+    setKey(k => k + 1)
+  }
 
   function next() {
     const idx = PHASE_ORDER.indexOf(phase)
     if (idx + 1 >= PHASE_ORDER.length) {
-      const { correct, total } = scoreRef.current
+      let correct = 0, total = 0
+      for (const v of phaseScoresRef.current.values()) { correct += v.correct; total += v.total }
       onComplete(total > 0 ? correct / total : 1, total)
       return
     }
-    setPhase(PHASE_ORDER[idx + 1])
-    setKey(k => k + 1)
+    goToPhase(PHASE_ORDER[idx + 1])
+  }
+
+  function back() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx > 0) {
+      const prev = PHASE_ORDER[idx - 1]
+      phaseScoresRef.current.delete(prev)
+      goToPhase(prev)
+    }
   }
 
   function scored(correct: number, total: number) {
-    scoreRef.current.correct += correct
-    scoreRef.current.total   += total
+    phaseScoresRef.current.set(phase, { correct, total })
     next()
   }
 
-  if (phase === 'intro') {
-    return <StepsIntro key={key} onNext={next} />
-  }
-  if (phase === 'half-keyboard') {
-    return (
-      <StepKeyboardEx
-        key={key}
-        pool={HALF_POOL}
-        total={12}
-        stepType="half"
-        exLabel="Exercise 1 — Half steps on the keyboard"
-        onDone={next}
-      />
-    )
-  }
-  if (phase === 'whole-keyboard') {
-    return (
-      <StepKeyboardEx
-        key={key}
-        pool={WHOLE_POOL}
-        total={6}
-        stepType="whole"
-        exLabel="Exercise 2 — Whole steps on the keyboard"
-        onDone={next}
-      />
-    )
-  }
-  if (phase === 'letter-pairs') {
-    return (
-      <LetterPairEx
-        key={key}
-        total={14}
-        exLabel="Exercise 3 — Half or whole step?"
-        onDone={scored}
-      />
-    )
-  }
+  const canGoBack = PHASE_ORDER.indexOf(phase) > 0
+
   return (
-    <StaffPairEx
-      key={key}
-      total={12}
-      exLabel="Exercise 4 — Steps on the staff"
-      onDone={scored}
-    />
+    <div>
+      {canGoBack && <BackButton onClick={back} />}
+      {phase === 'intro' && <StepsIntro key={key} onNext={next} />}
+      {phase === 'half-keyboard' && (
+        <StepKeyboardEx
+          key={key}
+          pool={HALF_POOL}
+          total={12}
+          stepType="half"
+          exLabel="Exercise 1 — Half steps on the keyboard"
+          onDone={next}
+        />
+      )}
+      {phase === 'whole-keyboard' && (
+        <StepKeyboardEx
+          key={key}
+          pool={WHOLE_POOL}
+          total={6}
+          stepType="whole"
+          exLabel="Exercise 2 — Whole steps on the keyboard"
+          onDone={next}
+        />
+      )}
+      {phase === 'letter-pairs' && (
+        <LetterPairEx
+          key={key}
+          total={14}
+          exLabel="Exercise 3 — Half or whole step?"
+          onDone={scored}
+        />
+      )}
+      {phase === 'staff-pairs' && (
+        <StaffPairEx
+          key={key}
+          total={12}
+          exLabel="Exercise 4 — Steps on the staff"
+          onDone={scored}
+        />
+      )}
+    </div>
   )
 }

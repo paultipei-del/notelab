@@ -822,34 +822,66 @@ export default function SharpsFlatsLesson({
 }) {
   const [phase, setPhase] = useState<Phase>('sharps-intro')
   const [key,   setKey]   = useState(0)
-  const scoreRef = useRef({ correct: 0, total: 0 })
+  const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
+
+  function goToPhase(p: Phase) {
+    setPhase(p)
+    setKey(k => k + 1)
+  }
 
   function next() {
     const idx = PHASE_ORDER.indexOf(phase)
     if (idx + 1 >= PHASE_ORDER.length) {
-      const { correct, total } = scoreRef.current
+      let correct = 0, total = 0
+      for (const v of phaseScoresRef.current.values()) { correct += v.correct; total += v.total }
       onComplete(total > 0 ? correct / total : 1, total)
       return
     }
-    setPhase(PHASE_ORDER[idx + 1])
-    setKey(k => k + 1)
+    goToPhase(PHASE_ORDER[idx + 1])
+  }
+
+  function back() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx > 0) {
+      const prev = PHASE_ORDER[idx - 1]
+      phaseScoresRef.current.delete(prev)
+      goToPhase(prev)
+    }
   }
 
   function scored(correct: number, total: number) {
-    scoreRef.current.correct += correct
-    scoreRef.current.total   += total
+    phaseScoresRef.current.set(phase, { correct, total })
     next()
   }
 
-  if (phase === 'sharps-intro')   return <SharpsIntro onNext={next} />
-  if (phase === 'draw-sharps')    return <DrawAccidentalEx key={key} pool={shuffled(ALL_SHARPS)} acc="#" exLabel="Exercise 1 — Draw the sharp" onDone={next} noteXOffset={-5} />
-  if (phase === 'name-sharps')    return <NameAccidentalEx key={key} pool={ALL_SHARPS} exLabel="Exercise 2 — Name the note" onDone={scored} />
-  if (phase === 'flats-intro')    return <FlatsIntro onNext={next} />
-  if (phase === 'draw-flats')     return <DrawAccidentalEx key={key} pool={shuffled(ALL_FLATS)} acc="b" exLabel="Exercise 3 — Draw the flat" onDone={next} />
-  if (phase === 'name-flats')     return <NameAccidentalEx key={key} pool={ALL_FLATS} exLabel="Exercise 4 — Name the note" onDone={scored} />
-  if (phase === 'naturals-intro') return <NaturalsIntro onNext={next} />
-  if (phase === 'draw-naturals')  return <DrawAccidentalEx key={key} pool={shuffled(ALL_NATURALS)} acc="n" exLabel="Exercise 5 — Draw the natural" onDone={next} />
-  if (phase === 'name-naturals')  return <NameAccidentalEx key={key} pool={ALL_NATURALS} exLabel="Exercise 6 — Name the note" onDone={scored} />
-  if (phase === 'name-mixed')     return <GrandNameEx key={key} pool={MIXED_ALL} exLabel="Exercise 7 — Name the note" onDone={scored} />
-  return <WriteAccidentalEx key={key} pool={MIXED_ALL} exLabel="Exercise 8 — Write the note" onDone={scored} />
+  const canGoBack = PHASE_ORDER.indexOf(phase) > 0
+
+  return (
+    <div>
+      {canGoBack && <BackButton onClick={back} />}
+      {phase === 'sharps-intro'   && <SharpsIntro onNext={next} />}
+      {phase === 'draw-sharps'    && <DrawAccidentalEx key={key} pool={shuffled(ALL_SHARPS)} acc="#" exLabel="Exercise 1 — Draw the sharp" onDone={next} noteXOffset={-5} />}
+      {phase === 'name-sharps'    && <NameAccidentalEx key={key} pool={ALL_SHARPS} exLabel="Exercise 2 — Name the note" onDone={scored} />}
+      {phase === 'flats-intro'    && <FlatsIntro onNext={next} />}
+      {phase === 'draw-flats'     && <DrawAccidentalEx key={key} pool={shuffled(ALL_FLATS)} acc="b" exLabel="Exercise 3 — Draw the flat" onDone={next} />}
+      {phase === 'name-flats'     && <NameAccidentalEx key={key} pool={ALL_FLATS} exLabel="Exercise 4 — Name the note" onDone={scored} />}
+      {phase === 'naturals-intro' && <NaturalsIntro onNext={next} />}
+      {phase === 'draw-naturals'  && <DrawAccidentalEx key={key} pool={shuffled(ALL_NATURALS)} acc="n" exLabel="Exercise 5 — Draw the natural" onDone={next} />}
+      {phase === 'name-naturals'  && <NameAccidentalEx key={key} pool={ALL_NATURALS} exLabel="Exercise 6 — Name the note" onDone={scored} />}
+      {phase === 'name-mixed'     && <GrandNameEx key={key} pool={MIXED_ALL} exLabel="Exercise 7 — Name the note" onDone={scored} />}
+      {phase === 'write-mixed'    && <WriteAccidentalEx key={key} pool={MIXED_ALL} exLabel="Exercise 8 — Write the note" onDone={scored} />}
+    </div>
+  )
+}
+
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: F, fontSize: 12, color: '#7A7060',
+      padding: '4px 0', marginBottom: 12,
+    }}>
+      ← Back to previous exercise
+    </button>
+  )
 }

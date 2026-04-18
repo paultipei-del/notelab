@@ -807,68 +807,102 @@ type Phase = 'note-shapes' | 'line-intro' | 'space-intro' |
 
 interface Props { passingScore: number; onComplete: (score: number, total: number) => void }
 
+// Linear progression — excludes retry pause phases (gs-repeat, dn-repeat)
+const PHASE_ORDER: Phase[] = [
+  'note-shapes', 'line-intro', 'space-intro',
+  'r1', 'r2', 'r3', 'r4', 'r5', 'r6',
+  'ex3',
+  'd1', 'd2', 'd3', 'd4', 'd5', 'd6',
+]
+const GS_ROUNDS: Phase[] = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6']
+const DN_ROUNDS: Phase[] = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6']
+
 export default function LineSpaceLesson({ passingScore, onComplete }: Props) {
   const [phase, setPhase] = useState<Phase>('note-shapes')
-  const [scores, setScores] = useState<{ s: number; t: number }[]>([])
-  const [gsScores, setGsScores] = useState<{ s: number; t: number }[]>([])
-  const [gsRatio,  setGsRatio]  = useState(0)
-  const [dnScores, setDnScores] = useState<{ s: number; t: number }[]>([])
-  const [dnRatio,  setDnRatio]  = useState(0)
+  const [key,   setKey]   = useState(0)
+  const [gsRatio, setGsRatio] = useState(0)
+  const [dnRatio, setDnRatio] = useState(0)
+  const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
-  function addScore(s: number, t: number) { setScores(prev => [...prev, { s, t }]) }
-
-  function addGsScore(s: number, t: number): { s: number; t: number }[] {
-    addScore(s, t)
-    const next = [...gsScores, { s, t }]
-    setGsScores(next)
-    return next
+  function goToPhase(p: Phase) {
+    setPhase(p)
+    setKey(k => k + 1)
   }
 
-  function addDnScore(s: number, t: number): { s: number; t: number }[] {
-    addScore(s, t)
-    const next = [...dnScores, { s, t }]
-    setDnScores(next)
-    return next
+  function sumRounds(rounds: Phase[]): { correct: number; total: number } {
+    let correct = 0, total = 0
+    for (const r of rounds) {
+      const s = phaseScoresRef.current.get(r)
+      if (s) { correct += s.correct; total += s.total }
+    }
+    return { correct, total }
+  }
+
+  function setScore(p: Phase, s: number, t: number) {
+    phaseScoresRef.current.set(p, { correct: Math.round(s * t), total: t })
+  }
+
+  function advanceOrR6Check(s: number, t: number, nextPhase: Phase) {
+    setScore(phase, s, t)
+    goToPhase(nextPhase)
   }
 
   function handleR6Done(s: number, t: number) {
-    const all     = addGsScore(s, t)
-    const total   = all.reduce((a, b) => a + b.t, 0)
-    const correct = all.reduce((a, b) => a + b.s * b.t, 0)
-    const ratio   = total > 0 ? correct / total : 1
-    if (ratio < 0.90) { setGsRatio(ratio); setPhase('gs-repeat') }
-    else               { setPhase('ex3') }
+    setScore('r6', s, t)
+    const { correct, total } = sumRounds(GS_ROUNDS)
+    const ratio = total > 0 ? correct / total : 1
+    if (ratio < 0.90) { setGsRatio(ratio); goToPhase('gs-repeat') }
+    else              { goToPhase('ex3') }
   }
 
   function handleD6Done(s: number, t: number) {
-    const all     = addDnScore(s, t)
-    const total   = all.reduce((a, b) => a + b.t, 0)
-    const correct = all.reduce((a, b) => a + b.s * b.t, 0)
-    const ratio   = total > 0 ? correct / total : 1
-    if (ratio < 0.90) { setDnRatio(ratio); setPhase('dn-repeat') }
-    else               { finish() }
+    setScore('d6', s, t)
+    const { correct, total } = sumRounds(DN_ROUNDS)
+    const ratio = total > 0 ? correct / total : 1
+    if (ratio < 0.90) { setDnRatio(ratio); goToPhase('dn-repeat') }
+    else              { finish() }
   }
 
-  function retryGs() { setGsScores([]); setPhase('r1') }
-  function retryDn() { setDnScores([]); setPhase('d1') }
+  function retryGs() {
+    for (const r of GS_ROUNDS) phaseScoresRef.current.delete(r)
+    goToPhase('r1')
+  }
+  function retryDn() {
+    for (const r of DN_ROUNDS) phaseScoresRef.current.delete(r)
+    goToPhase('d1')
+  }
+
+  function back() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx > 0) {
+      const prev = PHASE_ORDER[idx - 1]
+      phaseScoresRef.current.delete(prev)
+      goToPhase(prev)
+    }
+  }
 
   function finish() {
-    const total   = scores.reduce((a, b) => a + b.t, 0)
-    const correct = scores.reduce((a, b) => a + b.s * b.t, 0)
+    let correct = 0, total = 0
+    for (const v of phaseScoresRef.current.values()) { correct += v.correct; total += v.total }
     onComplete(total > 0 ? correct / total : 1, total)
   }
 
+  // Back button appears on any phase past the first in the linear order.
+  // Not shown on retry pause phases (gs-repeat, dn-repeat).
+  const canGoBack = PHASE_ORDER.indexOf(phase) > 0
+
   return (
     <div>
-      {phase === 'note-shapes' && <NoteShapesIntro onNext={() => setPhase('line-intro')} />}
-      {phase === 'line-intro'  && <LineNoteIntro   onNext={() => setPhase('space-intro')} />}
-      {phase === 'space-intro' && <SpaceNoteIntro  onNext={() => setPhase('r1')} />}
-      {phase === 'r1' && <GrandStaffEx targetLine          round={1} totalRounds={6} onDone={(s,t) => { addGsScore(s,t); setPhase('r2') }} />}
-      {phase === 'r2' && <GrandStaffEx targetLine={false}  round={2} totalRounds={6} onDone={(s,t) => { addGsScore(s,t); setPhase('r3') }} />}
-      {phase === 'r3' && <GrandStaffEx targetLine          round={3} totalRounds={6} onDone={(s,t) => { addGsScore(s,t); setPhase('r4') }} />}
-      {phase === 'r4' && <GrandStaffEx targetLine={false}  round={4} totalRounds={6} onDone={(s,t) => { addGsScore(s,t); setPhase('r5') }} />}
-      {phase === 'r5' && <GrandStaffEx targetLine          round={5} totalRounds={6} onDone={(s,t) => { addGsScore(s,t); setPhase('r6') }} />}
-      {phase === 'r6' && <GrandStaffEx targetLine={false}  round={6} totalRounds={6} onDone={handleR6Done} />}
+      {canGoBack && <BackButton onClick={back} />}
+      {phase === 'note-shapes' && <NoteShapesIntro key={key} onNext={() => goToPhase('line-intro')} />}
+      {phase === 'line-intro'  && <LineNoteIntro   key={key} onNext={() => goToPhase('space-intro')} />}
+      {phase === 'space-intro' && <SpaceNoteIntro  key={key} onNext={() => goToPhase('r1')} />}
+      {phase === 'r1' && <GrandStaffEx key={key} targetLine          round={1} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'r2')} />}
+      {phase === 'r2' && <GrandStaffEx key={key} targetLine={false}  round={2} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'r3')} />}
+      {phase === 'r3' && <GrandStaffEx key={key} targetLine          round={3} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'r4')} />}
+      {phase === 'r4' && <GrandStaffEx key={key} targetLine={false}  round={4} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'r5')} />}
+      {phase === 'r5' && <GrandStaffEx key={key} targetLine          round={5} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'r6')} />}
+      {phase === 'r6' && <GrandStaffEx key={key} targetLine={false}  round={6} totalRounds={6} onDone={handleR6Done} />}
       {phase === 'gs-repeat' && (
         <div>
           <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 6 }}>
@@ -881,13 +915,13 @@ export default function LineSpaceLesson({ passingScore, onComplete }: Props) {
           <PrimaryBtn label="Try again →" onClick={retryGs} />
         </div>
       )}
-      {phase === 'ex3' && <Ex3 onDone={(s,t) => { addScore(s,t); setPhase('d1') }} />}
-      {phase === 'd1' && <DrawNotes targetLine          exNum={4} round={1} totalRounds={6} onDone={(s,t) => { addDnScore(s,t); setPhase('d2') }} />}
-      {phase === 'd2' && <DrawNotes targetLine={false}  exNum={5} round={2} totalRounds={6} onDone={(s,t) => { addDnScore(s,t); setPhase('d3') }} />}
-      {phase === 'd3' && <DrawNotes targetLine          exNum={4} round={3} totalRounds={6} onDone={(s,t) => { addDnScore(s,t); setPhase('d4') }} />}
-      {phase === 'd4' && <DrawNotes targetLine={false}  exNum={5} round={4} totalRounds={6} onDone={(s,t) => { addDnScore(s,t); setPhase('d5') }} />}
-      {phase === 'd5' && <DrawNotes targetLine          exNum={4} round={5} totalRounds={6} onDone={(s,t) => { addDnScore(s,t); setPhase('d6') }} />}
-      {phase === 'd6' && <DrawNotes targetLine={false}  exNum={5} round={6} totalRounds={6} onDone={handleD6Done} />}
+      {phase === 'ex3' && <Ex3 key={key} onDone={(s,t) => advanceOrR6Check(s,t,'d1')} />}
+      {phase === 'd1' && <DrawNotes key={key} targetLine          exNum={4} round={1} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'d2')} />}
+      {phase === 'd2' && <DrawNotes key={key} targetLine={false}  exNum={5} round={2} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'d3')} />}
+      {phase === 'd3' && <DrawNotes key={key} targetLine          exNum={4} round={3} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'d4')} />}
+      {phase === 'd4' && <DrawNotes key={key} targetLine={false}  exNum={5} round={4} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'d5')} />}
+      {phase === 'd5' && <DrawNotes key={key} targetLine          exNum={4} round={5} totalRounds={6} onDone={(s,t) => advanceOrR6Check(s,t,'d6')} />}
+      {phase === 'd6' && <DrawNotes key={key} targetLine={false}  exNum={5} round={6} totalRounds={6} onDone={handleD6Done} />}
       {phase === 'dn-repeat' && (
         <div>
           <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 6 }}>
@@ -901,5 +935,17 @@ export default function LineSpaceLesson({ passingScore, onComplete }: Props) {
         </div>
       )}
     </div>
+  )
+}
+
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: F, fontSize: 12, color: '#7A7060',
+      padding: '4px 0', marginBottom: 12,
+    }}>
+      ← Back to previous exercise
+    </button>
   )
 }

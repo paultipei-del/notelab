@@ -776,66 +776,109 @@ type Phase =
   | 'ex4'          // place line notes
   | 'word-game'
 
+const PHASE_ORDER: Phase[] = ['space-intro', 'ex1', 'ex2', 'line-intro', 'ex3', 'ex4', 'word-game']
+
 interface Props { passingScore: number; onComplete: (score: number, total: number) => void }
 
 export default function TrebleClefLesson({ passingScore, onComplete }: Props) {
-  const [phase,  setPhase]  = useState<Phase>('space-intro')
-  const [scores, setScores] = useState<{ s: number; t: number }[]>([])
+  const [phase, setPhase] = useState<Phase>('space-intro')
+  const [key,   setKey]   = useState(0)
+  const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
-  function addScore(s: number, t: number) { setScores(prev => [...prev, { s, t }]) }
-
-  function finish(s: number, t: number) {
-    const all     = [...scores, { s, t }]
-    const total   = all.reduce((a, b) => a + b.t, 0)
-    const correct = all.reduce((a, b) => a + b.s * b.t, 0)
-    onComplete(total > 0 ? correct / total : 1, total)
+  function goToPhase(p: Phase) {
+    setPhase(p)
+    setKey(k => k + 1)
   }
+
+  function next() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx + 1 >= PHASE_ORDER.length) {
+      let correct = 0, total = 0
+      for (const v of phaseScoresRef.current.values()) { correct += v.correct; total += v.total }
+      onComplete(total > 0 ? correct / total : 1, total)
+      return
+    }
+    goToPhase(PHASE_ORDER[idx + 1])
+  }
+
+  function back() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx > 0) {
+      const prev = PHASE_ORDER[idx - 1]
+      phaseScoresRef.current.delete(prev)
+      goToPhase(prev)
+    }
+  }
+
+  function scored(s: number, t: number) {
+    phaseScoresRef.current.set(phase, { correct: Math.round(s * t), total: t })
+    next()
+  }
+
+  const canGoBack = PHASE_ORDER.indexOf(phase) > 0
 
   return (
     <div>
+      {canGoBack && <BackButton onClick={back} />}
       {phase === 'space-intro' && (
-        <SpaceNotesIntro onNext={() => setPhase('ex1')} />
+        <SpaceNotesIntro key={key} onNext={next} />
       )}
       {phase === 'ex1' && (
         <NameNoteEx
+          key={key}
           pool={SPACE_NOTE_POOL} total={18}
           label="Exercise 1 — Name the space note"
           color={SPACE_C}
-          onDone={(s, t) => { addScore(s, t); setPhase('ex2') }}
+          onDone={scored}
         />
       )}
       {phase === 'ex2' && (
         <PlaceNoteEx
+          key={key}
           pool={SPACE_NOTE_POOL} total={12}
           label="Exercise 2 — Place the space note"
           color={SPACE_C}
           spaceOnly
-          onDone={(s, t) => { addScore(s, t); setPhase('line-intro') }}
+          onDone={scored}
         />
       )}
       {phase === 'line-intro' && (
-        <LineNotesIntro onNext={() => setPhase('ex3')} />
+        <LineNotesIntro key={key} onNext={next} />
       )}
       {phase === 'ex3' && (
         <NameNoteEx
+          key={key}
           pool={LINE_NOTE_POOL} total={21}
           label="Exercise 3 — Name the line note"
           color={LINE_C}
-          onDone={(s, t) => { addScore(s, t); setPhase('ex4') }}
+          onDone={scored}
         />
       )}
       {phase === 'ex4' && (
         <PlaceNoteEx
+          key={key}
           pool={LINE_NOTE_POOL} total={14}
           label="Exercise 4 — Place the line note"
           color={LINE_C}
           spaceOnly={false}
-          onDone={(s, t) => { addScore(s, t); setPhase('word-game') }}
+          onDone={scored}
         />
       )}
       {phase === 'word-game' && (
-        <WordGame onDone={finish} />
+        <WordGame key={key} onDone={scored} />
       )}
     </div>
+  )
+}
+
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: F, fontSize: 12, color: '#7A7060',
+      padding: '4px 0', marginBottom: 12,
+    }}>
+      ← Back to previous exercise
+    </button>
   )
 }
