@@ -337,9 +337,9 @@ function StepKeyboard({
 
         {/* Ivory white keys */}
         <linearGradient id={`ivory-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor="#fbf9f3" />
-          <stop offset="60%"  stopColor="#eae2cc" />
-          <stop offset="100%" stopColor="#d4cebd" />
+          <stop offset="0%"   stopColor="#fefdf9" />
+          <stop offset="60%"  stopColor="#f4eedc" />
+          <stop offset="100%" stopColor="#e5dfcb" />
         </linearGradient>
         {/* Left-edge shadow */}
         <linearGradient id={`lEdge-${uid}`} x1="0" y1="0" x2="1" y2="0">
