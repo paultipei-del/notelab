@@ -609,7 +609,18 @@ function StepKeyboardEx({
         Starting from{' '}
         <strong style={{ color: accentColor }}>{item.fromLabel}</strong>
         {' '}— click the key one <strong>{stepType === 'half' ? 'half' : 'whole'} step</strong>{' '}
-        <strong>{direction === 'up' ? 'above' : 'below'}</strong>
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', gap: 5,
+          background: direction === 'up' ? '#EAF3DE' : '#E4ECF6',
+          border: `1px solid ${direction === 'up' ? '#88C060' : '#7098D0'}`,
+          color:      direction === 'up' ? '#2A5C0A' : '#1A3A6A',
+          padding: '2px 10px', borderRadius: 6,
+          fontWeight: 700, fontSize: 13,
+          verticalAlign: 'middle',
+        }}>
+          <span style={{ fontSize: 16, lineHeight: 1 }}>{direction === 'up' ? '↑' : '↓'}</span>
+          {direction === 'up' ? 'ABOVE' : 'BELOW'}
+        </span>
       </p>
 
       <div style={{ borderRadius: 18, overflow: 'hidden', boxShadow: '0 10px 40px rgba(0,0,0,0.40)', marginBottom: 12 }}>
