@@ -331,9 +331,484 @@ function NameIntervalEx({
   )
 }
 
+// ── Ex 2: Write a note above the given note to complete the interval ─────────
+interface BuildIntervalItem {
+  clef: 'treble' | 'bass'
+  givenPos: number
+  size: 2 | 3 | 4 | 5
+}
+
+// 7 treble + 7 bass. Given note fixed, student places a note a 2nd/3rd/4th/5th above.
+const EX2_POOL: BuildIntervalItem[] = [
+  // Treble — pos 0 (C4) to 12 (A5), target = givenPos + size - 1 ≤ 12
+  { clef: 'treble', givenPos: 1, size: 3 },   // D4 → F4
+  { clef: 'treble', givenPos: 2, size: 2 },   // E4 → F4
+  { clef: 'treble', givenPos: 4, size: 4 },   // G4 → C5
+  { clef: 'treble', givenPos: 5, size: 5 },   // A4 → E5
+  { clef: 'treble', givenPos: 6, size: 3 },   // B4 → D5
+  { clef: 'treble', givenPos: 7, size: 4 },   // C5 → F5
+  { clef: 'treble', givenPos: 8, size: 2 },   // D5 → E5
+  // Bass — pos 0 (E2) to 12 (C4)
+  { clef: 'bass',   givenPos: 1, size: 3 },   // F2 → A2
+  { clef: 'bass',   givenPos: 2, size: 4 },   // G2 → C3
+  { clef: 'bass',   givenPos: 3, size: 5 },   // A2 → E3
+  { clef: 'bass',   givenPos: 4, size: 2 },   // B2 → C3
+  { clef: 'bass',   givenPos: 6, size: 3 },   // D3 → F3
+  { clef: 'bass',   givenPos: 7, size: 4 },   // E3 → A3
+  { clef: 'bass',   givenPos: 9, size: 2 },   // G3 → A3
+]
+
+const EX2_NOTE1_X = 140   // given note x
+const EX2_NOTE2_X = 240   // placed note x
+
+function BuildIntervalEx({
+  onDone,
+}: {
+  onDone: (correct: number, total: number) => void
+}) {
+  const items = useMemo(() => {
+    const treble = shuffled(EX2_POOL.filter(it => it.clef === 'treble'))
+    const bass   = shuffled(EX2_POOL.filter(it => it.clef === 'bass'))
+    return [...treble, ...bass]
+  }, [])
+  const total = items.length
+
+  const [idx,       setIdx]       = useState(0)
+  const [stagedPos, setStagedPos] = useState<number | null>(null)
+  const [placedPos, setPlacedPos] = useState<number | null>(null)
+  const [submitted, setSubmitted] = useState(false)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const svgRef     = useRef<SVGSVGElement | null>(null)
+
+  const item      = items[idx]
+  const targetPos = item.givenPos + item.size - 1
+  const isCorrect = submitted && placedPos === targetPos
+
+  // Clamp-snap — any pos 0..12 is a valid target
+  function clientToPos(clientY: number): number {
+    const svg = svgRef.current
+    if (!svg) return 0
+    const r   = svg.getBoundingClientRect()
+    const sy  = (clientY - r.top) / r.height * svgH
+    let pos = Math.round(10 - (sy - tTop) / step)
+    if (pos < 0) pos = 0
+    if (pos > 12) pos = 12
+    return pos
+  }
+
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (submitted || lockedRef.current) return
+    if (!svgRef.current) svgRef.current = e.currentTarget
+    setStagedPos(clientToPos(e.clientY))
+  }
+
+  function onConfirm() {
+    if (submitted || lockedRef.current || stagedPos === null) return
+    lockedRef.current = true
+    const ok = stagedPos === targetPos
+    if (ok) correctRef.current += 1
+    setPlacedPos(stagedPos); setSubmitted(true)
+    setTimeout(() => {
+      if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+      setIdx(i => i + 1)
+      setStagedPos(null); setPlacedPos(null); setSubmitted(false)
+      lockedRef.current = false
+    }, ok ? 1200 : 2000)
+  }
+
+  const sizeLabel = (n: number) =>
+    n === 2 ? '2nd' : n === 3 ? '3rd' : n === 4 ? '4th' : '5th'
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 2 — Build the interval
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place a note a{' '}
+        <strong style={{ color: ACCENT }}>{sizeLabel(item.size)}</strong> above
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 12 }}>
+        <svg
+          ref={r => { svgRef.current = r }}
+          viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+          onClick={onStaffClick}
+          style={{
+            maxWidth: svgW, display: 'block', margin: '0 auto',
+            cursor: submitted ? 'default' : 'crosshair',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none',
+          }}>
+          <StaffBase />
+          <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+          <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
+          {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
+
+          {/* Given note */}
+          {(item.givenPos === 0 || item.givenPos === 12) &&
+            <LedgerLine cx={EX2_NOTE1_X} cy={(item.clef === 'treble' ? posToY_T : posToY_B)(item.givenPos)} />}
+          <BravuraNote cx={EX2_NOTE1_X}
+            cy={(item.clef === 'treble' ? posToY_T : posToY_B)(item.givenPos)} />
+
+          {/* Staged ghost / placed result */}
+          {!submitted && stagedPos !== null && (
+            <g opacity={0.55}>
+              {(stagedPos === 0 || stagedPos === 12) &&
+                <LedgerLine cx={EX2_NOTE2_X}
+                  cy={(item.clef === 'treble' ? posToY_T : posToY_B)(stagedPos)} color={ACCENT} />}
+              <BravuraNote cx={EX2_NOTE2_X}
+                cy={(item.clef === 'treble' ? posToY_T : posToY_B)(stagedPos)} color={ACCENT} />
+            </g>
+          )}
+          {submitted && placedPos !== null && (
+            <g>
+              {(placedPos === 0 || placedPos === 12) &&
+                <LedgerLine cx={EX2_NOTE2_X}
+                  cy={(item.clef === 'treble' ? posToY_T : posToY_B)(placedPos)}
+                  color={isCorrect ? CORRECT : WRONG} />}
+              <BravuraNote cx={EX2_NOTE2_X}
+                cy={(item.clef === 'treble' ? posToY_T : posToY_B)(placedPos)}
+                color={isCorrect ? CORRECT : WRONG} />
+            </g>
+          )}
+          {submitted && !isCorrect && (
+            <g opacity={0.55}>
+              {(targetPos === 0 || targetPos === 12) &&
+                <LedgerLine cx={EX2_NOTE2_X}
+                  cy={(item.clef === 'treble' ? posToY_T : posToY_B)(targetPos)} color={CORRECT} />}
+              <BravuraNote cx={EX2_NOTE2_X}
+                cy={(item.clef === 'treble' ? posToY_T : posToY_B)(targetPos)} color={CORRECT} />
+            </g>
+          )}
+        </svg>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+        <button
+          onClick={onConfirm}
+          disabled={submitted || stagedPos === null}
+          style={{
+            padding: '10px 28px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: submitted || stagedPos === null ? 'default' : 'pointer',
+            background: submitted || stagedPos === null ? '#EDE8DF' : DARK,
+            color: submitted || stagedPos === null ? '#B0ACA4' : 'white',
+          }}>
+          Place
+        </button>
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
+        {submitted && isCorrect  && '✓ Correct'}
+        {submitted && !isCorrect && (
+          <>The correct note is a <strong style={{ color: CORRECT }}>
+            {sizeLabel(item.size)}</strong> above — shown in green</>
+        )}
+      </p>
+    </div>
+  )
+}
+
+// ── Ex 3: Read, build, and name (three-step per item) ───────────────────────
+interface ReadBuildItem {
+  clef: 'treble' | 'bass'
+  givenPos: number
+  size: 2 | 3 | 4 | 5
+  direction: 'up' | 'down'
+}
+
+// 6 treble + 6 bass. Student names the given note, places the second note,
+// then names the second note. All three sub-steps are scored.
+const EX3_POOL: ReadBuildItem[] = [
+  // Treble
+  { clef: 'treble', givenPos: 3, size: 3, direction: 'up'   },   // F4 up 3rd → A4
+  { clef: 'treble', givenPos: 7, size: 5, direction: 'down' },   // C5 down 5th → F4
+  { clef: 'treble', givenPos: 5, size: 2, direction: 'up'   },   // A4 up 2nd → B4
+  { clef: 'treble', givenPos: 8, size: 3, direction: 'down' },   // D5 down 3rd → B4
+  { clef: 'treble', givenPos: 2, size: 4, direction: 'up'   },   // E4 up 4th → A4
+  { clef: 'treble', givenPos: 9, size: 2, direction: 'down' },   // E5 down 2nd → D5
+  // Bass
+  { clef: 'bass',   givenPos: 2, size: 3, direction: 'up'   },   // G2 up 3rd → B2
+  { clef: 'bass',   givenPos: 8, size: 5, direction: 'down' },   // F3 down 5th → B2
+  { clef: 'bass',   givenPos: 4, size: 4, direction: 'up'   },   // B2 up 4th → E3
+  { clef: 'bass',   givenPos: 10, size: 3, direction: 'down' },  // A3 down 3rd → F3
+  { clef: 'bass',   givenPos: 5, size: 2, direction: 'up'   },   // C3 up 2nd → D3
+  { clef: 'bass',   givenPos: 7, size: 2, direction: 'down' },   // E3 down 2nd → D3
+]
+
+const EX3_NOTE1_X = 140
+const EX3_NOTE2_X = 240
+
+type Ex3Step = 'name1' | 'place' | 'name2'
+
+function ReadBuildEx({
+  onDone,
+}: {
+  onDone: (correct: number, total: number) => void
+}) {
+  const items = useMemo(() => {
+    const treble = shuffled(EX3_POOL.filter(it => it.clef === 'treble'))
+    const bass   = shuffled(EX3_POOL.filter(it => it.clef === 'bass'))
+    return [...treble, ...bass]
+  }, [])
+  const total = items.length
+  const totalSteps = total * 3   // each item has 3 scored sub-steps
+
+  const [idx,       setIdx]       = useState(0)
+  const [subStep,   setSubStep]   = useState<Ex3Step>('name1')
+  const [name1Pick, setName1Pick] = useState<string | null>(null)
+  const [stagedPos, setStagedPos] = useState<number | null>(null)
+  const [placedPos, setPlacedPos] = useState<number | null>(null)
+  const [name2Pick, setName2Pick] = useState<string | null>(null)
+  const [feedback,  setFeedback]  = useState<{ step: Ex3Step; ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const svgRef     = useRef<SVGSVGElement | null>(null)
+
+  const item      = items[idx]
+  const targetPos = item.direction === 'up'
+    ? item.givenPos + item.size - 1
+    : item.givenPos - (item.size - 1)
+  const givenLetter  = letterAt(item.clef, item.givenPos)
+  const targetLetter = letterAt(item.clef, targetPos)
+
+  function advance() {
+    // Move to next sub-step / next item
+    if (subStep === 'name1') { setSubStep('place'); setFeedback(null); lockedRef.current = false; return }
+    if (subStep === 'place') { setSubStep('name2'); setFeedback(null); lockedRef.current = false; return }
+    // subStep === 'name2' — last sub-step for this item
+    if (idx + 1 >= total) { onDone(correctRef.current, totalSteps); return }
+    setIdx(i => i + 1)
+    setSubStep('name1')
+    setName1Pick(null); setStagedPos(null); setPlacedPos(null); setName2Pick(null)
+    setFeedback(null)
+    lockedRef.current = false
+  }
+
+  function judge(ok: boolean, currentStep: Ex3Step) {
+    if (ok) correctRef.current += 1
+    setFeedback({ step: currentStep, ok })
+    setTimeout(advance, ok ? 1100 : 1800)
+  }
+
+  function pickName1(letter: string) {
+    if (subStep !== 'name1' || feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    setName1Pick(letter)
+    judge(letter === givenLetter, 'name1')
+  }
+
+  function clientToPos(clientY: number): number {
+    const svg = svgRef.current
+    if (!svg) return 0
+    const r   = svg.getBoundingClientRect()
+    const sy  = (clientY - r.top) / r.height * svgH
+    let pos = Math.round(10 - (sy - tTop) / step)   // module-level staff step (8)
+    if (pos < 0) pos = 0
+    if (pos > 12) pos = 12
+    return pos
+  }
+
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (subStep !== 'place' || feedback !== null || lockedRef.current) return
+    if (!svgRef.current) svgRef.current = e.currentTarget
+    setStagedPos(clientToPos(e.clientY))
+  }
+
+  function onPlace() {
+    if (subStep !== 'place' || feedback !== null || lockedRef.current || stagedPos === null) return
+    lockedRef.current = true
+    setPlacedPos(stagedPos)
+    judge(stagedPos === targetPos, 'place')
+  }
+
+  function pickName2(letter: string) {
+    if (subStep !== 'name2' || feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    setName2Pick(letter)
+    judge(letter === targetLetter, 'name2')
+  }
+
+  // Keyboard shortcuts — A–G (pick a letter) and Enter (Place when staged)
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (feedback !== null || lockedRef.current) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.key === 'Enter' && subStep === 'place' && stagedPos !== null) { onPlace(); return }
+      const k = e.key.toUpperCase()
+      if (k.length !== 1 || k < 'A' || k > 'G') return
+      if (subStep === 'name1') pickName1(k)
+      else if (subStep === 'name2') pickName2(k)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx, subStep, stagedPos, feedback])
+
+  const sizeLabel = (n: number) =>
+    n === 2 ? '2nd' : n === 3 ? '3rd' : n === 4 ? '4th' : '5th'
+
+  const posToY = item.clef === 'treble' ? posToY_T : posToY_B
+
+  // Which sub-step's letter picker is active? (name1 or name2)
+  const pickerActive = subStep === 'name1' || subStep === 'name2'
+  const pickerAnswer = subStep === 'name1' ? givenLetter : targetLetter
+  const pickerChosen = subStep === 'name1' ? name1Pick : name2Pick
+  const pickerFeedback = feedback?.step === subStep ? feedback : null
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 3 — Read and build intervals
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} —{' '}
+        <strong style={{ color: ACCENT }}>
+          {item.direction === 'up' ? 'up a ' : 'down a '}{sizeLabel(item.size)}
+        </strong>
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 16 }}>
+        <svg
+          ref={r => { svgRef.current = r }}
+          viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+          onClick={onStaffClick}
+          style={{
+            maxWidth: svgW, display: 'block', margin: '0 auto',
+            cursor: subStep === 'place' && !feedback ? 'crosshair' : 'default',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none',
+          }}>
+          <StaffBase />
+          <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+          <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
+          {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
+
+          {/* Given note (always visible) */}
+          {(item.givenPos === 0 || item.givenPos === 12) &&
+            <LedgerLine cx={EX3_NOTE1_X} cy={posToY(item.givenPos)} />}
+          <BravuraNote cx={EX3_NOTE1_X} cy={posToY(item.givenPos)} />
+
+          {/* Second note: staged (purple/amber) → placed (green/red) → correct hint if wrong */}
+          {subStep === 'place' && !feedback && stagedPos !== null && (
+            <g opacity={0.55}>
+              {(stagedPos === 0 || stagedPos === 12) &&
+                <LedgerLine cx={EX3_NOTE2_X} cy={posToY(stagedPos)} color={ACCENT} />}
+              <BravuraNote cx={EX3_NOTE2_X} cy={posToY(stagedPos)} color={ACCENT} />
+            </g>
+          )}
+          {subStep === 'place' && feedback && placedPos !== null && (
+            <g>
+              {(placedPos === 0 || placedPos === 12) &&
+                <LedgerLine cx={EX3_NOTE2_X} cy={posToY(placedPos)}
+                  color={feedback.ok ? CORRECT : WRONG} />}
+              <BravuraNote cx={EX3_NOTE2_X} cy={posToY(placedPos)}
+                color={feedback.ok ? CORRECT : WRONG} />
+            </g>
+          )}
+          {subStep === 'place' && feedback && !feedback.ok && (
+            <g opacity={0.55}>
+              {(targetPos === 0 || targetPos === 12) &&
+                <LedgerLine cx={EX3_NOTE2_X} cy={posToY(targetPos)} color={CORRECT} />}
+              <BravuraNote cx={EX3_NOTE2_X} cy={posToY(targetPos)} color={CORRECT} />
+            </g>
+          )}
+          {/* After place-step completes, keep the (correct) second note on screen for name2 */}
+          {subStep === 'name2' && (
+            <g>
+              {(targetPos === 0 || targetPos === 12) &&
+                <LedgerLine cx={EX3_NOTE2_X} cy={posToY(targetPos)} />}
+              <BravuraNote cx={EX3_NOTE2_X} cy={posToY(targetPos)} />
+            </g>
+          )}
+        </svg>
+      </div>
+
+      {/* Step indicator */}
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 10 }}>
+        {subStep === 'name1' && <>Step 1 — Name the <strong>given</strong> note</>}
+        {subStep === 'place' && <>Step 2 — Place the second note{' '}
+          <strong style={{ color: ACCENT }}>{item.direction === 'up' ? 'up' : 'down'} a {sizeLabel(item.size)}</strong>
+        </>}
+        {subStep === 'name2' && <>Step 3 — Name the <strong>second</strong> note</>}
+      </p>
+
+      {/* Letter picker (for name1 and name2) */}
+      {pickerActive && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8, marginBottom: 16 }}>
+          {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map(letter => {
+            const isChosen = pickerChosen === letter
+            const isAnswer = pickerAnswer === letter
+            let bg = 'white', border = '#DDD8CA', color = DARK
+            if (pickerFeedback !== null) {
+              if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
+              else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
+            }
+            return (
+              <button key={letter}
+                onClick={() => (subStep === 'name1' ? pickName1(letter) : pickName2(letter))}
+                disabled={pickerFeedback !== null}
+                style={{
+                  padding: '14px 0', borderRadius: 10, border: `1.5px solid ${border}`,
+                  background: bg, fontFamily: SERIF, fontSize: 22, fontWeight: 400,
+                  color, cursor: pickerFeedback !== null ? 'default' : 'pointer',
+                }}>
+                {letter}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Place button (for subStep 'place') */}
+      {subStep === 'place' && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+          <button onClick={onPlace}
+            disabled={feedback !== null || stagedPos === null}
+            style={{
+              padding: '10px 28px', borderRadius: 10, border: 'none',
+              fontFamily: F, fontSize: 14, fontWeight: 600,
+              cursor: feedback !== null || stagedPos === null ? 'default' : 'pointer',
+              background: feedback !== null || stagedPos === null ? '#EDE8DF' : DARK,
+              color: feedback !== null || stagedPos === null ? '#B0ACA4' : 'white',
+            }}>
+            Place
+          </button>
+        </div>
+      )}
+
+      {/* Feedback row */}
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
+        {feedback?.step === 'name1' && !feedback.ok && (
+          <>It&apos;s <strong style={{ color: CORRECT }}>{givenLetter}</strong></>
+        )}
+        {feedback?.step === 'place' && !feedback.ok && (
+          <>Correct note shown in green</>
+        )}
+        {feedback?.step === 'name2' && !feedback.ok && (
+          <>It&apos;s <strong style={{ color: CORRECT }}>{targetLetter}</strong></>
+        )}
+        {feedback?.ok && '✓ Correct'}
+      </p>
+    </div>
+  )
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
-type Phase = 'ex1'
-const PHASE_ORDER: Phase[] = ['ex1']
+type Phase = 'ex1' | 'ex2' | 'ex3'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3']
 
 export default function IntervalsLesson({
   passingScore,
@@ -381,7 +856,9 @@ export default function IntervalsLesson({
   return (
     <div>
       {canGoBack && <BackButton onClick={back} />}
-      {phase === 'ex1' && <NameIntervalEx key={key} onDone={scored} />}
+      {phase === 'ex1' && <NameIntervalEx  key={key} onDone={scored} />}
+      {phase === 'ex2' && <BuildIntervalEx key={key} onDone={scored} />}
+      {phase === 'ex3' && <ReadBuildEx     key={key} onDone={scored} />}
     </div>
   )
 }
