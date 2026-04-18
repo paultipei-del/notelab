@@ -123,10 +123,35 @@ function BackButton({ onClick }: { onClick: () => void }) {
     <button onClick={onClick} style={{
       background: 'none', border: 'none', cursor: 'pointer',
       fontFamily: F, fontSize: 12, color: '#7A7060',
-      padding: '4px 0', marginBottom: 12,
+      padding: '4px 0',
     }}>
-      ← Back to previous exercise
+      ← Back
     </button>
+  )
+}
+
+function ForwardButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: F, fontSize: 12, color: '#7A7060',
+      padding: '4px 0',
+    }}>
+      Forward →
+    </button>
+  )
+}
+
+function NavBar({ canBack, canForward, onBack, onForward }: {
+  canBack: boolean; canForward: boolean
+  onBack: () => void; onForward: () => void
+}) {
+  if (!canBack && !canForward) return null
+  return (
+    <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 12 }}>
+      {canBack && <BackButton onClick={onBack} />}
+      {canForward && <ForwardButton onClick={onForward} />}
+    </div>
   )
 }
 
@@ -1131,8 +1156,9 @@ export default function IntervalsLesson({
   passingScore: number
   onComplete: (score: number, total: number) => void
 }) {
-  const [phase, setPhase] = useState<Phase>('ex1')
-  const [key,   setKey]   = useState(0)
+  const [phase,       setPhase]       = useState<Phase>('ex1')
+  const [key,         setKey]         = useState(0)
+  const [furthestIdx, setFurthestIdx] = useState(0)
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
   function goToPhase(p: Phase) {
@@ -1148,15 +1174,20 @@ export default function IntervalsLesson({
       onComplete(total > 0 ? correct / total : 1, total)
       return
     }
-    goToPhase(PHASE_ORDER[idx + 1])
+    const nextIdx = idx + 1
+    setFurthestIdx(f => Math.max(f, nextIdx))
+    goToPhase(PHASE_ORDER[nextIdx])
   }
 
   function back() {
     const idx = PHASE_ORDER.indexOf(phase)
-    if (idx > 0) {
-      const prev = PHASE_ORDER[idx - 1]
-      phaseScoresRef.current.delete(prev)
-      goToPhase(prev)
+    if (idx > 0) goToPhase(PHASE_ORDER[idx - 1])
+  }
+
+  function forward() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx >= 0 && idx < furthestIdx && idx + 1 < PHASE_ORDER.length) {
+      goToPhase(PHASE_ORDER[idx + 1])
     }
   }
 
@@ -1165,11 +1196,14 @@ export default function IntervalsLesson({
     next()
   }
 
-  const canGoBack = PHASE_ORDER.indexOf(phase) > 0
+  const currentIdx   = PHASE_ORDER.indexOf(phase)
+  const canGoBack    = currentIdx > 0
+  const canGoForward = currentIdx >= 0 && currentIdx < furthestIdx
 
   return (
     <div>
-      {canGoBack && <BackButton onClick={back} />}
+      <NavBar canBack={canGoBack} canForward={canGoForward}
+        onBack={back} onForward={forward} />
       {phase === 'ex1' && <NameIntervalEx    key={key} onDone={scored} />}
       {phase === 'ex2' && <BuildIntervalEx   key={key} onDone={scored} />}
       {phase === 'ex3' && <ReadBuildEx       key={key} onDone={scored} />}

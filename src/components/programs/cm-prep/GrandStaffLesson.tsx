@@ -1830,8 +1830,9 @@ interface Props {
 }
 
 export default function GrandStaffLesson({ passingScore, onComplete }: Props) {
-  const [phase, setPhase] = useState<Phase>('staff-intro')
-  const [key,   setKey]   = useState(0)
+  const [phase,       setPhase]       = useState<Phase>('staff-intro')
+  const [key,         setKey]         = useState(0)
+  const [furthestIdx, setFurthestIdx] = useState(0)
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
   function goToPhase(p: Phase) {
@@ -1848,15 +1849,20 @@ export default function GrandStaffLesson({ passingScore, onComplete }: Props) {
       setPhase('done')
       return
     }
-    goToPhase(PHASE_ORDER[idx + 1])
+    const nextIdx = idx + 1
+    setFurthestIdx(f => Math.max(f, nextIdx))
+    goToPhase(PHASE_ORDER[nextIdx])
   }
 
   function back() {
     const idx = PHASE_ORDER.indexOf(phase)
-    if (idx > 0) {
-      const prev = PHASE_ORDER[idx - 1]
-      phaseScoresRef.current.delete(prev)
-      goToPhase(prev)
+    if (idx > 0) goToPhase(PHASE_ORDER[idx - 1])
+  }
+
+  function forward() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx >= 0 && idx < furthestIdx && idx + 1 < PHASE_ORDER.length) {
+      goToPhase(PHASE_ORDER[idx + 1])
     }
   }
 
@@ -1867,11 +1873,14 @@ export default function GrandStaffLesson({ passingScore, onComplete }: Props) {
 
   if (phase === 'done') return null
 
-  const canGoBack = PHASE_ORDER.indexOf(phase) > 0
+  const currentIdx   = PHASE_ORDER.indexOf(phase)
+  const canGoBack    = currentIdx > 0
+  const canGoForward = currentIdx >= 0 && currentIdx < furthestIdx
 
   return (
     <div>
-      {canGoBack && <BackButton onClick={back} />}
+      <NavBar canBack={canGoBack} canForward={canGoForward}
+        onBack={back} onForward={forward} />
       {phase === 'staff-intro'  && <StaffIntro   key={key} onNext={next} />}
       {phase === 'staff-ex'     && <StaffEx      key={key} onDone={scored} />}
       {phase === 'treble-intro' && <TrebleIntro  key={key} onNext={next} />}
@@ -1892,9 +1901,34 @@ function BackButton({ onClick }: { onClick: () => void }) {
     <button onClick={onClick} style={{
       background: 'none', border: 'none', cursor: 'pointer',
       fontFamily: 'var(--font-jost), sans-serif', fontSize: 12, color: '#7A7060',
-      padding: '4px 0', marginBottom: 12,
+      padding: '4px 0',
     }}>
-      ← Back to previous exercise
+      ← Back
     </button>
+  )
+}
+
+function ForwardButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button onClick={onClick} style={{
+      background: 'none', border: 'none', cursor: 'pointer',
+      fontFamily: 'var(--font-jost), sans-serif', fontSize: 12, color: '#7A7060',
+      padding: '4px 0',
+    }}>
+      Forward →
+    </button>
+  )
+}
+
+function NavBar({ canBack, canForward, onBack, onForward }: {
+  canBack: boolean; canForward: boolean
+  onBack: () => void; onForward: () => void
+}) {
+  if (!canBack && !canForward) return null
+  return (
+    <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 12 }}>
+      {canBack && <BackButton onClick={onBack} />}
+      {canForward && <ForwardButton onClick={onForward} />}
+    </div>
   )
 }
