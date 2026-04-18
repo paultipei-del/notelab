@@ -468,8 +468,10 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
             mode === 'flats' || (mode === 'half-steps' && direction === 'down') ? FLAT_TARGET :
             mode === 'whole-steps' && direction === 'down' ? WHOLE_TARGET_DOWN :
             mode === 'whole-steps' ? WHOLE_TARGET : SHARP_TARGET
-          const isInactive = mode !== 'naturals' && targetMap[note] === null
-          // C5 is the keyboard's right edge — not clickable going up, but shouldn't look greyed
+          // In step modes let the user click any white key — even if the step would
+          // land off-keyboard (e.g. B + whole = C♯5). Only sharps/flats dim/disable.
+          const isInactive = !isStepMode && mode !== 'naturals' && targetMap[note] === null
+          // C5 is the keyboard's right edge — never looks greyed even in sharps mode
           const shouldDim = isInactive && note !== 'C5'
           return (
             <g
