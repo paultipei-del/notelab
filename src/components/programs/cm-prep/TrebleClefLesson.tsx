@@ -135,11 +135,11 @@ const LINE_NOTE_POOL: NoteInfo[] = [
   { name: 'A5', letter: 'A', pos: 12 },
 ]
 
-// Treble-only octave ranges: Middle C (pos=0), treble (pos 1–7), high (pos 8–12)
+// Treble-only octave labels: Middle C (pos=0), Treble (pos 1–7), High (pos 8–12)
 function octaveLabel(pos: number): string {
   if (pos === 0) return 'Middle C'
-  if (pos >= 8)  return 'high (D5–A5)'
-  return 'treble (D4–C5)'
+  if (pos >= 8)  return 'High'
+  return 'Treble'
 }
 
 // ── Single-note staff (for naming / placing exercises) ─────────────────────────
@@ -361,9 +361,10 @@ function NameNoteEx({
 
   const [idx,       setIdx]       = useState(0)
   const [selected,  setSelected]  = useState<string | null>(null)
-  const [confirmed, setConfirmed] = useState(false)
+  const [feedback,  setFeedback]  = useState<{ correctLetter: string; ok: boolean } | null>(null)
   const [correct,   setCorrect]   = useState(0)
   const [done,      setDone]      = useState(false)
+  const confirmed = feedback !== null
 
   const item = items[idx]
 
@@ -371,7 +372,7 @@ function NameNoteEx({
     if (idx + 1 >= total) { setDone(true); onDone(currentCorrect / total, total); return }
     setIdx(i => i + 1)
     setSelected(null)
-    setConfirmed(false)
+    setFeedback(null)
   }
 
   function pick(letter: string) {
@@ -380,10 +381,22 @@ function NameNoteEx({
     const newCorrect = ok ? correct + 1 : correct
     if (ok) setCorrect(newCorrect)
     setSelected(letter)
-    setConfirmed(true)
+    setFeedback({ correctLetter: item.letter, ok })
     // Auto-advance after 1.2s on correct, 2s on wrong
     setTimeout(() => next(newCorrect), ok ? 1200 : 2000)
   }
+
+  // Keyboard shortcut — type A–G to answer
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (confirmed) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const k = e.key.toUpperCase()
+      if (k.length === 1 && k >= 'A' && k <= 'G') pick(k)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [idx, confirmed])
 
   if (done) return null
 
@@ -423,8 +436,8 @@ function NameNoteEx({
       </div>
 
       <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, minHeight: '1.5em' }}>
-        {confirmed && selected !== item.letter && (
-          <>It's <strong style={{ color: CORRECT }}>{item.letter}</strong></>
+        {feedback && !feedback.ok && (
+          <>It's <strong style={{ color: CORRECT }}>{feedback.correctLetter}</strong></>
         )}
       </p>
     </div>
@@ -635,18 +648,12 @@ function WordStaff({ notes }: { notes: number[] }) {
           <g key={i}>
             {pos === 0  && <LedgerLine cx={x} cy={cy} sw={2} hw={16} />}
             {pos === 12 && <LedgerLine cx={x} cy={cy} hw={16} />}
-            {pos === 1  && <LedgerLine cx={x} cy={cy} color={GREY} sw={0.8} hw={16} />}
             <BravuraNote cx={x} cy={cy} val="whole" />
           </g>
         )
       })}
     </svg>
   )
-}
-
-function buildWordChoices(item: WordItem, pool: WordItem[]): string[] {
-  const others = shuffled(pool.filter(w => w.word !== item.word)).slice(0, 2)
-  return shuffled([item.word, ...others.map(w => w.word)])
 }
 
 function WordRound({
@@ -656,27 +663,59 @@ function WordRound({
   onDone: (s: number, t: number) => void
 }) {
   const items = useMemo(() => shuffled(pool), [pool])
-  const [idx,      setIdx]      = useState(0)
-  const [chosen,   setChosen]   = useState<string | null>(null)
-  const [correct,  setCorrect]  = useState(0)
+  const [idx,       setIdx]       = useState(0)
+  const [typed,     setTyped]     = useState('')
+  const [submitted, setSubmitted] = useState<{ ok: boolean } | null>(null)
+  const [correct,   setCorrect]   = useState(0)
+  const lockedRef = useRef(false)
+  const inputRef  = useRef<HTMLInputElement>(null)
 
-  const item    = items[idx]
-  const choices = useMemo(() => buildWordChoices(item, pool), [item, pool])
-  const isCorrect = chosen !== null ? chosen === item.word : null
+  const item      = items[idx]
+  const isCorrect = submitted?.ok ?? null
 
-  function pick(w: string) {
-    if (chosen !== null) return
-    const ok = w === item.word
+  useEffect(() => { inputRef.current?.focus() }, [idx])
+
+  function submit() {
+    if (submitted !== null || lockedRef.current) return
+    const guess = typed.trim().toUpperCase()
+    if (guess === '') return
+    lockedRef.current = true
+    const ok = guess === item.word
     const newCorrect = ok ? correct + 1 : correct
     if (ok) setCorrect(newCorrect)
-    setChosen(w)
+    setSubmitted({ ok })
     setTimeout(() => {
       if (idx + 1 >= items.length) { onDone(newCorrect / items.length, items.length); return }
       setIdx(i => i + 1)
-      setChosen(null)
+      setTyped(''); setSubmitted(null); lockedRef.current = false
     }, ok ? 1200 : 2000)
   }
 
+  // Window-level keyboard — works even when the input doesn't have focus
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (submitted !== null || lockedRef.current) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const k = e.key
+      if (k === 'Enter') { submit(); return }
+      if (k === 'Backspace') {
+        e.preventDefault()
+        setTyped(t => t.slice(0, -1))
+        return
+      }
+      const up = k.toUpperCase()
+      if (up.length === 1 && up >= 'A' && up <= 'G') {
+        setTyped(t => t.length >= item.word.length ? t : t + up)
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [idx, submitted, typed, item.word.length])
+
+  const borderColor = submitted === null ? '#DDD8CA'
+    : isCorrect ? '#C0DD97' : '#F0C4A8'
+  const inputColor  = submitted === null ? DARK
+    : isCorrect ? CORRECT : WRONG
 
   return (
     <div>
@@ -694,31 +733,66 @@ function WordRound({
         <WordStaff notes={item.notes} />
       </div>
 
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 16, justifyContent: 'center' }}>
-        {choices.map(w => {
-          const picked = chosen === w
-          const isAns  = w === item.word
-          let bg     = 'white'
-          let border = '#DDD8CA'
-          let tc     = DARK
-          if (chosen !== null) {
-            if (isAns)                { bg = '#EAF3DE'; border = '#C0DD97'; tc = CORRECT }
-            else if (picked && !isAns){ bg = '#FDF3ED'; border = '#F0C4A8'; tc = WRONG }
-          } else if (picked) { bg = '#F7F4ED'; border = DARK }
+      <div style={{ display: 'flex', gap: 10, marginBottom: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <input
+          ref={inputRef}
+          value={typed}
+          readOnly
+          placeholder="Type or tap letters"
+          style={{
+            padding: '10px 16px', borderRadius: 10,
+            border: `1.5px solid ${borderColor}`, background: 'white',
+            fontFamily: SERIF, fontSize: 22, fontWeight: 400,
+            color: inputColor, minWidth: 140, textAlign: 'center',
+            letterSpacing: '0.15em', outline: 'none',
+          }}
+        />
+        <button onClick={submit} disabled={submitted !== null || typed.trim() === ''} style={{
+          padding: '10px 20px', borderRadius: 10, border: 'none',
+          background: submitted !== null || typed.trim() === '' ? '#EDE8DF' : DARK,
+          color: submitted !== null || typed.trim() === '' ? '#B0ACA4' : 'white',
+          fontFamily: F, fontSize: 14, fontWeight: 600,
+          cursor: submitted !== null || typed.trim() === '' ? 'default' : 'pointer',
+        }}>Submit</button>
+      </div>
 
-          return (
-            <button key={w} onClick={() => pick(w)} style={{
-              padding: '10px 20px', borderRadius: 10, border: `1.5px solid ${border}`,
-              background: bg, fontFamily: SERIF, fontSize: 18, fontWeight: 400,
-              color: tc, cursor: chosen ? 'default' : 'pointer',
-            }}>{w}</button>
-          )
-        })}
+      {/* Letter pad — tap to append, backspace to remove. Useful on mobile. */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 6,
+        maxWidth: 440, margin: '0 auto 16px' }}>
+        {NOTE_LETTERS.map(letter => (
+          <button key={letter}
+            onClick={() => {
+              if (submitted !== null) return
+              if (typed.length >= item.word.length) return
+              setTyped(t => t + letter)
+            }}
+            disabled={submitted !== null || typed.length >= item.word.length}
+            style={{
+              padding: '10px 0', borderRadius: 8, border: '1.5px solid #DDD8CA',
+              background: 'white', fontFamily: SERIF, fontSize: 18, fontWeight: 400,
+              color: submitted !== null || typed.length >= item.word.length ? '#B0ACA4' : DARK,
+              cursor: submitted !== null || typed.length >= item.word.length ? 'default' : 'pointer',
+            }}>
+            {letter}
+          </button>
+        ))}
+        <button
+          onClick={() => { if (submitted === null) setTyped(t => t.slice(0, -1)) }}
+          disabled={submitted !== null || typed.length === 0}
+          aria-label="Backspace"
+          style={{
+            padding: '10px 0', borderRadius: 8, border: '1.5px solid #DDD8CA',
+            background: 'white', fontFamily: F, fontSize: 14,
+            color: submitted !== null || typed.length === 0 ? '#B0ACA4' : DARK,
+            cursor: submitted !== null || typed.length === 0 ? 'default' : 'pointer',
+          }}>
+          ⌫
+        </button>
       </div>
 
       <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
-        color: chosen !== null ? (isCorrect ? CORRECT : WRONG) : 'transparent' }}>
-        {chosen !== null ? (isCorrect ? '✓ Correct!' : `✗ The word is ${item.word}`) : '·'}
+        color: submitted !== null ? (isCorrect ? CORRECT : WRONG) : 'transparent' }}>
+        {submitted !== null ? (isCorrect ? '✓ Correct!' : `✗ The word is ${item.word}`) : '·'}
       </p>
     </div>
   )

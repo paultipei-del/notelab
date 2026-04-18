@@ -61,8 +61,8 @@ function isLedger(n: { clef: string; pos: number }): boolean {
 function octaveLabel(item: AccNote): string {
   if ((item.clef === 'treble' && item.pos === 0) || (item.clef === 'bass' && item.pos === 12))
     return 'Middle C'
-  if (item.clef === 'treble') return item.pos >= 8 ? 'high (D5–A5)' : 'treble (D4–C5)'
-  return item.pos <= 4 ? 'low (E2–B2)' : 'bass (C3–B3)'
+  if (item.clef === 'treble') return item.pos >= 8 ? 'High' : 'Treble'
+  return item.pos <= 4 ? 'Low' : 'Bass'
 }
 
 // For naturals: both "F♮" and "F" are correct

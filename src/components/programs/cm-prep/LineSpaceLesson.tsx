@@ -530,7 +530,7 @@ function CardStaff({ note, revealed }: { note: CardNote; revealed: boolean }) {
       {note.pos === 0 && <LedgerLine cx={cx} cy={cy} color={col} />}
       <BravuraNote cx={cx} cy={cy} val={note.val} color={col} stemUp={up} />
       {revealed && (
-        <text x={W/2 + 5} y={H - 8} fontFamily={F} fontSize={12} fontWeight="700"
+        <text x={W/2 + 20} y={H - 8} fontFamily={F} fontSize={12} fontWeight="700"
           fill={note.isLine ? LINE_C : SPACE_C} textAnchor="middle">
           {note.isLine ? 'Line note' : 'Space note'}
         </text>
@@ -656,6 +656,7 @@ function DrawNotes({
 
   function onClick() {
     if (allFilled || submitted || hoverPos === null) return
+    if (placed.includes(hoverPos)) return  // each line/space can only be used once
     setPlaced(prev => [...prev, hoverPos])
   }
 
@@ -697,18 +698,21 @@ function DrawNotes({
           <line x1={sR + 6} y1={tTop} x2={sR + 6} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
           <TrebleClef />
 
-          {/* Ghost note at next slot */}
-          {!allFilled && hoverPos !== null && (
-            <g style={{ pointerEvents: 'none' }} opacity={0.35}>
-              <BravuraNote
-                cx={slotX(placed.length)}
-                cy={posToY_S(hoverPos)}
-                val="quarter"
-                color={ACCENT}
-                stemUp={hoverPos <= 6}
-              />
-            </g>
-          )}
+          {/* Ghost note at next slot — greyed if that line/space is already used */}
+          {!allFilled && hoverPos !== null && (() => {
+            const taken = placed.includes(hoverPos)
+            return (
+              <g style={{ pointerEvents: 'none' }} opacity={taken ? 0.25 : 0.35}>
+                <BravuraNote
+                  cx={slotX(placed.length)}
+                  cy={posToY_S(hoverPos)}
+                  val="quarter"
+                  color={taken ? '#B0ACA4' : ACCENT}
+                  stemUp={hoverPos <= 6}
+                />
+              </g>
+            )
+          })()}
 
           {/* Placed notes */}
           {placed.map((pos, i) => {

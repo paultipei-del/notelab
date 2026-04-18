@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import StaffCard from '@/components/cards/StaffCard'
 import type { StaffNoteItem } from '@/lib/programs/cm-prep/questions'
 import { shuffle } from '@/lib/programs/cm-prep/questions'
@@ -53,8 +53,8 @@ function octaveLabel(item: StaffNoteItem): string {
   const isMiddleC = (item.clef === 'treble' && item.pos === 0) ||
                     (item.clef === 'bass'   && item.pos === 12)
   if (isMiddleC) return 'Middle C'
-  if (item.clef === 'treble') return item.pos >= 8 ? 'high (D5–A5)' : 'treble (D4–C5)'
-  return item.pos <= 4 ? 'low (E2–B2)' : 'bass (C3–B3)'
+  if (item.clef === 'treble') return item.pos >= 8 ? 'High' : 'Treble'
+  return item.pos <= 4 ? 'Low' : 'Bass'
 }
 
 // ── Shared primitives ─────────────────────────────────────────────────────────
@@ -197,6 +197,18 @@ function NameExercise({
     }, ok ? 1200 : 2000)
   }
 
+  // Keyboard shortcut — type A–G to answer
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (feedback) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const k = e.key.toUpperCase()
+      if (k.length === 1 && k >= 'A' && k <= 'G') handlePick(k)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [idx, feedback])
+
   return (
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
@@ -253,6 +265,18 @@ function NameExerciseGrand({
       setIdx(next); setFeedback(null); lockedRef.current = false
     }, ok ? 1200 : 2000)
   }
+
+  // Keyboard shortcut — type A–G to answer
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (feedback) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const k = e.key.toUpperCase()
+      if (k.length === 1 && k >= 'A' && k <= 'G') handlePick(k)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [idx, feedback])
 
   return (
     <div>
