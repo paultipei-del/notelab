@@ -673,7 +673,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div>
+    <div style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}>
       <ExLabel>Exercise 3 — Assemble the treble clef</ExLabel>
       {calibrating && <TrebleClefCalibrator onClose={() => setCalibrating(false)} />}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
@@ -1186,7 +1186,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div>
+    <div style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}>
       <ExLabel>Exercise 5 — Assemble the bass clef</ExLabel>
       {calibrating && <BassClefCalibrator onClose={() => setCalibrating(false)} />}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
@@ -1552,7 +1552,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div>
+    <div style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}>
       <ExLabel>Exercise 7 — Build the grand staff</ExLabel>
       <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
         {[0,1,2,3].map(i => (
