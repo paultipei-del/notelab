@@ -3,7 +3,11 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { CM_PREP_LESSONS } from '@/lib/programs/cm-prep/lessons'
-import { loadCMPrepProgress, isCMPrepLessonUnlocked, type CMPrepProgressStore } from '@/lib/programs/cm-prep/progress'
+import {
+  loadCMPrepProgress, loadCMPrepProgressRemote, isCMPrepLessonUnlocked,
+  type CMPrepProgressStore,
+} from '@/lib/programs/cm-prep/progress'
+import { useAuth } from '@/hooks/useAuth'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -11,8 +15,18 @@ const ACCENT = '#BA7517'
 
 export default function CMPrepHubPage() {
   const [store, setStore] = useState<CMPrepProgressStore>({})
+  const { user } = useAuth()
 
+  // Show the local cache right away, then merge/sync with Supabase when signed in.
   useEffect(() => { setStore(loadCMPrepProgress()) }, [])
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+    loadCMPrepProgressRemote(user.id).then(remote => {
+      if (!cancelled) setStore(remote)
+    })
+    return () => { cancelled = true }
+  }, [user])
 
   const total = CM_PREP_LESSONS.length
   const done = CM_PREP_LESSONS.filter(l => store[l.slug]?.completed).length

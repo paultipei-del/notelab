@@ -4,9 +4,11 @@ import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
 import { getCMPrepLesson, nextCMPrepLesson } from '@/lib/programs/cm-prep/lessons'
 import {
-  loadCMPrepProgress, isCMPrepLessonUnlocked, recordCMPrepSession,
+  loadCMPrepProgress, loadCMPrepProgressRemote,
+  isCMPrepLessonUnlocked, recordCMPrepSession, recordCMPrepSessionRemote,
   type CMPrepProgressStore,
 } from '@/lib/programs/cm-prep/progress'
+import { useAuth } from '@/hooks/useAuth'
 import {
   getQuestionsForLesson, getNotePoolForLesson,
   LINE_SPACE_POOL, shuffle,
@@ -45,8 +47,18 @@ export default function CMPrepLessonPage({ params }: Props) {
   const [sessionDone, setSessionDone] = useState(false)
   const [sessionScore, setSessionScore] = useState(0)
   const [sessionTotal, setSessionTotal] = useState(0)
+  const { user } = useAuth()
 
+  // Local cache first (instant), then overlay remote data when signed in.
   useEffect(() => { setStore(loadCMPrepProgress()) }, [])
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+    loadCMPrepProgressRemote(user.id).then(remote => {
+      if (!cancelled) setStore(remote)
+    })
+    return () => { cancelled = true }
+  }, [user])
 
   if (!lesson) {
     return (
@@ -60,11 +72,15 @@ export default function CMPrepLessonPage({ params }: Props) {
   const progress = store[lessonSlug]
   const completed = progress?.completed ?? false
 
-  function handleComplete(score: number, total: number) {
-    recordCMPrepSession(lessonSlug, score, total)
+  async function handleComplete(score: number, total: number) {
     setSessionScore(score)
     setSessionTotal(total)
     setSessionDone(true)
+    if (user) {
+      await recordCMPrepSessionRemote(user.id, lessonSlug, score, total)
+    } else {
+      recordCMPrepSession(lessonSlug, score, total)
+    }
     setStore(loadCMPrepProgress())
   }
 

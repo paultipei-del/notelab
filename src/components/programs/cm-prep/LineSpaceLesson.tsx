@@ -530,7 +530,7 @@ function CardStaff({ note, revealed }: { note: CardNote; revealed: boolean }) {
       {note.pos === 0 && <LedgerLine cx={cx} cy={cy} color={col} />}
       <BravuraNote cx={cx} cy={cy} val={note.val} color={col} stemUp={up} />
       {revealed && (
-        <text x={W/2} y={H - 8} fontFamily={F} fontSize={12} fontWeight="700"
+        <text x={W/2 + 5} y={H - 8} fontFamily={F} fontSize={12} fontWeight="700"
           fill={note.isLine ? LINE_C : SPACE_C} textAnchor="middle">
           {note.isLine ? 'Line note' : 'Space note'}
         </text>
