@@ -24,6 +24,7 @@ import TrebleClefLesson from '@/components/programs/cm-prep/TrebleClefLesson'
 import BassClefLesson from '@/components/programs/cm-prep/BassClefLesson'
 import SharpsFlatsLesson from '@/components/programs/cm-prep/SharpsFlatsLesson'
 import HalfWholeStepsLesson from '@/components/programs/cm-prep/HalfWholeStepsLesson'
+import IntervalsLesson from '@/components/programs/cm-prep/IntervalsLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -276,6 +277,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'mc-quiz' && 'Answer multiple-choice questions about the concepts in this lesson.'}
                   {lesson.tool === 'mixed-quiz' && 'A mixed set of questions drawing from all topics covered so far.'}
                   {lesson.tool === 'half-whole-lesson' && 'Four exercises: find half and whole steps on the keyboard, identify step types from letter names, and read steps on the staff.'}
+                  {lesson.tool === 'intervals-lesson' && 'Four exercises: name intervals on the staff, build intervals by placing a second note, and identify intervals in short musical phrases.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -340,6 +342,11 @@ export default function CMPrepLessonPage({ params }: Props) {
                   />
                 ) : lesson.tool === 'half-whole-lesson' ? (
                   <HalfWholeStepsLesson
+                    passingScore={lesson.passingScore}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'intervals-lesson' ? (
+                  <IntervalsLesson
                     passingScore={lesson.passingScore}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />

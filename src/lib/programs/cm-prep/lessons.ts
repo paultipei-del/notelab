@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -97,7 +97,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Measuring the distance between notes',
     description: "An interval is the distance between two notes, counted by including both note names. A 2nd moves to the next letter; a 3rd skips one; a 4th spans four letters; a 5th spans five. On the staff, a 2nd always moves from line to space or space to line; a 3rd always moves line to line or space to space.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'intervals-lesson',
     unlockAfter: 'half-whole-steps',
     passingScore: 0.8,
   },
