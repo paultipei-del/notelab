@@ -469,6 +469,8 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
             mode === 'whole-steps' && direction === 'down' ? WHOLE_TARGET_DOWN :
             mode === 'whole-steps' ? WHOLE_TARGET : SHARP_TARGET
           const isInactive = mode !== 'naturals' && targetMap[note] === null
+          // C5 is the keyboard's right edge — not clickable going up, but shouldn't look greyed
+          const shouldDim = isInactive && note !== 'C5'
           return (
             <g
               key={note}
@@ -485,7 +487,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
               <rect x={x} y={KEY_Y} width={WK_W} height={28}
                 fill="white" opacity={0.12} rx={5} />
               {/* Inactive overlay (B in sharps, C in flats) */}
-              {isInactive && (
+              {shouldDim && (
                 <rect x={x} y={KEY_Y} width={WK_W} height={FACE_B - KEY_Y}
                   fill="rgba(0,0,0,0.18)" rx={5} />
               )}
