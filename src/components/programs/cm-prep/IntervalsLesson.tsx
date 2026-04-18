@@ -806,9 +806,251 @@ function ReadBuildEx({
   )
 }
 
+// ── Ex 4: Identify the interval used throughout a short musical phrase ──────
+type Duration = 'quarter' | 'half' | 'eighth'
+interface PhraseNote { pos: number; duration: Duration }
+interface Ex4Item {
+  clef: 'treble' | 'bass'
+  notes: PhraseNote[]
+  answer: 2 | 3 | 4 | 5
+  // Pairs of indices into notes[] that should be beamed together (eighths only)
+  beamPairs: [number, number][]
+}
+
+const EX4_POOL: Ex4Item[] = [
+  // 1. Treble: F4 B4 F4 — all quarters → 4ths
+  {
+    clef: 'treble', answer: 4, beamPairs: [],
+    notes: [
+      { pos: 3, duration: 'quarter' },
+      { pos: 6, duration: 'quarter' },
+      { pos: 3, duration: 'quarter' },
+    ],
+  },
+  // 2. Treble: C5 quarter, B4 eighth, A4 eighth, G4 quarter → 2nds
+  {
+    clef: 'treble', answer: 2, beamPairs: [[1, 2]],
+    notes: [
+      { pos: 7, duration: 'quarter' },
+      { pos: 6, duration: 'eighth'  },
+      { pos: 5, duration: 'eighth'  },
+      { pos: 4, duration: 'quarter' },
+    ],
+  },
+  // 3. Treble: D4 F4 A4 F4 — all quarters → 3rds
+  {
+    clef: 'treble', answer: 3, beamPairs: [],
+    notes: [
+      { pos: 1, duration: 'quarter' },
+      { pos: 3, duration: 'quarter' },
+      { pos: 5, duration: 'quarter' },
+      { pos: 3, duration: 'quarter' },
+    ],
+  },
+  // 4. Bass: F3 half, A3 half → 3rd
+  {
+    clef: 'bass', answer: 3, beamPairs: [],
+    notes: [
+      { pos: 8, duration: 'half' },
+      { pos: 10, duration: 'half' },
+    ],
+  },
+]
+
+// Render a quarter or eighth note with stem; eighth may be flagged or left
+// unflagged (when it's part of a beam group handled separately)
+function RhythmNote({
+  cx, cy, duration, stemUp, color = DARK, suppressFlag = false,
+}: {
+  cx: number; cy: number; duration: Duration; stemUp: boolean
+  color?: string; suppressFlag?: boolean
+}) {
+  const NH_OFF = 8
+  const STEM_LEN = 40
+  const isWhole = false // not used here
+  const isHollow = duration === 'half'
+  const headGlyph = isHollow ? '\uE0A3' : '\uE0A4'  // half or quarter/eighth black notehead
+  const stemX = stemUp ? cx + NH_OFF : cx - NH_OFF
+  const stemY2 = stemUp ? cy - STEM_LEN : cy + STEM_LEN
+  return (
+    <g>
+      <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={42}
+        fill={color} textAnchor="middle" dominantBaseline="central">{headGlyph}</text>
+      <line x1={stemX} y1={cy} x2={stemX} y2={stemY2} stroke={color} strokeWidth={1.5} />
+      {duration === 'eighth' && !suppressFlag && (
+        <text x={stemX} y={stemY2} fontFamily="Bravura, serif" fontSize={42}
+          fill={color} textAnchor={stemUp ? 'start' : 'start'} dominantBaseline="central">
+          {stemUp ? '\uE240' : '\uE241'}
+        </text>
+      )}
+      {isWhole && null /* whole note would omit stem; unused here */}
+    </g>
+  )
+}
+
+function PhraseStaff({ item }: { item: Ex4Item }) {
+  const posToY = item.clef === 'treble' ? posToY_T : posToY_B
+  const N = item.notes.length
+  const startX = sL + 70
+  const endX   = sR - 12
+  const span   = endX - startX
+  const noteX  = (i: number) => startX + (i + 0.5) * (span / N)
+
+  // Map eighth-note pair indices to their partner (for beam suppression of flags)
+  const beamedSet = new Set<number>()
+  for (const [a, b] of item.beamPairs) { beamedSet.add(a); beamedSet.add(b) }
+
+  // Middle line (pos 6 in both clefs here — B4 / D3). Stem-up for pos < 6, else stem-down.
+  const MID = 6
+  const stemDir = (pos: number) => pos < MID
+
+  const NH_OFF = 8
+  const STEM_LEN = 40
+
+  return (
+    <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+      style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
+      <StaffBase />
+      <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+      <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
+      {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
+
+      {/* Notes — beams drawn first so the notehead/stem sits on top */}
+      {item.beamPairs.map(([a, b], i) => {
+        const ax = noteX(a), bx = noteX(b)
+        const ay = posToY(item.notes[a].pos), by = posToY(item.notes[b].pos)
+        // Pick a common stem direction for the pair based on the group's average pos
+        const avg = (item.notes[a].pos + item.notes[b].pos) / 2
+        const up = avg < MID
+        const stemAx = up ? ax + NH_OFF : ax - NH_OFF
+        const stemBx = up ? bx + NH_OFF : bx - NH_OFF
+        // Beam y: past the higher of the two stem tips so beam is flush
+        const beamY = up
+          ? Math.min(ay, by) - STEM_LEN
+          : Math.max(ay, by) + STEM_LEN
+        return (
+          <g key={`beam-${i}`}>
+            {/* Stems */}
+            <line x1={stemAx} y1={ay} x2={stemAx} y2={beamY}
+              stroke={DARK} strokeWidth={1.5} />
+            <line x1={stemBx} y1={by} x2={stemBx} y2={beamY}
+              stroke={DARK} strokeWidth={1.5} />
+            {/* Beam bar */}
+            <rect x={stemAx - 0.75} y={beamY - 4} width={stemBx - stemAx + 1.5} height={5}
+              fill={DARK} />
+          </g>
+        )
+      })}
+
+      {item.notes.map((n, i) => {
+        const up = stemDir(n.pos)
+        // For beamed eighths, omit stem + flag (drawn separately above) and render just the head
+        const isBeamedEighth = beamedSet.has(i) && n.duration === 'eighth'
+        if (isBeamedEighth) {
+          return (
+            <text key={i} x={noteX(i)} y={posToY(n.pos)}
+              fontFamily="Bravura, serif" fontSize={42}
+              fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A4'}</text>
+          )
+        }
+        return (
+          <g key={i}>
+            <RhythmNote cx={noteX(i)} cy={posToY(n.pos)} duration={n.duration} stemUp={up} />
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+function PhraseIntervalEx({
+  onDone,
+}: {
+  onDone: (correct: number, total: number) => void
+}) {
+  const items = useMemo(() => shuffled(EX4_POOL), [])
+  const total = items.length
+
+  const [idx,      setIdx]      = useState(0)
+  const [chosen,   setChosen]   = useState<number | null>(null)
+  const [feedback, setFeedback] = useState<{ ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const item = items[idx]
+
+  function pick(n: number) {
+    if (lockedRef.current || feedback !== null) return
+    lockedRef.current = true
+    const ok = n === item.answer
+    if (ok) correctRef.current += 1
+    setChosen(n)
+    setFeedback({ ok })
+    setTimeout(() => {
+      if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+      setIdx(i => i + 1)
+      setChosen(null); setFeedback(null); lockedRef.current = false
+    }, ok ? 1200 : 2000)
+  }
+
+  const sizeLabel = (n: number) =>
+    n === 2 ? '2nd' : n === 3 ? '3rd' : n === 4 ? '4th' : '5th'
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 4 — Identify the interval used
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — what interval connects the notes?
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 16 }}>
+        <PhraseStaff item={item} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 16 }}>
+        {[2, 3, 4, 5].map(n => {
+          const isChosen = chosen === n
+          const isAnswer = n === item.answer
+          let bg = 'white', border = '#DDD8CA', color = DARK
+          if (feedback !== null) {
+            if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
+            else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
+          }
+          return (
+            <button key={n} onClick={() => pick(n)}
+              disabled={feedback !== null}
+              style={{
+                padding: '14px 0', borderRadius: 10, border: `1.5px solid ${border}`,
+                background: bg, fontFamily: SERIF, fontSize: 22, fontWeight: 400,
+                color, cursor: feedback !== null ? 'default' : 'pointer',
+              }}>
+              {sizeLabel(n)}
+            </button>
+          )
+        })}
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
+        {feedback !== null && !feedback.ok && (
+          <>Correct answer: <strong style={{ color: CORRECT }}>{sizeLabel(item.answer)}</strong></>
+        )}
+        {feedback !== null && feedback.ok && '✓ Correct'}
+      </p>
+    </div>
+  )
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
-type Phase = 'ex1' | 'ex2' | 'ex3'
-const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3']
+type Phase = 'ex1' | 'ex2' | 'ex3' | 'ex4'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4']
 
 export default function IntervalsLesson({
   passingScore,
@@ -856,9 +1098,10 @@ export default function IntervalsLesson({
   return (
     <div>
       {canGoBack && <BackButton onClick={back} />}
-      {phase === 'ex1' && <NameIntervalEx  key={key} onDone={scored} />}
-      {phase === 'ex2' && <BuildIntervalEx key={key} onDone={scored} />}
-      {phase === 'ex3' && <ReadBuildEx     key={key} onDone={scored} />}
+      {phase === 'ex1' && <NameIntervalEx    key={key} onDone={scored} />}
+      {phase === 'ex2' && <BuildIntervalEx   key={key} onDone={scored} />}
+      {phase === 'ex3' && <ReadBuildEx       key={key} onDone={scored} />}
+      {phase === 'ex4' && <PhraseIntervalEx  key={key} onDone={scored} />}
     </div>
   )
 }
