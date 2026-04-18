@@ -136,6 +136,13 @@ const LINE_NOTE_POOL: NoteInfo[] = [
   { name: 'C4', letter: 'C', pos: 12 },  // ledger above (Middle C)
 ]
 
+// Bass-only octave ranges: low (pos 0–4), bass (pos 5–11), Middle C (pos=12)
+function octaveLabel(pos: number): string {
+  if (pos === 12) return 'Middle C'
+  if (pos <= 4)   return 'low (E2–B2)'
+  return 'bass (C3–B3)'
+}
+
 // ── Single-note staff ─────────────────────────────────────────────────────────
 function SingleNoteStaff({ pos, color = DARK }: { pos?: number; color?: string }) {
   const cx = svgW / 2
@@ -499,7 +506,7 @@ function PlaceNoteEx({
           {item.letter}
         </span>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
-          Place <strong>{item.name}</strong> on the staff
+          <strong>{octaveLabel(item.pos)}</strong> — place <strong>{item.name}</strong> on the staff
         </p>
       </div>
 

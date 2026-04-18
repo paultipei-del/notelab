@@ -544,23 +544,27 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
   const [idx, setIdx] = useState(0)
   const [chosen, setChosen] = useState<'L' | 'S' | null>(null)
   const [results, setResults] = useState<boolean[]>([])
+  const lockedRef = useRef(false)
 
   const card = cards[idx]
   const isCorrect = chosen !== null ? (chosen === 'L') === card.isLine : null
 
   function pick(c: 'L' | 'S') {
-    if (chosen !== null) return
+    if (chosen !== null || lockedRef.current) return
+    lockedRef.current = true
+    const ok = (c === 'L') === card.isLine
     setChosen(c)
-    setResults(r => [...r, (c === 'L') === card.isLine])
-  }
-
-  function next() {
-    if (idx + 1 >= EX3_TOTAL) {
-      onDone(results.filter(Boolean).length / EX3_TOTAL, EX3_TOTAL)
-      return
-    }
-    setIdx(i => i + 1)
-    setChosen(null)
+    setResults(r => [...r, ok])
+    setTimeout(() => {
+      if (idx + 1 >= EX3_TOTAL) {
+        const correctCount = results.filter(Boolean).length + (ok ? 1 : 0)
+        onDone(correctCount / EX3_TOTAL, EX3_TOTAL)
+        return
+      }
+      setIdx(i => i + 1)
+      setChosen(null)
+      lockedRef.current = false
+    }, ok ? 1000 : 1800)
   }
 
   return (
@@ -599,13 +603,10 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
       </div>
 
       {chosen !== null && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600,
-            color: isCorrect ? CORRECT : WRONG, margin: 0 }}>
-            {isCorrect ? '✓ Correct' : `✗ That's a ${card.isLine ? 'line' : 'space'} note`}
-          </p>
-          <PrimaryBtn label={idx + 1 >= EX3_TOTAL ? 'Finish →' : 'Next →'} onClick={next} />
-        </div>
+        <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600,
+          color: isCorrect ? CORRECT : WRONG, margin: 0 }}>
+          {isCorrect ? '✓ Correct' : `✗ That's a ${card.isLine ? 'line' : 'space'} note`}
+        </p>
       )}
     </div>
   )

@@ -105,28 +105,49 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
 interface StepQuestion {
   from: string
   answer: string
+  direction: 'up' | 'down'
   fromLabel: string
   toLabel: string
 }
 
 // ── Pools ─────────────────────────────────────────────────────────────────────
 const HALF_POOL: StepQuestion[] = [
-  { from: 'C', answer: 'C#', fromLabel: 'C',  toLabel: 'C♯' },
-  { from: 'D', answer: 'D#', fromLabel: 'D',  toLabel: 'D♯' },
-  { from: 'E', answer: 'F',  fromLabel: 'E',  toLabel: 'E♯' },
-  { from: 'F', answer: 'F#', fromLabel: 'F',  toLabel: 'F♯' },
-  { from: 'G', answer: 'G#', fromLabel: 'G',  toLabel: 'G♯' },
-  { from: 'A', answer: 'A#', fromLabel: 'A',  toLabel: 'A♯' },
-  { from: 'B', answer: 'C5', fromLabel: 'B',  toLabel: 'C'  },
+  // Ascending from white keys
+  { from: 'C', answer: 'C#', direction: 'up',   fromLabel: 'C',  toLabel: 'C♯' },
+  { from: 'D', answer: 'D#', direction: 'up',   fromLabel: 'D',  toLabel: 'D♯' },
+  { from: 'E', answer: 'F',  direction: 'up',   fromLabel: 'E',  toLabel: 'F'  },
+  { from: 'F', answer: 'F#', direction: 'up',   fromLabel: 'F',  toLabel: 'F♯' },
+  { from: 'G', answer: 'G#', direction: 'up',   fromLabel: 'G',  toLabel: 'G♯' },
+  { from: 'A', answer: 'A#', direction: 'up',   fromLabel: 'A',  toLabel: 'A♯' },
+  { from: 'B', answer: 'C5', direction: 'up',   fromLabel: 'B',  toLabel: 'C'  },
+  // Ascending from black keys
+  { from: 'C#', answer: 'D', direction: 'up',   fromLabel: 'C♯', toLabel: 'D'  },
+  { from: 'D#', answer: 'E', direction: 'up',   fromLabel: 'D♯', toLabel: 'E'  },
+  { from: 'F#', answer: 'G', direction: 'up',   fromLabel: 'F♯', toLabel: 'G'  },
+  { from: 'G#', answer: 'A', direction: 'up',   fromLabel: 'G♯', toLabel: 'A'  },
+  { from: 'A#', answer: 'B', direction: 'up',   fromLabel: 'A♯', toLabel: 'B'  },
+  // Descending from white keys
+  { from: 'D', answer: 'C#', direction: 'down', fromLabel: 'D',  toLabel: 'C♯' },
+  { from: 'E', answer: 'D#', direction: 'down', fromLabel: 'E',  toLabel: 'D♯' },
+  { from: 'F', answer: 'E',  direction: 'down', fromLabel: 'F',  toLabel: 'E'  },
+  { from: 'G', answer: 'F#', direction: 'down', fromLabel: 'G',  toLabel: 'F♯' },
+  { from: 'A', answer: 'G#', direction: 'down', fromLabel: 'A',  toLabel: 'G♯' },
+  { from: 'B', answer: 'A#', direction: 'down', fromLabel: 'B',  toLabel: 'A♯' },
+  // Descending from black keys
+  { from: 'C#', answer: 'C', direction: 'down', fromLabel: 'C♯', toLabel: 'C'  },
+  { from: 'D#', answer: 'D', direction: 'down', fromLabel: 'D♯', toLabel: 'D'  },
+  { from: 'F#', answer: 'F', direction: 'down', fromLabel: 'F♯', toLabel: 'F'  },
+  { from: 'G#', answer: 'G', direction: 'down', fromLabel: 'G♯', toLabel: 'G'  },
+  { from: 'A#', answer: 'A', direction: 'down', fromLabel: 'A♯', toLabel: 'A'  },
 ]
 
 const WHOLE_POOL: StepQuestion[] = [
-  { from: 'C', answer: 'D',  fromLabel: 'C',  toLabel: 'D'  },
-  { from: 'D', answer: 'E',  fromLabel: 'D',  toLabel: 'E'  },
-  { from: 'E', answer: 'F#', fromLabel: 'E',  toLabel: 'F♯' },
-  { from: 'F', answer: 'G',  fromLabel: 'F',  toLabel: 'G'  },
-  { from: 'G', answer: 'A',  fromLabel: 'G',  toLabel: 'A'  },
-  { from: 'A', answer: 'B',  fromLabel: 'A',  toLabel: 'B'  },
+  { from: 'C', answer: 'D',  direction: 'up', fromLabel: 'C',  toLabel: 'D'  },
+  { from: 'D', answer: 'E',  direction: 'up', fromLabel: 'D',  toLabel: 'E'  },
+  { from: 'E', answer: 'F#', direction: 'up', fromLabel: 'E',  toLabel: 'F♯' },
+  { from: 'F', answer: 'G',  direction: 'up', fromLabel: 'F',  toLabel: 'G'  },
+  { from: 'G', answer: 'A',  direction: 'up', fromLabel: 'G',  toLabel: 'A'  },
+  { from: 'A', answer: 'B',  direction: 'up', fromLabel: 'A',  toLabel: 'B'  },
 ]
 
 const LETTER_POOL: { from: string; to: string; type: 'H' | 'W' }[] = [
@@ -527,6 +548,7 @@ function StepKeyboardEx({
   const item        = items[idx]
   const fromNote    = item.from
   const answer      = item.answer
+  const direction   = item.direction
   const accentColor = stepType === 'half' ? ACCENT : ACCENT2
   const uid         = stepType === 'half' ? 'hk' : 'wk'
 
@@ -573,8 +595,9 @@ function StepKeyboardEx({
       <ProgressBar done={idx} total={total} color={accentColor} />
       <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Starting from{' '}
-        <strong style={{ color: accentColor }}>{fromNote === 'C5' ? 'C' : fromNote}</strong>
-        {' '}— click the key one <strong>{stepType === 'half' ? 'half' : 'whole'} step</strong> above
+        <strong style={{ color: accentColor }}>{item.fromLabel}</strong>
+        {' '}— click the key one <strong>{stepType === 'half' ? 'half' : 'whole'} step</strong>{' '}
+        <strong>{direction === 'up' ? 'above' : 'below'}</strong>
       </p>
 
       <div style={{ borderRadius: 18, overflow: 'hidden', boxShadow: '0 10px 40px rgba(0,0,0,0.40)', marginBottom: 12 }}>
@@ -727,14 +750,13 @@ function LetterPairEx({
 // ── StaffPairEx ───────────────────────────────────────────────────────────────
 const NOTE1_X = 150
 const NOTE2_X = 240
-const BRACKET_Y = 152
 
 const ACC_SHARP = '\uE262'
 const ACC_FLAT  = '\uE260'
 
 function Accidental({ cx, cy, type }: { cx: number; cy: number; type: 'sharp' | 'flat' }) {
   return (
-    <text x={cx - 18} y={cy}
+    <text x={cx - 20} y={cy}
       fontFamily="Bravura, serif" fontSize={48}
       fill={DARK} textAnchor="middle" dominantBaseline="central">
       {type === 'sharp' ? ACC_SHARP : ACC_FLAT}
@@ -742,38 +764,9 @@ function Accidental({ cx, cy, type }: { cx: number; cy: number; type: 'sharp' | 
   )
 }
 
-function StaffPairSVG({
-  item,
-  showAnswer,
-  answered,
-}: {
-  item: StaffPairItem
-  showAnswer: boolean
-  answered: 'H' | 'W' | null
-}) {
+function StaffPairSVG({ item }: { item: StaffPairItem }) {
   const cy1 = posToY(item.pos1)
   const cy2 = posToY(item.pos2)
-
-  const noteColor1 = DARK
-  const noteColor2 = DARK
-
-  const bracketColor = (() => {
-    if (answered === null && !showAnswer) return GREY
-    if (showAnswer) return CORRECT
-    return answered === item.type ? CORRECT : WRONG
-  })()
-
-  const labelText = (() => {
-    if (showAnswer) return item.type
-    if (answered !== null) return answered
-    return '?'
-  })()
-
-  const labelColor = (() => {
-    if (showAnswer) return CORRECT
-    if (answered === null) return GREY
-    return answered === item.type ? CORRECT : WRONG
-  })()
 
   return (
     <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
@@ -788,34 +781,9 @@ function StaffPairSVG({
       {item.pos2 === 0 && <LedgerLine cx={NOTE2_X} cy={cy2} />}
 
       {item.acc1 && <Accidental cx={NOTE1_X} cy={cy1} type={item.acc1} />}
-      <BravuraNote cx={NOTE1_X} cy={cy1} color={noteColor1} />
+      <BravuraNote cx={NOTE1_X} cy={cy1} color={DARK} />
       {item.acc2 && <Accidental cx={NOTE2_X} cy={cy2} type={item.acc2} />}
-      <BravuraNote cx={NOTE2_X} cy={cy2} color={noteColor2} />
-
-      {/* Note name labels */}
-      <text x={NOTE1_X} y={cy1 - 22}
-        fontFamily={SERIF} fontSize={15} fontWeight="600"
-        fill={GREY} textAnchor="middle" dominantBaseline="auto">
-        {item.name1}
-      </text>
-      <text x={NOTE2_X} y={cy2 - 22}
-        fontFamily={SERIF} fontSize={15} fontWeight="600"
-        fill={GREY} textAnchor="middle" dominantBaseline="auto">
-        {item.name2}
-      </text>
-
-      {/* Bracket */}
-      <line x1={NOTE1_X - 8} y1={BRACKET_Y} x2={NOTE2_X + 8} y2={BRACKET_Y}
-        stroke={bracketColor} strokeWidth={1.2} />
-      <line x1={NOTE1_X - 8} y1={BRACKET_Y - 6} x2={NOTE1_X - 8} y2={BRACKET_Y}
-        stroke={bracketColor} strokeWidth={1.2} />
-      <line x1={NOTE2_X + 8} y1={BRACKET_Y - 6} x2={NOTE2_X + 8} y2={BRACKET_Y}
-        stroke={bracketColor} strokeWidth={1.2} />
-      <text x={(NOTE1_X + NOTE2_X) / 2} y={BRACKET_Y + 14}
-        fontFamily={F} fontSize={13} fontWeight="700"
-        fill={labelColor} textAnchor="middle" dominantBaseline="auto">
-        {labelText}
-      </text>
+      <BravuraNote cx={NOTE2_X} cy={cy2} color={DARK} />
     </svg>
   )
 }
@@ -868,7 +836,7 @@ function StaffPairEx({
 
         <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
           padding: '8px 0', marginBottom: 12 }}>
-          <StaffPairSVG item={ex} showAnswer answered={null} />
+          <StaffPairSVG item={ex} />
         </div>
 
         <div style={{ display: 'inline-block', background: ACCENT + '22',
@@ -912,7 +880,7 @@ function StaffPairEx({
 
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
-        <StaffPairSVG item={item} showAnswer={false} answered={answered} />
+        <StaffPairSVG item={item} />
       </div>
 
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 16 }}>
@@ -972,7 +940,7 @@ export default function HalfWholeStepsLesson({
       <StepKeyboardEx
         key={key}
         pool={HALF_POOL}
-        total={7}
+        total={12}
         stepType="half"
         exLabel="Exercise 1 — Half steps on the keyboard"
         onDone={next}
@@ -995,7 +963,7 @@ export default function HalfWholeStepsLesson({
     return (
       <LetterPairEx
         key={key}
-        total={8}
+        total={14}
         exLabel="Exercise 3 — Half or whole step?"
         onDone={scored}
       />
@@ -1004,7 +972,7 @@ export default function HalfWholeStepsLesson({
   return (
     <StaffPairEx
       key={key}
-      total={6}
+      total={12}
       exLabel="Exercise 4 — Steps on the staff"
       onDone={scored}
     />

@@ -135,6 +135,13 @@ const LINE_NOTE_POOL: NoteInfo[] = [
   { name: 'A5', letter: 'A', pos: 12 },
 ]
 
+// Treble-only octave ranges: Middle C (pos=0), treble (pos 1–7), high (pos 8–12)
+function octaveLabel(pos: number): string {
+  if (pos === 0) return 'Middle C'
+  if (pos >= 8)  return 'high (D5–A5)'
+  return 'treble (D4–C5)'
+}
+
 // ── Single-note staff (for naming / placing exercises) ─────────────────────────
 function SingleNoteStaff({ pos, color = DARK, ghostPos }: {
   pos?: number; color?: string; ghostPos?: number
@@ -522,7 +529,7 @@ function PlaceNoteEx({
           {item.letter}
         </span>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
-          Place <strong>{item.name}</strong> on the staff
+          <strong>{octaveLabel(item.pos)}</strong> — place <strong>{item.name}</strong> on the staff
         </p>
       </div>
 
