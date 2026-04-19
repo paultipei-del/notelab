@@ -473,13 +473,13 @@ export function MinorPatternDiagram() {
   )
 }
 
-// Two paired reference staves: G major → G minor (treble), D major → D minor (bass).
-// Shows the student the exact change: the 3rd note gains a flat (G) or loses a
-// sharp (D needs a natural since its major 3rd was F♯).
+// Two paired reference staves: G major | G minor in treble, D major | D minor
+// in bass. The viewBox is extended to accommodate both measures side-by-side
+// with full note spacing — same note size as everywhere else in the program.
 function MinorStaffExamples() {
   const step = 8
   const sL   = 32
-  const sR   = 360
+  const sR   = 684                  // extended for two measures of 5 notes each
   const tTop = 54
   const svgW = sR + 16
   const svgH = tTop + 8 * step + 54
@@ -487,36 +487,40 @@ function MinorStaffExamples() {
   const lineY  = (n: number) => tTop + (5 - n) * 2 * step
   const posToY = (pos: number) => tTop + (10 - pos) * step
 
-  // Treble — G major 5FP (pos 4..8): G A B C D. G minor: G A B♭ C D (flat on 3rd = B).
-  // Bass   — D major 5FP (pos 6..10): D E F♯ G A. D minor: D E F G A (natural on 3rd = F).
-  const trebleMajor = [{ pos: 4, l: 'G' }, { pos: 5, l: 'A' }, { pos: 6, l: 'B' }, { pos: 7, l: 'C' }, { pos: 8, l: 'D' }]
-  const trebleMinor = [{ pos: 4, l: 'G' }, { pos: 5, l: 'A' }, { pos: 6, l: 'B♭', acc: 'flat' as const }, { pos: 7, l: 'C' }, { pos: 8, l: 'D' }]
-  const bassMajor   = [{ pos: 6, l: 'D' }, { pos: 7, l: 'E' }, { pos: 8, l: 'F♯', acc: 'sharp' as const }, { pos: 9, l: 'G' }, { pos: 10, l: 'A' }]
-  const bassMinor   = [{ pos: 6, l: 'D' }, { pos: 7, l: 'E' }, { pos: 8, l: 'F',  acc: 'natural' as const }, { pos: 9, l: 'G' }, { pos: 10, l: 'A' }]
+  type AccType = 'flat' | 'sharp' | 'natural'
+  type StaffNote = { pos: number; l: string; acc?: AccType }
 
-  const xMajorStart = sL + 70
-  const xMajorEnd   = sL + 70 + (sR - sL - 70) / 2 - 8
-  const xMinorStart = xMajorEnd + 16
-  const xMinorEnd   = sR - 12
+  // Treble — G major (pos 4..8): G A B C D  ·  G minor: G A B♭ C D
+  // Bass   — D major (pos 6..10): D E F♯ G A · D minor: D E F G A
+  const gMajor: StaffNote[] = [{ pos: 4, l: 'G' }, { pos: 5, l: 'A' }, { pos: 6, l: 'B' }, { pos: 7, l: 'C' }, { pos: 8, l: 'D' }]
+  const gMinor: StaffNote[] = [{ pos: 4, l: 'G' }, { pos: 5, l: 'A' }, { pos: 6, l: 'B♭', acc: 'flat' }, { pos: 7, l: 'C' }, { pos: 8, l: 'D' }]
+  const dMajor: StaffNote[] = [{ pos: 6, l: 'D' }, { pos: 7, l: 'E' }, { pos: 8, l: 'F♯', acc: 'sharp' }, { pos: 9, l: 'G' }, { pos: 10, l: 'A' }]
+  const dMinor: StaffNote[] = [{ pos: 6, l: 'D' }, { pos: 7, l: 'E' }, { pos: 8, l: 'F',  acc: 'natural' }, { pos: 9, l: 'G' }, { pos: 10, l: 'A' }]
 
-  const spacing = (a: number, b: number, n: number) => Array.from({ length: n }, (_, i) => a + (i + 0.5) * ((b - a) / n))
+  // Layout: clef at sL..sL+66, two measures of equal width with a double bar
+  // between them.
+  const clefEnd = sL + 66
+  const midBar  = clefEnd + (sR - clefEnd) / 2
+  const m1Start = clefEnd + 4
+  const m1End   = midBar - 6
+  const m2Start = midBar + 10
+  const m2End   = sR - 12
+  const spacing = (a: number, b: number, n: number) =>
+    Array.from({ length: n }, (_, i) => a + (i + 0.5) * ((b - a) / n))
 
-  const renderAcc = (acc: 'flat' | 'sharp' | 'natural' | undefined, cx: number, cy: number, color: string) => {
+  const renderAcc = (acc: AccType | undefined, cx: number, cy: number) => {
     if (!acc) return null
     const glyph = acc === 'flat' ? '\uE260' : acc === 'sharp' ? '\uE262' : '\uE261'
     return (
       <text x={cx - 20} y={cy} fontFamily="Bravura, serif" fontSize={48}
-        fill={color} textAnchor="middle" dominantBaseline="central">{glyph}</text>
+        fill={DARK} textAnchor="middle" dominantBaseline="central">{glyph}</text>
     )
   }
 
-  const renderHalfStaff = (clef: 'treble' | 'bass',
-    majorNotes: { pos: number; l: string; acc?: 'flat' | 'sharp' | 'natural' }[],
-    minorNotes: { pos: number; l: string; acc?: 'flat' | 'sharp' | 'natural' }[]) => {
-    const majorXs = spacing(xMajorStart, xMajorEnd, 5)
-    const minorXs = spacing(xMinorStart, xMinorEnd, 5)
-    const allNotes = [...majorNotes.map((n, i) => ({ ...n, cx: majorXs[i], variant: 'major' as const })),
-                      ...minorNotes.map((n, i) => ({ ...n, cx: minorXs[i], variant: 'minor' as const }))]
+  const renderPairStaff = (clef: 'treble' | 'bass',
+    majorNotes: StaffNote[], minorNotes: StaffNote[]) => {
+    const m1Xs = spacing(m1Start, m1End, majorNotes.length)
+    const m2Xs = spacing(m2Start, m2End, minorNotes.length)
     return (
       <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
         style={{ maxWidth: svgW, display: 'block', margin: '6px auto' }}>
@@ -524,11 +528,13 @@ function MinorStaffExamples() {
           <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
             stroke={DARK} strokeWidth={STROKE_W} />
         ))}
+        {/* Left barline */}
         <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
-        {/* Double bar between the two measures */}
-        <line x1={xMajorEnd + 2}  y1={tTop} x2={xMajorEnd + 2}  y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
-        <line x1={xMajorEnd + 6}  y1={tTop} x2={xMajorEnd + 6}  y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
-        <line x1={sR}  y1={tTop} x2={sR}  y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+        {/* Double bar between measures */}
+        <line x1={midBar - 1} y1={tTop} x2={midBar - 1} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+        <line x1={midBar + 3} y1={tTop} x2={midBar + 3} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+        {/* Right barline */}
+        <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
 
         {clef === 'treble'
           ? <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
@@ -536,16 +542,39 @@ function MinorStaffExamples() {
           : <text x={sL + 2} y={tTop + 2 * step + 2} fontFamily="Bravura, serif" fontSize={66}
               fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>}
 
-        {allNotes.map((n, i) => {
+        {/* Section captions above each measure */}
+        <text x={(m1Start + m1End) / 2} y={tTop - 10}
+          fontFamily={F} fontSize={11} fontWeight={700} fill={MAJ_C}
+          textAnchor="middle">major</text>
+        <text x={(m2Start + m2End) / 2} y={tTop - 10}
+          fontFamily={F} fontSize={11} fontWeight={700} fill={MIN_C}
+          textAnchor="middle">minor</text>
+
+        {/* Major notes */}
+        {majorNotes.map((n, i) => {
           const cy = posToY(n.pos)
-          const color = n.variant === 'major' ? MAJ_C : MIN_C
           return (
-            <g key={i}>
-              {renderAcc(n.acc, n.cx, cy, DARK)}
-              <text x={n.cx} y={cy} fontFamily="Bravura, serif" fontSize={60}
+            <g key={`maj-${i}`}>
+              {renderAcc(n.acc, m1Xs[i], cy)}
+              <text x={m1Xs[i]} y={cy} fontFamily="Bravura, serif" fontSize={60}
                 fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
-              <text x={n.cx} y={lineY(5) - 8}
-                fontFamily={F} fontSize={11} fontWeight={700} fill={color}
+              <text x={m1Xs[i]} y={lineY(5) - 22}
+                fontFamily={F} fontSize={11} fontWeight={600} fill={GREY}
+                textAnchor="middle">{n.l}</text>
+            </g>
+          )
+        })}
+
+        {/* Minor notes */}
+        {minorNotes.map((n, i) => {
+          const cy = posToY(n.pos)
+          return (
+            <g key={`min-${i}`}>
+              {renderAcc(n.acc, m2Xs[i], cy)}
+              <text x={m2Xs[i]} y={cy} fontFamily="Bravura, serif" fontSize={60}
+                fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
+              <text x={m2Xs[i]} y={lineY(5) - 22}
+                fontFamily={F} fontSize={11} fontWeight={600} fill={GREY}
                 textAnchor="middle">{n.l}</text>
             </g>
           )
@@ -554,16 +583,15 @@ function MinorStaffExamples() {
     )
   }
 
+  const captionStyle = { fontFamily: F, fontSize: 11, color: GREY,
+    textAlign: 'center' as const, margin: '4px 0 0' }
+
   return (
     <div>
-      <p style={{ fontFamily: F, fontSize: 11, color: GREY, textAlign: 'center', margin: '0 0 2px' }}>
-        G major → G minor (treble) · flat the B
-      </p>
-      {renderHalfStaff('treble', trebleMajor, trebleMinor)}
-      <p style={{ fontFamily: F, fontSize: 11, color: GREY, textAlign: 'center', margin: '10px 0 2px' }}>
-        D major → D minor (bass) · natural cancels the F♯
-      </p>
-      {renderHalfStaff('bass', bassMajor, bassMinor)}
+      <p style={captionStyle}>G major → G minor · flat the B</p>
+      {renderPairStaff('treble', gMajor, gMinor)}
+      <p style={{ ...captionStyle, marginTop: 12 }}>D major → D minor · natural cancels the F♯</p>
+      {renderPairStaff('bass', dMajor, dMinor)}
     </div>
   )
 }
