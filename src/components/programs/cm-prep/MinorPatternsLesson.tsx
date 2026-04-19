@@ -328,6 +328,257 @@ function MatchPatternEx({
   )
 }
 
+// ── Ex 5: Match the minor triad to its name ──────────────────────────────
+function MatchTriadEx({
+  onDone,
+}: {
+  onDone: (correct: number, total: number) => void
+}) {
+  const items = useMemo<MinorKey[]>(() => shuffled([...KEYS, ...KEYS]), [])
+  const total = items.length
+
+  const [idx,      setIdx]      = useState(0)
+  const [chosen,   setChosen]   = useState<MinorKey | null>(null)
+  const [feedback, setFeedback] = useState<{ ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const answer = items[idx]
+  const triad = minorTriadFor(answer)
+  const triadSet = new Set(triad)
+
+  function pick(k: MinorKey) {
+    if (lockedRef.current || feedback !== null) return
+    lockedRef.current = true
+    const ok = k === answer
+    if (ok) correctRef.current += 1
+    setChosen(k)
+    setFeedback({ ok })
+    setTimeout(() => {
+      if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+      setIdx(i => i + 1)
+      setChosen(null); setFeedback(null); lockedRef.current = false
+    }, ok ? 1000 : 1800)
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 5 — Match the minor triad
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '12px' }}>
+        Which minor triad is highlighted?
+      </p>
+
+      <div style={{ marginBottom: 16 }}>
+        <PatternKeyboard pattern={triad} triadSet={triadSet} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 16 }}>
+        {KEYS.map(k => {
+          const isChosen = chosen === k
+          const isAnswer = k === answer
+          let bg = 'white', border = '#DDD8CA', color = DARK
+          if (feedback !== null) {
+            if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
+            else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
+          }
+          return (
+            <button key={k} onClick={() => pick(k)}
+              disabled={feedback !== null}
+              style={{
+                padding: '14px 0', borderRadius: 10, border: `1.5px solid ${border}`,
+                background: bg, fontFamily: SERIF, fontSize: 22, fontWeight: 400,
+                color, cursor: feedback !== null ? 'default' : 'pointer',
+              }}>
+              {k} minor
+            </button>
+          )
+        })}
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
+        {feedback !== null && !feedback.ok && (
+          <>Correct answer: <strong style={{ color: CORRECT }}>{answer} minor</strong></>
+        )}
+        {feedback !== null && feedback.ok && '✓ Correct'}
+      </p>
+    </div>
+  )
+}
+
+// ── Ex 6: Place the minor triad on the staff ───────────────────────────────
+interface Ex6TriadTarget {
+  clef: 'treble' | 'bass'
+  rootKey: MinorKey
+  positions: number[]          // 3 staff positions, ascending
+  accidentalPos?: number       // position that gets an accidental (if any)
+  accidentalType?: AccType     // 'flat' for C/F/G minor triads
+}
+
+// Minor triads and their staff positions:
+// C minor (C E♭ G): treble [0, 2, 4], bass [5, 7, 9], flat on pos where E sits
+// F minor (F A♭ C): treble [3, 5, 7], bass [1, 3, 5], flat on pos where A sits
+// G minor (G B♭ D): treble [4, 6, 8], bass [2, 4, 6], flat on pos where B sits
+// D minor (D F A):  treble [1, 3, 5], bass [6, 8, 10], no accidental
+const EX6_POOL: Ex6TriadTarget[] = [
+  { clef: 'treble', rootKey: 'C', positions: [0, 2, 4], accidentalPos: 2, accidentalType: 'flat' },
+  { clef: 'bass',   rootKey: 'C', positions: [5, 7, 9], accidentalPos: 7, accidentalType: 'flat' },
+  { clef: 'treble', rootKey: 'F', positions: [3, 5, 7], accidentalPos: 5, accidentalType: 'flat' },
+  { clef: 'bass',   rootKey: 'F', positions: [1, 3, 5], accidentalPos: 3, accidentalType: 'flat' },
+  { clef: 'treble', rootKey: 'G', positions: [4, 6, 8], accidentalPos: 6, accidentalType: 'flat' },
+  { clef: 'bass',   rootKey: 'G', positions: [2, 4, 6], accidentalPos: 4, accidentalType: 'flat' },
+  { clef: 'treble', rootKey: 'D', positions: [1, 3, 5] },
+  { clef: 'bass',   rootKey: 'D', positions: [6, 8, 10] },
+]
+
+const EX6_NOTE_X = 190   // all 3 noteheads stack at this x
+
+function PlaceTriadEx({
+  onDone,
+}: {
+  onDone: (correct: number, total: number) => void
+}) {
+  const items = useMemo(() => shuffled(EX6_POOL).slice(0, 6), [])
+  const total = items.length
+
+  const [idx,       setIdx]       = useState(0)
+  const [staged,    setStaged]    = useState<number[]>([])
+  const [submitted, setSubmitted] = useState(false)
+  const [isCorrect, setIsCorrect] = useState(false)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const svgRef     = useRef<SVGSVGElement | null>(null)
+
+  const item = items[idx]
+  const target = new Set(item.positions)
+
+  function clientToPos(clientY: number): number {
+    const svg = svgRef.current
+    if (!svg) return 0
+    const r = svg.getBoundingClientRect()
+    const sy = (clientY - r.top) / r.height * svgH
+    let pos = Math.round(10 - (sy - tTop) / step)
+    if (pos < 0) pos = 0
+    if (pos > 12) pos = 12
+    return pos
+  }
+
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (submitted || lockedRef.current) return
+    if (!svgRef.current) svgRef.current = e.currentTarget
+    const pos = clientToPos(e.clientY)
+    setStaged(prev => {
+      if (prev.includes(pos)) return prev.filter(p => p !== pos)
+      if (prev.length >= 3) return prev
+      return [...prev, pos]
+    })
+  }
+
+  function onConfirm() {
+    if (submitted || lockedRef.current || staged.length !== 3) return
+    lockedRef.current = true
+    const stagedSet = new Set(staged)
+    const ok = stagedSet.size === target.size &&
+      [...target].every(p => stagedSet.has(p))
+    if (ok) correctRef.current += 1
+    setSubmitted(true); setIsCorrect(ok)
+    setTimeout(() => {
+      if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+      setIdx(i => i + 1)
+      setStaged([]); setSubmitted(false); setIsCorrect(false)
+      lockedRef.current = false
+    }, ok ? 1200 : 2200)
+  }
+
+  const renderNote = (pos: number, color: string, opacity = 1) => {
+    const cy = posToY(pos)
+    const ledgerTreble = item.clef === 'treble' && pos === 0
+    const ledgerBass   = item.clef === 'bass'   && (pos === 0 || pos === 12)
+    return (
+      <g key={pos} opacity={opacity}>
+        {(ledgerTreble || ledgerBass) &&
+          <LedgerLine cx={EX6_NOTE_X} cy={cy} color={color} />}
+        {item.accidentalPos === pos && item.accidentalType &&
+          <AccidentalGlyph cx={EX6_NOTE_X} cy={cy} acc={item.accidentalType} color={color} />}
+        <BravuraNote cx={EX6_NOTE_X} cy={cy} color={color} />
+      </g>
+    )
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 6 — Place the minor triad
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '10px' }}>
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place the{' '}
+        <strong style={{ color: ACCENT }}>{item.rootKey} minor triad</strong>
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 14 }}>
+        <svg
+          ref={r => { svgRef.current = r }}
+          viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+          onClick={onStaffClick}
+          style={{
+            maxWidth: svgW, display: 'block', margin: '0 auto',
+            cursor: submitted ? 'default' : 'crosshair',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none',
+          }}>
+          <StaffBase />
+          <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+          <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
+          {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
+
+          {/* Staged ghost noteheads */}
+          {!submitted && staged.map(pos => renderNote(pos, ACCENT, 0.55))}
+
+          {/* Committed result */}
+          {submitted && staged.map(pos => renderNote(pos, isCorrect ? CORRECT : WRONG))}
+
+          {/* Correct hint on wrong answer */}
+          {submitted && !isCorrect && item.positions.map(pos =>
+            <g key={`hint-${pos}`} opacity={0.45}>{renderNote(pos, CORRECT, 1)}</g>
+          )}
+        </svg>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+        <button onClick={onConfirm}
+          disabled={submitted || staged.length !== 3}
+          style={{
+            padding: '10px 28px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: submitted || staged.length !== 3 ? 'default' : 'pointer',
+            background: submitted || staged.length !== 3 ? '#EDE8DF' : DARK,
+            color: submitted || staged.length !== 3 ? '#B0ACA4' : 'white',
+          }}>
+          Check ({staged.length}/3)
+        </button>
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
+        {submitted && isCorrect && '✓ Correct'}
+        {submitted && !isCorrect && (
+          <>Correct triad shown in green — tap again on the next one.</>
+        )}
+      </p>
+    </div>
+  )
+}
+
 // ── Ex 3 / Ex 4: Convert between major and minor by adjusting the 3rd ──────
 // Free-form: student picks an accidental (♭, ♮, ♯) and taps any note to apply
 // it. Tap the same note + same accidental to clear it. Check validates the
@@ -622,8 +873,8 @@ function AccidentalGlyph({ cx, cy, acc, color = DARK }: { cx: number; cy: number
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────
-type Phase = 'ex1' | 'ex2' | 'ex3' | 'ex4'
-const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4']
+type Phase = 'ex1' | 'ex2' | 'ex3' | 'ex4' | 'ex5' | 'ex6'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4', 'ex5', 'ex6']
 
 export default function MinorPatternsLesson({
   passingScore,
@@ -686,6 +937,8 @@ export default function MinorPatternsLesson({
       {phase === 'ex2' && <MatchPatternEx  key={key} onDone={scored} />}
       {phase === 'ex3' && <ConvertEx       key={key} direction="toMinor" onDone={scored} />}
       {phase === 'ex4' && <ConvertEx       key={key} direction="toMajor" onDone={scored} />}
+      {phase === 'ex5' && <MatchTriadEx    key={key} onDone={scored} />}
+      {phase === 'ex6' && <PlaceTriadEx    key={key} onDone={scored} />}
     </div>
   )
 }
