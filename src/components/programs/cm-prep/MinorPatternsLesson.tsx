@@ -413,28 +413,27 @@ function MatchTriadEx({
 }
 
 // ── Ex 6: Place the minor triad on the staff ───────────────────────────────
+interface Ex6TriadNote { pos: number; acc?: AccType }
 interface Ex6TriadTarget {
   clef: 'treble' | 'bass'
   rootKey: MinorKey
-  positions: number[]          // 3 staff positions, ascending
-  accidentalPos?: number       // position that gets an accidental (if any)
-  accidentalType?: AccType     // 'flat' for C/F/G minor triads
+  notes: Ex6TriadNote[]         // 3 notes, optional accidental per note
 }
 
 // Minor triads and their staff positions:
-// C minor (C E♭ G): treble [0, 2, 4], bass [5, 7, 9], flat on pos where E sits
-// F minor (F A♭ C): treble [3, 5, 7], bass [1, 3, 5], flat on pos where A sits
-// G minor (G B♭ D): treble [4, 6, 8], bass [2, 4, 6], flat on pos where B sits
-// D minor (D F A):  treble [1, 3, 5], bass [6, 8, 10], no accidental
+// C minor (C E♭ G): flat on E (middle note)
+// F minor (F A♭ C): flat on A (middle note)
+// G minor (G B♭ D): flat on B (middle note)
+// D minor (D F A):  no accidentals
 const EX6_POOL: Ex6TriadTarget[] = [
-  { clef: 'treble', rootKey: 'C', positions: [0, 2, 4], accidentalPos: 2, accidentalType: 'flat' },
-  { clef: 'bass',   rootKey: 'C', positions: [5, 7, 9], accidentalPos: 7, accidentalType: 'flat' },
-  { clef: 'treble', rootKey: 'F', positions: [3, 5, 7], accidentalPos: 5, accidentalType: 'flat' },
-  { clef: 'bass',   rootKey: 'F', positions: [1, 3, 5], accidentalPos: 3, accidentalType: 'flat' },
-  { clef: 'treble', rootKey: 'G', positions: [4, 6, 8], accidentalPos: 6, accidentalType: 'flat' },
-  { clef: 'bass',   rootKey: 'G', positions: [2, 4, 6], accidentalPos: 4, accidentalType: 'flat' },
-  { clef: 'treble', rootKey: 'D', positions: [1, 3, 5] },
-  { clef: 'bass',   rootKey: 'D', positions: [6, 8, 10] },
+  { clef: 'treble', rootKey: 'C', notes: [{ pos: 0 }, { pos: 2, acc: 'flat' }, { pos: 4 }] },
+  { clef: 'bass',   rootKey: 'C', notes: [{ pos: 5 }, { pos: 7, acc: 'flat' }, { pos: 9 }] },
+  { clef: 'treble', rootKey: 'F', notes: [{ pos: 3 }, { pos: 5, acc: 'flat' }, { pos: 7 }] },
+  { clef: 'bass',   rootKey: 'F', notes: [{ pos: 1 }, { pos: 3, acc: 'flat' }, { pos: 5 }] },
+  { clef: 'treble', rootKey: 'G', notes: [{ pos: 4 }, { pos: 6, acc: 'flat' }, { pos: 8 }] },
+  { clef: 'bass',   rootKey: 'G', notes: [{ pos: 2 }, { pos: 4, acc: 'flat' }, { pos: 6 }] },
+  { clef: 'treble', rootKey: 'D', notes: [{ pos: 1 }, { pos: 3 }, { pos: 5 }] },
+  { clef: 'bass',   rootKey: 'D', notes: [{ pos: 6 }, { pos: 8 }, { pos: 10 }] },
 ]
 
 const EX6_NOTE_X = 190   // all 3 noteheads stack at this x
@@ -447,16 +446,17 @@ function PlaceTriadEx({
   const items = useMemo(() => shuffled(EX6_POOL).slice(0, 6), [])
   const total = items.length
 
-  const [idx,       setIdx]       = useState(0)
-  const [staged,    setStaged]    = useState<number[]>([])
-  const [submitted, setSubmitted] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
+  const [idx,         setIdx]         = useState(0)
+  const [stagedNotes, setStagedNotes] = useState<Record<number, AccType | null>>({})
+  const [pickedAcc,   setPickedAcc]   = useState<AccType | null>(null)
+  const [submitted,   setSubmitted]   = useState(false)
+  const [isCorrect,   setIsCorrect]   = useState(false)
   const correctRef = useRef(0)
   const lockedRef  = useRef(false)
   const svgRef     = useRef<SVGSVGElement | null>(null)
 
   const item = items[idx]
-  const target = new Set(item.positions)
+  const placedCount = Object.keys(stagedNotes).length
 
   function clientToPos(clientY: number): number {
     const svg = svgRef.current
@@ -473,30 +473,62 @@ function PlaceTriadEx({
     if (submitted || lockedRef.current) return
     if (!svgRef.current) svgRef.current = e.currentTarget
     const pos = clientToPos(e.clientY)
-    setStaged(prev => {
-      if (prev.includes(pos)) return prev.filter(p => p !== pos)
-      if (prev.length >= 3) return prev
-      return [...prev, pos]
+    setStagedNotes(prev => {
+      const hasNote = pos in prev
+      const next = { ...prev }
+      if (!pickedAcc) {
+        // Toggle note presence
+        if (hasNote) { delete next[pos] }
+        else {
+          if (Object.keys(prev).length >= 3) return prev
+          next[pos] = null
+        }
+      } else {
+        // Apply/toggle accidental (place note if missing)
+        if (hasNote) {
+          next[pos] = prev[pos] === pickedAcc ? null : pickedAcc
+        } else {
+          if (Object.keys(prev).length >= 3) return prev
+          next[pos] = pickedAcc
+        }
+      }
+      return next
     })
   }
 
+  function selectAcc(acc: AccType) {
+    if (submitted || lockedRef.current) return
+    setPickedAcc(prev => prev === acc ? null : acc)
+  }
+
+  function onReset() {
+    if (submitted || lockedRef.current) return
+    setStagedNotes({})
+    setPickedAcc(null)
+  }
+
   function onConfirm() {
-    if (submitted || lockedRef.current || staged.length !== 3) return
+    if (submitted || lockedRef.current || placedCount !== 3) return
     lockedRef.current = true
-    const stagedSet = new Set(staged)
-    const ok = stagedSet.size === target.size &&
-      [...target].every(p => stagedSet.has(p))
+    const ok = item.notes.length === placedCount &&
+      item.notes.every(n => {
+        if (!(n.pos in stagedNotes)) return false
+        const studentAcc = stagedNotes[n.pos] ?? null
+        const targetAcc  = n.acc ?? null
+        return studentAcc === targetAcc
+      })
     if (ok) correctRef.current += 1
     setSubmitted(true); setIsCorrect(ok)
     setTimeout(() => {
       if (idx + 1 >= total) { onDone(correctRef.current, total); return }
       setIdx(i => i + 1)
-      setStaged([]); setSubmitted(false); setIsCorrect(false)
+      setStagedNotes({}); setPickedAcc(null)
+      setSubmitted(false); setIsCorrect(false)
       lockedRef.current = false
     }, ok ? 1200 : 2200)
   }
 
-  const renderNote = (pos: number, color: string, opacity = 1) => {
+  const renderNote = (pos: number, acc: AccType | null, color: string, opacity = 1) => {
     const cy = posToY(pos)
     const ledgerTreble = item.clef === 'treble' && pos === 0
     const ledgerBass   = item.clef === 'bass'   && (pos === 0 || pos === 12)
@@ -504,10 +536,31 @@ function PlaceTriadEx({
       <g key={pos} opacity={opacity}>
         {(ledgerTreble || ledgerBass) &&
           <LedgerLine cx={EX6_NOTE_X} cy={cy} color={color} />}
-        {item.accidentalPos === pos && item.accidentalType &&
-          <AccidentalGlyph cx={EX6_NOTE_X} cy={cy} acc={item.accidentalType} color={color} />}
+        {acc && <AccidentalGlyph cx={EX6_NOTE_X} cy={cy} acc={acc} color={color} />}
         <BravuraNote cx={EX6_NOTE_X} cy={cy} color={color} />
       </g>
+    )
+  }
+
+  const accBtn = (acc: AccType, glyph: string) => {
+    const active = pickedAcc === acc
+    return (
+      <button key={acc} onClick={() => selectAcc(acc)}
+        disabled={submitted}
+        aria-label={acc}
+        style={{
+          width: 48, height: 48, borderRadius: 10,
+          border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
+          background: active ? DARK : 'white',
+          color: active ? 'white' : DARK,
+          fontFamily: 'var(--font-cormorant), serif',
+          fontSize: 28, lineHeight: 1,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          padding: 0,
+          cursor: submitted ? 'default' : 'pointer',
+        }}>
+        {glyph}
+      </button>
     )
   }
 
@@ -542,31 +595,55 @@ function PlaceTriadEx({
           {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
 
           {/* Staged ghost noteheads */}
-          {!submitted && staged.map(pos => renderNote(pos, ACCENT, 0.55))}
+          {!submitted && Object.entries(stagedNotes).map(([posStr, acc]) =>
+            renderNote(Number(posStr), acc, ACCENT, 0.55))}
 
           {/* Committed result */}
-          {submitted && staged.map(pos => renderNote(pos, isCorrect ? CORRECT : WRONG))}
+          {submitted && Object.entries(stagedNotes).map(([posStr, acc]) =>
+            renderNote(Number(posStr), acc, isCorrect ? CORRECT : WRONG))}
 
           {/* Correct hint on wrong answer */}
-          {submitted && !isCorrect && item.positions.map(pos =>
-            <g key={`hint-${pos}`} opacity={0.45}>{renderNote(pos, CORRECT, 1)}</g>
+          {submitted && !isCorrect && item.notes.map(n =>
+            <g key={`hint-${n.pos}`} opacity={0.45}>
+              {renderNote(n.pos, n.acc ?? null, CORRECT, 1)}
+            </g>
           )}
         </svg>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
-        <button onClick={onConfirm}
-          disabled={submitted || staged.length !== 3}
+      {/* Accidental pad + Check */}
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center',
+        marginBottom: 12, flexWrap: 'wrap' }}>
+        {accBtn('flat', '\u266D')}
+        {accBtn('natural', '\u266E')}
+        {accBtn('sharp', '\u266F')}
+        <div style={{ width: 1, height: 28, background: '#DDD8CA', margin: '0 4px' }} />
+        <button onClick={onReset}
+          disabled={submitted}
           style={{
-            padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
-            cursor: submitted || staged.length !== 3 ? 'default' : 'pointer',
-            background: submitted || staged.length !== 3 ? '#EDE8DF' : DARK,
-            color: submitted || staged.length !== 3 ? '#B0ACA4' : 'white',
+            padding: '10px 16px', borderRadius: 10,
+            border: '1.5px solid #DDD8CA', background: 'white',
+            color: GREY, fontFamily: F, fontSize: 13,
+            cursor: submitted ? 'default' : 'pointer',
           }}>
-          Check ({staged.length}/3)
+          Reset
+        </button>
+        <button onClick={onConfirm}
+          disabled={submitted || placedCount !== 3}
+          style={{
+            padding: '10px 24px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: submitted || placedCount !== 3 ? 'default' : 'pointer',
+            background: submitted || placedCount !== 3 ? '#EDE8DF' : DARK,
+            color: submitted || placedCount !== 3 ? '#B0ACA4' : 'white',
+          }}>
+          Check ({placedCount}/3)
         </button>
       </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
+        Tap the staff to place a notehead. Pick an accidental, then tap a note to apply it.
+      </p>
 
       <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
