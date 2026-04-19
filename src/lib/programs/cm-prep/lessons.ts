@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -108,7 +108,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'C, F, G, and D major',
     description: "A major five-finger pattern spans five adjacent notes following the step sequence Whole-Whole-Half-Whole — producing the bright, settled sound we associate with major keys. The triad built on the first, third, and fifth notes of each pattern is the tonic chord of that key.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'major-patterns-lesson',
     unlockAfter: 'intervals',
     passingScore: 0.8,
   },
