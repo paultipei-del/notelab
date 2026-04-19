@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -119,7 +119,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'c, f, g, and d minor',
     description: "A minor five-finger pattern follows Whole-Half-Whole-Whole — shifting the half step one position earlier than major, lowering the third note by one half step. This single change gives minor its darker, more expressive quality. The four tonics are the same as in Lesson 8: C, F, G, and D.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'minor-patterns-lesson',
     unlockAfter: 'major-patterns',
     passingScore: 0.8,
   },

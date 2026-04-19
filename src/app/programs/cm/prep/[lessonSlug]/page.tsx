@@ -26,6 +26,7 @@ import SharpsFlatsLesson from '@/components/programs/cm-prep/SharpsFlatsLesson'
 import HalfWholeStepsLesson from '@/components/programs/cm-prep/HalfWholeStepsLesson'
 import IntervalsLesson from '@/components/programs/cm-prep/IntervalsLesson'
 import MajorPatternsLesson from '@/components/programs/cm-prep/MajorPatternsLesson'
+import MinorPatternsLesson from '@/components/programs/cm-prep/MinorPatternsLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -280,6 +281,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'half-whole-lesson' && 'Four exercises: find half and whole steps on the keyboard, identify step types from letter names, and read steps on the staff.'}
                   {lesson.tool === 'intervals-lesson' && 'Four exercises: name intervals on the staff, build intervals by placing a second note, and identify intervals in short musical phrases.'}
                   {lesson.tool === 'major-patterns-lesson' && 'Five exercises: identify five-finger patterns on the staff, match pattern and triad shapes to their letter names, and build both on the keyboard and staff.'}
+                  {lesson.tool === 'minor-patterns-lesson' && 'Six exercises: build minor patterns and triads on the keyboard, match patterns and triads to their letter names, and convert between major and minor by adding the right accidental.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -361,6 +363,12 @@ export default function CMPrepLessonPage({ params }: Props) {
                   />
                 ) : lesson.tool === 'major-patterns-lesson' ? (
                   <MajorPatternsLesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'minor-patterns-lesson' ? (
+                  <MinorPatternsLesson
                     passingScore={lesson.passingScore}
                     previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}

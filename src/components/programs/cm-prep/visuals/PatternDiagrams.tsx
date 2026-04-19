@@ -30,6 +30,23 @@ export function triadLetters(k: MajorKey): string[] {
   return [l[0], l[2], l[4]]
 }
 
+// Minor patterns use the same four roots but with a lowered 3rd.
+export type MinorKey = 'C' | 'F' | 'G' | 'D'
+export const MINOR_PATTERNS: Record<MinorKey, { notes: number[]; letters: string[] }> = {
+  C: { notes: [0, 2, 3, 5, 7],    letters: ['C', 'D', 'E♭', 'F', 'G'] },
+  F: { notes: [5, 7, 8, 10, 12],  letters: ['F', 'G', 'A♭', 'B♭','C'] },
+  G: { notes: [7, 9, 10, 12, 14], letters: ['G', 'A', 'B♭', 'C', 'D'] },
+  D: { notes: [2, 4, 5, 7, 9],    letters: ['D', 'E', 'F',  'G', 'A'] },
+}
+export function minorTriadFor(k: MinorKey): number[] {
+  const p = MINOR_PATTERNS[k].notes
+  return [p[0], p[2], p[4]]
+}
+export function minorTriadLetters(k: MinorKey): string[] {
+  const l = MINOR_PATTERNS[k].letters
+  return [l[0], l[2], l[4]]
+}
+
 // Draw a note oval on a mini staff (no stem)
 function MiniNote({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
   return <ellipse cx={cx} cy={cy} rx={7} ry={4.5} fill={color} />
@@ -394,104 +411,159 @@ function StaffExamples() {
   )
 }
 
-// ── Lesson 9: Minor Five-Finger Patterns ──────────────────────────────────
+// ── Lesson 9: Minor Five-Finger Patterns (Visual Guide) ──────────────────
+// Consolidated teaching card — same interactive keyboard as Lesson 8 but for
+// minor patterns (3rd note lowered a half step). Includes a reference staff
+// showing a paired G major → G minor conversion.
 export function MinorPatternDiagram() {
-  const step = 9
-  const sL = 25
-  const sR = 490
-  const tTop = 30
-  const noteColor = MIN_C
-
-  // c minor: C4(10), D4(9), Eb4(8), F4(7), G4(6)
-  // Eb4 sits at E4's position with a flat
-  const patternPos = [10, 9, 8, 7, 6]
-  const patternNames = ['C', 'D', 'E♭', 'F', 'G']
-  const steps = ['W', 'H', 'W', 'W']
-  const stepColors = ['#2A5C0A', '#B5402A', '#2A5C0A', '#2A5C0A']
-  const noteSpacing = 78
-  const startX = sL + 52
+  const [patternKey, setPatternKey] = useState<MinorKey>('C')
+  const p = MINOR_PATTERNS[patternKey]
+  const triad = minorTriadFor(patternKey)
+  const triadSet = new Set(triad)
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 520 230" width="100%" style={{ maxWidth: 520, display: 'block', margin: '0 auto' }}>
+    <div>
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 14, lineHeight: 1.7 }}>
+        To turn a <strong style={{ color: DARK }}>major</strong> pattern into a{' '}
+        <strong style={{ color: MIN_C }}>minor</strong> pattern, lower the <strong>3rd note</strong>{' '}
+        by one half step. Minor patterns follow <strong style={{ color: MIN_C }}>W–H–W–W</strong>{' '}
+        — whole steps everywhere except between keys 2 and 3.
+      </p>
 
-        <text x={sL} y={18} fontFamily={F} fontSize={11} fill={MIN_C} fontWeight="600">
-          c minor Five-Finger Pattern — W H W W  (♭3rd)
-        </text>
-
-        <MiniStaff x1={sL} x2={sR} top={tTop} step={step} />
-        <line x1={sL} y1={tTop} x2={sL} y2={tTop + 8 * step} stroke={DARK} strokeWidth={STROKE_W} />
-        <line x1={sR} y1={tTop} x2={sR} y2={tTop + 8 * step} stroke={DARK} strokeWidth={2.5} />
-        <text x={sL + 2} y={tTop + 42} fontFamily="Bravura, serif" fontSize={55} fill={DARK}>&#x1D11E;</text>
-
-        {/* C4 ledger */}
-        <line x1={startX - 12} y1={tTop + 10 * step} x2={startX + 12} y2={tTop + 10 * step}
-          stroke={DARK} strokeWidth={STROKE_W} />
-
-        {patternPos.map((pos, i) => {
-          const cx = startX + i * noteSpacing
-          const cy = tTop + pos * step
-          const isFlat = patternNames[i] === 'E♭'
+      {/* Pattern tabs */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+        {(['C', 'F', 'G', 'D'] as const).map(k => {
+          const isActive = k === patternKey
           return (
-            <g key={i}>
-              {isFlat && (
-                <text x={cx - 14} y={cy + 4} fontFamily="Bravura, serif" fontSize={16} fill={MIN_C}>&#x266D;</text>
-              )}
-              <MiniNote cx={cx} cy={cy} color={noteColor} />
-              <text x={cx} y={cy - 14} fontFamily={F} fontSize={10} fill={noteColor} textAnchor="middle" fontWeight="600">
-                {patternNames[i]}
-              </text>
-            </g>
+            <button key={k} onClick={() => setPatternKey(k)}
+              style={{
+                padding: '6px 14px', borderRadius: 8,
+                background: isActive ? MIN_C : 'transparent',
+                border: `1px solid ${isActive ? MIN_C : '#DDD8CA'}`,
+                fontFamily: F, fontSize: 13, fontWeight: isActive ? 700 : 500,
+                color: isActive ? 'white' : '#7A7060',
+                cursor: 'pointer', transition: 'all 0.15s',
+              }}>
+              {k} minor
+            </button>
           )
         })}
+        <span style={{ flex: 1 }} />
+        <span style={{
+          fontFamily: SERIF, fontSize: 17, fontWeight: 600, color: MIN_C,
+          alignSelf: 'center',
+        }}>
+          {p.letters.join(' ')}  ·  triad {minorTriadLetters(patternKey).join(' – ')}
+        </span>
+      </div>
 
-        {steps.map((s, i) => {
-          const x1 = startX + i * noteSpacing
-          const x2 = startX + (i + 1) * noteSpacing
-          const midX = (x1 + x2) / 2
+      <PatternKeyboard pattern={p.notes} triadSet={triadSet} patternLetters={p.letters} />
 
-          return (
-            <g key={i}>
-              <rect x={midX - 9} y={tTop + 8 * step + 14} width={18} height={16} rx={8}
-                fill={s === 'H' ? 'rgba(181,64,42,0.14)' : 'rgba(59,109,181,0.12)'}
-                stroke={stepColors[i]} strokeWidth={1} />
-              <text x={midX} y={tTop + 8 * step + 26}
-                fontFamily={F} fontSize={10} fill={stepColors[i]} textAnchor="middle" fontWeight="700">
-                {s}
-              </text>
-            </g>
-          )
-        })}
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: '14px 0 10px', lineHeight: 1.7 }}>
+        Stack the <strong>1st, 3rd, and 5th</strong> notes to build a{' '}
+        <strong style={{ color: MIN_C }}>minor triad</strong>. Notice how the triad&apos;s middle note
+        sits a half step lower than in the matching major triad.
+      </p>
 
-        {/* Comparison box */}
-        <rect x={sL} y={tTop + 8 * step + 48} width={sR - sL} height={38} rx={10}
-          fill="rgba(59,109,181,0.06)" stroke="rgba(59,109,181,0.2)" strokeWidth={1} />
-        <text x={sL + 10} y={tTop + 8 * step + 64} fontFamily={F} fontSize={10} fill={MAJ_C}>
-          C Major: C D E F G  (W W H W)
-        </text>
-        <text x={sL + 10} y={tTop + 8 * step + 80} fontFamily={F} fontSize={10} fill={MIN_C}>
-          c minor:  C D E♭ F G  (W H W W) — the 3rd is lowered by one half step
-        </text>
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '10px 0', marginBottom: 4 }}>
+        <MinorStaffExamples />
+      </div>
+    </div>
+  )
+}
 
-        {/* All 4 minor patterns summary */}
-        <rect x={sL} y={tTop + 8 * step + 96} width={sR - sL} height={50} rx={10}
-          fill="rgba(59,109,181,0.06)" stroke="rgba(59,109,181,0.2)" strokeWidth={1} />
-        {[
-          { key: 'c', notes: 'C D E♭ F G', triad: 'C–E♭–G' },
-          { key: 'f', notes: 'F G A♭ B♭ C', triad: 'F–A♭–C' },
-          { key: 'g', notes: 'G A B♭ C D', triad: 'G–B♭–D' },
-          { key: 'd', notes: 'D E F G A', triad: 'D–F–A' },
-        ].map((p, i) => (
-          <g key={p.key}>
-            <text x={sL + 12 + i * 116} y={tTop + 8 * step + 116}
-              fontFamily={F} fontSize={10} fill={MIN_C} fontWeight="600">{p.key} minor</text>
-            <text x={sL + 12 + i * 116} y={tTop + 8 * step + 130}
-              fontFamily={F} fontSize={9} fill={DARK}>{p.notes}</text>
-            <text x={sL + 12 + i * 116} y={tTop + 8 * step + 142}
-              fontFamily={F} fontSize={9} fill={GREY}>triad: {p.triad}</text>
-          </g>
+// Two paired reference staves: G major → G minor (treble), D major → D minor (bass).
+// Shows the student the exact change: the 3rd note gains a flat (G) or loses a
+// sharp (D needs a natural since its major 3rd was F♯).
+function MinorStaffExamples() {
+  const step = 8
+  const sL   = 32
+  const sR   = 360
+  const tTop = 54
+  const svgW = sR + 16
+  const svgH = tTop + 8 * step + 54
+
+  const lineY  = (n: number) => tTop + (5 - n) * 2 * step
+  const posToY = (pos: number) => tTop + (10 - pos) * step
+
+  // Treble — G major 5FP (pos 4..8): G A B C D. G minor: G A B♭ C D (flat on 3rd = B).
+  // Bass   — D major 5FP (pos 6..10): D E F♯ G A. D minor: D E F G A (natural on 3rd = F).
+  const trebleMajor = [{ pos: 4, l: 'G' }, { pos: 5, l: 'A' }, { pos: 6, l: 'B' }, { pos: 7, l: 'C' }, { pos: 8, l: 'D' }]
+  const trebleMinor = [{ pos: 4, l: 'G' }, { pos: 5, l: 'A' }, { pos: 6, l: 'B♭', acc: 'flat' as const }, { pos: 7, l: 'C' }, { pos: 8, l: 'D' }]
+  const bassMajor   = [{ pos: 6, l: 'D' }, { pos: 7, l: 'E' }, { pos: 8, l: 'F♯', acc: 'sharp' as const }, { pos: 9, l: 'G' }, { pos: 10, l: 'A' }]
+  const bassMinor   = [{ pos: 6, l: 'D' }, { pos: 7, l: 'E' }, { pos: 8, l: 'F',  acc: 'natural' as const }, { pos: 9, l: 'G' }, { pos: 10, l: 'A' }]
+
+  const xMajorStart = sL + 70
+  const xMajorEnd   = sL + 70 + (sR - sL - 70) / 2 - 8
+  const xMinorStart = xMajorEnd + 16
+  const xMinorEnd   = sR - 12
+
+  const spacing = (a: number, b: number, n: number) => Array.from({ length: n }, (_, i) => a + (i + 0.5) * ((b - a) / n))
+
+  const renderAcc = (acc: 'flat' | 'sharp' | 'natural' | undefined, cx: number, cy: number, color: string) => {
+    if (!acc) return null
+    const glyph = acc === 'flat' ? '\uE260' : acc === 'sharp' ? '\uE262' : '\uE261'
+    return (
+      <text x={cx - 20} y={cy} fontFamily="Bravura, serif" fontSize={48}
+        fill={color} textAnchor="middle" dominantBaseline="central">{glyph}</text>
+    )
+  }
+
+  const renderHalfStaff = (clef: 'treble' | 'bass',
+    majorNotes: { pos: number; l: string; acc?: 'flat' | 'sharp' | 'natural' }[],
+    minorNotes: { pos: number; l: string; acc?: 'flat' | 'sharp' | 'natural' }[]) => {
+    const majorXs = spacing(xMajorStart, xMajorEnd, 5)
+    const minorXs = spacing(xMinorStart, xMinorEnd, 5)
+    const allNotes = [...majorNotes.map((n, i) => ({ ...n, cx: majorXs[i], variant: 'major' as const })),
+                      ...minorNotes.map((n, i) => ({ ...n, cx: minorXs[i], variant: 'minor' as const }))]
+    return (
+      <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+        style={{ maxWidth: svgW, display: 'block', margin: '6px auto' }}>
+        {[1, 2, 3, 4, 5].map(n => (
+          <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
+            stroke={DARK} strokeWidth={STROKE_W} />
         ))}
+        <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+        {/* Double bar between the two measures */}
+        <line x1={xMajorEnd + 2}  y1={tTop} x2={xMajorEnd + 2}  y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+        <line x1={xMajorEnd + 6}  y1={tTop} x2={xMajorEnd + 6}  y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+        <line x1={sR}  y1={tTop} x2={sR}  y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+
+        {clef === 'treble'
+          ? <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
+              fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+          : <text x={sL + 2} y={tTop + 2 * step + 2} fontFamily="Bravura, serif" fontSize={66}
+              fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>}
+
+        {allNotes.map((n, i) => {
+          const cy = posToY(n.pos)
+          const color = n.variant === 'major' ? MAJ_C : MIN_C
+          return (
+            <g key={i}>
+              {renderAcc(n.acc, n.cx, cy, DARK)}
+              <text x={n.cx} y={cy} fontFamily="Bravura, serif" fontSize={60}
+                fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
+              <text x={n.cx} y={lineY(5) - 8}
+                fontFamily={F} fontSize={11} fontWeight={700} fill={color}
+                textAnchor="middle">{n.l}</text>
+            </g>
+          )
+        })}
       </svg>
+    )
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, color: GREY, textAlign: 'center', margin: '0 0 2px' }}>
+        G major → G minor (treble) · flat the B
+      </p>
+      {renderHalfStaff('treble', trebleMajor, trebleMinor)}
+      <p style={{ fontFamily: F, fontSize: 11, color: GREY, textAlign: 'center', margin: '10px 0 2px' }}>
+        D major → D minor (bass) · natural cancels the F♯
+      </p>
+      {renderHalfStaff('bass', bassMajor, bassMinor)}
     </div>
   )
 }
