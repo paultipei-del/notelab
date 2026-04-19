@@ -2,16 +2,29 @@
 
 import { useState, useRef, useMemo } from 'react'
 import {
-  MINOR_PATTERNS, minorTriadFor, type MinorKey,
+  MAJOR_PATTERNS, MINOR_PATTERNS, minorTriadFor, type MinorKey, type MajorKey,
   PatternKeyboard,
 } from './visuals/PatternDiagrams'
 
 const F       = 'var(--font-jost), sans-serif'
 const SERIF   = 'var(--font-cormorant), serif'
 const DARK    = '#1A1A18'
+const GREY    = '#B0ACA4'
 const ACCENT  = '#3B6DB5'   // blue — matches MIN_C in PatternDiagrams
 const CORRECT = '#2A6B1E'
 const WRONG   = '#B5402A'
+const STROKE  = 1.3
+
+// ── Staff geometry (standard CM Prep card dimensions) ───────────────────────
+const step = 8
+const sL   = 32
+const sR   = 360
+const tTop = 54
+const svgW = sR + 16
+const svgH = tTop + 8 * step + 54
+
+function posToY(pos: number) { return tTop + (10 - pos) * step }
+function lineY(n: number)    { return tTop + (5 - n) * 2 * step }
 
 // ── UI helpers ────────────────────────────────────────────────────────────────
 function shuffled<T>(arr: T[]): T[] { return [...arr].sort(() => Math.random() - 0.5) }
@@ -315,9 +328,302 @@ function MatchPatternEx({
   )
 }
 
+// ── Ex 3 / Ex 4: Convert between major and minor by adjusting the 3rd ──────
+// Free-form: student picks an accidental (♭, ♮, ♯) and taps any note to apply
+// it. Tap the same note + same accidental to clear it. Check validates the
+// entire pattern — placing a flat on the wrong note (or applying the wrong
+// kind of accidental) will fail.
+type AccType = 'flat' | 'sharp' | 'natural'
+interface ConvertStaffNote { pos: number; letter: string; acc?: AccType }
+interface ConvertItem {
+  clef: 'treble' | 'bass'
+  rootKey: MajorKey           // same set {C, F, G, D}
+  sourceMode: 'major' | 'minor'
+  notes: ConvertStaffNote[]
+}
+
+const LETTER_BASE: Record<string, number> = {
+  C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11,
+}
+function accShift(acc: AccType | undefined): number {
+  return acc === 'sharp' ? 1 : acc === 'flat' ? -1 : 0
+}
+function effectivePitchClass(note: ConvertStaffNote, studentAcc: AccType | null): number {
+  const effective = studentAcc ?? note.acc
+  return ((LETTER_BASE[note.letter] + accShift(effective)) + 12) % 12
+}
+function targetPitchClasses(item: ConvertItem): number[] {
+  const targetMode = item.sourceMode === 'major' ? 'minor' : 'major'
+  const seq = targetMode === 'minor'
+    ? MINOR_PATTERNS[item.rootKey as MinorKey].notes
+    : MAJOR_PATTERNS[item.rootKey].notes
+  return seq.map(n => ((n % 12) + 12) % 12)
+}
+
+// ── Ex 3 pool — source is MAJOR, student converts to MINOR ────────────────
+const EX3_POOL: ConvertItem[] = [
+  { clef: 'treble', rootKey: 'C', sourceMode: 'major', notes: [
+    { pos: 0, letter: 'C' }, { pos: 1, letter: 'D' }, { pos: 2, letter: 'E' },
+    { pos: 3, letter: 'F' }, { pos: 4, letter: 'G' },
+  ]},
+  { clef: 'bass', rootKey: 'F', sourceMode: 'major', notes: [
+    { pos: 1, letter: 'F' }, { pos: 2, letter: 'G' }, { pos: 3, letter: 'A' },
+    { pos: 4, letter: 'B', acc: 'flat' }, { pos: 5, letter: 'C' },
+  ]},
+  { clef: 'treble', rootKey: 'G', sourceMode: 'major', notes: [
+    { pos: 4, letter: 'G' }, { pos: 5, letter: 'A' }, { pos: 6, letter: 'B' },
+    { pos: 7, letter: 'C' }, { pos: 8, letter: 'D' },
+  ]},
+  { clef: 'bass', rootKey: 'D', sourceMode: 'major', notes: [
+    { pos: 6, letter: 'D' }, { pos: 7, letter: 'E' }, { pos: 8, letter: 'F', acc: 'sharp' },
+    { pos: 9, letter: 'G' }, { pos: 10, letter: 'A' },
+  ]},
+]
+
+// ── Ex 4 pool — source is MINOR, student converts to MAJOR ────────────────
+const EX4_POOL: ConvertItem[] = [
+  { clef: 'treble', rootKey: 'C', sourceMode: 'minor', notes: [
+    { pos: 0, letter: 'C' }, { pos: 1, letter: 'D' }, { pos: 2, letter: 'E', acc: 'flat' },
+    { pos: 3, letter: 'F' }, { pos: 4, letter: 'G' },
+  ]},
+  { clef: 'bass', rootKey: 'F', sourceMode: 'minor', notes: [
+    { pos: 1, letter: 'F' }, { pos: 2, letter: 'G' }, { pos: 3, letter: 'A', acc: 'flat' },
+    { pos: 4, letter: 'B', acc: 'flat' }, { pos: 5, letter: 'C' },
+  ]},
+  { clef: 'treble', rootKey: 'G', sourceMode: 'minor', notes: [
+    { pos: 4, letter: 'G' }, { pos: 5, letter: 'A' }, { pos: 6, letter: 'B', acc: 'flat' },
+    { pos: 7, letter: 'C' }, { pos: 8, letter: 'D' },
+  ]},
+  { clef: 'bass', rootKey: 'D', sourceMode: 'minor', notes: [
+    { pos: 6, letter: 'D' }, { pos: 7, letter: 'E' }, { pos: 8, letter: 'F' },
+    { pos: 9, letter: 'G' }, { pos: 10, letter: 'A' },
+  ]},
+]
+
+const EX_NOTE_START_X = 90
+const EX_NOTE_END_X   = sR - 12
+
+function ConvertEx({
+  direction, onDone,
+}: {
+  direction: 'toMinor' | 'toMajor'
+  onDone: (correct: number, total: number) => void
+}) {
+  const pool = direction === 'toMinor' ? EX3_POOL : EX4_POOL
+  const items = useMemo(() => shuffled(pool), [pool])
+  const total = items.length
+
+  const [idx,          setIdx]          = useState(0)
+  const [pickedAcc,    setPickedAcc]    = useState<AccType | null>(null)
+  const [studentAccs,  setStudentAccs]  = useState<(AccType | null)[]>(() => Array(5).fill(null))
+  const [feedback,     setFeedback]     = useState<{ ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const item = items[idx]
+  const targets = targetPitchClasses(item)
+
+  function selectAcc(acc: AccType) {
+    if (feedback !== null) return
+    setPickedAcc(prev => prev === acc ? null : acc)
+  }
+
+  function applyToNote(noteIdx: number) {
+    if (feedback !== null || lockedRef.current) return
+    if (!pickedAcc) return
+    setStudentAccs(prev => {
+      const next = [...prev]
+      next[noteIdx] = next[noteIdx] === pickedAcc ? null : pickedAcc
+      return next
+    })
+  }
+
+  function onReset() {
+    if (feedback !== null) return
+    setStudentAccs(Array(5).fill(null))
+  }
+
+  function onCheck() {
+    if (feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    const ok = item.notes.every((n, i) =>
+      effectivePitchClass(n, studentAccs[i]) === targets[i]
+    )
+    if (ok) correctRef.current += 1
+    setFeedback({ ok })
+    setTimeout(() => {
+      if (ok) {
+        if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+        setIdx(i => i + 1)
+        setPickedAcc(null); setStudentAccs(Array(5).fill(null))
+        setFeedback(null); lockedRef.current = false
+      } else {
+        setFeedback(null); lockedRef.current = false
+      }
+    }, ok ? 1200 : 2200)
+  }
+
+  const xs = Array.from({ length: 5 }, (_, i) =>
+    EX_NOTE_START_X + (i + 0.5) * ((EX_NOTE_END_X - EX_NOTE_START_X) / 5)
+  )
+
+  const targetModeLabel = item.sourceMode === 'major' ? 'minor' : 'major'
+  const sourceLabel = `${item.rootKey} ${item.sourceMode}`
+  const targetLabel = `${item.rootKey} ${targetModeLabel}`
+
+  const accBtn = (acc: AccType, glyph: string) => {
+    const active = pickedAcc === acc
+    return (
+      <button key={acc} onClick={() => selectAcc(acc)}
+        disabled={feedback !== null}
+        style={{
+          width: 48, height: 48, borderRadius: 10,
+          border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
+          background: active ? DARK : 'white',
+          color: active ? 'white' : DARK,
+          fontFamily: 'Bravura, serif', fontSize: 24,
+          cursor: feedback !== null ? 'default' : 'pointer',
+        }}>
+        {glyph}
+      </button>
+    )
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise {direction === 'toMinor' ? '3' : '4'} — Make it {targetModeLabel}
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+        This is <strong style={{ color: DARK }}>{sourceLabel}</strong>. Add the accidental that turns
+        it into <strong style={{ color: ACCENT }}>{targetLabel}</strong>. Pick an accidental, then
+        tap the note you want it on. Tap again to clear.
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 16 }}>
+        <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+          style={{
+            maxWidth: svgW, display: 'block', margin: '0 auto',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none',
+            cursor: feedback !== null ? 'default' : (pickedAcc ? 'pointer' : 'default'),
+          }}>
+          <StaffBase />
+          <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+          <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
+          {item.clef === 'treble'
+            ? <TrebleClef />
+            : <BassClef />}
+
+          {item.notes.map((n, i) => {
+            const cx = xs[i]
+            const cy = posToY(n.pos)
+            const renderedAcc = studentAccs[i] ?? n.acc
+            const accColor = studentAccs[i] !== null ? ACCENT : DARK
+            const isLedger = (item.clef === 'treble' && n.pos === 0) ||
+                             (item.clef === 'bass' && (n.pos === 0 || n.pos === 12))
+            return (
+              <g key={i}
+                onClick={() => applyToNote(i)}
+                style={{ cursor: pickedAcc && !feedback ? 'pointer' : 'default' }}>
+                {/* Transparent wide hit target to make the note easier to tap */}
+                <rect x={cx - 30} y={cy - 30} width={60} height={60} fill="transparent" />
+                {isLedger && <LedgerLine cx={cx} cy={cy} />}
+                {renderedAcc && <AccidentalGlyph cx={cx} cy={cy} acc={renderedAcc} color={accColor} />}
+                <BravuraNote cx={cx} cy={cy} />
+              </g>
+            )
+          })}
+        </svg>
+      </div>
+
+      {/* Accidental pad + Check */}
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center',
+        marginBottom: 12, flexWrap: 'wrap' }}>
+        {accBtn('flat', '\u266D')}
+        {accBtn('natural', '\u266E')}
+        {accBtn('sharp', '\u266F')}
+        <div style={{ width: 1, height: 28, background: '#DDD8CA', margin: '0 4px' }} />
+        <button onClick={onReset}
+          disabled={feedback !== null}
+          style={{
+            padding: '10px 16px', borderRadius: 10,
+            border: '1.5px solid #DDD8CA', background: 'white',
+            color: GREY, fontFamily: F, fontSize: 13,
+            cursor: feedback !== null ? 'default' : 'pointer',
+          }}>
+          Reset
+        </button>
+        <button onClick={onCheck}
+          disabled={feedback !== null}
+          style={{
+            padding: '10px 24px', borderRadius: 10, border: 'none',
+            background: feedback !== null ? '#EDE8DF' : DARK,
+            color: feedback !== null ? '#B0ACA4' : 'white',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: feedback !== null ? 'default' : 'pointer',
+          }}>
+          Check
+        </button>
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
+        {feedback !== null && feedback.ok  && `✓ Correct — this is now ${targetLabel}`}
+        {feedback !== null && !feedback.ok && (
+          <>Not quite — only the 3rd note needs a change. Give it another try.</>
+        )}
+      </p>
+    </div>
+  )
+}
+
+// ── SVG primitives used by ConvertEx ────────────────────────────────────────
+function StaffBase() {
+  return (
+    <>
+      {[1, 2, 3, 4, 5].map(n => (
+        <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
+          stroke={DARK} strokeWidth={STROKE} />
+      ))}
+    </>
+  )
+}
+function TrebleClef() {
+  return (
+    <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
+      fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+  )
+}
+function BassClef() {
+  return (
+    <text x={sL + 2} y={tTop + 2 * step + 2} fontFamily="Bravura, serif" fontSize={66}
+      fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>
+  )
+}
+function BravuraNote({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
+  return (
+    <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={60}
+      fill={color} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
+  )
+}
+function LedgerLine({ cx, cy, color = DARK, hw = 14 }: { cx: number; cy: number; color?: string; hw?: number }) {
+  return <line x1={cx - hw} y1={cy} x2={cx + hw} y2={cy} stroke={color} strokeWidth={STROKE} />
+}
+function AccidentalGlyph({ cx, cy, acc, color = DARK }: { cx: number; cy: number; acc: AccType; color?: string }) {
+  const glyph = acc === 'flat' ? '\uE260' : acc === 'sharp' ? '\uE262' : '\uE261'
+  return (
+    <text x={cx - 20} y={cy} fontFamily="Bravura, serif" fontSize={48}
+      fill={color} textAnchor="middle" dominantBaseline="central">{glyph}</text>
+  )
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
-type Phase = 'ex1' | 'ex2'
-const PHASE_ORDER: Phase[] = ['ex1', 'ex2']
+type Phase = 'ex1' | 'ex2' | 'ex3' | 'ex4'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4']
 
 export default function MinorPatternsLesson({
   passingScore,
@@ -378,6 +684,8 @@ export default function MinorPatternsLesson({
         onBack={back} onForward={forward} />
       {phase === 'ex1' && <BuildKeyboardEx key={key} onDone={scored} />}
       {phase === 'ex2' && <MatchPatternEx  key={key} onDone={scored} />}
+      {phase === 'ex3' && <ConvertEx       key={key} direction="toMinor" onDone={scored} />}
+      {phase === 'ex4' && <ConvertEx       key={key} direction="toMajor" onDone={scored} />}
     </div>
   )
 }
