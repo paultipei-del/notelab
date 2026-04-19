@@ -114,10 +114,14 @@ export function MajorPatternDiagram() {
 // Chromatic index 0 = C4 (bottom-left C), 24 = C6 (two octaves up).
 // Used by the Visual Guide and by Lesson 8 Ex 2/3 to display a pattern or triad.
 export function PatternKeyboard({
-  pattern, triadSet, patternLetters,
+  pattern, triadSet, patternLetters, onKeyClick,
 }: {
-  pattern: number[]; triadSet: Set<number>; patternLetters?: string[]
+  pattern: number[]
+  triadSet: Set<number>
+  patternLetters?: string[]
+  onKeyClick?: (chromatic: number) => void
 }) {
+  const isInteractive = typeof onKeyClick === 'function'
   // Dimensions match PianoKeyboard.tsx (WK_W=86 pitch 88, BK_W=51)
   const KEY_PITCH = 88
   const WK_W = 86
@@ -269,7 +273,9 @@ export function PatternKeyboard({
           const fill = isTri ? 'url(#mpk-wTriad)' : isPat ? 'url(#mpk-wPat)' : 'url(#mpk-ivory)'
           const labelColor = isTri ? '#7A4800' : isPat ? '#1A5C0A' : '#7A7060'
           return (
-            <g key={i}>
+            <g key={i}
+              onClick={isInteractive ? () => onKeyClick!(chromatic) : undefined}
+              style={isInteractive ? { cursor: 'pointer' } : undefined}>
               <rect x={x} y={KEY_Y} width={WK_W} height={FACE_B - KEY_Y} fill={fill} rx={5} />
               <rect x={x} y={KEY_Y + 6} width={14} height={FACE_B - KEY_Y - 6} fill="url(#mpk-lEdge)" />
               <rect x={x} y={KEY_Y} width={WK_W} height={28} fill="white" opacity={0.12} rx={5} />
@@ -293,7 +299,9 @@ export function PatternKeyboard({
             const isTri = triadSet.has(chromatic)
             const fill = isTri ? 'url(#mpk-bTriad)' : isPat ? 'url(#mpk-bPat)' : 'url(#mpk-bDark)'
             return (
-              <g key={`${oct}-${rem}`} filter="url(#mpk-bShadow)">
+              <g key={`${oct}-${rem}`} filter="url(#mpk-bShadow)"
+                onClick={isInteractive ? () => onKeyClick!(chromatic) : undefined}
+                style={isInteractive ? { cursor: 'pointer' } : undefined}>
                 <rect x={info.x} y={KEY_Y} width={BK_W} height={BK_H} fill={fill} rx={7} />
                 <rect x={info.x} y={KEY_Y} width={BK_W} height={BK_H} fill="url(#mpk-bSheen)" rx={7} />
                 <rect x={info.x + 4} y={BK_END - 22} width={BK_W - 8} height={22}

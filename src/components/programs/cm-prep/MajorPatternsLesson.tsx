@@ -369,9 +369,342 @@ function MatchEx({
   )
 }
 
+// ── Ex 4: Build the pattern + triad on the keyboard ─────────────────────────
+// Two sub-steps per item: (1) tap the 5 pattern keys, Confirm. (2) tap the 3
+// triad keys, Confirm. Clicked keys toggle; both sub-steps auto-advance after
+// feedback.
+type Ex4SubStep = 'pattern' | 'triad'
+
+function BuildKeyboardEx({
+  onDone,
+}: {
+  onDone: (correct: number, total: number) => void
+}) {
+  const items = useMemo<MajorKey[]>(() => shuffled(['C', 'F', 'G', 'D']), [])
+  const total = items.length
+  const totalSteps = total * 2   // pattern + triad per item
+
+  const [idx,             setIdx]             = useState(0)
+  const [subStep,         setSubStep]         = useState<Ex4SubStep>('pattern')
+  const [selectedPattern, setSelectedPattern] = useState<Set<number>>(new Set())
+  const [selectedTriad,   setSelectedTriad]   = useState<Set<number>>(new Set())
+  const [feedback, setFeedback] = useState<{ step: Ex4SubStep; ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const key = items[idx]
+  const correctPattern = new Set(MAJOR_PATTERNS[key].notes)
+  const correctTriad   = new Set(triadFor(key))
+
+  // Chromatic keys "already committed" from earlier sub-step — pattern pieces stay
+  // visible while the student builds the triad.
+  const committedPattern = subStep === 'triad' ? correctPattern : selectedPattern
+
+  function toggleKey(c: number) {
+    if (feedback !== null || lockedRef.current) return
+    if (subStep === 'pattern') {
+      setSelectedPattern(prev => {
+        const next = new Set(prev)
+        if (next.has(c)) next.delete(c); else next.add(c)
+        return next
+      })
+    } else {
+      // Triad step — only toggle keys that are part of the committed pattern
+      if (!correctPattern.has(c)) return
+      setSelectedTriad(prev => {
+        const next = new Set(prev)
+        if (next.has(c)) next.delete(c); else next.add(c)
+        return next
+      })
+    }
+  }
+
+  function setsEqual(a: Set<number>, b: Set<number>) {
+    if (a.size !== b.size) return false
+    for (const x of a) if (!b.has(x)) return false
+    return true
+  }
+
+  function checkPattern() {
+    if (feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    const ok = setsEqual(selectedPattern, correctPattern)
+    if (ok) correctRef.current += 1
+    setFeedback({ step: 'pattern', ok })
+    setTimeout(() => {
+      if (ok) {
+        // Keep the correct pattern lit, move to triad sub-step.
+        setSubStep('triad'); setFeedback(null); lockedRef.current = false
+      } else {
+        // Reset pattern and let student retry (count this attempt as wrong).
+        setSelectedPattern(new Set()); setFeedback(null); lockedRef.current = false
+      }
+    }, ok ? 1100 : 2000)
+  }
+
+  function checkTriad() {
+    if (feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    const ok = setsEqual(selectedTriad, correctTriad)
+    if (ok) correctRef.current += 1
+    setFeedback({ step: 'triad', ok })
+    setTimeout(() => {
+      if (ok) {
+        // Advance to next item.
+        if (idx + 1 >= total) { onDone(correctRef.current, totalSteps); return }
+        setIdx(i => i + 1)
+        setSubStep('pattern')
+        setSelectedPattern(new Set())
+        setSelectedTriad(new Set())
+        setFeedback(null); lockedRef.current = false
+      } else {
+        setSelectedTriad(new Set()); setFeedback(null); lockedRef.current = false
+      }
+    }, ok ? 1100 : 2000)
+  }
+
+  // Which keys to light as "pattern" (green) vs "triad" (amber)
+  // Pattern sub-step:  show selectedPattern as green, no triad highlight
+  // Triad sub-step:    show committedPattern (all 5 correct keys) green,
+  //                    plus selectedTriad keys amber (override green for those)
+  const patternArr = subStep === 'pattern'
+    ? Array.from(selectedPattern)
+    : Array.from(correctPattern)
+  const triadArr = subStep === 'triad' ? selectedTriad : new Set<number>()
+
+  const confirmReady = subStep === 'pattern'
+    ? selectedPattern.size === 5
+    : selectedTriad.size === 3
+  const onConfirm = subStep === 'pattern' ? checkPattern : checkTriad
+
+  const sizeLabel = (n: number) => n === 5 ? 'five-finger pattern' : 'triad'
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 4 — Build the pattern and triad
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '10px' }}>
+        {subStep === 'pattern'
+          ? <>Tap the <strong style={{ color: ACCENT }}>5 keys</strong> of the{' '}
+              <strong style={{ color: ACCENT }}>{key} major</strong> five-finger pattern</>
+          : <>Now tap the <strong style={{ color: '#BA7517' }}>3 keys</strong> that form the{' '}
+              <strong style={{ color: '#BA7517' }}>{key} major triad</strong></>}
+      </p>
+
+      <div style={{ marginBottom: 14 }}>
+        <PatternKeyboard pattern={patternArr} triadSet={triadArr as Set<number>}
+          onKeyClick={toggleKey} />
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+        <button onClick={onConfirm}
+          disabled={!confirmReady || feedback !== null}
+          style={{
+            padding: '10px 28px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: !confirmReady || feedback !== null ? 'default' : 'pointer',
+            background: !confirmReady || feedback !== null ? '#EDE8DF' : DARK,
+            color: !confirmReady || feedback !== null ? '#B0ACA4' : 'white',
+          }}>
+          Check {sizeLabel(subStep === 'pattern' ? 5 : 3)}
+        </button>
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
+        {feedback !== null && feedback.ok  && '✓ Correct'}
+        {feedback !== null && !feedback.ok && (
+          <>Not quite — take another look and try again.</>
+        )}
+      </p>
+    </div>
+  )
+}
+
+// ── Ex 5: Place the triad on the staff ──────────────────────────────────────
+// Grand staff, student taps 3 positions that form the target triad.
+// Positions stack at the same x; accidentals (D major F♯) auto-render when the
+// position lines up with the correct natural pitch that needs the sharp.
+// Treble pos: 0 = C4 … 7 = C5 … 12 = A5
+// Bass pos:   0 = E2 …            12 = C4
+
+interface TriadTarget {
+  clef: 'treble' | 'bass'
+  rootKey: MajorKey
+  positions: number[]       // 3 staff positions, ascending
+  accidentalPos?: number    // pos that gets a sharp (F♯ for D major)
+}
+
+const EX5_POOL: TriadTarget[] = [
+  // C major triad: C E G
+  { clef: 'treble', rootKey: 'C', positions: [0, 2, 4] },                   // C4 E4 G4
+  { clef: 'bass',   rootKey: 'C', positions: [5, 7, 9] },                   // C3 E3 G3
+
+  // F major triad: F A C
+  { clef: 'treble', rootKey: 'F', positions: [3, 5, 7] },                   // F4 A4 C5
+  { clef: 'bass',   rootKey: 'F', positions: [1, 3, 5] },                   // F2 A2 C3
+
+  // G major triad: G B D
+  { clef: 'treble', rootKey: 'G', positions: [4, 6, 8] },                   // G4 B4 D5
+  { clef: 'bass',   rootKey: 'G', positions: [2, 4, 6] },                   // G2 B2 D3
+
+  // D major triad: D F♯ A — sharp on the middle note
+  { clef: 'treble', rootKey: 'D', positions: [1, 3, 5], accidentalPos: 3 }, // D4 F♯4 A4
+  { clef: 'bass',   rootKey: 'D', positions: [6, 8, 10], accidentalPos: 8 }, // D3 F♯3 A3
+]
+
+const EX5_NOTE_X = 190   // all 3 noteheads stack at this x
+
+function PlaceTriadEx({
+  onDone,
+}: {
+  onDone: (correct: number, total: number) => void
+}) {
+  const items = useMemo(() => shuffled(EX5_POOL).slice(0, 6), [])
+  const total = items.length
+
+  const [idx,       setIdx]       = useState(0)
+  const [staged,    setStaged]    = useState<number[]>([])
+  const [submitted, setSubmitted] = useState(false)
+  const [isCorrect, setIsCorrect] = useState(false)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+  const svgRef     = useRef<SVGSVGElement | null>(null)
+
+  const item = items[idx]
+  const target = new Set(item.positions)
+
+  function clientToPos(clientY: number): number {
+    const svg = svgRef.current
+    if (!svg) return 0
+    const r = svg.getBoundingClientRect()
+    const sy = (clientY - r.top) / r.height * svgH
+    let pos = Math.round(10 - (sy - tTop) / step)
+    if (pos < 0) pos = 0
+    if (pos > 12) pos = 12
+    return pos
+  }
+
+  function onStaffClick(e: React.MouseEvent<SVGSVGElement>) {
+    if (submitted || lockedRef.current) return
+    if (!svgRef.current) svgRef.current = e.currentTarget
+    const pos = clientToPos(e.clientY)
+    setStaged(prev => {
+      // toggle: click an already-selected pos to remove it, else add (cap at 3)
+      if (prev.includes(pos)) return prev.filter(p => p !== pos)
+      if (prev.length >= 3) return prev
+      return [...prev, pos]
+    })
+  }
+
+  function onConfirm() {
+    if (submitted || lockedRef.current || staged.length !== 3) return
+    lockedRef.current = true
+    const stagedSet = new Set(staged)
+    const ok = stagedSet.size === target.size &&
+      [...target].every(p => stagedSet.has(p))
+    if (ok) correctRef.current += 1
+    setSubmitted(true); setIsCorrect(ok)
+    setTimeout(() => {
+      if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+      setIdx(i => i + 1)
+      setStaged([]); setSubmitted(false); setIsCorrect(false)
+      lockedRef.current = false
+    }, ok ? 1200 : 2200)
+  }
+
+  // The visual should stack the triad at the same x; draw ledger lines when needed.
+  const renderNote = (pos: number, color: string, opacity = 1) => {
+    const cy = posToY(pos)
+    const showLedgerTreble = item.clef === 'treble' && pos === 0
+    const showLedgerBass   = item.clef === 'bass'   && (pos === 0 || pos === 12)
+    return (
+      <g key={pos} opacity={opacity}>
+        {(showLedgerTreble || showLedgerBass) &&
+          <LedgerLine cx={EX5_NOTE_X} cy={cy} color={color} />}
+        {item.accidentalPos === pos &&
+          <SharpGlyph cx={EX5_NOTE_X} cy={cy} color={color} />}
+        <BravuraNote cx={EX5_NOTE_X} cy={cy} color={color} />
+      </g>
+    )
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 5 — Place the triad
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '10px' }}>
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place the{' '}
+        <strong style={{ color: ACCENT }}>{item.rootKey} major triad</strong>
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '8px 0', marginBottom: 14 }}>
+        <svg
+          ref={r => { svgRef.current = r }}
+          viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+          onClick={onStaffClick}
+          style={{
+            maxWidth: svgW, display: 'block', margin: '0 auto',
+            cursor: submitted ? 'default' : 'crosshair',
+            userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none',
+          }}>
+          <StaffBase />
+          <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+          <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
+          {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
+
+          {/* Staged ghost noteheads */}
+          {!submitted && staged.map(pos => renderNote(pos, ACCENT, 0.55))}
+
+          {/* Committed result */}
+          {submitted && staged.map(pos => renderNote(pos, isCorrect ? CORRECT : WRONG))}
+
+          {/* Correct hint overlay on wrong answer */}
+          {submitted && !isCorrect && item.positions.map(pos =>
+            <g key={`hint-${pos}`} opacity={0.45}>{renderNote(pos, CORRECT, 1)}</g>
+          )}
+        </svg>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+        <button onClick={onConfirm}
+          disabled={submitted || staged.length !== 3}
+          style={{
+            padding: '10px 28px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: submitted || staged.length !== 3 ? 'default' : 'pointer',
+            background: submitted || staged.length !== 3 ? '#EDE8DF' : DARK,
+            color: submitted || staged.length !== 3 ? '#B0ACA4' : 'white',
+          }}>
+          Check ({staged.length}/3)
+        </button>
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
+        {submitted && isCorrect && '✓ Correct'}
+        {submitted && !isCorrect && (
+          <>Correct triad shown in green — tap again on the next one.</>
+        )}
+      </p>
+    </div>
+  )
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
-type Phase = 'ex1' | 'ex2' | 'ex3'
-const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3']
+type Phase = 'ex1' | 'ex2' | 'ex3' | 'ex4' | 'ex5'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4', 'ex5']
 
 export default function MajorPatternsLesson({
   passingScore,
@@ -437,6 +770,8 @@ export default function MajorPatternsLesson({
       {phase === 'ex3' && <MatchEx key={key} mode="triad"
         exLabel="Exercise 3 — Match the triad"
         onDone={scored} />}
+      {phase === 'ex4' && <BuildKeyboardEx key={key} onDone={scored} />}
+      {phase === 'ex5' && <PlaceTriadEx    key={key} onDone={scored} />}
     </div>
   )
 }
