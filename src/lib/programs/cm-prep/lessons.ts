@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -130,7 +130,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Major and minor combined',
     description: "Major and minor patterns share the same tonic — only one note changes. This review sharpens your ability to distinguish them by step formula, by sound, and by the notes they contain.",
     type: 'review',
-    tool: 'mc-quiz',
+    tool: 'review-patterns-lesson',
     unlockAfter: 'minor-patterns',
     passingScore: 0.75,
   },
@@ -141,7 +141,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Comprehensive checkpoint',
     description: "A cumulative check covering everything from staff anatomy through five-finger patterns. Pass this before moving on to key signatures, major scales, and musical vocabulary.",
     type: 'review',
-    tool: 'mixed-quiz',
+    tool: 'review-1to9-lesson',
     unlockAfter: 'review-patterns',
     passingScore: 0.75,
   },
@@ -152,7 +152,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'C, F, and G major',
     description: "A key signature appears right after the clef sign and tells you which notes are consistently sharp or flat throughout the piece. C major has no sharps or flats. G major has one sharp: F♯. F major has one flat: B♭. Knowing these three is the foundation for reading most beginning piano literature.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'key-signatures-lesson',
     unlockAfter: 'review-lessons-1-9',
     passingScore: 0.8,
   },

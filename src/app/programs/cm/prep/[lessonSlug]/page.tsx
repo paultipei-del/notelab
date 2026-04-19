@@ -27,6 +27,9 @@ import HalfWholeStepsLesson from '@/components/programs/cm-prep/HalfWholeStepsLe
 import IntervalsLesson from '@/components/programs/cm-prep/IntervalsLesson'
 import MajorPatternsLesson from '@/components/programs/cm-prep/MajorPatternsLesson'
 import MinorPatternsLesson from '@/components/programs/cm-prep/MinorPatternsLesson'
+import ReviewPatternsLesson from '@/components/programs/cm-prep/ReviewPatternsLesson'
+import ReviewLessons1to9Lesson from '@/components/programs/cm-prep/ReviewLessons1to9Lesson'
+import KeySignaturesLesson from '@/components/programs/cm-prep/KeySignaturesLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -282,6 +285,9 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'intervals-lesson' && 'Four exercises: name intervals on the staff, build intervals by placing a second note, and identify intervals in short musical phrases.'}
                   {lesson.tool === 'major-patterns-lesson' && 'Five exercises: identify five-finger patterns on the staff, match pattern and triad shapes to their letter names, and build both on the keyboard and staff.'}
                   {lesson.tool === 'minor-patterns-lesson' && 'Six exercises: build minor patterns and triads on the keyboard, match patterns and triads to their letter names, and convert between major and minor by adding the right accidental.'}
+                  {lesson.tool === 'review-patterns-lesson' && 'Two exercises: name each pattern on the staff as major or minor, then write patterns and triads in both clefs.'}
+                  {lesson.tool === 'review-1to9-lesson' && 'Five exercises drawn from Lessons 1–9: complete the grand staff, name notes in both clefs, identify whole and half steps, name intervals, and name five-finger patterns.'}
+                  {lesson.tool === 'key-signatures-lesson' && 'Four exercises: match each key signature to its name, identify the accidental and the key, write the key signature on an empty staff, and name the key of a short musical example.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -369,6 +375,24 @@ export default function CMPrepLessonPage({ params }: Props) {
                   />
                 ) : lesson.tool === 'minor-patterns-lesson' ? (
                   <MinorPatternsLesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'review-patterns-lesson' ? (
+                  <ReviewPatternsLesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'review-1to9-lesson' ? (
+                  <ReviewLessons1to9Lesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'key-signatures-lesson' ? (
+                  <KeySignaturesLesson
                     passingScore={lesson.passingScore}
                     previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
