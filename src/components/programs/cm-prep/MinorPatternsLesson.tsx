@@ -727,12 +727,16 @@ function ConvertEx({
     return (
       <button key={acc} onClick={() => selectAcc(acc)}
         disabled={feedback !== null}
+        aria-label={acc}
         style={{
           width: 48, height: 48, borderRadius: 10,
           border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
           background: active ? DARK : 'white',
           color: active ? 'white' : DARK,
-          fontFamily: 'Bravura, serif', fontSize: 24,
+          fontFamily: 'var(--font-cormorant), serif',
+          fontSize: 28, lineHeight: 1,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          padding: 0,
           cursor: feedback !== null ? 'default' : 'pointer',
         }}>
         {glyph}
