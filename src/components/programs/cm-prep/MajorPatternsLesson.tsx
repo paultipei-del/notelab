@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useRef, useMemo } from 'react'
+import { MAJOR_PATTERNS, triadFor, type MajorKey } from './visuals/PatternDiagrams'
+import { PatternKeyboard } from './visuals/PatternDiagrams'
 
 const F       = 'var(--font-jost), sans-serif'
 const SERIF   = 'var(--font-cormorant), serif'
@@ -274,9 +276,102 @@ function IdentifyPatternEx({
   )
 }
 
+// ── Shared letter-picker for Ex 2 / Ex 3 ─────────────────────────────────────
+const KEYS: MajorKey[] = ['C', 'F', 'G', 'D']
+
+function MatchEx({
+  mode, exLabel, onDone,
+}: {
+  mode: 'pattern' | 'triad'
+  exLabel: string
+  onDone: (correct: number, total: number) => void
+}) {
+  // Two rounds of each key, shuffled → 8 items per session.
+  const items = useMemo<MajorKey[]>(() => shuffled([...KEYS, ...KEYS]), [])
+  const total = items.length
+
+  const [idx,      setIdx]      = useState(0)
+  const [chosen,   setChosen]   = useState<MajorKey | null>(null)
+  const [feedback, setFeedback] = useState<{ ok: boolean } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const answer = items[idx]
+  const pattern = mode === 'pattern'
+    ? MAJOR_PATTERNS[answer].notes
+    : triadFor(answer)
+  const triadSet = new Set(triadFor(answer))
+
+  function pick(k: MajorKey) {
+    if (lockedRef.current || feedback !== null) return
+    lockedRef.current = true
+    const ok = k === answer
+    if (ok) correctRef.current += 1
+    setChosen(k)
+    setFeedback({ ok })
+    setTimeout(() => {
+      if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+      setIdx(i => i + 1)
+      setChosen(null); setFeedback(null); lockedRef.current = false
+    }, ok ? 1000 : 1800)
+  }
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        {exLabel}
+      </p>
+      <ProgressBar done={idx} total={total} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '12px' }}>
+        {mode === 'pattern'
+          ? 'Which five-finger pattern is highlighted?'
+          : 'Which major triad is highlighted?'}
+      </p>
+
+      <div style={{ marginBottom: 16 }}>
+        <PatternKeyboard pattern={pattern} triadSet={triadSet} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 16 }}>
+        {KEYS.map(k => {
+          const isChosen = chosen === k
+          const isAnswer = k === answer
+          let bg = 'white', border = '#DDD8CA', color = DARK
+          if (feedback !== null) {
+            if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
+            else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
+          }
+          return (
+            <button key={k} onClick={() => pick(k)}
+              disabled={feedback !== null}
+              style={{
+                padding: '14px 0', borderRadius: 10, border: `1.5px solid ${border}`,
+                background: bg, fontFamily: SERIF, fontSize: 22, fontWeight: 400,
+                color, cursor: feedback !== null ? 'default' : 'pointer',
+              }}>
+              {k} major
+            </button>
+          )
+        })}
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
+        {feedback !== null && !feedback.ok && (
+          <>Correct answer: <strong style={{ color: CORRECT }}>{answer} major</strong></>
+        )}
+        {feedback !== null && feedback.ok && '✓ Correct'}
+      </p>
+    </div>
+  )
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
-type Phase = 'ex1'
-const PHASE_ORDER: Phase[] = ['ex1']
+type Phase = 'ex1' | 'ex2' | 'ex3'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3']
 
 export default function MajorPatternsLesson({
   passingScore,
@@ -336,6 +431,12 @@ export default function MajorPatternsLesson({
       <NavBar canBack={canGoBack} canForward={canGoForward}
         onBack={back} onForward={forward} />
       {phase === 'ex1' && <IdentifyPatternEx key={key} onDone={scored} />}
+      {phase === 'ex2' && <MatchEx key={key} mode="pattern"
+        exLabel="Exercise 2 — Match the five-finger pattern"
+        onDone={scored} />}
+      {phase === 'ex3' && <MatchEx key={key} mode="triad"
+        exLabel="Exercise 3 — Match the triad"
+        onDone={scored} />}
     </div>
   )
 }

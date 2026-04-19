@@ -112,10 +112,11 @@ export function MajorPatternDiagram() {
 
 // Interactive 2-octave keyboard highlighting 5 pattern keys + triad subset.
 // Chromatic index 0 = C4 (bottom-left C), 24 = C6 (two octaves up).
-function PatternKeyboard({
+// Used by the Visual Guide and by Lesson 8 Ex 2/3 to display a pattern or triad.
+export function PatternKeyboard({
   pattern, triadSet, patternLetters,
 }: {
-  pattern: number[]; triadSet: Set<number>; patternLetters: string[]
+  pattern: number[]; triadSet: Set<number>; patternLetters?: string[]
 }) {
   // Dimensions match PianoKeyboard.tsx (WK_W=86 pitch 88, BK_W=51)
   const KEY_PITCH = 88
@@ -163,9 +164,9 @@ function PatternKeyboard({
   const fingerByChromatic: Record<number, number> = {}
   pattern.forEach((c, i) => { fingerByChromatic[c] = i + 1 })
 
-  // Letters above each lit key (for finger display)
+  // Letters above each lit key — optional; omitted in match-the-pattern exercises
   const letterByChromatic: Record<number, string> = {}
-  pattern.forEach((c, i) => { letterByChromatic[c] = patternLetters[i] })
+  if (patternLetters) pattern.forEach((c, i) => { letterByChromatic[c] = patternLetters[i] })
 
   return (
     <div style={{ borderRadius: 18, overflow: 'hidden',
@@ -243,12 +244,14 @@ function PatternKeyboard({
                 textAnchor="middle" dominantBaseline="central">
                 {finger}
               </text>
-              <text x={info.centerX} y={KB_TOP - 18}
-                fontFamily={F} fontSize={12} fontWeight={600}
-                fill={isTri ? '#F0D070' : '#C0E890'}
-                textAnchor="middle" dominantBaseline="central">
-                {letterByChromatic[c]}
-              </text>
+              {patternLetters && (
+                <text x={info.centerX} y={KB_TOP - 18}
+                  fontFamily={F} fontSize={12} fontWeight={600}
+                  fill={isTri ? '#F0D070' : '#C0E890'}
+                  textAnchor="middle" dominantBaseline="central">
+                  {letterByChromatic[c]}
+                </text>
+              )}
             </g>
           )
         })}
