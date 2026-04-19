@@ -81,17 +81,30 @@ function BuildKeyboardEx({
   const total = items.length
   const totalSteps = total * 2
 
-  const [idx,             setIdx]             = useState(0)
-  const [subStep,         setSubStep]         = useState<Ex1SubStep>('pattern')
-  const [selectedPattern, setSelectedPattern] = useState<Set<number>>(new Set())
-  const [selectedTriad,   setSelectedTriad]   = useState<Set<number>>(new Set())
+  const [idx,               setIdx]               = useState(0)
+  const [subStep,           setSubStep]           = useState<Ex1SubStep>('pattern')
+  const [selectedPattern,   setSelectedPattern]   = useState<Set<number>>(new Set())
+  const [selectedTriad,     setSelectedTriad]     = useState<Set<number>>(new Set())
+  const [committedPattern,  setCommittedPattern]  = useState<number[] | null>(null)
   const [feedback, setFeedback] = useState<{ step: Ex1SubStep; ok: boolean } | null>(null)
   const correctRef = useRef(0)
   const lockedRef  = useRef(false)
 
   const key = items[idx]
-  const correctPattern = new Set(MINOR_PATTERNS[key].notes)
-  const correctTriad   = new Set(minorTriadFor(key))
+  // Allow the pattern to be built in either octave the student picks.
+  // The keyboard shows two octaves (chromatic 0..24), so if the shifted copy
+  // fits, it's also a valid answer.
+  const basePattern = MINOR_PATTERNS[key].notes
+  const candidates: number[][] = useMemo(() => {
+    const opts = [basePattern]
+    const shifted = basePattern.map(n => n + 12)
+    if (shifted.every(n => n >= 0 && n <= 24)) opts.push(shifted)
+    return opts
+  // basePattern changes each item via idx → listing idx as dep
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx])
+  // Which concrete pattern the student committed (locks the octave for the triad step)
+  const committedSet = new Set(committedPattern ?? basePattern)
 
   function toggleKey(c: number) {
     if (feedback !== null || lockedRef.current) return
@@ -102,7 +115,7 @@ function BuildKeyboardEx({
         return next
       })
     } else {
-      if (!correctPattern.has(c)) return   // triad must be inside the pattern
+      if (!committedSet.has(c)) return   // triad must be inside the committed pattern
       setSelectedTriad(prev => {
         const next = new Set(prev)
         if (next.has(c)) next.delete(c); else next.add(c)
@@ -120,8 +133,14 @@ function BuildKeyboardEx({
   function checkPattern() {
     if (feedback !== null || lockedRef.current) return
     lockedRef.current = true
-    const ok = setsEqual(selectedPattern, correctPattern)
-    if (ok) correctRef.current += 1
+    // Match against any valid octave; remember which one so the triad step
+    // knows the exact keys that count.
+    const match = candidates.find(c => setsEqual(selectedPattern, new Set(c))) ?? null
+    const ok = match !== null
+    if (ok) {
+      correctRef.current += 1
+      setCommittedPattern(match)
+    }
     setFeedback({ step: 'pattern', ok })
     setTimeout(() => {
       if (ok) { setSubStep('triad'); setFeedback(null); lockedRef.current = false }
@@ -130,8 +149,11 @@ function BuildKeyboardEx({
   }
 
   function checkTriad() {
-    if (feedback !== null || lockedRef.current) return
+    if (feedback !== null || lockedRef.current || !committedPattern) return
     lockedRef.current = true
+    const correctTriad = new Set([
+      committedPattern[0], committedPattern[2], committedPattern[4],
+    ])
     const ok = setsEqual(selectedTriad, correctTriad)
     if (ok) correctRef.current += 1
     setFeedback({ step: 'triad', ok })
@@ -142,6 +164,7 @@ function BuildKeyboardEx({
         setSubStep('pattern')
         setSelectedPattern(new Set())
         setSelectedTriad(new Set())
+        setCommittedPattern(null)
         setFeedback(null); lockedRef.current = false
       } else {
         setSelectedTriad(new Set()); setFeedback(null); lockedRef.current = false
@@ -151,7 +174,7 @@ function BuildKeyboardEx({
 
   const patternArr = subStep === 'pattern'
     ? Array.from(selectedPattern)
-    : Array.from(correctPattern)
+    : (committedPattern ?? basePattern)
   const triadArr = subStep === 'triad' ? selectedTriad : new Set<number>()
 
   const confirmReady = subStep === 'pattern'

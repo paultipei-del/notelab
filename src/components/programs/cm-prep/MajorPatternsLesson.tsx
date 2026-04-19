@@ -384,21 +384,27 @@ function BuildKeyboardEx({
   const total = items.length
   const totalSteps = total * 2   // pattern + triad per item
 
-  const [idx,             setIdx]             = useState(0)
-  const [subStep,         setSubStep]         = useState<Ex4SubStep>('pattern')
-  const [selectedPattern, setSelectedPattern] = useState<Set<number>>(new Set())
-  const [selectedTriad,   setSelectedTriad]   = useState<Set<number>>(new Set())
+  const [idx,              setIdx]              = useState(0)
+  const [subStep,          setSubStep]          = useState<Ex4SubStep>('pattern')
+  const [selectedPattern,  setSelectedPattern]  = useState<Set<number>>(new Set())
+  const [selectedTriad,    setSelectedTriad]    = useState<Set<number>>(new Set())
+  const [committedPattern, setCommittedPattern] = useState<number[] | null>(null)
   const [feedback, setFeedback] = useState<{ step: Ex4SubStep; ok: boolean } | null>(null)
   const correctRef = useRef(0)
   const lockedRef  = useRef(false)
 
   const key = items[idx]
-  const correctPattern = new Set(MAJOR_PATTERNS[key].notes)
-  const correctTriad   = new Set(triadFor(key))
-
-  // Chromatic keys "already committed" from earlier sub-step — pattern pieces stay
-  // visible while the student builds the triad.
-  const committedPattern = subStep === 'triad' ? correctPattern : selectedPattern
+  // The keyboard spans two octaves (chromatic 0..24). Accept the pattern built
+  // in either octave — whichever one the student chose defines the triad.
+  const basePattern = MAJOR_PATTERNS[key].notes
+  const candidates: number[][] = useMemo(() => {
+    const opts = [basePattern]
+    const shifted = basePattern.map(n => n + 12)
+    if (shifted.every(n => n >= 0 && n <= 24)) opts.push(shifted)
+    return opts
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx])
+  const committedSet = new Set(committedPattern ?? basePattern)
 
   function toggleKey(c: number) {
     if (feedback !== null || lockedRef.current) return
@@ -409,8 +415,8 @@ function BuildKeyboardEx({
         return next
       })
     } else {
-      // Triad step — only toggle keys that are part of the committed pattern
-      if (!correctPattern.has(c)) return
+      // Triad step — only toggle keys inside the pattern the student built
+      if (!committedSet.has(c)) return
       setSelectedTriad(prev => {
         const next = new Set(prev)
         if (next.has(c)) next.delete(c); else next.add(c)
@@ -428,34 +434,36 @@ function BuildKeyboardEx({
   function checkPattern() {
     if (feedback !== null || lockedRef.current) return
     lockedRef.current = true
-    const ok = setsEqual(selectedPattern, correctPattern)
-    if (ok) correctRef.current += 1
+    const match = candidates.find(c => setsEqual(selectedPattern, new Set(c))) ?? null
+    const ok = match !== null
+    if (ok) {
+      correctRef.current += 1
+      setCommittedPattern(match)
+    }
     setFeedback({ step: 'pattern', ok })
     setTimeout(() => {
-      if (ok) {
-        // Keep the correct pattern lit, move to triad sub-step.
-        setSubStep('triad'); setFeedback(null); lockedRef.current = false
-      } else {
-        // Reset pattern and let student retry (count this attempt as wrong).
-        setSelectedPattern(new Set()); setFeedback(null); lockedRef.current = false
-      }
+      if (ok) { setSubStep('triad'); setFeedback(null); lockedRef.current = false }
+      else    { setSelectedPattern(new Set()); setFeedback(null); lockedRef.current = false }
     }, ok ? 1100 : 2000)
   }
 
   function checkTriad() {
-    if (feedback !== null || lockedRef.current) return
+    if (feedback !== null || lockedRef.current || !committedPattern) return
     lockedRef.current = true
+    const correctTriad = new Set([
+      committedPattern[0], committedPattern[2], committedPattern[4],
+    ])
     const ok = setsEqual(selectedTriad, correctTriad)
     if (ok) correctRef.current += 1
     setFeedback({ step: 'triad', ok })
     setTimeout(() => {
       if (ok) {
-        // Advance to next item.
         if (idx + 1 >= total) { onDone(correctRef.current, totalSteps); return }
         setIdx(i => i + 1)
         setSubStep('pattern')
         setSelectedPattern(new Set())
         setSelectedTriad(new Set())
+        setCommittedPattern(null)
         setFeedback(null); lockedRef.current = false
       } else {
         setSelectedTriad(new Set()); setFeedback(null); lockedRef.current = false
@@ -463,13 +471,9 @@ function BuildKeyboardEx({
     }, ok ? 1100 : 2000)
   }
 
-  // Which keys to light as "pattern" (green) vs "triad" (amber)
-  // Pattern sub-step:  show selectedPattern as green, no triad highlight
-  // Triad sub-step:    show committedPattern (all 5 correct keys) green,
-  //                    plus selectedTriad keys amber (override green for those)
   const patternArr = subStep === 'pattern'
     ? Array.from(selectedPattern)
-    : Array.from(correctPattern)
+    : (committedPattern ?? basePattern)
   const triadArr = subStep === 'triad' ? selectedTriad : new Set<number>()
 
   const confirmReady = subStep === 'pattern'
