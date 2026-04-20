@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson' | 'major-scales-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -163,7 +163,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'C, F, and G major — eight notes, one pattern',
     description: "Every major scale follows the same step sequence: W W H W W W H. This pattern is identical in every key — only the starting note changes. Knowing the scale spelling for C, F, and G major lets you predict the key signature and navigate the staff with confidence.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'major-scales-lesson',
     unlockAfter: 'key-signatures',
     passingScore: 0.8,
   },

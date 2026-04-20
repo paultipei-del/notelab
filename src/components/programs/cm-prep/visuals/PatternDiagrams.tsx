@@ -740,79 +740,111 @@ export function KeySignatureDiagram() {
 
 // ── Lesson 11: Major Scales ────────────────────────────────────────────────
 export function MajorScaleDiagram() {
-  const step = 9
-  const sL = 25
-  const sR = 500
+  // Standard CM Prep staff geometry (matches Lesson 10 / key sig diagrams)
+  const step = 8
+  const sL   = 32
+  const sR   = 600
   const tTop = 30
+  const svgW = sR + 16
+  const svgH = tTop + 8 * step + 64
 
-  // C major scale on treble: C4(10), D4(9), E4(8), F4(7), G4(6), A4(5), B4(4), C5(3)
-  const scalePos = [10, 9, 8, 7, 6, 5, 4, 3]
+  const lineY  = (n: number) => tTop + (5 - n) * 2 * step
+  const posToY = (pos: number) => tTop + (10 - pos) * step
+
+  // C major scale on treble: pos 0 = C4 (1 ledger below), pos 7 = C5 (space 3)
+  const scalePos = [0, 1, 2, 3, 4, 5, 6, 7]
   const scaleNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C']
   const scaleSteps = ['W', 'W', 'H', 'W', 'W', 'W', 'H']
   const stepColor = (s: string) => s === 'H' ? '#B5402A' : MAJ_C
-  const noteSpacing = 56
-  const startX = sL + 52
+
+  const xStart = sL + 80
+  const xEnd   = sR - 20
+  const xs = Array.from({ length: 8 }, (_, i) =>
+    xStart + (i + 0.5) * ((xEnd - xStart) / 8)
+  )
+
+  // Two versions of the same scale — plain, then with step labels between notes.
+  const renderScale = (showSteps: boolean) => (
+    <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+      style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
+      {/* Staff lines */}
+      {[1, 2, 3, 4, 5].map(n => (
+        <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
+          stroke={DARK} strokeWidth={STROKE_W} />
+      ))}
+      {/* Left + right borders */}
+      <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+      <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+      {/* Treble clef */}
+      <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
+        fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+
+      {/* Notes */}
+      {scalePos.map((pos, i) => {
+        const cx = xs[i]
+        const cy = posToY(pos)
+        const isTonic = i === 0 || i === 7
+        const color = isTonic ? ACCENT : DARK
+        return (
+          <g key={i}>
+            {pos === 0 && (
+              <line x1={cx - 14} y1={cy} x2={cx + 14} y2={cy}
+                stroke={color} strokeWidth={STROKE_W} />
+            )}
+            <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={60}
+              fill={color} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
+            {/* Letter label above each note */}
+            <text x={cx} y={tTop - 14}
+              fontFamily={F} fontSize={15} fontWeight={700} fill={color}
+              textAnchor="middle">{scaleNames[i]}</text>
+          </g>
+        )
+      })}
+
+      {/* Step badges between notes (W/H) — placed well below the staff so
+          they never share a horizontal line with a notehead */}
+      {showSteps && scaleSteps.map((s, i) => {
+        const midX = (xs[i] + xs[i + 1]) / 2
+        const y = lineY(1) + 46
+        return (
+          <g key={'step' + i}>
+            <circle cx={midX} cy={y} r={11}
+              fill={s === 'H' ? 'rgba(181,64,42,0.15)' : 'rgba(42,92,10,0.12)'}
+              stroke={stepColor(s)} strokeWidth={1.2} />
+            <text x={midX} y={y}
+              fontFamily={F} fontSize={12} fontWeight={800}
+              fill={stepColor(s)} textAnchor="middle" dominantBaseline="central">{s}</text>
+          </g>
+        )
+      })}
+    </svg>
+  )
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 530 190" width="100%" style={{ maxWidth: 530, display: 'block', margin: '0 auto' }}>
+    <div>
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 12, lineHeight: 1.75 }}>
+        Every <strong style={{ color: DARK }}>major scale</strong> is built from{' '}
+        <strong style={{ color: DARK }}>eight notes</strong>. It begins and ends on the same letter name —
+        its tonic — and it borrows its sharps or flats from the major key signature of the same name.
+      </p>
 
-        <text x={sL} y={18} fontFamily={F} fontSize={11} fill={DARK} fontWeight="600">
-          C Major Scale — pattern: W W H W W W H
-        </text>
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '10px 0', marginBottom: 14 }}>
+        {renderScale(false)}
+      </div>
 
-        <MiniStaff x1={sL} x2={sR} top={tTop} step={step} />
-        <line x1={sL} y1={tTop} x2={sL} y2={tTop + 8 * step} stroke={DARK} strokeWidth={STROKE_W} />
-        <line x1={sR} y1={tTop} x2={sR} y2={tTop + 8 * step} stroke={DARK} strokeWidth={2.5} />
-        <text x={sL + 2} y={tTop + 42} fontFamily="Bravura, serif" fontSize={55} fill={DARK}>&#x1D11E;</text>
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 10, lineHeight: 1.75 }}>
+        Whole steps (<strong style={{ color: MAJ_C }}>W</strong>) fall between most adjacent notes. Half
+        steps (<strong style={{ color: '#B5402A' }}>H</strong>) sit between notes <strong>3–4</strong>
+        {' '}and <strong>7–8</strong>.
+      </p>
 
-        {/* Ledger line for C4 */}
-        <line x1={startX - 12} y1={tTop + 10 * step} x2={startX + 12} y2={tTop + 10 * step}
-          stroke={DARK} strokeWidth={STROKE_W} />
-
-        {scalePos.map((pos, i) => {
-          const cx = startX + i * noteSpacing
-          const cy = tTop + pos * step
-          const color = i === 0 || i === 7 ? ACCENT : DARK
-
-          return (
-            <g key={i}>
-              <ellipse cx={cx} cy={cy} rx={7} ry={4.5} fill={color} />
-              <text x={cx} y={cy - 13} fontFamily={F} fontSize={10} fill={color} textAnchor="middle" fontWeight="600">
-                {scaleNames[i]}
-              </text>
-              {/* Scale degree number */}
-              <text x={cx} y={tTop + 8 * step + 20}
-                fontFamily={F} fontSize={9} fill={GREY} textAnchor="middle">{i + 1}</text>
-            </g>
-          )
-        })}
-
-        {/* Step labels */}
-        {scaleSteps.map((s, i) => {
-          const midX = startX + i * noteSpacing + noteSpacing / 2
-          return (
-            <g key={i}>
-              <rect x={midX - 8} y={tTop + 8 * step + 28} width={16} height={14} rx={7}
-                fill={s === 'H' ? 'rgba(181,64,42,0.12)' : 'rgba(42,92,10,0.10)'}
-                stroke={stepColor(s)} strokeWidth={1} />
-              <text x={midX} y={tTop + 8 * step + 39}
-                fontFamily={F} fontSize={9} fill={stepColor(s)} textAnchor="middle" fontWeight="700">{s}</text>
-            </g>
-          )
-        })}
-
-        {/* G and F major summaries */}
-        <rect x={sL} y={tTop + 8 * step + 54} width={(sR - sL) * 0.48} height={40} rx={8}
-          fill="rgba(42,92,10,0.07)" stroke="rgba(42,92,10,0.2)" strokeWidth={1} />
-        <text x={sL + 10} y={tTop + 8 * step + 70} fontFamily={F} fontSize={10} fill={MAJ_C} fontWeight="600">G major:</text>
-        <text x={sL + 10} y={tTop + 8 * step + 84} fontFamily={F} fontSize={10} fill={DARK}>G A B C D E F♯ G</text>
-
-        <rect x={sR - (sR - sL) * 0.48} y={tTop + 8 * step + 54} width={(sR - sL) * 0.48} height={40} rx={8}
-          fill="rgba(59,109,181,0.07)" stroke="rgba(59,109,181,0.2)" strokeWidth={1} />
-        <text x={sR - (sR - sL) * 0.48 + 10} y={tTop + 8 * step + 70} fontFamily={F} fontSize={10} fill={'#3B6DB5'} fontWeight="600">F major:</text>
-        <text x={sR - (sR - sL) * 0.48 + 10} y={tTop + 8 * step + 84} fontFamily={F} fontSize={10} fill={DARK}>F G A B♭ C D E F</text>
-      </svg>
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '10px 0 28px' }}>
+        {renderScale(true)}
+      </div>
+      {/* The per-key summary cards (C / F / G) are rendered by the lesson page,
+          below the lesson description — see page.tsx. */}
     </div>
   )
 }

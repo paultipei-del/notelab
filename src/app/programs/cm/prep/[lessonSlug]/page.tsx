@@ -30,6 +30,7 @@ import MinorPatternsLesson from '@/components/programs/cm-prep/MinorPatternsLess
 import ReviewPatternsLesson from '@/components/programs/cm-prep/ReviewPatternsLesson'
 import ReviewLessons1to9Lesson from '@/components/programs/cm-prep/ReviewLessons1to9Lesson'
 import KeySignaturesLesson from '@/components/programs/cm-prep/KeySignaturesLesson'
+import MajorScalesLesson from '@/components/programs/cm-prep/MajorScalesLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -187,6 +188,50 @@ export default function CMPrepLessonPage({ params }: Props) {
           </div>
         )}
 
+        {/* Per-key summary cards for the Major Scales lesson */}
+        {!practicing && lessonSlug === 'major-scales' && (
+          <div style={{ marginBottom: '16px' }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540',
+              lineHeight: 1.75, margin: '0 0 12px' }}>
+              Because the step sequence has to stay the same, starting on a pitch other than C
+              forces a sharp or flat to appear. That&apos;s exactly why each key has its own
+              signature:
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              <div style={{
+                background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 10,
+                padding: '10px 12px',
+              }}>
+                <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+                  textTransform: 'uppercase', color: '#7A7060', margin: '0 0 4px' }}>C major</p>
+                <p style={{ fontFamily: SERIF, fontSize: 15, color: '#1A1A18', margin: 0 }}>
+                  No sharps or flats
+                </p>
+              </div>
+              <div style={{
+                background: 'rgba(59,109,181,0.06)', border: '1px solid rgba(59,109,181,0.22)',
+                borderRadius: 10, padding: '10px 12px',
+              }}>
+                <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+                  textTransform: 'uppercase', color: '#3B6DB5', margin: '0 0 4px' }}>F major</p>
+                <p style={{ fontFamily: SERIF, fontSize: 15, color: '#1A1A18', margin: 0 }}>
+                  One flat — B♭
+                </p>
+              </div>
+              <div style={{
+                background: 'rgba(42,92,10,0.07)', border: '1px solid rgba(42,92,10,0.22)',
+                borderRadius: 10, padding: '10px 12px',
+              }}>
+                <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+                  textTransform: 'uppercase', color: '#2A5C0A', margin: '0 0 4px' }}>G major</p>
+                <p style={{ fontFamily: SERIF, fontSize: 15, color: '#1A1A18', margin: 0 }}>
+                  One sharp — F♯
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Concept mnemonics for note-reading lessons */}
         {!practicing && (lessonSlug === 'treble-clef-notes' || lessonSlug === 'review-letter-names') && (
           <div style={{ background: ACCENT_BG, border: `1px solid ${ACCENT_BORDER}`, borderRadius: '14px', padding: '20px 24px', marginBottom: '20px' }}>
@@ -288,6 +333,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'review-patterns-lesson' && 'Two exercises: name each pattern on the staff as major or minor, then write patterns and triads in both clefs.'}
                   {lesson.tool === 'review-1to9-lesson' && 'Five exercises drawn from Lessons 1–9: complete the grand staff, name notes in both clefs, identify whole and half steps, name intervals, and name five-finger patterns.'}
                   {lesson.tool === 'key-signatures-lesson' && 'Four exercises: match each key signature to its name, identify the accidental and the key, write the key signature on an empty staff, and name the key of a short musical example.'}
+                  {lesson.tool === 'major-scales-lesson' && 'Two exercises: mark the whole and half steps in each major scale, then write C, F, and G major scales in both clefs.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -393,6 +439,12 @@ export default function CMPrepLessonPage({ params }: Props) {
                   />
                 ) : lesson.tool === 'key-signatures-lesson' ? (
                   <KeySignaturesLesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'major-scales-lesson' ? (
+                  <MajorScalesLesson
                     passingScore={lesson.passingScore}
                     previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
