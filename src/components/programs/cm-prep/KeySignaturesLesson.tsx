@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useMemo } from 'react'
+import ScoreFromXml from '@/components/music/ScoreFromXml'
 
 const F       = 'var(--font-jost), sans-serif'
 const DARK    = '#1A1A18'
@@ -187,12 +188,23 @@ function GrandStaff({
   const trebleClefY = gTT + 6 * gStep
   const bassClefY   = gBT + 2 * gStep + 2
 
-  // Accidental x-positions — after clef, before time sig
-  const accStartX = gSL + 52
+  // Standard engraving order: clef → (small gap) → key sig → (2-space gap) → time sig.
+  // Start the key sig far enough right that the bass clef glyph clears the accidental.
+  const accStartX  = gSL + 60         // first accidental column
+  const accSpacing = 14               // column spacing when a key has several accidentals
   const keySigAccidentals = keyName ? KEY_SIGS[keyName].placements : []
+  const trebleKeySigAccs  = keySigAccidentals.filter(p => p.clef === 'treble')
+  const bassKeySigAccs    = keySigAccidentals.filter(p => p.clef === 'bass')
+  const studentTrebleAccs = studentAccidentals.filter(p => p.clef === 'treble')
+  const studentBassAccs   = studentAccidentals.filter(p => p.clef === 'bass')
+  const numSlots = Math.max(trebleKeySigAccs.length, bassKeySigAccs.length)
 
-  // Time signature position
-  const timeSigX = accStartX + (keySigAccidentals.length > 0 ? 16 : 0) + 4
+  // Time signature sits 2 staff spaces (~16px) past whatever precedes it.
+  // With no key sig it sits just after the clef; with accidentals it follows
+  // the last accidental column.
+  const timeSigX = numSlots === 0
+    ? gSL + 56
+    : accStartX + numSlots * accSpacing + 8
 
   return (
     <svg
@@ -224,19 +236,23 @@ function GrandStaff({
       <text x={gSL + 5} y={bassClefY} fontFamily="Bravura, serif" fontSize={56}
         fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>
 
-      {/* Key signature accidentals */}
-      {keySigAccidentals.map((p, i) => {
-        const cx = accStartX + i * 12
-        const cy = p.clef === 'treble' ? trebleY(p.pos) : bassY(p.pos)
-        return <AccGlyph key={'ks' + i} cx={cx} cy={cy} acc={p.acc} />
-      })}
+      {/* Key signature accidentals — treble and bass share the same slot (column) */}
+      {trebleKeySigAccs.map((p, i) => (
+        <AccGlyph key={'kst' + i} cx={accStartX + i * accSpacing} cy={trebleY(p.pos)} acc={p.acc} />
+      ))}
+      {bassKeySigAccs.map((p, i) => (
+        <AccGlyph key={'ksb' + i} cx={accStartX + i * accSpacing} cy={bassY(p.pos)} acc={p.acc} />
+      ))}
 
-      {/* Student-placed accidentals (for Ex 3) */}
-      {studentAccidentals.map((p, i) => {
-        const cx = accStartX + i * 12
-        const cy = p.clef === 'treble' ? trebleY(p.pos) : bassY(p.pos)
-        return <AccGlyph key={'sa' + i} cx={cx} cy={cy} acc={p.acc} color={studentAccColor} />
-      })}
+      {/* Student-placed accidentals (for Ex 3) — same slot-based layout */}
+      {studentTrebleAccs.map((p, i) => (
+        <AccGlyph key={'sat' + i} cx={accStartX + i * accSpacing} cy={trebleY(p.pos)}
+          acc={p.acc} color={studentAccColor} />
+      ))}
+      {studentBassAccs.map((p, i) => (
+        <AccGlyph key={'sab' + i} cx={accStartX + i * accSpacing} cy={bassY(p.pos)}
+          acc={p.acc} color={studentAccColor} />
+      ))}
 
       {/* Time signature */}
       {timeSignature && (
@@ -296,8 +312,35 @@ const EX1_POOL: KeyName[] = [
   'C', 'G', 'F', 'G', 'F', 'C',   // distribute so students see each
 ]
 
+// Shuffle so no two consecutive items are the same — the pool is small enough
+// that a plain shuffle often lands on repeats.
+function shuffleNoRepeat<T>(arr: T[]): T[] {
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const out = [...arr].sort(() => Math.random() - 0.5)
+    let ok = true
+    for (let i = 1; i < out.length; i++) {
+      if (out[i] === out[i - 1]) { ok = false; break }
+    }
+    if (ok) return out
+  }
+  // Fallback: greedily swap any adjacent duplicate with a later distinct item.
+  const out = [...arr].sort(() => Math.random() - 0.5)
+  for (let i = 1; i < out.length; i++) {
+    if (out[i] !== out[i - 1]) continue
+    for (let j = i + 1; j < out.length; j++) {
+      const okWithPrev = out[j] !== out[i - 1]
+      const okWithNext = i + 1 >= out.length || out[j] !== out[i + 1]
+      if (okWithPrev && okWithNext) {
+        [out[i], out[j]] = [out[j], out[i]]
+        break
+      }
+    }
+  }
+  return out
+}
+
 function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
-  const items = useMemo(() => shuffled(EX1_POOL), [])
+  const items = useMemo(() => shuffleNoRepeat(EX1_POOL), [])
   const total = items.length
   const [idx,      setIdx]      = useState(0)
   const [feedback, setFeedback] = useState<{ ok: boolean; picked: string } | null>(null)
@@ -382,7 +425,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
 
 // ── Ex 2: Name the accidental + the key ───────────────────────────────────
 function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
-  const items = useMemo(() => shuffled<KeyName>(['C','G','F','G','F','C']), [])
+  const items = useMemo(() => shuffleNoRepeat<KeyName>(['C','G','F','G','F','C']), [])
   const total = items.length
   const [idx,          setIdx]          = useState(0)
   const [pickedAcc,    setPickedAcc]    = useState<string | null>(null)
@@ -417,8 +460,10 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
     }, ok ? 1200 : 2400)
   }
 
-  const accOptions = ['None', 'F♯', 'B♭']
-  const keyOptions = ['C major', 'G major', 'F major']
+  // Shuffle each question so the column position doesn't tip off the answer
+  // (students can't just pick "same column as last time").
+  const accOptions = useMemo(() => shuffled(['None', 'F♯', 'B♭']), [idx])
+  const keyOptions = useMemo(() => shuffled(['C major', 'G major', 'F major']), [idx])
 
   const renderBtn = (opt: string, picked: string | null, setter: (s: string) => void, isAnswerFn: (o: string) => boolean) => {
     const isSel = picked === opt
@@ -504,7 +549,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
 
 // ── Ex 3: Write the key signature on an empty grand staff ─────────────────
 function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
-  const items = useMemo(() => shuffled<KeyName>(['C','G','F','G','F']), [])
+  const items = useMemo(() => shuffleNoRepeat<KeyName>(['C','G','F','G','F']), [])
   const total = items.length
   const [idx,            setIdx]            = useState(0)
   const [placements,     setPlacements]     = useState<KeySigPlacement[]>([])
@@ -657,75 +702,20 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
 }
 
 // ── Ex 4: Identify the key from a short musical example ───────────────────
-// For each key we lay out a simple 4-measure piece with a couple of whole notes
-// per measure. The answer is determined entirely by the key signature.
+// Pieces are real MusicXML (.mxl) files rendered by OpenSheetMusicDisplay.
 interface PieceExample {
   key: KeyName
-  timeSignature: [number, number]
-  notes: GrandStaffNote[]
+  xmlSrc: string
 }
 
-// Treble positions quick reference: 0=C4, 2=E4, 4=G4, 5=A4, 6=B4, 7=C5, 8=D5, 9=E5, 10=F5
-// Bass positions quick reference:   5=C3, 6=D3, 7=E3, 8=F3, 9=G3, 10=A3, 12=C4
-// Four measures — notes spaced per measure (measure width determined by xs)
-function buildMeasuresXs(startX: number, endX: number, nMeasures: number): number[] {
-  const xs: number[] = []
-  const w = (endX - startX) / nMeasures
-  for (let m = 0; m < nMeasures; m++) xs.push(startX + m * w + w / 2)
-  return xs
-}
-
-const EX4_PIECE_WIDTH = 520
-const EX4_BAR_START_X = 140      // after clef + key sig + time sig
-const EX4_BAR_END_X   = EX4_PIECE_WIDTH - 20
-
-function makeExamples(): PieceExample[] {
-  const mxs = buildMeasuresXs(EX4_BAR_START_X, EX4_BAR_END_X, 4)
-  return [
-    // C major piece — C E G C / G E C / etc.
-    {
-      key: 'C',
-      timeSignature: [4, 4],
-      notes: [
-        { clef: 'treble', pos: 7, cx: mxs[0] },   // C5
-        { clef: 'treble', pos: 4, cx: mxs[1] },   // G4
-        { clef: 'treble', pos: 2, cx: mxs[2] },   // E4
-        { clef: 'treble', pos: 7, cx: mxs[3] },   // C5
-        { clef: 'bass',   pos: 5, cx: mxs[0] },   // C3
-        { clef: 'bass',   pos: 9, cx: mxs[2] },   // G3
-      ],
-    },
-    // G major piece — G B D G / (needs F♯ which is handled by key sig)
-    {
-      key: 'G',
-      timeSignature: [4, 4],
-      notes: [
-        { clef: 'treble', pos: 4, cx: mxs[0] },   // G4
-        { clef: 'treble', pos: 6, cx: mxs[1] },   // B4
-        { clef: 'treble', pos: 8, cx: mxs[2] },   // D5
-        { clef: 'treble', pos: 4, cx: mxs[3] },   // G4
-        { clef: 'bass',   pos: 9, cx: mxs[0] },   // G3
-        { clef: 'bass',   pos: 6, cx: mxs[2] },   // D3
-      ],
-    },
-    // F major piece — F A C F / (needs B♭ handled by key sig)
-    {
-      key: 'F',
-      timeSignature: [4, 4],
-      notes: [
-        { clef: 'treble', pos: 3, cx: mxs[0] },   // F4
-        { clef: 'treble', pos: 5, cx: mxs[1] },   // A4
-        { clef: 'treble', pos: 7, cx: mxs[2] },   // C5
-        { clef: 'treble', pos: 3, cx: mxs[3] },   // F4
-        { clef: 'bass',   pos: 8, cx: mxs[0] },   // F3
-        { clef: 'bass',   pos: 5, cx: mxs[2] },   // C3
-      ],
-    },
-  ]
-}
+const EX4_EXAMPLES: PieceExample[] = [
+  { key: 'C', xmlSrc: '/music/prep/c-major.mxl' },
+  { key: 'G', xmlSrc: '/music/prep/g-major.mxl' },
+  { key: 'F', xmlSrc: '/music/prep/f-major.mxl' },
+]
 
 function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
-  const examples = useMemo(() => shuffled(makeExamples()), [])
+  const examples = useMemo(() => shuffled([...EX4_EXAMPLES]), [])
   const total = examples.length
   const [idx,      setIdx]      = useState(0)
   const [feedback, setFeedback] = useState<{ ok: boolean; picked: string } | null>(null)
@@ -734,11 +724,6 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
 
   const piece = examples[idx]
   const answer = `${piece.key} major`
-
-  const mxs = useMemo(() => buildMeasuresXs(EX4_BAR_START_X, EX4_BAR_END_X, 4), [])
-  const barLineXs = mxs.slice(0, -1).map((_, i) =>
-    EX4_BAR_START_X + (i + 1) * ((EX4_BAR_END_X - EX4_BAR_START_X) / 4)
-  )
 
   function pick(opt: string) {
     if (feedback !== null || lockedRef.current) return
@@ -770,15 +755,8 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
       </p>
 
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
-        padding: '12px 0', marginBottom: 14, overflowX: 'auto' }}>
-        <GrandStaff
-          width={EX4_PIECE_WIDTH}
-          keyName={piece.key}
-          timeSignature={piece.timeSignature}
-          notes={piece.notes}
-          barLineXs={barLineXs}
-          endDoubleBar
-        />
+        padding: '12px 0', marginBottom: 14 }}>
+        <ScoreFromXml key={piece.xmlSrc} src={piece.xmlSrc} />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 12 }}>

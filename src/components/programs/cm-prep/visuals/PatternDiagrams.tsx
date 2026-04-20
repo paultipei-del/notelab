@@ -589,8 +589,9 @@ function MinorStaffExamples() {
         {/* Double bar between measures */}
         <line x1={midBar - 1} y1={tTop} x2={midBar - 1} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
         <line x1={midBar + 3} y1={tTop} x2={midBar + 3} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
-        {/* Right barline */}
-        <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+        {/* Right-end double barline */}
+        <line x1={sR - 6} y1={tTop} x2={sR - 6} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+        <line x1={sR}     y1={tTop} x2={sR}     y2={lineY(1)} stroke={DARK} strokeWidth={2.5} />
 
         {clef === 'treble'
           ? <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
@@ -599,12 +600,12 @@ function MinorStaffExamples() {
               fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>}
 
         {/* Section captions above each measure */}
-        <text x={(m1Start + m1End) / 2} y={tTop - 10}
-          fontFamily={F} fontSize={11} fontWeight={700} fill={MAJ_C}
-          textAnchor="middle">major</text>
-        <text x={(m2Start + m2End) / 2} y={tTop - 10}
-          fontFamily={F} fontSize={11} fontWeight={700} fill={MIN_C}
-          textAnchor="middle">minor</text>
+        <text x={(m1Start + m1End) / 2} y={tTop - 14}
+          fontFamily={F} fontSize={14} fontWeight={700} fill={MAJ_C}
+          textAnchor="middle" letterSpacing="1">MAJOR</text>
+        <text x={(m2Start + m2End) / 2} y={tTop - 14}
+          fontFamily={F} fontSize={14} fontWeight={700} fill={MIN_C}
+          textAnchor="middle" letterSpacing="1">MINOR</text>
 
         {/* Major notes */}
         {majorNotes.map((n, i) => {
@@ -614,8 +615,8 @@ function MinorStaffExamples() {
               {renderAcc(n.acc, m1Xs[i], cy)}
               <text x={m1Xs[i]} y={cy} fontFamily="Bravura, serif" fontSize={60}
                 fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
-              <text x={m1Xs[i]} y={lineY(5) - 22}
-                fontFamily={F} fontSize={11} fontWeight={600} fill={GREY}
+              <text x={m1Xs[i]} y={lineY(1) + 24}
+                fontFamily={F} fontSize={14} fontWeight={700} fill={DARK}
                 textAnchor="middle">{n.l}</text>
             </g>
           )
@@ -629,8 +630,8 @@ function MinorStaffExamples() {
               {renderAcc(n.acc, m2Xs[i], cy)}
               <text x={m2Xs[i]} y={cy} fontFamily="Bravura, serif" fontSize={60}
                 fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
-              <text x={m2Xs[i]} y={lineY(5) - 22}
-                fontFamily={F} fontSize={11} fontWeight={600} fill={GREY}
+              <text x={m2Xs[i]} y={lineY(1) + 24}
+                fontFamily={F} fontSize={14} fontWeight={700} fill={DARK}
                 textAnchor="middle">{n.l}</text>
             </g>
           )
@@ -639,8 +640,8 @@ function MinorStaffExamples() {
     )
   }
 
-  const captionStyle = { fontFamily: F, fontSize: 11, color: GREY,
-    textAlign: 'center' as const, margin: '4px 0 0' }
+  const captionStyle = { fontFamily: F, fontSize: 13, color: DARK, fontWeight: 600,
+    textAlign: 'center' as const, marginTop: 8, marginBottom: 2 }
 
   return (
     <div>
@@ -653,71 +654,86 @@ function MinorStaffExamples() {
 }
 
 // ── Lesson 10: Key Signatures ─────────────────────────────────────────────
+// One full-width treble staff per key (C, G, F major), matching the standard
+// staff geometry used throughout CM Prep. Key-signature accidentals are drawn
+// at the proper position (F♯ on the top line; B♭ on the middle line).
 export function KeySignatureDiagram() {
   const step = 8
-  const sTop = 30
-  const colW = 155
-  const sL = 20
-  const sEnd = 110
+  const sL   = 32
+  const sR   = 340
+  const tTop = 30
+  const svgW = sR + 16
+  const svgH = 156    // room below the staff for name + sublabel
 
-  const keySigs = [
-    { name: 'C major', label: 'No sharps or flats', sharps: [], flats: [], accent: '#7A7060' },
-    { name: 'G major', label: '1 sharp: F♯', sharps: [{ name: 'F♯', pos: 0 }], flats: [], accent: MAJ_C },
-    { name: 'F major', label: '1 flat: B♭', sharps: [], flats: [{ name: 'B♭', pos: 4 }], accent: '#3B6DB5' },
+  const lineY  = (n: number) => tTop + (5 - n) * 2 * step
+  const posToY = (pos: number) => tTop + (10 - pos) * step
+
+  type AccSpec = { pos: number; acc: 'sharp' | 'flat' }
+  type KeySig = { name: string; sublabel: string; accidentals: AccSpec[]; accent: string }
+
+  const keySigs: KeySig[] = [
+    { name: 'C major', sublabel: 'No sharps or flats',
+      accidentals: [], accent: '#7A7060' },
+    { name: 'G major', sublabel: 'One sharp: F♯',
+      accidentals: [{ pos: 10, acc: 'sharp' }], accent: MAJ_C },    // F♯ on top line (F5)
+    { name: 'F major', sublabel: 'One flat: B♭',
+      accidentals: [{ pos: 6, acc: 'flat' }],  accent: '#3B6DB5' }, // B♭ on middle line (B4)
   ]
 
+  const renderStaff = (ks: KeySig) => (
+    <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+      style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
+      {/* Staff lines */}
+      {[1, 2, 3, 4, 5].map(n => (
+        <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
+          stroke={DARK} strokeWidth={STROKE_W} />
+      ))}
+      {/* Left + right borders */}
+      <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+      <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+
+      {/* Treble clef — standard size */}
+      <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
+        fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+
+      {/* Key-signature accidentals — positioned just after the clef */}
+      {ks.accidentals.map((a, i) => {
+        const cx = sL + 60 + i * 14
+        const cy = posToY(a.pos)
+        const glyph = a.acc === 'sharp' ? '\uE262' : '\uE260'
+        return (
+          <text key={i} x={cx} y={cy} fontFamily="Bravura, serif" fontSize={48}
+            fill={ks.accent} textAnchor="middle" dominantBaseline="central">{glyph}</text>
+        )
+      })}
+
+      {/* Labels beneath the staff */}
+      <text x={(sL + sR) / 2} y={lineY(1) + 24}
+        fontFamily={SERIF} fontSize={17} fontWeight={600} fill={DARK}
+        textAnchor="middle">{ks.name}</text>
+      <text x={(sL + sR) / 2} y={lineY(1) + 42}
+        fontFamily={F} fontSize={12} fontWeight={600} fill={ks.accent}
+        textAnchor="middle" letterSpacing="0.5">{ks.sublabel}</text>
+    </svg>
+  )
+
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 490 175" width="100%" style={{ maxWidth: 490, display: 'block', margin: '0 auto' }}>
-
-        {keySigs.map((ks, ki) => {
-          const ox = sL + ki * colW
-
-          return (
-            <g key={ks.name}>
-              {/* Staff */}
-              {[0, 2, 4, 6, 8].map(p => (
-                <line key={p} x1={ox} y1={sTop + p * step} x2={ox + sEnd} y2={sTop + p * step}
-                  stroke={DARK} strokeWidth={STROKE_W} />
-              ))}
-              <line x1={ox} y1={sTop} x2={ox} y2={sTop + 8 * step} stroke={DARK} strokeWidth={STROKE_W} />
-              <line x1={ox + sEnd} y1={sTop} x2={ox + sEnd} y2={sTop + 8 * step} stroke={DARK} strokeWidth={1.5} />
-
-              {/* Treble clef */}
-              <text x={ox + 1} y={sTop + 36} fontFamily="Bravura, serif" fontSize={50} fill={DARK}>&#x1D11E;</text>
-
-              {/* Sharp accidentals in key sig */}
-              {ks.sharps.map((acc, ai) => (
-                <text key={ai} x={ox + 42 + ai * 10} y={sTop + acc.pos * step + 5}
-                  fontFamily="Bravura, serif" fontSize={16} fill={ks.accent}>&#x266F;</text>
-              ))}
-
-              {/* Flat accidentals in key sig */}
-              {ks.flats.map((acc, ai) => (
-                <text key={ai} x={ox + 42 + ai * 10} y={sTop + acc.pos * step + 8}
-                  fontFamily="Bravura, serif" fontSize={18} fill={ks.accent}>&#x266D;</text>
-              ))}
-
-              {/* Label */}
-              <text x={ox + sEnd / 2} y={sTop + 8 * step + 20}
-                fontFamily={SERIF} fontSize={15} fontWeight="400" fill={DARK} textAnchor="middle">
-                {ks.name}
-              </text>
-              <text x={ox + sEnd / 2} y={sTop + 8 * step + 35}
-                fontFamily={F} fontSize={10} fill={ks.accent} textAnchor="middle">
-                {ks.label}
-              </text>
-            </g>
-          )
-        })}
-
-        {/* Summary rule */}
-        <rect x={sL} y={145} width={450} height={24} rx={8}
-          fill="rgba(186,117,23,0.08)" stroke="rgba(186,117,23,0.2)" strokeWidth={1} />
-        <text x={sL + 225} y={161} fontFamily={F} fontSize={10} fill={DARK} textAnchor="middle">
-          Key signature appears right after the clef — its accidentals apply to the entire piece
-        </text>
-      </svg>
+    <div>
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 12, lineHeight: 1.7 }}>
+        A <strong style={{ color: DARK }}>key signature</strong> sits right after the clef and tells
+        you which notes are sharp or flat for the whole piece. At the preparatory level, three keys
+        cover most of the literature.
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {keySigs.map(ks => (
+          <div key={ks.name} style={{
+            background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+            padding: '8px 0',
+          }}>
+            {renderStaff(ks)}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
