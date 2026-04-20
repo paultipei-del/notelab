@@ -69,6 +69,16 @@ function FlatGlyph({ cx, cy, color = DARK }: { cx: number; cy: number; color?: s
   )
 }
 
+type AccType = 'flat' | 'sharp' | 'natural'
+function AccidentalGlyph({ cx, cy, acc, color = DARK }:
+  { cx: number; cy: number; acc: AccType; color?: string }) {
+  const glyph = acc === 'flat' ? '\uE260' : acc === 'sharp' ? '\uE262' : '\uE261'
+  return (
+    <text x={cx - 20} y={cy} fontFamily="Bravura, serif" fontSize={48}
+      fill={color} textAnchor="middle" dominantBaseline="central">{glyph}</text>
+  )
+}
+
 // ── UI helpers ────────────────────────────────────────────────────────────────
 function shuffled<T>(arr: T[]): T[] { return [...arr].sort(() => Math.random() - 0.5) }
 
@@ -135,7 +145,7 @@ interface Ex1Item {
 
 const EX1_POOL: Ex1Item[] = [
   // Treble — pos 0 = C4, 1 = D4, 2 = E4 … 12 = A5
-  // Valid 5-finger patterns (5 adjacent positions):
+  // Valid 5-finger patterns, ascending:
   { clef: 'treble', isFivePattern: true,
     notes: [{ pos: 0 }, { pos: 1 }, { pos: 2 }, { pos: 3 }, { pos: 4 }] },                             // C D E F G
   { clef: 'treble', isFivePattern: true,
@@ -143,30 +153,48 @@ const EX1_POOL: Ex1Item[] = [
   { clef: 'treble', isFivePattern: true,
     notes: [{ pos: 4 }, { pos: 5 }, { pos: 6 }, { pos: 7 }, { pos: 8 }] },                             // G A B C D
   { clef: 'treble', isFivePattern: true,
-    notes: [{ pos: 6 }, { pos: 7 }, { pos: 8 }, { pos: 9 }, { pos: 10, acc: 'sharp' }] },              // B C D E F♯
+    notes: [{ pos: 6 }, { pos: 7, acc: 'sharp' }, { pos: 8 }, { pos: 9 }, { pos: 10, acc: 'sharp' }] }, // B C♯ D E F♯
+  // Valid 5-finger patterns, descending:
+  { clef: 'treble', isFivePattern: true,
+    notes: [{ pos: 4 }, { pos: 3 }, { pos: 2 }, { pos: 1 }, { pos: 0 }] },                             // G F E D C (desc)
+  { clef: 'treble', isFivePattern: true,
+    notes: [{ pos: 8 }, { pos: 7 }, { pos: 6 }, { pos: 5 }, { pos: 4 }] },                             // D C B A G (desc)
 
-  // Invalid — skips between notes:
+  // Invalid treble — skips between notes:
   { clef: 'treble', isFivePattern: false,
     notes: [{ pos: 0 }, { pos: 2 }, { pos: 4 }, { pos: 6 }, { pos: 8 }] },                             // C E G B D — all thirds
   { clef: 'treble', isFivePattern: false,
     notes: [{ pos: 2 }, { pos: 3 }, { pos: 4 }, { pos: 6 }, { pos: 7 }] },                             // E F G skip B C
+  { clef: 'treble', isFivePattern: false,
+    notes: [{ pos: 5 }, { pos: 4 }, { pos: 3 }, { pos: 1 }, { pos: 0 }] },                             // A G F D C — desc, skips E
 
   // Bass — pos 0 = E2, 2 = G2, 6 = D3, 8 = F3, 10 = A3, 12 = C4
+  // Valid ascending:
   { clef: 'bass', isFivePattern: true,
     notes: [{ pos: 2 }, { pos: 3 }, { pos: 4 }, { pos: 5 }, { pos: 6 }] },                             // G A B C D
   { clef: 'bass', isFivePattern: true,
     notes: [{ pos: 6 }, { pos: 7 }, { pos: 8, acc: 'sharp' }, { pos: 9 }, { pos: 10 }] },              // D E F♯ G A
+  // Valid descending:
+  { clef: 'bass', isFivePattern: true,
+    notes: [{ pos: 5 }, { pos: 4 }, { pos: 3 }, { pos: 2 }, { pos: 1 }] },                             // C B A G F (desc)
+  { clef: 'bass', isFivePattern: true,
+    notes: [{ pos: 7 }, { pos: 6 }, { pos: 5 }, { pos: 4 }, { pos: 3 }] },                             // E D C B A (desc)
+
+  // Invalid bass — skips:
   { clef: 'bass', isFivePattern: false,
     notes: [{ pos: 1 }, { pos: 3 }, { pos: 5 }, { pos: 7 }, { pos: 9 }] },                             // stacked thirds
   { clef: 'bass', isFivePattern: false,
     notes: [{ pos: 5 }, { pos: 6 }, { pos: 8 }, { pos: 9 }, { pos: 11 }] },                            // two gaps
+  { clef: 'bass', isFivePattern: false,
+    notes: [{ pos: 6 }, { pos: 5 }, { pos: 4 }, { pos: 2 }, { pos: 1 }] },                             // D C B G F — desc, skips A
 ]
 
-const EX1_NOTE_START = 90
-const EX1_NOTE_SPAN  = 240
+// Notes are placed with equal gaps: clef-to-first, each pair, last-to-right-border
+// all ~48px apart. Clef area ends around x=72, right border at sR=360.
+const EX1_NOTE_XS = [120, 168, 216, 264, 312]
 
 function Ex1Staff({ item }: { item: Ex1Item }) {
-  const xs = Array.from({ length: 5 }, (_, i) => EX1_NOTE_START + (i + 0.5) * (EX1_NOTE_SPAN / 5))
+  const xs = EX1_NOTE_XS
   return (
     <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
       style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -247,9 +275,14 @@ function IdentifyPatternEx({
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
-        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '4px' }}>
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — do these five notes form a
         five-finger pattern?
+      </p>
+      <p style={{ fontFamily: F, fontSize: 12, color: GREY, fontStyle: 'italic',
+        margin: '0 0 10px', lineHeight: 1.6 }}>
+        Look for five <strong>adjacent</strong> lines and spaces — don&apos;t worry about the
+        W–W–H–W formula here. Any unbroken 5-note run counts, major or not.
       </p>
 
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -531,35 +564,25 @@ function BuildKeyboardEx({
 }
 
 // ── Ex 5: Place the triad on the staff ──────────────────────────────────────
-// Grand staff, student taps 3 positions that form the target triad.
-// Positions stack at the same x; accidentals (D major F♯) auto-render when the
-// position lines up with the correct natural pitch that needs the sharp.
-// Treble pos: 0 = C4 … 7 = C5 … 12 = A5
-// Bass pos:   0 = E2 …            12 = C4
-
+// Student taps positions to place the 3 noteheads and must add any required
+// accidental themselves (D major triad → sharp on the middle note). Other
+// triads (C, F, G) take no accidental.
+interface TriadNote { pos: number; acc?: AccType }
 interface TriadTarget {
   clef: 'treble' | 'bass'
   rootKey: MajorKey
-  positions: number[]       // 3 staff positions, ascending
-  accidentalPos?: number    // pos that gets a sharp (F♯ for D major)
+  notes: TriadNote[]   // 3 notes; optional accidental per note
 }
 
 const EX5_POOL: TriadTarget[] = [
-  // C major triad: C E G
-  { clef: 'treble', rootKey: 'C', positions: [0, 2, 4] },                   // C4 E4 G4
-  { clef: 'bass',   rootKey: 'C', positions: [5, 7, 9] },                   // C3 E3 G3
-
-  // F major triad: F A C
-  { clef: 'treble', rootKey: 'F', positions: [3, 5, 7] },                   // F4 A4 C5
-  { clef: 'bass',   rootKey: 'F', positions: [1, 3, 5] },                   // F2 A2 C3
-
-  // G major triad: G B D
-  { clef: 'treble', rootKey: 'G', positions: [4, 6, 8] },                   // G4 B4 D5
-  { clef: 'bass',   rootKey: 'G', positions: [2, 4, 6] },                   // G2 B2 D3
-
-  // D major triad: D F♯ A — sharp on the middle note
-  { clef: 'treble', rootKey: 'D', positions: [1, 3, 5], accidentalPos: 3 }, // D4 F♯4 A4
-  { clef: 'bass',   rootKey: 'D', positions: [6, 8, 10], accidentalPos: 8 }, // D3 F♯3 A3
+  { clef: 'treble', rootKey: 'C', notes: [{ pos: 0 }, { pos: 2 }, { pos: 4 }] },                                // C E G
+  { clef: 'bass',   rootKey: 'C', notes: [{ pos: 5 }, { pos: 7 }, { pos: 9 }] },                                // C E G
+  { clef: 'treble', rootKey: 'F', notes: [{ pos: 3 }, { pos: 5 }, { pos: 7 }] },                                // F A C
+  { clef: 'bass',   rootKey: 'F', notes: [{ pos: 1 }, { pos: 3 }, { pos: 5 }] },                                // F A C
+  { clef: 'treble', rootKey: 'G', notes: [{ pos: 4 }, { pos: 6 }, { pos: 8 }] },                                // G B D
+  { clef: 'bass',   rootKey: 'G', notes: [{ pos: 2 }, { pos: 4 }, { pos: 6 }] },                                // G B D
+  { clef: 'treble', rootKey: 'D', notes: [{ pos: 1 }, { pos: 3, acc: 'sharp' }, { pos: 5 }] },                  // D F♯ A
+  { clef: 'bass',   rootKey: 'D', notes: [{ pos: 6 }, { pos: 8, acc: 'sharp' }, { pos: 10 }] },                 // D F♯ A
 ]
 
 const EX5_NOTE_X = 190   // all 3 noteheads stack at this x
@@ -572,16 +595,17 @@ function PlaceTriadEx({
   const items = useMemo(() => shuffled(EX5_POOL).slice(0, 6), [])
   const total = items.length
 
-  const [idx,       setIdx]       = useState(0)
-  const [staged,    setStaged]    = useState<number[]>([])
-  const [submitted, setSubmitted] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
+  const [idx,         setIdx]         = useState(0)
+  const [stagedNotes, setStagedNotes] = useState<Record<number, AccType | null>>({})
+  const [pickedAcc,   setPickedAcc]   = useState<AccType | null>(null)
+  const [submitted,   setSubmitted]   = useState(false)
+  const [isCorrect,   setIsCorrect]   = useState(false)
   const correctRef = useRef(0)
   const lockedRef  = useRef(false)
   const svgRef     = useRef<SVGSVGElement | null>(null)
 
   const item = items[idx]
-  const target = new Set(item.positions)
+  const placedCount = Object.keys(stagedNotes).length
 
   function clientToPos(clientY: number): number {
     const svg = svgRef.current
@@ -598,32 +622,59 @@ function PlaceTriadEx({
     if (submitted || lockedRef.current) return
     if (!svgRef.current) svgRef.current = e.currentTarget
     const pos = clientToPos(e.clientY)
-    setStaged(prev => {
-      // toggle: click an already-selected pos to remove it, else add (cap at 3)
-      if (prev.includes(pos)) return prev.filter(p => p !== pos)
-      if (prev.length >= 3) return prev
-      return [...prev, pos]
+    setStagedNotes(prev => {
+      const hasNote = pos in prev
+      const next = { ...prev }
+      if (!pickedAcc) {
+        if (hasNote) { delete next[pos] }
+        else {
+          if (Object.keys(prev).length >= 3) return prev
+          next[pos] = null
+        }
+      } else {
+        if (hasNote) {
+          next[pos] = prev[pos] === pickedAcc ? null : pickedAcc
+        } else {
+          if (Object.keys(prev).length >= 3) return prev
+          next[pos] = pickedAcc
+        }
+      }
+      return next
     })
   }
 
+  function selectAcc(acc: AccType) {
+    if (submitted || lockedRef.current) return
+    setPickedAcc(prev => prev === acc ? null : acc)
+  }
+
+  function onReset() {
+    if (submitted || lockedRef.current) return
+    setStagedNotes({}); setPickedAcc(null)
+  }
+
   function onConfirm() {
-    if (submitted || lockedRef.current || staged.length !== 3) return
+    if (submitted || lockedRef.current || placedCount !== 3) return
     lockedRef.current = true
-    const stagedSet = new Set(staged)
-    const ok = stagedSet.size === target.size &&
-      [...target].every(p => stagedSet.has(p))
+    const ok = item.notes.length === placedCount &&
+      item.notes.every(n => {
+        if (!(n.pos in stagedNotes)) return false
+        const studentAcc = stagedNotes[n.pos] ?? null
+        const targetAcc  = n.acc ?? null
+        return studentAcc === targetAcc
+      })
     if (ok) correctRef.current += 1
     setSubmitted(true); setIsCorrect(ok)
     setTimeout(() => {
       if (idx + 1 >= total) { onDone(correctRef.current, total); return }
       setIdx(i => i + 1)
-      setStaged([]); setSubmitted(false); setIsCorrect(false)
+      setStagedNotes({}); setPickedAcc(null)
+      setSubmitted(false); setIsCorrect(false)
       lockedRef.current = false
     }, ok ? 1200 : 2200)
   }
 
-  // The visual should stack the triad at the same x; draw ledger lines when needed.
-  const renderNote = (pos: number, color: string, opacity = 1) => {
+  const renderNote = (pos: number, acc: AccType | null, color: string, opacity = 1) => {
     const cy = posToY(pos)
     const showLedgerTreble = item.clef === 'treble' && pos === 0
     const showLedgerBass   = item.clef === 'bass'   && (pos === 0 || pos === 12)
@@ -631,10 +682,31 @@ function PlaceTriadEx({
       <g key={pos} opacity={opacity}>
         {(showLedgerTreble || showLedgerBass) &&
           <LedgerLine cx={EX5_NOTE_X} cy={cy} color={color} />}
-        {item.accidentalPos === pos &&
-          <SharpGlyph cx={EX5_NOTE_X} cy={cy} color={color} />}
+        {acc && <AccidentalGlyph cx={EX5_NOTE_X} cy={cy} acc={acc} color={color} />}
         <BravuraNote cx={EX5_NOTE_X} cy={cy} color={color} />
       </g>
+    )
+  }
+
+  const accBtn = (acc: AccType, glyph: string) => {
+    const active = pickedAcc === acc
+    return (
+      <button key={acc} onClick={() => selectAcc(acc)}
+        disabled={submitted}
+        aria-label={acc}
+        style={{
+          width: 48, height: 48, borderRadius: 10,
+          border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
+          background: active ? DARK : 'white',
+          color: active ? 'white' : DARK,
+          fontFamily: 'var(--font-cormorant), serif',
+          fontSize: 28, lineHeight: 1,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          padding: 0,
+          cursor: submitted ? 'default' : 'pointer',
+        }}>
+        {glyph}
+      </button>
     )
   }
 
@@ -669,31 +741,55 @@ function PlaceTriadEx({
           {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
 
           {/* Staged ghost noteheads */}
-          {!submitted && staged.map(pos => renderNote(pos, ACCENT, 0.55))}
+          {!submitted && Object.entries(stagedNotes).map(([posStr, acc]) =>
+            renderNote(Number(posStr), acc, ACCENT, 0.55))}
 
           {/* Committed result */}
-          {submitted && staged.map(pos => renderNote(pos, isCorrect ? CORRECT : WRONG))}
+          {submitted && Object.entries(stagedNotes).map(([posStr, acc]) =>
+            renderNote(Number(posStr), acc, isCorrect ? CORRECT : WRONG))}
 
-          {/* Correct hint overlay on wrong answer */}
-          {submitted && !isCorrect && item.positions.map(pos =>
-            <g key={`hint-${pos}`} opacity={0.45}>{renderNote(pos, CORRECT, 1)}</g>
+          {/* Correct hint on wrong answer */}
+          {submitted && !isCorrect && item.notes.map(n =>
+            <g key={`hint-${n.pos}`} opacity={0.45}>
+              {renderNote(n.pos, n.acc ?? null, CORRECT, 1)}
+            </g>
           )}
         </svg>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
-        <button onClick={onConfirm}
-          disabled={submitted || staged.length !== 3}
+      {/* Accidental pad + Check */}
+      <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center',
+        marginBottom: 12, flexWrap: 'wrap' }}>
+        {accBtn('flat', '\u266D')}
+        {accBtn('natural', '\u266E')}
+        {accBtn('sharp', '\u266F')}
+        <div style={{ width: 1, height: 28, background: '#DDD8CA', margin: '0 4px' }} />
+        <button onClick={onReset}
+          disabled={submitted}
           style={{
-            padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
-            cursor: submitted || staged.length !== 3 ? 'default' : 'pointer',
-            background: submitted || staged.length !== 3 ? '#EDE8DF' : DARK,
-            color: submitted || staged.length !== 3 ? '#B0ACA4' : 'white',
+            padding: '10px 16px', borderRadius: 10,
+            border: '1.5px solid #DDD8CA', background: 'white',
+            color: '#7A7060', fontFamily: F, fontSize: 13,
+            cursor: submitted ? 'default' : 'pointer',
           }}>
-          Check ({staged.length}/3)
+          Reset
+        </button>
+        <button onClick={onConfirm}
+          disabled={submitted || placedCount !== 3}
+          style={{
+            padding: '10px 24px', borderRadius: 10, border: 'none',
+            fontFamily: F, fontSize: 14, fontWeight: 600,
+            cursor: submitted || placedCount !== 3 ? 'default' : 'pointer',
+            background: submitted || placedCount !== 3 ? '#EDE8DF' : DARK,
+            color: submitted || placedCount !== 3 ? '#B0ACA4' : 'white',
+          }}>
+          Check ({placedCount}/3)
         </button>
       </div>
+
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: '0 0 8px', lineHeight: 1.6 }}>
+        Tap the staff to place a notehead. Pick an accidental, then tap a note to apply it.
+      </p>
 
       <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>

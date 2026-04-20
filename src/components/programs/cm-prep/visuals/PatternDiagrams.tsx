@@ -101,15 +101,9 @@ export function MajorPatternDiagram() {
             </button>
           )
         })}
-        <span style={{ flex: 1 }} />
-        <span style={{
-          fontFamily: SERIF, fontSize: 17, fontWeight: 600, color: MAJ_C,
-          alignSelf: 'center',
-        }}>
-          {p.letters.join(' ')}  ·  triad {triadLetters(patternKey).join(' – ')}
-        </span>
       </div>
 
+      <PatternLegend letters={p.letters} mode="major" />
       <PatternKeyboard pattern={p.notes} triadSet={triadSet} patternLetters={p.letters} />
 
       <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: '14px 0 10px', lineHeight: 1.7 }}>
@@ -122,6 +116,82 @@ export function MajorPatternDiagram() {
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '10px 0', marginBottom: 4 }}>
         <StaffExamples />
+      </div>
+    </div>
+  )
+}
+
+// ── Finger / letter legend — HTML chips rendered above the keyboard ───────
+// The in-SVG pills previously drawn in PatternKeyboard scale down with the
+// keyboard and become unreadable; this legend uses real browser font sizing.
+export function PatternLegend({
+  letters, triadIndices = [0, 2, 4], mode = 'major',
+}: {
+  letters: string[]
+  triadIndices?: number[]
+  mode?: 'major' | 'minor'
+}) {
+  const patternBg     = mode === 'major' ? '#EAF5DE' : '#E4EDFA'
+  const patternBorder = mode === 'major' ? '#78A850' : '#3B6DB5'
+  const patternText   = mode === 'major' ? '#1A5C0A' : '#2A4D7A'
+  const triadBg       = '#FFF4D0'
+  const triadBorder   = '#C89028'
+  const triadText     = '#7A4800'
+  const triadSet = new Set(triadIndices)
+
+  // Fixed-width grid so the bracket below can line up with each chip's center.
+  const COL_W = 68
+  const COL_GAP = 8
+  const GRID_W = 5 * COL_W + 4 * COL_GAP
+  const colCenter = (i: number) => i * (COL_W + COL_GAP) + COL_W / 2
+
+  return (
+    <div style={{ margin: '0 0 12px' }}>
+      <div style={{
+        display: 'grid', gridTemplateColumns: `repeat(5, ${COL_W}px)`,
+        gap: COL_GAP, justifyContent: 'center', marginBottom: 4,
+      }}>
+        {letters.map((letter, i) => {
+          const isTri = triadSet.has(i)
+          const ordinal = ['1st', '2nd', '3rd', '4th', '5th'][i]
+          return (
+            <div key={i} style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              padding: '6px 0', borderRadius: 10,
+              background: isTri ? triadBg : patternBg,
+              border: `1.5px solid ${isTri ? triadBorder : patternBorder}`,
+              color: isTri ? triadText : patternText,
+            }}>
+              <div style={{
+                fontFamily: F, fontSize: 10, fontWeight: 700,
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                opacity: 0.75,
+              }}>{ordinal}</div>
+              <div style={{
+                fontFamily: SERIF, fontSize: 22, fontWeight: 700,
+                lineHeight: 1.1, marginTop: 2,
+              }}>{letter}</div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Triad bracket: single gold rail spanning the three triad chips,
+          with tick marks at 1st / 3rd / 5th and one "triad" label */}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <svg width={GRID_W} height={28} viewBox={`0 0 ${GRID_W} 28`}
+          style={{ display: 'block' }}>
+          <line x1={colCenter(0)} y1={6} x2={colCenter(4)} y2={6}
+            stroke={triadBorder} strokeWidth={2} strokeLinecap="round" />
+          {[0, 2, 4].map(i => (
+            <line key={i} x1={colCenter(i)} y1={2} x2={colCenter(i)} y2={10}
+              stroke={triadBorder} strokeWidth={2} strokeLinecap="round" />
+          ))}
+          <text x={colCenter(2)} y={22}
+            fontFamily={F} fontSize={11} fontWeight={700}
+            fill={triadText} textAnchor="middle"
+            letterSpacing="1">TRIAD</text>
+        </svg>
       </div>
     </div>
   )
@@ -145,7 +215,7 @@ export function PatternKeyboard({
   const BK_W = 51
   const LEFT_PAD = 30
   const RIGHT_PAD = 8
-  const KB_TOP = 120
+  const KB_TOP = 44   // shorter wood panel now that finger pills live outside the SVG
   const KEY_Y  = 69 + KB_TOP
   const KEY_END = 441 + KB_TOP
   const FACE_B = 449 + KB_TOP
@@ -156,7 +226,7 @@ export function PatternKeyboard({
   const WHITE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
   const N_WHITE = 15
   const VW = LEFT_PAD + N_WHITE * KEY_PITCH - 2 + RIGHT_PAD
-  const VH = 600
+  const VH = FACE_B + 24      // small bottom lip of wood below the keys
 
   const wkX = (i: number) => LEFT_PAD + i * KEY_PITCH
 
@@ -180,14 +250,6 @@ export function PatternKeyboard({
     const x = wkX(oct * 7) + BK_OCTAVE_OFFSETS[bi]
     return { kind: 'black', x, centerX: x + BK_W / 2 }
   }
-
-  // Pre-compute lookup maps: chromatic → pattern finger (1-5) and triad flag
-  const fingerByChromatic: Record<number, number> = {}
-  pattern.forEach((c, i) => { fingerByChromatic[c] = i + 1 })
-
-  // Letters above each lit key — optional; omitted in match-the-pattern exercises
-  const letterByChromatic: Record<number, string> = {}
-  if (patternLetters) pattern.forEach((c, i) => { letterByChromatic[c] = patternLetters[i] })
 
   return (
     <div style={{ borderRadius: 18, overflow: 'hidden',
@@ -247,35 +309,9 @@ export function PatternKeyboard({
         </defs>
 
         <rect x={0} y={0} width={VW} height={VH} fill="url(#mpk-wood)" />
-        <rect x={0} y={KB_TOP - 88} width={VW} height={36} fill="url(#mpk-woodSheen)" rx={4} />
+        <rect x={0} y={4} width={VW} height={18} fill="url(#mpk-woodSheen)" rx={4} />
         <rect x={24} y={KB_TOP - 8} width={VW - 48} height={10} fill="#6a1515" rx={3} />
         <rect x={24} y={KB_TOP - 8} width={VW - 48} height={3}  fill="#9a2828" opacity={0.55} rx={3} />
-
-        {/* Finger-number pills in the wood area, above each pattern key */}
-        {pattern.map(c => {
-          const info = keyInfo(c)
-          const finger = fingerByChromatic[c]
-          const isTri  = triadSet.has(c)
-          return (
-            <g key={`f-${c}`}>
-              <circle cx={info.centerX} cy={KB_TOP - 48} r={14}
-                fill={isTri ? '#D49210' : MAJ_C} />
-              <text x={info.centerX} y={KB_TOP - 44}
-                fontFamily={F} fontSize={15} fontWeight={700} fill="white"
-                textAnchor="middle" dominantBaseline="central">
-                {finger}
-              </text>
-              {patternLetters && (
-                <text x={info.centerX} y={KB_TOP - 18}
-                  fontFamily={F} fontSize={12} fontWeight={600}
-                  fill={isTri ? '#F0D070' : '#C0E890'}
-                  textAnchor="middle" dominantBaseline="central">
-                  {letterByChromatic[c]}
-                </text>
-              )}
-            </g>
-          )
-        })}
 
         {/* White keys */}
         {Array.from({ length: N_WHITE }, (_, i) => {
@@ -339,74 +375,99 @@ export function PatternKeyboard({
 function StaffExamples() {
   const step = 8
   const sL   = 32
-  const sR   = 360
-  const tTop = 54
+  const sR   = 576                           // wide staff for two patterns side-by-side
+  const tTop = 36                            // leaves room for letter labels above
   const svgW = sR + 16
-  const svgH = tTop + 8 * step + 54
+  const svgH = tTop + 8 * step + 28
 
   const lineY  = (n: number) => tTop + (5 - n) * 2 * step
   const posToY = (pos: number) => tTop + (10 - pos) * step
 
-  // Treble C major 5FP: C4 D4 E4 F4 G4 → pos 0,1,2,3,4
-  // Bass   D major 5FP: D3 E3 F#3 G3 A3 → pos 6,7,8,9,10 (F#3 = pos 8 with sharp accidental)
+  // C major in treble clef: C4 D4 E4 F4 G4 → pos 0,1,2,3,4
+  // D major in bass clef:   D3 E3 F♯3 G3 A3 → pos 6,7,8,9,10 (same pos system, bass interpretation)
   const trebleNotes = [{ pos: 0, letter: 'C' }, { pos: 1, letter: 'D' }, { pos: 2, letter: 'E' }, { pos: 3, letter: 'F' }, { pos: 4, letter: 'G' }]
   const bassNotes   = [{ pos: 6, letter: 'D' }, { pos: 7, letter: 'E' }, { pos: 8, letter: 'F♯', acc: true }, { pos: 9, letter: 'G' }, { pos: 10, letter: 'A' }]
 
-  const xStart = sL + 70
-  const xEnd   = sR - 12
-  const span   = xEnd - xStart
-  const xs = (n: number) => Array.from({ length: n }, (_, i) => xStart + (i + 0.5) * (span / n))
+  // Layout: [treble clef] [5 treble notes] [barline] [clef change] [5 bass notes]
+  // Spacing: 44px between notes; 24px between last treble note and barline;
+  // 24px between barline and clef change; 38px from clef change to first bass note.
+  const trebleXs = [100, 144, 188, 232, 276]
+  const midBarX  = 300
+  const clefChangeX = 324
+  const bassXs   = [362, 406, 450, 494, 538]
 
-  const renderStaff = (clef: 'treble' | 'bass', notes: { pos: number; letter: string; acc?: boolean }[]) => {
-    const xx = xs(notes.length)
-    return (
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 20px',
+        marginBottom: 4, gap: 20 }}>
+        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0 }}>
+          <strong style={{ color: MAJ_C }}>C major</strong> — treble
+        </p>
+        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0 }}>
+          <strong style={{ color: MAJ_C }}>D major</strong> — bass
+        </p>
+      </div>
+
       <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
-        style={{ maxWidth: svgW, display: 'block', margin: '6px auto' }}>
+        style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
+
+        {/* Staff lines */}
         {[1, 2, 3, 4, 5].map(n => (
           <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
             stroke={DARK} strokeWidth={STROKE_W} />
         ))}
+        {/* Left + right borders */}
         <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
         <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
-        {clef === 'treble'
-          ? <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
-              fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
-          : <text x={sL + 2} y={tTop + 2 * step + 2} fontFamily="Bravura, serif" fontSize={66}
-              fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>}
 
-        {notes.map((n, i) => {
-          const cx = xx[i]
+        {/* Barline before the clef change */}
+        <line x1={midBarX} y1={tTop} x2={midBarX} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+
+        {/* Initial treble clef */}
+        <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
+          fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+
+        {/* Clef change marker (smaller bass clef) */}
+        <text x={clefChangeX} y={tTop + 2 * step + 2} fontFamily="Bravura, serif" fontSize={48}
+          fill={DARK} textAnchor="middle" dominantBaseline="auto">{'\uD834\uDD22'}</text>
+
+        {/* Treble notes (C major) — labels above each note */}
+        {trebleNotes.map((n, i) => {
+          const cx = trebleXs[i]
           const cy = posToY(n.pos)
           return (
-            <g key={i}>
-              {n.pos === 0 && clef === 'treble' &&
-                <line x1={cx - 14} y1={cy} x2={cx + 14} y2={cy} stroke={DARK} strokeWidth={STROKE_W} />}
+            <g key={'t' + i}>
+              {n.pos === 0 && (
+                <line x1={cx - 14} y1={cy} x2={cx + 14} y2={cy} stroke={DARK} strokeWidth={STROKE_W} />
+              )}
+              <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={60}
+                fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
+              <text x={cx} y={tTop - 16}
+                fontFamily={F} fontSize={15} fontWeight={700} fill={MAJ_C}
+                textAnchor="middle">{n.letter}</text>
+            </g>
+          )
+        })}
+
+        {/* Bass notes (D major) — labels above each note */}
+        {bassNotes.map((n, i) => {
+          const cx = bassXs[i]
+          const cy = posToY(n.pos)
+          return (
+            <g key={'b' + i}>
               {n.acc && (
                 <text x={cx - 20} y={cy} fontFamily="Bravura, serif" fontSize={48}
                   fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE262'}</text>
               )}
               <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={60}
                 fill={DARK} textAnchor="middle" dominantBaseline="central">{'\uE0A2'}</text>
-              <text x={cx} y={lineY(5) - 8}
-                fontFamily={F} fontSize={11} fontWeight={700} fill={MAJ_C}
+              <text x={cx} y={tTop - 16}
+                fontFamily={F} fontSize={15} fontWeight={700} fill={MAJ_C}
                 textAnchor="middle">{n.letter}</text>
             </g>
           )
         })}
       </svg>
-    )
-  }
-
-  return (
-    <div>
-      <p style={{ fontFamily: F, fontSize: 11, color: GREY, textAlign: 'center', margin: '0 0 4px' }}>
-        C major — treble
-      </p>
-      {renderStaff('treble', trebleNotes)}
-      <p style={{ fontFamily: F, fontSize: 11, color: GREY, textAlign: 'center', margin: '12px 0 4px' }}>
-        D major — bass
-      </p>
-      {renderStaff('bass', bassNotes)}
     </div>
   )
 }
@@ -448,14 +509,9 @@ export function MinorPatternDiagram() {
             </button>
           )
         })}
-        <span style={{ flex: 1 }} />
-        <span style={{
-          fontFamily: SERIF, fontSize: 17, fontWeight: 600, color: MIN_C,
-          alignSelf: 'center',
-        }}>
-          {p.letters.join(' ')}  ·  triad {minorTriadLetters(patternKey).join(' – ')}
-        </span>
       </div>
+
+      <PatternLegend letters={p.letters} mode="minor" />
 
       <PatternKeyboard pattern={p.notes} triadSet={triadSet} patternLetters={p.letters} />
 
