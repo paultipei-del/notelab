@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson' | 'major-scales-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson' | 'major-scales-lesson' | 'time-signatures-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -174,7 +174,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Counting beats and note values',
     description: "The time signature sits at the beginning of every piece, stacked like a fraction. The top number tells you how many beats belong in each measure. The bottom number tells you which note value receives one beat — a 4 on the bottom means the quarter note gets the beat.",
     type: 'lesson',
-    tool: 'mc-quiz',
+    tool: 'time-signatures-lesson',
     unlockAfter: 'major-scales',
     passingScore: 0.8,
   },

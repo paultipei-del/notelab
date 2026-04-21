@@ -31,6 +31,7 @@ import ReviewPatternsLesson from '@/components/programs/cm-prep/ReviewPatternsLe
 import ReviewLessons1to9Lesson from '@/components/programs/cm-prep/ReviewLessons1to9Lesson'
 import KeySignaturesLesson from '@/components/programs/cm-prep/KeySignaturesLesson'
 import MajorScalesLesson from '@/components/programs/cm-prep/MajorScalesLesson'
+import TimeSignaturesLesson from '@/components/programs/cm-prep/TimeSignaturesLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -334,6 +335,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'review-1to9-lesson' && 'Five exercises drawn from Lessons 1–9: complete the grand staff, name notes in both clefs, identify whole and half steps, name intervals, and name five-finger patterns.'}
                   {lesson.tool === 'key-signatures-lesson' && 'Four exercises: match each key signature to its name, identify the accidental and the key, write the key signature on an empty staff, and name the key of a short musical example.'}
                   {lesson.tool === 'major-scales-lesson' && 'Two exercises: mark the whole and half steps in each major scale, then write C, F, and G major scales in both clefs.'}
+                  {lesson.tool === 'time-signatures-lesson' && 'Identify the beat value of each note and rest. More exercises — counting patterns on rhythm lines and musical examples — coming next.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -445,6 +447,12 @@ export default function CMPrepLessonPage({ params }: Props) {
                   />
                 ) : lesson.tool === 'major-scales-lesson' ? (
                   <MajorScalesLesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'time-signatures-lesson' ? (
+                  <TimeSignaturesLesson
                     passingScore={lesson.passingScore}
                     previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}

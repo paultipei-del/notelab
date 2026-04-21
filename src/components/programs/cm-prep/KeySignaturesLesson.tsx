@@ -257,13 +257,13 @@ function GrandStaff({
       {/* Time signature */}
       {timeSignature && (
         <>
-          <text x={timeSigX} y={gTT + 2 * gStep} fontFamily="Bravura, serif" fontSize={30}
+          <text x={timeSigX} y={gTT + 2 * gStep} fontFamily="Bravura, serif" fontSize={46}
             fill={DARK} dominantBaseline="central">{timeSigBravura(timeSignature[0])}</text>
-          <text x={timeSigX} y={gTT + 6 * gStep} fontFamily="Bravura, serif" fontSize={30}
+          <text x={timeSigX} y={gTT + 6 * gStep} fontFamily="Bravura, serif" fontSize={46}
             fill={DARK} dominantBaseline="central">{timeSigBravura(timeSignature[1])}</text>
-          <text x={timeSigX} y={gBT + 2 * gStep} fontFamily="Bravura, serif" fontSize={30}
+          <text x={timeSigX} y={gBT + 2 * gStep} fontFamily="Bravura, serif" fontSize={46}
             fill={DARK} dominantBaseline="central">{timeSigBravura(timeSignature[0])}</text>
-          <text x={timeSigX} y={gBT + 6 * gStep} fontFamily="Bravura, serif" fontSize={30}
+          <text x={timeSigX} y={gBT + 6 * gStep} fontFamily="Bravura, serif" fontSize={46}
             fill={DARK} dominantBaseline="central">{timeSigBravura(timeSignature[1])}</text>
         </>
       )}

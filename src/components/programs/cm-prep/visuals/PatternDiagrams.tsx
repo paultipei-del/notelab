@@ -851,81 +851,302 @@ export function MajorScaleDiagram() {
 
 // ── Lesson 12: Time Signatures ────────────────────────────────────────────
 export function TimeSignatureDiagram() {
-  const col1 = 20
-  const col2 = 220
+  // Standard CM Prep staff geometry (matches Lessons 10-11)
+  const step = 6                                   // staff line-to-line = 12px
+
+  // ── Section A: mini grand staff with a 4/4 time signature ─────────────
+  const gSL  = 32
+  const gSR  = 260
+  const gTT  = 24
+  const gBT  = gTT + 8 * step + 36
+  const gBB  = gBT + 8 * step
+  const gW   = gSR + 16
+  const gH   = gBB + 16
+
+  const tLineY = (n: number) => gTT + (5 - n) * 2 * step
+  const bLineY = (n: number) => gBT + (5 - n) * 2 * step
+
+  // Time-sig digits sit centered on lines 4 (top digit) and 2 (bottom digit)
+  const tsTopY = (top: number) => top + 2 * step
+  const tsBotY = (top: number) => top + 6 * step
+  const TS_DIGIT = (d: number) => String.fromCodePoint(0xE080 + d)
+  const tsX = gSL + 60
+
+  // ── Section B: notes with counts (counting example in 4/4) ────────────
+  const sL   = 32
+  const sR   = 600
+  const tTop = 30
+  const svgW = sR + 16
+  const svgH = tTop + 8 * step + 56
+
+  const lineY  = (n: number) => tTop + (5 - n) * 2 * step
+  const posToY = (pos: number) => tTop + (10 - pos) * step
+
+  // Bravura pre-composed note glyphs (with stems / flags built in)
+  const NOTE_WHOLE   = '\uE1D2'
+  const NOTE_HALF_U  = '\uE1D3'
+  const NOTE_HALF_D  = '\uE1D4'
+  const NOTE_QTR_U   = '\uE1D5'
+  const NOTE_QTR_D   = '\uE1D6'
+  const NOTE_8TH_U   = '\uE1D7'
+  const NOTE_8TH_D   = '\uE1D8'
+  const AUG_DOT      = '\uE1E7'
+  // Notehead-only glyph (used when we need to draw a custom beam across multiple noteheads)
+  const NOTEHEAD_BLACK = '\uE0A4'
+
+  // Measure the note-column x-positions for the counting example (4 quarters,
+  // then 8 eighths). Both measures share a single staff; a barline separates them.
+  const mStartX = sL + 90
+  const mEndX   = sR - 24
+  const mMidX   = (mStartX + mEndX) / 2
+  const m1Xs = Array.from({ length: 4 }, (_, i) =>
+    mStartX + (i + 0.5) * ((mMidX - 14 - mStartX) / 4)
+  )
+  const m2Xs = Array.from({ length: 8 }, (_, i) =>
+    mMidX + 14 + (i + 0.5) * ((mEndX - mMidX - 14) / 8)
+  )
+
+  // All notes live on line 2 (G4, pos 4) so stems naturally go up and the
+  // beams for the eighth-note measure sit above the staff.
+  const NOTE_Y = posToY(4)
+  // Stem length that matches Bravura's internal stem on the pre-composed
+  // quarter/eighth glyphs rendered at fontSize=36.
+  const STEM_LEN = 31
+  const BEAM_H = 4
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox="0 0 490 260" width="100%" style={{ maxWidth: 490, display: 'block', margin: '0 auto' }}>
+    <div>
+      {/* ── Intro ─────────────────────────────────────────────── */}
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 12, lineHeight: 1.75 }}>
+        The <strong style={{ color: DARK }}>time signature</strong> sits at the very beginning of a
+        piece, right after the clef signs, and stays in effect throughout. It&apos;s written as two
+        stacked numbers and tells you how the beats are organized.
+      </p>
 
-        {/* Time signature anatomy */}
-        <text x={col1} y={22} fontFamily={F} fontSize={11} fill={DARK} fontWeight="600">Time Signature</text>
+      {/* Grand staff showing 4/4 */}
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '10px 0', marginBottom: 14 }}>
+        <svg viewBox={`0 0 ${gW} ${gH}`} width="100%"
+          style={{ maxWidth: gW, display: 'block', margin: '0 auto' }}>
+          {/* Staff lines */}
+          {[1, 2, 3, 4, 5].map(n => (
+            <line key={'t' + n} x1={gSL} y1={tLineY(n)} x2={gSR} y2={tLineY(n)}
+              stroke={DARK} strokeWidth={STROKE_W} />
+          ))}
+          {[1, 2, 3, 4, 5].map(n => (
+            <line key={'b' + n} x1={gSL} y1={bLineY(n)} x2={gSR} y2={bLineY(n)}
+              stroke={DARK} strokeWidth={STROKE_W} />
+          ))}
+          <line x1={gSL} y1={gTT} x2={gSL} y2={gBB} stroke={DARK} strokeWidth={1.6} />
+          <text x={gSL - 10} y={gBB} fontSize={gBB - gTT}
+            fontFamily="Bravura, serif" fill={DARK} textAnchor="middle" dominantBaseline="auto">{'\uE000'}</text>
+          <line x1={gSR} y1={gTT} x2={gSR} y2={gBB} stroke={DARK} strokeWidth={STROKE_W} />
+          {/* Clefs — sized to match Lesson 1's MissingStaff (gStep=6, fontSize=50) */}
+          <text x={gSL + 5} y={gTT + 6 * step} fontFamily="Bravura, serif" fontSize={50}
+            fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+          <text x={gSL + 5} y={gBT + 2 * step + 2} fontFamily="Bravura, serif" fontSize={50}
+            fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>
+          {/* 4/4 time signature on both staves */}
+          <text x={tsX} y={tsTopY(gTT)} fontFamily="Bravura, serif" fontSize={48}
+            fill={ACCENT} textAnchor="middle" dominantBaseline="central">{TS_DIGIT(4)}</text>
+          <text x={tsX} y={tsBotY(gTT)} fontFamily="Bravura, serif" fontSize={48}
+            fill={ACCENT} textAnchor="middle" dominantBaseline="central">{TS_DIGIT(4)}</text>
+          <text x={tsX} y={tsTopY(gBT)} fontFamily="Bravura, serif" fontSize={48}
+            fill={ACCENT} textAnchor="middle" dominantBaseline="central">{TS_DIGIT(4)}</text>
+          <text x={tsX} y={tsBotY(gBT)} fontFamily="Bravura, serif" fontSize={48}
+            fill={ACCENT} textAnchor="middle" dominantBaseline="central">{TS_DIGIT(4)}</text>
+          {/* Callout arrow + caption */}
+          <line x1={tsX + 14} y1={gTT - 6} x2={tsX + 38} y2={gTT - 14}
+            stroke={GREY} strokeWidth={1} />
+          <text x={tsX + 42} y={gTT - 14}
+            fontFamily={F} fontSize={11} fontWeight={700} fill={ACCENT}
+            dominantBaseline="central">Time signature</text>
+        </svg>
+      </div>
 
-        {/* Draw 4/4 large */}
-        <text x={col1 + 10} y={82} fontFamily="Bravura, serif" fontSize={72} fill={DARK}>𝄴</text>
+      {/* ── Top / bottom number explanation ───────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+        <div style={{
+          background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 10,
+          padding: '12px 14px',
+        }}>
+          <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+            textTransform: 'uppercase', color: ACCENT, margin: '0 0 6px' }}>Top number</p>
+          <p style={{ fontFamily: F, fontSize: 13, color: DARK, margin: 0, lineHeight: 1.55 }}>
+            How many beats belong in each measure.
+          </p>
+        </div>
+        <div style={{
+          background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 10,
+          padding: '12px 14px',
+        }}>
+          <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+            textTransform: 'uppercase', color: ACCENT, margin: '0 0 6px' }}>Bottom number</p>
+          <p style={{ fontFamily: F, fontSize: 13, color: DARK, margin: 0, lineHeight: 1.55 }}>
+            Which note value counts as one beat (4 = quarter note).
+          </p>
+        </div>
+      </div>
 
-        <line x1={col1 + 62} y1={30} x2={col1 + 62} y2={110} stroke={GREY} strokeWidth={0.8} strokeDasharray="3 2" />
-        <text x={col1 + 70} y={55} fontFamily={F} fontSize={10} fill={DARK}>Top number = beats per measure</text>
-        <line x1={col1 + 62} y1={68} x2={col1 + 68} y2={65} stroke={GREY} strokeWidth={0.8} />
-        <text x={col1 + 70} y={90} fontFamily={F} fontSize={10} fill={DARK}>Bottom number = which note gets 1 beat</text>
-        <text x={col1 + 70} y={104} fontFamily={F} fontSize={10} fill={GREY}>(4 = quarter note)</text>
+      {/* ── Note-value reference (when the bottom number is 4) ──── */}
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 8, lineHeight: 1.75 }}>
+        When the bottom number is <strong style={{ color: DARK }}>4</strong>, the quarter note gets one
+        beat and the rest of the note values scale from there:
+      </p>
+      <div style={{
+        background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '14px 12px 12px', marginBottom: 14,
+      }}>
+        <svg viewBox="0 0 560 110" width="100%" style={{ maxWidth: 560, display: 'block', margin: '0 auto' }}>
+          {([
+            { label: 'Whole',       beats: '4 beats', glyph: NOTE_WHOLE  },
+            { label: 'Dotted half', beats: '3 beats', glyph: NOTE_HALF_U, dot: true },
+            { label: 'Half',        beats: '2 beats', glyph: NOTE_HALF_U },
+            { label: 'Quarter',     beats: '1 beat',  glyph: NOTE_QTR_U  },
+            { label: 'Eighth',      beats: '½ beat',  glyph: NOTE_8TH_U  },
+          ]).map((it, i) => {
+            const col = 110
+            const ox = 30 + i * col
+            const cx = ox + 26
+            const ny = 44
+            return (
+              <g key={it.label}>
+                <line x1={ox} y1={ny} x2={ox + 56} y2={ny} stroke="#E2DDD0" strokeWidth={1} />
+                <text x={cx} y={ny} fontFamily="Bravura, serif" fontSize={30}
+                  fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{it.glyph}</text>
+                {it.dot && (
+                  <text x={cx + 13} y={ny} fontFamily="Bravura, serif" fontSize={30}
+                    fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{AUG_DOT}</text>
+                )}
+                <text x={ox + 28} y={82} fontFamily={F} fontSize={11} fontWeight={700}
+                  fill={DARK} textAnchor="middle">{it.label}</text>
+                <text x={ox + 28} y={98} fontFamily={F} fontSize={11} fontWeight={600}
+                  fill={ACCENT} textAnchor="middle">{it.beats}</text>
+              </g>
+            )
+          })}
+        </svg>
+      </div>
 
-        {/* Common time signatures */}
-        <rect x={col1} y={122} width={185} height={48} rx={8} fill="rgba(186,117,23,0.07)" stroke="rgba(186,117,23,0.2)" strokeWidth={1} />
-        <text x={col1 + 10} y={140} fontFamily={F} fontSize={10} fill={DARK} fontWeight="600">Common time signatures:</text>
-        <text x={col1 + 10} y={156} fontFamily={F} fontSize={10} fill={DARK}>4/4 — 4 quarter-note beats</text>
-        <text x={col1 + 10} y={168} fontFamily={F} fontSize={10} fill={DARK}>3/4 — 3 quarter-note beats · 2/4 — 2 beats</text>
+      {/* ── Counting example: 4/4 with quarters, then 4/4 with eighths ── */}
+      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 8, lineHeight: 1.75 }}>
+        <strong style={{ color: DARK }}>Counting 4/4.</strong> Every measure starts again at 1.
+        Quarter notes get each number; eighth notes split the beat — say <strong>1 + 2 + 3 + 4 +</strong>.
+        Beats <strong style={{ color: ACCENT }}>1</strong> and <strong style={{ color: ACCENT }}>3</strong> carry the
+        strongest stress in 4/4.
+      </p>
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '10px 0 14px', marginBottom: 14 }}>
+        <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
+          style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
+          {/* Staff */}
+          {[1, 2, 3, 4, 5].map(n => (
+            <line key={n} x1={sL} y1={lineY(n)} x2={sR} y2={lineY(n)}
+              stroke={DARK} strokeWidth={STROKE_W} />
+          ))}
+          <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
+          {/* Barline between the two measures */}
+          <line x1={mMidX} y1={tTop} x2={mMidX} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+          {/* End double bar */}
+          <line x1={sR - 5} y1={tTop} x2={sR - 5} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
+          <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={2.5} />
+          {/* Treble clef — matches Lesson 1 sizing for step=6 */}
+          <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={50}
+            fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+          {/* 4/4 time signature */}
+          <text x={sL + 52} y={tsTopY(tTop)} fontFamily="Bravura, serif" fontSize={48}
+            fill={DARK} textAnchor="middle" dominantBaseline="central">{TS_DIGIT(4)}</text>
+          <text x={sL + 52} y={tsBotY(tTop)} fontFamily="Bravura, serif" fontSize={48}
+            fill={DARK} textAnchor="middle" dominantBaseline="central">{TS_DIGIT(4)}</text>
 
-        {/* Note value chart */}
-        <text x={col2} y={22} fontFamily={F} fontSize={11} fill={DARK} fontWeight="600">Note Values (quarter note = 1 beat)</text>
+          {/* Measure 1: four quarter notes on G4 (stems up, pre-composed glyph) */}
+          {m1Xs.map((cx) => (
+            <text key={'q' + cx} x={cx} y={NOTE_Y} fontFamily="Bravura, serif" fontSize={36}
+              fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{NOTE_QTR_U}</text>
+          ))}
+          {/* Measure 1 count labels — 1 + 2 + 3 + 4 + under each subdivision */}
+          {(() => {
+            const subdiv = (m1Xs[1] - m1Xs[0]) / 2
+            const labels = ['1', '+', '2', '+', '3', '+', '4', '+']
+            return labels.map((label, i) => {
+              const x = m1Xs[0] + i * subdiv
+              const strong = i === 0 || i === 4
+              return (
+                <text key={'m1l' + i} x={x} y={lineY(1) + 24}
+                  fontFamily={F} fontSize={15} fontWeight={700}
+                  fill={strong ? ACCENT : DARK}
+                  textAnchor="middle">{label}</text>
+              )
+            })
+          })()}
 
+          {/* Measure 2: eight eighth notes beamed in pairs (stems up) */}
+          {m2Xs.map((cx, i) => {
+            const stemX = cx + 4.5      // stem attaches at notehead's right edge
+            const stemTopY = NOTE_Y - STEM_LEN
+            return (
+              <g key={'e' + i}>
+                <text x={cx} y={NOTE_Y} fontFamily="Bravura, serif" fontSize={36}
+                  fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{NOTEHEAD_BLACK}</text>
+                <line x1={stemX} y1={NOTE_Y - 2} x2={stemX} y2={stemTopY}
+                  stroke={DARK} strokeWidth={1.4} />
+                <text x={cx} y={lineY(1) + 24}
+                  fontFamily={F} fontSize={15} fontWeight={700}
+                  fill={i === 0 || i === 4 ? ACCENT : DARK}
+                  textAnchor="middle">{i % 2 === 0 ? String((i / 2) + 1) : '+'}</text>
+              </g>
+            )
+          })}
+          {/* Beams connecting pairs of stems — rect with edges exactly at the
+              stem centerlines, so there's no stroke-cap overhang past the stems */}
+          {[0, 2, 4, 6].map(i => {
+            const x1 = m2Xs[i] + 4.5         // left stem x
+            const x2 = m2Xs[i + 1] + 4.5     // right stem x
+            const yBot = NOTE_Y - STEM_LEN   // beam's bottom edge meets the stem tops
+            return (
+              <rect key={'bm' + i}
+                x={x1} y={yBot - BEAM_H}
+                width={x2 - x1} height={BEAM_H}
+                fill={DARK} />
+            )
+          })}
+        </svg>
+      </div>
+
+      {/* ── Accent patterns ────────────────────────────────────── */}
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+        textTransform: 'uppercase', color: '#7A7060', margin: '0 0 6px' }}>
+        Stress patterns
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
         {[
-          { label: 'Whole note', beats: '4 beats', shape: 'open-oval', y: 55 },
-          { label: 'Half note', beats: '2 beats', shape: 'open-stem', y: 95 },
-          { label: 'Quarter note', beats: '1 beat', shape: 'filled-stem', y: 135 },
-          { label: 'Eighth note', beats: '½ beat', shape: 'flag', y: 175 },
-        ].map(({ label, beats, shape, y }) => {
-          const nx = col2 + 25  // note x center
-          const ny = y
-
-          return (
-            <g key={label}>
-              {/* Note glyph */}
-              {shape === 'open-oval' && (
-                <ellipse cx={nx} cy={ny} rx={9} ry={6} fill="none" stroke={DARK} strokeWidth={1.5} />
-              )}
-              {shape === 'open-stem' && (
-                <>
-                  <ellipse cx={nx} cy={ny} rx={8} ry={5.5} fill="none" stroke={DARK} strokeWidth={1.5} />
-                  <line x1={nx + 7} y1={ny} x2={nx + 7} y2={ny - 26} stroke={DARK} strokeWidth={1.5} />
-                </>
-              )}
-              {shape === 'filled-stem' && (
-                <>
-                  <ellipse cx={nx} cy={ny} rx={8} ry={5.5} fill={DARK} />
-                  <line x1={nx + 7} y1={ny} x2={nx + 7} y2={ny - 26} stroke={DARK} strokeWidth={1.5} />
-                </>
-              )}
-              {shape === 'flag' && (
-                <>
-                  <ellipse cx={nx} cy={ny} rx={8} ry={5.5} fill={DARK} />
-                  <line x1={nx + 7} y1={ny} x2={nx + 7} y2={ny - 26} stroke={DARK} strokeWidth={1.5} />
-                  <path d={`M ${nx + 7} ${ny - 26} C ${nx + 22} ${ny - 20} ${nx + 22} ${ny - 10} ${nx + 7} ${ny - 8}`}
-                    fill="none" stroke={DARK} strokeWidth={1.5} />
-                </>
-              )}
-              {/* Label */}
-              <text x={col2 + 50} y={ny + 4} fontFamily={F} fontSize={11} fill={DARK}>{label}</text>
-              <text x={col2 + 170} y={ny + 4} fontFamily={F} fontSize={11} fill={ACCENT} fontWeight="600">{beats}</text>
-            </g>
-          )
-        })}
-
-        {/* Rest note at bottom */}
-        <text x={col2} y={225} fontFamily={F} fontSize={10} fill={GREY}>
-          Rests: whole rest (hangs down) · half rest (sits up) · quarter rest
-        </text>
-      </svg>
+          { ts: '2/4', beats: [true, false] },
+          { ts: '3/4', beats: [true, false, false] },
+          { ts: '4/4', beats: [true, false, 'mid', false] as (boolean | 'mid')[] },
+        ].map((row, idx) => (
+          <div key={idx} style={{
+            background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 10,
+            padding: '10px 12px',
+          }}>
+            <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 600, color: DARK, margin: '0 0 6px' }}>
+              {row.ts}
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {row.beats.map((b, i) => (
+                <span key={i} style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  width: 28, height: 28, borderRadius: 14,
+                  background: b === true ? ACCENT
+                            : b === 'mid' ? 'rgba(186,117,23,0.35)'
+                            : '#F0EBDE',
+                  color: b === true ? 'white' : b === 'mid' ? DARK : GREY,
+                  fontFamily: F, fontWeight: 700, fontSize: 14,
+                }}>{i + 1}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
