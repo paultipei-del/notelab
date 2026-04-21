@@ -918,9 +918,9 @@ export function TimeSignatureDiagram() {
     <div>
       {/* ── Intro ─────────────────────────────────────────────── */}
       <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 12, lineHeight: 1.75 }}>
-        The <strong style={{ color: DARK }}>time signature</strong> sits at the very beginning of a
-        piece, right after the clef signs, and stays in effect throughout. It&apos;s written as two
-        stacked numbers and tells you how the beats are organized.
+        The <strong style={{ color: DARK }}>time signature</strong>{' '}
+        sits at the very beginning of a piece, right after the clef signs, and stays in effect
+        throughout. It&apos;s written as two stacked numbers and tells you how the beats are organized.
       </p>
 
       {/* Grand staff showing 4/4 */}
@@ -1097,16 +1097,21 @@ export function TimeSignatureDiagram() {
               </g>
             )
           })}
-          {/* Beams connecting pairs of stems — rect with edges exactly at the
-              stem centerlines, so there's no stroke-cap overhang past the stems */}
+          {/* Beams connecting pairs of stems. The rect extends by half the
+              stem stroke-width on each side so it fully covers the outer edges
+              of the first and last stems, and overlaps the stem tops by 1px so
+              the junction reads as one solid shape. */}
           {[0, 2, 4, 6].map(i => {
-            const x1 = m2Xs[i] + 4.5         // left stem x
-            const x2 = m2Xs[i + 1] + 4.5     // right stem x
-            const yBot = NOTE_Y - STEM_LEN   // beam's bottom edge meets the stem tops
+            const stemX1 = m2Xs[i] + 4.5
+            const stemX2 = m2Xs[i + 1] + 4.5
+            const STEM_W = 1.4
+            const stemTopY = NOTE_Y - STEM_LEN
             return (
               <rect key={'bm' + i}
-                x={x1} y={yBot - BEAM_H}
-                width={x2 - x1} height={BEAM_H}
+                x={stemX1 - STEM_W / 2}
+                y={stemTopY - BEAM_H + 1}
+                width={(stemX2 - stemX1) + STEM_W}
+                height={BEAM_H}
                 fill={DARK} />
             )
           })}

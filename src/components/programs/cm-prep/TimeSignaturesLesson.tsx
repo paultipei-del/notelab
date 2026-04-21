@@ -19,6 +19,8 @@ const NOTE_GLYPH: Record<'whole' | 'half' | 'quarter' | 'eighth', string> = {
   eighth:  '\uE1D7',   // note8thUp
 }
 const AUG_DOT = '\uE1E7'
+// Plain notehead (used when we beam eighth notes and draw custom stems + beams).
+const NOTEHEAD_BLACK = '\uE0A4'
 
 const REST_GLYPH: Record<'whole' | 'half' | 'quarter' | 'eighth', string> = {
   whole:   '\uE4E3',
@@ -222,41 +224,96 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
 }
 
 // ── Ex 1: Time-signature facts ────────────────────────────────────────────
-interface FactQuestion { question: string; options: string[]; answer: string }
+// Mini time-signature "card" — treble clef + 2 Bravura digits on a short staff.
+// Used whenever a question refers to a specific time signature, so the student
+// connects the concept to the visual symbol.
+function TimeSigCard({ ts }: { ts: [number, number] }) {
+  const cardStep = 6
+  const cSL   = 20, cSR = 130
+  const cTop  = 20
+  const svgW  = cSR + 12
+  // Extra room at the bottom so the treble clef's lower hook isn't clipped.
+  const svgH  = cTop + 8 * cardStep + 36
+  const cLineY = (n: number) => cTop + (5 - n) * 2 * cardStep
+  const digit  = (d: number) => String.fromCodePoint(0xE080 + d)
 
+  return (
+    <svg viewBox={`0 0 ${svgW} ${svgH}`} width={svgW} height={svgH}
+      style={{ display: 'block' }}>
+      {[1, 2, 3, 4, 5].map(n => (
+        <line key={n} x1={cSL} y1={cLineY(n)} x2={cSR} y2={cLineY(n)}
+          stroke={DARK} strokeWidth={1.2} />
+      ))}
+      <line x1={cSL} y1={cTop} x2={cSL} y2={cLineY(1)} stroke={DARK} strokeWidth={1.5} />
+      <line x1={cSR} y1={cTop} x2={cSR} y2={cLineY(1)} stroke={DARK} strokeWidth={1.2} />
+      {/* Treble clef */}
+      <text x={cSL + 4} y={cTop + 6 * cardStep} fontFamily="Bravura, serif" fontSize={50}
+        fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
+      {/* Time-signature digits (top on line 4, bottom on line 2) */}
+      <text x={cSL + 58} y={cTop + 2 * cardStep} fontFamily="Bravura, serif" fontSize={48}
+        fill={ACCENT} textAnchor="middle" dominantBaseline="central">{digit(ts[0])}</text>
+      <text x={cSL + 58} y={cTop + 6 * cardStep} fontFamily="Bravura, serif" fontSize={48}
+        fill={ACCENT} textAnchor="middle" dominantBaseline="central">{digit(ts[1])}</text>
+    </svg>
+  )
+}
+
+interface FactQuestion {
+  visual?: [number, number]       // show this time signature above the question
+  question: string
+  options: string[]
+  answer: string
+}
+
+// Pool: mixes text-only concept questions with visual questions tied to a
+// displayed time signature. Language kept short and kid-friendly.
 const EX1_POOL: FactQuestion[] = [
-  { question: 'What does the TOP number of a time signature tell you?',
-    options: ['Beats per measure', 'Which note value equals one beat',
-              'The total number of measures', 'How loud to play'],
-    answer: 'Beats per measure' },
-  { question: 'What does the BOTTOM number of a time signature tell you?',
-    options: ['Beats per measure', 'Which note value equals one beat',
-              'Sharps or flats in the key', 'The tempo'],
-    answer: 'Which note value equals one beat' },
-  { question: 'When the bottom number is 4, which note value equals one beat?',
+  // Concept questions (no visual)
+  { question: 'What does the TOP number tell you?',
+    options: ['How many beats are in each measure',
+              'Which note gets one beat',
+              'How loud to play',
+              'How many sharps or flats there are'],
+    answer: 'How many beats are in each measure' },
+  { question: 'What does the BOTTOM number tell you?',
+    options: ['Which note gets one beat',
+              'How many beats are in each measure',
+              'Which key the piece is in',
+              'The tempo'],
+    answer: 'Which note gets one beat' },
+  { question: 'When the bottom number is 4, which note gets one beat?',
     options: ['Whole note', 'Half note', 'Quarter note', 'Eighth note'],
     answer: 'Quarter note' },
-  { question: 'In 2/4 time, which beat carries the strongest stress?',
-    options: ['Beat 1', 'Beat 2', 'Both beats equally', 'Neither beat'],
+
+  // Visual questions — time signature shown above the prompt
+  { visual: [4, 4], question: 'How many beats are in each measure?',
+    options: ['2', '3', '4', '6'], answer: '4' },
+  { visual: [3, 4], question: 'How many beats are in each measure?',
+    options: ['2', '3', '4', '6'], answer: '3' },
+  { visual: [2, 4], question: 'How many beats are in each measure?',
+    options: ['2', '3', '4', '6'], answer: '2' },
+  { visual: [4, 4], question: 'Which note gets one beat?',
+    options: ['Whole note', 'Half note', 'Quarter note', 'Eighth note'],
+    answer: 'Quarter note' },
+  { visual: [2, 4], question: 'Which beat is the strongest?',
+    options: ['Beat 1', 'Beat 2', 'Both equally', 'Neither beat'],
     answer: 'Beat 1' },
-  { question: 'In 3/4 time, which beat carries the strongest stress?',
-    options: ['Beat 1', 'Beat 2', 'Beat 3', 'All three equally'],
+  { visual: [3, 4], question: 'Which beat is the strongest?',
+    options: ['Beat 1', 'Beat 2', 'Beat 3', 'All three the same'],
     answer: 'Beat 1' },
-  { question: 'In 4/4 time, which beats are emphasized?',
-    options: ['Beats 1 and 3', 'Beats 2 and 4', 'Only beat 1', 'All four equally'],
+  { visual: [4, 4], question: 'Which beats are emphasized?',
+    options: ['Beats 1 and 3', 'Beats 2 and 4', 'Only beat 1', 'All four the same'],
     answer: 'Beats 1 and 3' },
-  { question: 'How many quarter notes fill one measure of 4/4?',
-    options: ['2', '3', '4', '6'],
-    answer: '4' },
-  { question: 'How many quarter notes fill one measure of 3/4?',
-    options: ['2', '3', '4', '6'],
-    answer: '3' },
-  { question: 'In 4/4 time, how many beats does a whole note last?',
-    options: ['1', '2', '3', '4'],
-    answer: '4' },
-  { question: 'In 4/4 time, how many beats does a dotted half note last?',
-    options: ['1½', '2', '3', '4'],
-    answer: '3' },
+  { visual: [4, 4], question: 'How many quarter notes fit in one measure?',
+    options: ['2', '3', '4', '6'], answer: '4' },
+  { visual: [3, 4], question: 'How many quarter notes fit in one measure?',
+    options: ['2', '3', '4', '6'], answer: '3' },
+  { visual: [2, 4], question: 'How many quarter notes fit in one measure?',
+    options: ['2', '3', '4', '6'], answer: '2' },
+  { visual: [4, 4], question: 'A whole note lasts how many beats?',
+    options: ['1', '2', '3', '4'], answer: '4' },
+  { visual: [4, 4], question: 'A dotted half note lasts how many beats?',
+    options: ['1½', '2', '3', '4'], answer: '3' },
 ]
 
 function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
@@ -296,8 +353,16 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
-        padding: '20px 22px', marginBottom: 14 }}>
-        <p style={{ fontFamily: F, fontSize: 15, color: DARK, margin: 0, lineHeight: 1.55 }}>
+        padding: '18px 22px', marginBottom: 14 }}>
+        {item.visual && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+            <TimeSigCard ts={item.visual} />
+          </div>
+        )}
+        <p style={{ fontFamily: 'var(--font-cormorant), serif',
+          fontSize: 20, fontWeight: 500, color: DARK,
+          margin: 0, lineHeight: 1.45,
+          textAlign: item.visual ? 'center' : 'left' }}>
           {item.question}
         </p>
       </div>
@@ -342,16 +407,57 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
 }
 
 // ── Ex 3: Write the counts on rhythm lines ────────────────────────────────
-// Student sees a rhythm line and fills in a count number under each beat.
-// Notes are drawn stems-up on G4. Halves and wholes span multiple beats, but
-// the counting still happens beat-by-beat (so a half covers "1 2", etc.).
-type RhythmDur = 'quarter' | 'half' | 'dottedHalf' | 'whole'
-const DUR_BEATS: Record<RhythmDur, number> = { quarter: 1, half: 2, dottedHalf: 3, whole: 4 }
+// Subdivisions are at the eighth-note level (2 per beat). Each note holds
+// subdivision slots proportional to its duration: quarter=2 ("N +"),
+// half=4 ("N + N +"), dotted half=6, whole=8. Slots live directly under their
+// note with a tinted group background so the student can see what counts belong
+// to which note. Input uses a painter bar — pick a value, then tap slots.
+type RhythmDur =
+  | 'eighth' | 'quarter' | 'half' | 'dottedHalf' | 'whole'
+  | 'eighthRest' | 'quarterRest' | 'halfRest' | 'wholeRest'
+const DUR_EIGHTHS: Record<RhythmDur, number> = {
+  eighth: 1, quarter: 2, half: 4, dottedHalf: 6, whole: 8,
+  eighthRest: 1, quarterRest: 2, halfRest: 4, wholeRest: 8,
+}
 const DUR_GLYPH: Record<RhythmDur, string> = {
+  eighth:  NOTE_GLYPH.eighth,     // only used for isolated (un-beamed) eighths
   quarter: NOTE_GLYPH.quarter,
   half:    NOTE_GLYPH.half,
   dottedHalf: NOTE_GLYPH.half,     // half + aug dot rendered separately
   whole:   NOTE_GLYPH.whole,
+  eighthRest:  REST_GLYPH.eighth,
+  quarterRest: REST_GLYPH.quarter,
+  halfRest:    REST_GLYPH.half,
+  wholeRest:   REST_GLYPH.whole,
+}
+function isRest(d: RhythmDur): boolean {
+  return d === 'eighthRest' || d === 'quarterRest' || d === 'halfRest' || d === 'wholeRest'
+}
+
+// Group consecutive eighth notes (rests break runs) so we can beam them.
+// Returns pairs of [startIdx, endIdx] for each run of 2+ eighths.
+function detectBeamGroups(notes: RhythmDur[]): Array<{ start: number; end: number }> {
+  const groups: Array<{ start: number; end: number }> = []
+  let runStart: number | null = null
+  for (let i = 0; i < notes.length; i++) {
+    if (notes[i] === 'eighth') {
+      if (runStart === null) runStart = i
+    } else {
+      if (runStart !== null && i - runStart >= 2) {
+        groups.push({ start: runStart, end: i - 1 })
+      }
+      runStart = null
+    }
+  }
+  if (runStart !== null && notes.length - runStart >= 2) {
+    groups.push({ start: runStart, end: notes.length - 1 })
+  }
+  return groups
+}
+
+// Expected label for subdivision i: "1", "+", "2", "+", … based on parity.
+function expectedCountAt(subdivIdx: number): string {
+  return subdivIdx % 2 === 0 ? String(subdivIdx / 2 + 1) : '+'
 }
 
 interface RhythmItem { ts: [number, number]; measures: Array<{ notes: RhythmDur[] }> }
@@ -375,68 +481,187 @@ const EX3_POOL: RhythmItem[] = [
     { notes: ['quarter', 'quarter'] },
     { notes: ['half'] },
   ]},
+  // 4/4 with rests
+  { ts: [4, 4], measures: [
+    { notes: ['quarter', 'quarter', 'quarterRest', 'quarter'] },
+    { notes: ['half', 'halfRest'] },
+    { notes: ['quarter', 'quarterRest', 'half'] },
+    { notes: ['halfRest', 'quarter', 'quarter'] },
+  ]},
+  // 3/4 with rests
+  { ts: [3, 4], measures: [
+    { notes: ['quarter', 'quarterRest', 'quarter'] },
+    { notes: ['half', 'quarterRest'] },
+    { notes: ['quarterRest', 'quarter', 'quarter'] },
+    { notes: ['quarter', 'half'] },
+  ]},
+  // 2/4 with rests
+  { ts: [2, 4], measures: [
+    { notes: ['quarter', 'quarterRest'] },
+    { notes: ['halfRest'] },
+    { notes: ['quarterRest', 'quarter'] },
+    { notes: ['half'] },
+  ]},
+  // 4/4 with eighths (no rests) — 8 subdivs per measure
+  { ts: [4, 4], measures: [
+    { notes: ['quarter', 'eighth', 'eighth', 'half'] },
+    { notes: ['eighth', 'eighth', 'eighth', 'eighth', 'half'] },
+    { notes: ['half', 'eighth', 'eighth', 'quarter'] },
+    { notes: ['quarter', 'quarter', 'eighth', 'eighth', 'quarter'] },
+  ]},
+  // 3/4 with eighths (no rests) — 6 subdivs per measure
+  { ts: [3, 4], measures: [
+    { notes: ['eighth', 'eighth', 'quarter', 'quarter'] },
+    { notes: ['quarter', 'eighth', 'eighth', 'quarter'] },
+    { notes: ['quarter', 'quarter', 'eighth', 'eighth'] },
+    { notes: ['eighth', 'eighth', 'eighth', 'eighth', 'quarter'] },
+  ]},
+  // 2/4 with eighths (no rests) — 4 subdivs per measure
+  { ts: [2, 4], measures: [
+    { notes: ['eighth', 'eighth', 'quarter'] },
+    { notes: ['quarter', 'eighth', 'eighth'] },
+    { notes: ['eighth', 'eighth', 'eighth', 'eighth'] },
+    { notes: ['quarter', 'quarter'] },
+  ]},
+  // 4/4 with eighths AND rests
+  { ts: [4, 4], measures: [
+    { notes: ['quarter', 'eighth', 'eighthRest', 'half'] },
+    { notes: ['eighth', 'eighth', 'quarterRest', 'half'] },
+    { notes: ['half', 'eighth', 'eighthRest', 'quarter'] },
+    { notes: ['eighthRest', 'eighth', 'quarter', 'half'] },
+  ]},
+  // 3/4 with eighths AND rests
+  { ts: [3, 4], measures: [
+    { notes: ['eighth', 'eighth', 'quarterRest', 'quarter'] },
+    { notes: ['quarter', 'eighth', 'eighth', 'quarterRest'] },
+    { notes: ['quarterRest', 'eighth', 'eighth', 'quarter'] },
+    { notes: ['quarter', 'eighth', 'eighthRest', 'quarter'] },
+  ]},
+  // 2/4 with eighths AND rests
+  { ts: [2, 4], measures: [
+    { notes: ['quarter', 'eighth', 'eighthRest'] },
+    { notes: ['eighth', 'eighthRest', 'quarter'] },
+    { notes: ['eighth', 'eighth', 'eighth', 'eighthRest'] },
+    { notes: ['quarterRest', 'eighth', 'eighth'] },
+  ]},
 ]
 
 const EX3_STEP = 6
 const EX3_TTOP = 36
 const EX3_SL   = 32
-const EX3_SR   = 620
+const EX3_SR   = 820                     // wider so eighth notes have breathing room
 const EX3_SVG_W = EX3_SR + 16
 const EX3_SVG_H = EX3_TTOP + 8 * EX3_STEP + 64
 function ex3LineY(n: number) { return EX3_TTOP + (5 - n) * 2 * EX3_STEP }
 const EX3_NOTE_Y = EX3_TTOP + (10 - 4) * EX3_STEP   // G4 = pos 4
 
-const EX3_MEASURE_START_X = 130
+// Start the first measure just past the time signature (clef ends ~x=62,
+// time-sig digits center at ~x=88 and extend to ~x=100, so the first bar line
+// sits comfortably around x=112).
+const EX3_MEASURE_START_X = 112
 const EX3_MEASURE_END_X   = EX3_SR - 20
 const EX3_NUM_MEASURES = 4
+
+function initInputs(it: RhythmItem): string[][] {
+  return it.measures.map(m => m.notes.map(() => ''))
+}
+
+// Expected count string for a single note: concatenate the count label for
+// every subdivision it covers (no separators). e.g. a half starting at subdiv 2
+// returns "2+3+".
+function expectedForNote(dur: RhythmDur, startSubdiv: number): string {
+  const n = DUR_EIGHTHS[dur]
+  return Array.from({ length: n }, (_, k) => expectedCountAt(startSubdiv + k)).join('')
+}
+function normalized(s: string): string {
+  return s.replace(/\s+/g, '').toLowerCase()
+}
 
 function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
   const items = useMemo(() => [...EX3_POOL], [])
   const total = items.length
   const [idx,      setIdx]      = useState(0)
-  const [marks,    setMarks]    = useState<(number | null)[][]>(() =>
-    items[0].measures.map(() => Array(items[0].ts[0]).fill(null))
-  )
-  const [feedback, setFeedback] = useState<{ ok: boolean } | null>(null)
+  const [inputs,   setInputs]   = useState<string[][]>(() => initInputs(items[0]))
+  const [feedback, setFeedback] = useState<{ ok: boolean; errors: boolean[][] } | null>(null)
   const correctRef = useRef(0)
   const lockedRef  = useRef(false)
+  // Track which text input was most recently focused so the palette can append
+  // characters to it without stealing focus away.
+  const focusedRef = useRef<{ m: number; n: number } | null>(null)
+  const inputRefs  = useRef<Array<Array<HTMLInputElement | null>>>([])
 
   const item = items[idx]
   const [beats] = item.ts
+  const subdivsPerMeasure = beats * 2
   const totalMeasureW = (EX3_MEASURE_END_X - EX3_MEASURE_START_X) / EX3_NUM_MEASURES
-  const beatW = totalMeasureW / beats
+  // Engraving rules: leave a small indent after each bar line and a small
+  // margin before the next bar line. Notes are laid out proportionally within
+  // the usable area, so later notes don't get squeezed against the next bar.
+  const M_LEFT_INDENT  = 10
+  const M_RIGHT_MARGIN = 10
+  const usableMeasureW = totalMeasureW - M_LEFT_INDENT - M_RIGHT_MARGIN
+  const eighthW = usableMeasureW / subdivsPerMeasure
+  const subdivX = (measureLeft: number, s: number) =>
+    measureLeft + M_LEFT_INDENT + s * eighthW
 
-  function cycleMark(measureIdx: number, beatIdx: number) {
-    if (feedback !== null || lockedRef.current) return
-    setMarks(prev => {
+  function handleInputChange(mIdx: number, nIdx: number, v: string) {
+    if (feedback !== null) return
+    setInputs(prev => {
       const next = prev.map(row => [...row])
-      const cur = next[measureIdx][beatIdx]
-      // Cycle through null → 1 → 2 → … → beats → null
-      next[measureIdx][beatIdx] = cur === null ? 1 : cur >= beats ? null : cur + 1
+      next[mIdx][nIdx] = v
       return next
+    })
+  }
+
+  function paletteInsert(ch: string) {
+    if (feedback !== null) return
+    const f = focusedRef.current
+    if (!f) return
+    setInputs(prev => {
+      const next = prev.map(row => [...row])
+      if (ch === 'BACKSPACE') next[f.m][f.n] = next[f.m][f.n].slice(0, -1)
+      else                    next[f.m][f.n] = next[f.m][f.n] + ch
+      return next
+    })
+    // Re-focus the input after the state update, so repeated palette clicks all
+    // land in the same field.
+    requestAnimationFrame(() => {
+      const input = inputRefs.current[f.m]?.[f.n]
+      if (input) input.focus()
     })
   }
 
   function onReset() {
     if (feedback !== null) return
-    setMarks(item.measures.map(() => Array(beats).fill(null)))
+    setInputs(initInputs(item))
+    focusedRef.current = null
   }
 
   function onCheck() {
     if (feedback !== null || lockedRef.current) return
-    // Must fill every slot
-    const filled = marks.every(row => row.every(v => v !== null))
-    if (!filled) return
     lockedRef.current = true
-    // Every measure must be 1..beats in sequence
-    const ok = marks.every(row => row.every((v, i) => v === i + 1))
+    // Validate per note: normalize whitespace and compare to expected.
+    let ok = true
+    const errors = item.measures.map((m, mIdx) => {
+      let s = 0
+      return m.notes.map((dur, nIdx) => {
+        const expected = expectedForNote(dur, s)
+        s += DUR_EIGHTHS[dur]
+        const actual = normalized(inputs[mIdx][nIdx])
+        const match = actual === normalized(expected) && actual.length > 0
+        if (!match) ok = false
+        return !match
+      })
+    })
     if (ok) correctRef.current += 1
-    setFeedback({ ok })
+    setFeedback({ ok, errors })
     setTimeout(() => {
       if (ok) {
         if (idx + 1 >= total) { onDone(correctRef.current, total); return }
-        setIdx(i => i + 1)
-        setMarks(items[idx + 1].measures.map(() => Array(items[idx + 1].ts[0]).fill(null)))
+        const nextIdx = idx + 1
+        setIdx(nextIdx)
+        setInputs(initInputs(items[nextIdx]))
+        focusedRef.current = null
         setFeedback(null); lockedRef.current = false
       } else {
         setFeedback(null); lockedRef.current = false
@@ -444,13 +669,21 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
     }, ok ? 1400 : 2800)
   }
 
-  const filledCount = marks.flat().filter(v => v !== null).length
-  const totalSlots  = marks.flat().length
+  const allFilled = inputs.every(row => row.every(v => v.trim().length > 0))
 
-  // Precompute positions
   const barLineXs = Array.from({ length: EX3_NUM_MEASURES - 1 }, (_, i) =>
     EX3_MEASURE_START_X + (i + 1) * totalMeasureW
   )
+
+  const groupTop = ex3LineY(1) + 20
+  const groupH   = 30
+
+  // Palette buttons: numbers relevant to this time sig + "+" + backspace.
+  const paletteItems: Array<{ value: string; label: string; wide?: boolean }> = [
+    ...Array.from({ length: beats }, (_, i) => ({ value: String(i + 1), label: String(i + 1) })),
+    { value: '+', label: '+' },
+    { value: 'BACKSPACE', label: '⌫', wide: true },
+  ]
 
   return (
     <div>
@@ -461,34 +694,36 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 10, lineHeight: 1.65 }}>
-        Tap each circle to cycle through the beats. Every measure starts again
-        at <strong style={{ color: ACCENT }}>1</strong> and counts up to the top
-        number of the time signature ({item.ts[0]}/{item.ts[1]}).
+        Under each note, type the counts it holds. A quarter holds{' '}
+        <strong style={{ color: DARK }}>N+</strong>, a half holds{' '}
+        <strong style={{ color: DARK }}>N+N+</strong>, and counting runs continuously from{' '}
+        <strong style={{ color: ACCENT }}>1</strong> through the top number of the time signature,
+        resetting each measure.
       </p>
 
       <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
-        padding: '10px 0 18px', marginBottom: 14, overflowX: 'auto' }}>
+        padding: '10px 0 18px', marginBottom: 14, overflowX: 'auto',
+        // Extend past the practice card's 28px padding so rhythms with eighths
+        // have room without squishing.
+        marginLeft: -28, marginRight: -28 }}>
         <svg viewBox={`0 0 ${EX3_SVG_W} ${EX3_SVG_H}`} width="100%"
           style={{ maxWidth: EX3_SVG_W, display: 'block', margin: '0 auto',
             userSelect: 'none', WebkitUserSelect: 'none' }}>
-          {/* Staff lines */}
+          {/* Staff + bar lines */}
           {[1, 2, 3, 4, 5].map(n => (
             <line key={n} x1={EX3_SL} y1={ex3LineY(n)} x2={EX3_SR} y2={ex3LineY(n)}
               stroke={DARK} strokeWidth={STROKE} />
           ))}
-          {/* Left + final bar lines */}
           <line x1={EX3_SL} y1={EX3_TTOP} x2={EX3_SL} y2={ex3LineY(1)} stroke={DARK} strokeWidth={1.5} />
           <line x1={EX3_SR - 5} y1={EX3_TTOP} x2={EX3_SR - 5} y2={ex3LineY(1)} stroke={DARK} strokeWidth={STROKE} />
           <line x1={EX3_SR} y1={EX3_TTOP} x2={EX3_SR} y2={ex3LineY(1)} stroke={DARK} strokeWidth={2.5} />
-          {/* Interior bar lines */}
           {barLineXs.map((x, i) => (
             <line key={'bl' + i} x1={x} y1={EX3_TTOP} x2={x} y2={ex3LineY(1)}
               stroke={DARK} strokeWidth={STROKE} />
           ))}
-          {/* Treble clef */}
+          {/* Clef + time signature */}
           <text x={EX3_SL + 4} y={EX3_TTOP + 6 * EX3_STEP} fontFamily="Bravura, serif" fontSize={50}
             fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
-          {/* Time signature */}
           <text x={EX3_SL + 56} y={EX3_TTOP + 2 * EX3_STEP} fontFamily="Bravura, serif" fontSize={48}
             fill={DARK} textAnchor="middle" dominantBaseline="central">
             {String.fromCodePoint(0xE080 + item.ts[0])}
@@ -498,64 +733,168 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
             {String.fromCodePoint(0xE080 + item.ts[1])}
           </text>
 
-          {/* Notes: walk through each measure, placing notes at their beat onset */}
+          {/* Each note: group background + note (or rest) glyph + text input */}
           {item.measures.map((measure, mIdx) => {
             const measureLeft = EX3_MEASURE_START_X + mIdx * totalMeasureW
-            let beatCursor = 0
-            return measure.notes.map((dur, nIdx) => {
-              const d = DUR_BEATS[dur]
-              const cx = measureLeft + (beatCursor + d / 2) * beatW
-              beatCursor += d
-              return (
-                <g key={`m${mIdx}n${nIdx}`}>
-                  <text x={cx} y={EX3_NOTE_Y} fontFamily="Bravura, serif" fontSize={36}
-                    fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">
-                    {DUR_GLYPH[dur]}
-                  </text>
-                  {dur === 'dottedHalf' && (
-                    <text x={cx + 14} y={EX3_NOTE_Y} fontFamily="Bravura, serif" fontSize={36}
-                      fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{AUG_DOT}</text>
-                  )}
-                </g>
-              )
+            const beamGroups = detectBeamGroups(measure.notes)
+            // Pre-compute positions so we can draw beams across multiple stems.
+            let cursor = 0
+            const positions = measure.notes.map(dur => {
+              const startSubdiv = cursor
+              cursor += DUR_EIGHTHS[dur]
+              const subdivStartX = subdivX(measureLeft, startSubdiv)
+              return {
+                startSubdiv,
+                nSubdivs: DUR_EIGHTHS[dur],
+                subdivStartX,
+                noteCx: subdivStartX + 8,
+                groupLeft: subdivStartX + 1,
+                groupWidth: DUR_EIGHTHS[dur] * eighthW - 2,
+              }
             })
-          })}
+            if (!inputRefs.current[mIdx]) inputRefs.current[mIdx] = []
 
-          {/* Count slots — one per beat under each measure */}
-          {item.measures.map((_, mIdx) => {
-            const measureLeft = EX3_MEASURE_START_X + mIdx * totalMeasureW
-            return Array.from({ length: beats }, (_, bIdx) => {
-              const cx = measureLeft + (bIdx + 0.5) * beatW
-              const cy = ex3LineY(1) + 36
-              const val = marks[mIdx]?.[bIdx] ?? null
-              const isCorrect = val === bIdx + 1
-              const strokeColor = val === null
-                ? GREY
-                : feedback !== null
-                  ? (isCorrect ? CORRECT : WRONG)
-                  : ACCENT
-              const fillBg = val === null
-                ? 'white'
-                : feedback !== null
-                  ? (isCorrect ? 'rgba(42,107,30,0.10)' : 'rgba(181,64,42,0.12)')
-                  : 'rgba(186,117,23,0.10)'
-              return (
-                <g key={`s${mIdx}-${bIdx}`}
-                  onClick={() => cycleMark(mIdx, bIdx)}
-                  style={{ cursor: feedback !== null ? 'default' : 'pointer' }}>
-                  <circle cx={cx} cy={cy} r={13}
-                    fill={fillBg} stroke={strokeColor} strokeWidth={1.5} />
-                  <text x={cx} y={cy}
-                    fontFamily={F} fontSize={13} fontWeight={800}
-                    fill={strokeColor}
-                    textAnchor="middle" dominantBaseline="central">
-                    {val ?? '?'}
-                  </text>
-                </g>
-              )
-            })
+            const STEM_LEN = 31
+            const STEM_W = 1.4           // matches strokeWidth of the stem <line>
+            const BEAM_H = 4
+
+            return (
+              <g key={`m${mIdx}`}>
+                {measure.notes.map((dur, nIdx) => {
+                  const p = positions[nIdx]
+                  const isErr = feedback?.errors[mIdx]?.[nIdx] ?? false
+                  const showGood = feedback !== null && !isErr
+
+                  // Rests sit around the middle line; notes stay on G4 so stems go up.
+                  const glyphY    = isRest(dur) ? ex3LineY(3) : EX3_NOTE_Y
+                  const glyphSize = isRest(dur) ? 40 : 36
+
+                  // Is this eighth part of a beam group?
+                  const inBeam = dur === 'eighth' &&
+                    beamGroups.some(g => nIdx >= g.start && nIdx <= g.end)
+
+                  return (
+                    <g key={`m${mIdx}n${nIdx}`}>
+                      {/* Beamed eighth: notehead only + custom stem (beam is drawn below) */}
+                      {inBeam ? (
+                        <>
+                          <text x={p.noteCx} y={EX3_NOTE_Y}
+                            fontFamily="Bravura, serif" fontSize={36}
+                            fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">
+                            {NOTEHEAD_BLACK}
+                          </text>
+                          <line x1={p.noteCx + 4.5} y1={EX3_NOTE_Y - 2}
+                            x2={p.noteCx + 4.5} y2={EX3_NOTE_Y - STEM_LEN}
+                            stroke={DARK} strokeWidth={1.4} />
+                        </>
+                      ) : (
+                        <text x={p.noteCx} y={glyphY}
+                          fontFamily="Bravura, serif" fontSize={glyphSize}
+                          fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">
+                          {DUR_GLYPH[dur]}
+                        </text>
+                      )}
+                      {dur === 'dottedHalf' && (
+                        <text x={p.noteCx + 14} y={EX3_NOTE_Y}
+                          fontFamily="Bravura, serif" fontSize={36}
+                          fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{AUG_DOT}</text>
+                      )}
+
+                      {/* Write-zone background */}
+                      <rect x={p.groupLeft} y={groupTop}
+                        width={p.groupWidth} height={groupH}
+                        rx={5}
+                        fill={showGood ? 'rgba(42,107,30,0.08)'
+                            : isErr   ? 'rgba(181,64,42,0.10)'
+                            :           'rgba(186,117,23,0.04)'}
+                        stroke={showGood ? 'rgba(42,107,30,0.35)'
+                              : isErr   ? 'rgba(181,64,42,0.45)'
+                              :           'rgba(186,117,23,0.22)'}
+                        strokeWidth={0.8} />
+
+                      {/* Text input */}
+                      <foreignObject x={p.groupLeft + 2} y={groupTop + 2}
+                        width={p.groupWidth - 4} height={groupH - 4}>
+                        <input
+                          ref={el => { inputRefs.current[mIdx][nIdx] = el }}
+                          type="text"
+                          value={inputs[mIdx][nIdx]}
+                          onChange={e => handleInputChange(mIdx, nIdx, e.target.value)}
+                          onFocus={() => { focusedRef.current = { m: mIdx, n: nIdx } }}
+                          disabled={feedback !== null}
+                          inputMode="text"
+                          autoComplete="off"
+                          autoCapitalize="off"
+                          spellCheck={false}
+                          placeholder="·"
+                          aria-label={`Counts for ${dur}, measure ${mIdx + 1}`}
+                          style={{
+                            width: '100%', height: '100%',
+                            border: 'none', background: 'transparent',
+                            textAlign: 'center',
+                            fontFamily: F, fontSize: 14, fontWeight: 700,
+                            color: showGood ? CORRECT : isErr ? WRONG : DARK,
+                            padding: 0,
+                            outline: 'none',
+                            caretColor: ACCENT,
+                          }}
+                        />
+                      </foreignObject>
+                    </g>
+                  )
+                })}
+
+                {/* Beams connecting each run of 2+ eighth notes. The rect
+                    extends by half the stem stroke-width on each side so it
+                    fully covers the outer edges of the first and last stems,
+                    and overlaps the stem tops by 1px so the junction reads as
+                    one solid shape. */}
+                {beamGroups.map((g, gIdx) => {
+                  const firstCx = positions[g.start].noteCx
+                  const lastCx  = positions[g.end].noteCx
+                  const stemX1 = firstCx + 4.5
+                  const stemX2 = lastCx + 4.5
+                  const stemTopY = EX3_NOTE_Y - STEM_LEN
+                  return (
+                    <rect key={`beam-${mIdx}-${gIdx}`}
+                      x={stemX1 - STEM_W / 2}
+                      y={stemTopY - BEAM_H + 1}
+                      width={(stemX2 - stemX1) + STEM_W}
+                      height={BEAM_H}
+                      fill={DARK} />
+                  )
+                })}
+              </g>
+            )
           })}
         </svg>
+      </div>
+
+      {/* Count palette — taps insert into the focused input */}
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+        textTransform: 'uppercase', color: '#7A7060', margin: '0 0 6px' }}>
+        Count palette
+      </p>
+      <div style={{ display: 'flex', gap: 6, justifyContent: 'center', alignItems: 'center',
+        flexWrap: 'wrap', marginBottom: 12 }}>
+        {paletteItems.map(p => (
+          <button key={p.value}
+            onMouseDown={e => e.preventDefault()}
+            onClick={() => paletteInsert(p.value)}
+            disabled={feedback !== null}
+            aria-label={p.value === 'BACKSPACE' ? 'backspace' : p.value}
+            style={{
+              minWidth: p.wide ? 56 : 44,
+              height: 44, borderRadius: 8,
+              border: `1.5px solid #DDD8CA`,
+              background: 'white', color: DARK,
+              fontFamily: F, fontSize: 18, fontWeight: 700,
+              padding: '0 10px',
+              cursor: feedback !== null ? 'default' : 'pointer',
+            }}>
+            {p.label}
+          </button>
+        ))}
       </div>
 
       <div style={{ display: 'flex', gap: 10, justifyContent: 'center', alignItems: 'center',
@@ -569,20 +908,22 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
         <button onClick={onCheck}
-          disabled={feedback !== null || filledCount !== totalSlots}
+          disabled={feedback !== null || !allFilled}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
             fontFamily: F, fontSize: 14, fontWeight: 600,
-            background: feedback !== null || filledCount !== totalSlots ? '#EDE8DF' : DARK,
-            color: feedback !== null || filledCount !== totalSlots ? '#B0ACA4' : 'white',
-            cursor: feedback !== null || filledCount !== totalSlots ? 'default' : 'pointer',
-          }}>Check ({filledCount}/{totalSlots})</button>
+            background: feedback !== null || !allFilled ? '#EDE8DF' : DARK,
+            color: feedback !== null || !allFilled ? '#B0ACA4' : 'white',
+            cursor: feedback !== null || !allFilled ? 'default' : 'pointer',
+          }}>Check</button>
       </div>
 
       <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
-        {feedback !== null && !feedback.ok && 'Not quite — each measure should count 1 up to the top number.'}
+        {feedback !== null && !feedback.ok && (
+          'Some notes don\u2019t add up — notes shown in red need another look. Counts run 1 + 2 + 3 + 4 + continuously across each measure.'
+        )}
       </p>
 
       {/* Link out to the rhythm trainer for the tapping practice */}
