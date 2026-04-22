@@ -107,15 +107,15 @@ function NavBar({ canBack, canForward, onBack, onForward }: {
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
       {canBack && (
         <button onClick={onBack} style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+          background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+          fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
         }}>← Back</button>
       )}
       {canForward && (
         <div style={{ marginLeft: 'auto' }}>
           <button onClick={onForward} style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+            background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+            fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
           }}>Forward →</button>
         </div>
       )}
@@ -248,7 +248,7 @@ function NamePatternEx({
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Read the five notes on the staff. Give the letter of the tonic and pick{' '}
         <strong style={{ color: MAJ_C }}>major</strong> or{' '}
         <strong style={{ color: MIN_C }}>minor</strong>.
@@ -301,7 +301,7 @@ function NamePatternEx({
               style={{
                 padding: '10px 8px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 13, fontWeight: 500,
+                fontFamily: F, fontSize: 14, fontWeight: 500,
                 cursor: locked ? 'default' : 'pointer',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
               }}>
@@ -312,7 +312,7 @@ function NamePatternEx({
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: '10px 0 0', minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: '10px 0 0', minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -587,7 +587,7 @@ function WritePatternEx({
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: GREY, fontFamily: F, fontSize: 13,
+            color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>
           Reset
@@ -596,7 +596,7 @@ function WritePatternEx({
           disabled={feedback !== null || placedCount !== expectedCount}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: feedback !== null || placedCount !== expectedCount ? 'default' : 'pointer',
             background: feedback !== null || placedCount !== expectedCount ? '#EDE8DF' : DARK,
             color: feedback !== null || placedCount !== expectedCount ? '#B0ACA4' : 'white',
@@ -605,7 +605,7 @@ function WritePatternEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
         Tap the staff to place a notehead. Pick an accidental, then tap a note to apply it.
       </p>
 
@@ -616,7 +616,7 @@ function WritePatternEx({
         label="Keyboard reference"
       />
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: '10px 0 0', minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: '10px 0 0', minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && subStep === 'pattern' && '✓ Pattern correct — now write the triad.'}
         {feedback !== null && feedback.ok && subStep === 'triad' && '✓ Triad correct.'}

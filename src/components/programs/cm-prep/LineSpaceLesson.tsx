@@ -158,7 +158,7 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
   return (
     <button onClick={onClick} style={{
       background: DARK, color: 'white', border: 'none', borderRadius: 10,
-      padding: '10px 24px', fontFamily: F, fontSize: 13, cursor: 'pointer',
+      padding: '10px 24px', fontFamily: F, fontSize: 14, cursor: 'pointer',
     }}>{label}</button>
   )
 }
@@ -405,12 +405,12 @@ function GrandStaffEx({
         </span>
       </div>
       <ExLabel>Highlight the {targetLine ? 'line' : 'space'} notes</ExLabel>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 6, lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 6, lineHeight: 1.6 }}>
         {targetLine
           ? 'Tap each line note — a staff line runs through its head.'
           : 'Tap each space note — its head rests between two lines.'}
       </p>
-      <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', marginBottom: 16 }}>
+      <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', marginBottom: 16 }}>
         Focus on the note head, not the stem.
       </p>
 
@@ -487,13 +487,13 @@ function GrandStaffEx({
       {!submitted ? (
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <PrimaryBtn label="Check →" onClick={submit} />
-          <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', margin: 0 }}>
+          <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', margin: 0 }}>
             {selectedCount} selected
           </p>
         </div>
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0 }}>
             {notes.filter(n => states[n.id] === 'correct').length} / {notes.filter(n => n.isLine === targetLine).length} {targetLine ? 'line' : 'space'} notes found
           </p>
           <PrimaryBtn label="Continue →" onClick={finish} />
@@ -571,7 +571,7 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
     <div>
       <ExLabel>Exercise 3 — Line or space?</ExLabel>
       <ProgressDots total={EX3_TOTAL} current={idx} results={results} />
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
         Is this a <strong>Line</strong> note or a <strong>Space</strong> note?
       </p>
 
@@ -595,7 +595,7 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
               padding: '10px 20px', borderRadius: 10,
               border: `2px solid ${border}`, background: bg,
               cursor: chosen ? 'default' : 'pointer',
-              fontFamily: F, fontSize: 14, fontWeight: 600, color: textCol,
+              fontFamily: F, fontSize: 15, fontWeight: 600, color: textCol,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>{label}</button>
           )
@@ -603,7 +603,7 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
       </div>
 
       {chosen !== null && (
-        <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600,
+        <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600,
           color: isCorrect ? CORRECT : WRONG, margin: 0 }}>
           {isCorrect ? '✓ Correct' : `✗ That's a ${card.isLine ? 'line' : 'space'} note`}
         </p>
@@ -677,7 +677,7 @@ function DrawNotes({
         </span>
       </div>
       <ExLabel>Exercise {exNum} — Draw a note on each {targetLine ? 'line' : 'space'}</ExLabel>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 8, lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 8, lineHeight: 1.6 }}>
         {allFilled
           ? `All ${total} notes placed.`
           : `Click anywhere on the staff to place a note. ${total - placed.length} remaining.`}
@@ -739,7 +739,7 @@ function DrawNotes({
       )}
       {submitted && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0,
+          <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0,
             color: placed.every(p => targets.includes(p)) ? CORRECT : GREY }}>
             {placed.filter(p => targets.includes(p)).length} / {total} on a {targetLine ? 'line' : 'space'}
           </p>
@@ -755,7 +755,7 @@ function NoteShapesIntro({ onNext }: { onNext: () => void }) {
   return (
     <div>
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>Note shapes</p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         Every note has a shape that tells you how long to hold it.
         A <strong>whole note</strong> is a hollow oval with no stem.
         {' '}A <strong>half note</strong> adds a stem to that hollow oval.
@@ -774,7 +774,7 @@ function LineNoteIntro({ onNext }: { onNext: () => void }) {
   return (
     <div>
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>Line notes</p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         A <strong style={{ color: LINE_C }}>line note</strong> has a staff line running directly through its head.
         Any note value can sit on a line — look at the head position, not the stem.
       </p>
@@ -790,7 +790,7 @@ function SpaceNoteIntro({ onNext }: { onNext: () => void }) {
   return (
     <div>
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>Space notes</p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         A <strong style={{ color: SPACE_C }}>space note</strong> has its head between two staff lines —
         no line passes through it. Space notes can also appear above the top line or below the bottom line.
       </p>
@@ -927,7 +927,7 @@ export default function LineSpaceLesson({ passingScore, previouslyCompleted = fa
           <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 6 }}>
             Keep practicing
           </p>
-          <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 24, lineHeight: 1.7 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 24, lineHeight: 1.7 }}>
             You scored <strong style={{ color: DARK }}>{Math.round(gsRatio * 100)}%</strong> across those 6 rounds.
             Try again to reach 90% before moving on.
           </p>
@@ -946,7 +946,7 @@ export default function LineSpaceLesson({ passingScore, previouslyCompleted = fa
           <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 6 }}>
             Keep practicing
           </p>
-          <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 24, lineHeight: 1.7 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 24, lineHeight: 1.7 }}>
             You scored <strong style={{ color: DARK }}>{Math.round(dnRatio * 100)}%</strong> across those 6 rounds.
             Try again to reach 90% before moving on.
           </p>
@@ -960,8 +960,8 @@ export default function LineSpaceLesson({ passingScore, previouslyCompleted = fa
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       ← Back
     </button>
@@ -971,8 +971,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       Forward →
     </button>

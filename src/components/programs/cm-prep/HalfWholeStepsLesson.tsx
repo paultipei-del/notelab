@@ -104,8 +104,8 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       ← Back
     </button>
@@ -115,8 +115,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       Forward →
     </button>
@@ -265,31 +265,31 @@ function StepsIntro({ onNext }: { onNext: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         Half Steps &amp; Whole Steps
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
         Two fundamental building blocks of music are <strong style={{ color: DARK }}>half steps</strong> and{' '}
         <strong style={{ color: DARK }}>whole steps</strong>. Every scale, chord, and interval is made of these.
       </p>
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
         <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10, padding: '12px 16px' }}>
-          <p style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: ACCENT, margin: '0 0 6px' }}>
+          <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT, margin: '0 0 6px' }}>
             H — Half Step
           </p>
-          <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
             Adjacent keys — no key between. Examples: C to C♯, or E to F.
           </p>
         </div>
         <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10, padding: '12px 16px' }}>
-          <p style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: ACCENT2, margin: '0 0 6px' }}>
+          <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT2, margin: '0 0 6px' }}>
             W — Whole Step
           </p>
-          <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
             Skips exactly one key. Examples: C to D, or E to F♯.
           </p>
         </div>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 12, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         Remember: when counting keys, include the black keys.
       </p>
 
@@ -606,7 +606,7 @@ function StepKeyboardEx({
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
       <ProgressBar done={idx} total={total} color={accentColor} />
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Starting from{' '}
         <strong style={{ color: accentColor }}>{item.fromLabel}</strong>
         {' '}— click the key one <strong>{stepType === 'half' ? 'half' : 'whole'} step</strong>{' '}
@@ -616,7 +616,7 @@ function StepKeyboardEx({
           border: `1px solid ${direction === 'up' ? '#88C060' : '#7098D0'}`,
           color:      direction === 'up' ? '#2A5C0A' : '#1A3A6A',
           padding: '2px 10px', borderRadius: 6,
-          fontWeight: 700, fontSize: 13,
+          fontWeight: 700, fontSize: 14,
           verticalAlign: 'middle',
         }}>
           <span style={{ fontSize: 16, lineHeight: 1 }}>{direction === 'up' ? '↑' : '↓'}</span>
@@ -637,7 +637,7 @@ function StepKeyboardEx({
       </div>
 
       <p style={{
-        fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+        fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: kbState === 'correct' ? CORRECT : kbState === 'wrong' ? WRONG : '#B0ACA4',
       }}>
         {feedbackText}
@@ -689,7 +689,7 @@ function LetterPairEx({
       <div>
         <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
           textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
-        <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
           For each pair of notes, identify whether they are a <strong>half step (H)</strong> or a{' '}
           <strong>whole step (W)</strong> apart.
         </p>
@@ -703,11 +703,11 @@ function LetterPairEx({
           </div>
           <div style={{ display: 'inline-block', background: ACCENT + '22',
             border: `1px solid ${ACCENT}55`, borderRadius: 8,
-            padding: '6px 18px', fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT,
+            padding: '6px 18px', fontFamily: F, fontSize: 15, fontWeight: 700, color: ACCENT,
             marginBottom: 12 }}>
             H — Half Step
           </div>
-          <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
             E and F are adjacent white keys — no black key between them.
           </p>
         </div>
@@ -731,7 +731,7 @@ function LetterPairEx({
     }
     return {
       padding: '10px 20px', borderRadius: 10, fontFamily: F,
-      fontSize: 14, fontWeight: 600, cursor: answered !== null ? 'default' : 'pointer',
+      fontSize: 15, fontWeight: 600, cursor: answered !== null ? 'default' : 'pointer',
       border: 'none', background: bg, color,
     } as React.CSSProperties
   }
@@ -760,7 +760,7 @@ function LetterPairEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: answered === null ? '#B0ACA4' : answered === item.type ? CORRECT : WRONG }}>
         {answered !== null && answered !== item.type && (
           <>Correct answer: <strong style={{ color: CORRECT }}>{item.type === 'H' ? 'H — Half Step' : 'W — Whole Step'}</strong></>
@@ -854,7 +854,7 @@ function StaffPairEx({
       <div>
         <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
           textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
-        <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
           Now identify half and whole steps on the staff. The letter names will help you.
         </p>
 
@@ -865,11 +865,11 @@ function StaffPairEx({
 
         <div style={{ display: 'inline-block', background: ACCENT + '22',
           border: `1px solid ${ACCENT}55`, borderRadius: 8,
-          padding: '6px 18px', fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT,
+          padding: '6px 18px', fontFamily: F, fontSize: 15, fontWeight: 700, color: ACCENT,
           marginBottom: 12 }}>
           H — Half Step
         </div>
-        <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
           E and F are adjacent white notes — no black key between them.
         </p>
 
@@ -891,7 +891,7 @@ function StaffPairEx({
     }
     return {
       padding: '10px 20px', borderRadius: 10, fontFamily: F,
-      fontSize: 14, fontWeight: 600, cursor: answered !== null ? 'default' : 'pointer',
+      fontSize: 15, fontWeight: 600, cursor: answered !== null ? 'default' : 'pointer',
       border: 'none', background: bg, color,
     } as React.CSSProperties
   }
@@ -916,7 +916,7 @@ function StaffPairEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: answered === null ? '#B0ACA4' : answered === item.type ? CORRECT : WRONG }}>
         {answered !== null && answered !== item.type && (
           <>Correct answer: <strong style={{ color: CORRECT }}>{item.type === 'H' ? 'H — Half Step' : 'W — Whole Step'}</strong></>

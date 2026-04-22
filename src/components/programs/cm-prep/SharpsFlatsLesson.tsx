@@ -239,14 +239,14 @@ function SharpsIntro({ onNext }: { onNext: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         Sharps
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
         A <strong style={{ color: DARK }}>sharp (♯)</strong> raises a note by one half step.
         On the piano, play the key to the <strong>right</strong> of the white key — that is always a black key.
       </p>
       <PianoKeyboard mode="sharps" />
       <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10,
         padding: '12px 16px', marginBottom: 20 }}>
-        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
           On the staff, a sharp is written to the <strong>left</strong> of the note head,
           centered on the same line or space as the note.
         </p>
@@ -262,14 +262,14 @@ function FlatsIntro({ onNext }: { onNext: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         Flats
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
         A <strong style={{ color: DARK }}>flat (♭)</strong> lowers a note by one half step.
         On the piano, play the key to the <strong>left</strong> of the white key — also a black key.
       </p>
       <PianoKeyboard mode="flats" />
       <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10,
         padding: '12px 16px', marginBottom: 20 }}>
-        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
           Like a sharp, a flat is written to the <strong>left</strong> of the note head,
           on the same line or space.
         </p>
@@ -285,7 +285,7 @@ function NaturalsIntro({ onNext }: { onNext: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         Naturals
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
         A <strong style={{ color: DARK }}>natural (♮)</strong> cancels any sharp or flat,
         returning the note to its white-key pitch for the rest of the measure.
         On the piano, naturals are always <strong>white keys</strong>.
@@ -293,7 +293,7 @@ function NaturalsIntro({ onNext }: { onNext: () => void }) {
       <PianoKeyboard mode="naturals" />
       <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10,
         padding: '12px 16px', marginBottom: 20 }}>
-        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
           The natural sign is written to the <strong>left</strong> of the note head,
           on the same line or space. C♮ is the same key as C — the natural just cancels a previous accidental.
         </p>
@@ -382,7 +382,7 @@ function DrawAccidentalEx({
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Tap to the <strong>left</strong> of the note, on the <strong>same line or space</strong>, then press Place to confirm the {accWord(acc)} ({accSymbol(acc)}).
       </p>
 
@@ -425,7 +425,7 @@ function DrawAccidentalEx({
           disabled={state !== 'idle' || stagedX === null}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: state !== 'idle' || stagedX === null ? 'default' : 'pointer',
             background: state !== 'idle' || stagedX === null ? '#EDE8DF' : DARK,
             color: state !== 'idle' || stagedX === null ? '#B0ACA4' : 'white',
@@ -435,7 +435,7 @@ function DrawAccidentalEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: state === 'idle' ? '#B0ACA4' : state === 'correct' ? CORRECT : WRONG }}>
         {state === 'idle'       && (stagedX === null
           ? `Tap the staff to position the ${accSymbol(acc)}`
@@ -725,7 +725,7 @@ function WriteAccidentalEx({
         <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
           {displayName(item)}
         </span>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
           <strong>{octaveLabel(item)}</strong>
           {!step2 && !submitted && ' — tap the staff to position the note'}
           {step2 && ' — pick the accidental below to confirm'}
@@ -785,7 +785,7 @@ function WriteAccidentalEx({
         </div>
       )}
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: submitted ? (isCorrect ? CORRECT : WRONG) : '#B0ACA4' }}>
         {!step2 && !submitted && 'Click on the staff to place the note'}
         {step2   && !submitted && 'Pick the accidental symbol below'}
@@ -889,8 +889,8 @@ export default function SharpsFlatsLesson({
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       ← Back
     </button>
@@ -900,8 +900,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       Forward →
     </button>

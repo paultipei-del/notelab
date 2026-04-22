@@ -57,15 +57,15 @@ function NavBar({ canBack, canForward, onBack, onForward }: {
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
       {canBack && (
         <button onClick={onBack} style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+          background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+          fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
         }}>← Back</button>
       )}
       {canForward && (
         <div style={{ marginLeft: 'auto' }}>
           <button onClick={onForward} style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+            background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+            fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
           }}>Forward →</button>
         </div>
       )}
@@ -220,7 +220,7 @@ function CompleteStaffEx({ onDone }: { onDone: (correct: number, total: number) 
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         One element is missing from the grand staff below. What is it?
       </p>
 
@@ -248,7 +248,7 @@ function CompleteStaffEx({ onDone }: { onDone: (correct: number, total: number) 
               style={{
                 padding: '12px 14px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 14, fontWeight: 500,
+                fontFamily: F, fontSize: 15, fontWeight: 500,
                 cursor: locked ? 'default' : 'pointer',
               }}>
               {opt}
@@ -257,7 +257,7 @@ function CompleteStaffEx({ onDone }: { onDone: (correct: number, total: number) 
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -396,7 +396,7 @@ function NameNoteEx({ onDone }: { onDone: (correct: number, total: number) => vo
               style={{
                 padding: '12px 8px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 15, fontWeight: 600,
+                fontFamily: F, fontSize: 16, fontWeight: 600,
                 cursor: locked ? 'default' : 'pointer',
               }}>
               {opt}
@@ -405,7 +405,7 @@ function NameNoteEx({ onDone }: { onDone: (correct: number, total: number) => vo
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -490,7 +490,7 @@ function StepsEx({ onDone }: { onDone: (correct: number, total: number) => void 
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Look at the two notes on the staff. Is the distance between them a{' '}
         <strong style={{ color: DARK }}>whole step</strong> or a{' '}
         <strong style={{ color: DARK }}>half step</strong>?
@@ -532,7 +532,7 @@ function StepsEx({ onDone }: { onDone: (correct: number, total: number) => void 
               style={{
                 padding: '14px 12px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 14, fontWeight: 600,
+                fontFamily: F, fontSize: 15, fontWeight: 600,
                 cursor: locked ? 'default' : 'pointer',
               }}>
               {opt}
@@ -541,7 +541,7 @@ function StepsEx({ onDone }: { onDone: (correct: number, total: number) => void 
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -618,7 +618,7 @@ function IntervalEx({ onDone }: { onDone: (correct: number, total: number) => vo
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Count from the lower note up to the higher one, including both. Pick the matching interval.
       </p>
 
@@ -656,7 +656,7 @@ function IntervalEx({ onDone }: { onDone: (correct: number, total: number) => vo
               style={{
                 padding: '14px 8px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 15, fontWeight: 600,
+                fontFamily: F, fontSize: 16, fontWeight: 600,
                 cursor: locked ? 'default' : 'pointer',
               }}>
               {opt}
@@ -665,7 +665,7 @@ function IntervalEx({ onDone }: { onDone: (correct: number, total: number) => vo
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -764,7 +764,7 @@ function PatternNameEx({ onDone }: { onDone: (correct: number, total: number) =>
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Read the five notes. Name the tonic letter and pick{' '}
         <strong style={{ color: DARK }}>major</strong> or <strong style={{ color: DARK }}>minor</strong>.
       </p>
@@ -813,7 +813,7 @@ function PatternNameEx({ onDone }: { onDone: (correct: number, total: number) =>
               style={{
                 padding: '10px 8px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 13, fontWeight: 500,
+                fontFamily: F, fontSize: 14, fontWeight: 500,
                 cursor: locked ? 'default' : 'pointer',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
               }}>
@@ -836,7 +836,7 @@ function PatternNameEx({ onDone }: { onDone: (correct: number, total: number) =>
         </div>
       )}
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (

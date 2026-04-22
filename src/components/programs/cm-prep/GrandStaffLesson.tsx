@@ -105,7 +105,7 @@ function SectionTitle({ children }: { children: string }) {
 }
 function ConceptBox({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 20px', marginBottom: 20, fontFamily: F, fontSize: 13, color: '#4A4540', lineHeight: 1.8 }}>
+    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 20px', marginBottom: 20, fontFamily: F, fontSize: 14, color: '#4A4540', lineHeight: 1.8 }}>
       {children}
     </div>
   )
@@ -117,7 +117,7 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
   return (
     <button onClick={onClick} style={{
       background: DARK, color: 'white', border: 'none', borderRadius: 10,
-      padding: '11px 26px', fontFamily: F, fontSize: 13, cursor: 'pointer',
+      padding: '11px 26px', fontFamily: F, fontSize: 14, cursor: 'pointer',
     }}>{label}</button>
   )
 }
@@ -139,7 +139,7 @@ function FeedbackRow({
 }: { result: boolean; correctLabel: string; onNext: () => void; nextLabel: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
-      <p style={{ fontFamily: F, fontSize: 13, color: result ? CORRECT : WRONG, fontWeight: 600, margin: 0 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: result ? CORRECT : WRONG, fontWeight: 600, margin: 0 }}>
         {result ? '✓ Correct!' : `✗ ${correctLabel}`}
       </p>
       <PrimaryBtn label={nextLabel} onClick={onNext} />
@@ -302,7 +302,7 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
       </div>
 
       {chosen !== null && (
-        <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0,
+        <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0,
           color: chosen === q.n ? CORRECT : WRONG }}>
           {chosen === q.n ? '✓ Correct' : `✗ This is ${q.type} ${q.n}`}
         </p>
@@ -385,7 +385,7 @@ function TrebleEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 6 }}>
         The treble clef's spiral anchors to the second line.
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20 }}>
         Tap <strong>line 2</strong> — the G line — on this staff.
       </p>
 
@@ -438,7 +438,7 @@ function TrebleEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
         />
       )}
       {chosen === null && (
-        <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', textAlign: 'center' }}>Tap a line</p>
+        <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center' }}>Tap a line</p>
       )}
     </div>
   )
@@ -568,11 +568,11 @@ function TrebleClefCalibrator({ onClose }: { onClose: () => void }) {
         <p style={{ fontFamily: F, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: ACCENT, fontWeight: 700, margin: 0 }}>
           Calibrate segments
         </p>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', fontFamily: F, fontSize: 12, color: GREY, cursor: 'pointer', padding: 0 }}>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', fontFamily: F, fontSize: 13, color: GREY, cursor: 'pointer', padding: 0 }}>
           Close ✕
         </button>
       </div>
-      <p style={{ fontFamily: F, fontSize: 12, color: GREY, marginBottom: 12, lineHeight: 1.5 }}>
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.5 }}>
         Drag inside a band to move it · drag its top or bottom edge to resize.
         {' '}<span style={{ color: ACCENT, fontWeight: 600 }}>Orange</span> = Top curl
         {' · '}<span style={{ color: '#2A6B1E', fontWeight: 600 }}>Green</span> = Loop
@@ -697,7 +697,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 6 }}>
         Build {round + 1} of {ROUNDS}
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.6 }}>
         {allPlaced
           ? 'Complete. The loop circles line 2 — that is what makes it a G clef.'
           : 'Drag each piece onto the staff to build the treble clef.'}
@@ -797,7 +797,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
 
       {/* Part descriptions */}
       {!allPlaced && (
-        <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', textAlign: 'center', margin: '0 0 16px' }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center', margin: '0 0 16px' }}>
           Drag a piece onto the staff above
         </p>
       )}
@@ -805,7 +805,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       {/* Complete */}
       {allPlaced && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontFamily: F, fontSize: 13, color: CORRECT, fontWeight: 600, margin: 0 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: CORRECT, fontWeight: 600, margin: 0 }}>
             ✓ Treble clef assembled
           </p>
           <PrimaryBtn
@@ -909,7 +909,7 @@ function BassEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 6 }}>
         The bass clef's dots bracket the fourth line.
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20 }}>
         Hover to explore, then tap <strong>line 4</strong> — the F line.
       </p>
 
@@ -965,7 +965,7 @@ function BassEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
         />
       )}
       {chosen === null && (
-        <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', textAlign: 'center' }}>Tap a line</p>
+        <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center' }}>Tap a line</p>
       )}
     </div>
   )
@@ -1062,11 +1062,11 @@ function BassClefCalibrator({ onClose }: { onClose: () => void }) {
         <p style={{ fontFamily: F, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: ACCENT, fontWeight: 700, margin: 0 }}>
           Calibrate segments
         </p>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', fontFamily: F, fontSize: 12, color: GREY, cursor: 'pointer', padding: 0 }}>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', fontFamily: F, fontSize: 13, color: GREY, cursor: 'pointer', padding: 0 }}>
           Close ✕
         </button>
       </div>
-      <p style={{ fontFamily: F, fontSize: 12, color: GREY, marginBottom: 12, lineHeight: 1.5 }}>
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.5 }}>
         Drag the boxes — or drag their corner handles to resize.
         {' '}<span style={{ color: ACCENT, fontWeight: 600 }}>Orange</span> = Curve
         {' · '}<span style={{ color: '#2A5C9A', fontWeight: 600 }}>Blue</span> = Dots
@@ -1209,7 +1209,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 6 }}>
         Build {round + 1} of {ROUNDS}
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16, lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.6 }}>
         {allPlaced ? 'Complete. The dots bracket line 4 — that is what makes it an F clef.'
           : 'Drag each piece onto the staff.'}
       </p>
@@ -1284,10 +1284,10 @@ function BassEx2({ onDone }: { onDone: () => void }) {
         })}
       </div>
 
-      {!allPlaced && <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', textAlign: 'center', margin: '0 0 16px' }}>Drag a piece onto the staff above</p>}
+      {!allPlaced && <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center', margin: '0 0 16px' }}>Drag a piece onto the staff above</p>}
       {allPlaced && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontFamily: F, fontSize: 13, color: CORRECT, fontWeight: 600, margin: 0 }}>✓ Bass clef assembled</p>
+          <p style={{ fontFamily: F, fontSize: 14, color: CORRECT, fontWeight: 600, margin: 0 }}>✓ Bass clef assembled</p>
           <PrimaryBtn label={round + 1 >= ROUNDS ? 'Continue →' : `Again (${round + 1}/${ROUNDS}) →`} onClick={nextRound} />
         </div>
       )}
@@ -1420,7 +1420,7 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
           return (
             <button key={opt} onClick={() => pick(opt)} style={{
               background: bg, border, borderRadius: 10, padding: '12px 16px',
-              fontFamily: F, fontSize: 13, color, cursor: chosen ? 'default' : 'pointer', textAlign: 'left',
+              fontFamily: F, fontSize: 14, color, cursor: chosen ? 'default' : 'pointer', textAlign: 'left',
             }}>{opt}</button>
           )
         })}
@@ -1560,7 +1560,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
             background: i < round ? CORRECT : i === round ? ACCENT : '#DDD8CA' }} />
         ))}
       </div>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 16 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16 }}>
         Round {round + 1} of 4 — drag each part onto the staff.
       </p>
 
@@ -1634,7 +1634,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
           <PrimaryBtn label={round + 1 >= 4 ? 'Finish →' : 'Next round →'} onClick={nextRound} />
         </div>
       )}
-      {!complete && <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', textAlign: 'center' }}>Drag a piece onto the staff above</p>}
+      {!complete && <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center' }}>Drag a piece onto the staff above</p>}
 
       {dragging && typeof document !== 'undefined' && createPortal(
         <div style={{ position: 'fixed', left: dragClient.x, top: dragClient.y, transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 9999, opacity: 0.9, filter: 'drop-shadow(0 3px 10px rgba(0,0,0,0.22))' }}>
@@ -1752,7 +1752,7 @@ function GrandEx3({ onDone }: { onDone: (s: number, t: number) => void }) {
   return (
     <div>
       <ExLabel>Exercise 8 — Match symbols to names</ExLabel>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.6 }}>
         Tap a name, then tap its matching symbol.
         {selectedName && <strong style={{ color: ACCENT }}> Now find: {MATCH_ITEMS.find(m => m.key === selectedName)?.label}</strong>}
       </p>
@@ -1772,7 +1772,7 @@ function GrandEx3({ onDone }: { onDone: (s: number, t: number) => void }) {
             return (
               <button key={item.key} onClick={() => handleName(item.key)} style={{
                 width: '100%', background: bg, border, borderRadius: 10, padding: '12px 14px',
-                fontFamily: F, fontSize: 13, color, cursor: isMatched ? 'default' : 'pointer',
+                fontFamily: F, fontSize: 14, color, cursor: isMatched ? 'default' : 'pointer',
                 textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                 marginBottom: 8, transition: 'border 0.15s',
               }}>
@@ -1902,8 +1902,8 @@ export default function GrandStaffLesson({ passingScore, previouslyCompleted = f
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: 'var(--font-jost), sans-serif', fontSize: 12, color: '#7A7060',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: 'var(--font-jost), sans-serif', fontSize: 13, color: '#7A7060',
       padding: '4px 0',
     }}>
       ← Back
@@ -1914,8 +1914,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: 'var(--font-jost), sans-serif', fontSize: 12, color: '#7A7060',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: 'var(--font-jost), sans-serif', fontSize: 13, color: '#7A7060',
       padding: '4px 0',
     }}>
       Forward →

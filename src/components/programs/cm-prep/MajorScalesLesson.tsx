@@ -100,15 +100,15 @@ function NavBar({ canBack, canForward, onBack, onForward }: {
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
       {canBack && (
         <button onClick={onBack} style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+          background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+          fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
         }}>← Back</button>
       )}
       {canForward && (
         <div style={{ marginLeft: 'auto' }}>
           <button onClick={onForward} style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+            background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+            fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
           }}>Forward →</button>
         </div>
       )}
@@ -230,7 +230,7 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '4px' }}>
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — {item.key} major scale
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 10px', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 10px', lineHeight: 1.6 }}>
         Tap each circle to cycle between <strong style={{ color: MAJ_C }}>W</strong> and{' '}
         <strong style={{ color: HALF_C }}>H</strong>. Mark every gap between the eight notes.
       </p>
@@ -301,14 +301,14 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: GREY, fontFamily: F, fontSize: 13,
+            color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
         <button onClick={onCheck}
           disabled={feedback !== null || !allMarked}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             background: feedback !== null || !allMarked ? '#EDE8DF' : DARK,
             color: feedback !== null || !allMarked ? '#B0ACA4' : 'white',
             cursor: feedback !== null || !allMarked ? 'default' : 'pointer',
@@ -317,7 +317,7 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct — W W H W W W H'}
         {feedback !== null && !feedback.ok && 'Not quite — every major scale follows W W H W W W H.'}
@@ -531,7 +531,7 @@ function WriteScaleEx({ onDone }: { onDone: (correct: number, total: number) => 
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: GREY, fontFamily: F, fontSize: 13,
+            color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
         <button onClick={onCheck}
@@ -540,16 +540,16 @@ function WriteScaleEx({ onDone }: { onDone: (correct: number, total: number) => 
             padding: '10px 24px', borderRadius: 10, border: 'none',
             background: feedback !== null || placedCount !== 8 ? '#EDE8DF' : DARK,
             color: feedback !== null || placedCount !== 8 ? '#B0ACA4' : 'white',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: feedback !== null || placedCount !== 8 ? 'default' : 'pointer',
           }}>Check ({placedCount}/8)</button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
         Tap the staff to place a note in the nearest slot. Pick an accidental, then tap a note to apply it.
       </p>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && 'Not quite — the correct scale is shown in green.'}

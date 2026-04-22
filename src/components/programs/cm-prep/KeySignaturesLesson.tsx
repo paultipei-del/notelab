@@ -88,15 +88,15 @@ function NavBar({ canBack, canForward, onBack, onForward }: {
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
       {canBack && (
         <button onClick={onBack} style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+          background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+          fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
         }}>← Back</button>
       )}
       {canForward && (
         <div style={{ marginLeft: 'auto' }}>
           <button onClick={onForward} style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+            background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+            fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
           }}>Forward →</button>
         </div>
       )}
@@ -375,7 +375,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Look at the key signature at the start of the grand staff. Which major key is it?
       </p>
 
@@ -403,7 +403,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
               style={{
                 padding: '14px 10px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 15, fontWeight: 600,
+                fontFamily: F, fontSize: 16, fontWeight: 600,
                 cursor: locked ? 'default' : 'pointer',
               }}>
               {opt}
@@ -412,7 +412,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -484,7 +484,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
         style={{
           padding: '12px 10px', borderRadius: 10,
           border: `1.5px solid ${border}`, background: bg, color,
-          fontFamily: F, fontSize: 14, fontWeight: 600,
+          fontFamily: F, fontSize: 15, fontWeight: 600,
           cursor: locked ? 'default' : 'pointer',
         }}>
         {opt}
@@ -500,7 +500,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Pick the accidental that is used in the key signature, then pick the name of the major key.
       </p>
 
@@ -526,7 +526,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
           disabled={feedback !== null || pickedAcc === null || pickedKey === null}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             background: feedback !== null || pickedAcc === null || pickedKey === null ? '#EDE8DF' : DARK,
             color: feedback !== null || pickedAcc === null || pickedKey === null ? '#B0ACA4' : 'white',
             cursor: feedback !== null || pickedAcc === null || pickedKey === null ? 'default' : 'pointer',
@@ -535,7 +535,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -669,7 +669,7 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: GREY, fontFamily: F, fontSize: 13,
+            color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
         <button onClick={onCheck}
@@ -678,18 +678,18 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
             padding: '10px 24px', borderRadius: 10, border: 'none',
             background: feedback !== null ? '#EDE8DF' : DARK,
             color: feedback !== null ? '#B0ACA4' : 'white',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Check</button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
         {item === 'C'
           ? 'C major uses no sharps or flats — just press Check.'
           : 'Pick the accidental, then tap the correct line or space on each staff (treble and bass).'}
       </p>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -750,7 +750,7 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Look at the key signature at the start of this example. Which major key is the piece in?
       </p>
 
@@ -777,7 +777,7 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
               style={{
                 padding: '14px 10px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 15, fontWeight: 600,
+                fontFamily: F, fontSize: 16, fontWeight: 600,
                 cursor: locked ? 'default' : 'pointer',
               }}>
               {opt}
@@ -786,7 +786,7 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (

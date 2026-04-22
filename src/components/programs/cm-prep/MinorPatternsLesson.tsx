@@ -46,8 +46,8 @@ function ProgressBar({ done, total, color = ACCENT }: { done: number; total: num
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       ← Back
     </button>
@@ -56,8 +56,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       Forward →
     </button>
@@ -223,7 +223,7 @@ function BuildKeyboardEx({
           disabled={!confirmReady || feedback !== null}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: !confirmReady || feedback !== null ? 'default' : 'pointer',
             background: !confirmReady || feedback !== null ? '#EDE8DF' : DARK,
             color: !confirmReady || feedback !== null ? '#B0ACA4' : 'white',
@@ -232,7 +232,7 @@ function BuildKeyboardEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok  && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -317,7 +317,7 @@ function MatchPatternEx({
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && !feedback.ok && (
           <>Correct answer: <strong style={{ color: CORRECT }}>{answer} minor</strong></>
@@ -401,7 +401,7 @@ function MatchTriadEx({
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && !feedback.ok && (
           <>Correct answer: <strong style={{ color: CORRECT }}>{answer} minor</strong></>
@@ -623,7 +623,7 @@ function PlaceTriadEx({
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: GREY, fontFamily: F, fontSize: 13,
+            color: GREY, fontFamily: F, fontSize: 14,
             cursor: submitted ? 'default' : 'pointer',
           }}>
           Reset
@@ -632,7 +632,7 @@ function PlaceTriadEx({
           disabled={submitted || placedCount !== 3}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: submitted || placedCount !== 3 ? 'default' : 'pointer',
             background: submitted || placedCount !== 3 ? '#EDE8DF' : DARK,
             color: submitted || placedCount !== 3 ? '#B0ACA4' : 'white',
@@ -641,11 +641,11 @@ function PlaceTriadEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
         Tap the staff to place a notehead. Pick an accidental, then tap a note to apply it.
       </p>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
         {submitted && isCorrect && '✓ Correct'}
         {submitted && !isCorrect && (
@@ -829,7 +829,7 @@ function ConvertEx({
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         This is <strong style={{ color: DARK }}>{sourceLabel}</strong>. Add the accidental that turns
         it into <strong style={{ color: ACCENT }}>{targetLabel}</strong>. Pick an accidental, then
         tap the note you want it on. Tap again to clear.
@@ -884,7 +884,7 @@ function ConvertEx({
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: GREY, fontFamily: F, fontSize: 13,
+            color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>
           Reset
@@ -895,14 +895,14 @@ function ConvertEx({
             padding: '10px 24px', borderRadius: 10, border: 'none',
             background: feedback !== null ? '#EDE8DF' : DARK,
             color: feedback !== null ? '#B0ACA4' : 'white',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>
           Check
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok  && `✓ Correct — this is now ${targetLabel}`}
         {feedback !== null && !feedback.ok && (

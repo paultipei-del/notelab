@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { CM_PREP_LESSONS } from '@/lib/programs/cm-prep/lessons'
+import { Breadcrumb } from '@/components/programs/cm-prep/nav/Breadcrumb'
 import {
   loadCMPrepProgress, loadCMPrepProgressRemote, isCMPrepLessonUnlocked,
   type CMPrepProgressStore,
@@ -33,14 +34,14 @@ export default function CMPrepHubPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
-      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
+       <div style={{ maxWidth: '760px', margin: '0 auto' }}>
 
-        {/* Breadcrumb */}
-        <Link href="/programs/cm" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>
-            ← CM Theory Prep
-          </span>
-        </Link>
+        {/* Breadcrumb trail */}
+        <Breadcrumb crumbs={[
+          { label: 'Certificate of Merit', href: '/programs/cm' },
+          { label: 'Preparatory Level' },
+        ]} />
 
         {/* Header */}
         <div style={{ marginTop: '28px', marginBottom: '36px' }}>
@@ -90,7 +91,7 @@ export default function CMPrepHubPage() {
                     </span>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#B0ACA4', margin: '0 0 3px' }}>{lesson.title}</p>
+                    <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400, color: '#B0ACA4', margin: '0 0 3px' }}>{lesson.title}</p>
                     <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#C8C4BA', margin: 0 }}>{lesson.subtitle}</p>
                   </div>
                   <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA' }}>🔒</span>
@@ -124,7 +125,7 @@ export default function CMPrepHubPage() {
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                      <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#2A2318', margin: 0 }}>
+                      <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400, color: '#2A2318', margin: 0 }}>
                         {lesson.title}
                       </p>
                       {inProgress && (
@@ -150,6 +151,7 @@ export default function CMPrepHubPage() {
           })}
         </div>
 
+       </div>
       </div>
     </div>
   )

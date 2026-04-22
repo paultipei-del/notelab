@@ -99,8 +99,8 @@ function ProgressBar({ done, total, color = ACCENT }: { done: number; total: num
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       ← Back
     </button>
@@ -109,8 +109,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       Forward →
     </button>
@@ -279,7 +279,7 @@ function IdentifyPatternEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — do these five notes form a
         five-finger pattern?
       </p>
-      <p style={{ fontFamily: F, fontSize: 12, color: GREY, fontStyle: 'italic',
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, fontStyle: 'italic',
         margin: '0 0 10px', lineHeight: 1.6 }}>
         Look for five <strong>adjacent</strong> lines and spaces — don&apos;t worry about the
         W–W–H–W formula here. Any unbroken 5-note run counts, major or not.
@@ -295,7 +295,7 @@ function IdentifyPatternEx({
         <button style={btnStyle(false)} onClick={() => pick(false)} disabled={feedback !== null}>No</button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && !feedback.ok && !item.isFivePattern && (
           <>Not a five-finger pattern — there&apos;s a skip between at least two notes.</>
@@ -391,7 +391,7 @@ function MatchEx({
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && !feedback.ok && (
           <>Correct answer: <strong style={{ color: CORRECT }}>{answer} major</strong></>
@@ -543,7 +543,7 @@ function BuildKeyboardEx({
           disabled={!confirmReady || feedback !== null}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: !confirmReady || feedback !== null ? 'default' : 'pointer',
             background: !confirmReady || feedback !== null ? '#EDE8DF' : DARK,
             color: !confirmReady || feedback !== null ? '#B0ACA4' : 'white',
@@ -552,7 +552,7 @@ function BuildKeyboardEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok  && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -769,7 +769,7 @@ function PlaceTriadEx({
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: '#7A7060', fontFamily: F, fontSize: 13,
+            color: '#7A7060', fontFamily: F, fontSize: 14,
             cursor: submitted ? 'default' : 'pointer',
           }}>
           Reset
@@ -778,7 +778,7 @@ function PlaceTriadEx({
           disabled={submitted || placedCount !== 3}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: submitted || placedCount !== 3 ? 'default' : 'pointer',
             background: submitted || placedCount !== 3 ? '#EDE8DF' : DARK,
             color: submitted || placedCount !== 3 ? '#B0ACA4' : 'white',
@@ -787,11 +787,11 @@ function PlaceTriadEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: '0 0 8px', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: '#7A7060', margin: '0 0 8px', lineHeight: 1.6 }}>
         Tap the staff to place a notehead. Pick an accidental, then tap a note to apply it.
       </p>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
         {submitted && isCorrect && '✓ Correct'}
         {submitted && !isCorrect && (

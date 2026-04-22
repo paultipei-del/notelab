@@ -94,7 +94,7 @@ function PrimaryBtn({ label, onClick, disabled = false }: { label: string; onCli
       background: disabled ? '#EDE8DF' : DARK,
       color: disabled ? '#B0ACA4' : 'white',
       border: 'none', borderRadius: 10,
-      padding: '10px 24px', fontFamily: F, fontSize: 13,
+      padding: '10px 24px', fontFamily: F, fontSize: 14,
       cursor: disabled ? 'default' : 'pointer',
     }}>{label}</button>
   )
@@ -195,7 +195,7 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         Space notes
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         The treble staff has <strong>six space notes</strong> — four inside the staff, plus one space
         just below line 1 and one space just above line 5. Every space note spells part of <strong style={{ color: SPACE_C }}>D F A C E G</strong>.
       </p>
@@ -242,13 +242,13 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
         background: 'rgba(139,58,139,0.08)', border: '1px solid rgba(139,58,139,0.2)',
         borderRadius: 10, padding: '12px 16px', marginBottom: 20,
       }}>
-        <p style={{ fontFamily: F, fontSize: 12, fontWeight: 700, color: SPACE_C, margin: '0 0 4px', letterSpacing: '0.06em' }}>
+        <p style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: SPACE_C, margin: '0 0 4px', letterSpacing: '0.06em' }}>
           D F A C E G
         </p>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '0 0 8px' }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px' }}>
           "Do Funny Animals Come Every Game?" — bottom to top, D through G
         </p>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0 }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0 }}>
           The four inner spaces spell <strong style={{ color: SPACE_C }}>FACE</strong> — F A C E from bottom to top.
         </p>
       </div>
@@ -272,7 +272,7 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         Line notes
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         Five lines, five line notes — <strong style={{ color: LINE_C }}>E G B D F</strong> from bottom to top.
         Add middle C below on its own ledger line, and A5 above on another — seven line notes in all.
       </p>
@@ -313,10 +313,10 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
         background: 'rgba(186,117,23,0.08)', border: '1px solid rgba(186,117,23,0.25)',
         borderRadius: 10, padding: '14px 16px', marginBottom: 20,
       }}>
-        <p style={{ fontFamily: F, fontSize: 12, fontWeight: 700, color: ACCENT, margin: '0 0 6px' }}>
+        <p style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: ACCENT, margin: '0 0 6px' }}>
           Watch out: C4 and A5
         </p>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0, lineHeight: 1.6 }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.6 }}>
           Both sit on a ledger line — C4 below the staff, A5 above.
           Students often confuse them. Remember: C (Middle C) is <em>below</em>, A is <em>above</em>.
         </p>
@@ -327,13 +327,13 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
         background: 'rgba(42,92,154,0.08)', border: '1px solid rgba(42,92,154,0.2)',
         borderRadius: 10, padding: '12px 16px', marginBottom: 20,
       }}>
-        <p style={{ fontFamily: F, fontSize: 12, fontWeight: 700, color: LINE_C, margin: '0 0 4px', letterSpacing: '0.06em' }}>
+        <p style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: LINE_C, margin: '0 0 4px', letterSpacing: '0.06em' }}>
           C E G B D F A
         </p>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '0 0 8px' }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px' }}>
           "Can Every Good Boy Do Fine Always?" — all 7 line notes, bottom to top
         </p>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0 }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0 }}>
           The five staff lines spell <strong style={{ color: LINE_C }}>E G B D F</strong> — "Every Good Boy Does Fine"
         </p>
       </div>
@@ -411,7 +411,7 @@ function NameNoteEx({
         <SingleNoteStaff pos={item.pos} color={DARK} />
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 12, color: GREY, marginBottom: 12 }}>
+      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12 }}>
         Name this note
       </p>
 
@@ -435,7 +435,7 @@ function NameNoteEx({
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, minHeight: '1.5em' }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, minHeight: '1.5em' }}>
         {feedback && !feedback.ok && (
           <>It's <strong style={{ color: CORRECT }}>{feedback.correctLetter}</strong></>
         )}
@@ -545,7 +545,7 @@ function PlaceNoteEx({
         <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
           {item.letter}
         </span>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
           <strong>{octaveLabel(item.pos)}</strong> — place <strong>{item.name}</strong> on the staff
         </p>
       </div>
@@ -581,7 +581,7 @@ function PlaceNoteEx({
         </svg>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: submitted ? (isCorrect ? CORRECT : WRONG) : '#B0ACA4' }}>
         {!submitted
           ? 'Click on the staff to place the note'
@@ -724,7 +724,7 @@ function WordRound({
         textTransform: 'uppercase' as const, color: ACCENT, marginBottom: 12 }}>
         {roundLabel}
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12 }}>
         What word do these notes spell?
       </p>
 
@@ -751,7 +751,7 @@ function WordRound({
           padding: '10px 20px', borderRadius: 10, border: 'none',
           background: submitted !== null || typed.trim() === '' ? '#EDE8DF' : DARK,
           color: submitted !== null || typed.trim() === '' ? '#B0ACA4' : 'white',
-          fontFamily: F, fontSize: 14, fontWeight: 600,
+          fontFamily: F, fontSize: 15, fontWeight: 600,
           cursor: submitted !== null || typed.trim() === '' ? 'default' : 'pointer',
         }}>Submit</button>
       </div>
@@ -782,7 +782,7 @@ function WordRound({
           aria-label="Backspace"
           style={{
             padding: '10px 0', borderRadius: 8, border: '1.5px solid #DDD8CA',
-            background: 'white', fontFamily: F, fontSize: 14,
+            background: 'white', fontFamily: F, fontSize: 15,
             color: submitted !== null || typed.length === 0 ? '#B0ACA4' : DARK,
             cursor: submitted !== null || typed.length === 0 ? 'default' : 'pointer',
           }}>
@@ -790,7 +790,7 @@ function WordRound({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: submitted !== null ? (isCorrect ? CORRECT : WRONG) : 'transparent' }}>
         {submitted !== null ? (isCorrect ? '✓ Correct!' : `✗ The word is ${item.word}`) : '·'}
       </p>
@@ -814,7 +814,7 @@ function WordGame({ onDone }: { onDone: (s: number, t: number) => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         Note spelling
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         Notes spell real words. Read the notes on the staff and choose the word they form.
       </p>
 
@@ -963,8 +963,8 @@ export default function TrebleClefLesson({ passingScore, previouslyCompleted = f
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       ← Back
     </button>
@@ -974,8 +974,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
     }}>
       Forward →
     </button>

@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson' | 'major-scales-lesson' | 'time-signatures-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson' | 'major-scales-lesson' | 'time-signatures-lesson' | 'signs-terms-lesson' | 'review-10-13-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -185,7 +185,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Preparatory-level musical vocabulary',
     description: "Tempo markings, dynamic symbols, articulation signs, and structural directions — these words and symbols control how music is performed. Knowing them is the difference between playing the right notes and playing music as it was written.",
     type: 'lesson',
-    tool: 'flash-session',
+    tool: 'signs-terms-lesson',
     unlockAfter: 'time-signatures',
     passingScore: 0.8,
   },
@@ -196,7 +196,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Key signatures, scales, time, and terms',
     description: "A focused review of everything from the second half of the preparatory level: key signatures for C, F, and G major; scale spellings; time signatures and note values; and the complete set of signs and terms.",
     type: 'review',
-    tool: 'mixed-quiz',
+    tool: 'review-10-13-lesson',
     unlockAfter: 'signs-terms',
     passingScore: 0.75,
   },
@@ -224,4 +224,9 @@ export function getCMPrepLessonIndex(slug: string): number {
 export function nextCMPrepLesson(slug: string): CMPrepLesson | undefined {
   const idx = getCMPrepLessonIndex(slug)
   return idx >= 0 ? CM_PREP_LESSONS[idx + 1] : undefined
+}
+
+export function prevCMPrepLesson(slug: string): CMPrepLesson | undefined {
+  const idx = getCMPrepLessonIndex(slug)
+  return idx > 0 ? CM_PREP_LESSONS[idx - 1] : undefined
 }

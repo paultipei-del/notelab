@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
-import { getCMPrepLesson, nextCMPrepLesson } from '@/lib/programs/cm-prep/lessons'
+import { getCMPrepLesson, nextCMPrepLesson, prevCMPrepLesson } from '@/lib/programs/cm-prep/lessons'
+import { Breadcrumb } from '@/components/programs/cm-prep/nav/Breadcrumb'
+import { LessonPager } from '@/components/programs/cm-prep/nav/LessonPager'
 import {
   loadCMPrepProgress, loadCMPrepProgressRemote,
   isCMPrepLessonUnlocked, recordCMPrepSession, recordCMPrepSessionRemote,
@@ -32,6 +34,8 @@ import ReviewLessons1to9Lesson from '@/components/programs/cm-prep/ReviewLessons
 import KeySignaturesLesson from '@/components/programs/cm-prep/KeySignaturesLesson'
 import MajorScalesLesson from '@/components/programs/cm-prep/MajorScalesLesson'
 import TimeSignaturesLesson from '@/components/programs/cm-prep/TimeSignaturesLesson'
+import SignsTermsLesson from '@/components/programs/cm-prep/SignsTermsLesson'
+import ReviewLessons10to13Lesson from '@/components/programs/cm-prep/ReviewLessons10to13Lesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -49,6 +53,7 @@ export default function CMPrepLessonPage({ params }: Props) {
   const { lessonSlug } = use(params)
   const lesson = getCMPrepLesson(lessonSlug)
   const next = nextCMPrepLesson(lessonSlug)
+  const prev = prevCMPrepLesson(lessonSlug)
 
   const [store, setStore] = useState<CMPrepProgressStore>({})
   const [practicing, setPracticing] = useState(false)
@@ -96,14 +101,15 @@ export default function CMPrepLessonPage({ params }: Props) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
-      <div style={{ maxWidth: '640px', margin: '0 auto', padding: '40px 24px 80px' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
+       <div style={{ maxWidth: '760px', margin: '0 auto' }}>
 
-        {/* Breadcrumb */}
-        <Link href="/programs/cm/prep" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>
-            ← Preparatory Level
-          </span>
-        </Link>
+        {/* Breadcrumb trail */}
+        <Breadcrumb crumbs={[
+          { label: 'Certificate of Merit', href: '/programs/cm' },
+          { label: 'Preparatory Level', href: '/programs/cm/prep' },
+          { label: lesson.title },
+        ]} />
 
         {/* Header */}
         <div style={{ marginTop: '28px', marginBottom: '28px' }}>
@@ -335,7 +341,9 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'review-1to9-lesson' && 'Five exercises drawn from Lessons 1–9: complete the grand staff, name notes in both clefs, identify whole and half steps, name intervals, and name five-finger patterns.'}
                   {lesson.tool === 'key-signatures-lesson' && 'Four exercises: match each key signature to its name, identify the accidental and the key, write the key signature on an empty staff, and name the key of a short musical example.'}
                   {lesson.tool === 'major-scales-lesson' && 'Two exercises: mark the whole and half steps in each major scale, then write C, F, and G major scales in both clefs.'}
-                  {lesson.tool === 'time-signatures-lesson' && 'Three exercises: answer questions about how time signatures work, identify the beat value of each note and rest, and write the counts under a rhythm line in 2/4, 3/4, and 4/4.'}
+                  {lesson.tool === 'time-signatures-lesson' && 'Four exercises: answer questions about how time signatures work, identify the beat value of each note and rest, write the counts under a rhythm line in 2/4, 3/4, and 4/4, and write the counts for real rhythms from real music.'}
+                  {lesson.tool === 'signs-terms-lesson' && 'Four exercises: match signs with definitions, identify the sign, play a memory-match pair game, and group each sign by category.'}
+                  {lesson.tool === 'review-10-13-lesson' && 'Five exercises drawn from Lessons 10–13: write counts and place accents, match terms to definitions, complete scales with sharps or flats, identify keys from key signatures, and identify signs and terms.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -457,6 +465,18 @@ export default function CMPrepLessonPage({ params }: Props) {
                     previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
                   />
+                ) : lesson.tool === 'signs-terms-lesson' ? (
+                  <SignsTermsLesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'review-10-13-lesson' ? (
+                  <ReviewLessons10to13Lesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
                 ) : lesson.tool === 'flash-session' ? (
                   <FlashSession
                     cards={SIGNS_TERMS_CARDS}
@@ -478,6 +498,10 @@ export default function CMPrepLessonPage({ params }: Props) {
           </div>
         )}
 
+        {/* Adjacent-lesson pager */}
+        {!practicing && <LessonPager prev={prev} next={next} />}
+
+       </div>
       </div>
     </div>
   )

@@ -4,11 +4,11 @@
 
 /* Readable UI scale (Jost): prefer font-weight 400 from --nl-text-meta down */
 :root {
-  --nl-text-body: 15px; /* hero sublines, primary secondary paragraphs */
-  --nl-text-base: 16px; /* marketing hero, pickers — one step up from body */
-  --nl-text-ui: 14px; /* nav, menus, primary buttons */
-  --nl-text-meta: 13px; /* footer, card meta, desktop nav */
-  --nl-text-compact: 12px; /* chips, form labels (uppercase), tight controls */
+  --nl-text-body: 16px; /* hero sublines, primary secondary paragraphs */
+  --nl-text-base: 17px; /* marketing hero, pickers — one step up from body */
+  --nl-text-ui: 15px; /* nav, menus, primary buttons */
+  --nl-text-meta: 14px; /* footer, card meta, desktop nav */
+  --nl-text-compact: 13px; /* chips, form labels (uppercase), tight controls */
   --nl-text-badge: 11px; /* tiny pills / wordmark sublabel only */
   --nl-site-header-h: 60px; /* keep in sync with .site-header height */
   /* Smallest viewport metric so study height never exceeds visible area (avoids 1–2px body scroll) */

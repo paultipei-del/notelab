@@ -9,6 +9,7 @@ export interface RhythmNote {
   tieStart: boolean
   tieStop: boolean
   durationBeats: number  // in quarter note units
+  staff: number          // 1 for treble, 2 for bass on a grand staff; 1 when unspecified
 }
 
 export interface RhythmMeasure {
@@ -93,7 +94,8 @@ export async function parseMXL(buffer: ArrayBuffer): Promise<RhythmExercise> {
       const type: NoteValue = (rawType && DURATION_MAP[normalizedType] !== undefined)
         ? normalizedType
         : inferNoteTypeFromDuration(durationBeats, dot)
-      notes.push({ type, rest, dot, tieStart, tieStop, durationBeats })
+      const staff = parseInt(note.querySelector('staff')?.textContent || '1')
+      notes.push({ type, rest, dot, tieStart, tieStop, durationBeats, staff })
     })
     if (notes.length > 0) measures.push({ notes })
   })

@@ -387,7 +387,7 @@ function PlaceExercise({
         <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
           {item.answer}
         </span>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
           <strong>{octaveLabel(item)}</strong> — tap the staff, then press Place to confirm
         </p>
       </div>
@@ -419,7 +419,7 @@ function PlaceExercise({
           disabled={submitted || stagedPos === null}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: submitted || stagedPos === null ? 'default' : 'pointer',
             background: submitted || stagedPos === null ? '#EDE8DF' : DARK,
             color: submitted || stagedPos === null ? '#B0ACA4' : 'white',
@@ -540,7 +540,7 @@ function PlaceExerciseGrand({
         <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
           {item.answer}
         </span>
-        <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: '4px 0 0' }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
           <strong>{octaveLabel(item)}</strong> — tap the staff, then press Place to confirm
           {itemIsMiddleC && <span style={{ color: '#B0ACA4' }}> (either staff accepted)</span>}
         </p>
@@ -573,7 +573,7 @@ function PlaceExerciseGrand({
           disabled={submitted || stagedPos === null}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: submitted || stagedPos === null ? 'default' : 'pointer',
             background: submitted || stagedPos === null ? '#EDE8DF' : DARK,
             color: submitted || stagedPos === null ? '#B0ACA4' : 'white',
@@ -630,7 +630,7 @@ function PlaceFeedback({ submitted, isCorrect, item }: {
   submitted: boolean; isCorrect: boolean; item: StaffNoteItem
 }) {
   return (
-    <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+    <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
       color: submitted ? (isCorrect ? CORRECT_C : WRONG_C) : '#B0ACA4' }}>
       {!submitted
         ? 'Click on the staff to place the note'
@@ -656,7 +656,7 @@ function TransitionCard({
       <p style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 300, color: DARK, marginBottom: 4 }}>
         {correct} / {total} — {pct}%
       </p>
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 32 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 32 }}>
         {nextType === 'place'
           ? `Next: place each note on the ${nextGrand ? 'grand staff' : 'staff'}.`
           : `Next: name each note on the ${nextGrand ? 'grand staff' : 'staff'}.`}

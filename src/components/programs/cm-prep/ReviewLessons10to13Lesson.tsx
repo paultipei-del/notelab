@@ -1,0 +1,727 @@
+'use client'
+
+import { useMemo, useRef, useState } from 'react'
+import { NotationSymbol } from './visuals/NotationSymbols'
+import { SIGN_CARDS } from './SignsTermsLesson'
+
+const F       = 'var(--font-jost), sans-serif'
+const SERIF   = 'var(--font-cormorant), serif'
+const BRAVURA = 'Bravura, serif'
+const DARK    = '#1A1A18'
+const GREY    = '#7A7060'
+const ACCENT  = '#BA7517'
+const CORRECT = '#2A6B1E'
+const WRONG   = '#B5402A'
+
+// Bravura glyphs (SMuFL codepoints)
+const G_TREBLE   = ''
+const G_QUARTER  = ''
+const G_ACCENT   = ''   // accentAbove
+const G_SHARP    = ''
+const G_FLAT     = ''
+const G_NATURAL  = ''
+const TS_DIGIT: Record<string, string> = {
+  '2': '', '3': '', '4': '',
+}
+
+function shuffled<T>(arr: T[]): T[] { return [...arr].sort(() => Math.random() - 0.5) }
+
+// ── Shared UI primitives ──────────────────────────────────────────────────
+function ProgressBar({ done, total, color = ACCENT }: { done: number; total: number; color?: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+      <div style={{ flex: 1, height: 4, background: '#EDE8DF', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ width: `${(done / total) * 100}%`, height: '100%', background: color,
+          borderRadius: 2, transition: 'width 0.3s' }} />
+      </div>
+      <span style={{ fontFamily: F, fontSize: 11, color: '#B0ACA4', whiteSpace: 'nowrap' }}>
+        {done + 1} / {total}
+      </span>
+    </div>
+  )
+}
+
+function ExerciseLabel({ children }: { children: string }) {
+  return (
+    <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+      textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+      {children}
+    </p>
+  )
+}
+
+function MCButton({ label, isPicked, isAnswer, locked, onClick }: {
+  label: string; isPicked: boolean; isAnswer: boolean; locked: boolean; onClick: () => void
+}) {
+  const bg     = locked && isAnswer ? CORRECT : locked && isPicked && !isAnswer ? WRONG : 'white'
+  const color  = locked && (isAnswer || isPicked) ? 'white' : DARK
+  const border = locked && isAnswer ? CORRECT : locked && isPicked && !isAnswer ? WRONG : '#DDD8CA'
+  return (
+    <button onClick={onClick} disabled={locked}
+      style={{
+        padding: '14px 16px', borderRadius: 10,
+        border: `1.5px solid ${border}`, background: bg, color,
+        fontFamily: F, fontSize: 15, fontWeight: 500,
+        textAlign: 'left', lineHeight: 1.5,
+        cursor: locked ? 'default' : 'pointer',
+      }}>{label}</button>
+  )
+}
+
+function FeedbackLine({ feedback, wrongContent }: {
+  feedback: { ok: boolean } | null
+  wrongContent: React.ReactNode
+}) {
+  return (
+    <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
+      {feedback !== null && feedback.ok && '✓ Correct'}
+      {feedback !== null && !feedback.ok && wrongContent}
+    </p>
+  )
+}
+
+// ── Ex 1: Counts + accents ────────────────────────────────────────────────
+// Student writes the count under each note and taps an accent over beat 1
+// (the only emphasized beat in 2/4, 3/4, and 4/4 at the Preparatory level).
+interface RhythmBar {
+  ts:      [number, number]
+  counts:  string[]       // expected count for each beat
+  accents: boolean[]      // whether each beat should carry an accent
+}
+const RHYTHM_BARS: RhythmBar[] = [
+  { ts: [2,4], counts: ['1','2'],         accents: [true, false] },
+  { ts: [3,4], counts: ['1','2','3'],     accents: [true, false, false] },
+  { ts: [4,4], counts: ['1','2','3','4'], accents: [true, false, false, false] },
+]
+
+function CountsAccentsEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
+  const [counts,    setCounts]    = useState<string[][]>(() => RHYTHM_BARS.map(b => b.counts.map(() => '')))
+  const [accents,   setAccents]   = useState<boolean[][]>(() => RHYTHM_BARS.map(b => b.accents.map(() => false)))
+  const [submitted, setSubmitted] = useState(false)
+
+  function setCount(bi: number, beat: number, v: string) {
+    if (submitted) return
+    setCounts(prev => prev.map((row, i) => i === bi ? row.map((c, j) => j === beat ? v : c) : row))
+  }
+  function toggleAccent(bi: number, beat: number) {
+    if (submitted) return
+    setAccents(prev => prev.map((row, i) => i === bi ? row.map((a, j) => j === beat ? !a : a) : row))
+  }
+
+  function submit() {
+    setSubmitted(true)
+    let correct = 0
+    let total   = 0
+    for (let bi = 0; bi < RHYTHM_BARS.length; bi++) {
+      for (let j = 0; j < RHYTHM_BARS[bi].counts.length; j++) {
+        total += 2
+        if (counts[bi][j].trim() === RHYTHM_BARS[bi].counts[j]) correct += 1
+        if (accents[bi][j] === RHYTHM_BARS[bi].accents[j])      correct += 1
+      }
+    }
+    setTimeout(() => onDone(correct, total), 1600)
+  }
+
+  return (
+    <div>
+      <ExerciseLabel>Exercise 1 — Write the counts and place accents</ExerciseLabel>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, lineHeight: 1.6, margin: '0 0 18px' }}>
+        Type the count below each note, then tap the space above each note to place an accent on the
+        beats that should be emphasized.
+      </p>
+
+      {RHYTHM_BARS.map((bar, bi) => (
+        <RhythmBarUI key={bi}
+          bar={bar}
+          counts={counts[bi]}
+          accents={accents[bi]}
+          submitted={submitted}
+          onSetCount={(j, v) => setCount(bi, j, v)}
+          onToggleAccent={j => toggleAccent(bi, j)}
+        />
+      ))}
+
+      {!submitted ? (
+        <button onClick={submit}
+          style={{ background: DARK, color: 'white', border: 'none', borderRadius: 10,
+            padding: '12px 28px', fontFamily: F, fontSize: 14, cursor: 'pointer', marginTop: 6 }}>
+          Check answers
+        </button>
+      ) : (
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '6px 0 0' }}>
+          Moving on…
+        </p>
+      )}
+    </div>
+  )
+}
+
+function RhythmBarUI({ bar, counts, accents, submitted, onSetCount, onToggleAccent }: {
+  bar: RhythmBar
+  counts:  string[]
+  accents: boolean[]
+  submitted: boolean
+  onSetCount: (beat: number, v: string) => void
+  onToggleAccent: (beat: number) => void
+}) {
+  const W = 440
+  const H = 200
+  const STAFF_L = 18
+  const STAFF_R = W - 18
+  const step    = 6                                   // half a staff space
+  const LINE_Y  = (n: number) => 60 + (5 - n) * 2 * step   // n=5 top, n=1 bottom
+  const NOTE_Y  = LINE_Y(2)                           // G4 — quarters sit here
+  const TS_TOP  = LINE_Y(4) + 2
+  const TS_BOT  = LINE_Y(2) + 2
+
+  const N = bar.counts.length
+  const noteStart = 108
+  const noteEnd   = W - 20
+  const span      = noteEnd - noteStart
+  const cxFor     = (i: number) => N === 1 ? (noteStart + noteEnd) / 2
+                                           : noteStart + (span / (N - 1)) * i
+
+  return (
+    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      padding: '12px 12px 14px', marginBottom: 14 }}>
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="xMidYMid meet"
+        style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
+        {/* Staff */}
+        {[1,2,3,4,5].map(n => (
+          <line key={n} x1={STAFF_L} y1={LINE_Y(n)} x2={STAFF_R} y2={LINE_Y(n)}
+            stroke={DARK} strokeWidth={1.1} />
+        ))}
+        <line x1={STAFF_L} y1={LINE_Y(5)} x2={STAFF_L} y2={LINE_Y(1)} stroke={DARK} strokeWidth={1.4} />
+        <line x1={STAFF_R} y1={LINE_Y(5)} x2={STAFF_R} y2={LINE_Y(1)} stroke={DARK} strokeWidth={1.4} />
+
+        {/* Clef */}
+        <text x={STAFF_L + 6} y={LINE_Y(2)} fontFamily={BRAVURA} fontSize={50}
+          fill={DARK} dominantBaseline="auto">{G_TREBLE}</text>
+
+        {/* Time signature */}
+        <text x={STAFF_L + 62} y={TS_TOP} fontFamily={BRAVURA} fontSize={26}
+          fill={DARK} textAnchor="middle" dominantBaseline="central">
+          {TS_DIGIT[String(bar.ts[0])]}
+        </text>
+        <text x={STAFF_L + 62} y={TS_BOT} fontFamily={BRAVURA} fontSize={26}
+          fill={DARK} textAnchor="middle" dominantBaseline="central">
+          {TS_DIGIT[String(bar.ts[1])]}
+        </text>
+
+        {/* Notes + accents */}
+        {bar.counts.map((_, i) => {
+          const cx = cxFor(i)
+          return (
+            <g key={i}>
+              {/* Accent glyph (only when toggled on) */}
+              {accents[i] && (
+                <text x={cx} y={LINE_Y(5) - 8} fontFamily={BRAVURA} fontSize={22}
+                  fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">
+                  {G_ACCENT}
+                </text>
+              )}
+              {/* Notehead (stem up) */}
+              <text x={cx} y={NOTE_Y} fontFamily={BRAVURA} fontSize={48}
+                fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">
+                {G_QUARTER}
+              </text>
+              {/* Invisible tap-zone above the note to toggle accent */}
+              <rect x={cx - 16} y={LINE_Y(5) - 26} width={32} height={24}
+                fill={accents[i] ? 'rgba(186,117,23,0.14)' : 'rgba(186,117,23,0.05)'}
+                stroke={accents[i] ? ACCENT : 'rgba(186,117,23,0.3)'}
+                strokeWidth={accents[i] ? 1.3 : 0.8}
+                strokeDasharray={accents[i] ? '0' : '3 3'}
+                rx={3}
+                style={{ cursor: submitted ? 'default' : 'pointer' }}
+                onClick={() => onToggleAccent(i)}
+              />
+            </g>
+          )
+        })}
+
+        {/* Final bar line */}
+        <line x1={STAFF_R - 1} y1={LINE_Y(5)} x2={STAFF_R - 1} y2={LINE_Y(1)}
+          stroke={DARK} strokeWidth={1.8} />
+
+        {/* Count input boxes — placed below the staff */}
+        {bar.counts.map((_, i) => {
+          const cx = cxFor(i)
+          const value = counts[i]
+          const expected = bar.counts[i]
+          const accOk = accents[i] === bar.accents[i]
+          const countOk = value.trim() === expected
+          const bg  = !submitted ? 'white'
+                    : countOk ? 'rgba(42,107,30,0.10)'
+                              : 'rgba(181,64,42,0.10)'
+          const bd  = !submitted ? '#DDD8CA'
+                    : countOk ? CORRECT : WRONG
+          return (
+            <g key={`in${i}`}>
+              <foreignObject x={cx - 22} y={LINE_Y(1) + 14} width={44} height={30}>
+                <input
+                  value={value}
+                  onChange={e => onSetCount(i, e.target.value)}
+                  disabled={submitted}
+                  style={{
+                    width: '100%', height: '100%', textAlign: 'center',
+                    fontFamily: F, fontSize: 14, fontWeight: 600,
+                    color: DARK, background: bg, border: `1.5px solid ${bd}`,
+                    borderRadius: 6, outline: 'none', padding: 0,
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </foreignObject>
+              {submitted && !countOk && (
+                <text x={cx} y={LINE_Y(1) + 58} fontFamily={F} fontSize={11}
+                  fill={CORRECT} textAnchor="middle">{expected}</text>
+              )}
+              {submitted && !accOk && (
+                <text x={cx} y={LINE_Y(1) + 72} fontFamily={F} fontSize={10}
+                  fill={WRONG} textAnchor="middle">
+                  {bar.accents[i] ? 'accent' : 'no accent'}
+                </text>
+              )}
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
+// ── Ex 2: Term → definition ───────────────────────────────────────────────
+function MatchDefEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
+  const items = useMemo(() => shuffled(SIGN_CARDS).slice(0, 6), [])
+  const total = items.length
+  const [idx,      setIdx]      = useState(0)
+  const [feedback, setFeedback] = useState<{ ok: boolean; picked: string } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const item = items[idx]
+  const options = useMemo(() => {
+    const others = SIGN_CARDS.filter(c => c.id !== item.id).map(c => c.def)
+    return shuffled([item.def, ...shuffled(others).slice(0, 3)])
+  }, [item])
+
+  function pick(opt: string) {
+    if (feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    const ok = opt === item.def
+    if (ok) correctRef.current += 1
+    setFeedback({ ok, picked: opt })
+    setTimeout(() => {
+      if (ok) {
+        if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+        setIdx(i => i + 1); setFeedback(null); lockedRef.current = false
+      } else { setFeedback(null); lockedRef.current = false }
+    }, ok ? 1200 : 2400)
+  }
+
+  return (
+    <div>
+      <ExerciseLabel>Exercise 2 — Match the sign with its definition</ExerciseLabel>
+      <ProgressBar done={idx} total={total} />
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 14,
+        padding: '18px 20px 12px', marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
+          minHeight: 120, marginBottom: 4 }}>
+          <NotationSymbol cardId={item.id} />
+        </div>
+        <p style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 500,
+          color: DARK, textAlign: 'center', margin: '0 0 2px' }}>{item.term}</p>
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 10px', textAlign: 'center' }}>
+        Which definition matches this sign or term?
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+        {options.map(opt => <MCButton key={opt} label={opt} isPicked={feedback?.picked === opt}
+          isAnswer={opt === item.def} locked={feedback !== null} onClick={() => pick(opt)} />)}
+      </div>
+
+      <FeedbackLine feedback={feedback}
+        wrongContent={<><strong style={{ color: CORRECT }}>{item.term}</strong> means:{' '}
+          <strong style={{ color: CORRECT }}>{item.def}</strong></>} />
+    </div>
+  )
+}
+
+// ── Ex 3: Complete the scales ─────────────────────────────────────────────
+// For each of C / F / G major, show the eight natural notes on the treble
+// staff and let the student cycle each note's accidental (natural → ♯ → ♭ → …)
+// by tapping. Scale pos is "letter index from C4": C4=0, D4=1, … G5=11.
+type AccType = 'natural' | 'sharp' | 'flat'
+
+interface Scale {
+  name:     string
+  letters:  string[]       // 8 letters
+  pos:      number[]       // 8 staff positions
+  expected: AccType[]      // expected accidental per note
+}
+
+const SCALES: Scale[] = [
+  { name: 'C major',
+    letters: ['C','D','E','F','G','A','B','C'],
+    pos:      [0,1,2,3,4,5,6,7],
+    expected: ['natural','natural','natural','natural','natural','natural','natural','natural'] },
+  { name: 'F major',
+    letters: ['F','G','A','B','C','D','E','F'],
+    pos:      [3,4,5,6,7,8,9,10],
+    expected: ['natural','natural','natural','flat','natural','natural','natural','natural'] },
+  { name: 'G major',
+    letters: ['G','A','B','C','D','E','F','G'],
+    pos:      [4,5,6,7,8,9,10,11],
+    expected: ['natural','natural','natural','natural','natural','natural','sharp','natural'] },
+]
+
+function CompleteScaleEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
+  // State: one array of 8 AccType per scale.
+  const [accs,      setAccs]      = useState<AccType[][]>(
+    () => SCALES.map(s => s.letters.map((): AccType => 'natural'))
+  )
+  const [submitted, setSubmitted] = useState(false)
+
+  function cycle(scaleIdx: number, noteIdx: number) {
+    if (submitted) return
+    setAccs(prev => prev.map((row, i) =>
+      i !== scaleIdx ? row
+        : row.map((a, j) => {
+            if (j !== noteIdx) return a
+            if (a === 'natural') return 'sharp'
+            if (a === 'sharp')   return 'flat'
+            return 'natural'
+          })
+    ))
+  }
+
+  function submit() {
+    setSubmitted(true)
+    let correct = 0
+    let total   = 0
+    for (let s = 0; s < SCALES.length; s++) {
+      for (let i = 0; i < SCALES[s].expected.length; i++) {
+        total += 1
+        if (accs[s][i] === SCALES[s].expected[i]) correct += 1
+      }
+    }
+    setTimeout(() => onDone(correct, total), 1600)
+  }
+
+  return (
+    <div>
+      <ExerciseLabel>Exercise 3 — Complete each scale by adding sharps or flats</ExerciseLabel>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, lineHeight: 1.6, margin: '0 0 18px' }}>
+        Tap a note to cycle through <strong>natural → sharp → flat → natural</strong>. Some scales
+        need no changes.
+      </p>
+
+      {SCALES.map((scale, si) => (
+        <ScaleRow key={scale.name}
+          scale={scale}
+          accs={accs[si]}
+          submitted={submitted}
+          onCycle={i => cycle(si, i)}
+        />
+      ))}
+
+      {!submitted ? (
+        <button onClick={submit}
+          style={{ background: DARK, color: 'white', border: 'none', borderRadius: 10,
+            padding: '12px 28px', fontFamily: F, fontSize: 14, cursor: 'pointer', marginTop: 6 }}>
+          Check answers
+        </button>
+      ) : (
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '6px 0 0' }}>
+          Moving on…
+        </p>
+      )}
+    </div>
+  )
+}
+
+function ScaleRow({ scale, accs, submitted, onCycle }: {
+  scale: Scale
+  accs:  AccType[]
+  submitted: boolean
+  onCycle: (i: number) => void
+}) {
+  const W       = 560
+  const H       = 180
+  const step    = 6                              // half staff space
+  const TOP_Y   = 40                             // y of line 5 (F5)
+  const LINE_Y  = (n: number) => TOP_Y + (5 - n) * 2 * step
+  const POS_Y   = (pos: number) => TOP_Y + (10 - pos) * step   // pos=10 (F5) → TOP_Y
+  const STAFF_L = 20
+  const STAFF_R = W - 20
+  const START_X = 92
+  const END_X   = W - 28
+  const cxFor   = (i: number) => START_X + ((END_X - START_X) / 7) * i
+  const accGlyph = (a: AccType) => a === 'sharp' ? G_SHARP : a === 'flat' ? G_FLAT : ''
+
+  return (
+    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      padding: '10px 12px 12px', marginBottom: 14 }}>
+      <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 500, color: DARK,
+        margin: '0 0 4px', textAlign: 'center' }}>{scale.name}</p>
+
+      <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="xMidYMid meet"
+        style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
+        {/* Staff */}
+        {[1,2,3,4,5].map(n => (
+          <line key={n} x1={STAFF_L} y1={LINE_Y(n)} x2={STAFF_R} y2={LINE_Y(n)}
+            stroke={DARK} strokeWidth={1.1} />
+        ))}
+
+        {/* Clef */}
+        <text x={STAFF_L + 6} y={LINE_Y(2)} fontFamily={BRAVURA} fontSize={50}
+          fill={DARK} dominantBaseline="auto">{G_TREBLE}</text>
+
+        {/* Notes */}
+        {scale.letters.map((letter, i) => {
+          const cx  = cxFor(i)
+          const cy  = POS_Y(scale.pos[i])
+          const acc = accs[i]
+          const exp = scale.expected[i]
+          const ok  = acc === exp
+          const noteTint = !submitted ? DARK : ok ? CORRECT : WRONG
+          const needsLedger = scale.pos[i] === 0 || scale.pos[i] <= -1  // C4 ledger below
+
+          return (
+            <g key={i}>
+              {/* Ledger line for C4 */}
+              {needsLedger && (
+                <line x1={cx - 10} y1={cy} x2={cx + 10} y2={cy}
+                  stroke={DARK} strokeWidth={1.1} />
+              )}
+              {/* Accidental glyph */}
+              {acc !== 'natural' && (
+                <text x={cx - 13} y={cy + 1} fontFamily={BRAVURA} fontSize={26}
+                  fill={noteTint} textAnchor="middle" dominantBaseline="central">
+                  {accGlyph(acc)}
+                </text>
+              )}
+              {/* Whole-note head (unstemmed — cleaner for scale degrees) */}
+              <ellipse cx={cx} cy={cy} rx={6.5} ry={4.5}
+                fill={noteTint}
+                transform={`rotate(-20 ${cx} ${cy})`}
+              />
+              {/* Tap target */}
+              <rect x={cx - 16} y={cy - 14} width={32} height={28}
+                fill="transparent"
+                style={{ cursor: submitted ? 'default' : 'pointer' }}
+                onClick={() => onCycle(i)}
+              />
+              {/* Letter name below */}
+              <text x={cx} y={LINE_Y(1) + 32} fontFamily={F} fontSize={13}
+                fontWeight={600} fill={submitted && !ok ? WRONG : GREY}
+                textAnchor="middle">{letter}</text>
+              {/* Post-submit hint */}
+              {submitted && !ok && exp !== 'natural' && (
+                <text x={cx} y={LINE_Y(1) + 50} fontFamily={F} fontSize={11}
+                  fill={CORRECT} textAnchor="middle">
+                  {exp === 'sharp' ? '♯' : '♭'}
+                </text>
+              )}
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
+// ── Ex 4: Key signature → key name ───────────────────────────────────────
+interface KeySigItem {
+  kind:   'none' | 'sharp' | 'flat'
+  answer: 'C major' | 'F major' | 'G major'
+}
+const KEY_SIG_ITEMS: KeySigItem[] = [
+  { kind: 'none',  answer: 'C major' },
+  { kind: 'flat',  answer: 'F major' },
+  { kind: 'sharp', answer: 'G major' },
+]
+const KEY_SIG_OPTIONS: KeySigItem['answer'][] = ['C major', 'F major', 'G major']
+
+function KeySigIdEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
+  const items = useMemo(() => shuffled(KEY_SIG_ITEMS), [])
+  const total = items.length
+  const [idx,      setIdx]      = useState(0)
+  const [feedback, setFeedback] = useState<{ ok: boolean; picked: string } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const item = items[idx]
+
+  function pick(opt: string) {
+    if (feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    const ok = opt === item.answer
+    if (ok) correctRef.current += 1
+    setFeedback({ ok, picked: opt })
+    setTimeout(() => {
+      if (ok) {
+        if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+        setIdx(i => i + 1); setFeedback(null); lockedRef.current = false
+      } else { setFeedback(null); lockedRef.current = false }
+    }, ok ? 1200 : 2400)
+  }
+
+  return (
+    <div>
+      <ExerciseLabel>Exercise 4 — Name the key from its key signature</ExerciseLabel>
+      <ProgressBar done={idx} total={total} />
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 14,
+        padding: '18px 20px', marginBottom: 14,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 130 }}>
+        <KeySigStaff kind={item.kind} />
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 10px', textAlign: 'center' }}>
+        Which major key uses this key signature?
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 14 }}>
+        {KEY_SIG_OPTIONS.map(opt => <MCButton key={opt} label={opt} isPicked={feedback?.picked === opt}
+          isAnswer={opt === item.answer} locked={feedback !== null} onClick={() => pick(opt)} />)}
+      </div>
+
+      <FeedbackLine feedback={feedback}
+        wrongContent={<>This is <strong style={{ color: CORRECT }}>{item.answer}</strong></>} />
+    </div>
+  )
+}
+
+function KeySigStaff({ kind }: { kind: 'none' | 'sharp' | 'flat' }) {
+  const W = 260
+  const H = 110
+  const step   = 6
+  const TOP_Y  = 30
+  const LINE_Y = (n: number) => TOP_Y + (5 - n) * 2 * step
+  const POS_Y  = (pos: number) => TOP_Y + (10 - pos) * step
+  // F♯ sits on line 5 (pos=10). B♭ sits on line 3 (pos=6).
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="xMidYMid meet"
+      style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
+      {[1,2,3,4,5].map(n => (
+        <line key={n} x1={16} y1={LINE_Y(n)} x2={W - 16} y2={LINE_Y(n)}
+          stroke={DARK} strokeWidth={1.1} />
+      ))}
+      <text x={22} y={LINE_Y(2)} fontFamily={BRAVURA} fontSize={50}
+        fill={DARK} dominantBaseline="auto">{G_TREBLE}</text>
+      {kind === 'sharp' && (
+        <text x={80} y={POS_Y(10)} fontFamily={BRAVURA} fontSize={36}
+          fill={DARK} textAnchor="middle" dominantBaseline="central">{G_SHARP}</text>
+      )}
+      {kind === 'flat' && (
+        <text x={80} y={POS_Y(6)} fontFamily={BRAVURA} fontSize={36}
+          fill={DARK} textAnchor="middle" dominantBaseline="central">{G_FLAT}</text>
+      )}
+    </svg>
+  )
+}
+
+// ── Ex 5: Symbol → term ───────────────────────────────────────────────────
+function IdentifySymbolEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
+  const items = useMemo(() => shuffled(SIGN_CARDS).slice(0, 6), [])
+  const total = items.length
+  const [idx,      setIdx]      = useState(0)
+  const [feedback, setFeedback] = useState<{ ok: boolean; picked: string } | null>(null)
+  const correctRef = useRef(0)
+  const lockedRef  = useRef(false)
+
+  const item = items[idx]
+  const options = useMemo(() => {
+    const others = SIGN_CARDS.filter(c => c.id !== item.id).map(c => c.term)
+    return shuffled([item.term, ...shuffled(others).slice(0, 3)])
+  }, [item])
+
+  function pick(opt: string) {
+    if (feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    const ok = opt === item.term
+    if (ok) correctRef.current += 1
+    setFeedback({ ok, picked: opt })
+    setTimeout(() => {
+      if (ok) {
+        if (idx + 1 >= total) { onDone(correctRef.current, total); return }
+        setIdx(i => i + 1); setFeedback(null); lockedRef.current = false
+      } else { setFeedback(null); lockedRef.current = false }
+    }, ok ? 1100 : 2200)
+  }
+
+  return (
+    <div>
+      <ExerciseLabel>Exercise 5 — Identify the sign</ExerciseLabel>
+      <ProgressBar done={idx} total={total} />
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 14,
+        padding: '22px 20px', marginBottom: 14, minHeight: 140,
+        display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <NotationSymbol cardId={item.id} />
+      </div>
+
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 10px', textAlign: 'center' }}>
+        What is this sign or term called?
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 14 }}>
+        {options.map(opt => <MCButton key={opt} label={opt} isPicked={feedback?.picked === opt}
+          isAnswer={opt === item.term} locked={feedback !== null} onClick={() => pick(opt)} />)}
+      </div>
+
+      <FeedbackLine feedback={feedback}
+        wrongContent={<>This is <strong style={{ color: CORRECT }}>{item.term}</strong></>} />
+    </div>
+  )
+}
+
+// ── Root ──────────────────────────────────────────────────────────────────
+type Phase = 'ex1' | 'ex2' | 'ex3' | 'ex4' | 'ex5'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4', 'ex5']
+
+export default function ReviewLessons10to13Lesson({
+  previouslyCompleted = false,
+  onComplete,
+}: {
+  passingScore: number
+  previouslyCompleted?: boolean
+  onComplete: (score: number, total: number) => void
+}) {
+  const [phase, setPhase] = useState<Phase>('ex1')
+  const [keyN,  setKeyN]  = useState(0)
+  const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
+
+  void previouslyCompleted
+
+  function next() {
+    const idx = PHASE_ORDER.indexOf(phase)
+    if (idx + 1 >= PHASE_ORDER.length) {
+      let correct = 0, total = 0
+      for (const v of phaseScoresRef.current.values()) { correct += v.correct; total += v.total }
+      onComplete(total > 0 ? correct / total : 1, total)
+      return
+    }
+    setPhase(PHASE_ORDER[idx + 1])
+    setKeyN(k => k + 1)
+  }
+
+  function scored(correct: number, total: number) {
+    phaseScoresRef.current.set(phase, { correct, total })
+    next()
+  }
+
+  return (
+    <div>
+      {phase === 'ex1' && <CountsAccentsEx   key={keyN} onDone={scored} />}
+      {phase === 'ex2' && <MatchDefEx        key={keyN} onDone={scored} />}
+      {phase === 'ex3' && <CompleteScaleEx   key={keyN} onDone={scored} />}
+      {phase === 'ex4' && <KeySigIdEx        key={keyN} onDone={scored} />}
+      {phase === 'ex5' && <IdentifySymbolEx  key={keyN} onDone={scored} />}
+    </div>
+  )
+}

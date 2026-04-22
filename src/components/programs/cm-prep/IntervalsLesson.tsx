@@ -121,8 +121,8 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060',
       padding: '4px 0',
     }}>
       ← Back
@@ -133,8 +133,8 @@ function BackButton({ onClick }: { onClick: () => void }) {
 function ForwardButton({ onClick }: { onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'none', border: 'none', cursor: 'pointer',
-      fontFamily: F, fontSize: 12, color: '#7A7060',
+      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
+      fontFamily: F, fontSize: 13, color: '#7A7060',
       padding: '4px 0',
     }}>
       Forward →
@@ -280,7 +280,7 @@ function NameIntervalEx({
           textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
           Exercise 1 — Name these intervals
         </p>
-        <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
           The first one is given: this is a <strong style={{ color: ACCENT }}>5th</strong>.
           Count <strong>{letterAt(item.clef, Math.min(item.pos1, item.pos2))}</strong> → ... →{' '}
           <strong>{letterAt(item.clef, Math.max(item.pos1, item.pos2))}</strong> to verify.
@@ -294,7 +294,7 @@ function NameIntervalEx({
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
           <span style={{ display: 'inline-block', background: ACCENT + '22',
             border: `1px solid ${ACCENT}55`, borderRadius: 8,
-            padding: '6px 18px', fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT }}>
+            padding: '6px 18px', fontFamily: F, fontSize: 15, fontWeight: 700, color: ACCENT }}>
             5th
           </span>
         </div>
@@ -347,7 +347,7 @@ function NameIntervalEx({
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && !feedback.ok && (
           <>Correct answer: <strong style={{ color: CORRECT }}>
@@ -534,7 +534,7 @@ function BuildIntervalEx({
           disabled={submitted || stagedPos === null}
           style={{
             padding: '10px 28px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             cursor: submitted || stagedPos === null ? 'default' : 'pointer',
             background: submitted || stagedPos === null ? '#EDE8DF' : DARK,
             color: submitted || stagedPos === null ? '#B0ACA4' : 'white',
@@ -543,7 +543,7 @@ function BuildIntervalEx({
         </button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
         {submitted && isCorrect  && '✓ Correct'}
         {submitted && !isCorrect && (
@@ -776,7 +776,7 @@ function ReadBuildEx({
       </div>
 
       {/* Step indicator */}
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 10 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 10 }}>
         {subStep === 'name1' && <>Step 1 — Name the <strong>given</strong> note</>}
         {subStep === 'place' && <>Step 2 — Place the second note{' '}
           <strong style={{ color: ACCENT }}>{item.direction === 'up' ? 'up' : 'down'} a {sizeLabel(item.size)}</strong>
@@ -818,7 +818,7 @@ function ReadBuildEx({
             disabled={feedback !== null || stagedPos === null}
             style={{
               padding: '10px 28px', borderRadius: 10, border: 'none',
-              fontFamily: F, fontSize: 14, fontWeight: 600,
+              fontFamily: F, fontSize: 15, fontWeight: 600,
               cursor: feedback !== null || stagedPos === null ? 'default' : 'pointer',
               background: feedback !== null || stagedPos === null ? '#EDE8DF' : DARK,
               color: feedback !== null || stagedPos === null ? '#B0ACA4' : 'white',
@@ -829,7 +829,7 @@ function ReadBuildEx({
       )}
 
       {/* Feedback row */}
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback?.step === 'name1' && !feedback.ok && (
           <>It&apos;s <strong style={{ color: CORRECT }}>{givenLetter}</strong></>
@@ -1138,7 +1138,7 @@ function PhraseIntervalEx({
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && !feedback.ok && (
           <>Correct answer: <strong style={{ color: CORRECT }}>{sizeLabel(item.answer)}</strong></>

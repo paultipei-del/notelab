@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
+import { parseMXL, type RhythmNote, type RhythmExercise } from '@/lib/parseMXL'
+import OsmdRhythmCounts from './OsmdRhythmCounts'
 
 const F       = 'var(--font-jost), sans-serif'
 const DARK    = '#1A1A18'
@@ -71,25 +73,51 @@ function ProgressBar({ done, total, color = ACCENT }: { done: number; total: num
   )
 }
 
+function NavButton({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+  const [pressed, setPressed] = useState(false)
+  const [hover,   setHover]   = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        background: hover
+          ? 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+          : 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
+        border: '1px solid #D7D1C0',
+        borderRadius: 9,
+        cursor: 'pointer',
+        fontFamily: F, fontSize: 13, fontWeight: 600,
+        color: '#4A4540',
+        padding: '9px 20px',
+        letterSpacing: '0.02em',
+        // Bottom shadow = button's "body"; small drop shadow = depth off the page.
+        boxShadow: pressed
+          ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+          : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)',
+        transform: pressed ? 'translateY(2px)' : 'translateY(0)',
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
 function NavBar({ canBack, canForward, onBack, onForward }: {
   canBack: boolean; canForward: boolean
   onBack: () => void; onForward: () => void
 }) {
   if (!canBack && !canForward) return null
   return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-      {canBack && (
-        <button onClick={onBack} style={{
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
-        }}>← Back</button>
-      )}
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
+      {canBack && <NavButton onClick={onBack}>← Back</NavButton>}
       {canForward && (
         <div style={{ marginLeft: 'auto' }}>
-          <button onClick={onForward} style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontFamily: F, fontSize: 12, color: '#7A7060', padding: '4px 0',
-          }}>Forward →</button>
+          <NavButton onClick={onForward}>Forward →</NavButton>
         </div>
       )}
     </div>
@@ -174,7 +202,7 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Quarter note = 1 beat. How many beats does{' '}
         <strong style={{ color: DARK }}>this {item.kind === 'rest' ? 'rest' : 'note'}</strong> get?
       </p>
@@ -202,7 +230,7 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
               style={{
                 padding: '12px 4px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 14, fontWeight: 600,
+                fontFamily: F, fontSize: 15, fontWeight: 600,
                 cursor: locked ? 'default' : 'pointer',
               }}>
               {opt}
@@ -211,7 +239,7 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -385,7 +413,7 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
               style={{
                 padding: '12px 14px', borderRadius: 10,
                 border: `1.5px solid ${border}`, background: bg, color,
-                fontFamily: F, fontSize: 14, fontWeight: 500, textAlign: 'left',
+                fontFamily: F, fontSize: 15, fontWeight: 500, textAlign: 'left',
                 lineHeight: 1.4,
                 cursor: locked ? 'default' : 'pointer',
               }}>
@@ -395,7 +423,7 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
         })}
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -413,15 +441,16 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
 // note with a tinted group background so the student can see what counts belong
 // to which note. Input uses a painter bar — pick a value, then tap slots.
 type RhythmDur =
-  | 'eighth' | 'quarter' | 'half' | 'dottedHalf' | 'whole'
+  | 'eighth' | 'quarter' | 'dottedQuarter' | 'half' | 'dottedHalf' | 'whole'
   | 'eighthRest' | 'quarterRest' | 'halfRest' | 'wholeRest'
 const DUR_EIGHTHS: Record<RhythmDur, number> = {
-  eighth: 1, quarter: 2, half: 4, dottedHalf: 6, whole: 8,
+  eighth: 1, quarter: 2, dottedQuarter: 3, half: 4, dottedHalf: 6, whole: 8,
   eighthRest: 1, quarterRest: 2, halfRest: 4, wholeRest: 8,
 }
 const DUR_GLYPH: Record<RhythmDur, string> = {
   eighth:  NOTE_GLYPH.eighth,     // only used for isolated (un-beamed) eighths
   quarter: NOTE_GLYPH.quarter,
+  dottedQuarter: NOTE_GLYPH.quarter,  // quarter + aug dot rendered separately
   half:    NOTE_GLYPH.half,
   dottedHalf: NOTE_GLYPH.half,     // half + aug dot rendered separately
   whole:   NOTE_GLYPH.whole,
@@ -577,8 +606,16 @@ function normalized(s: string): string {
   return s.replace(/\s+/g, '').toLowerCase()
 }
 
-function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
-  const items = useMemo(() => [...EX3_POOL], [])
+function WriteCountsEx({
+  onDone,
+  pool = EX3_POOL,
+  title = 'Exercise 3 — Write the counts',
+}: {
+  onDone: (correct: number, total: number) => void
+  pool?: RhythmItem[]
+  title?: string
+}) {
+  const items = useMemo(() => [...pool], [pool])
   const total = items.length
   const [idx,      setIdx]      = useState(0)
   const [inputs,   setInputs]   = useState<string[][]>(() => initInputs(items[0]))
@@ -689,11 +726,11 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 3 — Write the counts
+        {title}
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 10, lineHeight: 1.65 }}>
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 10, lineHeight: 1.65 }}>
         Under each note, type the counts it holds. A quarter holds{' '}
         <strong style={{ color: DARK }}>N+</strong>, a half holds{' '}
         <strong style={{ color: DARK }}>N+N+</strong>, and counting runs continuously from{' '}
@@ -794,7 +831,7 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
                           {DUR_GLYPH[dur]}
                         </text>
                       )}
-                      {dur === 'dottedHalf' && (
+                      {(dur === 'dottedHalf' || dur === 'dottedQuarter') && (
                         <text x={p.noteCx + 14} y={EX3_NOTE_Y}
                           fontFamily="Bravura, serif" fontSize={36}
                           fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{AUG_DOT}</text>
@@ -832,7 +869,7 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
                             width: '100%', height: '100%',
                             border: 'none', background: 'transparent',
                             textAlign: 'center',
-                            fontFamily: F, fontSize: 14, fontWeight: 700,
+                            fontFamily: F, fontSize: 15, fontWeight: 700,
                             color: showGood ? CORRECT : isErr ? WRONG : DARK,
                             padding: 0,
                             outline: 'none',
@@ -904,21 +941,21 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
           style={{
             padding: '10px 16px', borderRadius: 10,
             border: '1.5px solid #DDD8CA', background: 'white',
-            color: GREY, fontFamily: F, fontSize: 13,
+            color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
         <button onClick={onCheck}
           disabled={feedback !== null || !allFilled}
           style={{
             padding: '10px 24px', borderRadius: 10, border: 'none',
-            fontFamily: F, fontSize: 14, fontWeight: 600,
+            fontFamily: F, fontSize: 15, fontWeight: 600,
             background: feedback !== null || !allFilled ? '#EDE8DF' : DARK,
             color: feedback !== null || !allFilled ? '#B0ACA4' : 'white',
             cursor: feedback !== null || !allFilled ? 'default' : 'pointer',
           }}>Check</button>
       </div>
 
-      <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, margin: 0, minHeight: '1.5em',
+      <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
@@ -930,7 +967,7 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
       <div style={{ marginTop: 18, padding: '12px 14px',
         background: 'rgba(186,117,23,0.06)', border: '1px solid rgba(186,117,23,0.22)',
         borderRadius: 10 }}>
-        <p style={{ fontFamily: F, fontSize: 12, color: DARK, margin: 0, lineHeight: 1.55 }}>
+        <p style={{ fontFamily: F, fontSize: 13, color: DARK, margin: 0, lineHeight: 1.55 }}>
           Want to <em>feel</em> the counts instead of just writing them? Try the{' '}
           <a href="/rhythm" style={{ color: ACCENT, fontWeight: 600, textDecoration: 'none' }}>
             rhythm trainer ↗
@@ -942,9 +979,310 @@ function WriteCountsEx({ onDone }: { onDone: (correct: number, total: number) =>
   )
 }
 
+// ── Ex 4: Write the counts on real MusicXML rhythms ─────────────────────
+// Six short rhythms authored in notation software and exported as .mxl. We
+// parse them at runtime and reuse WriteCountsEx's renderer, so Ex 4 feels
+// identical to Ex 3 but drills on real musical examples.
+const EX4_XML_SRCS = [
+  '/music/prep/rhythm/rhythm-1.mxl',
+  '/music/prep/rhythm/rhythm-2.mxl',
+  '/music/prep/rhythm/rhythm-3.mxl',
+  '/music/prep/rhythm/rhythm-4.mxl',
+  '/music/prep/rhythm/rhythm-5.mxl',
+  '/music/prep/rhythm/rhythm-6.mxl',
+]
+
+function mxlNoteToRhythmDur(n: RhythmNote): RhythmDur {
+  if (n.rest) {
+    if (n.type === 'whole')   return 'wholeRest'
+    if (n.type === 'half')    return 'halfRest'
+    if (n.type === 'quarter') return 'quarterRest'
+    if (n.type === 'eighth')  return 'eighthRest'
+    return 'quarterRest'
+  }
+  if (n.type === 'half'    && n.dot) return 'dottedHalf'
+  if (n.type === 'quarter' && n.dot) return 'dottedQuarter'
+  if (n.type === 'whole')   return 'whole'
+  if (n.type === 'half')    return 'half'
+  if (n.type === 'quarter') return 'quarter'
+  if (n.type === 'eighth')  return 'eighth'
+  return 'quarter'
+}
+
+// Map a subdivision count back to the shortest RhythmDur that fits. Used
+// when the two-staff merge emits a rest that spans the gap until the next
+// event start.
+function restForSubdivs(n: number): RhythmDur {
+  if (n >= 8) return 'wholeRest'
+  if (n >= 4) return 'halfRest'
+  if (n >= 2) return 'quarterRest'
+  return 'eighthRest'
+}
+
+// Merge two staves of a grand-staff rhythm into a single sequence of events.
+// At every subdivision where either staff STARTS a new event, we emit one
+// event whose duration is the gap until the NEXT start (in either staff).
+// When both staves have an event active, we prefer the non-rest one, so the
+// resulting rhythm matches what the student sees when reading across the
+// grand staff.
+function mergeMeasure(notes: RhythmNote[]): RhythmDur[] {
+  const s1 = notes.filter(n => n.staff === 1)
+  const s2 = notes.filter(n => n.staff !== 1)
+
+  // Build start-tick → event maps for each staff, plus a total subdiv count.
+  function build(list: RhythmNote[]) {
+    const starts = new Map<number, RhythmNote>()
+    let cursor = 0
+    for (const n of list) {
+      starts.set(cursor, n)
+      cursor += Math.round(n.durationBeats * 2)   // subdivs in eighths
+    }
+    return { starts, total: cursor }
+  }
+  const a = build(s1)
+  const b = build(s2)
+  const total = Math.max(a.total, b.total)
+  if (total === 0) return []
+
+  // Helper: at any tick, which event from this staff is "active" (started
+  // at or before tick and ends after tick)?
+  function activeAt(info: ReturnType<typeof build>, tick: number): RhythmNote | null {
+    let cursor = 0
+    let last: RhythmNote | null = null
+    for (const [startTick, note] of info.starts) {
+      if (startTick <= tick) {
+        const end = startTick + Math.round(note.durationBeats * 2)
+        if (tick < end) last = note
+        cursor = end
+      }
+    }
+    void cursor
+    return last
+  }
+
+  // Collect the union of start ticks from both staves.
+  const startSet = new Set<number>()
+  for (const t of a.starts.keys()) startSet.add(t)
+  for (const t of b.starts.keys()) startSet.add(t)
+  const allStarts = [...startSet].sort((x, y) => x - y)
+
+  const out: RhythmDur[] = []
+  for (let i = 0; i < allStarts.length; i++) {
+    const start   = allStarts[i]
+    const nextEnd = i + 1 < allStarts.length ? allStarts[i + 1] : total
+    const span    = nextEnd - start
+
+    const act1 = activeAt(a, start)
+    const act2 = activeAt(b, start)
+
+    // Prefer the non-rest event from either staff. If both are rests (or one
+    // staff is empty), emit a rest covering the full gap.
+    const chosen = (act1 && !act1.rest ? act1 : null)
+                ?? (act2 && !act2.rest ? act2 : null)
+
+    if (chosen) {
+      // Emit the chosen note BUT with the merged gap duration, so overlaps
+      // get truncated to the next event start.
+      const chosenEnd = findEndOf(chosen, a.starts, b.starts)
+      const clampedSpan = Math.min(span, chosenEnd - start)
+      out.push(durForSubdivs(chosen, clampedSpan))
+    } else {
+      out.push(restForSubdivs(span))
+    }
+  }
+  return out
+}
+
+// Find the end tick of a note by locating its start in either staff map.
+function findEndOf(n: RhythmNote,
+  s1: Map<number, RhythmNote>, s2: Map<number, RhythmNote>): number {
+  for (const [t, x] of s1) if (x === n) return t + Math.round(n.durationBeats * 2)
+  for (const [t, x] of s2) if (x === n) return t + Math.round(n.durationBeats * 2)
+  return 0
+}
+
+// Map a chosen note's (possibly truncated) subdiv count back to a RhythmDur.
+function durForSubdivs(n: RhythmNote, span: number): RhythmDur {
+  if (n.rest) return restForSubdivs(span)
+  // Notes: prefer exact matches for the values our renderer knows.
+  if (span >= 8) return 'whole'
+  if (span === 6) return 'dottedHalf'
+  if (span >= 4) return 'half'
+  if (span === 3) return 'dottedQuarter'
+  if (span >= 2) return 'quarter'
+  return 'eighth'
+}
+
+function mxlToRhythmItem(ex: RhythmExercise): RhythmItem {
+  // Grand-staff rhythms split the rhythm across both hands. Merge the two
+  // staves so the count-writing UI shows one combined rhythm line — exactly
+  // what the student is supposed to read across the grand staff.
+  return {
+    ts: [ex.timeSignature.beats, ex.timeSignature.beatType],
+    measures: ex.measures.map(m => ({ notes: mergeMeasure(m.notes) })),
+  }
+}
+
+// Build a 2-D array of per-event expected count strings, grouped by measure.
+// Every event — note OR rest — gets an expected count, because counting runs
+// continuously through the measure and students write counts under rests too.
+function expectedCountsByMeasureFull(item: RhythmItem): string[][] {
+  return item.measures.map(m => {
+    const out: string[] = []
+    let cursor = 0
+    for (const dur of m.notes) {
+      out.push(expectedForNote(dur, cursor))
+      cursor += DUR_EIGHTHS[dur]
+    }
+    return out
+  })
+}
+
+function normalizeCount(s: string): string {
+  return s.replace(/\s+/g, '').toLowerCase()
+}
+
+interface Ex4Piece {
+  src:      string
+  expected: string[][]  // per-measure, per-note expected count strings (rests skipped)
+}
+
+function WriteCountsMxlEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
+  const [pool,  setPool]  = useState<Ex4Piece[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [idx,   setIdx]   = useState(0)
+  // inputs[measureIdx][noteIdx] for the current piece.
+  const [inputs,   setInputs]   = useState<string[][]>([])
+  const [feedback, setFeedback] = useState<{ ok: boolean; matches: boolean[][] } | null>(null)
+  const correctRef = useRef(0)
+  const totalRef   = useRef(0)
+  const lockedRef  = useRef(false)
+
+  useEffect(() => {
+    let cancelled = false
+    Promise.all(EX4_XML_SRCS.map(src =>
+      fetch(src).then(r => {
+        if (!r.ok) throw new Error(`${src}: ${r.status}`)
+        return r.arrayBuffer()
+      }).then(parseMXL).then(ex => ({
+        src,
+        expected: expectedCountsByMeasureFull(mxlToRhythmItem(ex)),
+      }))
+    )).then(results => {
+      if (cancelled) return
+      setPool(shuffled(results))
+    }).catch(e => {
+      if (!cancelled) setError(String(e))
+    })
+    return () => { cancelled = true }
+  }, [])
+
+  // Reset per-note inputs when the current piece changes.
+  useEffect(() => {
+    if (!pool) return
+    setInputs(pool[idx].expected.map(row => row.map(() => '')))
+    setFeedback(null)
+    lockedRef.current = false
+  }, [idx, pool])
+
+  function setInput(m: number, n: number, v: string) {
+    setInputs(prev => prev.map((row, mi) =>
+      mi === m ? row.map((c, ni) => ni === n ? v : c) : row
+    ))
+  }
+
+  function check() {
+    if (!pool || feedback !== null || lockedRef.current) return
+    lockedRef.current = true
+    const piece = pool[idx]
+    let pieceCorrect = 0, pieceTotal = 0
+    const matches = piece.expected.map((expArr, mi) =>
+      expArr.map((exp, ni) => {
+        pieceTotal += 1
+        const ok = normalizeCount(inputs[mi]?.[ni] ?? '') === normalizeCount(exp)
+        if (ok) pieceCorrect += 1
+        return ok
+      })
+    )
+    correctRef.current += pieceCorrect
+    totalRef.current   += pieceTotal
+    const ok = pieceCorrect === pieceTotal
+    setFeedback({ ok, matches })
+    setTimeout(() => {
+      if (idx + 1 >= pool.length) {
+        onDone(correctRef.current, totalRef.current)
+        return
+      }
+      setIdx(i => i + 1)
+    }, ok ? 1400 : 3000)
+  }
+
+  if (error) {
+    return (
+      <div>
+        <p style={{ fontFamily: F, fontSize: 14, color: WRONG, marginBottom: 8 }}>
+          Couldn’t load rhythm files.
+        </p>
+        <p style={{ fontFamily: F, fontSize: 13, color: GREY }}>{error}</p>
+      </div>
+    )
+  }
+  if (pool === null) {
+    return <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0 }}>Loading rhythms…</p>
+  }
+
+  const piece = pool[idx]
+
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
+        Exercise 4 — Write the counts on real rhythms
+      </p>
+      <ProgressBar done={idx} total={pool.length} color={ACCENT} />
+
+      <p style={{ fontFamily: F, fontSize: 14, color: GREY, lineHeight: 1.65, margin: '0 0 12px' }}>
+        Under each note, type the counts it holds. A quarter holds{' '}
+        <strong style={{ color: DARK }}>N+</strong>, a half holds{' '}
+        <strong style={{ color: DARK }}>N+N+</strong>, and counting runs continuously from{' '}
+        <strong style={{ color: ACCENT }}>1</strong> through the top number of the time signature,
+        resetting each measure. Rests don’t need a count.
+      </p>
+
+      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        padding: '12px 0', marginBottom: 16 }}>
+        <OsmdRhythmCounts
+          key={piece.src}
+          src={piece.src}
+          expected={piece.expected}
+          inputs={inputs}
+          onChangeInput={setInput}
+          disabled={feedback !== null}
+          feedback={feedback?.matches ?? null}
+        />
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button onClick={check} disabled={feedback !== null}
+          style={{ background: DARK, color: 'white', border: 'none', borderRadius: 10,
+            padding: '12px 28px', fontFamily: F, fontSize: 14,
+            cursor: feedback !== null ? 'default' : 'pointer', opacity: feedback !== null ? 0.6 : 1 }}>
+          Check answers
+        </button>
+        {feedback !== null && (
+          <span style={{ fontFamily: F, fontSize: 14, fontWeight: 600,
+            color: feedback.ok ? CORRECT : WRONG }}>
+            {feedback.ok ? '✓ All correct' : 'Keep reviewing…'}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────
-type Phase = 'ex1' | 'ex2' | 'ex3'
-const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3']
+type Phase = 'ex1' | 'ex2' | 'ex3' | 'ex4'
+const PHASE_ORDER: Phase[] = ['ex1', 'ex2', 'ex3', 'ex4']
 
 export default function TimeSignaturesLesson({
   previouslyCompleted = false,
@@ -1002,9 +1340,10 @@ export default function TimeSignaturesLesson({
     <div>
       <NavBar canBack={canGoBack} canForward={canGoForward}
         onBack={back} onForward={forward} />
-      {phase === 'ex1' && <FactsEx         key={keyN} onDone={scored} />}
-      {phase === 'ex2' && <HowManyBeatsEx  key={keyN} onDone={scored} />}
-      {phase === 'ex3' && <WriteCountsEx   key={keyN} onDone={scored} />}
+      {phase === 'ex1' && <FactsEx            key={keyN} onDone={scored} />}
+      {phase === 'ex2' && <HowManyBeatsEx     key={keyN} onDone={scored} />}
+      {phase === 'ex3' && <WriteCountsEx      key={keyN} onDone={scored} />}
+      {phase === 'ex4' && <WriteCountsMxlEx   key={keyN} onDone={scored} />}
     </div>
   )
 }

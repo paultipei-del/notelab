@@ -217,7 +217,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               onClick={() => m === 'quiz' ? startQuiz() : (setMode('explore'), setActive(null), setActiveLine(null))}
               style={{
                 padding: '9px 22px', borderRadius: '20px', border: 'none', cursor: 'pointer',
-                fontFamily: F, fontSize: 13, fontWeight: mode === m ? 600 : 400,
+                fontFamily: F, fontSize: 14, fontWeight: mode === m ? 600 : 400,
                 background: mode === m ? DARK : '#EDE8DF',
                 color: mode === m ? 'white' : GREY,
                 transition: 'background 0.15s',
@@ -237,7 +237,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
           minHeight: '110px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
-            <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
               Question {quizIdx + 1} of {quizOrder.length}
             </p>
             <div style={{ display: 'flex', gap: '5px' }}>
@@ -261,11 +261,11 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
                 <span style={{
                   width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   background: lastCorrect ? 'rgba(42,107,30,0.12)' : 'rgba(181,64,42,0.12)',
-                  fontSize: 14,
+                  fontSize: 15,
                 }}>
                   {lastCorrect ? '✓' : '✗'}
                 </span>
-                <p style={{ fontFamily: F, fontSize: 13, color: lastCorrect ? CORRECT : WRONG, margin: 0, fontWeight: 600 }}>
+                <p style={{ fontFamily: F, fontSize: 14, color: lastCorrect ? CORRECT : WRONG, margin: 0, fontWeight: 600 }}>
                   {lastCorrect ? 'Correct!' : `Not quite — ${quizTarget.label} is highlighted in green`}
                 </p>
               </div>
@@ -273,7 +273,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
                 onClick={nextQuestion}
                 style={{
                   background: DARK, color: 'white', border: 'none', borderRadius: '10px',
-                  padding: '10px 22px', fontFamily: F, fontSize: 13, cursor: 'pointer',
+                  padding: '10px 22px', fontFamily: F, fontSize: 14, cursor: 'pointer',
                 }}
               >
                 {quizIdx + 1 >= quizOrder.length ? 'See results' : 'Next →'}
@@ -505,10 +505,10 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 400, color: ACCENT, margin: '0 0 6px' }}>
                 {activeEl.label}
               </p>
-              <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: DARK, margin: '0 0 8px' }}>
+              <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: DARK, margin: '0 0 8px' }}>
                 {activeEl.shortDesc}
               </p>
-              <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+              <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
                 {activeEl.fullDesc}
               </p>
             </>
@@ -517,7 +517,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 400, color: ACCENT, margin: '0 0 6px' }}>
                 Line {activeLineEl.num} — {activeLineEl.staff === 'treble' ? 'Treble' : 'Bass'} Staff
               </p>
-              <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.7 }}>
+              <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
                 {activeLineEl.staff === 'treble' ? (
                   <>
                     {activeLineEl.num === 1 && 'Line 1 (bottom): E4 — just below middle C on the treble staff.'}
@@ -538,7 +538,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               </p>
             </>
           ) : (
-            <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', margin: 0, textAlign: 'center', paddingTop: 6 }}>
+            <p style={{ fontFamily: F, fontSize: 14, color: '#B0ACA4', margin: 0, textAlign: 'center', paddingTop: 6 }}>
               Tap any numbered element or line number to learn about it
             </p>
           )}
@@ -562,19 +562,19 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
           <p style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 300, color: DARK, marginBottom: 6 }}>
             {correctCount === ELEMENTS.length ? 'All correct' : `${correctCount} of ${ELEMENTS.length} correct`}
           </p>
-          <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 24 }}>
+          <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 24 }}>
             {correctCount === ELEMENTS.length ? 'You can identify every part of the grand staff.' : 'Review the highlighted parts and try again.'}
           </p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={startQuiz} style={{
               background: DARK, color: 'white', border: 'none', borderRadius: '10px',
-              padding: '11px 24px', fontFamily: F, fontSize: 13, cursor: 'pointer',
+              padding: '11px 24px', fontFamily: F, fontSize: 14, cursor: 'pointer',
             }}>
               Try again →
             </button>
             <button onClick={() => { setMode('explore'); setActive(null); setActiveLine(null) }} style={{
               background: '#EDE8DF', color: DARK, border: 'none', borderRadius: '10px',
-              padding: '11px 24px', fontFamily: F, fontSize: 13, cursor: 'pointer',
+              padding: '11px 24px', fontFamily: F, fontSize: 14, cursor: 'pointer',
             }}>
               Back to Explore
             </button>

@@ -302,7 +302,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
           borderRadius: 8,
           padding: '5px 12px',
           fontFamily: 'var(--font-jost), sans-serif',
-          fontSize: 13, fontWeight: 600,
+          fontSize: 14, fontWeight: 600,
           color: accentColor,
         }}>
           {arrowLabel}
@@ -336,7 +336,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
                     border: `1px solid ${isActive ? accentColor : '#DDD8CA'}`,
                     borderRadius: 6,
                     fontFamily: 'var(--font-jost), sans-serif',
-                    fontSize: 12, fontWeight: isActive ? 600 : 400,
+                    fontSize: 13, fontWeight: isActive ? 600 : 400,
                     color: isActive ? 'white' : '#7A7060',
                     cursor: 'pointer',
                     transition: 'all 0.15s',
