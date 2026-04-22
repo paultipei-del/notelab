@@ -2,27 +2,10 @@
 
 import Link from 'next/link'
 import { Deck } from '@/lib/types'
+import DeckTile from './flashcards/DeckTile'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
-const BRAVURA = 'Bravura, serif'
-const ACCENT = '#B5402A'
-
-// Per-deck Bravura glyph — tiny score-font icon that signals the deck's
-// topic at a glance while staying consistent with the rest of the app's
-// score-rendering aesthetic.
-function deckGlyph(id: string): string {
-  if (id === 'dynamics' || id === 'symbols-dynamics')  return '' // f
-  if (id === 'tempo')                                  return '' // quarter note
-  if (id === 'intervals')                              return '' // treble clef
-  if (id === 'symbols-articulations')                  return '' // accent
-  if (id === 'symbols-clefs')                          return '' // treble clef
-  if (id === 'symbols-repeats')                        return '' // segno
-  if (id === 'symbols-ornaments')                      return '' // turn
-  if (id === 'symbols-accidentals')                    return '' // sharp
-  if (id === 'symbols-note-values')                    return '' // half note
-  return ''                                                      // whole notehead fallback
-}
 
 export type FlashcardsHubProps =
   | {
@@ -137,58 +120,14 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
 
         <p style={groupLabelStyle}>Notation &amp; Terms</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', marginBottom: '28px', alignItems: 'stretch' }}>
-          {notationDecks.map(deck => (
-            <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
-              <div
-                className="nl-card-surface"
-                style={{
-                  padding: '24px',
-                  cursor: 'pointer',
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column' as const,
-                  alignItems: 'flex-start' as const,
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%', marginBottom: '10px' }}>
-                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
-                </div>
-                <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '24px', color: '#1A1A18', marginBottom: '8px', width: '100%', letterSpacing: '0.01em' }}>{deck.title}</h3>
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%', marginBottom: '14px' }}>{deck.description}</p>
-                <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, color: ACCENT, alignSelf: 'flex-end' }}>Start →</span>
-              </div>
-            </Link>
-          ))}
+          {notationDecks.map(deck => <DeckTile key={deck.id} deck={deck} />)}
         </div>
 
         {symbolDecks.length > 0 && (
           <>
             <p style={groupLabelStyle}>Music symbols</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', marginBottom: '28px', alignItems: 'stretch' }}>
-              {symbolDecks.map(deck => (
-                <Link key={deck.id} href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'flex', height: '100%' }}>
-                  <div
-                    className="nl-card-surface"
-                    style={{
-                      padding: '24px',
-                      cursor: 'pointer',
-                      width: '100%',
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column' as const,
-                      alignItems: 'flex-start' as const,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%', marginBottom: '10px' }}>
-                      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
-                    </div>
-                    <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '24px', color: '#1A1A18', marginBottom: '8px', width: '100%', letterSpacing: '0.01em' }}>{deck.title}</h3>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%', marginBottom: '14px' }}>{deck.description}</p>
-                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, color: ACCENT, alignSelf: 'flex-end' }}>Start →</span>
-                  </div>
-                </Link>
-              ))}
+              {symbolDecks.map(deck => <DeckTile key={deck.id} deck={deck} />)}
             </div>
           </>
         )}

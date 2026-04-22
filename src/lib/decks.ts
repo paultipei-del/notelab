@@ -17,6 +17,7 @@ import { CM_LEVEL7_CARDS } from './cm-content/level7'
 import { CM_LEVEL8_CARDS } from './cm-content/level8'
 import { CM_LEVEL9_CARDS } from './cm-content/level9'
 import { CM_ADVANCED_CARDS } from './cm-content/advanced'
+import { MAJOR_KEY_SIGNATURES_CARDS } from './flashcards/major-key-signatures'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -52,6 +53,10 @@ export const DECKS: Deck[] = [
     title: 'Tempo Markings',
     description: 'Italian tempo terms from Largo to Prestissimo.',
     tag: 'free',
+    tier: 'foundations',
+    tierOrder: 1,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:italian'],
     cards: [
       { id: 1, front: 'Largo', back: 'Very slow and broad (40–60 BPM)', type: 'text' },
       { id: 2, front: 'Adagio', back: 'Slow and stately (66–76 BPM)', type: 'text' },
@@ -70,6 +75,10 @@ export const DECKS: Deck[] = [
     title: 'Intervals',
     description: 'Recognize and name melodic and harmonic intervals.',
     tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 50,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:recognition'],
     cards: [
       { id: 1, front: 'Minor 2nd', back: '1 half step — dissonant, tense', type: 'text' },
       { id: 2, front: 'Major 2nd', back: '2 half steps — whole tone', type: 'text' },
@@ -106,6 +115,10 @@ export const DECKS: Deck[] = [
     title: 'Dynamic Markings',
     description: 'Read and identify dynamic symbols — p, f, mf, mp, ff, pp, sfz, crescendo and more.',
     tag: 'free',
+    tier: 'foundations',
+    tierOrder: 1,
+    category: 'Music symbols',
+    tags: ['topic:expression', 'type:recognition'],
     cards: DYNAMICS_SYMBOL_CARDS,
   },
   {
@@ -113,6 +126,10 @@ export const DECKS: Deck[] = [
     title: 'Articulation Markings',
     description: 'Identify staccato, tenuto, accent, fermata, and trill symbols.',
     tag: 'free',
+    tier: 'foundations',
+    tierOrder: 2,
+    category: 'Music symbols',
+    tags: ['topic:expression', 'type:recognition'],
     cards: ARTICULATION_SYMBOL_CARDS,
   },
   {
@@ -120,6 +137,10 @@ export const DECKS: Deck[] = [
     title: 'Accidentals',
     description: 'Identify sharp, flat, natural, double sharp, and double flat symbols.',
     tag: 'free',
+    tier: 'foundations',
+    tierOrder: 3,
+    category: 'Music symbols',
+    tags: ['topic:notation', 'type:recognition'],
     cards: ACCIDENTAL_SYMBOL_CARDS,
   },
   {
@@ -127,6 +148,10 @@ export const DECKS: Deck[] = [
     title: 'Note & Rest Values',
     description: 'Identify whole, half, quarter, eighth, and sixteenth notes and rests.',
     tag: 'free',
+    tier: 'foundations',
+    tierOrder: 4,
+    category: 'Music symbols',
+    tags: ['topic:rhythm', 'type:recognition'],
     cards: NOTE_VALUES_SYMBOL_CARDS,
   },
 
@@ -135,6 +160,10 @@ export const DECKS: Deck[] = [
     title: 'Repeat & Structure Signs',
     description: 'Identify repeat barlines, D.C., D.S., coda, segno, and endings.',
     tag: 'free' as const,
+    tier: 'foundations',
+    tierOrder: 5,
+    category: 'Music symbols',
+    tags: ['topic:notation', 'type:recognition'],
     cards: REPEAT_SYMBOL_CARDS,
   },
   {
@@ -142,6 +171,10 @@ export const DECKS: Deck[] = [
     title: 'Clefs & Time Signatures',
     description: 'Identify treble, bass, alto, tenor clefs and common/cut time.',
     tag: 'free' as const,
+    tier: 'foundations',
+    tierOrder: 6,
+    category: 'Music symbols',
+    tags: ['topic:notation', 'type:recognition'],
     cards: CLEF_SYMBOL_CARDS,
   },
   {
@@ -149,8 +182,26 @@ export const DECKS: Deck[] = [
     title: 'Ornaments',
     description: 'Identify trills, mordents, turns, and grace notes.',
     tag: 'free' as const,
+    tier: 'foundations',
+    tierOrder: 7,
+    category: 'Music symbols',
+    tags: ['topic:expression', 'type:recognition'],
     cards: ORNAMENT_SYMBOL_CARDS,
   },
+
+  // ── FLASHCARDS EXPANSION (tiered decks) ──
+  {
+    id: 'major-key-signatures',
+    title: 'Major Key Signatures',
+    description: 'Name the sharps or flats for every major key.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 1,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:recognition'],
+    cards: MAJOR_KEY_SIGNATURES_CARDS,
+  },
+
   {
     id: 'ear-intervals',
     title: 'Intervals I',
