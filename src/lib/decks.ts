@@ -31,6 +31,14 @@ import { TRIAD_QUALITIES_CARDS } from './flashcards/triad-qualities'
 import { TRIAD_INVERSIONS_CARDS } from './flashcards/triad-inversions'
 import { SEVENTH_CHORD_QUALITIES_CARDS } from './flashcards/seventh-chord-qualities'
 import { SEVENTH_CHORD_INVERSIONS_CARDS } from './flashcards/seventh-chord-inversions'
+import { STAFF_ANATOMY_CARDS } from './flashcards/staff-anatomy'
+import { TREBLE_CLEF_NOTES_CARDS } from './flashcards/treble-clef-notes'
+import { BASS_CLEF_NOTES_CARDS } from './flashcards/bass-clef-notes'
+import { MIDDLE_C_ACROSS_CLEFS_CARDS } from './flashcards/middle-c-across-clefs'
+import { DOTTED_AND_TIED_NOTES_CARDS } from './flashcards/dotted-and-tied-notes'
+import { SIMPLE_METERS_CARDS } from './flashcards/simple-meters'
+import { COMPOUND_METERS_CARDS } from './flashcards/compound-meters'
+import { TUPLETS_CARDS } from './flashcards/tuplets'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -71,16 +79,18 @@ export const DECKS: Deck[] = [
     category: 'Notation & Terms',
     tags: ['topic:expression', 'type:terminology', 'lang:italian'],
     cards: [
-      { id: 1, front: 'Largo', back: 'Very slow and broad (40–60 BPM)', type: 'text' },
-      { id: 2, front: 'Adagio', back: 'Slow and stately (66–76 BPM)', type: 'text' },
-      { id: 3, front: 'Andante', back: 'Walking pace (76–108 BPM)', type: 'text' },
-      { id: 4, front: 'Moderato', back: 'Moderate tempo (108–120 BPM)', type: 'text' },
-      { id: 5, front: 'Allegro', back: 'Fast and lively (120–156 BPM)', type: 'text' },
-      { id: 6, front: 'Vivace', back: 'Lively and fast (156–176 BPM)', type: 'text' },
-      { id: 7, front: 'Presto', back: 'Very fast (168–200 BPM)', type: 'text' },
-      { id: 8, front: 'Ritardando', back: 'Gradually slowing down', type: 'text' },
-      { id: 9, front: 'Accelerando', back: 'Gradually speeding up', type: 'text' },
-      { id: 10, front: 'A tempo', back: 'Return to the original tempo', type: 'text' },
+      { id: 1, front: 'Grave', back: 'Very slow and solemn (under 40 BPM)', type: 'text' },
+      { id: 2, front: 'Largo', back: 'Very slow and broad (40–60 BPM)', type: 'text' },
+      { id: 3, front: 'Adagio', back: 'Slow and stately (66–76 BPM)', type: 'text' },
+      { id: 4, front: 'Andante', back: 'Walking pace (76–108 BPM)', type: 'text' },
+      { id: 5, front: 'Moderato', back: 'Moderate tempo (108–120 BPM)', type: 'text' },
+      { id: 6, front: 'Allegro', back: 'Fast and lively (120–156 BPM)', type: 'text' },
+      { id: 7, front: 'Vivace', back: 'Lively and fast (156–176 BPM)', type: 'text' },
+      { id: 8, front: 'Presto', back: 'Very fast (168–200 BPM)', type: 'text' },
+      { id: 9, front: 'Prestissimo', back: 'As fast as possible (200+ BPM)', type: 'text' },
+      { id: 10, front: 'Ritardando', back: 'Gradually slowing down', type: 'text' },
+      { id: 11, front: 'Accelerando', back: 'Gradually speeding up', type: 'text' },
+      { id: 12, front: 'A tempo', back: 'Return to the original tempo', type: 'text' },
     ],
   },
   {
@@ -356,6 +366,96 @@ export const DECKS: Deck[] = [
     category: 'Pitch & Harmony',
     tags: ['topic:harmony', 'type:recognition'],
     cards: SEVENTH_CHORD_INVERSIONS_CARDS,
+  },
+
+  // ── TIER 1 NEW DECKS ──
+  {
+    id: 'staff-anatomy',
+    title: 'Staff Anatomy',
+    description: 'The parts of the staff — lines, spaces, bar lines, grand staff.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 2,
+    category: 'Notation & Terms',
+    tags: ['topic:notation', 'type:terminology'],
+    cards: STAFF_ANATOMY_CARDS,
+  },
+  {
+    id: 'treble-clef-notes',
+    title: 'Treble Clef Notes',
+    description: 'Name every note on the treble staff plus ledger lines.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 3,
+    category: 'Notation & Terms',
+    tags: ['topic:pitch', 'type:recognition'],
+    cards: TREBLE_CLEF_NOTES_CARDS,
+  },
+  {
+    id: 'bass-clef-notes',
+    title: 'Bass Clef Notes',
+    description: 'Name every note on the bass staff plus ledger lines.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 4,
+    category: 'Notation & Terms',
+    tags: ['topic:pitch', 'type:recognition'],
+    cards: BASS_CLEF_NOTES_CARDS,
+  },
+  {
+    id: 'middle-c-across-clefs',
+    title: 'Middle C Across Clefs',
+    description: 'Where Middle C lives on treble, bass, alto, and tenor clefs.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 5,
+    category: 'Notation & Terms',
+    tags: ['topic:pitch', 'type:recognition'],
+    cards: MIDDLE_C_ACROSS_CLEFS_CARDS,
+  },
+  {
+    id: 'dotted-and-tied-notes',
+    title: 'Dotted & Tied Notes',
+    description: 'How dots and ties change note durations.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 8,
+    category: 'Music symbols',
+    tags: ['topic:rhythm', 'type:recognition'],
+    cards: DOTTED_AND_TIED_NOTES_CARDS,
+  },
+  {
+    id: 'simple-meters',
+    title: 'Simple Meters',
+    description: 'Meters where each beat divides into two — 2/4, 3/4, 4/4, 2/2, 3/8.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 1,
+    category: 'Rhythm & Meter',
+    tags: ['topic:rhythm', 'type:recognition'],
+    cards: SIMPLE_METERS_CARDS,
+  },
+  {
+    id: 'compound-meters',
+    title: 'Compound Meters',
+    description: 'Meters where each beat divides into three — 6/8, 9/8, 12/8 and kin.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 2,
+    category: 'Rhythm & Meter',
+    tags: ['topic:rhythm', 'type:recognition'],
+    cards: COMPOUND_METERS_CARDS,
+  },
+  {
+    id: 'tuplets',
+    title: 'Tuplets',
+    description: 'Triplets, duplets, and other irregular subdivisions.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 3,
+    category: 'Rhythm & Meter',
+    tags: ['topic:rhythm', 'type:recognition'],
+    cards: TUPLETS_CARDS,
   },
 
   {

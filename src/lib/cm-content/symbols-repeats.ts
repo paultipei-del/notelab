@@ -13,4 +13,5 @@ export const REPEAT_SYMBOL_CARDS: Card[] = [
   { id: 9, type: 'symbol', front: 'D.S. al Coda', back: 'Return to segno, then jump to coda', symbolName: 'Dal Segno al Coda' },
   { id: 10, type: 'symbol', front: '1.', back: 'First ending — play on first pass only', symbolName: 'First ending' },
   { id: 11, type: 'symbol', front: '2.', back: 'Second ending — play on second pass', symbolName: 'Second ending' },
+  { id: 12, type: 'symbol', front: 'To Coda', back: 'Text direction to jump to the Coda on the repeat pass', symbolName: 'To Coda' },
 ]
