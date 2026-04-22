@@ -18,6 +18,19 @@ import { CM_LEVEL8_CARDS } from './cm-content/level8'
 import { CM_LEVEL9_CARDS } from './cm-content/level9'
 import { CM_ADVANCED_CARDS } from './cm-content/advanced'
 import { MAJOR_KEY_SIGNATURES_CARDS } from './flashcards/major-key-signatures'
+import { MINOR_KEY_SIGNATURES_CARDS } from './flashcards/minor-key-signatures'
+import { CIRCLE_OF_FIFTHS_CARDS } from './flashcards/circle-of-fifths'
+import { MAJOR_SCALE_CONSTRUCTION_CARDS } from './flashcards/major-scale-construction'
+import { MINOR_SCALES_CARDS } from './flashcards/minor-scales'
+import { MODES_CARDS } from './flashcards/modes'
+import { OTHER_SCALES_CARDS } from './flashcards/other-scales'
+import { INTERVAL_INVERSIONS_CARDS } from './flashcards/interval-inversions'
+import { ENHARMONIC_INTERVALS_CARDS } from './flashcards/enharmonic-intervals'
+import { COMPOUND_INTERVALS_CARDS } from './flashcards/compound-intervals'
+import { TRIAD_QUALITIES_CARDS } from './flashcards/triad-qualities'
+import { TRIAD_INVERSIONS_CARDS } from './flashcards/triad-inversions'
+import { SEVENTH_CHORD_QUALITIES_CARDS } from './flashcards/seventh-chord-qualities'
+import { SEVENTH_CHORD_INVERSIONS_CARDS } from './flashcards/seventh-chord-inversions'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -200,6 +213,149 @@ export const DECKS: Deck[] = [
     category: 'Pitch & Harmony',
     tags: ['topic:pitch', 'type:recognition'],
     cards: MAJOR_KEY_SIGNATURES_CARDS,
+  },
+  {
+    id: 'minor-key-signatures',
+    title: 'Minor Key Signatures',
+    description: 'Name the sharps or flats for every minor key.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 2,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:recognition'],
+    cards: MINOR_KEY_SIGNATURES_CARDS,
+  },
+  {
+    id: 'circle-of-fifths',
+    title: 'Circle of Fifths Relationships',
+    description: 'Relative and parallel keys, motion around the circle, enharmonics.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 3,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:calculation'],
+    cards: CIRCLE_OF_FIFTHS_CARDS,
+  },
+  {
+    id: 'major-scale-construction',
+    title: 'Major Scale Construction',
+    description: 'The step pattern, scale-degree names, and building major scales.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 4,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:calculation'],
+    cards: MAJOR_SCALE_CONSTRUCTION_CARDS,
+  },
+  {
+    id: 'minor-scales',
+    title: 'Minor Scales',
+    description: 'Natural, harmonic, and melodic minor forms and how they differ.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 5,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:calculation'],
+    cards: MINOR_SCALES_CARDS,
+  },
+  {
+    id: 'modes',
+    title: 'Modes',
+    description: 'Ionian through Locrian — step patterns and defining qualities.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 6,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:terminology'],
+    cards: MODES_CARDS,
+  },
+  {
+    id: 'other-scales',
+    title: 'Pentatonic, Blues, Chromatic, Whole Tone',
+    description: 'Beyond major and minor — the other common scale families.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 7,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:terminology'],
+    cards: OTHER_SCALES_CARDS,
+  },
+  {
+    id: 'interval-inversions',
+    title: 'Interval Inversions',
+    description: 'The sum-is-9 rule and how quality flips under inversion.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 8,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:calculation'],
+    cards: INTERVAL_INVERSIONS_CARDS,
+  },
+  {
+    id: 'enharmonic-intervals',
+    title: 'Enharmonic Intervals',
+    description: 'Intervals that sound the same but function differently.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 9,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:calculation'],
+    cards: ENHARMONIC_INTERVALS_CARDS,
+  },
+  {
+    id: 'compound-intervals',
+    title: 'Compound Intervals',
+    description: 'Intervals larger than an octave — 9ths, 10ths, 11ths, and up.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 10,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:recognition'],
+    cards: COMPOUND_INTERVALS_CARDS,
+  },
+  {
+    id: 'triad-qualities',
+    title: 'Triad Qualities',
+    description: 'Major, minor, diminished, augmented — formulas and examples.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 11,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:recognition'],
+    cards: TRIAD_QUALITIES_CARDS,
+  },
+  {
+    id: 'triad-inversions',
+    title: 'Triad Inversions',
+    description: 'Root, first, and second inversions across common triads.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 12,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:recognition'],
+    cards: TRIAD_INVERSIONS_CARDS,
+  },
+  {
+    id: 'seventh-chord-qualities',
+    title: 'Seventh Chord Qualities',
+    description: 'Major 7, dominant 7, minor 7, half-diminished, fully diminished, minor-major.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 13,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:recognition'],
+    cards: SEVENTH_CHORD_QUALITIES_CARDS,
+  },
+  {
+    id: 'seventh-chord-inversions',
+    title: 'Seventh Chord Inversions',
+    description: 'The four positions and their figured-bass shorthand.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 14,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:recognition'],
+    cards: SEVENTH_CHORD_INVERSIONS_CARDS,
   },
 
   {
