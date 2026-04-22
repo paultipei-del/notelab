@@ -56,20 +56,31 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={{ width: '100%', maxWidth: '640px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-      {/* Term card */}
+      {/* Term card — matches MC/Flip sizing so switching modes feels
+          continuous (no card width or min-height jumps). */}
       <div
         className="nl-study-card-hover"
         style={{
+          position: 'relative',
           background: '#FDFAF3',
           borderRadius: '20px',
           border: '1px solid #DDD8CA',
-          padding: '40px 32px',
+          padding: '56px 32px 32px',
           textAlign: 'center',
+          minHeight: 'clamp(220px, 28dvh, 300px)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', display: 'block', marginBottom: '16px' }}>
+        <span style={{
+          position: 'absolute', top: 22, left: 0, right: 0, textAlign: 'center',
+          fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em',
+          textTransform: 'uppercase', color: '#7A7060',
+        }}>
           Explain this term
         </span>
 
@@ -100,7 +111,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
           alignItems: 'start',
           width: '100%',
           minWidth: 0,
-          minHeight: 'clamp(240px, 40vh, 420px)',
+          minHeight: 'clamp(200px, 26vh, 300px)',
         }}
       >
         <div

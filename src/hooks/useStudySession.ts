@@ -119,6 +119,11 @@ export function useStudySession(deck: Deck | null, userId: string | null = null,
     return shuffle([correct, ...pool])
   }, [currentCard])
 
+  // resetSession reshuffles the card queue and zeroes per-mode stats, but
+  // preserves the session start time — switching modes (flip → MC → explain)
+  // within the same deck is still ONE study session. Callers that want a
+  // full session reset (e.g. "Study Again" from the complete screen) should
+  // also invoke resetTimer() explicitly.
   function resetSession() {
     loadProgress(userId).then(stored => {
       setProgress(stored)
@@ -126,14 +131,14 @@ export function useStudySession(deck: Deck | null, userId: string | null = null,
       setQueue(shuffle([...q]))
       setCardIndex(0)
       setRevealed(false)
-      setStats({
+      setStats(prev => ({
         correct: 0,
         total: 0,
         streak: 0,
         bestStreak: 0,
         streakHistory: [],
-        startTime: Date.now(),
-      })
+        startTime: prev.startTime,
+      }))
     })
   }
 

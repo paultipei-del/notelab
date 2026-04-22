@@ -27,10 +27,15 @@
   overflow: hidden;
 }
 
-/* Belt-and-suspenders: no window scroll on /study when inner regions handle scrolling */
+/* Belt-and-suspenders: no window scroll on /study when inner regions handle
+   scrolling. Lock BOTH html and body to the visual viewport height so no
+   stray margin or SSR hydration offset can introduce a page scrollbar. */
+html:has(.nl-study-viewport),
 body:has(.nl-study-viewport) {
-  overflow-y: hidden;
-  overscroll-behavior-y: none;
+  overflow: hidden !important;
+  height: 100dvh;
+  max-height: 100dvh;
+  overscroll-behavior: none;
 }
 
 /* study/[deckId] loading + not-found — class-based only (avoids SSR/client inline style normalization mismatch) */
@@ -50,10 +55,13 @@ body:has(.nl-study-viewport) {
   flex: 1;
   min-height: 0;
   display: flex;
-  align-items: center;
+  /* Anchor at the top so taller modes (Explain, with its input/feedback
+     area) never get cut off at the top when centered overflow occurs.
+     Every mode starts its content at the same vertical position. */
+  align-items: flex-start;
   justify-content: center;
   overflow: hidden;
-  padding: 0 24px 2px;
+  padding: 24px 24px 2px;
 }
 
 .nl-study-main--stack {
@@ -78,6 +86,40 @@ body:has(.nl-study-viewport) {
   gap: 8px;
   padding: 10px max(32px, env(safe-area-inset-left)) 8px max(32px, env(safe-area-inset-right));
   background: #f2eddf;
+}
+
+/* Ghost-outline back button used across the study viewport (topbar, browse
+   header, etc.). Subtle enough for the header, clearly pressable. */
+.nl-study-back-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd8ca;
+  background: #fdfaf3;
+  color: #4a4540;
+  font-family: var(--font-jost), sans-serif;
+  font-size: var(--nl-text-compact);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.08s ease;
+}
+
+.nl-study-back-btn:hover {
+  border-color: #bcb59f;
+  background: #faf6ec;
+  color: #2a2318;
+}
+
+.nl-study-back-btn:active {
+  transform: translateY(1px);
 }
 
 .nl-study-topbar__row1 {
@@ -262,7 +304,7 @@ body:has(.nl-study-viewport) {
   align-items: center;
   gap: 10px;
   column-gap: 12px;
-  padding: 6px max(32px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-bottom))
+  padding: 4px max(32px, env(safe-area-inset-left)) max(40px, env(safe-area-inset-bottom))
     max(32px, env(safe-area-inset-right));
   flex-shrink: 0;
   width: 100%;
@@ -273,17 +315,35 @@ body:has(.nl-study-viewport) {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: 8px;
   border: 1px solid #ddd8ca;
   background: #fdfaf3;
+  color: #4a4540;
   font-family: var(--font-jost), sans-serif;
   font-size: var(--nl-text-meta);
-  font-weight: 400;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.08s ease;
+}
+
+.nl-study-flip-nav__btn:hover:not(:disabled) {
+  border-color: #bcb59f;
+  background: #faf6ec;
+  color: #2a2318;
+}
+
+.nl-study-flip-nav__btn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .nl-study-flip-nav__btn:disabled {
+  color: #ddd8ca;
   cursor: default;
 }
 
@@ -293,7 +353,7 @@ body:has(.nl-study-viewport) {
   align-items: center;
   min-height: 64px;
   margin-top: clamp(10px, 2vmin, 18px);
-  padding: 8px max(32px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-bottom))
+  padding: 8px max(32px, env(safe-area-inset-left)) max(40px, env(safe-area-inset-bottom))
     max(32px, env(safe-area-inset-right));
   flex-shrink: 0;
 }
@@ -328,18 +388,22 @@ body:has(.nl-study-viewport) {
 
 .nl-study-mc-stack {
   width: 100%;
-  max-width: 480px;
-  flex: 1;
-  min-height: 0;
-  display: grid;
+  max-width: 640px;              /* matches Flip / Symbol / Explain cards */
+  /* Content stacked from the TOP — parent .nl-study-main already anchors
+     flex-start, so every mode (Flip / MC / Explain) starts its first
+     element at the same vertical position. */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 12px;
   box-sizing: border-box;
-  grid-template-rows: minmax(4px, 0.33fr) auto minmax(2px, 0.24fr) auto;
-  justify-items: stretch;
-  align-content: start;
 }
 
+/* (previously pushed Explain content down — no longer needed; centered
+   via flex justify-content on .nl-study-mc-stack) */
 .nl-study-mc-stack--explain {
-  padding-top: clamp(52px, 10vh, 98px);
+  padding-top: 0;
 }
 
 .nl-study-mc-streak {
@@ -457,6 +521,78 @@ body:has(.nl-study-viewport) {
 @media (max-width: 400px) {
   .nl-study-mode-row--modes[data-mode-count='4'] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── Desktop (≥ 720px) — stop every row from spanning the full viewport,
+      compact the mode toolbar into a single centered pill strip, pull the
+      flip-nav into a tight centered cluster, and give the flip card more
+      presence so it doesn't float in a sea of empty space. */
+@media (min-width: 720px) {
+  .nl-study-topbar,
+  .nl-study-mode-toolbar,
+  .nl-study-streak,
+  .nl-study-flip-nav,
+  .nl-study-rate-footer {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  /* Mode toolbar collapses the two stacked rows into a single row, with
+     study modes on the LEFT and action buttons (Quiz · Browse) on the
+     RIGHT — visually separating "what you're learning with" from "what
+     you can launch next". */
+  .nl-study-mode-toolbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2px;
+    padding-bottom: 10px;
+  }
+  .nl-study-mode-row--modes,
+  .nl-study-mode-row--actions {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    grid-template-columns: none;
+    gap: 6px;
+    width: auto;
+  }
+  .nl-study-mode-btn {
+    width: auto;
+    min-width: 0;
+    padding: 8px 18px;
+    min-height: 36px;
+    font-size: var(--nl-text-compact);
+  }
+
+  /* Flip nav: centered cluster rather than left/center/right distributed. */
+  .nl-study-flip-nav {
+    grid-template-columns: auto auto auto;
+    justify-content: center;
+    gap: 14px;
+  }
+  .nl-study-flip-nav__btn {
+    width: auto;
+    min-width: 120px;
+  }
+
+  /* Top-row metrics tighten up so they don't drift edge-to-edge. */
+  .nl-study-topbar__metrics {
+    gap: 4px 24px;
+  }
+
+  /* Flip card stays at 640 so every mode (Flip / MC / Explain) shares
+     the same card width — switching modes no longer snaps the layout.
+     Height uses the base value (clamp(200, 42dvh, 340)) so the full
+     flip/MC/explain stack fits the fixed viewport without scrolling. */
+  .nl-study-main .nl-flip-card {
+    max-width: 640px !important;
   }
 }
 

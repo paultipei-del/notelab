@@ -11,6 +11,15 @@ interface MultipleChoiceProps {
   onReveal: () => void
 }
 
+// Clefs and other tall Bravura glyphs need a smaller render size than the
+// compact dynamics / accidental glyphs, otherwise they overlap the
+// "Choose the correct answer" label in the MC card.
+const TALL_GLYPH = /[-]|\uD834[\uDD1E-\uDD24]/
+function pickGlyphSize(text: string): string {
+  if (TALL_GLYPH.test(text)) return 'clamp(44px, 8vw, 72px)'
+  return 'clamp(68px, 12vw, 96px)'
+}
+
 export default function MultipleChoice({ card, options, onAnswer, onReveal }: MultipleChoiceProps) {
   const [chosen, setChosen] = useState<string | null>(null)
 
@@ -66,8 +75,15 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
     }
     if (card.type === 'symbol') {
       return (
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: 'Bravura, serif', fontSize: '96px', lineHeight: 1.4, color: '#2A2318', marginBottom: card.symbolLabel ? '12px' : '0' }}>
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{
+            fontFamily: 'Bravura, serif',
+            fontSize: pickGlyphSize(card.front),
+            lineHeight: 1,
+            color: '#2A2318',
+            marginBottom: card.symbolLabel ? '12px' : '0',
+          }}>
             {card.front}
           </div>
           {card.symbolLabel && (
@@ -86,11 +102,14 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* Question card — hidden for audio cards (AudioCard renders above) */}
+    <div style={{ width: '100%', maxWidth: '640px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* Question card — hidden for audio cards (AudioCard renders above).
+          Label is absolute-positioned so it never shifts when the glyph
+          size changes between cards. */}
       {card.type !== 'audio' && <div
         className="nl-study-card-hover"
         style={{
+          position: 'relative',
           background: '#FDFAF3',
           borderRadius: '20px',
           border: '1px solid #DDD8CA',
@@ -98,11 +117,14 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '48px 32px',
-          minHeight: '180px',
+          padding: '56px 32px 36px',
+          minHeight: 'clamp(220px, 28dvh, 300px)',
         }}
       >
-        <span style={{ fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
+        <span style={{ position: 'absolute', top: 22, left: 0, right: 0,
+          textAlign: 'center',
+          fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em',
+          textTransform: 'uppercase', color: '#7A7060' }}>
           Choose the correct answer
         </span>
         {questionContent()}

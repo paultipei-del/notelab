@@ -13,7 +13,7 @@ interface FlipCardProps {
 export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.key === ' ' || e.key === 'Enter') && !revealed) {
+      if (e.key === ' ' || e.key === 'Enter') {
         e.preventDefault()
         onReveal()
       }
@@ -37,13 +37,19 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
     WebkitBackfaceVisibility: 'hidden',
   }
 
+  // Pin "Question" / "Answer" labels to the top of each face so they don't
+  // drift up/down as the glyph or text content changes height.
   const labelStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: 22,
+    left: 0,
+    right: 0,
     fontSize: 'var(--nl-text-badge)',
     fontWeight: 400,
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
     color: '#7A7060',
-    marginBottom: '24px',
+    textAlign: 'center',
   }
 
   const frontContent = card.type === 'staff' && card.note && card.clef ? (
@@ -54,7 +60,11 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
       </p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(28px, 5vw, 52px)', textAlign: 'center', color: '#2A2318', letterSpacing: '0.01em', lineHeight: 1.2 }}>
+    // Italic serif mirrors the classical score convention for Italian tempo
+    // terms, dynamic markings, and directives (dolce, poco a poco, etc.).
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic',
+      fontWeight: 400, fontSize: 'clamp(28px, 5vw, 52px)', textAlign: 'center',
+      color: '#2A2318', letterSpacing: '0.01em', lineHeight: 1.2 }}>
       {card.front}
     </p>
   )
@@ -75,9 +85,9 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
   )
 
   return (
-    <div className="nl-flip-card" style={{ width: '100%', maxWidth: '680px' }}>
+    <div className="nl-flip-card" style={{ width: '100%', maxWidth: '640px' }}>
       <div
-        onClick={!revealed ? onReveal : undefined}
+        onClick={onReveal}
         style={{
           width: '100%',
           minHeight: 'clamp(200px, 42dvh, 340px)',
@@ -85,7 +95,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
           transformStyle: 'preserve-3d',
           transform: revealed ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-          cursor: revealed ? 'default' : 'pointer',
+          cursor: 'pointer',
         }}
       >
         {/* Front */}

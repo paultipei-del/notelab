@@ -29,6 +29,15 @@ function formatTime(ms: number): string {
   return `${m}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`
 }
 
+// Learning modes (flip / MC / explain) show minutes only so the clock doesn't
+// nag a hurrying student. Sight-read (play) keeps centisecond precision since
+// speed IS the metric there.
+function formatTopbarTime(ms: number, isPlay: boolean): string {
+  if (isPlay) return formatTime(ms)
+  const minutes = Math.floor(ms / 60000)
+  return minutes < 1 ? '<1m' : `${minutes}m`
+}
+
 export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) {
   const router = useRouter()
   const isSightReadDeckInit = deck.id.startsWith('sight-read-')
@@ -53,10 +62,13 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const isFlipMode = mode === 'flip'
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const mcOptions = useMemo(() => mode === 'mc' && currentCard ? getMCOptions(deck.cards) : [], [currentCard?.id, mode])
+  // In flip mode we want click / Space to toggle both directions — flipping
+  // back to the question is just as useful as flipping to the answer.
+  const toggleFlipRevealed = () => setFlipRevealed(r => !r)
   const flipCardEl = !flipCard ? null
-    : flipCard.type === 'audio' ? <AudioCard card={flipCard} revealed={flipRevealed} onReveal={() => setFlipRevealed(true)} />
-    : flipCard.type === 'symbol' ? <SymbolCard card={flipCard} revealed={flipRevealed} onReveal={() => setFlipRevealed(true)} />
-    : <FlipCard card={flipCard as any} revealed={flipRevealed} onReveal={() => setFlipRevealed(true)} />
+    : flipCard.type === 'audio' ? <AudioCard card={flipCard} revealed={flipRevealed} onReveal={toggleFlipRevealed} />
+    : flipCard.type === 'symbol' ? <SymbolCard card={flipCard} revealed={flipRevealed} onReveal={toggleFlipRevealed} />
+    : <FlipCard card={flipCard as any} revealed={flipRevealed} onReveal={toggleFlipRevealed} />
 
   function goNext() { setFlipIndex(i => Math.min(i + 1, flipCards.length - 1)); setFlipRevealed(false) }
   function goPrev() { setFlipIndex(i => Math.max(i - 1, 0)); setFlipRevealed(false) }
@@ -65,16 +77,19 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
     router.back()
   }
 
+  const isPlayMode = mode === 'play'
   const [, setTick] = useState(0)
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null)
   useEffect(() => {
-    tickRef.current = setInterval(() => setTick(t => t + 1), 100)
+    // Fine-grained ticking only where centiseconds matter (sight-read).
+    // Learning modes just show minutes, so 5s is plenty.
+    const tickMs = isPlayMode ? 100 : 5000
+    tickRef.current = setInterval(() => setTick(t => t + 1), tickMs)
     return () => { if (tickRef.current) clearInterval(tickRef.current) }
-  }, [])
+  }, [isPlayMode])
 
   const elapsedMs = Date.now() - stats.startTime
   const elapsed = Math.round(elapsedMs / 60000)
-  const isPlayMode = mode === 'play'
 
   // Best time tracking for sight-read decks
   const bestTimeKey = `notelab-best-time-${deck.id}`
@@ -145,10 +160,10 @@ return (
               ))}
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button onClick={() => { resetSession(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Study Again</button>
+              <button onClick={() => { resetSession(); resetTimer(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Study Again</button>
               {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Reset Best</button>}
               {!isSightReadDeck && <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Browse Cards</button>}
-              <button onClick={goBack} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>← Back</button>
+              <button onClick={goBack} className="nl-study-back-btn" style={{ padding: '12px 22px', fontSize: 'var(--nl-text-meta)' }}>← Back</button>
             </div>
           </div>
         </div>
@@ -156,16 +171,23 @@ return (
 
       {!isComplete && viewMode === 'browse' && (
         <div className="nl-study-viewport">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 32px', borderBottom: '1px solid #DDD8CA', flexShrink: 0 }}>
-            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>← Back</button>
-            <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '20px', color: '#2A2318' }}>{deck.title}</div>
-            <button onClick={() => setViewMode('study')} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 18px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Study →</button>
+          {/* Header and mode switcher match the study-mode topbar's
+              centered-column geometry so the page width stays the same
+              when toggling between Study and Browse. */}
+          <div style={{ borderBottom: '1px solid #DDD8CA', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              gap: '12px', padding: '12px 24px', maxWidth: '760px', margin: '0 auto' }}>
+              {/* Browse is a sub-view of the deck — "Back" returns to study
+                  mode, NOT out of the deck entirely. To exit, use Back from
+                  the study-mode header. */}
+              <button onClick={() => setViewMode('study')} className="nl-study-back-btn">
+                ← Back to Study
+              </button>
+              <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '20px', color: '#2A2318' }}>{deck.title}</div>
+              <span style={{ width: 1 }} aria-hidden />
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '8px', padding: '12px 32px 0', flexShrink: 0 }}>
-            <button onClick={() => setViewMode('study')} style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'transparent', color: '#7A7060', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Study</button>
-            <button style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #1A1A18', background: '#1A1A18', color: 'white', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Browse</button>
-          </div>
-          <div className="nl-study-scroll" style={{ padding: '16px 32px 24px', maxWidth: '720px', margin: '0 auto', width: '100%' }}>
+          <div className="nl-study-scroll" style={{ padding: '20px 24px 24px', maxWidth: '760px', margin: '0 auto', width: '100%' }}>
             <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', marginBottom: '20px' }}>{deck.cards.length} cards{deck.cards[0]?.type !== 'audio' ? ' — click any card to see the answer' : ''}</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {(deck.browseCards ?? deck.cards).map((card, i) => (
@@ -195,12 +217,12 @@ return (
           <header className="nl-study-topbar">
             <div className="nl-study-topbar__row1">
               <div className="nl-study-topbar__back">
-                <button type="button" onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: '2px 0' }}>← Back</button>
+                <button type="button" onClick={goBack} className="nl-study-back-btn">← Back</button>
               </div>
               <div className={`nl-study-topbar__metrics${stats.total > 0 ? '' : ' nl-study-topbar__metrics--pair'}`}>
                 <div>
                   <span className="nl-study-topbar__metric-label">Session time</span>
-                  <span className="nl-study-topbar__metric-value">{formatTime(elapsedMs)}</span>
+                  <span className="nl-study-topbar__metric-value">{formatTopbarTime(elapsedMs, isPlayMode)}</span>
                 </div>
                 <div>
                   <span className="nl-study-topbar__metric-label">Answered</span>
@@ -216,6 +238,20 @@ return (
                 )}
               </div>
             </div>
+            {/* Subtle deck-title caption — low-contrast, centered, so the
+                student always knows which deck they're in without the title
+                competing with the metrics. */}
+            <p style={{
+              fontFamily: 'var(--font-cormorant), serif',
+              fontSize: 'var(--nl-text-compact)',
+              fontStyle: 'italic',
+              color: '#9A9081',
+              letterSpacing: '0.03em',
+              margin: 0,
+              textAlign: 'center',
+            }}>
+              {deck.title}
+            </p>
             <div className="nl-study-progress-rail" aria-hidden>
               <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
             </div>
@@ -247,50 +283,23 @@ return (
               </div>
             </div>
           )}
-          <div
-            className="nl-study-main"
-            style={(mode === 'mc' || mode === 'explain') && currentCard && !isFlipMode ? { alignItems: 'stretch' } : undefined}
-          >
+          <div className="nl-study-main">
             {isFlipMode ? flipCardEl : (mode === 'mc' || mode === 'explain') && currentCard ? (
-              <div
-                style={{
-                  alignSelf: 'stretch',
-                  width: '100%',
-                  minHeight: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
-                <div
-                  className={`nl-study-mc-stack${mode === 'explain' ? ' nl-study-mc-stack--explain' : ''}`}
-                >
-                  <div style={{ minHeight: 0 }} />
-                  <div
-                    role="group"
-                    aria-label="Last ten answers in this session"
-                    className="nl-study-mc-streak"
-                  >
-                    {stats.streakHistory.slice(-10).map((result, i) => (
-                      <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: result === 'hit' ? '#B5402A' : '#F09595' }} />
-                    ))}
-                  </div>
-                  <div style={{ minHeight: 0 }} />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', minHeight: 0 }}>
-                    {mode === 'mc' && currentCard.type === 'audio' && <AudioCard key={currentCard.id + '-audio'} card={currentCard} revealed={false} onReveal={() => {}} compact hideReveal />}
-                    {mode === 'mc' ? (
-                      <MultipleChoice key={currentCard.id} card={currentCard} options={mcOptions} onAnswer={recordAnswer} onReveal={reveal} />
-                    ) : (
-                      <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
-                    )}
-                  </div>
-                </div>
+              <div className="nl-study-mc-stack">
+                {/* Streak moved out of the stack so MC/Explain's question
+                    card starts at the same Y as the FlipCard. The global
+                    streak row below the main area now shows in every mode. */}
+                {mode === 'mc' && currentCard.type === 'audio' && <AudioCard key={currentCard.id + '-audio'} card={currentCard} revealed={false} onReveal={() => {}} compact hideReveal />}
+                {mode === 'mc' ? (
+                  <MultipleChoice key={currentCard.id} card={currentCard} options={mcOptions} onAnswer={recordAnswer} onReveal={reveal} />
+                ) : (
+                  <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
+                )}
               </div>
             ) : mode === 'play' && currentCard ? (
               <PlayItCard2 key={currentCard.id} card={currentCard} onCorrect={(firstTry: boolean) => { recordAnswer(firstTry); rate(3) }} onWrong={() => {}} />
             ) : null}
           </div>
-          {!((mode === 'mc' || mode === 'explain') && currentCard && !isFlipMode) && (
           <div
             role="group"
             aria-label="Last ten answers in this session"
@@ -306,27 +315,21 @@ return (
               <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: result === 'hit' ? '#B5402A' : '#F09595' }} />
             ))}
           </div>
-          )}
           <div className="nl-study-flip-nav" style={{ display: isFlipMode ? 'flex' : 'none' }}>
             <button
               type="button"
               className="nl-study-flip-nav__btn"
               onClick={goPrev}
               disabled={flipIndex === 0}
-              style={{ color: flipIndex === 0 ? '#DDD8CA' : '#7A7060', cursor: flipIndex === 0 ? 'default' : 'pointer' }}
             >
               ← Prev
             </button>
-            <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', flexShrink: 0 }}>{flipIndex + 1} / {flipCards.length}</span>
+            <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 500, color: '#7A7060', flexShrink: 0 }}>{flipIndex + 1} / {flipCards.length}</span>
             <button
               type="button"
               className="nl-study-flip-nav__btn"
               onClick={goNext}
               disabled={flipIndex === flipCards.length - 1}
-              style={{
-                color: flipIndex === flipCards.length - 1 ? '#DDD8CA' : '#7A7060',
-                cursor: flipIndex === flipCards.length - 1 ? 'default' : 'pointer',
-              }}
             >
               Next →
             </button>

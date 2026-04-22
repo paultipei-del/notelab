@@ -12,6 +12,16 @@ interface QuizEngineProps {
   onExit: () => void
 }
 
+// Format quiz duration as "M:SS" for anything ≥ 10s, "Ns" below that.
+function formatQuizTime(ms: number): string {
+  const totalSec = Math.floor(ms / 1000)
+  if (totalSec < 10) return `${totalSec}s`
+  const m = Math.floor(totalSec / 60)
+  const s = totalSec % 60
+  if (m === 0) return `${s}s`
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
 export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
   const router = useRouter()
   const {
@@ -22,6 +32,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
     chosen,
     score,
     missed,
+    elapsedMs,
     getMCOptions,
     answer,
   } = useQuizSession(deck)
@@ -58,11 +69,12 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
           </p>
 
           {/* Stats */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', marginBottom: '36px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', marginBottom: '36px', flexWrap: 'wrap' }}>
             {[
               { num: `${score}/${total}`, label: 'Correct' },
               { num: `${pct}%`, label: 'Score' },
               { num: missed.length, label: 'Missed' },
+              { num: formatQuizTime(elapsedMs), label: 'Time' },
             ].map(({ num, label }) => (
               <div key={label}>
                 <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#2A2318', lineHeight: 1 }}>{num}</div>

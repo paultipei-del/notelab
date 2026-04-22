@@ -29,16 +29,22 @@ export const DECKS: Deck[] = [
     description: 'Essential volume and expression markings found in music notation.',
     tag: 'free',
     cards: [
-      { id: 1, front: 'pp', back: 'Pianissimo — very soft', type: 'text' },
-      { id: 2, front: 'p', back: 'Piano — soft', type: 'text' },
-      { id: 3, front: 'mp', back: 'Mezzo-piano — moderately soft', type: 'text' },
-      { id: 4, front: 'mf', back: 'Mezzo-forte — moderately loud', type: 'text' },
-      { id: 5, front: 'f', back: 'Forte — loud', type: 'text' },
-      { id: 6, front: 'ff', back: 'Fortissimo — very loud', type: 'text' },
-      { id: 7, front: 'sfz', back: 'Sforzando — sudden strong accent', type: 'text' },
-      { id: 8, front: 'crescendo', back: 'Gradually getting louder', type: 'text' },
-      { id: 9, front: 'diminuendo', back: 'Gradually getting softer', type: 'text' },
-      { id: 10, front: 'fp', back: 'Forte-piano — loud then immediately soft', type: 'text' },
+      // Dynamic letter glyphs use SMuFL Bravura codepoints (U+E520–E526) so
+      // they render in the authentic italic-bold form found in real scores,
+      // not plain Latin letters.  p=E520, m=E521, f=E522, s=E524, z=E525.
+      { id: 1, front: '',         symbolName: 'pp',  back: 'Pianissimo — very soft',              type: 'symbol' },
+      { id: 2, front: '',               symbolName: 'p',   back: 'Piano — soft',                        type: 'symbol' },
+      { id: 3, front: '',         symbolName: 'mp',  back: 'Mezzo-piano — moderately soft',       type: 'symbol' },
+      { id: 4, front: '',         symbolName: 'mf',  back: 'Mezzo-forte — moderately loud',       type: 'symbol' },
+      { id: 5, front: '',               symbolName: 'f',   back: 'Forte — loud',                        type: 'symbol' },
+      { id: 6, front: '',         symbolName: 'ff',  back: 'Fortissimo — very loud',              type: 'symbol' },
+      { id: 7, front: '',   symbolName: 'sfz', back: 'Sforzando — sudden strong accent',    type: 'symbol' },
+      // Crescendo / diminuendo are spelled out in italic serif (FlipCard
+      // renders the italic); in full score they'd be hairpins, but we keep
+      // the word here for study clarity.
+      { id: 8, front: 'crescendo',            back: 'Gradually getting louder',                                type: 'text' },
+      { id: 9, front: 'diminuendo',           back: 'Gradually getting softer',                                type: 'text' },
+      { id: 10, front: '',        symbolName: 'fp',  back: 'Forte-piano — loud then immediately soft', type: 'symbol' },
     ],
   },
   {

@@ -17,6 +17,9 @@ export function useQuizSession(deck: Deck) {
   const [results, setResults] = useState<QuizResult[]>([])
   const [isComplete, setIsComplete] = useState(false)
   const [chosen, setChosen] = useState<string | null>(null)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const startTime = useMemo(() => Date.now(), [deck.id])
+  const [endTime, setEndTime] = useState<number | null>(null)
 
   const currentCard = cards[index] ?? null
 
@@ -44,6 +47,7 @@ export function useQuizSession(deck: Deck) {
       setChosen(null)
       if (index + 1 >= cards.length) {
         setIsComplete(true)
+        setEndTime(Date.now())
       } else {
         setIndex(i => i + 1)
       }
@@ -52,6 +56,7 @@ export function useQuizSession(deck: Deck) {
 
   const score = results.filter(r => r.correct).length
   const missed = results.filter(r => !r.correct)
+  const elapsedMs = (endTime ?? Date.now()) - startTime
 
   return {
     currentCard,
@@ -62,6 +67,7 @@ export function useQuizSession(deck: Deck) {
     chosen,
     score,
     missed,
+    elapsedMs,
     getMCOptions,
     answer,
   }
