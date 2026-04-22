@@ -5,6 +5,24 @@ import { Deck } from '@/lib/types'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
+const BRAVURA = 'Bravura, serif'
+const ACCENT = '#B5402A'
+
+// Per-deck Bravura glyph — tiny score-font icon that signals the deck's
+// topic at a glance while staying consistent with the rest of the app's
+// score-rendering aesthetic.
+function deckGlyph(id: string): string {
+  if (id === 'dynamics' || id === 'symbols-dynamics')  return '' // f
+  if (id === 'tempo')                                  return '' // quarter note
+  if (id === 'intervals')                              return '' // treble clef
+  if (id === 'symbols-articulations')                  return '' // accent
+  if (id === 'symbols-clefs')                          return '' // treble clef
+  if (id === 'symbols-repeats')                        return '' // segno
+  if (id === 'symbols-ornaments')                      return '' // turn
+  if (id === 'symbols-accidentals')                    return '' // sharp
+  if (id === 'symbols-note-values')                    return '' // half note
+  return ''                                                      // whole notehead fallback
+}
 
 export type FlashcardsHubProps =
   | {
@@ -133,9 +151,12 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
                   alignItems: 'flex-start' as const,
                 }}
               >
-                <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-                <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%', marginBottom: '10px' }}>
+                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
+                </div>
+                <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '24px', color: '#1A1A18', marginBottom: '8px', width: '100%', letterSpacing: '0.01em' }}>{deck.title}</h3>
+                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%', marginBottom: '14px' }}>{deck.description}</p>
+                <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, color: ACCENT, alignSelf: 'flex-end' }}>Start →</span>
               </div>
             </Link>
           ))}
@@ -159,9 +180,12 @@ export default function FlashcardsHub(props: FlashcardsHubProps) {
                       alignItems: 'flex-start' as const,
                     }}
                   >
-                    <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: '#E1F5EE', color: '#0F6E56', fontFamily: F, width: 'fit-content' }}>Free</span>
-                    <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%' }}>{deck.description}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%', marginBottom: '10px' }}>
+                      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
+                    </div>
+                    <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '24px', color: '#1A1A18', marginBottom: '8px', width: '100%', letterSpacing: '0.01em' }}>{deck.title}</h3>
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%', marginBottom: '14px' }}>{deck.description}</p>
+                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, color: ACCENT, alignSelf: 'flex-end' }}>Start →</span>
                   </div>
                 </Link>
               ))}

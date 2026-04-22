@@ -9,6 +9,22 @@ import { usePurchases } from '@/hooks/usePurchases'
 import AuthModal from '@/components/AuthModal'
 import { useState } from 'react'
 
+// Per-deck Bravura glyph — small score-font icon signalling each deck's
+// topic at a glance; matches FlashcardsHub so cards feel cohesive across
+// /flashcards and /collection.
+function deckGlyph(id: string): string {
+  if (id === 'dynamics' || id === 'symbols-dynamics')  return ''  // forte
+  if (id === 'tempo')                                  return ''  // quarter note
+  if (id === 'intervals')                              return ''  // treble clef
+  if (id === 'symbols-articulations')                  return ''  // accent
+  if (id === 'symbols-clefs')                          return ''  // treble clef
+  if (id === 'symbols-repeats')                        return ''  // segno
+  if (id === 'symbols-ornaments')                      return ''  // turn
+  if (id === 'symbols-accidentals')                    return ''  // sharp
+  if (id === 'symbols-note-values')                    return ''  // half note up
+  return ''                                                       // whole notehead fallback
+}
+
 const TAG_COLORS: Record<string, { bg: string; color: string }> = {
   free: { bg: '#E1F5EE', color: '#0F6E56' },
   cm: { bg: '#FAEEDA', color: '#B5402A' },
@@ -138,13 +154,12 @@ function CollectionContent() {
                           alignItems: 'flex-start',
                         }}
                       >
-                        <span style={{ display: 'inline-block', fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 10px', borderRadius: '20px', marginBottom: '12px', background: TAG_COLORS.free.bg, color: TAG_COLORS.free.color, fontFamily: 'var(--font-jost), sans-serif', width: 'fit-content' }}>Free</span>
-                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '8px', width: '100%' }}>{deck.title}</h3>
-                        <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, margin: 0, flex: 1, width: '100%' }}>{deck.description}</p>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginTop: '16px', gap: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%', marginBottom: '10px' }}>
                           <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
-                          <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#B5402A', flexShrink: 0 }}>Start →</span>
                         </div>
+                        <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 500, fontSize: '24px', color: '#1A1A18', marginBottom: '8px', width: '100%', letterSpacing: '0.01em' }}>{deck.title}</h3>
+                        <p style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, margin: '0 0 14px', flex: 1, width: '100%' }}>{deck.description}</p>
+                        <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 500, color: '#B5402A', alignSelf: 'flex-end' }}>Start →</span>
                       </div>
                     </Link>
                   ))}
@@ -165,7 +180,7 @@ function CollectionContent() {
                     <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#DDD8CA' }}>🔒</span>
                     <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', letterSpacing: '0.05em' }}>Locked</span>
                   </div>
-                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#7A7060', marginBottom: '6px' }}>
+                  <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 500, fontSize: '24px', color: '#9A9081', marginBottom: '8px', letterSpacing: '0.01em' }}>
                     {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                   </h3>
                   <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', lineHeight: 1.6 }}>
@@ -184,7 +199,7 @@ function CollectionContent() {
                       </span>
                       <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
                     </div>
-                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '20px', color: '#2A2318', marginBottom: '6px' }}>
+                    <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 500, fontSize: '24px', color: '#1A1A18', marginBottom: '8px', letterSpacing: '0.01em' }}>
                       {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                     </h3>
                     <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', lineHeight: 1.6, marginBottom: '16px' }}>
