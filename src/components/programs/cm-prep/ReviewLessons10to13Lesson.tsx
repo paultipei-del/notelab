@@ -275,16 +275,20 @@ function ScaleRow({ scale, accs, submitted, onCycle }: {
   submitted: boolean
   onCycle: (i: number) => void
 }) {
-  const W       = 560
-  const H       = 180
-  const step    = 6                              // half staff space
-  const TOP_Y   = 40                             // y of line 5 (F5)
+  // Match MajorScalesLesson's proportions: step=8, clef fontSize=62,
+  // noteheadWhole at fontSize=60, accidentals at 48.
+  const W       = 620
+  const H       = 200
+  const step    = 8                               // half staff space
+  const TOP_Y   = 46                              // y of line 5 (F5)
   const LINE_Y  = (n: number) => TOP_Y + (5 - n) * 2 * step
-  const POS_Y   = (pos: number) => TOP_Y + (10 - pos) * step   // pos=10 (F5) → TOP_Y
+  const POS_Y   = (pos: number) => TOP_Y + (10 - pos) * step
   const STAFF_L = 20
   const STAFF_R = W - 20
-  const START_X = 92
-  const END_X   = W - 28
+  // Leave a margin after the clef and before the final bar line so notes
+  // sit squarely inside the measure rather than brushing the bar.
+  const START_X = 108
+  const END_X   = STAFF_R - 28
   const cxFor   = (i: number) => START_X + ((END_X - START_X) / 7) * i
   const accGlyph = (a: AccType) => a === 'sharp' ? G_SHARP : a === 'flat' ? G_FLAT : ''
 
@@ -299,12 +303,16 @@ function ScaleRow({ scale, accs, submitted, onCycle }: {
         {/* Staff */}
         {[1,2,3,4,5].map(n => (
           <line key={n} x1={STAFF_L} y1={LINE_Y(n)} x2={STAFF_R} y2={LINE_Y(n)}
-            stroke={DARK} strokeWidth={1.1} />
+            stroke={DARK} strokeWidth={1.2} />
         ))}
 
         {/* Clef */}
-        <text x={STAFF_L + 6} y={LINE_Y(2)} fontFamily={BRAVURA} fontSize={50}
+        <text x={STAFF_L + 6} y={LINE_Y(2)} fontFamily={BRAVURA} fontSize={62}
           fill={DARK} dominantBaseline="auto">{G_TREBLE}</text>
+
+        {/* Final bar line */}
+        <line x1={STAFF_R} y1={LINE_Y(5)} x2={STAFF_R} y2={LINE_Y(1)}
+          stroke={DARK} strokeWidth={2} />
 
         {/* Notes */}
         {scale.letters.map((letter, i) => {
@@ -320,34 +328,39 @@ function ScaleRow({ scale, accs, submitted, onCycle }: {
             <g key={i}>
               {/* Ledger line for C4 */}
               {needsLedger && (
-                <line x1={cx - 10} y1={cy} x2={cx + 10} y2={cy}
-                  stroke={DARK} strokeWidth={1.1} />
+                <line x1={cx - 14} y1={cy} x2={cx + 14} y2={cy}
+                  stroke={DARK} strokeWidth={1.3} />
               )}
               {/* Accidental glyph */}
               {acc !== 'natural' && (
-                <text x={cx - 13} y={cy + 1} fontFamily={BRAVURA} fontSize={26}
+                <text x={cx - 20} y={cy} fontFamily={BRAVURA} fontSize={48}
                   fill={noteTint} textAnchor="middle" dominantBaseline="central">
                   {accGlyph(acc)}
                 </text>
               )}
-              {/* Whole-note head (unstemmed — cleaner for scale degrees) */}
-              <ellipse cx={cx} cy={cy} rx={6.5} ry={4.5}
-                fill={noteTint}
-                transform={`rotate(-20 ${cx} ${cy})`}
-              />
-              {/* Tap target */}
-              <rect x={cx - 16} y={cy - 14} width={32} height={28}
+              {/* Whole-note head (unstemmed — SMuFL noteheadWhole) */}
+              <text x={cx} y={cy} fontFamily={BRAVURA} fontSize={60}
+                fill={noteTint} textAnchor="middle" dominantBaseline="central">
+                {''}
+              </text>
+              {/* Tap target — slightly bigger than the notehead */}
+              <rect x={cx - 18} y={cy - 14} width={36} height={28}
                 fill="transparent"
                 style={{ cursor: submitted ? 'default' : 'pointer' }}
                 onClick={() => onCycle(i)}
               />
-              {/* Letter name below */}
-              <text x={cx} y={LINE_Y(1) + 32} fontFamily={F} fontSize={13}
+              {/* Letter name below — updates live with the student's accidental.
+                  C major sits lower because its first note (C4) hangs below
+                  the staff on a ledger line, so the label needs to clear it. */}
+              <text x={cx} y={LINE_Y(1) + (scale.name === 'C major' ? 38 : 36)}
+                fontFamily={F} fontSize={14}
                 fontWeight={600} fill={submitted && !ok ? WRONG : GREY}
-                textAnchor="middle">{letter}</text>
+                textAnchor="middle">
+                {letter}{acc === 'sharp' ? '♯' : acc === 'flat' ? '♭' : ''}
+              </text>
               {/* Post-submit hint */}
               {submitted && !ok && exp !== 'natural' && (
-                <text x={cx} y={LINE_Y(1) + 50} fontFamily={F} fontSize={11}
+                <text x={cx} y={LINE_Y(1) + 54} fontFamily={F} fontSize={12}
                   fill={CORRECT} textAnchor="middle">
                   {exp === 'sharp' ? '♯' : '♭'}
                 </text>
