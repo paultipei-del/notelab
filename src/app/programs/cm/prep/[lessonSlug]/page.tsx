@@ -36,6 +36,7 @@ import MajorScalesLesson from '@/components/programs/cm-prep/MajorScalesLesson'
 import TimeSignaturesLesson from '@/components/programs/cm-prep/TimeSignaturesLesson'
 import SignsTermsLesson from '@/components/programs/cm-prep/SignsTermsLesson'
 import ReviewLessons10to13Lesson from '@/components/programs/cm-prep/ReviewLessons10to13Lesson'
+import ReviewTestLesson from '@/components/programs/cm-prep/ReviewTestLesson'
 import LessonVisual from '@/components/programs/cm-prep/LessonVisual'
 
 const F = 'var(--font-jost), sans-serif'
@@ -344,6 +345,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'time-signatures-lesson' && 'Four exercises: answer questions about how time signatures work, identify the beat value of each note and rest, write the counts under a rhythm line in 2/4, 3/4, and 4/4, and write the counts for real rhythms from real music.'}
                   {lesson.tool === 'signs-terms-lesson' && 'Four exercises: match signs with definitions, identify the sign, play a memory-match pair game, and group each sign by category.'}
                   {lesson.tool === 'review-10-13-lesson' && 'Five exercises drawn from Lessons 10–13: write counts and place accents, match terms to definitions, complete scales with sharps or flats, identify keys from key signatures, and identify signs and terms.'}
+                  {lesson.tool === 'review-test-lesson' && 'A comprehensive preparatory-level test modelled on the Certificate of Merit Practice Theory Test. Name notes on the grand staff, complete Major scales, identify key signatures, name notes and rests, recognize signs and terms, and label parts of the grand staff.'}
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
@@ -473,6 +475,12 @@ export default function CMPrepLessonPage({ params }: Props) {
                   />
                 ) : lesson.tool === 'review-10-13-lesson' ? (
                   <ReviewLessons10to13Lesson
+                    passingScore={lesson.passingScore}
+                    previouslyCompleted={completed}
+                    onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}
+                  />
+                ) : lesson.tool === 'review-test-lesson' ? (
+                  <ReviewTestLesson
                     passingScore={lesson.passingScore}
                     previouslyCompleted={completed}
                     onComplete={(s, t) => { handleComplete(s, t); setPracticing(false) }}

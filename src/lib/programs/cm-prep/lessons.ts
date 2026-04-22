@@ -1,4 +1,4 @@
-export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson' | 'major-scales-lesson' | 'time-signatures-lesson' | 'signs-terms-lesson' | 'review-10-13-lesson'
+export type LessonTool = 'mc-quiz' | 'staff-note-quiz' | 'line-space-quiz' | 'flash-session' | 'mixed-quiz' | 'grand-staff-lesson' | 'line-space-lesson' | 'treble-clef-lesson' | 'bass-clef-lesson' | 'sharps-flats-lesson' | 'half-whole-lesson' | 'intervals-lesson' | 'major-patterns-lesson' | 'minor-patterns-lesson' | 'review-patterns-lesson' | 'review-1to9-lesson' | 'key-signatures-lesson' | 'major-scales-lesson' | 'time-signatures-lesson' | 'signs-terms-lesson' | 'review-10-13-lesson' | 'review-test-lesson'
 
 export interface CMPrepLesson {
   slug: string
@@ -207,7 +207,7 @@ export const CM_PREP_LESSONS: CMPrepLesson[] = [
     subtitle: 'Full preparatory level assessment',
     description: "A comprehensive test covering all preparatory-level material — staff reading, accidentals, steps, intervals, patterns, key signatures, scales, time signatures, and signs and terms. Pass this to complete the Preparatory level.",
     type: 'review',
-    tool: 'mixed-quiz',
+    tool: 'review-test-lesson',
     unlockAfter: 'review-lessons-10-13',
     passingScore: 0.8,
   },

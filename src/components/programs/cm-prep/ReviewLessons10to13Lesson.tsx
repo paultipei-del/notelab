@@ -182,14 +182,14 @@ function MatchDefEx({ onDone }: { onDone: (correct: number, total: number) => vo
 // by tapping. Scale pos is "letter index from C4": C4=0, D4=1, … G5=11.
 type AccType = 'natural' | 'sharp' | 'flat'
 
-interface Scale {
+export interface Scale {
   name:     string
   letters:  string[]       // 8 letters
   pos:      number[]       // 8 staff positions
   expected: AccType[]      // expected accidental per note
 }
 
-const SCALES: Scale[] = [
+export const SCALES: Scale[] = [
   { name: 'C major',
     letters: ['C','D','E','F','G','A','B','C'],
     pos:      [0,1,2,3,4,5,6,7],
@@ -204,10 +204,10 @@ const SCALES: Scale[] = [
     expected: ['natural','natural','natural','natural','natural','natural','sharp','natural'] },
 ]
 
-function CompleteScaleEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
+export function CompleteScaleEx({ onDone, scales = SCALES, title = 'Exercise 3 — Complete each scale by adding sharps or flats' }: { onDone: (correct: number, total: number) => void; scales?: Scale[]; title?: string }) {
   // State: one array of 8 AccType per scale.
   const [accs,      setAccs]      = useState<AccType[][]>(
-    () => SCALES.map(s => s.letters.map((): AccType => 'natural'))
+    () => scales.map(s => s.letters.map((): AccType => 'natural'))
   )
   const [submitted, setSubmitted] = useState(false)
 
@@ -228,10 +228,10 @@ function CompleteScaleEx({ onDone }: { onDone: (correct: number, total: number) 
     setSubmitted(true)
     let correct = 0
     let total   = 0
-    for (let s = 0; s < SCALES.length; s++) {
-      for (let i = 0; i < SCALES[s].expected.length; i++) {
+    for (let s = 0; s < scales.length; s++) {
+      for (let i = 0; i < scales[s].expected.length; i++) {
         total += 1
-        if (accs[s][i] === SCALES[s].expected[i]) correct += 1
+        if (accs[s][i] === scales[s].expected[i]) correct += 1
       }
     }
     setTimeout(() => onDone(correct, total), 1600)
@@ -239,13 +239,13 @@ function CompleteScaleEx({ onDone }: { onDone: (correct: number, total: number) 
 
   return (
     <div>
-      <ExerciseLabel>Exercise 3 — Complete each scale by adding sharps or flats</ExerciseLabel>
+      <ExerciseLabel>{title}</ExerciseLabel>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, lineHeight: 1.6, margin: '0 0 18px' }}>
         Tap a note to cycle through <strong>natural → sharp → flat → natural</strong>. Some scales
         need no changes.
       </p>
 
-      {SCALES.map((scale, si) => (
+      {scales.map((scale, si) => (
         <ScaleRow key={scale.name}
           scale={scale}
           accs={accs[si]}

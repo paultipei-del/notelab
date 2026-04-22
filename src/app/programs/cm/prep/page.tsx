@@ -132,17 +132,17 @@ export default function CMPrepHubPage() {
                         <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: ACCENT, display: 'inline-block' }} />
                       )}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>
-                        {lesson.subtitle}
-                      </p>
-                      {completed && progress && (
-                        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4' }}>
-                          Best: {Math.round(progress.bestScore * 100)}%
-                        </span>
-                      )}
-                    </div>
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>
+                      {lesson.subtitle}
+                    </p>
                   </div>
+
+                  {completed && progress && (
+                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060',
+                      whiteSpace: 'nowrap', flexShrink: 0 }}>
+                      Best: <strong style={{ color: '#2A2318' }}>{Math.round(progress.bestScore * 100)}%</strong>
+                    </span>
+                  )}
 
                   <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', flexShrink: 0 }}>→</span>
                 </div>
