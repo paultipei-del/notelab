@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useMemo } from 'react'
+import { ExerciseNavBar } from './nav/ExerciseNavBar'
 
 const F      = 'var(--font-jost), sans-serif'
 const SERIF  = 'var(--font-cormorant), serif'
@@ -101,44 +102,6 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
   )
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button onClick={onClick} style={{
-      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
-      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
-    }}>
-      ← Back
-    </button>
-  )
-}
-
-function ForwardButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button onClick={onClick} style={{
-      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
-      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
-    }}>
-      Forward →
-    </button>
-  )
-}
-
-function NavBar({ canBack, canForward, onBack, onForward }: {
-  canBack: boolean; canForward: boolean
-  onBack: () => void; onForward: () => void
-}) {
-  if (!canBack && !canForward) return null
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-      {canBack && <BackButton onClick={onBack} />}
-      {canForward && (
-        <div style={{ marginLeft: 'auto' }}>
-          <ForwardButton onClick={onForward} />
-        </div>
-      )}
-    </div>
-  )
-}
 
 // ── Pool types ────────────────────────────────────────────────────────────────
 interface StepQuestion {
@@ -986,7 +949,7 @@ export default function HalfWholeStepsLesson({
 
   return (
     <div>
-      <NavBar canBack={canGoBack} canForward={canGoForward}
+      <ExerciseNavBar canBack={canGoBack} canForward={canGoForward}
         onBack={back} onForward={forward} />
       {phase === 'intro' && <StepsIntro key={key} onNext={next} />}
       {phase === 'half-keyboard' && (

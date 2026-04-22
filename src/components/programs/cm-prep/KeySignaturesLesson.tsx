@@ -2,6 +2,7 @@
 
 import { useState, useRef, useMemo } from 'react'
 import ScoreFromXml from '@/components/music/ScoreFromXml'
+import { ExerciseNavBar } from './nav/ExerciseNavBar'
 
 const F       = 'var(--font-jost), sans-serif'
 const DARK    = '#1A1A18'
@@ -75,31 +76,6 @@ function ProgressBar({ done, total, color = ACCENT }: { done: number; total: num
       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', whiteSpace: 'nowrap' }}>
         {done + 1} / {total}
       </span>
-    </div>
-  )
-}
-
-function NavBar({ canBack, canForward, onBack, onForward }: {
-  canBack: boolean; canForward: boolean
-  onBack: () => void; onForward: () => void
-}) {
-  if (!canBack && !canForward) return null
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-      {canBack && (
-        <button onClick={onBack} style={{
-          background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
-          fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
-        }}>← Back</button>
-      )}
-      {canForward && (
-        <div style={{ marginLeft: 'auto' }}>
-          <button onClick={onForward} style={{
-            background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
-            fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
-          }}>Forward →</button>
-        </div>
-      )}
     </div>
   )
 }
@@ -855,7 +831,7 @@ export default function KeySignaturesLesson({
 
   return (
     <div>
-      <NavBar canBack={canGoBack} canForward={canGoForward}
+      <ExerciseNavBar canBack={canGoBack} canForward={canGoForward}
         onBack={back} onForward={forward} />
       {phase === 'ex1' && <MatchKeySignatureEx key={keyN} onDone={scored} />}
       {phase === 'ex2' && <IdentifyKeyEx       key={keyN} onDone={scored} />}

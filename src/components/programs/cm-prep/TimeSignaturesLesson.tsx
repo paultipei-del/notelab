@@ -3,6 +3,7 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
 import { parseMXL, type RhythmNote, type RhythmExercise } from '@/lib/parseMXL'
 import OsmdRhythmCounts from './OsmdRhythmCounts'
+import { ExerciseNavBar } from './nav/ExerciseNavBar'
 
 const F       = 'var(--font-jost), sans-serif'
 const DARK    = '#1A1A18'
@@ -69,57 +70,6 @@ function ProgressBar({ done, total, color = ACCENT }: { done: number; total: num
       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', whiteSpace: 'nowrap' }}>
         {done + 1} / {total}
       </span>
-    </div>
-  )
-}
-
-function NavButton({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
-  const [pressed, setPressed] = useState(false)
-  const [hover,   setHover]   = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => { setHover(false); setPressed(false) }}
-      style={{
-        background: hover
-          ? 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
-          : 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
-        border: '1px solid #D7D1C0',
-        borderRadius: 9,
-        cursor: 'pointer',
-        fontFamily: F, fontSize: 13, fontWeight: 600,
-        color: '#4A4540',
-        padding: '9px 20px',
-        letterSpacing: '0.02em',
-        // Bottom shadow = button's "body"; small drop shadow = depth off the page.
-        boxShadow: pressed
-          ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
-          : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)',
-        transform: pressed ? 'translateY(2px)' : 'translateY(0)',
-        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
-      }}
-    >
-      {children}
-    </button>
-  )
-}
-
-function NavBar({ canBack, canForward, onBack, onForward }: {
-  canBack: boolean; canForward: boolean
-  onBack: () => void; onForward: () => void
-}) {
-  if (!canBack && !canForward) return null
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 14 }}>
-      {canBack && <NavButton onClick={onBack}>← Back</NavButton>}
-      {canForward && (
-        <div style={{ marginLeft: 'auto' }}>
-          <NavButton onClick={onForward}>Forward →</NavButton>
-        </div>
-      )}
     </div>
   )
 }
@@ -489,7 +439,7 @@ function expectedCountAt(subdivIdx: number): string {
   return subdivIdx % 2 === 0 ? String(subdivIdx / 2 + 1) : '+'
 }
 
-interface RhythmItem { ts: [number, number]; measures: Array<{ notes: RhythmDur[] }> }
+export interface RhythmItem { ts: [number, number]; measures: Array<{ notes: RhythmDur[] }> }
 
 const EX3_POOL: RhythmItem[] = [
   { ts: [4, 4], measures: [
@@ -606,7 +556,7 @@ function normalized(s: string): string {
   return s.replace(/\s+/g, '').toLowerCase()
 }
 
-function WriteCountsEx({
+export function WriteCountsEx({
   onDone,
   pool = EX3_POOL,
   title = 'Exercise 3 — Write the counts',
@@ -652,6 +602,7 @@ function WriteCountsEx({
 
   function paletteInsert(ch: string) {
     if (feedback !== null) return
+    if (ch === 'NEXT') { nextInput(); return }
     const f = focusedRef.current
     if (!f) return
     setInputs(prev => {
@@ -664,6 +615,26 @@ function WriteCountsEx({
     // land in the same field.
     requestAnimationFrame(() => {
       const input = inputRefs.current[f.m]?.[f.n]
+      if (input) input.focus()
+    })
+  }
+
+  function nextInput() {
+    if (feedback !== null) return
+    const measures = item.measures
+    let m = 0, n = 0
+    if (focusedRef.current) {
+      m = focusedRef.current.m
+      n = focusedRef.current.n + 1
+      if (n >= measures[m].notes.length) {
+        m += 1
+        n = 0
+        if (m >= measures.length) { m = 0 }
+      }
+    }
+    focusedRef.current = { m, n }
+    requestAnimationFrame(() => {
+      const input = inputRefs.current[m]?.[n]
       if (input) input.focus()
     })
   }
@@ -720,6 +691,7 @@ function WriteCountsEx({
     ...Array.from({ length: beats }, (_, i) => ({ value: String(i + 1), label: String(i + 1) })),
     { value: '+', label: '+' },
     { value: 'BACKSPACE', label: '⌫', wide: true },
+    { value: 'NEXT', label: 'Next →', wide: true },
   ]
 
   return (
@@ -1338,7 +1310,7 @@ export default function TimeSignaturesLesson({
 
   return (
     <div>
-      <NavBar canBack={canGoBack} canForward={canGoForward}
+      <ExerciseNavBar canBack={canGoBack} canForward={canGoForward}
         onBack={back} onForward={forward} />
       {phase === 'ex1' && <FactsEx            key={keyN} onDone={scored} />}
       {phase === 'ex2' && <HowManyBeatsEx     key={keyN} onDone={scored} />}

@@ -3,6 +3,7 @@
 import { useState, useRef, useMemo } from 'react'
 import { MAJOR_PATTERNS, triadFor, type MajorKey } from './visuals/PatternDiagrams'
 import { PatternKeyboard } from './visuals/PatternDiagrams'
+import { ExerciseNavBar } from './nav/ExerciseNavBar'
 
 const F       = 'var(--font-jost), sans-serif'
 const SERIF   = 'var(--font-cormorant), serif'
@@ -96,42 +97,6 @@ function ProgressBar({ done, total, color = ACCENT }: { done: number; total: num
   )
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button onClick={onClick} style={{
-      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
-      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
-    }}>
-      ← Back
-    </button>
-  )
-}
-function ForwardButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button onClick={onClick} style={{
-      background: 'white', border: '1.5px solid #DDD8CA', borderRadius: 8, cursor: 'pointer',
-      fontFamily: F, fontSize: 13, color: '#7A7060', padding: '4px 0',
-    }}>
-      Forward →
-    </button>
-  )
-}
-function NavBar({ canBack, canForward, onBack, onForward }: {
-  canBack: boolean; canForward: boolean
-  onBack: () => void; onForward: () => void
-}) {
-  if (!canBack && !canForward) return null
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-      {canBack && <BackButton onClick={onBack} />}
-      {canForward && (
-        <div style={{ marginLeft: 'auto' }}>
-          <ForwardButton onClick={onForward} />
-        </div>
-      )}
-    </div>
-  )
-}
 
 // ── Ex 1: Is this a five-finger pattern? ─────────────────────────────────────
 // A five-finger pattern = 5 *adjacent* staff positions (line-space-line-space-line
@@ -861,7 +826,7 @@ export default function MajorPatternsLesson({
 
   return (
     <div>
-      <NavBar canBack={canGoBack} canForward={canGoForward}
+      <ExerciseNavBar canBack={canGoBack} canForward={canGoForward}
         onBack={back} onForward={forward} />
       {phase === 'ex1' && <IdentifyPatternEx key={key} onDone={scored} />}
       {phase === 'ex2' && <MatchEx key={key} mode="pattern"

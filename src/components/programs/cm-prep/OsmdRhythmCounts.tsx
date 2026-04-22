@@ -198,9 +198,42 @@ export default function OsmdRhythmCounts({
 
   const textTop = staffBottomY + 8   // sit closer to the staff than full inputs did
 
+  // Count palette: clicking a button appends its character to the selected
+  // slot's input (or auto-selects the first slot if none selected). NEXT
+  // advances selection; BACKSPACE trims the last char.
+  function paletteApply(ch: string) {
+    if (disabled) return
+    const currentIdx = selectedIdx ?? 0
+    if (ch === 'NEXT') {
+      const nextIdx = currentIdx + 1
+      setSelectedIdx(nextIdx < slots.length ? nextIdx : 0)
+      return
+    }
+    const slot = slots[currentIdx]
+    if (!slot) return
+    const current = inputs[slot.measureIdx]?.[slot.inMeasureIdx] ?? ''
+    const newVal  = ch === 'BACKSPACE' ? current.slice(0, -1) : current + ch
+    onChangeInput(slot.measureIdx, slot.inMeasureIdx, newVal)
+    if (selectedIdx === null) setSelectedIdx(currentIdx)
+  }
+  const paletteItems: Array<{ value: string; label: string; wide?: boolean }> = [
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: '+', label: '+' },
+    { value: 'BACKSPACE', label: '⌫', wide: true },
+    { value: 'NEXT', label: 'Next →', wide: true },
+  ]
+
   return (
-    <div ref={wrapperRef} style={{ position: 'relative', paddingBottom: 58 }}>
-      <div id={divId} style={{ overflowX: 'auto' }} />
+    <div>
+      {/* Wrapper contains OSMD + absolutely-positioned dashes/inputs. Slot
+          coordinates are measured against wrapperRect, so they must live
+          INSIDE wrapperRef, and wrapperRef's paddingBottom reserves space
+          below the staff for them to sit in. */}
+      <div ref={wrapperRef} style={{ position: 'relative', paddingBottom: 48 }}>
+        <div id={divId} style={{ overflowX: 'auto' }} />
       {loaded && slots.map((slot, idx) => {
         const value = inputs[slot.measureIdx]?.[slot.inMeasureIdx] ?? ''
         const exp   = expected[slot.measureIdx]?.[slot.inMeasureIdx] ?? ''
@@ -268,6 +301,39 @@ export default function OsmdRhythmCounts({
           </span>
         )
       })}
+      </div>
+
+      {/* Count palette — sits BELOW the wrapper, so it flows after the staff
+          + dashes instead of overlapping them. */}
+      {!disabled && (
+        <div style={{ marginTop: 12 }}>
+          <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
+            textTransform: 'uppercase', color: '#7A7060', margin: '0 0 6px', textAlign: 'center' }}>
+            Count palette
+          </p>
+          <div style={{ display: 'flex', gap: 6, justifyContent: 'center', alignItems: 'center',
+            flexWrap: 'wrap' }}>
+            {paletteItems.map(p => (
+              <button key={p.value}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => paletteApply(p.value)}
+                aria-label={p.value === 'BACKSPACE' ? 'backspace'
+                          : p.value === 'NEXT' ? 'next note' : p.value}
+                style={{
+                  minWidth: p.wide ? 64 : 40,
+                  height: 40, borderRadius: 8,
+                  border: '1.5px solid #DDD8CA',
+                  background: 'white', color: DARK,
+                  fontFamily: F, fontSize: 16, fontWeight: 700,
+                  padding: '0 10px',
+                  cursor: 'pointer',
+                }}>
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { NotationSymbol } from './visuals/NotationSymbols'
 import { SIGN_CARDS } from './SignsTermsLesson'
+import { WriteCountsEx, type RhythmItem } from './TimeSignaturesLesson'
 
 const F       = 'var(--font-jost), sans-serif'
 const SERIF   = 'var(--font-cormorant), serif'
@@ -81,212 +82,37 @@ function FeedbackLine({ feedback, wrongContent }: {
   )
 }
 
-// ── Ex 1: Counts + accents ────────────────────────────────────────────────
-// Student writes the count under each note and taps an accent over beat 1
-// (the only emphasized beat in 2/4, 3/4, and 4/4 at the Preparatory level).
-interface RhythmBar {
-  ts:      [number, number]
-  counts:  string[]       // expected count for each beat
-  accents: boolean[]      // whether each beat should carry an accent
-}
-const RHYTHM_BARS: RhythmBar[] = [
-  { ts: [2,4], counts: ['1','2'],         accents: [true, false] },
-  { ts: [3,4], counts: ['1','2','3'],     accents: [true, false, false] },
-  { ts: [4,4], counts: ['1','2','3','4'], accents: [true, false, false, false] },
+// ── Ex 1: Write the counts on 4-measure rhythms (2/4, 3/4, 4/4) ──────────
+// Reuses Lesson 12's WriteCountsEx renderer with a review-specific pool of
+// three 4-measure items — one per time signature.
+const EX1_POOL: RhythmItem[] = [
+  { ts: [2, 4], measures: [
+    { notes: ['quarter', 'quarter'] },
+    { notes: ['half'] },
+    { notes: ['quarter', 'quarter'] },
+    { notes: ['half'] },
+  ]},
+  { ts: [3, 4], measures: [
+    { notes: ['quarter', 'quarter', 'quarter'] },
+    { notes: ['half', 'quarter'] },
+    { notes: ['quarter', 'half'] },
+    { notes: ['dottedHalf'] },
+  ]},
+  { ts: [4, 4], measures: [
+    { notes: ['quarter', 'quarter', 'quarter', 'quarter'] },
+    { notes: ['half', 'half'] },
+    { notes: ['quarter', 'quarter', 'half'] },
+    { notes: ['whole'] },
+  ]},
 ]
 
 function CountsAccentsEx({ onDone }: { onDone: (correct: number, total: number) => void }) {
-  const [counts,    setCounts]    = useState<string[][]>(() => RHYTHM_BARS.map(b => b.counts.map(() => '')))
-  const [accents,   setAccents]   = useState<boolean[][]>(() => RHYTHM_BARS.map(b => b.accents.map(() => false)))
-  const [submitted, setSubmitted] = useState(false)
-
-  function setCount(bi: number, beat: number, v: string) {
-    if (submitted) return
-    setCounts(prev => prev.map((row, i) => i === bi ? row.map((c, j) => j === beat ? v : c) : row))
-  }
-  function toggleAccent(bi: number, beat: number) {
-    if (submitted) return
-    setAccents(prev => prev.map((row, i) => i === bi ? row.map((a, j) => j === beat ? !a : a) : row))
-  }
-
-  function submit() {
-    setSubmitted(true)
-    let correct = 0
-    let total   = 0
-    for (let bi = 0; bi < RHYTHM_BARS.length; bi++) {
-      for (let j = 0; j < RHYTHM_BARS[bi].counts.length; j++) {
-        total += 2
-        if (counts[bi][j].trim() === RHYTHM_BARS[bi].counts[j]) correct += 1
-        if (accents[bi][j] === RHYTHM_BARS[bi].accents[j])      correct += 1
-      }
-    }
-    setTimeout(() => onDone(correct, total), 1600)
-  }
-
   return (
-    <div>
-      <ExerciseLabel>Exercise 1 — Write the counts and place accents</ExerciseLabel>
-      <p style={{ fontFamily: F, fontSize: 14, color: GREY, lineHeight: 1.6, margin: '0 0 18px' }}>
-        Type the count below each note, then tap the space above each note to place an accent on the
-        beats that should be emphasized.
-      </p>
-
-      {RHYTHM_BARS.map((bar, bi) => (
-        <RhythmBarUI key={bi}
-          bar={bar}
-          counts={counts[bi]}
-          accents={accents[bi]}
-          submitted={submitted}
-          onSetCount={(j, v) => setCount(bi, j, v)}
-          onToggleAccent={j => toggleAccent(bi, j)}
-        />
-      ))}
-
-      {!submitted ? (
-        <button onClick={submit}
-          style={{ background: DARK, color: 'white', border: 'none', borderRadius: 10,
-            padding: '12px 28px', fontFamily: F, fontSize: 14, cursor: 'pointer', marginTop: 6 }}>
-          Check answers
-        </button>
-      ) : (
-        <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '6px 0 0' }}>
-          Moving on…
-        </p>
-      )}
-    </div>
-  )
-}
-
-function RhythmBarUI({ bar, counts, accents, submitted, onSetCount, onToggleAccent }: {
-  bar: RhythmBar
-  counts:  string[]
-  accents: boolean[]
-  submitted: boolean
-  onSetCount: (beat: number, v: string) => void
-  onToggleAccent: (beat: number) => void
-}) {
-  const W = 440
-  const H = 200
-  const STAFF_L = 18
-  const STAFF_R = W - 18
-  const step    = 6                                   // half a staff space
-  const LINE_Y  = (n: number) => 60 + (5 - n) * 2 * step   // n=5 top, n=1 bottom
-  const NOTE_Y  = LINE_Y(2)                           // G4 — quarters sit here
-  const TS_TOP  = LINE_Y(4) + 2
-  const TS_BOT  = LINE_Y(2) + 2
-
-  const N = bar.counts.length
-  const noteStart = 108
-  const noteEnd   = W - 20
-  const span      = noteEnd - noteStart
-  const cxFor     = (i: number) => N === 1 ? (noteStart + noteEnd) / 2
-                                           : noteStart + (span / (N - 1)) * i
-
-  return (
-    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
-      padding: '12px 12px 14px', marginBottom: 14 }}>
-      <svg viewBox={`0 0 ${W} ${H}`} width="100%" preserveAspectRatio="xMidYMid meet"
-        style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
-        {/* Staff */}
-        {[1,2,3,4,5].map(n => (
-          <line key={n} x1={STAFF_L} y1={LINE_Y(n)} x2={STAFF_R} y2={LINE_Y(n)}
-            stroke={DARK} strokeWidth={1.1} />
-        ))}
-        <line x1={STAFF_L} y1={LINE_Y(5)} x2={STAFF_L} y2={LINE_Y(1)} stroke={DARK} strokeWidth={1.4} />
-        <line x1={STAFF_R} y1={LINE_Y(5)} x2={STAFF_R} y2={LINE_Y(1)} stroke={DARK} strokeWidth={1.4} />
-
-        {/* Clef */}
-        <text x={STAFF_L + 6} y={LINE_Y(2)} fontFamily={BRAVURA} fontSize={50}
-          fill={DARK} dominantBaseline="auto">{G_TREBLE}</text>
-
-        {/* Time signature */}
-        <text x={STAFF_L + 62} y={TS_TOP} fontFamily={BRAVURA} fontSize={26}
-          fill={DARK} textAnchor="middle" dominantBaseline="central">
-          {TS_DIGIT[String(bar.ts[0])]}
-        </text>
-        <text x={STAFF_L + 62} y={TS_BOT} fontFamily={BRAVURA} fontSize={26}
-          fill={DARK} textAnchor="middle" dominantBaseline="central">
-          {TS_DIGIT[String(bar.ts[1])]}
-        </text>
-
-        {/* Notes + accents */}
-        {bar.counts.map((_, i) => {
-          const cx = cxFor(i)
-          return (
-            <g key={i}>
-              {/* Accent glyph (only when toggled on) */}
-              {accents[i] && (
-                <text x={cx} y={LINE_Y(5) - 8} fontFamily={BRAVURA} fontSize={22}
-                  fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">
-                  {G_ACCENT}
-                </text>
-              )}
-              {/* Notehead (stem up) */}
-              <text x={cx} y={NOTE_Y} fontFamily={BRAVURA} fontSize={48}
-                fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">
-                {G_QUARTER}
-              </text>
-              {/* Invisible tap-zone above the note to toggle accent */}
-              <rect x={cx - 16} y={LINE_Y(5) - 26} width={32} height={24}
-                fill={accents[i] ? 'rgba(186,117,23,0.14)' : 'rgba(186,117,23,0.05)'}
-                stroke={accents[i] ? ACCENT : 'rgba(186,117,23,0.3)'}
-                strokeWidth={accents[i] ? 1.3 : 0.8}
-                strokeDasharray={accents[i] ? '0' : '3 3'}
-                rx={3}
-                style={{ cursor: submitted ? 'default' : 'pointer' }}
-                onClick={() => onToggleAccent(i)}
-              />
-            </g>
-          )
-        })}
-
-        {/* Final bar line */}
-        <line x1={STAFF_R - 1} y1={LINE_Y(5)} x2={STAFF_R - 1} y2={LINE_Y(1)}
-          stroke={DARK} strokeWidth={1.8} />
-
-        {/* Count input boxes — placed below the staff */}
-        {bar.counts.map((_, i) => {
-          const cx = cxFor(i)
-          const value = counts[i]
-          const expected = bar.counts[i]
-          const accOk = accents[i] === bar.accents[i]
-          const countOk = value.trim() === expected
-          const bg  = !submitted ? 'white'
-                    : countOk ? 'rgba(42,107,30,0.10)'
-                              : 'rgba(181,64,42,0.10)'
-          const bd  = !submitted ? '#DDD8CA'
-                    : countOk ? CORRECT : WRONG
-          return (
-            <g key={`in${i}`}>
-              <foreignObject x={cx - 22} y={LINE_Y(1) + 14} width={44} height={30}>
-                <input
-                  value={value}
-                  onChange={e => onSetCount(i, e.target.value)}
-                  disabled={submitted}
-                  style={{
-                    width: '100%', height: '100%', textAlign: 'center',
-                    fontFamily: F, fontSize: 14, fontWeight: 600,
-                    color: DARK, background: bg, border: `1.5px solid ${bd}`,
-                    borderRadius: 6, outline: 'none', padding: 0,
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </foreignObject>
-              {submitted && !countOk && (
-                <text x={cx} y={LINE_Y(1) + 58} fontFamily={F} fontSize={11}
-                  fill={CORRECT} textAnchor="middle">{expected}</text>
-              )}
-              {submitted && !accOk && (
-                <text x={cx} y={LINE_Y(1) + 72} fontFamily={F} fontSize={10}
-                  fill={WRONG} textAnchor="middle">
-                  {bar.accents[i] ? 'accent' : 'no accent'}
-                </text>
-              )}
-            </g>
-          )
-        })}
-      </svg>
-    </div>
+    <WriteCountsEx
+      onDone={onDone}
+      pool={EX1_POOL}
+      title="Exercise 1 — Write the counts on each rhythm"
+    />
   )
 }
 
