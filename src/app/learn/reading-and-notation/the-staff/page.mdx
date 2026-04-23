@@ -1,0 +1,74 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'reading-and-notation',
+  subtopic: 'the-staff',
+  title: 'The Staff',
+  oneSentence:
+    'The staff is the set of five horizontal lines and four spaces that music is written on — each line and space represents a specific pitch, and everything in standard music notation is organized around it.',
+  practice: [
+    { kind: 'flashcard', label: 'Staff Anatomy Flashcards', detail: '8 cards', href: '/study/staff-anatomy' },
+  ],
+  related: [
+    { title: 'Clefs',                                  href: '/learn/reading-and-notation/clefs' },
+    { title: 'Ledger Lines and the Grand Staff',       href: '/learn/reading-and-notation/ledger-lines-and-the-grand-staff' },
+    { title: 'Note Names and the Musical Alphabet',    href: '/learn/reading-and-notation/note-names-and-the-musical-alphabet' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Imagine trying to describe a melody to someone using only words. "Start on a medium-high note, then go up a little, then down two steps, then back up…" It works, but it's slow and imprecise. The staff solves this problem. It's a grid for pitch — five lines and four spaces, stacked vertically — that lets a composer show exactly which note comes when, and exactly how high or low each one sits relative to the others.
+
+Every note you'll ever read sits somewhere on, above, or below this grid. Learning the staff is the first step to reading music, and it pays off immediately — once the lines and spaces are automatic, everything else follows.
+
+## The visual
+
+<DiagramPlaceholder description="An empty five-line staff — no clef, no notes, just the grid." />
+
+<DiagramPlaceholder description="The same staff with labels pointing to each of the five lines (line 1 through line 5 from bottom to top) and each of the four spaces (space 1 through space 4 from bottom to top)." />
+
+## How the staff works
+
+The staff has **five lines** and **four spaces**. Together, these nine positions represent nine consecutive pitches. The lowest line sits at the bottom of the staff; the highest line sits at the top. As you move upward through the lines and spaces, the pitch goes up. As you move downward, the pitch goes down.
+
+Lines and spaces are counted from the bottom. The bottom line is line 1; the top line is line 5. The bottom space is space 1; the top space is space 4. This numbering matters mostly for theory discussions — in practice, you'll quickly learn the pitch names directly rather than counting positions.
+
+Notes are written *on* a line (with the line passing through the notehead) or *in* a space (with the notehead fitting between two lines). A notehead that looks too high or too low to fit cleanly — squeezed between positions — is almost certainly a reading error or notation mistake. Every note has a clear home.
+
+## What the staff does not tell you on its own
+
+The staff, by itself, doesn't tell you which pitches its lines and spaces actually represent. A line near the top of the staff might mean a high note in one context and a much lower note in another. The **clef** — the symbol at the beginning of every staff — is what anchors the staff to specific pitches. Without a clef, the staff is just a grid. We'll cover clefs on the next page.
+
+The staff also doesn't, by itself, tell you anything about rhythm, dynamics, articulation, or any other musical element. Those are communicated by additional symbols placed on, above, or below the staff. The staff is the pitch grid; everything else is layered on top.
+
+## Why five lines
+
+Five has been the standard since roughly the 13th century, though earlier notation systems used four lines (still used today for Gregorian chant), six lines, eleven lines, and other variants. Five became standard because it strikes a balance: it's enough lines to cover a useful pitch range at a glance, but not so many that the lines blur together and become hard to read quickly. The four-space-plus-five-line structure also puts the middle line at a visually prominent position, which makes sight-reading faster.
+
+The **grand staff**, used for piano and other two-handed instruments, uses two staves bracketed together — a treble staff on top and a bass staff on bottom. We'll get to that on its own page.
+
+## The staff in practice
+
+When you look at a piece of sheet music, each line of music is called a **system**. A single-staff instrument (like a flute) has one staff per system. A piano has two. An orchestral score has a staff for each instrument, all aligned vertically so the conductor can see every part at once.
+
+The staff scales to match the medium. In a pocket score, the staves are small; in a choral octavo, they're generous. Lines and spaces remain in the same relative proportions, so the reading logic never changes — just the physical size.
+
+## Common questions
+
+**Why are the lines the way they are — what determines which pitch goes on which line?**
+
+The clef determines that (next page). On the most common staff — treble clef — the five lines from bottom to top are E, G, B, D, F, and the four spaces are F, A, C, E. A different clef would assign different pitches to the same lines and spaces.
+
+**Can I add extra lines if I need higher or lower notes?**
+
+Yes — they're called **ledger lines**, short horizontal segments added above or below the staff for notes that extend outside the five-line grid. This is how a single staff can notate pitches well above and below its normal range. Covered in a later page.
+
+**Why do I sometimes see a staff with more or fewer than five lines?**
+
+Specialized notations exist. A single-line staff is used for unpitched percussion (drum notation where only rhythm matters). A six-line staff (tablature) is used for guitar, with each line representing a string. But for standard pitched instruments and vocal music, five lines is universal.
