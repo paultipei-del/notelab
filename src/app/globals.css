@@ -1838,9 +1838,12 @@ body:has(.nl-study-viewport) {
 
 /* Thin colored stripe on the left edge, drawn via a pseudo-element so the
    tile's 1px border (and the hover accent-color border transition) stay
-   undisturbed. Tile must set `--deck-accent` via inline style. */
+   undisturbed. Tile must set `--deck-accent` via inline style.
+   `overflow: hidden` on the parent clips the stripe to the card's rounded
+   corners so the line ends flush with the curve instead of running past it. */
 .nl-card-surface[data-deck-accent] {
   position: relative;
+  overflow: hidden;
 }
 .nl-card-surface[data-deck-accent]::before {
   content: '';
@@ -1850,8 +1853,6 @@ body:has(.nl-study-viewport) {
   bottom: 0;
   width: 3px;
   background: var(--deck-accent);
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
   pointer-events: none;
 }
 
