@@ -1,0 +1,146 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'roman-numeral-analysis',
+  title: 'Roman Numeral Analysis',
+  oneSentence:
+    "Roman numeral analysis labels each chord in a piece by the scale degree it's built on — I, ii, V, vi, and so on — making harmonic relationships visible across any key and revealing the functional logic of a chord progression.",
+  practice: [
+    { kind: 'flashcard', label: 'Roman Numerals Flashcards', detail: '15 cards', href: '/study/roman-numerals' },
+  ],
+  related: [
+    { title: 'Triads on Scale Degrees',       href: '/learn/harmony/triads-on-scale-degrees' },
+    { title: 'Primary Chords — I, IV, V',     href: '/learn/harmony/primary-chords' },
+    { title: 'Cadences',                      href: '/learn/harmony/cadences' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A chord in isolation isn't that interesting. A chord *in a key* is where the musical meaning lives. The same chord — say, G major — plays a completely different role in C major (where it's the dominant, pulling toward the tonic) than in D major (where it's the subdominant, more relaxed and stable). To analyze tonal music, you need a way to label chords not by their absolute pitch but by their function within the key.
+
+**Roman numeral analysis** is that system. Each chord gets a Roman numeral corresponding to the scale degree of its root. A chord built on the 1st degree is **I**. A chord built on the 5th degree is **V**. A chord built on the 2nd degree is **ii**. The case (uppercase or lowercase) indicates quality — uppercase for major, lowercase for minor, with small symbols (°, +) for diminished and augmented.
+
+Once you have this labeling system, every chord progression in every key can be described with the same set of seven numerals. Patterns leap out. Common progressions become visible. Analysis becomes portable across keys.
+
+## The visual
+
+<DiagramPlaceholder description="A four-chord progression in C major (C → F → G → C) labeled with Roman numerals (I → IV → V → I) and the same progression transposed to G major (G → C → D → G) with identical Roman numerals." />
+
+<DiagramPlaceholder description="A table showing the seven diatonic triads of a major key, each labeled with its Roman numeral and quality." />
+
+## How Roman numerals work
+
+Each chord gets labeled by:
+
+**1. The scale degree of its root.** A chord built on the 1st degree of the scale is numbered I. On the 2nd degree, ii. Third degree, iii. Fourth, IV. Fifth, V. Sixth, vi. Seventh, vii. This is the number.
+
+**2. The case.** Uppercase Roman numerals (I, IV, V) indicate major chord quality. Lowercase (ii, iii, vi) indicate minor quality. Adding a small "°" indicates diminished (vii°). Adding a "+" indicates augmented (III+, seen in harmonic minor).
+
+**3. Inversion, if any.** Figured bass numbers (6, 6/4, 6/5, etc.) are attached after the Roman numeral to indicate inversion, as covered in previous pages.
+
+**4. Seventh or extensions, if any.** A "7" added means seventh chord. So "V7" is a dominant seventh chord on the 5th scale degree.
+
+A chord labeled **ii6** is a minor chord built on the 2nd scale degree, in first inversion. A chord labeled **V4/3** is a major chord built on the 5th scale degree, with a seventh, in second inversion. These few symbols completely specify a chord's root, quality, and voicing.
+
+## The seven diatonic triads — in Roman numerals
+
+In **major keys**, the seven diatonic triads have these qualities and labels:
+
+- **I** — major (tonic)
+- **ii** — minor (supertonic)
+- **iii** — minor (mediant)
+- **IV** — major (subdominant)
+- **V** — major (dominant)
+- **vi** — minor (submediant)
+- **vii°** — diminished (leading tone)
+
+In **natural minor keys**, the pattern is different:
+
+- **i** — minor (tonic)
+- **ii°** — diminished (supertonic)
+- **III** — major (mediant)
+- **iv** — minor (subdominant)
+- **v** — minor (dominant)
+- **VI** — major (submediant)
+- **VII** — major (subtonic)
+
+In **harmonic minor** (used more often than natural minor in common-practice music), several qualities change:
+
+- **i** — minor (tonic)
+- **ii°** — diminished (supertonic)
+- **III+** — augmented (mediant, raised 5th)
+- **iv** — minor (subdominant)
+- **V** — **major** (dominant, now with the raised 7th as its 3rd)
+- **VI** — major (submediant)
+- **vii°** — **diminished** (leading tone, built on the raised 7th)
+
+The shift from natural minor's **v** to harmonic minor's **V** is the most important change — it restores the proper leading-tone dominant that drives V-i resolutions in minor keys.
+
+## Roman numerals across keys — the universal pattern
+
+The power of Roman numeral analysis is that the pattern of qualities is identical in every major key, and identical in every minor key. A I-IV-V-I progression in C major (C-F-G-C) has the exact same Roman numeral structure as I-IV-V-I in any other major key:
+
+- C major: C (I) → F (IV) → G (V) → C (I)
+- G major: G (I) → C (IV) → D (V) → G (I)
+- E♭ major: E♭ (I) → A♭ (IV) → B♭ (V) → E♭ (I)
+
+Same Roman numerals, different pitches. The progression is functionally identical across all three keys.
+
+This means that once you know a progression in one key, you know it in all keys. "ii-V-I" in C major (Dm-G-C) is the same functional progression as "ii-V-I" in A♭ major (B♭m-E♭-A♭) or B major (C♯m-F♯-B). Learn the pattern; apply it anywhere.
+
+## Common progressions in Roman numerals
+
+Some progressions appear so often in tonal music that they're practically idioms:
+
+**I-IV-V-I** — the basic tonic-subdominant-dominant-tonic progression. The foundation of folk music, hymns, and endless pop songs.
+
+**I-vi-IV-V** — the "'50s progression," ubiquitous in doo-wop, early rock, and pop ballads.
+
+**I-V-vi-IV** — the "Axis" progression, the backbone of thousands of modern pop songs.
+
+**ii-V-I** — the most common progression in jazz. Appears constantly as a cadential pattern.
+
+**vi-IV-I-V** — a cousin of the '50s progression, common in modern pop and rock.
+
+**I-IV-I-V-I** — a more extended idiom, common in classical music's simpler forms.
+
+Each of these can be transposed to any key by applying the Roman numerals to that key's scale. A guitarist who knows "I-vi-IV-V" in G can play it in D, F, B♭, or any key by just finding the chords on those scale degrees.
+
+## Why Roman numerals rather than letter names
+
+You could analyze music using letter-name chord symbols (C, G, Am, F). Why use Roman numerals instead?
+
+Three reasons:
+
+**1. Functional clarity.** Roman numerals tell you what a chord is *doing* in the key, not just its name. "V" means dominant — a chord with strong pull toward the tonic. "ii" means pre-dominant — a chord that tends to move to V. These functional roles are invisible in letter names.
+
+**2. Transposability.** A Roman numeral analysis of a piece works in any key. You can transpose the piece simply by re-applying the analysis to a different scale. Letter-name analyses have to be redone in each key.
+
+**3. Pattern recognition.** Since all major keys follow the same pattern of chord qualities (and similarly for minor), patterns that appear in one piece are identifiable in any key. "This is a ii-V-I cadence" — said once — applies across all 12 major keys, identifying the same functional gesture each time.
+
+Letter names are useful for performance (you need to know what notes to play). Roman numerals are useful for analysis (you need to understand what the music is doing). Both have their place.
+
+## Common questions
+
+**How do I know whether a chord is major or minor in the Roman numeral?**
+
+The case tells you. Uppercase (I, IV, V, III) = major. Lowercase (ii, iii, vi, iv) = minor. The degree symbol (°) means diminished; the plus sign (+) means augmented. Once you see the case convention, it becomes automatic.
+
+**What does "V/V" mean?**
+
+A "secondary dominant" — a chord that acts as the dominant *of* another chord (not the main tonic). V/V is "the dominant of the dominant." In C major, V is G, so V/V would be the dominant of G, which is D major. Secondary dominants add chromatic color by temporarily tonicizing a non-tonic chord. Covered in a later page.
+
+**Can Roman numerals describe modulation?**
+
+Yes, in a few ways. When a modulation happens, analysts either continue using the old key's numerals (tracking the now-foreign chords with chromatic labels) or switch to the new key's numerals at the point of modulation. A common notation is to write both: "In the new key: I - V - I" with a change-of-key marker indicating the shift.
+
+**Are Roman numerals used in jazz?**
+
+Extensively, especially in jazz education and analysis. Jazz uses chord symbols (like "Cmaj7" or "Dm7") for performance but Roman numerals for analysis — ii7-V7-I7 is the most famous Roman numeral phrase in all of music, central to jazz's harmonic vocabulary.

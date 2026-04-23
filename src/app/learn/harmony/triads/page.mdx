@@ -1,0 +1,96 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'triads',
+  title: 'Triads — The Fundamental Chord',
+  oneSentence:
+    'A triad is a three-note chord built from a root, a third, and a fifth — the fundamental chord type in Western music, from which every other tonal chord type is extended.',
+  practice: [],
+  related: [
+    { title: 'What a Chord Is',       href: '/learn/harmony/what-a-chord-is' },
+    { title: 'Triad Qualities',       href: '/learn/harmony/triad-qualities' },
+    { title: 'Triad Inversions',      href: '/learn/harmony/triad-inversions' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A **triad** is the simplest complete chord in Western tonal music. Three notes: a root, a third above the root, and a fifth above the root. Stacked thirds. Nothing more, nothing less. Every major chord, every minor chord, every diminished and augmented chord is a triad in one form or another. Virtually every tonal chord you'll encounter is either a triad itself or a triad with one or more additional notes extending it.
+
+Triads are the fundamental building blocks of Western tonal harmony. Master triads — their construction, their four qualities, their inversions — and you've mastered roughly 80% of harmonic analysis.
+
+## The visual
+
+<DiagramPlaceholder description="Four triads on a treble staff — C major, C minor, C diminished, C augmented — all built on the same root, showing the different qualities." />
+
+<DiagramPlaceholder description="A triad broken into its three chord tones, each labeled — root (1), third (3), fifth (5)." />
+
+## The three chord tones
+
+A triad has three functional positions:
+
+**1. Root** — the note the chord is named after. The chord's identity comes from its root. A "C triad" has C as its root, regardless of how the chord is voiced or inverted.
+
+**2. Third** — a third above the root. The third is the chord tone that most determines the chord's quality. A major third produces a major chord; a minor third produces a minor chord. The third carries the chord's emotional color.
+
+**3. Fifth** — a fifth above the root. The fifth provides stability and reinforces the chord's identity. A perfect fifth produces stable chords (major, minor); altered fifths (diminished, augmented) produce the less-stable quality variants.
+
+These three tones — root, third, fifth — are the triad's complete content. A chord with these three notes is a triad. A chord with additional notes beyond them is an extended chord (a seventh chord, a ninth, and so on).
+
+## The four triad qualities
+
+Combining different third and fifth qualities produces four distinct triad types:
+
+**Major triad** — root, major 3rd, perfect 5th. Bright, stable, "happy." Example from C: C-E-G.
+
+**Minor triad** — root, minor 3rd, perfect 5th. Dark, stable, "sad." Example from C: C-E♭-G.
+
+**Diminished triad** — root, minor 3rd, diminished 5th. Tense, unstable. Example from C: C-E♭-G♭.
+
+**Augmented triad** — root, major 3rd, augmented 5th. Tense, unstable, "stretched." Example from C: C-E-G♯.
+
+Each quality has its own distinctive sound. The next page covers them in depth; for now, note that all four come from the same skeleton (root-third-fifth) with different specific third and fifth intervals.
+
+## Why thirds?
+
+Of all the possible interval stackings, why is stacking thirds the foundation of Western harmony? Three related reasons:
+
+**1. The overtone series.** The most consonant intervals — octave, 5th, 4th — don't produce coherent multi-note chord structures when stacked. The next-most consonant intervals are the 3rds (both major and minor), and stacking 3rds produces chord structures where every pair of notes is consonant or mildly consonant with each of the others.
+
+**2. Scale compatibility.** The seven notes of a major scale can be arranged into seven triads (one on each scale degree), each built by stacking thirds using only notes from that scale. This gives every key a complete, self-contained chord vocabulary — a crucial feature for tonal music.
+
+**3. Historical development.** Medieval and Renaissance music gradually evolved from 5th-and-4th-based harmonies toward 3rd-based harmonies. By the Baroque era, the triad was established as the core harmonic unit, and Western music has built on that foundation ever since.
+
+## Triads in scales
+
+Every scale degree in a major or minor scale can be the root of a triad. In C major, you can build seven different triads, one on each of the seven scale degrees — C, D, E, F, G, A, B. Each triad uses only notes from the C major scale (stacking thirds *within* the scale).
+
+The result: C major, D minor, E minor, F major, G major, A minor, B diminished. Seven triads, all built from just the seven notes of the scale, each with a specific quality that falls naturally out of the major-scale structure.
+
+This is the **chord vocabulary of a key**. Any piece in C major draws from this set of seven diatonic triads (plus, occasionally, altered or borrowed chords from outside the key). The exact pattern of qualities — M, m, m, M, M, m, d° — is identical for every major key, not just C. Transposing to G major gives you G major, A minor, B minor, C major, D major, E minor, F♯ diminished — same pattern of qualities.
+
+Understanding which triads exist in a key and which scale degrees they're built on is the core of chord-and-key analysis. Covered in detail when we reach Roman numeral analysis.
+
+## Common questions
+
+**Do all chords contain thirds?**
+
+All tonal (tertian) chords are built by stacking thirds, so yes — every tonal chord has thirds as its building blocks. Non-tertian chords (quartal, quintal, clusters) don't, but they're outside mainstream tonal practice. For standard harmony, the third is fundamental.
+
+**Is a triad always three notes, or can it have more?**
+
+A triad has exactly three distinct pitches (root, third, fifth). In actual music, a triad can be **doubled** — the same pitch appears in multiple voices at different octaves, giving four or five sounding notes but still only three distinct pitch classes. A four-voice SATB setting of a triad, for instance, usually has one pitch doubled (often the root). The chord is still a triad, just with four-voice doubled voicing.
+
+**What's the difference between a triad and a chord?**
+
+Every triad is a chord. Not every chord is a triad. Seventh chords (four notes), ninth chords (five notes), and extended chords with added extensions are all chords but not triads. Triads are the three-note core; chords are any three-or-more-note harmonic entity.
+
+**Why is the third the "quality-defining" note rather than the fifth or the root?**
+
+Because the root is always the same (by definition), and the fifth is often perfect (providing stability without much color). The third is where the major/minor distinction lives — a major third sounds bright; a minor third sounds dark. Alterations to the fifth produce the less common qualities (diminished, augmented), but they're modifications of the "normal" perfect fifth. The third is where the primary emotional character sits.

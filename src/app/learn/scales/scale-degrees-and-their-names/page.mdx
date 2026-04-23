@@ -1,0 +1,114 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { SCALE_DEGREE_NAMES_XML } from './notations'
+
+export const learnPage = {
+  topic: 'scales',
+  subtopic: 'scale-degrees-and-their-names',
+  title: 'Scale Degrees and Their Names',
+  oneSentence:
+    'Each degree of a scale has both a number (1 through 7) and a traditional name — tonic, supertonic, mediant, subdominant, dominant, submediant, leading tone — that describes its function and tendency within the scale.',
+  practice: [],
+  related: [
+    { title: 'The Major Scale',            href: '/learn/scales/the-major-scale' },
+    { title: 'The Natural Minor Scale',    href: '/learn/scales/the-natural-minor-scale' },
+    { title: 'Cadences',                   href: '/learn/harmony/cadences' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Scale degrees aren't just numbers. Each degree of a scale plays a distinctive role in the scale's functional world. The 1st degree (tonic) is the home. The 5th degree (dominant) is the strongest away-from-home position. The 7th degree (leading tone) strongly pulls back to the tonic. These functional relationships — built into every major and minor scale — are what give tonal music its sense of motion, tension, and resolution.
+
+Traditional names capture these functions: **tonic, supertonic, mediant, subdominant, dominant, submediant, leading tone**. Knowing these names lets you talk about scales and music theory at a functional level, regardless of which specific key you're in.
+
+## The visual
+
+<Notation
+  musicXml={SCALE_DEGREE_NAMES_XML}
+  caption="C major scale with functional names beneath each note — Tonic, Supertonic (Super.), Mediant (Med.), Subdominant (Sub.), Dominant (Dom.), Submediant (Subm.), Leading Tone (LT), Tonic."
+  ariaLabel="C major scale with traditional scale-degree names."
+/>
+
+<DiagramPlaceholder description="A horizontal line showing the seven degrees spaced out, with functional names below and arrows indicating resolution tendencies — leading tone → tonic, dominant → tonic, subdominant → dominant." />
+
+## The seven scale degrees and their names
+
+For major scales (most of it applies to natural minor as well):
+
+**1. Tonic** — the home note, the reference point. All other degrees are measured from it. Melodies usually end on the tonic; stable chord progressions usually end on the tonic chord. The tonic feels like rest.
+
+**2. Supertonic** — literally "above the tonic." One step up. In harmonic function, the supertonic is one of the "pre-dominant" degrees; it tends to lead toward the dominant.
+
+**3. Mediant** — "in the middle" between tonic and dominant. The 3rd degree is the note that defines whether a scale is major (major 3rd) or minor (minor 3rd). It has a strong coloring effect on the scale's character.
+
+**4. Subdominant** — "below the dominant." One step below the dominant; also a perfect 4th above the tonic. The subdominant is another pre-dominant degree; it often moves to the dominant. In older theory, subdominant is the dominant's mirror — below the tonic by the same interval (a perfect 5th going down) as the dominant is above (a perfect 5th going up).
+
+**5. Dominant** — the most powerful degree after the tonic. A perfect 5th above the tonic. The dominant's chord (V) has a strong tendency to resolve to the tonic (I), driving most tonal progressions. If the tonic is "home," the dominant is "the road back home."
+
+**6. Submediant** — "below the mediant." Actually above the dominant by a whole step. The submediant has a gentler, less urgent functional role; it often appears in deceptive cadences where a progression "tricks" the listener by going to vi instead of I.
+
+**7. Leading tone** (in major) — one half step below the tonic, with a strong upward pull toward it. The leading tone's tendency to resolve up to the tonic is one of the most reliable features of tonal music. In natural minor, this degree is a whole step below the tonic and is called the **subtonic** instead, lacking the strong upward pull.
+
+**8. Tonic (octave)** — the same pitch class as the 1st, an octave higher. The scale's resolution point.
+
+## Scale-degree notation
+
+In analysis and theory texts, scale degrees are sometimes marked with a **caret** above the number: 1̂, 2̂, 3̂, and so on. This makes scale-degree references visually distinct from other numbers that appear in music theory (chord Roman numerals, time signatures, etc.).
+
+So you might read "1̂ – 2̂ – 3̂" to describe a melodic motion from tonic to supertonic to mediant. The caret is optional in casual writing but standard in academic writing.
+
+## Functional tendencies
+
+Each degree has a tendency — a direction it "wants" to move:
+
+- **Tonic (1)** — rest. No inherent motion; the resting point.
+- **Supertonic (2)** — weak descending pull to tonic, but often moves up to mediant.
+- **Mediant (3)** — can resolve either up to the subdominant or down to the tonic.
+- **Subdominant (4)** — strong descending pull to mediant or upward push to dominant.
+- **Dominant (5)** — strong pull back to tonic, usually via descending motion.
+- **Submediant (6)** — usually moves down to dominant or up to leading tone.
+- **Leading tone (7)** — very strong pull up to tonic. Almost always resolves upward.
+
+These tendencies aren't rules — they're statistical patterns in tonal music. Composers frequently violate them for effect (a leading tone that resolves down to the subdominant, for instance, creates a subtle surprise). But when a composer wants to write in a clear tonal style, these tendencies are the default.
+
+## Why these names
+
+The names come from medieval and Renaissance music theory, with most formalized during the common-practice period (roughly 1600-1900). The functional analysis of scale degrees became codified as Western music developed its distinctive approach to harmony and tonal structure.
+
+The Latin-derived names reflect a deliberate effort to name each degree by its relationship to the tonic. "Supertonic" = above the tonic. "Subdominant" = below the dominant. "Leading tone" = leads to the tonic. Each name encodes a bit of the degree's functional role.
+
+Some non-English traditions use different terminology. In German and much of Central European theory, the names are **Tonika** (tonic), **Dominante** (dominant), **Subdominante** (subdominant), with less emphasis on the "middle" degrees.
+
+## In minor scales
+
+Most of the functional analysis applies to minor scales too, with a few key differences:
+
+- The **mediant** (3rd degree) is a minor 3rd above the tonic, giving the scale its minor character.
+- The **submediant** (6th degree) is a minor 6th above the tonic.
+- The **7th degree** in natural minor is called the **subtonic** (a whole step below the tonic) rather than the leading tone, because it doesn't pull as strongly. Harmonic minor raises this degree to restore the leading tone function.
+
+These differences change the character of minor scales significantly. Covered in the minor-scale pages.
+
+## Common questions
+
+**Do I have to memorize all seven names?**
+
+For fluent theory conversation: yes. The names come up constantly in analysis, and knowing them saves time. For practical playing and basic music reading: not strictly necessary. You can get by calling them "1, 2, 3, 4, 5, 6, 7." But if you're studying theory seriously, the traditional names are the currency of the field.
+
+**Why is the 4th called "subdominant" if it's four steps above the tonic, not below?**
+
+Because it's a perfect 5th *below* the tonic. Looking at the scale as a palindrome: the dominant is a perfect 5th above the tonic; the subdominant is a perfect 5th below the tonic. The sub-prefix describes its position relative to the tonic going *down*. Historically, this symmetry was more emphasized than it is today.
+
+**Are these names the same in minor as in major?**
+
+Mostly. The main difference is the 7th: in minor, the natural 7th is the subtonic (whole step below tonic), not the leading tone. When the 7th is raised (as in harmonic minor), it becomes the leading tone. All other names are identical.
+
+**Why does the dominant have such a special role?**
+
+Because it's a perfect 5th above the tonic — the second-most-consonant interval. A chord built on the dominant (V) shares two pitches with the tonic chord (I), yet creates strong tension through its third and seventh. This combination of shared pitch and new tension makes the dominant the natural "away" pole to the tonic's "home." Moving from V to I is the most fundamental harmonic resolution in Western tonal music, and the dominant's naming reflects that.

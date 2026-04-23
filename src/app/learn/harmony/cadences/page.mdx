@@ -1,0 +1,125 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'cadences',
+  title: 'Cadences',
+  oneSentence:
+    'A cadence is a harmonic formula that marks the end of a musical phrase — the punctuation of music — with specific types (authentic, half, plagal, deceptive, Phrygian) each producing a distinct sense of closure, pause, surprise, or continuation.',
+  practice: [
+    { kind: 'flashcard', label: 'Cadences Flashcards', detail: '10 cards', href: '/study/cadences' },
+  ],
+  related: [
+    { title: 'Roman Numeral Analysis',         href: '/learn/harmony/roman-numeral-analysis' },
+    { title: 'Primary Chords — I, IV, V',      href: '/learn/harmony/primary-chords' },
+    { title: 'Motive, Phrase, and Period',     href: '/learn/form-and-structure/motive-phrase-and-period' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A cadence is the punctuation of music. Just as written language uses periods, commas, and question marks to signal the end of sentences or pauses between clauses, music uses specific harmonic progressions to mark where phrases end. Some cadences feel like full stops (the piece is over, or this section is done). Others feel like commas (brief pause, more is coming). Still others feel like question marks (leaving the listener hanging, expecting a reply).
+
+The five common cadences in tonal music each produce a distinct sense of closure or continuation. Learning them is partly about knowing the chord formulas (which chord goes to which) and partly about training your ear to hear the different feelings they create.
+
+## The visual
+
+<DiagramPlaceholder description="Four cadences side-by-side in C major — perfect authentic cadence (V-I), half cadence (X-V), plagal cadence (IV-I), deceptive cadence (V-vi) — each two measures, showing the harmonic approach and the cadential chord." />
+
+<DiagramPlaceholder description="A table summarizing cadence types with their chord progressions, strength, and typical usage." />
+
+## Authentic cadence (V → I)
+
+The **authentic cadence** is the strongest cadence in tonal music — the full-stop punctuation. It moves from the dominant (V or V7) to the tonic (I), creating definitive closure.
+
+**Chord progression:** V → I (or V7 → I)
+
+**Two subtypes:**
+
+- **Perfect authentic cadence (PAC).** Both V and I are in root position, and the melody ends on the tonic note (scale degree 1). This is the most conclusive of all cadences — the sonic equivalent of a decisive period. Most pieces end with a PAC.
+
+- **Imperfect authentic cadence (IAC).** Still V → I, but with one or more features weakening the perfect form: maybe V or I is in inversion, or the melody doesn't end on the tonic note. IAC is still conclusive but less emphatic than PAC.
+
+**Sound:** definitive, resolved, settled. The leading tone in V resolves up to the tonic; the 7th (if V7) resolves down to the 3rd of I. Strong forward motion completes.
+
+**Typical uses:** final cadence of a piece, ending of major sections, strong internal phrase endings.
+
+## Half cadence (X → V)
+
+A **half cadence** ends on the dominant (V) rather than the tonic. The phrase pauses on V, leaving the listener expecting continuation. The approach chord (X) can be many things — I, IV, ii, vi, etc. — but the cadence is defined by *ending on V*.
+
+**Chord progression:** (any chord) → V
+
+**Sound:** unresolved, expectant, waiting. V isn't a resting point; its purpose is to move to I. Stopping on V creates a sense of incompleteness — a comma, or a semicolon, rather than a period.
+
+**Typical uses:** middle of a piece where phrases pair up, with a half cadence ending the first phrase and an authentic cadence ending the second. The half cadence asks a question ("are we going to resolve?"), and the following authentic cadence answers it.
+
+**Phrygian half cadence:** A special form of half cadence that occurs only in minor keys. The progression is iv6 → V, with characteristic stepwise descent in the bass (from ♭6 down to 5). The name comes from the Phrygian mode's characteristic half-step bass descent. This cadence was popular in Baroque music, especially at transitions between slow movements and faster ones, and has a distinctive "old-fashioned" or "vintage" sound.
+
+## Plagal cadence (IV → I)
+
+The **plagal cadence** moves from the subdominant (IV) to the tonic (I). It's sometimes called the "Amen cadence" because it's frequently set to the word "Amen" at the end of hymns.
+
+**Chord progression:** IV → I (or iv → i in minor)
+
+**Sound:** gentle, settled, peaceful. Less assertive than an authentic cadence — no leading tone resolving up to tonic. The subdominant's weak pull to the tonic produces a softer, more relaxed resolution.
+
+**Typical uses:** often appears *after* an authentic cadence as a kind of extension or coda (a "tag" on the ending). Can also be a cadence in its own right, especially in hymns, folk music, and rock/pop.
+
+Note: some music theorists (notably William Caplin) argue that the plagal "cadence" isn't truly a cadence in classical common-practice music — it's more of a post-cadential extension after an authentic cadence has already created closure. In Romantic and later music, plagal cadences do appear as genuine cadences. This theoretical debate doesn't affect the basic recognition: a IV → I progression at the end of a phrase has the characteristic "plagal" sound.
+
+## Deceptive cadence (V → vi, or V → VI)
+
+The **deceptive cadence** (also called an "interrupted" cadence) sets up an authentic cadence — the listener expects V → I — but substitutes a different chord, usually vi (or VI in minor).
+
+**Chord progression:** V → vi (in major) or V → VI (in minor)
+
+**Sound:** surprise, deferred resolution, unresolved. The V chord's tension demands resolution, but the resolution goes to the "wrong" chord — the relative minor instead of the tonic. The effect is of a promise unfulfilled. Music often continues for several more measures before finally reaching an authentic cadence.
+
+**Typical uses:** extending a phrase beyond its expected ending, building drama before a final resolution, creating a sense of reaching but not quite arriving. Classical and Romantic composers used deceptive cadences extensively for expressive effect.
+
+**Why V → vi specifically?** Because vi shares two pitches with I (scale degrees 1 and 3), so V → vi "almost" sounds like V → I. The ear starts to hear resolution, then catches itself as it recognizes the relative minor instead of the tonic. This near-resolution creates the surprise — a close substitute for the expected tonic.
+
+## Comparing the cadences
+
+| Cadence | Chord progression | Strength | Effect |
+|---------|-------------------|----------|--------|
+| Perfect authentic (PAC) | V → I (both root, melody on 1) | Strongest | Full stop |
+| Imperfect authentic (IAC) | V → I (inversion or melody not on 1) | Strong | Period |
+| Half (HC) | → V | Medium | Comma, question |
+| Plagal (PC) | IV → I | Medium | Amen, peaceful ending |
+| Deceptive (DC) | V → vi | Weakest | Surprise, deferred resolution |
+| Phrygian half | iv6 → V | Medium | Baroque / vintage |
+
+Each cadence has its place. A well-constructed piece uses a variety — half cadences to punctuate internal phrase endings, authentic cadences for stronger arrivals, plagal and deceptive cadences for coloristic or dramatic effect.
+
+## Cadences in phrase structure
+
+Cadences define the boundaries of phrases. A musical phrase is typically 4 or 8 measures long, ending with a cadence. Phrases often pair up: a **consequent** phrase (ending with authentic cadence, bringing resolution) follows an **antecedent** phrase (ending with half cadence, creating expectation). This question-and-answer phrase structure is the backbone of classical melody.
+
+In longer forms, cadences mark the ends of sections. A sonata exposition ends with a cadence in a new key. A rondo theme ends with an authentic cadence each time it returns. The form of a piece is largely revealed by where its cadences fall and what types they are.
+
+Understanding cadences helps you hear music's architecture. The "grammar" of tonal music consists largely of phrases ending in specific cadences at specific points, creating predictable patterns of tension and release.
+
+## Common questions
+
+**How do I recognize a cadence when I hear it?**
+
+Listen for moments of arrival or pause — places where the music seems to stop, settle, or breathe. Then ask what chords are happening at that moment. V → I is authentic. Ending on V is half. IV → I is plagal. V going somewhere unexpected is deceptive. With practice, the harmonic sound becomes recognizable even without analyzing the specific chords.
+
+**Are cadences the only way a piece can end?**
+
+No. 20th-century and contemporary music often ends without a traditional cadence — on an unresolved dissonance, on an open-ended sustained chord, on silence. These endings work because they don't use tonal harmony's resolution structure at all. But for tonal music (most of what was written in the 1600s-1900s and still much popular music today), cadences are the primary way pieces end.
+
+**Why is the deceptive cadence called "deceptive"?**
+
+Because it deceives the listener's expectation. After a V chord, listeners expect resolution to I. The deceptive cadence provides a resolution — V does move somewhere — but to vi instead of I. The deception is that expectations were set up and then subverted, creating a moment of surprise. This surprise is the deceptive cadence's expressive purpose: to unsettle, to extend, to add drama.
+
+**Can you have a cadence in a minor key?**
+
+Absolutely. All the cadence types work in both major and minor. The chord qualities shift (i replaces I, V stays major in harmonic minor, iv replaces IV, VI replaces vi in deceptive cadences in natural minor), but the functional roles — tonic, dominant, subdominant, submediant — are the same. Minor-key cadences often feel weightier or more dramatic than major-key ones because of the darker tonal context, but they're structurally analogous.

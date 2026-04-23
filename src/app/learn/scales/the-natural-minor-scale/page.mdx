@@ -1,0 +1,137 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { A_NATURAL_MINOR_STEPS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'scales',
+  subtopic: 'the-natural-minor-scale',
+  title: 'The Natural Minor Scale',
+  oneSentence:
+    'The natural minor scale is the basic minor scale — seven notes arranged in a pattern of whole-half-whole-whole-half-whole-whole — and it\'s the starting point for understanding the three forms of minor (natural, harmonic, melodic) that dominate Western minor-key music.',
+  practice: [
+    { kind: 'flashcard', label: 'Minor Scales Flashcards', detail: '15 cards', href: '/study/minor-scales' },
+  ],
+  related: [
+    { title: 'The Major Scale',           href: '/learn/scales/the-major-scale' },
+    { title: 'The Harmonic Minor Scale',  href: '/learn/scales/the-harmonic-minor-scale' },
+    { title: 'The Melodic Minor Scale',   href: '/learn/scales/the-melodic-minor-scale' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+If the major scale is bright, the natural minor scale is darker, more serious, or more melancholy. Same number of notes (seven), same basic idea (whole and half steps alternating), but a different interval pattern — and a completely different mood.
+
+The natural minor scale is one of three forms of minor in Western music. The other two (harmonic and melodic minor) are variations that modify specific scale degrees. Natural minor is the "pure" form, the starting point. Once you know it, the harmonic and melodic variations are small adjustments on the same frame.
+
+## The visual
+
+<Notation
+  musicXml={A_NATURAL_MINOR_STEPS_XML}
+  caption="A natural minor scale ascending, labeled with the interval pattern W-H-W-W-H-W-W."
+  ariaLabel="A natural minor scale ascending with whole and half step labels."
+/>
+
+<DiagramPlaceholder description="A natural minor and A major side by side, showing the three degrees that differ — the 3rd (C vs C♯), the 6th (F vs F♯), and the 7th (G vs G♯)." />
+
+## The interval pattern
+
+The natural minor scale's pattern, from tonic to octave:
+
+**Whole - Half - Whole - Whole - Half - Whole - Whole**
+
+Or by scale degrees:
+- 1st to 2nd: whole step
+- 2nd to 3rd: **half step**
+- 3rd to 4th: whole step
+- 4th to 5th: whole step
+- 5th to 6th: **half step**
+- 6th to 7th: whole step
+- 7th to 8th: whole step
+
+Compare this to the major scale (W-W-H-W-W-W-H). The differences:
+- The 3rd degree of minor is a half step lower than in major (minor 3rd vs. major 3rd) — this is the biggest change.
+- The 6th degree is a half step lower (minor 6th vs. major 6th).
+- The 7th degree is a half step lower (minor 7th vs. major 7th).
+
+These three lowered degrees — the 3rd, 6th, and 7th — are what distinguish natural minor from major. Everything else stays the same.
+
+## Building any natural minor scale
+
+Applying the pattern to build minor scales:
+
+**A natural minor starting from A:**
+- A (1st)
+- A + whole = B (2nd)
+- B + half = C (3rd)
+- C + whole = D (4th)
+- D + whole = E (5th)
+- E + half = F (6th)
+- F + whole = G (7th)
+- G + whole = A (8th, octave)
+
+So A natural minor is A, B, C, D, E, F, G, A. No accidentals — all white keys on a piano.
+
+This is the natural minor scale's reference point: **A natural minor has no accidentals**, just like C major. The two scales share the exact same seven pitches. Yet they sound completely different because their tonics are different.
+
+That relationship — same notes, different tonic — is called the **relative minor / major** relationship. A minor is the relative minor of C major. Or equivalently, C major is the relative major of A minor. We'll explore this on its own page.
+
+**D natural minor starting from D:**
+- D (1st)
+- D + whole = E (2nd)
+- E + half = F (3rd)
+- F + whole = G (4th)
+- G + whole = A (5th)
+- A + half = B♭ (6th)
+- B♭ + whole = C (7th)
+- C + whole = D (8th)
+
+D natural minor: D, E, F, G, A, B♭, C, D. One flat (B♭).
+
+This scale shares its key signature with F major — they're relative keys.
+
+## The sound of natural minor
+
+The natural minor scale is darker, more serious, or sometimes melancholy compared to major. The minor 3rd (between tonic and 3rd degree) is the single most important factor — it colors everything.
+
+But there's a subtle issue: the 7th degree of natural minor is a **whole step** below the tonic, not a half step. This means natural minor lacks a strong **leading tone** — the half-step pull toward the tonic that major scales have.
+
+Without the leading tone, natural minor scales can feel slightly "open" or "suspended" compared to the clear resolution feeling of major. This is part of why composers, especially in the common-practice period (Baroque, Classical, Romantic), often *didn't* use pure natural minor — they used harmonic or melodic minor to get a proper leading tone.
+
+Natural minor is the "academic" form of minor, useful for analysis and understanding the structure. In real practice, most minor-key pieces use harmonic or melodic minor for most of their material, reverting to natural minor only in specific passages. Understanding natural minor first, though, is essential because it's the frame the other two variations modify.
+
+## Natural minor vs. major — a practical comparison
+
+A natural minor and A major start on the same tonic but have very different notes:
+
+- **A major:** A, B, C♯, D, E, F♯, G♯, A (three sharps)
+- **A natural minor:** A, B, C, D, E, F, G, A (no accidentals)
+
+Three degrees are different: the 3rd (C♯ vs. C), the 6th (F♯ vs. F), and the 7th (G♯ vs. G). All three are lowered a half step in minor.
+
+That's the full difference. A major becomes A natural minor by lowering the 3rd, 6th, and 7th. Or going the other way, A natural minor becomes A major by raising those three degrees.
+
+This pattern holds for any pair. C major and C natural minor: lower the 3rd, 6th, and 7th of C major to get C minor. D major and D natural minor: same operation. The 3/6/7 triple-lowering is the transformation between parallel major and minor.
+
+## Common questions
+
+**Why is it called "natural" minor?**
+
+Because it uses only the notes that occur naturally in its key signature, without any altered degrees. The harmonic and melodic forms *modify* specific degrees beyond what the key signature provides. "Natural" just means the unmodified, key-signature-only form.
+
+**Is natural minor used in real music?**
+
+Yes, extensively — particularly in folk music, certain modal styles, and lots of post-1900 music including rock, pop, film scoring, and contemporary classical. For about 200 years (roughly 1700-1900), common-practice harmony tended to use harmonic/melodic minor more frequently because of the leading-tone issue, but natural minor has always been present and has become increasingly common again since the late Romantic era.
+
+**How do I remember the lowered 3rd, 6th, and 7th?**
+
+Think about what gives minor its minor character. The 3rd is the most obvious (minor 3rd vs. major 3rd makes the scale sound dark). The 6th and 7th are lowered partly for consistency with the mode historically, partly because the overtone-series-influenced harmonies benefit from this structure. Memorize the pattern W-H-W-W-H-W-W, or memorize "lower the 3rd, 6th, and 7th of the parallel major" — both work.
+
+**Do all minor-key pieces use natural minor?**
+
+No — most Classical and Romantic minor-key pieces use harmonic minor for harmonic purposes (to get a proper leading tone for V-i resolutions) and melodic minor for melodic purposes (to avoid the awkward augmented 2nd that harmonic minor creates between degrees 6 and 7). Natural minor is usually one of three flavors in a minor piece's vocabulary, not the only one.

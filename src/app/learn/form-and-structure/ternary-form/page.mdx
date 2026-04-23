@@ -1,0 +1,94 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'form-and-structure',
+  subtopic: 'ternary-form',
+  title: 'Ternary Form',
+  oneSentence:
+    'Ternary form is a three-part structure (A-B-A) where a main section is contrasted with a middle section and then returns — one of the most common and intuitive structures in music, underlying everything from Classical-era minuets to modern pop songs.',
+  practice: [],
+  related: [
+    { title: 'Binary Form',                 href: '/learn/form-and-structure/binary-form' },
+    { title: 'Rondo Form',                   href: '/learn/form-and-structure/rondo-form' },
+    { title: 'Motive, Phrase, and Period',   href: '/learn/form-and-structure/motive-phrase-and-period' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+**Ternary form** is the three-part structure A-B-A: present a section, contrast with a different section, return to the original section. It's one of the most natural and universal structures in music — and arguably in all art. A story has a beginning, middle, and end. A joke has a setup, twist, and punchline. A ternary-form piece has an opening idea, a contrasting middle, and a return.
+
+Ternary form is everywhere. Classical minuets and scherzos almost always use it (minuet-trio-minuet structure). Art songs frequently use it (verse-bridge-verse). Many pop songs use a ternary-like verse-chorus-verse layout. Once you learn to hear it, you'll recognize ternary form constantly.
+
+## The visual
+
+<DiagramPlaceholder description="A schematic showing three sections — A in the tonic, B in a contrasting key or character, A in the tonic — with boundaries and typical proportions labeled." />
+
+<DiagramPlaceholder description="The opening of a Classical minuet movement, showing the minuet (A) followed by the trio (B) followed by the return of the minuet (A)." />
+
+## The basic structure
+
+Ternary form has three main sections:
+
+**A section** — the main idea. Establishes the key, presents the primary thematic material. Usually in the tonic and fully closed (ending with an authentic cadence).
+
+**B section** — the contrasting middle. Typically in a different key (often the relative minor, the parallel minor, the dominant, or the subdominant), with contrasting material — different melody, different character, sometimes different tempo or texture. The B section creates the "middle act" contrast.
+
+**A section (returns)** — the original material, usually in the tonic, usually with some minor alterations but essentially the same as the opening. The return brings the listener home.
+
+This gives the form its characteristic arc: opening, departure, return. The structure is sometimes written as A-B-A', where the prime mark acknowledges that the returning section may be slightly altered (abbreviated, ornamented, or with small changes).
+
+## Simple ternary vs. compound ternary
+
+**Simple ternary.** Each section is relatively short and structurally simple. The A section might be just a period or a small binary. The B section is similar in scale. The whole piece is maybe 24-48 measures.
+
+**Compound ternary.** Each section is itself a complete small form. In a Classical minuet-trio-minuet movement, each section is its own binary-form piece. So you get nested structures: a binary A section, followed by a binary B section (the "trio"), followed by a return of the binary A section.
+
+Minuet-trio-minuet is the classic compound ternary. A symphony or string quartet's third movement is typically structured this way: minuet (binary) - trio (binary) - minuet da capo (the A section returns, often without its repeats). Same structural logic as simple ternary, just with more elaborate internal sections.
+
+## Da capo and the return
+
+Often the return of the A section isn't written out in full. Instead, after the B section, the score has a marking like **"D.C. al Fine"** ("from the beginning to the end") indicating that the performer should return to the beginning of the piece and play through to a point marked **Fine** ("end"). This tradition of *da capo* saves the composer from writing the A section twice.
+
+In Baroque and Classical music, da capo returns are the rule. In later music, composers often write out the return in full, sometimes with significant alterations that would be hard to indicate with a simple da capo mark.
+
+A **da capo aria** (common in Baroque opera) is a specific application: aria with A-B-A structure, where the returning A is typically embellished with improvised ornaments by the singer. The audience hears the same text and harmonic frame twice, but with variations the second time.
+
+## Ternary form in classical genres
+
+**Classical minuets and scherzos.** Nearly always compound ternary (minuet-trio-minuet). The minuet is a dance movement in 3/4; the trio is a contrasting central section, often in a different key or with different instrumentation, followed by the minuet's return.
+
+**Art songs.** Schubert, Schumann, and later song composers often use ternary form for through-composed songs, especially when the poetic text naturally divides into three parts.
+
+**Slow movements.** Many Classical-era slow movements are in ternary form, with a lyrical A section, a contrasting middle section (perhaps more agitated or in a distant key), and a return.
+
+**Character pieces.** Short piano pieces by Chopin, Schumann, Brahms — intermezzos, nocturnes, mazurkas — are very often in ternary form, with a contrasting middle section providing variety.
+
+## Ternary form in popular music
+
+Pop song structure has clear ternary echoes. A typical verse-chorus-verse layout has a three-part arc: the verse sets up, the chorus contrasts, and the verse returns. Longer pop songs often use more elaborate structures (verse-chorus-verse-chorus-bridge-chorus), but the central contrast of verse and chorus is a ternary-like structural gesture.
+
+Jazz tune forms also frequently use ternary structures. AABA (the 32-bar song form) is a specific ternary-like arrangement: A section, A section again, contrasting B (the "bridge"), A section once more. Thousands of Great American Songbook standards use this form.
+
+## Common questions
+
+**How is ternary form different from rounded binary?**
+
+They're related but structurally different. Rounded binary has **two** sections marked by repeat signs, with the A material returning within the second section. Ternary form has **three** clear sections, often with the B section as a complete independent unit. In rounded binary, the return of A is often brief and embedded in the B section. In ternary form, the return of A is a complete restatement.
+
+**Are the three sections always equal in length?**
+
+Not necessarily. The A section is usually shorter or longer than the B section, depending on the piece. What matters is the structural function — presentation, contrast, return — not specific bar counts. A Chopin nocturne might have a 40-measure A section, a 60-measure B section, and a 35-measure A' return.
+
+**What makes the B section "contrasting" enough?**
+
+Contrast is typically achieved through key change (B in a different key), character change (different tempo, dynamics, texture), or melodic/rhythmic change (different motives, different rhythmic patterns). Usually multiple of these combine. The contrast should be clear to the listener — if B sounds too similar to A, the return doesn't feel like a return.
+
+**Is ternary form "better" than binary?**
+
+Neither is better; they serve different structural purposes. Binary form's balanced two-part structure works well for dance music and short tunes where repeats are expected. Ternary form's arc — presentation, contrast, return — works well for pieces where a clear sense of "departure and homecoming" is desired. Composers choose based on the musical content and the desired effect.

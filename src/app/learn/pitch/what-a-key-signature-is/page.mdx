@@ -1,0 +1,96 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'pitch',
+  subtopic: 'what-a-key-signature-is',
+  title: 'What a Key Signature Is',
+  oneSentence:
+    'A key signature is a small cluster of sharps or flats placed at the beginning of every staff line, telling you which notes are altered throughout the piece — it\'s notational shorthand for the scale the music is built on.',
+  practice: [],
+  related: [
+    { title: 'Major Key Signatures', href: '/learn/pitch/major-key-signatures' },
+    { title: 'Minor Key Signatures', href: '/learn/pitch/minor-key-signatures' },
+    { title: 'The Major Scale',      href: '/learn/scales/the-major-scale' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A piece of music in G major uses the note F♯ throughout — every time an F appears on the staff, it's played as F♯. Rather than write a sharp sign in front of every F that appears in the piece (which would clutter the page enormously), composers put the F♯ once at the very beginning, in the key signature. From that point on, every F in the piece is understood to be F♯ unless a natural sign appears to cancel it.
+
+That's all a key signature is: shorthand. It tells you which notes are altered throughout the piece, so the composer doesn't have to repeat that information on every altered note. The key signature makes the music cleaner, faster to read, and makes the piece's tonal center visible at a glance.
+
+## The visual
+
+<DiagramPlaceholder description="A staff with no key signature, then with one sharp (G major / E minor), then with two sharps, then with three — showing how sharps are added in a fixed order and accumulate at the beginning of the staff." />
+
+<DiagramPlaceholder description="A simple phrase first with all the sharps written as accidentals, then with the same pitches in the key signature — demonstrating how the key signature reduces visual clutter." />
+
+## Where the key signature sits
+
+The key signature appears at the **beginning of every line of music**, placed immediately after the clef. The order is:
+
+1. **Clef** (treble, bass, alto, etc.) — leftmost
+2. **Key signature** (the sharps or flats)
+3. **Time signature** (4/4, 3/4, etc.)
+
+The key signature is reproduced at the start of every new line throughout the piece, even though the musical content only continues from the previous line. This is convention: each line stands on its own, with clef, key signature, and first notes all visible.
+
+Unlike an accidental (which only affects the specific note and measure where it appears), a key signature affects *every* note of that pitch class throughout the piece, in every octave, until a later key change replaces it.
+
+## What sharps and flats look like in a key signature
+
+Sharps appear as # symbols stacked on specific lines or spaces of the staff. Flats appear as ♭ symbols in the same manner. The exact positions are fixed by convention — the first sharp is always on the F line (in treble clef) or near the top of the staff; the first flat is always on the B line or near the middle.
+
+**The order of sharps:**
+F♯ (1st), C♯ (2nd), G♯ (3rd), D♯ (4th), A♯ (5th), E♯ (6th), B♯ (7th)
+
+**The order of flats:**
+B♭ (1st), E♭ (2nd), A♭ (3rd), D♭ (4th), G♭ (5th), C♭ (6th), F♭ (7th)
+
+Notice the order of flats is the reverse letter order of sharps (F-C-G-D-A-E-B reversed becomes B-E-A-D-G-C-F). This isn't coincidence — it reflects the circle of fifths, which organizes the tonal relationships between all 30 major and minor key signatures.
+
+## Why these specific sharps and flats
+
+The sharps and flats appear in a specific, invariant order because each one adds to produce the next key signature in the **circle of fifths**. Moving up by perfect fifths from C adds sharps one at a time, each new sharp being the leading tone (7th degree) of the new key. Moving down by perfect fifths from C (or up by perfect fourths) adds flats one at a time, each new flat being the 4th degree of the new key.
+
+So the key signature with *one* sharp is G major (or E minor) because G is a perfect fifth above C. Adding a second sharp gives us D major (or B minor), a perfect fifth above G. And so on. Each additional sharp climbs another perfect fifth.
+
+Similarly, *one* flat gives us F major (or D minor), a perfect fifth *below* C. Two flats give us B♭ major, a perfect fifth below F. Each additional flat descends another perfect fifth.
+
+We have a dedicated page on the circle of fifths that explores this fully. For now, the practical takeaway: the order of sharps and the order of flats aren't arbitrary — they encode a deep pattern that organizes all of Western tonal music.
+
+## Major vs. minor key signatures
+
+A key signature, by itself, doesn't tell you whether the piece is in a major or a minor key. Each key signature corresponds to **two** keys — a major key and its relative minor. The key signature with one sharp, for instance, could be either G major or E minor. Same sharps, same notes available. The piece's actual key — whether it treats G or E as the tonic — is revealed by the music itself, not the key signature.
+
+How do you tell which key you're in? Usually from:
+
+- **The final note or chord.** A piece ending on G (or a G major chord) is likely in G major. Ending on E (or an E minor chord) suggests E minor.
+- **The opening chord.** Many pieces begin on the tonic chord.
+- **The melodic and harmonic emphasis.** Is the music centered around G major sounds (G chord, G in the melody, D as dominant) or E minor sounds (E chord, E in the melody, B as dominant)?
+
+Becoming fluent at identifying keys from music is a skill that develops over time. For now, remember that a key signature is one half of the story — the other half is determining whether the music treats the major or minor of that signature as home.
+
+## Common questions
+
+**Why is the key signature repeated at the start of every line?**
+
+Readability. If a piece is long, by the time you reach line 3 or 4 you've long since forgotten the opening key signature. Repeating it at the start of each line keeps the key fresh in the reader's mind. This also lets a performer open the score to any page and immediately see the key without flipping back.
+
+**What happens if the key changes in the middle of a piece?**
+
+The new key signature is written at the point of the change, usually at a bar line. Typically any sharps or flats from the old key signature that aren't in the new one are cancelled with natural signs, and then the new key signature appears. From that point forward, the new key signature applies.
+
+**Can a piece have no key signature?**
+
+Yes. C major and A minor share the same key signature: no sharps or flats. Atonal and twelve-tone music may also use no key signature (or sometimes C major is used as a default when the music has no clear tonality).
+
+**Why does the key signature appear before the time signature?**
+
+Convention. The order — clef, key signature, time signature — has been standard in Western notation for centuries. There's no deep reason; it's just what developed. Every reader expects this order, so breaking it (putting time signature before key signature) would be confusing even though the information would be the same.

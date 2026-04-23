@@ -1,0 +1,132 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'seventh-chords',
+  title: 'Seventh Chords',
+  oneSentence:
+    'A seventh chord adds a fourth note — a seventh above the root — to a triad, producing chords with richer color, stronger directional pull, and more harmonic complexity than plain triads.',
+  practice: [
+    { kind: 'flashcard', label: 'Seventh Chord Qualities Flashcards', detail: '10 cards', href: '/study/seventh-chord-qualities' },
+  ],
+  related: [
+    { title: 'Triad Qualities',           href: '/learn/harmony/triad-qualities' },
+    { title: 'Seventh Chord Inversions',  href: '/learn/harmony/seventh-chord-inversions' },
+    { title: 'Figured Bass',              href: '/learn/harmony/figured-bass' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A triad has three notes: root, third, fifth. Add one more third on top — a seventh above the root — and you get a four-note chord. This **seventh chord** is richer than a triad, more directional (the seventh often wants to resolve), and carries more harmonic information than a plain triad can.
+
+Seventh chords are everywhere in tonal music. The dominant seventh chord (V7) is arguably the single most important chord in Western tonal harmony — it drives most cadences, creates the tension that resolves to the tonic, and defines the sound of functional harmony. Beyond V7, other seventh-chord types add color in specific contexts and show up constantly in jazz, pop, and classical music from the Romantic period onward.
+
+## The visual
+
+<DiagramPlaceholder description="A C major seventh chord (C-E-G-B) on a treble staff, labeled with each chord tone — root, 3rd, 5th, 7th." />
+
+<DiagramPlaceholder description="The five main seventh chord qualities all built on C — major 7 (CM7: C-E-G-B), dominant 7 (C7: C-E-G-B♭), minor 7 (Cm7: C-E♭-G-B♭), half-diminished 7 (Cø7: C-E♭-G♭-B♭), fully diminished 7 (C°7: C-E♭-G♭-B♭♭)." />
+
+## The five common seventh-chord qualities
+
+A triad is built from two 3rds (either major-minor for major triads, or minor-major for minor triads, etc.). A seventh chord adds one more 3rd on top. The five main seventh-chord qualities come from different combinations of triad quality and the specific seventh added on top.
+
+**Major seventh (M7, △7, or Maj7)**
+- Structure: major triad + major 7th
+- From C: C-E-G-B
+- Sound: bright, warm, sweet, slightly jazzy
+- Most common context: built on I (I7) or IV (IV7) in major keys
+
+**Dominant seventh (7)**
+- Structure: major triad + minor 7th
+- From C: C-E-G-B♭
+- Sound: tense, wanting to resolve, bluesy
+- Most common context: built on V (V7) in a major or minor key — the central tension chord of tonal harmony
+
+**Minor seventh (m7)**
+- Structure: minor triad + minor 7th
+- From C: C-E♭-G-B♭
+- Sound: dark, smooth, often jazzy
+- Most common context: built on ii (ii7) or vi (vi7) in major keys, or i (i7) in minor
+
+**Half-diminished seventh (ø7 or m7♭5)**
+- Structure: diminished triad + minor 7th
+- From C: C-E♭-G♭-B♭
+- Sound: tense, dark, transitional
+- Most common context: built on vii° in major (viiø7) or on ii° in minor (iiø7)
+
+**Fully diminished seventh (°7 or dim7)**
+- Structure: diminished triad + diminished 7th
+- From C: C-E♭-G♭-B♭♭ (enharmonically C-E♭-G♭-A)
+- Sound: very tense, highly chromatic, dramatic
+- Most common context: built on vii° in harmonic minor (vii°7) — a signature chord in minor-key drama
+
+## Building seventh chords on any root
+
+The pattern is consistent: take the triad quality you want, then add the appropriate 7th above the root. Some examples:
+
+**G major 7:** G major triad (G-B-D) + major 7th above G (F♯) = G-B-D-F♯.
+
+**A minor 7:** A minor triad (A-C-E) + minor 7th above A (G) = A-C-E-G.
+
+**D dominant 7:** D major triad (D-F♯-A) + minor 7th above D (C) = D-F♯-A-C.
+
+**F♯ half-diminished 7:** F♯ diminished triad (F♯-A-C) + minor 7th above F♯ (E) = F♯-A-C-E.
+
+**B fully diminished 7:** B diminished triad (B-D-F) + diminished 7th above B (A♭) = B-D-F-A♭.
+
+The quality of the triad and the quality of the added 7th are independent — any combination is theoretically possible, though only some are common in tonal music.
+
+## Why seventh chords matter
+
+Seventh chords do three things that triads can't do as well:
+
+**1. They create directional pull.** A seventh chord, especially a dominant seventh, feels incomplete. The 7th of the chord "wants to resolve" — typically downward by step. This directional pull is what makes V7 so powerful at cadences: the tritone between its 3rd and 7th resolves outward to the 3rd and root of the tonic chord.
+
+**2. They add color without changing chord identity.** A C major triad is a stable chord. A C major 7 chord is still fundamentally C major but with more sonic depth — a sweeter, richer sound. Composers use seventh chords to add color to a progression without departing from the underlying harmonic structure.
+
+**3. They enable richer harmonic vocabularies.** Jazz, in particular, is largely built on seventh-chord vocabulary. Nearly every chord in a jazz standard is a seventh chord of some kind. The specific qualities (M7, 7, m7, ø7) become the primary building blocks, with triads appearing less frequently than in classical music.
+
+## Diatonic seventh chords in a major key
+
+Just as you can build a triad on each scale degree, you can build a seventh chord on each scale degree by adding one more third.
+
+In C major:
+
+| Degree | Chord | Quality |
+|--------|-------|---------|
+| 1 (I7) | C-E-G-B | Major 7 |
+| 2 (ii7) | D-F-A-C | Minor 7 |
+| 3 (iii7) | E-G-B-D | Minor 7 |
+| 4 (IV7) | F-A-C-E | Major 7 |
+| 5 (V7) | G-B-D-F | **Dominant 7** |
+| 6 (vi7) | A-C-E-G | Minor 7 |
+| 7 (viiø7) | B-D-F-A | **Half-diminished 7** |
+
+The pattern: M7, m7, m7, M7, **7**, m7, **ø7**. Every degree's seventh-chord quality is determined by the diatonic stacking of thirds in the scale.
+
+Notice the **V7** — the only dominant 7 in the key — and the **viiø7** — the only half-diminished 7. These two chords are where the tritone interval appears (V7 has the tritone between its 3rd and 7th; viiø7 has it between its root and its 5th). They're the two tension chords of the key, the ones with the strongest pull toward resolution.
+
+## Common questions
+
+**What's the difference between a "dominant 7" chord (7) and a "major 7" chord (M7)?**
+
+A **dominant 7** has a *minor* 7th above the root (producing the characteristic "bluesy" or "cadential" sound). A **major 7** has a *major* 7th above the root (producing a brighter, sweeter sound). Same major triad underneath; different 7th on top. They feel quite different — dominant 7 wants to resolve; major 7 is stable and can function as a tonic.
+
+**Why is the dominant seventh specifically named that way?**
+
+Because in its most important usage, it's built on the **dominant** (5th scale degree) of a key. V7 in C major is G-B-D-F — a dominant seventh chord whose quality is specifically called "dominant 7" because it's the chord that naturally appears on the dominant degree of a major scale. Even when the same chord structure (major triad + minor 7th) appears built on other scale degrees, it's still called a "dominant 7" quality by convention.
+
+**What makes a "fully diminished" different from a "half diminished"?**
+
+A **half-diminished 7** has a minor 7th above the root (e.g., C-E♭-G♭-B♭). A **fully diminished 7** has a diminished 7th above the root (e.g., C-E♭-G♭-B♭♭, which is enharmonically C-E♭-G♭-A). The "fully" version has every interval as minor-third-sized, making it a stack of four minor 3rds — unique among chord structures.
+
+**Do I need to learn all five seventh-chord qualities?**
+
+For fluent harmonic analysis and jazz, yes. For basic classical reading, the dominant 7 and maybe major 7 and minor 7 are most essential. Half-diminished and fully diminished are important for minor-key music and for specific functional contexts (leading-tone harmonies). Start with the dominant 7 (by far the most common), then expand outward.

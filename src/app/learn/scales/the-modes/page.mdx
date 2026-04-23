@@ -1,0 +1,134 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'scales',
+  subtopic: 'the-modes',
+  title: 'The Modes',
+  oneSentence:
+    'The seven modes — Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, and Locrian — are scales built from the same seven pitches as a major scale but with different tonics, each producing a distinctive character that differs from both major and minor.',
+  practice: [
+    { kind: 'flashcard', label: 'Modes Flashcards', detail: '7 cards', href: '/study/modes' },
+  ],
+  related: [
+    { title: 'The Major Scale',                href: '/learn/scales/the-major-scale' },
+    { title: 'The Natural Minor Scale',        href: '/learn/scales/the-natural-minor-scale' },
+    { title: 'Scale Degrees and Their Names',  href: '/learn/scales/scale-degrees-and-their-names' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Take the seven notes of C major — C, D, E, F, G, A, B — but start on a different note as your tonic. Suddenly, the intervals from that new tonic are different from major. Starting on D and treating D as tonic, the scale D-E-F-G-A-B-C-D has a whole step to the 2nd degree but a *minor* 3rd to the 3rd degree. The resulting mode (Dorian) has a specific flavor — minor-ish but brighter than natural minor, with a raised 6th.
+
+Each of the seven possible starting notes of a major scale produces a different **mode**, and each mode has its own distinctive sound. The modes are the seven ways to organize the same seven pitches around seven different tonics.
+
+Modes matter because much of Western music, especially folk music, modal jazz, film scoring, and much 20th-century classical and popular music, uses modes rather than straightforward major or minor. Learning the modes gives you access to a wider palette than just major/minor — it lets you hear and produce the modal colors that permeate so much music.
+
+## The visual
+
+<DiagramPlaceholder description="The seven modes built on D (using the C major collection: D Dorian), ascending, with scale degrees labeled." />
+
+<DiagramPlaceholder description="All seven modes starting on C (transposed to a common tonic), shown together for comparison." />
+
+## The seven modes
+
+The modes, in their order as they appear in the major scale:
+
+**Ionian (the major scale itself)** — starts on the 1st degree. Same as the major scale. W-W-H-W-W-W-H.
+
+**Dorian** — starts on the 2nd degree. W-H-W-W-W-H-W. Characterized by a minor 3rd and a raised 6th. Sounds minor-ish but brighter than natural minor. Common in folk music, Celtic tunes, and much jazz.
+
+**Phrygian** — starts on the 3rd degree. H-W-W-W-H-W-W. Characterized by a minor 3rd and a lowered 2nd. Sounds dark, Spanish, Middle Eastern — the lowered 2nd is its signature feature.
+
+**Lydian** — starts on the 4th degree. W-W-W-H-W-W-H. Characterized by a major 3rd and a raised 4th. Sounds bright, even ethereal — the raised 4th gives it a floating quality. Used heavily in film music and fantasy soundtracks.
+
+**Mixolydian** — starts on the 5th degree. W-W-H-W-W-H-W. Characterized by a major 3rd and a lowered 7th. Sounds like major but without the leading tone — less resolute, more open. Very common in rock, blues-rock, and much folk music.
+
+**Aeolian (the natural minor scale)** — starts on the 6th degree. W-H-W-W-H-W-W. Same as natural minor.
+
+**Locrian** — starts on the 7th degree. H-W-W-H-W-W-W. Characterized by a minor 3rd and a diminished 5th. Unstable — the diminished 5th makes the tonic chord (built on the 1st degree) a diminished triad, which is unusual. Rare in practice but fascinating theoretically.
+
+## Deriving the modes from a major scale
+
+The easiest way to see the modes is to take any major scale and play it starting from each of the seven degrees:
+
+Using C major (C, D, E, F, G, A, B):
+
+- Starting on C: **C Ionian** — same as C major.
+- Starting on D: **D Dorian** — D, E, F, G, A, B, C, D.
+- Starting on E: **E Phrygian** — E, F, G, A, B, C, D, E.
+- Starting on F: **F Lydian** — F, G, A, B, C, D, E, F.
+- Starting on G: **G Mixolydian** — G, A, B, C, D, E, F, G.
+- Starting on A: **A Aeolian** — A, B, C, D, E, F, G, A (same as A natural minor).
+- Starting on B: **B Locrian** — B, C, D, E, F, G, A, B.
+
+Same seven pitches, seven different modes. The intervals between consecutive degrees are identical (because the pitches are), but measured *from the new tonic*, the scale patterns become unique.
+
+## Building any mode on any tonic
+
+You can transpose each mode to start on any pitch. D Dorian as shown above is one form; you can also have C Dorian, G Dorian, E Dorian, and so on — each built by applying Dorian's pattern (W-H-W-W-W-H-W) to a different starting note.
+
+**C Dorian** (applying W-H-W-W-W-H-W starting from C):
+- C (1st)
+- C + whole = D (2nd)
+- D + half = E♭ (3rd)
+- E♭ + whole = F (4th)
+- F + whole = G (5th)
+- G + whole = A (6th)
+- A + half = B♭ (7th)
+- B♭ + whole = C (8th)
+
+C Dorian: C, D, E♭, F, G, A, B♭, C.
+
+Notice: C Dorian contains the same notes as B♭ major (two flats). This is no coincidence — Dorian is the 2nd mode of the major scale, and C is the 2nd degree of B♭ major.
+
+This relationship holds generally: a mode on a given tonic always shares its pitch collection with the major scale whose key signature matches. Knowing this shortcut speeds up building any mode — find which major scale uses the right tonic position, and you have your pitches.
+
+## Modal character summary
+
+A simple way to remember each mode's character, measured against the major and minor scales:
+
+- **Ionian (major):** bright, stable
+- **Dorian:** minor with a raised 6th — minor but brighter
+- **Phrygian:** minor with a lowered 2nd — dark, Spanish-sounding
+- **Lydian:** major with a raised 4th — bright, ethereal
+- **Mixolydian:** major with a lowered 7th — major but without leading tone, "bluesy"
+- **Aeolian (natural minor):** standard minor
+- **Locrian:** minor with a lowered 5th — unstable, rare
+
+Each mode has a signature altered degree that distinguishes it. Learning the "characteristic note" of each mode is often faster than memorizing the full interval pattern.
+
+## Modes in practice
+
+You hear modes constantly once you know to listen. A few examples:
+
+- **Dorian:** "Scarborough Fair," much of the music of Miles Davis's "Kind of Blue" (notably the track "So What," which is built on D Dorian), many Celtic folk tunes.
+- **Phrygian:** Flamenco music, much Middle Eastern-influenced Western music, metal and rock that wants an exotic sound.
+- **Lydian:** The theme from *The Simpsons*, much film music (John Williams uses Lydian frequently), Joe Satriani's "Flying in a Blue Dream."
+- **Mixolydian:** "Norwegian Wood" by The Beatles, "Sweet Home Alabama" by Lynyrd Skynyrd, much blues and rock.
+- **Locrian:** rare in main sections; appears in transitional passages or specific metal/experimental contexts.
+
+Modes blur the major/minor binary. Instead of just happy (major) or sad (minor), music can be bright-but-strange (Lydian), minor-but-bright (Dorian), dark-with-Spanish-feel (Phrygian), rock-bluesy (Mixolydian), and so on. The modes give you a richer emotional vocabulary.
+
+## Common questions
+
+**Are modes just "starting a scale from a different note"?**
+
+Yes — as long as you also treat that different starting note as the tonic. If you play C-D-E-F-G-A-B-C but still feel C as home, you're in C major (Ionian). If you play D-E-F-G-A-B-C-D and feel D as home, you're in D Dorian. The tonic is what makes the difference.
+
+**Why do modes have Greek names?**
+
+They're named after ancient Greek tribes and regions (Ionian, Dorian, Phrygian, Lydian). Medieval music theorists borrowed these names when they systematized the church modes, which were the historical ancestors of the modern modes. The Greek origins are purely historical — the actual modes of ancient Greek music were not exactly what we call modes today.
+
+**Is Ionian exactly the same as major?**
+
+Yes. "Ionian" is the technical name for what we usually call "the major scale." They describe the same set of intervals and the same tonal function. Ionian is used in modal contexts; major is used in tonal contexts. The terminology differs by tradition, but the scale is identical.
+
+**Do modes have harmonic analysis the way major and minor do?**
+
+Modes have chord vocabularies that differ from major and minor in subtle but important ways. Dorian's chord progressions, for instance, often use the II and IV chords differently than in major. Mixolydian emphasizes the bVII chord. These modal chord progressions produce the characteristic sounds of each mode. For a full treatment of modal harmony, you'd dig into modal jazz theory or folk-music theory traditions.

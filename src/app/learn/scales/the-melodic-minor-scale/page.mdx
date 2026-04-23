@@ -1,0 +1,140 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'scales',
+  subtopic: 'the-melodic-minor-scale',
+  title: 'The Melodic Minor Scale',
+  oneSentence:
+    'The melodic minor scale ascends with raised 6th and 7th degrees — avoiding harmonic minor\'s awkward augmented 2nd — and traditionally descends as pure natural minor, a dual-form shape designed for smooth melodic writing in minor keys.',
+  practice: [
+    { kind: 'flashcard', label: 'Minor Scales Flashcards', detail: '15 cards', href: '/study/minor-scales' },
+  ],
+  related: [
+    { title: 'The Natural Minor Scale',       href: '/learn/scales/the-natural-minor-scale' },
+    { title: 'The Harmonic Minor Scale',      href: '/learn/scales/the-harmonic-minor-scale' },
+    { title: 'Scale Degrees and Their Names', href: '/learn/scales/scale-degrees-and-their-names' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Harmonic minor solves the leading-tone problem but creates a new one: the augmented 2nd between the 6th and 7th degrees is awkward to sing. For melodic writing — where the scale needs to flow smoothly up and down — composers wanted a minor scale that kept the leading tone (for proper resolution) but smoothed out the jumpy 6th-to-7th interval.
+
+The solution was the **melodic minor scale**, a scale with a peculiar feature: it changes shape depending on direction. Going up, it raises *both* the 6th and 7th degrees. Going down, it reverts to natural minor (lowering the 6th and 7th back). The ascending form is smooth to sing; the descending form doesn't need the leading tone anyway, so it uses natural minor's simpler shape.
+
+This dual-form structure is unique among Western scales. It reflects a practical, historical compromise: melodic minor is the minor scale adjusted specifically for singing and smooth melodic motion.
+
+## The visual
+
+<DiagramPlaceholder description="A melodic minor ascending on a treble staff with raised 6th and 7th (F♯ and G♯), labeled, then descending with natural 6th and 7th (G and F), also labeled." />
+
+<DiagramPlaceholder description="The three minor forms compared side by side — natural, harmonic, and melodic — ascending." />
+
+## The traditional dual form
+
+**Ascending melodic minor:**
+
+- 1st to 2nd: whole step
+- 2nd to 3rd: half step
+- 3rd to 4th: whole step
+- 4th to 5th: whole step
+- 5th to 6th: **whole step** (6th raised)
+- 6th to 7th: **whole step** (7th raised)
+- 7th to 8th: half step
+
+**Pattern: W - H - W - W - W - W - H**
+
+This is the major scale's pattern *from the 3rd degree onward*. The first three degrees are minor; the last four are major. The scale sounds like it starts in minor and transitions to major as it ascends.
+
+**Descending melodic minor:**
+
+Reverts to natural minor. The raised 6th and 7th drop back down.
+
+- 8th to 7th: whole step (now natural 7, not raised)
+- 7th to 6th: whole step (now natural 6, not raised)
+- 6th to 5th: half step
+- 5th to 4th: whole step
+- 4th to 3rd: whole step
+- 3rd to 2nd: half step
+- 2nd to 1st: whole step
+
+**Pattern descending: W - W - H - W - W - H - W**
+
+Same as natural minor going down.
+
+## Building melodic minor scales
+
+**A melodic minor ascending:**
+- Natural minor: A, B, C, D, E, F, G, A
+- Raise the 6th and 7th: F becomes F♯, G becomes G♯
+- A melodic minor ascending: A, B, C, D, E, **F♯**, **G♯**, A
+
+**A melodic minor descending:**
+- Same as A natural minor: A, G, F, E, D, C, B, A
+
+**D melodic minor ascending:**
+- Natural minor: D, E, F, G, A, B♭, C, D
+- Raise the 6th and 7th: B♭ becomes B♮ (natural), C becomes C♯
+- D melodic minor ascending: D, E, F, G, A, **B**, **C♯**, D
+
+**D melodic minor descending:**
+- Same as D natural minor: D, C, B♭, A, G, F, E, D
+
+Notice that raising the 6th of D minor (B♭) just makes it B natural — not an accidental added, but an existing flat canceled. This is common when raising degrees.
+
+## The modern "jazz" version
+
+Many modern musicians — particularly jazz players — use a version of melodic minor that doesn't change shape between ascending and descending. They treat it as a single scale: the ascending form of classical melodic minor, used in both directions.
+
+**Jazz melodic minor (ascending and descending):**
+- A: A, B, C, D, E, F♯, G♯, A (always this form)
+
+This "jazz minor" scale is a practical choice for improvisation. Having one form instead of two is easier to internalize for scale-based soloing.
+
+In classical analysis, the dual-form version remains standard. In jazz theory and contemporary practice, the single-form version is more common. Both are legitimate — just different conventions for different musical traditions.
+
+## When to use melodic minor
+
+In classical music, melodic minor shows up whenever a composer wants smooth melodic motion through the upper half of the scale *while still preserving the leading tone* for harmonic resolution. A rising melodic line in a minor key will often use ascending melodic minor; descending, natural minor takes over.
+
+In jazz, melodic minor (in its single-form version) is a fundamental scale for improvisation over certain chord types — particularly minor-major 7 chords, and in various harmonic substitutions. The "modes of melodic minor" (starting the scale from different degrees) produce seven distinct jazz-oriented scales with specific harmonic applications.
+
+Melodic minor is the minor scale's most practically useful form for melodic purposes. It keeps the leading tone (unlike natural minor) and avoids the augmented 2nd (unlike harmonic minor). The tradeoff is that it changes shape by direction, which takes a bit of getting used to.
+
+## The three minor scales compared
+
+A quick comparison of all three, starting from A:
+
+- **A natural minor:** A, B, C, D, E, F, G, A
+- **A harmonic minor:** A, B, C, D, E, F, **G♯**, A
+- **A melodic minor (ascending):** A, B, C, D, E, **F♯**, **G♯**, A
+- **A melodic minor (descending):** A, G, F, E, D, C, B, A (= natural minor)
+
+The distinguishing feature:
+- Natural minor: no raised degrees
+- Harmonic minor: raised 7th only
+- Melodic minor ascending: raised 6th and 7th
+- Melodic minor descending: reverts to natural minor
+
+## Common questions
+
+**Why does melodic minor change direction?**
+
+Historically, to make melodic lines easier to sing while preserving harmonic function. Ascending lines benefit from the leading tone (raised 7th) but are awkward with the augmented 2nd of harmonic minor; raising the 6th as well smooths out the line. Descending lines don't need the leading tone (resolution pulls are usually ascending), so natural minor's shape works fine going down.
+
+**Do jazz musicians use both forms or just the ascending?**
+
+Most modern jazz uses the ascending form in both directions. It's treated as a single scale with seven modes, each useful for specific chord types. The classical dual-form version is less common in jazz practice.
+
+**Is there ever a situation where you'd want descending ascending form — ascending natural?**
+
+In analysis, yes — occasionally a piece might flip the convention for specific expressive reasons. But the standard convention is ascending melodic minor (raised 6 and 7), descending natural minor. If a composer wants natural ascending, they'd write accidentals to indicate that choice explicitly.
+
+**Why is melodic minor specifically called "melodic"?**
+
+Because it's the minor scale designed for melodic smoothness. Harmonic minor gets its name from its role in harmony; melodic minor from its role in melody. The contrast is explicit: harmonic minor is built for chords, melodic minor for lines.

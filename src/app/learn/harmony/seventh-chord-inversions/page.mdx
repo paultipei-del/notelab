@@ -1,0 +1,132 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'seventh-chord-inversions',
+  title: 'Seventh Chord Inversions',
+  oneSentence:
+    'Seventh chords have four possible bass positions — root position (7), first inversion (6/5), second inversion (4/3), and third inversion (2) — each with distinctive figured-bass numbers and specific functional characteristics.',
+  practice: [
+    { kind: 'flashcard', label: 'Seventh Chord Inversions Flashcards', detail: '12 cards', href: '/study/seventh-chord-inversions' },
+  ],
+  related: [
+    { title: 'Seventh Chords',     href: '/learn/harmony/seventh-chords' },
+    { title: 'Triad Inversions',   href: '/learn/harmony/triad-inversions' },
+    { title: 'Figured Bass',       href: '/learn/harmony/figured-bass' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A triad has three possible bass positions (root, first, second inversion). A seventh chord has four — because it has four chord tones, any of which can be in the bass. Each position has its own figured-bass signature, its own sound, and its own typical functional role.
+
+Seventh chord inversions are more involved than triad inversions because there are more of them, and the figures (6/5, 4/3, 2) can feel cryptic at first. But the logic is consistent with the triad-inversion figures, and once you see the pattern, the four seventh-chord inversions become as familiar as the three triad inversions.
+
+## The visual
+
+<DiagramPlaceholder description="A V7 chord in C major (G-B-D-F) shown in all four inversions — root position (G in bass), first inversion (B in bass), second inversion (D in bass), third inversion (F in bass) — each labeled with its figured bass." />
+
+<DiagramPlaceholder description="A summary table showing each inversion's bass note, figure, and typical label format." />
+
+## The four inversions
+
+**Root position: bass note = root.**
+
+- Figured bass: **7**
+- Label example: V7
+- Sound: stable, most complete-feeling version of the chord
+- Typical use: approaching a strong cadence, establishing the chord's identity
+
+**First inversion: bass note = third.**
+
+- Figured bass: **6/5**
+- Label example: V6/5
+- Sound: slightly less weighty than root position, but still directional
+- Typical use: connecting chord progressions, smooth bass-line writing
+
+**Second inversion: bass note = fifth.**
+
+- Figured bass: **4/3**
+- Label example: V4/3
+- Sound: moderately unstable, serves as a passing or connecting chord
+- Typical use: bass passing between chord tones of adjacent harmonies
+
+**Third inversion: bass note = seventh.**
+
+- Figured bass: **2** (sometimes written 4/2)
+- Label example: V2 or V4/2
+- Sound: the most unstable inversion — has the characteristic "seventh in the bass" feel
+- Typical use: the seventh (in the bass) resolves down by step to the next chord
+
+## Figured-bass logic for seventh chords
+
+The figures describe intervals above the bass:
+
+**Root position (7):** The 7th above the bass is the seventh of the chord. This is the one number that uniquely identifies a seventh chord in root position. The 5th and 3rd above the bass are also present (they're chord tones) but assumed.
+
+**First inversion (6/5):** The 6th above the bass is the root of the chord (a major or minor 6th, depending on the chord). The 5th above the bass is the seventh of the chord. The 3rd above (not listed in the figure but present) is the 5th of the chord.
+
+**Second inversion (4/3):** The 4th above the bass is the root. The 3rd above the bass is the fifth of the chord. (The 6th is also present.)
+
+**Third inversion (2):** The 2nd above the bass is the root. The seventh of the chord is in the bass. This is the most "unstable" position because the chord's most dissonant note (the seventh) is on the bottom.
+
+If the figured bass feels arbitrary, just memorize the pattern: 7 → 6/5 → 4/3 → 2 corresponds to root → 1st → 2nd → 3rd inversions. The numbers decrease in a consistent way (7, 6, 4, 2) that maps to the inversion sequence.
+
+## Why third inversion is special
+
+Third inversion (with the seventh in the bass) is unique because the seventh — the chord's most dissonant note — is on the bottom. This creates strong directional pull: the seventh in the bass nearly always resolves *downward* by step to the next chord's root.
+
+Example: a G7 chord (G-B-D-F) in third inversion puts F in the bass. That F, the seventh of G7, wants to resolve down by step to E. In C major, this creates a V4/2 → I6 progression — G7 with F in the bass moving to C with E in the bass (first-inversion tonic).
+
+This resolution pattern is a signature of third inversion. Almost every time you see a seventh chord in third inversion, it's setting up this stepwise descent in the bass to the next chord's third.
+
+## Reading Roman numerals with figured bass
+
+Putting it together, a chord progression might look like this in analysis:
+
+> I → ii6 → V7 → I
+
+Reading: the progression is tonic (I, root position triad) → supertonic (ii, first-inversion triad) → dominant seventh (V7, root position) → tonic (I, root position triad).
+
+Or more complex:
+
+> I → IV6/4 → V6/5 → I
+
+Reading: tonic → IV in second inversion (probably a pedal or neighboring 6/4) → V7 in first inversion (smoother bass into tonic) → tonic.
+
+The Roman numeral tells you the chord's root (its scale-degree home). The figured bass tells you the inversion. The quality comes from the case of the Roman numeral (uppercase for major chords, lowercase for minor, etc.) and from the chord's position in the key.
+
+## Common patterns with seventh chord inversions
+
+Three inversion patterns appear constantly in tonal music:
+
+**1. V7 → I (root position).** The classic dominant-tonic resolution. V7 has root in the bass; I has root in the bass.
+
+**2. V6/5 → I.** V7 in first inversion leading to I. The bass moves up by step (from the 3rd of V to the root of I), producing a very smooth voice leading.
+
+**3. V4/2 → I6.** V7 in third inversion leading to first-inversion tonic. The seventh in the bass of V7 resolves down by step to the third of I.
+
+Each of these uses the same chord progression (V7 → I) but produces a different bass-line motion. Composers choose among them based on the melodic and voice-leading context.
+
+## Common questions
+
+**Why is third inversion labeled "2" instead of a more complete figure?**
+
+Because the "2" (the interval from the seventh in the bass to the root of the chord a second above it) is the distinctive identifier. Writing out all the intervals (6/4/2) would be redundant; the "2" uniquely identifies third inversion. In some texts you'll see "4/2" to be more explicit, but just "2" is the most common abbreviation.
+
+**How do I identify a seventh-chord inversion on the page?**
+
+First, identify the chord's root by looking at the stacked-thirds form. Then look at which chord tone is in the bass. If it's the root, you're in root position (7). If it's the third, first inversion (6/5). If it's the fifth, second inversion (4/3). If it's the seventh, third inversion (2).
+
+**Are all seventh-chord inversions equally useful?**
+
+Not quite. Root position (7) and first inversion (6/5) are the most common — they appear in nearly every piece with seventh-chord harmonies. Second inversion (4/3) appears regularly but less often. Third inversion (2) is more specialized — it requires specific voice-leading contexts (the seventh-in-bass wanting to resolve down by step), so it appears in specific functional positions rather than anywhere.
+
+**What if I see a Roman numeral with no figure at all — is that root position or first inversion?**
+
+Root position. A Roman numeral with no figure indicates a root-position triad. A Roman numeral with "7" indicates a root-position seventh chord. The absence of any figure is the signal for root position — either triad or seventh chord depending on the Roman numeral's context.

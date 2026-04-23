@@ -1,0 +1,132 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'form-and-structure',
+  subtopic: '32-bar-song-form',
+  title: '32-Bar Song Form',
+  oneSentence:
+    'The 32-bar song form (AABA) is the structural backbone of American popular song from roughly 1920 to 1960 — four 8-bar sections where the A section appears three times and a contrasting bridge (B) provides variety between the second and third A sections.',
+  practice: [],
+  related: [
+    { title: 'Motive, Phrase, and Period',   href: '/learn/form-and-structure/motive-phrase-and-period' },
+    { title: 'Ternary Form',                  href: '/learn/form-and-structure/ternary-form' },
+    { title: '12-Bar Blues',                  href: '/learn/form-and-structure/12-bar-blues' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+For roughly four decades — from the 1920s through the late 1950s — popular songs in America were dominated by a specific structural form: four 8-bar sections in an AABA pattern, 32 bars total. The "Great American Songbook" (the body of standards written by Gershwin, Porter, Berlin, Kern, Rodgers, and many others) is overwhelmingly in this form.
+
+The A section is the main theme. The B section (called the **bridge** or **middle eight**) provides contrast. The final A section returns to the main theme, often with slight variation. This AABA layout produces a satisfying arc: familiar, familiar (again), something new, familiar (once more). The bridge's contrast refreshes the ear for the return of A, preventing the main theme from wearing out.
+
+Understanding 32-bar form opens up the entire jazz standard repertoire. Thousands of pieces use this exact structure.
+
+## The visual
+
+<DiagramPlaceholder description="A schematic of 32-bar AABA form — four 8-bar sections, with A in the tonic, A repeated, B (the bridge) in a contrasting key, and A returning in the tonic for the final 8 bars." />
+
+<DiagramPlaceholder description="The opening of a representative standard showing the A section's 8-bar structure." />
+
+## The basic structure
+
+**32-bar AABA form** divides into four 8-bar sections:
+
+**A (measures 1-8)** — the main theme. Usually in the home key. Ends with some kind of cadence (authentic or half).
+
+**A (measures 9-16)** — a repeat of the main theme, often identical to the first A but sometimes with a slight variation at the end (different cadence, small melodic change).
+
+**B — the bridge (measures 17-24)** — contrasting material. Usually in a different key, often with different melodic and harmonic character. The bridge provides variety and builds anticipation for the return of A.
+
+**A (measures 25-32)** — the main theme returns one more time, usually in the original key. This final A typically ends with a strong cadence to close the song.
+
+Total: 32 bars. The A section appears three times, separated by one bridge.
+
+## The bridge
+
+The bridge is the form's contrast element. Common approaches:
+
+**Key change.** The bridge modulates to a related key — often the subdominant (IV), the relative minor (vi), or the parallel major/minor. The key change provides harmonic variety without venturing too far from home.
+
+**New melodic character.** The bridge's melody usually contrasts with the A section's melody — different contour, different range, different mood. If A is quiet and lyrical, the bridge might be more declarative. If A is rhythmically steady, the bridge might be more syncopated.
+
+**Different rhythm or texture.** Bridges often feature different rhythmic patterns or textural treatments to differentiate them from the A sections.
+
+**Building to the return.** The bridge typically ends with a turnaround — a brief passage that leads harmonically back to the tonic for the final A section. This turnaround is usually based on the dominant, creating expectation for the return.
+
+## Lyrical structure
+
+In songs with lyrics, the 32-bar form often corresponds to specific lyrical divisions:
+
+- First A: presents the song's main idea, first statement
+- Second A: often expands the idea or approaches it from a slightly different angle
+- Bridge: introduces a contrasting thought, sometimes a question, a change of perspective
+- Final A: returns to the main idea, often with a more emphatic or resolved statement
+
+This lyrical arc mirrors the musical arc — familiar, familiar, contrast, resolution.
+
+In some songs, the lyrics are identical across all three A sections (a "verse" that repeats). In others, each A has different words, with the final A providing the song's emotional climax.
+
+## Examples of the 32-bar form
+
+Almost every Great American Songbook standard uses this form:
+
+- "Over the Rainbow" (Harold Arlen)
+- "I Got Rhythm" (George Gershwin) — its chord progression, the "rhythm changes," became one of the most-covered templates in jazz
+- "Body and Soul" (Johnny Green)
+- "All the Things You Are" (Jerome Kern)
+- "Misty" (Erroll Garner)
+- "Sophisticated Lady" (Duke Ellington)
+- "Autumn Leaves" (Joseph Kosma)
+- "Stella by Starlight" (Victor Young)
+
+Jazz musicians learning standards essentially memorize the AABA pattern and its harmonic implications. Once you know the structure, you can improvise over any of these tunes by keeping track of which 8-bar section you're in.
+
+## How jazz treats 32-bar form
+
+Jazz performance typically uses 32-bar form as the **head** (the written melody), then improvises over the same 32-bar chord progression multiple times:
+
+1. **Head in** — play the melody once through the 32 bars
+2. **Solos** — improvisation over the chord changes, typically one full chorus (32 bars) or more per soloist
+3. **Head out** — return to the melody for the final 32 bars
+
+A performance might be 5-10 minutes long for a single tune, with most of the time given to solos. The 32-bar structure provides the harmonic framework for improvisation — every solo chorus starts and ends at the same structural points.
+
+## Related forms
+
+**ABAB'** — a variant where the bridge appears twice, alternating with the A section. Less common than AABA but appears in some songs.
+
+**AABA with a tag** — the standard 32-bar form extended with a brief tag or coda at the end. Common in jazz performances where the final A is extended to provide a more emphatic ending.
+
+**Extended song forms.** Some songs deviate from strict 32-bar form: 16-bar forms, 64-bar forms (two choruses of 32), or irregular structures. But AABA is the baseline.
+
+## The decline and legacy
+
+AABA form dominated popular music through the 1950s but declined in prominence with the rise of rock and roll. Rock songs more often use verse-chorus structure (AB AB CAB or similar) rather than AABA, reflecting different priorities in popular music — the big singable chorus rather than the AABA form's integrated whole.
+
+But AABA form didn't disappear. It's still used in jazz (both original compositions and covers of standards), in Broadway and musical theater, and in some singer-songwriter material. And even rock and pop songs occasionally use AABA for specific effects, especially in ballads and show-tune-style songs.
+
+The form's legacy is enormous: the entire jazz standard tradition, the vocabulary of most Tin Pan Alley songs, and much of the foundation of modern Western popular music all pass through AABA form.
+
+## Common questions
+
+**Why 32 bars specifically? Why not 30 or 40?**
+
+Convention. 8-bar sections are extremely natural in Western popular music (they fit neatly into 4-bar phrases, which fit neatly into 2-bar sub-phrases, which fit neatly into 1-bar units). Four 8-bar sections produces a clean 32-bar total, which became standardized in the 1920s. The 32-bar length is short enough to stay memorable but long enough to develop lyrical and musical ideas.
+
+**How is AABA different from ABA ternary form?**
+
+AABA has **four** sections (with A repeated at the start), whereas ternary form has **three** sections. The second A in AABA provides a strong opening statement by presenting the main theme twice before introducing contrast. Ternary form introduces contrast more quickly. The difference is subtle but produces noticeably different listening experiences.
+
+**Do all standards use exactly 8-bar sections?**
+
+Most do, but some use irregular section lengths — 10-bar sections, 12-bar sections, or uneven totals. "Stella by Starlight" is famously irregular. The AABA idea is flexible; what matters is the three-statements-of-A-with-one-bridge structure, not the exact bar count.
+
+**Is the 32-bar form still used?**
+
+Yes, but less prominently than it once was. Jazz musicians still play thousands of AABA standards. Some contemporary songwriters still use the form for particular moods. But in pop music, verse-chorus structures have largely replaced AABA as the dominant form since the 1960s.

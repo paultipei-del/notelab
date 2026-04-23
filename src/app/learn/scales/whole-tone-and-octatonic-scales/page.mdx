@@ -1,0 +1,115 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'scales',
+  subtopic: 'whole-tone-and-octatonic-scales',
+  title: 'Whole Tone and Octatonic Scales',
+  oneSentence:
+    'The whole tone scale uses six notes separated entirely by whole steps, producing a dreamy, symmetric sound; the octatonic scale alternates half and whole steps to produce an eight-note pattern used heavily in 20th-century music and jazz.',
+  practice: [
+    { kind: 'flashcard', label: 'Pentatonic, Blues, Chromatic, Whole Tone Flashcards', detail: '8 cards', href: '/study/other-scales' },
+  ],
+  related: [
+    { title: 'The Chromatic Scale',  href: '/learn/sound-and-hearing/the-chromatic-scale' },
+    { title: 'The Modes',            href: '/learn/scales/the-modes' },
+    { title: 'Interval Quality',     href: '/learn/intervals/interval-quality' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Most scales used in Western music mix whole steps and half steps — that mix is what creates their distinctive patterns. But what happens if you use only whole steps, or only alternating half and whole steps?
+
+You get **symmetric scales** — scales whose interval patterns repeat without a clear tonic or functional hierarchy. The **whole tone scale** uses only whole steps (six notes per octave). The **octatonic scale** alternates half and whole steps (eight notes per octave). Both have been staples of 20th-century and 21st-century composition, especially in impressionism, jazz, film music, and avant-garde classical.
+
+Symmetric scales produce a different kind of music. Without a strong tonic, they float. Without clear tendencies toward resolution, they produce ambiguity, color, and a dreamy or otherworldly quality. Learning them opens up tonal territory that major and minor alone can't reach.
+
+## The visual
+
+<DiagramPlaceholder description="The C whole tone scale ascending — C, D, E, F♯, G♯, A♯, C — labeled." />
+
+<DiagramPlaceholder description="The C octatonic scale (half-whole variety) ascending — C, D♭, E♭, E, F♯, G, A, B♭, C — labeled." />
+
+## The whole tone scale
+
+The whole tone scale is built entirely of whole steps. Six notes per octave, each a whole step from its neighbors:
+
+**Pattern: W - W - W - W - W - W**
+
+Starting from C: C, D, E, F♯, G♯, A♯, C. Six distinct pitches, with the octave closing the scale.
+
+Notice that the whole tone scale *skips* any possibility of half steps — there are no E-F or B-C moments, because every step is a whole step by definition. Every note is equally close to every adjacent note.
+
+Because the pattern is symmetric, there are only *two* whole tone scales in total:
+
+**C whole tone:** C, D, E, F♯, G♯, A♯, C
+**C♯ whole tone:** C♯, D♯, F, G, A, B, C♯
+
+Every whole tone scale is either the C whole tone set or the C♯ whole tone set. Starting from D gives you the same notes as C whole tone (just rearranged). Starting from D♯ gives you the same notes as C♯ whole tone. Only two distinct whole tone scales exist in the entire chromatic system.
+
+This is the **symmetric** property: the scale looks the same from any of its pitches. There's no clear tonic because no note has a special function. Every note is structurally identical to the others.
+
+## The sound of whole tone
+
+The whole tone scale's sound is distinctive: dreamy, floating, unresolved. Without half steps, the scale has no leading tone. Without a clear tonic, there's no home to come to. The result is music that seems to hover — music that can sustain and shift without strongly pulling toward resolution.
+
+Debussy was the great champion of the whole tone scale. His piece "Voiles" from *Préludes, Book 1* is largely built on a whole tone scale, producing a characteristically impressionist, ambiguous texture. Film composers have used the whole tone scale for dream sequences, underwater scenes, and moments of magical or otherworldly character.
+
+In jazz, the whole tone scale fits naturally with altered dominant chords — particularly dominant 7♭5 and 7♯5 chords, whose extensions match the whole tone structure. Jazz pianists like Thelonious Monk used whole tone passages frequently.
+
+## The octatonic scale
+
+The octatonic scale alternates whole and half steps in a strict pattern, producing an eight-note scale per octave:
+
+**Pattern (half-whole variety): H - W - H - W - H - W - H - W**
+
+Starting from C: C, D♭, E♭, E, F♯, G, A, B♭, C. Eight distinct pitches plus octave.
+
+There's also a whole-half variety:
+
+**Pattern (whole-half variety): W - H - W - H - W - H - W - H**
+
+Starting from C: C, D, E♭, F, G♭, A♭, A, B, C.
+
+Both varieties are used; the choice depends on context and the composer's preference. Like the whole tone scale, the octatonic is symmetric — but with more internal structure.
+
+Because of its symmetry, there are only *three* distinct octatonic scales in the chromatic system. Starting from any of the twelve pitches produces one of these three collections.
+
+## Uses of the octatonic scale
+
+The octatonic scale appears heavily in 20th-century music. Bartók, Stravinsky, Messiaen, and Scriabin all used it extensively. Messiaen included it in his "modes of limited transposition" — scales whose symmetric structure means they can only be transposed a limited number of times before repeating themselves.
+
+In jazz, the octatonic scale is often called the **diminished scale** because it fits naturally over diminished seventh chords. The whole-half version corresponds to the chord tones of a diminished seventh chord plus passing tones between them, making it a natural choice for diminished harmony.
+
+The half-whole version is used over dominant 7♭9 chords in jazz, adding characteristic color to altered dominant sonorities.
+
+## Why symmetric scales are different from diatonic scales
+
+Diatonic scales (major, minor, modes) have a clear tonic. Their interval patterns are asymmetric — the 4th degree is special (subdominant), the 5th is special (dominant), the 7th is special (leading tone). The hierarchy creates functional relationships and directional pull.
+
+Symmetric scales have no tonic. Every note in a whole tone scale is identical in function to every other note. Every note in an octatonic scale is structurally identical to every other at equivalent interval positions. The hierarchy disappears.
+
+This gives symmetric scales their characteristic floating quality. There's nothing to resolve to, because no note is special. Music in symmetric scales can sustain indefinitely without reaching a cadence, because cadences require hierarchy. The absence of hierarchy is the point.
+
+## Common questions
+
+**Are symmetric scales used in common popular music?**
+
+Rarely as the primary material, but occasionally as color. Jazz uses octatonic scales over specific altered chords; film scoring uses whole tone for dream sequences. In most pop, rock, and folk music, the main scale is major, minor, or a mode — and symmetric scales appear (if at all) as brief passing moments.
+
+**Can a piece be written entirely in whole tone or octatonic?**
+
+Yes, though it produces specific stylistic results. Debussy's "Voiles" is essentially entirely in whole tone. Bartók has sections built entirely on octatonic material. But because symmetric scales lack strong directional motion, extended passages in them tend toward impressionism, atmosphere, or ambiguity rather than traditional tonal narrative. Composers choose to use them deliberately for specific effects.
+
+**Is the octatonic scale the same as the "diminished scale" in jazz?**
+
+Yes — the whole-half octatonic scale is called the "diminished scale" in jazz theory because of its fit with diminished seventh chords. The terminology differs by context: classical theorists say "octatonic," jazz theorists say "diminished." Same scale.
+
+**Are there other symmetric scales?**
+
+Yes. The chromatic scale itself is symmetric (every step is a half step). Augmented scales alternate whole-and-a-half and half steps. Hungarian scales have specific asymmetric patterns that nonetheless contain symmetric sub-patterns. The term "mode of limited transposition" (from Messiaen) encompasses several symmetric scales with distinctive properties. Whole tone and octatonic are the two most commonly used.

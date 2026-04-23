@@ -1,0 +1,133 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { C_MAJOR_WITH_STEPS_XML, G_MAJOR_WITH_STEPS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'scales',
+  subtopic: 'the-major-scale',
+  title: 'The Major Scale',
+  oneSentence:
+    'The major scale is the fundamental scale of Western music — seven notes arranged in a pattern of whole-whole-half-whole-whole-whole-half — and it\'s the reference against which every other scale is understood.',
+  practice: [
+    { kind: 'flashcard', label: 'Major Scale Construction Flashcards', detail: '12 cards', href: '/study/major-scale-construction' },
+  ],
+  related: [
+    { title: 'What a Scale Is',              href: '/learn/scales/what-a-scale-is' },
+    { title: 'Major Key Signatures',         href: '/learn/pitch/major-key-signatures' },
+    { title: 'Scale Degrees and Their Names', href: '/learn/scales/scale-degrees-and-their-names' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+The major scale is what most people mean when they think of a "scale." Its sound is instantly recognizable — the "do-re-mi-fa-sol-la-ti-do" of solfège, the opening of countless folk songs and anthems, the bright tonal world of the majority of Western popular and classical music.
+
+Its structure is simple: seven notes in a specific interval pattern, with an octave completing the cycle. Every major scale — whether in C, F♯, or A♭ — follows the same pattern. That pattern is the thing to internalize. Once you know it, you can build the major scale from any starting note.
+
+## The visual
+
+<Notation
+  musicXml={C_MAJOR_WITH_STEPS_XML}
+  caption="C major scale ascending. Each note is labeled with the interval type (W = whole step, H = half step) to the next note. Pattern: W-W-H-W-W-W-H."
+  ariaLabel="C major scale ascending with whole and half step labels."
+/>
+
+<Notation
+  musicXml={G_MAJOR_WITH_STEPS_XML}
+  caption="G major scale ascending. Same W-W-H-W-W-W-H pattern, starting from G — requires F♯ to preserve the pattern."
+  ariaLabel="G major scale ascending with whole and half step labels."
+/>
+
+## The interval pattern
+
+The major scale's pattern, from tonic to octave:
+
+**Whole - Whole - Half - Whole - Whole - Whole - Half**
+
+Or, as scale degrees — the distances between consecutive degrees:
+- 1st to 2nd: whole step
+- 2nd to 3rd: whole step
+- 3rd to 4th: **half step**
+- 4th to 5th: whole step
+- 5th to 6th: whole step
+- 6th to 7th: whole step
+- 7th to 8th: **half step**
+
+This pattern is the defining feature of the major scale. The two half steps sit at predictable places — between degrees 3-4 and between 7-8. Everywhere else is a whole step.
+
+In the C major scale (all white keys on a piano), you can see the pattern clearly:
+- C to D: whole step
+- D to E: whole step
+- E to F: **half step** (just one key away)
+- F to G: whole step
+- G to A: whole step
+- A to B: whole step
+- B to C: **half step**
+
+The notes are C, D, E, F, G, A, B, C — and the pattern of whole and half steps matches exactly.
+
+## Building any major scale
+
+To build a major scale starting on any pitch, apply the pattern. Start from your chosen tonic, and walk up the intervals: whole, whole, half, whole, whole, whole, half.
+
+**G major starting from G:**
+- G (1st)
+- G + whole = A (2nd)
+- A + whole = B (3rd)
+- B + half = C (4th)
+- C + whole = D (5th)
+- D + whole = E (6th)
+- E + whole = F♯ (7th)
+- F♯ + half = G (8th, octave)
+
+So G major is G, A, B, C, D, E, F♯, G. One sharp (F♯).
+
+**F major starting from F:**
+- F (1st)
+- F + whole = G (2nd)
+- G + whole = A (3rd)
+- A + half = B♭ (4th)
+- B♭ + whole = C (5th)
+- C + whole = D (6th)
+- D + whole = E (7th)
+- E + half = F (8th, octave)
+
+F major is F, G, A, B♭, C, D, E, F. One flat (B♭).
+
+The interval pattern tells you exactly which accidentals are needed to preserve the major-scale shape, starting from any note.
+
+## Letter-name integrity
+
+When building a major scale, each consecutive note uses the *next letter* of the musical alphabet. The pattern ensures you get a note with a different letter name every step. If building G major leads to F♯ (sixth to seventh degree), you don't write G♭ just because you're about to hit G again — you must use F♯, because the seventh degree of any major scale must be an F of some kind, not a G.
+
+This is why double sharps and double flats occasionally appear in scales: the letter-name integrity takes precedence over using the "simplest" enharmonic spelling. The scale must have one note on each letter of the musical alphabet within an octave.
+
+## The sound of the major scale
+
+The major scale's sound is bright, optimistic, stable. The whole-whole-half opening gives it a clean ascending feel; the "leading tone" at the 7th degree (a half step below the tonic) pulls strongly toward resolution.
+
+Because the major scale contains so many strong consonances between its degrees (perfect 4ths, perfect 5ths, major 3rds, major 6ths), chords built from it tend to sound stable and pleasant. This is why most "happy" or "uplifting" music uses the major scale.
+
+Sung by children or beginning students, the major scale is almost always the first scale learned. It's the reference point for understanding every other scale in Western music.
+
+## Common questions
+
+**Why is it called "major" — major what?**
+
+The name comes from the interval between scale degrees 1 and 3 — a **major 3rd** (four half steps). This interval defines the scale's character. A scale with a minor 3rd between its 1st and 3rd degrees would be a minor scale. The labels "major" and "minor" ultimately come from which size third sits between the tonic and the third degree.
+
+**Why does C major have no accidentals?**
+
+Because the pattern of whole and half steps happens to match the layout of white keys on a piano. C major's half steps land exactly at E-F and B-C, which are the white-key-to-white-key half steps built into the keyboard. No accidentals are needed to produce the pattern; it's already there. This is why C major is traditionally the "starting" key for learning — its visual simplicity on the keyboard matches its conceptual simplicity.
+
+**Do all major scales sound the same?**
+
+In equal temperament, yes — they all have identical interval structure, just transposed. A C major scale and an F♯ major scale are the same pattern of whole and half steps; they just start on different notes. In historical tuning systems that slightly detuned certain intervals, different keys had subtly different characters. Modern tuning makes every major scale sound essentially equivalent.
+
+**Why is the octave (the 8th degree) considered "completing" the scale?**
+
+Because the 8th degree is the same pitch class as the 1st — they share the same note name, just an octave apart. Reaching the 8th means you've covered all seven distinct scale degrees and returned to your starting pitch class. The scale is complete at that point.

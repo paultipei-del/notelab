@@ -1,0 +1,106 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'pitch',
+  subtopic: 'modulation',
+  title: 'Modulation',
+  oneSentence:
+    'Modulation is the process of moving from one key to another within a piece — a fundamental device in tonal music that creates structural contrast, heightens emotional impact, and shapes the piece\'s harmonic journey.',
+  practice: [],
+  related: [
+    { title: 'The Circle of Fifths',     href: '/learn/pitch/the-circle-of-fifths' },
+    { title: 'Relative Major and Minor', href: '/learn/pitch/relative-major-and-minor' },
+    { title: 'Cadences',                 href: '/learn/harmony/cadences' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A piece doesn't have to stay in one key the whole way through. Composers frequently **modulate** — shift from one tonal center to another — for structural, expressive, or narrative reasons. A symphony movement might start in D major, travel through A major in its development, and return to D major for the recapitulation. A song might begin in G minor, rise to B♭ major for its bridge, and settle back into G minor for the final verse.
+
+Modulation is what gives tonal music its sense of journey. Without it, a piece stays in one harmonic world; with it, a piece travels. Different keys feel different — they have different brightness, different colors, different emotional temperatures — and moving between them is one of the most powerful tools in a composer's vocabulary.
+
+## The visual
+
+<DiagramPlaceholder description="A short excerpt beginning in C major, pivoting through a shared chord, and arriving in G major — labeled 'pivot chord modulation'." />
+
+<DiagramPlaceholder description="The same idea using a direct (chromatic) modulation from C major to A♭ major — a more dramatic shift." />
+
+## Types of modulation
+
+There are several common ways a piece can move between keys:
+
+**Pivot chord modulation.** The most common and smoothest type. The composer finds a chord that belongs to *both* the old key and the new key — a "pivot" — and uses it to transition. The listener hears the pivot chord first in the context of the old key; then the music reinterprets it as a chord in the new key, and subsequent chords confirm the new key.
+
+Example: in C major, the chord F-A-C (IV chord) is also a chord in G major (its IV would be C-E-G, but F-A-C is IV in C major and simultaneously the subdominant-related chord in G major). Passing through this shared chord smoothly transitions from C to G.
+
+**Direct (or chromatic) modulation.** The music simply starts in a new key without a smooth transition. Often marked by a new key signature appearing suddenly. This can be jarring or dramatic, depending on the harmonic distance and context.
+
+**Common tone modulation.** The transition uses a single pitch that belongs to both keys, sustained across the shift. Often more subtle than a pivot chord modulation, common tone modulation can produce magical-seeming shifts — the listener doesn't consciously register the key change until it's already happened.
+
+**Sequential modulation.** A melodic or harmonic pattern is repeated at a higher or lower pitch, gradually shifting the tonal center. Each repetition moves the music further from the original key.
+
+**Enharmonic modulation.** An enharmonic reinterpretation of a chord (like respelling a dominant 7th as a German augmented 6th) pivots the music to a distant key. This is a sophisticated technique that produces surprising, sometimes extreme modulations.
+
+## Common modulation destinations
+
+Some target keys are more common than others, reflecting how Western tonal music typically uses modulation:
+
+**To the dominant (up a perfect 5th).** The most common modulation. Moving from C major to G major, or from A minor to E minor. This creates a "rising" or "brightening" feel and provides contrast while staying tonally close. Sonata-form expositions almost always modulate to the dominant.
+
+**To the relative minor/major.** Moving from C major to A minor, or vice versa. Smooth because the keys share all pitches. Produces a mode shift (bright to dark or dark to bright) without needing new accidentals.
+
+**To the parallel key.** Moving from C major to C minor, or vice versa. Dramatic because the tonic stays but the character completely changes. Common in Romantic music and in specific dramatic sections.
+
+**To the subdominant (down a perfect 5th).** Moving from C major to F major. Less common than the dominant modulation; often feels "settling" or "relaxing" rather than tensing. Many hymns use this modulation.
+
+**To distant keys (by third or tritone).** Moving from C major to E major (major 3rd up), or to A♭ major (minor 6th down / major 3rd down). These chromatic mediant relationships were popular in 19th-century Romantic music and produce striking, sometimes otherworldly shifts.
+
+## How modulation shapes form
+
+Modulation isn't just a local effect — it's structural. Many classical forms are defined in part by their modulation patterns:
+
+**Sonata form** typically modulates from the tonic to a contrasting key (usually the dominant or relative major) in its exposition, explores multiple keys in its development, and returns to the tonic for its recapitulation.
+
+**Rondo form** often has contrasting episodes in different keys, with the main theme (and its key) returning between them.
+
+**Theme and variations** sometimes includes variations in different keys, particularly in the parallel minor or the relative key.
+
+**Fugue** frequently modulates through a series of closely related keys as different voices enter with the subject.
+
+Understanding where a piece modulates — and which keys it visits — is part of understanding its large-scale structure.
+
+## Telling a modulation from a passing chromaticism
+
+Not every accidental or unexpected chord means a modulation. Composers use chromatic harmony constantly *within* a single key — borrowed chords, secondary dominants, chromatic passing tones. Distinguishing genuine modulation from passing chromaticism is a key analytical skill.
+
+A real modulation usually has three features:
+
+1. **A clear establishment of a new tonic.** Not just a hint, but a confirmation — often via a cadence (V-I resolution) in the new key.
+2. **Extended duration.** The new key persists for several measures, not just a passing chord or two.
+3. **A change in melodic and harmonic emphasis.** Phrases now pull toward the new tonic; the old tonic stops being central.
+
+If those three features are present, you've got a modulation. If they're not, the music is probably still in the original key, just using temporary chromatic color.
+
+## Common questions
+
+**How long does a modulation last?**
+
+Varies enormously. A brief modulation might last only a few measures before returning to the original key. A major modulation (like in a sonata-form second theme) might last for a substantial section of the piece. Some pieces modulate and never return to the original key at all. The duration depends on the formal and expressive purpose.
+
+**Do all tonal pieces modulate?**
+
+Most do. Very short pieces (a simple song, a 16-bar dance) often stay in one key throughout. Longer pieces almost always modulate — the expressive variety provided by key changes is essential for sustaining listener interest over a long span. By the Classical era, modulation was a near-universal feature of instrumental music.
+
+**What's the most distant modulation possible?**
+
+The tritone — six steps around the circle of fifths. C major to F♯ major, or A minor to E♭ minor. These modulations share only one pitch between the keys and feel genuinely alien. They're rare in common-practice music but appear in dramatic moments, particularly in Romantic and post-Romantic composers (Liszt, Wagner, and later Debussy and Schoenberg).
+
+**How do composers decide where to modulate?**
+
+Partly by the formal conventions of the style they're working in (sonata form expects specific modulations), partly by the expressive arc they're building (a dark move calls for a flat-key modulation; a bright move calls for a sharp-key modulation), and partly by the melodic and harmonic opportunities in the specific material. Skilled composers use modulation strategically, placing key changes at moments of structural or emotional importance.

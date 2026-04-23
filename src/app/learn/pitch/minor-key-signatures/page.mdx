@@ -1,0 +1,112 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'pitch',
+  subtopic: 'minor-key-signatures',
+  title: 'Minor Key Signatures',
+  oneSentence:
+    'Every minor key shares its key signature with a major key — the two are called relative keys — so minor key signatures look identical to major ones, and the key signature alone doesn\'t tell you whether a piece is in major or minor.',
+  practice: [
+    { kind: 'flashcard', label: 'Minor Key Signatures Flashcards', detail: '15 cards', href: '/study/minor-key-signatures' },
+  ],
+  related: [
+    { title: 'Major Key Signatures',      href: '/learn/pitch/major-key-signatures' },
+    { title: 'Relative Major and Minor',  href: '/learn/pitch/relative-major-and-minor' },
+    { title: 'The Natural Minor Scale',   href: '/learn/scales/the-natural-minor-scale' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Every minor key uses the same seven pitches as some major key — just with a different tonic. A minor uses the same pitches as C major (no sharps or flats); E minor uses the same pitches as G major (one sharp). This means every minor key has an identical key signature to a major key. You don't learn a separate set of minor key signatures — you learn the pairings, the relative major/minor relationship that links them.
+
+There are fifteen minor key signatures, corresponding exactly to the fifteen major key signatures. Once you know major key signatures well, minor key signatures are a matter of knowing the relative relationship: the relative minor of any major key starts on the 6th degree of that major scale, and vice versa.
+
+## The visual
+
+<DiagramPlaceholder description="A staff with one sharp, labeled as both G major and E minor — the 'relative' pair." />
+
+<DiagramPlaceholder description="The fifteen pairs of major and minor keys shown as a table, each pair sharing a key signature." />
+
+## The fifteen minor key signatures
+
+**No accidentals:** A minor (relative of C major)
+
+**Sharp minor keys:**
+- 1 sharp: E minor (relative of G major)
+- 2 sharps: B minor (relative of D major)
+- 3 sharps: F♯ minor (relative of A major)
+- 4 sharps: C♯ minor (relative of E major)
+- 5 sharps: G♯ minor (relative of B major)
+- 6 sharps: D♯ minor (relative of F♯ major)
+- 7 sharps: A♯ minor (relative of C♯ major)
+
+**Flat minor keys:**
+- 1 flat: D minor (relative of F major)
+- 2 flats: G minor (relative of B♭ major)
+- 3 flats: C minor (relative of E♭ major)
+- 4 flats: F minor (relative of A♭ major)
+- 5 flats: B♭ minor (relative of D♭ major)
+- 6 flats: E♭ minor (relative of G♭ major)
+- 7 flats: A♭ minor (relative of C♭ major)
+
+## Finding the relative minor
+
+The relative minor of any major key is built on the **6th degree** of that major scale. In C major (C, D, E, F, G, A, B, C), the 6th degree is A. So A minor is the relative minor of C major.
+
+In G major (G, A, B, C, D, E, F♯, G), the 6th degree is E. So E minor is the relative minor of G major.
+
+In F major (F, G, A, B♭, C, D, E, F), the 6th degree is D. So D minor is the relative minor of F major.
+
+Another way to find the relative minor: count down a minor 3rd from the major tonic. C down a minor 3rd is A. G down a minor 3rd is E. F down a minor 3rd is D. The relative minor is always a minor 3rd below its relative major.
+
+## Finding the relative major
+
+Going the other direction: the relative major of any minor key is built on the **3rd degree** of that minor scale. In A natural minor (A, B, C, D, E, F, G, A), the 3rd degree is C. So C major is the relative major of A minor.
+
+In E natural minor (E, F♯, G, A, B, C, D, E), the 3rd degree is G. So G major is the relative major of E minor.
+
+Another way: count up a minor 3rd from the minor tonic. A up a minor 3rd is C. E up a minor 3rd is G.
+
+## Telling major from minor in the music
+
+Since the key signature alone doesn't distinguish major from minor, you have to look at the music to decide.
+
+**The ending is the strongest clue.** Classical and most tonal music ends on the tonic chord. A piece with one sharp that ends on G major is in G major. The same key signature ending on E minor is in E minor.
+
+**The opening is another strong clue.** Many tonal pieces begin on the tonic chord or strongly outline it.
+
+**Chord emphasis throughout tells you too.** Is the V chord a major chord with a leading tone (major key) or a minor-turned-major chord with a raised 7th (minor key)? The presence of raised-7th accidentals (which don't appear in the key signature) is often a signal that the piece is in minor.
+
+**The melodic character helps.** Major scales have a characteristic brightness; natural minor scales have a darker feel; harmonic minor's augmented 2nd stands out. With enough listening, the key becomes audible within a few measures.
+
+For written music, looking at the tonic-and-dominant chords is the fastest reliable method. For heard music, the ending note or final cadence is usually decisive.
+
+## Why the two share a key signature
+
+Because they share the same seven pitches. C major and A minor both use C, D, E, F, G, A, B. They just treat different notes as the tonic. When you look at the raw pitch collection, they're identical. The key signature — which is a notation of the pitch collection — is therefore also identical.
+
+This shared-pitch-set relationship is called the **relative** relationship. Major and its relative minor share notes but differ in tonic. It's one of the most fundamental relationships in tonal music, and it's covered in its own page.
+
+## Common questions
+
+**Is there a way to tell major from minor just by looking at the key signature?**
+
+No. The key signature is identical between a major key and its relative minor. You need to look at the music itself — the opening chord, the ending chord, the tonic emphasis — to determine which of the two keys the piece is in.
+
+**Can I just assume major when I see a key signature?**
+
+Statistically, most pieces *are* in major — roughly two-thirds of tonal music is in major keys. So "major by default" is a reasonable first guess. But in specific composers and genres (especially 19th-century Romantic music, some folk traditions, much film music), minor is very common. Never rely on the assumption; always check the music itself.
+
+**Do minor key signatures have their own order of sharps and flats?**
+
+No. The sharps and flats appear in the exact same order as in major keys — F-C-G-D-A-E-B for sharps; B-E-A-D-G-C-F for flats. The positions on the staff are also identical. A minor key with three sharps has F♯, C♯, and G♯ — the same as A major.
+
+**Are the three forms of minor (natural, harmonic, melodic) reflected in the key signature?**
+
+No — the key signature always reflects the **natural minor** form. The raised degrees of harmonic and melodic minor appear as accidentals within the music, not in the key signature. This is why minor-key pieces have lots of sharps or naturals that don't "belong" to the key signature — they're the raised 7th of harmonic minor or the raised 6th and 7th of melodic minor.

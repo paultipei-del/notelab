@@ -1,0 +1,118 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'pitch',
+  subtopic: 'parallel-major-and-minor',
+  title: 'Parallel Major and Minor',
+  oneSentence:
+    'Parallel major and minor keys share the same tonic — like C major and C minor — but have different key signatures, producing one of the most dramatic harmonic shifts in tonal music: same home, completely different character.',
+  practice: [],
+  related: [
+    { title: 'Relative Major and Minor',   href: '/learn/pitch/relative-major-and-minor' },
+    { title: 'The Major Scale',            href: '/learn/scales/the-major-scale' },
+    { title: 'The Natural Minor Scale',    href: '/learn/scales/the-natural-minor-scale' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Take a piece in C major. Now imagine the same piece in C minor — same tonic, same starting note, but dark and serious instead of bright. The two keys share their tonic (C) but nothing else — different key signatures, different scale patterns, different moods entirely.
+
+This pairing — same tonic, different key signature — is called the **parallel** relationship. C major and C minor are parallel keys. So are G major and G minor, F♯ major and F♯ minor, and so on.
+
+Parallel keys produce one of the most powerful shifts in tonal music: the sudden transformation from bright to dark (or vice versa) around a fixed home note. This is distinct from the **relative** relationship (same pitches, different tonic) and useful in completely different ways.
+
+## The visual
+
+<DiagramPlaceholder description="A staff showing C major (no accidentals) and C minor (three flats) side by side, both starting on C, illustrating that the tonic is the same but the pitches differ." />
+
+<DiagramPlaceholder description="A chord progression that modulates from C major to C minor, showing the dramatic tonal shift." />
+
+## The relationship
+
+Two keys are **parallel** to each other if they share the same tonic but have different key signatures (and therefore different pitch collections).
+
+- **C major** (no accidentals) is the parallel major of **C minor** (three flats).
+- **G major** (one sharp) is the parallel major of **G minor** (two flats).
+- **F major** (one flat) is the parallel major of **F minor** (four flats).
+
+Every major key has a parallel minor; every minor key has a parallel major. Like relative keys, there are fifteen such pairs, but they're constructed differently.
+
+## What changes between parallel keys
+
+From C major to C minor, the 3rd, 6th, and 7th degrees all drop by a half step:
+- C major: C, D, **E**, F, G, **A**, **B**, C
+- C minor: C, D, **E♭**, F, G, **A♭**, **B♭**, C
+
+Three degrees differ. The 3rd (E becomes E♭), the 6th (A becomes A♭), and the 7th (B becomes B♭). The tonic and the dominant (5th) and the 2nd stay the same. Everything else shifts down by a half step.
+
+This is consistent across every parallel pairing:
+
+From G major to G minor:
+- G major: G, A, **B**, C, D, **E**, **F♯**, G (one sharp)
+- G minor: G, A, **B♭**, C, D, **E♭**, **F**, G (two flats)
+
+The 3rd, 6th, and 7th degrees of G major (B, E, F♯) become the lowered versions in G minor (B♭, E♭, F natural). Same pattern.
+
+## The key signature change
+
+Moving from major to parallel minor always involves adding flats (or removing sharps) — specifically three "lowerings" in the key signature:
+
+- C major (0 accidentals) → C minor (3 flats). Added three flats: B♭, E♭, A♭.
+- G major (1 sharp) → G minor (2 flats). Removed one sharp, added two flats — net change of three flat-direction steps.
+- F♯ major (6 sharps) → F♯ minor (3 sharps). Removed three sharps.
+
+Every parallel major-to-minor transition shifts the key signature three steps in the flat direction (counter-clockwise around the circle of fifths). Every parallel minor-to-major transition shifts three steps in the sharp direction.
+
+This three-step shift corresponds to the three degrees (3rd, 6th, 7th) that change between the parallel major and minor scales.
+
+## Parallel keys in composition
+
+Composers use parallel-key relationships for specific dramatic effects:
+
+**Dramatic mode shift.** A piece in a major key might suddenly shift to its parallel minor for a contrasting section, producing a stark emotional change. Schubert's songs are full of this — a bright opening in major, a sudden dark turn to the parallel minor, then a return.
+
+**Picardy third.** A piece in a minor key might end on its parallel major's tonic chord — a kind of "surprise resolution" from minor to major. A Bach fugue in D minor, for instance, often ends on a D major chord (using F♯ instead of F). This is called a **Picardy third**, and it was a standard closing gesture in the Baroque era.
+
+**Borrowed chords.** Even within a single-key piece, composers often "borrow" a chord from the parallel minor (or parallel major) for momentary color. A piece in C major might use a iv chord (F minor) borrowed from C minor to add a brief dark moment before returning to major-key territory.
+
+**Thematic transformation.** A theme originally presented in major can be restated in parallel minor later in the piece to show emotional or narrative transformation. This is a staple of 19th-century Romantic music.
+
+## Parallel vs. relative
+
+To compare the two relationships:
+
+**Relative keys:**
+- Share: key signature, pitch collection
+- Differ: tonic
+- C major's relative minor is A minor
+
+**Parallel keys:**
+- Share: tonic
+- Differ: key signature, pitch collection
+- C major's parallel minor is C minor
+
+The two relationships serve different musical purposes. Relative keys are useful for smooth modulation (no new pitches needed); parallel keys are useful for dramatic tonal shifts (same tonic, completely different character). Both appear constantly in tonal music.
+
+## Common questions
+
+**Which is more common in tonal music — relative or parallel modulation?**
+
+Both are extremely common, but in different contexts. **Relative modulation** (to the relative minor or major) is smoother and appears more often in gentle, Classical-style transitions. **Parallel modulation** is more dramatic and appears more often in Romantic music and music with stark emotional contrasts.
+
+**Why don't the sharp/flat counts match up simply between parallel keys?**
+
+Because the relationship between tonic and key signature is different for major and minor. Major keys have their key signature "pointing toward" the major scale's 6th-degree relative minor; minor keys have their key signature pointing toward their 3rd-degree relative major. When you fix the tonic (as parallel keys do), the two different "pointing" relationships produce different key signatures for the two parallel keys.
+
+**Is it possible to modulate gradually between parallel keys?**
+
+Yes. Composers often use **chromatic mediant** relationships or **pivot chords** to modulate smoothly between parallel major and minor. The tonal gap is larger than between relative keys, so the modulation usually takes a few measures to complete fully. But the result is often deeply expressive.
+
+**In jazz, what's the equivalent concept?**
+
+Jazz uses parallel key relationships extensively, especially in bebop and modern jazz. The concept of "parallel minor ii-V" — borrowing a minor ii-V progression from the parallel minor while remaining in a major key — is a common technique that creates momentary dark color. Jazz also uses "modal interchange" extensively, which generalizes the parallel-key idea across all modes (borrowing chords from parallel Dorian, parallel Phrygian, etc.).

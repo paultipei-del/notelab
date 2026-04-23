@@ -1,0 +1,97 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'form-and-structure',
+  subtopic: 'binary-form',
+  title: 'Binary Form',
+  oneSentence:
+    'Binary form is a two-part structure (A-B) common in Baroque dance movements and many short pieces — the first section moves from the home key to a new key, and the second section returns, often with elaboration, to the home key.',
+  practice: [],
+  related: [
+    { title: 'Motive, Phrase, and Period',  href: '/learn/form-and-structure/motive-phrase-and-period' },
+    { title: 'Ternary Form',                 href: '/learn/form-and-structure/ternary-form' },
+    { title: 'Modulation',                   href: '/learn/pitch/modulation' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A piece in **binary form** has two main sections, each typically repeated. The first section (A) moves away from the home key — often modulating to the dominant (in major keys) or the relative major (in minor keys). The second section (B) departs further and then returns to the home key, closing the piece with a cadence in the original tonic.
+
+The structure is simple: two sections, each a harmonic journey, balanced across the middle. Binary form dominated Baroque dance music (nearly every minuet, gavotte, allemande, or sarabande you'll encounter is in binary form) and persists in many short pieces today — folk tunes, hymn verses, children's songs.
+
+Understanding binary form is the gateway to understanding more complex forms. Ternary form (ABA), rounded binary, sonata form — all of these extend or modify the basic binary idea.
+
+## The visual
+
+<DiagramPlaceholder description="A schematic diagram of binary form — section A going from tonic (I) to dominant (V), section B returning from V through various keys back to I, with repeat signs at both section boundaries." />
+
+<DiagramPlaceholder description="A short example of a Baroque minuet showing the A section (8 measures, ending in V) and B section (8 measures, ending back in I)." />
+
+## The basic shape
+
+Binary form has two sections, marked by double bar lines and typically with repeat signs:
+
+**A section** — opens in the tonic, ends in a contrasting key (usually the dominant in a major piece, or the relative major in a minor piece).
+
+**B section** — opens in the contrasting key, explores harmonic territory, and returns to the tonic for its final cadence.
+
+The whole structure is: **\|\|: A :\|\|: B :\|\|**
+
+Both sections repeat, giving the form its characteristic "AABB" sound in performance. The repeats let the listener absorb each section twice, which is especially useful in dance music where the repeats allow dancers multiple passes through each section.
+
+## Simple binary vs. rounded binary
+
+Two common variants:
+
+**Simple binary** — the B section doesn't bring back any material from A. It's its own distinct section, related to A mainly through the return to the home key.
+
+**Rounded binary** — the B section explores new material at first, then brings back a shortened version of A's opening material (usually in the home key) to close the piece. This produces a three-part feeling within a two-part structure: A, then B + A', with the final A' bringing a sense of return.
+
+Rounded binary is especially common in Classical-era dance movements (minuets) and in many short pieces. It's also one of the historical roots of sonata form: if you expand the B section significantly, you get something very close to sonata form.
+
+**Balanced binary** — a third variant where the B section ends with a recap of A's closing material, but in the tonic. This creates a different kind of symmetry: the same cadential gesture appears in both sections, but in different keys. The balanced binary is another root of sonata form.
+
+## Why the harmonic journey matters
+
+Binary form is defined by its harmonic plan, not just its sectional divisions. A piece with two sections isn't necessarily in binary form — it needs the specific modulation structure:
+
+- Move away from tonic in the A section (establishing tonal conflict)
+- Explore and return in the B section (resolving the conflict)
+
+This harmonic narrative is what gives binary form its shape. The tonal conflict in A creates expectation; the return in B fulfills it. The two-part repeat structure lets the listener hear the journey twice, reinforcing the pattern.
+
+In the 18th century, this harmonic structure was codified so strongly that composers rarely deviated from it. Nearly every Baroque dance movement follows the same basic plan: I → V in A, V → (various) → I in B.
+
+## Binary form in specific genres
+
+**Baroque dances.** The gavotte, minuet, courante, allemande, sarabande, gigue, bourrée — all standard Baroque dance types — are almost always in binary form. A Bach suite typically has 5-7 dance movements, each in binary form. Handel, Couperin, Rameau, and their contemporaries wrote thousands of binary-form pieces.
+
+**Hymns.** Many Protestant hymns are in rounded binary, with a verse structure that journeys out and returns. The repeats are often sung as separate verses with different lyrics.
+
+**Folk tunes.** Many folk melodies naturally fall into binary form, with a first half that "opens" and a second half that "closes." The structure fits the natural breath of a two-part song.
+
+**Theme and variations.** When composers write theme-and-variations sets, the "theme" is frequently a binary-form tune. Each variation then applies different treatments (ornamentation, new textures, rhythmic changes) to the same underlying binary structure.
+
+## Common questions
+
+**Why are both sections repeated?**
+
+Historical convention, mostly. Dancers needed repeats to complete the choreography. Listeners benefited from hearing each section twice to absorb the material. Performers had opportunities to add ornamentation on the second pass. The convention became so standard that pieces without repeats feel incomplete in a Baroque context, and pieces with repeats feel structurally balanced.
+
+**How long is each section typically?**
+
+Varies by genre, but 8 or 16 measures per section is most common. Short dances might have 4-measure sections; larger pieces might have 32 or more measures per section. Binary form is flexible about length — what matters is the two-part harmonic structure, not specific bar counts.
+
+**Is AABB the same as binary form?**
+
+AABB refers to performance (both sections repeated). Binary form refers to structure (two sections with a specific harmonic plan). They usually coincide in Baroque music, but not always — some binary-form pieces don't have repeats, and some pieces that repeat sections aren't technically in binary form if they lack the harmonic structure.
+
+**How does binary form relate to ternary?**
+
+They're related but distinct. Binary form has two sections where the second section returns to the home key without necessarily restating the opening material. Ternary form has three sections (A-B-A) where the final A restates the opening material and key. Rounded binary is a middle ground: two sections, but with a partial return to A within the B section. The distinction is important because the *listener experience* is different — binary feels like a journey with a return; ternary feels like a return of a specific familiar thing.

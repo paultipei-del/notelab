@@ -1,0 +1,105 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { C_MAJOR_WITH_DEGREES_XML } from './notations'
+
+export const learnPage = {
+  topic: 'scales',
+  subtopic: 'what-a-scale-is',
+  title: 'What a Scale Is',
+  oneSentence:
+    'A scale is an ordered collection of pitches — usually seven or fewer within an octave — that defines the tonal world of a piece, providing the raw material for its melodies, harmonies, and harmonic language.',
+  practice: [],
+  related: [
+    { title: 'The Major Scale',             href: '/learn/scales/the-major-scale' },
+    { title: 'What an Interval Is',         href: '/learn/intervals/what-an-interval-is' },
+    { title: 'Half Steps and Whole Steps',  href: '/learn/intervals/half-steps-and-whole-steps' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+When you hear a melody, it doesn't use all twelve chromatic pitches at random. Most Western music draws its melodies and harmonies from a **selected subset** of the twelve pitches — usually seven notes (sometimes fewer) chosen in a specific pattern and arranged in order from low to high. That selected subset is called a **scale**.
+
+A scale isn't just a collection — it's an *ordered* collection with a hierarchy. One note feels like "home" (the **tonic**); others have tendencies to move toward or away from it. The pattern of intervals between consecutive notes gives the scale its distinctive character — major scales feel bright; minor scales feel darker; modes have their own flavors; pentatonic scales feel spacious.
+
+Scales are the tonal vocabulary of music. A piece "in C major" uses the C major scale as its basic pitch set. A piece "in D minor" uses the D minor scale. The scale determines which notes are naturally available, which feel consonant with the tonic, and which create tension.
+
+## The visual
+
+<Notation
+  musicXml={C_MAJOR_WITH_DEGREES_XML}
+  caption="A C major scale ascending from C4 to C5, with scale-degree numbers 1 through 8 beneath each note."
+  ariaLabel="C major scale ascending with degree numbers 1 through 8."
+/>
+
+<DiagramPlaceholder description="A piano keyboard with the white keys of C major highlighted, showing the 'home' shape of the scale." />
+
+## What makes a scale
+
+Three features define every scale:
+
+**1. A tonic.** The home note, the reference point. The tonic gives the scale its name — C major has C as its tonic, D minor has D, and so on. When a melody ends, it usually lands on the tonic; when a chord progression resolves, it usually resolves to a chord built on the tonic.
+
+**2. A specific interval pattern.** The distances between consecutive notes of the scale. The major scale has a specific pattern (whole-whole-half-whole-whole-whole-half) that gives it its character. Minor scales have different patterns. Modes have their own. Change the pattern, change the scale.
+
+**3. An ordering.** Scales are organized low-to-high, with each note at a specific position within the octave. This ordering matters because it determines how each note functions relative to the tonic.
+
+All three features together define a scale. A collection of seven pitches isn't a scale until you identify one as the tonic and order them by pitch.
+
+## Scale degrees
+
+Each note in a scale has a **scale degree** — a number indicating its position in the scale:
+
+- 1st degree: the tonic
+- 2nd degree: one step above the tonic
+- 3rd degree: two steps above
+- 4th, 5th, 6th, 7th degrees: progressively higher
+- 8th degree: the tonic again, an octave up
+
+A seven-note scale (like the major or minor scale) has seven distinct degrees, with the 8th being the octave of the 1st.
+
+Scale degrees are also sometimes given functional names (tonic, supertonic, mediant, etc.) that describe their typical harmonic roles. These names matter for analysis and composition but are optional when learning scales.
+
+The degree-name system lets musicians discuss scales abstractly: "in any major key, the 7th degree is the leading tone" is a universal statement, regardless of which specific key is in use.
+
+## Diatonic vs. chromatic
+
+Scales built from specific patterns of whole steps and half steps within a single "tonal center" are called **diatonic** — they belong to a clear key. The major scale, the natural minor scale, and the modes are all diatonic.
+
+Scales that use more than seven notes per octave, or that don't establish a clear tonic, are called **chromatic** or **non-diatonic**. The chromatic scale itself uses all twelve notes; the whole tone scale uses six; the octatonic uses eight.
+
+Most of Western tonal music uses diatonic scales as its foundation. Non-diatonic scales are specialty tools, used for specific colors and effects.
+
+## Why scales matter
+
+A scale is the first thing a composer or improviser establishes. It's the background against which all the pitches of a piece are chosen. It determines:
+
+- Which notes sound "in" (consonant with the tonic) and which sound "out" (chromatic, altered)
+- The fundamental mood or character of the piece
+- The chord vocabulary available (chords are built by stacking scale tones)
+- The harmonic relationships — which chords follow which, which cadences feel natural
+
+Learning scales is foundational because nearly every other concept in music theory builds on them. Chords come from scales. Keys are defined by scales. Modulation moves between scales. Analysis starts with identifying the scale.
+
+## Common questions
+
+**Are scales the same as keys?**
+
+Closely related but not identical. A **scale** is the ordered pitch collection; a **key** is the broader tonal context of a piece, including the scale, the chords built on it, and the harmonic conventions that govern how the scale is used. In casual speech, the terms are often interchangeable ("I'm playing in C major" refers both to the scale and the key), but strictly speaking a key is broader than the scale alone.
+
+**Do scales always have seven notes?**
+
+Most Western scales do (major, minor, modes). But pentatonic scales have five; the chromatic scale has twelve; the whole tone scale has six; the octatonic (diminished) scale has eight. Scales vary by cultural tradition too — Indian classical music uses *ragas* with anywhere from five to seven notes; Arabic music uses *maqam* systems with microtonal intervals. The seven-note convention is specific to Western diatonic music.
+
+**Can I start a scale on any note?**
+
+Yes — that's the definition of transposition. The major scale has a fixed interval pattern, but you can apply that pattern starting from any pitch. C major, G major, F♯ major — all use the same pattern, just starting in different places. The "tonic" can be any of the twelve pitches.
+
+**What's the difference between a scale and a mode?**
+
+A **mode** is a specific kind of scale with a long tradition (Ionian, Dorian, Phrygian, etc.). The modes are essentially the same seven pitches as a major scale, but treated as having different tonics — so each mode is a scale with a unique interval pattern measured from its tonic. We have a dedicated page on modes. All modes are scales, but not all scales are modes.

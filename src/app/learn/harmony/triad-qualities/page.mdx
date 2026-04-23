@@ -1,0 +1,140 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'triad-qualities',
+  title: 'Triad Qualities',
+  oneSentence:
+    'The four triad qualities — major, minor, diminished, and augmented — are determined by the specific thirds and fifths stacked above the root, and they carry the four fundamental emotional colors of tonal harmony.',
+  practice: [
+    { kind: 'flashcard', label: 'Triad Qualities Flashcards', detail: '12 cards', href: '/study/triad-qualities' },
+  ],
+  related: [
+    { title: 'Triads — The Fundamental Chord',  href: '/learn/harmony/triads' },
+    { title: 'Interval Quality',                 href: '/learn/intervals/interval-quality' },
+    { title: 'Triads on Scale Degrees',          href: '/learn/harmony/triads-on-scale-degrees' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A triad has three notes: root, third, fifth. By varying *which* third (major or minor) and *which* fifth (perfect, diminished, or augmented) you stack above the root, you produce four distinct triad qualities — each with its own emotional color.
+
+- **Major** — bright, warm, stable
+- **Minor** — darker, more serious, stable
+- **Diminished** — tense, unstable, "compressed"
+- **Augmented** — tense, unstable, "stretched"
+
+These four qualities are the basic emotional palette of Western tonal harmony. Every major-scale and minor-scale chord is one of them. Most of the expressive shifts you hear in tonal music can be traced to changes in triad quality.
+
+## The visual
+
+<DiagramPlaceholder description="Four triads on a treble staff, all built on C, labeled — C major (C-E-G), C minor (C-E♭-G), C diminished (C-E♭-G♭), C augmented (C-E-G♯)." />
+
+<DiagramPlaceholder description="A visual showing the interval structure of each quality — which third (major or minor) and which fifth (perfect, diminished, augmented) is used." />
+
+## Major triad
+
+**Structure:** root + major 3rd + perfect 5th
+
+**From C:** C, E, G (C up to E is a major 3rd; C up to G is a perfect 5th)
+
+**Half-step measurements:**
+- Root to 3rd: 4 half steps (major 3rd)
+- 3rd to 5th: 3 half steps (minor 3rd)
+- Root to 5th: 7 half steps (perfect 5th)
+
+Notice the "major-third-on-top-of-minor-third" pattern: the major 3rd (C to E) is the lower interval, and a minor 3rd (E to G) sits on top. This 4+3 pattern is the major triad's internal structure.
+
+**Sound:** bright, warm, stable, consonant. Most Western music in major keys is built on major triads. The major triad feels "at home" — it's the default stable chord.
+
+**Example chords:** C major (C-E-G), G major (G-B-D), F major (F-A-C), D major (D-F♯-A), B♭ major (B♭-D-F).
+
+## Minor triad
+
+**Structure:** root + minor 3rd + perfect 5th
+
+**From C:** C, E♭, G (C up to E♭ is a minor 3rd; C up to G is a perfect 5th)
+
+**Half-step measurements:**
+- Root to 3rd: 3 half steps (minor 3rd)
+- 3rd to 5th: 4 half steps (major 3rd)
+- Root to 5th: 7 half steps (perfect 5th)
+
+The pattern is inverted from major: minor 3rd on the bottom, major 3rd on top. 3+4 instead of 4+3.
+
+**Sound:** darker, more serious, often described as "sad" or "melancholy." Still fully stable — the perfect 5th keeps the chord consonant. The minor 3rd, replacing the major 3rd, provides the emotional shift.
+
+**Example chords:** A minor (A-C-E), D minor (D-F-A), E minor (E-G-B), G minor (G-B♭-D), F♯ minor (F♯-A-C♯).
+
+## Diminished triad
+
+**Structure:** root + minor 3rd + diminished 5th
+
+**From C:** C, E♭, G♭ (C up to E♭ is a minor 3rd; C up to G♭ is a diminished 5th)
+
+**Half-step measurements:**
+- Root to 3rd: 3 half steps (minor 3rd)
+- 3rd to 5th: 3 half steps (minor 3rd)
+- Root to 5th: 6 half steps (diminished 5th / tritone)
+
+The pattern is two minor 3rds stacked (3+3), producing the characteristically tight sound.
+
+**Sound:** tense, unstable, unresolved. The diminished 5th between root and 5th is the tritone — the most dissonant interval in tonal music. Diminished triads don't feel like home; they feel like they need to resolve somewhere.
+
+**Example chords:** B diminished (B-D-F), C♯ diminished (C♯-E-G), F♯ diminished (F♯-A-C).
+
+In tonal music, diminished triads most commonly appear built on the 7th degree of a major scale (the leading-tone triad) or the 2nd degree of a minor scale (the supertonic triad). Both function as tension chords moving toward resolution.
+
+## Augmented triad
+
+**Structure:** root + major 3rd + augmented 5th
+
+**From C:** C, E, G♯ (C up to E is a major 3rd; C up to G♯ is an augmented 5th)
+
+**Half-step measurements:**
+- Root to 3rd: 4 half steps (major 3rd)
+- 3rd to 5th: 4 half steps (major 3rd)
+- Root to 5th: 8 half steps (augmented 5th)
+
+The pattern is two major 3rds stacked (4+4), producing the characteristically "stretched" sound.
+
+**Sound:** tense, ambiguous, often described as "mystical" or "floating." The augmented 5th pulls the chord out of tonal stability. Like the diminished triad, augmented triads typically function as tension chords wanting to resolve.
+
+**Example chords:** C augmented (C-E-G♯), F augmented (F-A-C♯), D augmented (D-F♯-A♯).
+
+Augmented triads are less common than the other three qualities in standard tonal music. They appear most often as altered dominant chords, as a coloristic effect in Romantic music, and as structural elements in some 20th-century harmony.
+
+## Summary — the four qualities at a glance
+
+| Quality | 3rd | 5th | Half-step pattern |
+|---------|-----|-----|---------|
+| Major | Major | Perfect | 4 + 3 |
+| Minor | Minor | Perfect | 3 + 4 |
+| Diminished | Minor | Diminished | 3 + 3 |
+| Augmented | Major | Augmented | 4 + 4 |
+
+Notice the symmetry: major and minor both have perfect 5ths (stable); diminished and augmented both have altered 5ths (unstable). Within each stability pair, the 3rd determines the flavor.
+
+## Common questions
+
+**Which triad quality is most common?**
+
+Major and minor are far more common than diminished and augmented. In a typical major-key piece, roughly half the triads are major, maybe a third are minor, a few are diminished (usually just the vii° chord), and augmented chords are rare. In minor-key music, minor dominates, but the harmonic minor's raised 7th introduces more augmented and diminished qualities.
+
+**Are diminished and augmented triads really unstable, or is that just convention?**
+
+Both. Acoustically, they contain less stable intervals (the tritone in diminished, the augmented 5th in augmented), which produces measurable beating and dissonance. Culturally, Western tonal music has spent centuries training listeners to hear these as "wanting to resolve" — a convention that's so deeply embedded that it feels like an acoustic fact. Both elements are real.
+
+**Can I hear the difference between the qualities without theory?**
+
+Yes, with some training. Major and minor are easy — most listeners can distinguish "happy" from "sad" chords. Diminished and augmented take a bit more listening. Diminished chords often sound "tense but dark"; augmented chords sound "tense but bright or mystical." With exposure, these become distinguishable.
+
+**Do all keys use all four triad qualities?**
+
+Sort of. A major key contains three major triads (I, IV, V), three minor triads (ii, iii, vi), and one diminished triad (vii°). No augmented triads naturally. Minor keys contain two minor triads (i, iv), two major triads (III, VI), a diminished triad (ii°), and the augmented triad built on the mediant (III+) appears in harmonic minor. So yes, all four qualities show up across tonal music, but not equally, and not all within a single key.

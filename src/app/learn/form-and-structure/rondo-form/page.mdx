@@ -1,0 +1,108 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'form-and-structure',
+  subtopic: 'rondo-form',
+  title: 'Rondo Form',
+  oneSentence:
+    'Rondo form is a structure in which a main theme (A) repeatedly returns, separated by contrasting episodes — A-B-A-C-A or A-B-A-C-A-B-A — producing a cheerful, circular shape that is especially common in final movements of classical sonatas and symphonies.',
+  practice: [],
+  related: [
+    { title: 'Ternary Form',                 href: '/learn/form-and-structure/ternary-form' },
+    { title: 'Sonata Form',                   href: '/learn/form-and-structure/sonata-form' },
+    { title: 'Motive, Phrase, and Period',    href: '/learn/form-and-structure/motive-phrase-and-period' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+**Rondo form** is built on repetition with variety. A main theme — called the refrain or **rondo theme** — returns multiple times, separated by contrasting sections called **episodes**. The main theme is the recurring element; the episodes provide variety between its returns.
+
+The result is a circular, celebratory structure. Listeners hear the familiar rondo theme again and again, with fresh episodes between each return. Rondos tend to be energetic, playful, and satisfying — the repeated return of the theme creates a sense of familiarity that's renewed each time.
+
+Classical-era composers used rondo form extensively, especially for the final movements of sonatas, concertos, and symphonies. The form's bright, returning character made it well-suited for "finale" movements that send the audience home on an uplifting note.
+
+## The visual
+
+<DiagramPlaceholder description="A schematic showing the rondo pattern — A-B-A-C-A-B-A (a seven-part rondo) with the returning A sections in the tonic and the contrasting episodes in different keys or characters." />
+
+<DiagramPlaceholder description="The opening of a Classical-era rondo finale, showing the rondo theme and its immediate return after the first episode." />
+
+## The basic structure
+
+A rondo has a recurring main theme (A) and contrasting episodes. The pattern is:
+
+**A - B - A - C - A** (five-part rondo)
+
+or
+
+**A - B - A - C - A - B - A** (seven-part rondo, sometimes called a "sonata rondo")
+
+In both, the A section is the rondo theme — the piece's main melodic material, always in the home key. The letters B, C (and sometimes D) represent episodes, each with its own character and often in different keys.
+
+The five-part rondo has two episodes between three returns of A. The seven-part rondo has four episodes between four returns, with B returning between the second and third A — giving it a ternary-like symmetry overall.
+
+## The rondo theme
+
+The rondo theme is the piece's anchor. It needs to be:
+
+**Catchy.** Listeners will hear it multiple times. It should be melodic enough to stay welcome on repeated hearings without becoming tedious.
+
+**Brief.** Typically 8, 16, or 32 measures — a self-contained period or small ternary. Long themes tire listeners when repeated; short themes stay fresh.
+
+**In the home key.** Every return of A is in the tonic. This is what gives the rondo its "returning home" feel.
+
+**Self-contained.** The theme ends with a strong cadence so it feels complete each time it returns. This lets the episode sections enter fresh rather than continuing an unresolved thread.
+
+## The episodes
+
+Episodes provide contrast. They typically:
+
+- **Are in different keys.** The first episode (B) is often in the dominant or relative major. Later episodes visit more distant keys for more dramatic contrast.
+- **Have different melodic material.** New themes, different characters, sometimes new textures.
+- **Lead back to the rondo theme.** The end of each episode prepares the return of A, usually by bringing the harmony back to the dominant or tonic of the home key.
+
+Episodes don't need to repeat material themselves. Each episode can be unique, giving the rondo a "variety show" feel — A, followed by something new, A returns, followed by something else new, A returns again.
+
+## Sonata rondo
+
+A specialized version called **sonata rondo** (or seven-part rondo with sonata characteristics) combines rondo structure with elements of sonata form. The pattern:
+
+**A - B - A - (development-like C) - A - B - A**
+
+The first episode (B) acts like a sonata exposition's second theme, typically in the dominant. The central section (C) behaves like a sonata development, exploring distant keys and manipulating material. The return of B in the tonic near the end mirrors a sonata recapitulation bringing the second theme home.
+
+Sonata rondo combines the recurring-theme charm of rondo form with the developmental weight of sonata form. It's common in Classical and Romantic finales — Beethoven's last movements in sonatas and symphonies often use it.
+
+## Rondo form in practice
+
+**Classical finales.** Mozart's, Haydn's, and Beethoven's late movements are frequently rondos. Mozart's Piano Concerto No. 21, K. 467, has a famous rondo finale. Beethoven's Piano Sonata Op. 13 (*Pathétique*), third movement, is a rondo.
+
+**Concerto finales.** Concertos especially favor rondos for their final movements — the soloist can shine in the episodes while the orchestra anchors the returns of the main theme.
+
+**Character pieces and salon music.** Some 19th-century piano pieces use loose rondo structures, with a recurring main theme and freely contrasting episodes.
+
+**Modern echoes.** The verse-chorus-verse-chorus-bridge-chorus structure of many pop songs has rondo DNA — the chorus returns repeatedly, with verses providing contrast. Not a strict rondo, but the principle of recurring-theme-with-variations runs through popular music structure.
+
+## Common questions
+
+**How is a rondo different from a theme and variations?**
+
+A rondo has **different** episodes between returns of the theme. A theme and variations has **variations of the same theme** separating returns (or more precisely, it's continuous variations of the same theme, with the theme evolving rather than returning). A rondo has distinct contrasting material between its returns; a theme and variations stays on the same theme throughout.
+
+**How long are rondo themes?**
+
+Typically 8, 16, or 32 measures. Short rondo themes keep the form lively — the theme returns often and fresh. Longer themes slow the pacing but give the theme more melodic development.
+
+**Do all returns of A have to be identical?**
+
+No. Composers often vary later returns — adding ornamentation, changing instrumentation, slight rhythmic variations. The essential melodic identity stays the same, but small variations can keep the theme interesting across multiple returns.
+
+**Can a rondo be slow?**
+
+Yes. While most classical rondos are fast and cheerful (especially those used as finales), slower rondos do exist. The character is flexible; the structural principle — a recurring theme separated by contrasting episodes — works at any tempo.

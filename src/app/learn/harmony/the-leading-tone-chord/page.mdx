@@ -1,0 +1,125 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'the-leading-tone-chord',
+  title: 'The Leading-Tone Chord',
+  oneSentence:
+    'The leading-tone chord — built on the 7th scale degree — is a diminished chord that functions almost identically to V7 but without the root, making it a powerful pre-tonic chord that appears constantly in first inversion and as a seventh chord in tonal music.',
+  practice: [],
+  related: [
+    { title: 'Secondary Chords',      href: '/learn/harmony/secondary-chords' },
+    { title: 'Seventh Chords',         href: '/learn/harmony/seventh-chords' },
+    { title: 'Cadences',               href: '/learn/harmony/cadences' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+The 7th scale degree is the **leading tone** — the note just a half step below the tonic, with a strong upward pull. The chord built on this degree, **vii°**, inherits that pull. It's a diminished triad in major keys and in harmonic minor, and it contains the same tritone (between its root and its 5th) that makes V7 so strong as a resolution chord.
+
+In fact, vii° is essentially **V7 without the root**. The top three notes of V7 (the 3rd, 5th, and 7th) are the same as the three notes of vii°. Dropping V7's root and analyzing what's left gives you the leading-tone chord. This tight relationship means vii° functions almost identically to V7 in resolving to the tonic — making it another central chord in the harmonic vocabulary of tonal music.
+
+## The visual
+
+<DiagramPlaceholder description="In C major, a V7 chord (G-B-D-F) next to a vii° chord (B-D-F), showing that vii° is V7 minus its root." />
+
+<DiagramPlaceholder description="A vii°6 resolving to I in C major, showing smooth voice leading — B to C, D to C (or E), F to E." />
+
+## The basic leading-tone chord
+
+**In a major key:**
+- Built on the 7th scale degree (the leading tone)
+- Quality: **diminished** (because the diminished 5th is formed between the leading tone and the 4th scale degree above it)
+- In C major: vii° = B-D-F
+
+**In a harmonic minor key:**
+- Built on the raised 7th scale degree
+- Quality: **diminished** (same reason — raised 7 to 4 is a tritone)
+- In A minor: vii° = G♯-B-D
+
+In both cases, the leading-tone chord is diminished, because its root-to-5th interval is always a tritone (6 half steps). That tritone is the chord's functional core — it's the source of its tension and its resolution tendencies.
+
+## Why vii° functions like V7
+
+Compare V7 (the dominant seventh) and vii° (the leading-tone triad) in C major:
+
+- **V7:** G - **B** - **D** - **F**
+- **vii°:** **B** - **D** - **F**
+
+vii° contains the top three notes of V7. The missing note is G, V7's root. But the root of a chord isn't always essential to its function — if the other three notes are present, they still carry most of the chord's harmonic weight.
+
+The critical thing V7 and vii° share is the tritone between B and F. That tritone is what creates the strong pull to resolve: B wants to go up to C, F wants to go down to E, and the resolution produces the tonic chord C-E-G. Whether you play a full V7 (G-B-D-F) or just vii° (B-D-F), the tritone does most of the functional work.
+
+This means **vii° resolves to I very similarly to how V7 does.** You might even hear vii° as "V7 with the root implied" — the listener's ear fills in the absent G, because the B-D-F configuration so strongly implies dominant function.
+
+## The leading-tone chord in first inversion
+
+In practice, **vii° rarely appears in root position.** The diminished triad has an unstable, "unresolved" quality, and with the leading tone as its lowest note, root-position vii° feels especially unstable.
+
+Instead, vii° is most commonly found in **first inversion: vii°6**.
+
+In C major:
+- vii°6 = D-F-B (with D in the bass)
+
+In first inversion, the bass note (D, the 2nd scale degree) is a step away from the tonic (C), creating smooth voice leading to the following I chord. The progression vii°6 → I has the bass moving D → C (stepwise down) and the leading tone B → C (stepwise up) — very natural melodic motion.
+
+This stepwise smoothness is why vii°6 → I is such a common alternative to V → I in tonal music. It produces the same harmonic resolution but with gentler bass motion.
+
+## The leading-tone seventh chord
+
+Adding a seventh to the leading-tone triad produces the **leading-tone seventh chord**, which comes in two flavors:
+
+**Half-diminished seventh (viiø7)**, used in major keys:
+- Diminished triad + minor 7th
+- In C major: viiø7 = B-D-F-A
+- Sound: tense but slightly "softer" than fully diminished
+- Most common in major-key contexts
+
+**Fully diminished seventh (vii°7)**, used in minor keys (from harmonic minor):
+- Diminished triad + diminished 7th
+- In A minor: vii°7 = G♯-B-D-F
+- Sound: very tense, highly chromatic, dramatic
+- Famous for its ability to resolve in many directions (can lead to many different keys, making it useful for modulation)
+
+The fully diminished seventh chord is particularly powerful. Because all its intervals are minor thirds (it's a symmetric chord), it has a unique property: any of its notes can be treated as a new leading tone, resolving to a different key. This makes vii°7 a favorite "pivot chord" for dramatic modulations in Romantic and later music.
+
+## When to use vii° vs. V7
+
+Both chords resolve to I in similar ways, so when does a composer choose one over the other?
+
+**Choose V7 when:**
+- You want a strong, definitive cadence (like the ending of a piece)
+- You want the fuller sound of a four-note dominant chord
+- The root motion (V to I, a descending fifth) supports the phrase
+
+**Choose vii° or vii°6 when:**
+- You want a smoother, less assertive cadence
+- The bass is moving stepwise (vii°6 → I keeps bass motion smooth)
+- You want a more subtle harmonic color
+- You want the extra tritone tension of the leading-tone seventh chord
+
+Both options are common. Good composers use them both strategically, matching chord choice to local musical needs.
+
+## Common questions
+
+**If vii° is just V7 without the root, why do we bother analyzing it separately?**
+
+Because the absence of the root affects how the chord sounds and functions. vii° is a three-note diminished triad; V7 is a four-note dominant seventh chord. They share structure but are not identical. Their voicings, their bass notes, and their specific harmonic colors differ. Analytically, treating them separately captures these differences. In theory-of-theory conversations, we might acknowledge they're functionally close cousins, but in specific harmonic analysis, they're distinct chords.
+
+**Why is vii° built on the leading tone specifically diminished in every major key?**
+
+Because the interval from the 7th scale degree to the 4th scale degree is always a tritone in any major scale. (From B to F in C major: six half steps.) A chord built on 7 with scale degrees 7, 2, 4 is therefore root-to-minor 3rd, root-to-diminished 5th — a diminished triad. The pattern is structural to the major scale itself.
+
+**Is vii° used in jazz?**
+
+Less often than in classical music. Jazz tends to use V7 as its default dominant and rarely uses plain vii° triads. Half-diminished and fully diminished seventh chords do appear in jazz but usually function more specifically — viiø7 in minor ii-V-i progressions, vii°7 as a substitute for V7♭9, and so on. Jazz favors the more colorful extended versions of leading-tone harmony over the basic triad.
+
+**Why does the diminished seventh chord have such a special reputation for dramatic effect?**
+
+Because of its symmetric structure. Every interval in a fully diminished seventh chord is a minor 3rd (3+3+3 half steps). This means it has no clear "root" acoustically — any of its notes could be the root, depending on enharmonic spelling. Composers exploit this ambiguity: a fully diminished seventh chord can resolve to four different tonics depending on how it's interpreted. This makes it uniquely versatile as a modulation tool and creates the characteristic "dramatic pause" sound that Romantic composers used so often.

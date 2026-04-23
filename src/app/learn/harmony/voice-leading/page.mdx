@@ -1,0 +1,148 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'harmony',
+  subtopic: 'voice-leading',
+  title: 'Voice Leading',
+  oneSentence:
+    'Voice leading is the art of connecting chords so that each individual voice — soprano, alto, tenor, bass — moves as smoothly and melodically as possible, usually by step or small leap, producing harmonic progressions that feel natural rather than mechanical.',
+  practice: [],
+  related: [
+    { title: 'Non-Chord Tones',    href: '/learn/harmony/non-chord-tones' },
+    { title: 'Triad Inversions',    href: '/learn/harmony/triad-inversions' },
+    { title: 'Cadences',            href: '/learn/harmony/cadences' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+When a progression moves from one chord to the next, each note in the chord has to go somewhere. The soprano voice might move up a step. The alto might hold its note. The tenor might leap down a third. The bass might step up a fourth. Each of these individual motions is a **voice** — an independent melodic line — and how all four voices move simultaneously is called **voice leading**.
+
+Good voice leading is what makes a chord progression feel like music instead of a sequence of isolated sonorities. Bad voice leading — with awkward leaps, parallel fifths, unresolved tendencies — makes even a correctly spelled progression sound strange or wrong. Voice leading is perhaps the subtlest art in tonal harmony, and it's what separates workmanlike composition from masterful composition.
+
+## The visual
+
+<DiagramPlaceholder description="Two four-voice realizations of the same I-IV-V-I progression in C major — one with awkward voice leading (lots of parallel motion, large leaps), one with smooth voice leading (stepwise motion, no parallels, close voicing)." />
+
+<DiagramPlaceholder description="A chord progression with arrows indicating the motion of each voice — showing how soprano, alto, tenor, bass each move independently but together." />
+
+## The four voices
+
+Traditional four-part writing uses four voices arranged roughly from highest to lowest:
+
+- **Soprano** — highest, often carries the melody
+- **Alto** — second highest
+- **Tenor** — second lowest
+- **Bass** — lowest, often carries the harmonic foundation
+
+This is the **SATB** layout familiar from choral music and the Bach chorales that are the standard training ground for voice-leading study. Each voice has a typical range: soprano roughly C4-G5, alto G3-D5, tenor C3-G4, bass E2-C4.
+
+Each voice is an independent melodic line. Good voice leading treats each voice as if a singer had to perform it — meaning the voice should move melodically, avoiding awkward leaps and dissonances, while fitting into the overall harmonic progression.
+
+## Fundamental principles of voice leading
+
+Four core principles govern smooth voice leading in common-practice style:
+
+**1. Move each voice as little as possible.**
+
+When a chord changes, move each voice to the nearest chord tone of the new chord. If a voice can hold its current note (because that note is also in the next chord), hold it. If it must move, move by step rather than leaping when possible.
+
+This principle produces *smooth* progressions. Listeners hear the collective motion as a gentle shifting of harmonic color rather than as a series of discrete chord changes.
+
+**2. Preserve the leading tone and tendency tones.**
+
+Certain notes have strong melodic tendencies. The **leading tone** (scale degree 7) pulls up to the tonic (1). The **7th of a V7 chord** pulls down to the 3rd of I. These tendency tones should resolve in their expected direction when the chord changes; deviating creates a sense of incompleteness.
+
+Example: in V7 → I in C major, the B (leading tone, 3rd of V7) should move up to C (tonic), and the F (7th of V7) should move down to E (3rd of I). Good voice leading respects these resolutions.
+
+**3. Avoid parallel fifths and parallel octaves.**
+
+When two voices move together by the same interval, in the same direction, with specifically a perfect fifth or a perfect octave between them, you have **parallel fifths** or **parallel octaves**. These are considered bad voice leading in common-practice tonal style.
+
+Why? Because they collapse the independence of the voices. When two voices move in parallel fifths, they sound like a single "thickened" voice rather than two independent melodies. The textural richness of four-voice writing depends on voices maintaining distinct melodic lines; parallels undermine that.
+
+This rule is strictly enforced in Baroque and Classical counterpoint. In modern popular music, parallel fifths are common (power chords are literally parallel fifths), and composers like Debussy used them deliberately for coloristic effect. But in traditional tonal voice leading, they're avoided.
+
+**4. Resolve dissonances properly.**
+
+Dissonances in a voice (like the 7th of a seventh chord, or any non-chord tone) should resolve in specific ways. The 7th of V7 resolves down by step. A 4-3 suspension resolves from the 4th to the 3rd above the bass. An appoggiatura resolves by step in the opposite direction of its approach.
+
+Unresolved dissonances don't "count as" harmonic progression in common-practice style — they leave the music unfinished. Resolution is part of how dissonance functions.
+
+## Common voice-leading errors
+
+Several patterns are flagged as errors in traditional four-part writing:
+
+**Parallel fifths** — two voices moving by the same interval in the same direction, maintaining a perfect 5th between them.
+
+**Parallel octaves** — same as above but with an octave between the voices.
+
+**Hidden (or direct) fifths and octaves** — when two voices *arrive at* a perfect 5th or octave by similar motion (both moving up or both down), with a leap in the soprano. Less serious than outright parallels but still usually avoided.
+
+**Large leaps in inner voices** — soprano and bass can reasonably leap for melodic emphasis, but alto and tenor should prefer stepwise motion or small leaps.
+
+**Unresolved leading tones** — the leading tone leaping away from the tonic instead of resolving up to it, in an outer voice especially, creates incomplete resolution.
+
+**Doubling the leading tone** — in a V or V7 chord, doubling the leading tone creates voice-leading problems (both doublings would try to resolve up to the tonic, producing parallel octaves when they both resolve).
+
+These rules originate from counterpoint study in the Renaissance and Baroque, and they remain the gold standard for common-practice voice leading. Breaking them isn't always wrong — skilled composers break them for specific expressive reasons — but knowing the rules lets you break them deliberately rather than accidentally.
+
+## Doubling
+
+In four-voice writing, a three-note triad must have one pitch **doubled** (played in two voices) to produce four sounding notes. Which note to double is a voice-leading decision:
+
+**Root-position triads: double the root.** The root is the chord's strongest pitch; doubling it emphasizes the chord's identity without creating voice-leading problems.
+
+**First-inversion triads: double the root or the 5th (not the 3rd).** The 3rd is in the bass, where its presence is already emphasized; doubling it would emphasize it further at the expense of the other tones. Double the root or the 5th for a more balanced sound.
+
+**Second-inversion triads: double the bass (the 5th).** This is a specific convention for the unstable 6/4 chord. Doubling the 5th (which is in the bass) creates the characteristic open sound of 6/4 chords.
+
+**Seventh chords: don't double the 7th.** The 7th is a tendency tone that needs to resolve; doubling it creates parallel resolution problems. In a V7, typically the root is doubled (in root position), or the voices are arranged so each of the four chord tones appears once.
+
+These doubling rules aren't absolute, but they're the defaults that produce smooth voice leading in most situations. Skilled composers vary doublings for specific textural or expressive reasons.
+
+## Voice leading across progressions
+
+When you write a progression, the voice-leading choices at each chord change determine the overall texture. Here's the general approach for a typical progression:
+
+1. **Identify common tones.** If any pitch appears in both the current chord and the next chord, have that pitch held in one voice (usually an inner voice).
+
+2. **Move the remaining voices stepwise if possible.** Each voice should move to the closest chord tone of the new chord.
+
+3. **Respect tendency tones.** The leading tone resolves up; the 7th of a seventh chord resolves down.
+
+4. **Avoid parallels.** Check that no two voices are moving in parallel 5ths or octaves.
+
+5. **Balance the voicing.** Don't leave big gaps between adjacent voices (soprano and alto, or alto and tenor, shouldn't be more than an octave apart; tenor and bass can be).
+
+Applying these steps to a I-IV-V-I progression in C major produces voice leading like:
+
+- I (C-E-G-C): soprano C, alto E, tenor G, bass C
+- IV (F-A-C-F): soprano C (held), alto A (up a 3rd), tenor F (stepwise from G — wait, from G down to F is a step), bass F (up a 4th from C)
+- V (G-B-D-G): soprano B (stepwise down from C), alto D (up a 3rd from A), tenor G (up a step from F), bass G (up a step from F)
+- I (C-E-G-C): soprano C (resolve up from B), alto E (down a 3rd from G — wait, should check parallels), tenor G (held), bass C (down a 5th from G)
+
+Working through each chord change carefully like this produces voice leading that sounds natural and singable, avoiding the rough patches that come from moving chords mechanically.
+
+## Common questions
+
+**Why are parallel fifths considered wrong when they sound fine in pop music?**
+
+Because the rule is specific to common-practice tonal style (Baroque, Classical, Romantic counterpoint). In that style, maintaining four independent voices is aesthetically central. Parallel fifths collapse that independence. In pop music, rock, and some modernist styles, parallel fifths are common and often deliberate — they produce a specific sound that's musically valid in those styles. The rule isn't universal; it's style-specific.
+
+**Is voice leading only relevant to classical music?**
+
+No. Voice leading applies to any music where multiple voices (or instrumental lines) move independently. Jazz comping, pop arrangement, orchestration, choral arranging, barbershop quartets, rock band parts — all involve voice-leading decisions. The specific rules vary by style, but the core idea (each voice should move melodically, connecting smoothly between chords) is universal.
+
+**How do I practice voice leading?**
+
+Traditional practice: work through Bach chorales, first analyzing them to see how Bach handles each chord change, then attempting to write your own four-voice progressions in the same style. Most music theory curricula spend significant time on this. You can also practice by arranging simple melodies with four-voice accompaniment, making each voice musically coherent on its own.
+
+**What's the relationship between voice leading and non-chord tones?**
+
+Closely linked. Non-chord tones often *enable* better voice leading by providing stepwise motion where a pure chord-tone line would require leaps. A passing tone between two chord tones smooths the line; a neighbor tone avoids having to move at all; a suspension creates expressive delay. Composers and arrangers use non-chord tones strategically to improve voice leading, not just for melodic decoration.

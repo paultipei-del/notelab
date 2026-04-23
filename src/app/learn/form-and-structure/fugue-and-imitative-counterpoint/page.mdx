@@ -1,0 +1,135 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'form-and-structure',
+  subtopic: 'fugue-and-imitative-counterpoint',
+  title: 'Fugue and Imitative Counterpoint',
+  oneSentence:
+    "A fugue is a complex polyphonic form built around a subject (a short theme) that's introduced in one voice and then successively imitated in other voices — the crowning achievement of contrapuntal writing and one of the great structural challenges in Western composition.",
+  practice: [],
+  related: [
+    { title: 'Voice Leading',         href: '/learn/harmony/voice-leading' },
+    { title: 'Sonata Form',            href: '/learn/form-and-structure/sonata-form' },
+    { title: 'Theme and Variations',   href: '/learn/form-and-structure/theme-and-variations' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A **fugue** is a piece built through imitation. A short theme — the **subject** — is introduced by one voice. Another voice then enters with the same subject (transposed to a different pitch level), while the first voice continues with new material. A third voice enters with the subject again, then a fourth. By the end of the opening section (the **exposition**), all the voices have stated the subject in turn, and the piece proceeds with the voices weaving the subject through various keys, combinations, and transformations.
+
+Fugue is arguably the most intellectually demanding of the classical forms. It requires each voice to be melodically interesting on its own while fitting contrapuntally with the others. It requires the subject to work in multiple keys simultaneously. It requires the composer to maintain motion, variety, and coherence across what can be a long and dense piece. Bach is the unquestioned master — his *Well-Tempered Clavier* contains 48 fugues that remain the touchstone of the form.
+
+## The visual
+
+<DiagramPlaceholder description="The opening of a fugue showing the subject entering in the first voice, followed by the answer (the subject transposed) in the second voice, followed by the subject returning in the third voice — demonstrating the cascading imitation." />
+
+<DiagramPlaceholder description="A schematic of fugue structure — exposition (all voices enter with subject), episodes, middle entries (subject returns in related keys), final entries (subject in the tonic), coda." />
+
+## The subject
+
+The **subject** is the piece's primary thematic material. It's typically:
+
+- **Short** — often 2-4 measures, sometimes up to 8
+- **Distinctive** — melodically and rhythmically memorable so listeners can track it through the piece
+- **Self-contained** — able to start and end cleanly, without needing continuation
+- **Versatile** — able to work against itself in counterpoint (against a countersubject and against inversions, augmentations, etc.)
+
+A good fugue subject rewards development. It's simple enough to be recognizable but flexible enough to generate extensive contrapuntal material.
+
+## The exposition
+
+The **exposition** is the opening section where all voices enter with the subject in turn:
+
+1. **Voice 1** enters alone with the subject in the tonic key.
+
+2. **Voice 2** enters with the **answer** — the subject transposed, usually to the dominant key. Meanwhile, voice 1 continues with new material (called the **countersubject**, if it recurs consistently).
+
+3. **Voice 3** enters with the subject back in the tonic key. Voices 1 and 2 continue with countersubject material.
+
+4. **Voice 4** (if present) enters with the answer in the dominant. All other voices continue in counterpoint.
+
+The pattern of alternation — subject in tonic, answer in dominant, subject in tonic, answer in dominant — is standard. Fugues typically have 3, 4, or 5 voices, sometimes more.
+
+The exposition establishes the subject and the contrapuntal texture. By the time all voices have entered, the listener has heard the subject multiple times and understood its shape.
+
+## Real vs. tonal answer
+
+When the answer enters, it's the subject transposed. But what interval of transposition?
+
+**Real answer** — an exact transposition of the subject, typically up a perfect 5th (to the dominant) or down a perfect 4th. The answer is an exact intervallic copy of the subject.
+
+**Tonal answer** — a slightly modified transposition. Some intervals are changed to keep the answer in the proper key without creating awkward modulations. Specifically, if the subject contains a leap from tonic to dominant, a tonal answer might invert that leap in the answer to avoid modulating to the dominant of the dominant.
+
+The choice between real and tonal answers depends on the subject. If the subject stays cleanly within the tonic triad, a real answer works. If the subject's intervals would create harmonic problems when transposed, a tonal answer adjusts to keep the music in the proper key.
+
+## Countersubject and episodes
+
+After the first voice enters with the subject and the second voice enters with the answer, the first voice often plays a consistent counter-melody against the answer. This is the **countersubject** — a fixed countermelody that recurs whenever the subject appears, providing a contrapuntal partner.
+
+**Episodes** are passages between subject entries. They often use sequenced material derived from the subject or countersubject, exploring different keys, and building toward the next entry of the subject. Episodes provide variety and forward motion, preventing the fugue from feeling like a mechanical succession of subject entries.
+
+## Middle entries and modulation
+
+After the exposition, the fugue continues with **middle entries** — appearances of the subject in related keys. A fugue in C major might have middle entries in G major, A minor, E minor, D minor, F major, and so on. Each middle entry presents the subject in a new tonal context, connected to the others by episodes.
+
+The middle section of a fugue is typically the most harmonically adventurous, visiting various keys and exploring the subject's character in different tonal lights.
+
+## Final entries and conclusion
+
+The fugue's conclusion usually brings the subject back to the tonic key for its final appearances, often in multiple voices simultaneously (a technique called **stretto** — where the subject enters in one voice before the previous voice has finished stating it, creating overlap).
+
+A coda may extend the ending with a final dramatic flourish, often a sustained chord or pedal point over which the subject makes a last appearance.
+
+## Contrapuntal devices
+
+Fugues often employ specific contrapuntal techniques to transform the subject:
+
+**Inversion.** The subject is turned upside down — ascending intervals become descending intervals and vice versa.
+
+**Retrograde.** The subject is played backwards, from last note to first.
+
+**Retrograde inversion.** Both backwards and upside down simultaneously.
+
+**Augmentation.** The subject's note values are doubled, playing it in twice-as-long durations.
+
+**Diminution.** The subject's note values are halved, playing it in twice-as-short durations.
+
+**Stretto.** Overlapping entries where voices enter with the subject before previous voices have finished.
+
+**Double fugue / triple fugue.** A fugue with two (or three) subjects, each given its own treatment and eventually combined.
+
+A master fugue might use several of these devices across its length, demonstrating the subject's versatility and the composer's contrapuntal ingenuity.
+
+## Bach and the Art of Fugue
+
+Johann Sebastian Bach is the universally acknowledged master of the fugue. His works:
+
+- **The Well-Tempered Clavier** — two books, each containing 24 preludes and fugues, one in each of the 24 major and minor keys. 48 fugues total, representing every possible key.
+- **The Art of Fugue** — Bach's late, unfinished work exploring the fugue in systematic depth. Fourteen fugues and four canons, all based on a single subject, using virtually every contrapuntal device known.
+- **Individual fugues within larger works** — the fugues in his organ works, the "48" (as the WTC is sometimes called), and finales of several instrumental works.
+
+Later composers continued to write fugues — Mozart, Beethoven, Mendelssohn, Brahms, Shostakovich, and many others — but Bach's fugues remain the standard by which all others are measured.
+
+## Common questions
+
+**Is fugue a form or a technique?**
+
+Both. "Fugue" refers to a specific compositional approach (imitative counterpoint built around a subject) and also to pieces structured around that approach. A fugal passage within a larger work uses fugue's techniques but isn't necessarily a "fugue" as a standalone piece. The standalone fugue is a piece (or movement) entirely organized around the fugal principle.
+
+**How many voices does a fugue typically have?**
+
+3, 4, or 5 voices is most common. 3-voice fugues are more transparent; 4-voice fugues are the standard. 5-voice fugues are quite dense. Bach wrote fugues with as many as 5 voices; 6-voice fugues are rare but exist.
+
+**Is fugue still used today?**
+
+Composers still write fugues, but less systematically than in Bach's time. Modern fugues often appear within larger works — a fugal passage in a symphony, a fugue as the final movement of a multi-movement work. The form has immense prestige, so composers often include fugues in their large works as a kind of demonstration of contrapuntal skill.
+
+**How is a fugue different from a canon?**
+
+A **canon** has strict imitation — each voice plays exactly the same material (usually transposed), with no new material for the voices that have already entered. A **fugue** uses imitation in the exposition (voices entering with the subject) but then departs from strict imitation, with each voice playing independent material while weaving the subject through various keys. A canon is pure imitation all the way through; a fugue uses imitation as a starting point for more flexible counterpoint.
