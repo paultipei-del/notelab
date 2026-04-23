@@ -1,0 +1,97 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import {
+  C_MAJOR_XML,
+  G_MAJOR_XML,
+  D_MAJOR_XML,
+  F_MAJOR_XML,
+  B_FLAT_MAJOR_XML,
+} from './notations'
+
+export const learnPage = {
+  topic: 'pitch',
+  subtopic: 'major-key-signatures',
+  title: 'Major Key Signatures',
+  oneSentence:
+    'A major key signature is the set of sharps or flats written at the start of a piece, telling you which notes are altered throughout — there are fifteen in total, one for each major key.',
+  practice: [
+    {
+      kind: 'flashcard',
+      label: 'Major Key Signatures Flashcards',
+      detail: '15 cards',
+      href: '/study/major-key-signatures',
+    },
+  ],
+  related: [
+    { title: 'Minor Key Signatures', href: '/learn/pitch/minor-key-signatures' },
+    { title: 'Circle of Fifths', href: '/learn/pitch/circle-of-fifths' },
+    { title: 'Major Scales', href: '/learn/pitch/major-scales' },
+    { title: 'Enharmonic Equivalents', href: '/learn/pitch/enharmonic-equivalents' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Music in a particular key tends to use a specific set of seven notes — the scale of that key. Rather than write a sharp or flat next to every altered note throughout the piece, composers put them once at the beginning of each line, in the key signature. The pattern of sharps or flats in a key signature is determined by the scale of the key.
+
+A piece in G major, for example, uses an F♯ throughout. Instead of marking that F♯ over and over, the key signature places one sharp on the F line at the start of each staff. Every F in the piece is now understood to be F♯ unless otherwise marked.
+
+## The visual
+
+<Notation musicXml={C_MAJOR_XML} caption="C major — no sharps or flats" ariaLabel="Treble clef with no sharps or flats (C major)" />
+
+<Notation musicXml={G_MAJOR_XML} caption="G major — one sharp (F♯)" ariaLabel="Treble clef with one sharp, F sharp (G major)" />
+
+<Notation musicXml={D_MAJOR_XML} caption="D major — two sharps (F♯, C♯)" ariaLabel="Treble clef with two sharps, F sharp and C sharp (D major)" />
+
+<Notation musicXml={F_MAJOR_XML} caption="F major — one flat (B♭)" ariaLabel="Treble clef with one flat, B flat (F major)" />
+
+<Notation musicXml={B_FLAT_MAJOR_XML} caption="B♭ major — two flats (B♭, E♭)" ariaLabel="Treble clef with two flats, B flat and E flat (B flat major)" />
+
+## How key signatures are built
+
+Sharps always appear in a fixed order: **F C G D A E B**. Each new sharp key adds the next sharp to the signature. C major has none. G major adds F♯. D major adds C♯. A major adds G♯. And so on, up to C♯ major, which contains all seven sharps.
+
+Flats appear in the opposite order: **B E A D G C F** — the same letters, reversed. F major has B♭. B♭ major adds E♭. E♭ major adds A♭. The pattern continues to C♭ major, which contains all seven flats.
+
+There are fifteen major key signatures in total: one with no accidentals (C major), seven with sharps, and seven with flats.
+
+## Identifying a key from its signature
+
+Once you know the order of sharps and flats, you can read any key signature directly:
+
+For **sharp keys**, the last sharp in the signature is the leading tone of the key — the note one half step below the tonic. A signature with three sharps (F♯ C♯ G♯) ends on G♯, and one half step above G♯ is A. The key is A major.
+
+For **flat keys**, the second-to-last flat in the signature *is* the tonic. A signature with three flats (B♭ E♭ A♭) — the second-to-last flat is E♭. The key is E♭ major. (For F major, which has only one flat, this rule needs an exception: F major is simply memorized.)
+
+## The circle of fifths connection
+
+Key signatures aren't arbitrary — they follow a clear pattern. Moving from C major up by a perfect fifth lands on G major (one sharp). Up another fifth lands on D major (two sharps). Each step adds a sharp, and the new sharp is always the one we just landed on as the leading tone.
+
+Moving down from C major by a fifth (or up by a fourth) lands on F major (one flat). Each step in that direction adds a flat. This relationship — keys arranged in fifths, accidentals accumulating in order — is the circle of fifths, and it organizes all the key signatures into a single coherent map.
+
+## Enharmonic equivalents
+
+Three pairs of major keys sound identical on a keyboard but are written with different signatures: F♯ major and G♭ major, C♯ major and D♭ major, B major and C♭ major. Composers choose between them based on which spelling makes the music easier to read for the harmonic context at hand.
+
+## Common questions
+
+**Why isn't there a key with a mix of sharps and flats?**
+
+Because the order is fixed. Sharps appear in their order; flats appear in theirs. A key signature is always *some number of sharps* or *some number of flats*, never both. The two systems are alternative ways of writing the same set of pitches — never combined.
+
+**What's the difference between F♯ major and G♭ major?**
+
+On a piano, they sound identical. On the page, they're spelled completely differently — F♯ major uses six sharps, G♭ major uses six flats. Composers pick the spelling that fits the surrounding music. A piece moving through sharp-side keys will use F♯ major; one moving through flat-side keys will use G♭ major.
+
+**Why does B major have five sharps but C♭ major has seven flats, when they're the same key?**
+
+They're enharmonically the same set of pitches, but B major requires fewer accidentals to write, so it appears far more often in real music. C♭ major exists for cases where the harmonic context (a piece centered on flat keys, for instance) makes the seven-flat spelling the clearer choice.
+
+**Do I need to memorize all fifteen?**
+
+Eventually, yes — fluent reading depends on instantly recognizing key signatures. But the patterns above (the order of sharps and flats, the leading-tone rule, the circle of fifths) mean you don't have to memorize fifteen separate facts. Once the patterns are internalized, the fifteen key signatures become five or six rules applied consistently.

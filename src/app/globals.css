@@ -1823,6 +1823,65 @@ body:has(.nl-study-viewport) {
   color: #b5402a;
 }
 
+/* Prose styling for /learn MDX bodies. Matches NoteLab typography tokens
+   (Jost body, Cormorant headings); line-height generous for long-form
+   reading. Scoped to .nl-learn-prose so it only applies to reference
+   pages, not the rest of the app. */
+.nl-learn-prose {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: #2A2318;
+  max-width: 64ch;
+}
+.nl-learn-prose p {
+  margin: 0 0 18px 0;
+}
+.nl-learn-prose h2 {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 26px;
+  color: #2A2318;
+  letter-spacing: 0.01em;
+  margin: 40px 0 12px 0;
+  line-height: 1.3;
+}
+.nl-learn-prose h3 {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #2A2318;
+  margin: 28px 0 10px 0;
+  line-height: 1.35;
+}
+.nl-learn-prose strong {
+  font-weight: 500;
+  color: #1A1A18;
+}
+.nl-learn-prose em {
+  font-style: italic;
+}
+.nl-learn-prose a {
+  color: #b5402a;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.nl-learn-prose ul,
+.nl-learn-prose ol {
+  margin: 0 0 18px 0;
+  padding-left: 22px;
+}
+.nl-learn-prose li {
+  margin-bottom: 6px;
+}
+/* Notation blocks span the full prose width (not capped at max-width: 64ch). */
+.nl-learn-prose .nl-notation {
+  max-width: none;
+  margin: 24px 0;
+}
+
 /* Domain color tokens for deck tiles — low-saturation (≈30%), medium
    lightness (≈60%), evenly spaced across the hue wheel so adjacent decks
    in the grid read as visually distinct at scroll speed. */
