@@ -1,0 +1,160 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'aural-skills',
+  subtopic: 'interval-recognition',
+  title: 'Interval Recognition',
+  oneSentence:
+    "Interval recognition is the skill of identifying the distance between two pitches by ear — hearing a melodic leap and knowing it's a perfect 5th, or hearing a harmonic pair and recognizing it as a minor 3rd — built through repeated listening with specific techniques for each interval type.",
+  practice: [
+    { kind: 'flashcard', label: 'Intervals Flashcards', detail: '10 cards', href: '/study/intervals' },
+  ],
+  related: [
+    { title: 'What Ear Training Is',              href: '/learn/aural-skills/what-ear-training-is' },
+    { title: 'The Seven Reference Intervals',      href: '/learn/intervals/the-seven-reference-intervals' },
+    { title: 'Solfège and Movable Do',             href: '/learn/aural-skills/solfege-and-movable-do' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+**Interval recognition** is the ability to identify an interval (the distance between two pitches) just by hearing it. You hear two notes — sounded one after another, or both at once — and you identify them as a major 3rd, a perfect 5th, a minor 7th, or whatever they are.
+
+This is one of the most practically useful ear training skills. When you can identify intervals, you can:
+- Write down melodies you hear (melodic dictation)
+- Understand the relationships in chord voicings
+- Recognize motives in pieces you're studying
+- Improve your sight-singing (because you can predict what each interval should sound like)
+- Transcribe music from recordings
+
+Interval recognition develops through specific practice. Most people need dozens to hundreds of repetitions to internalize each interval reliably. The payoff — being able to hear music with precise understanding — is large.
+
+## The visual
+
+<DiagramPlaceholder description="Each of the seven reference intervals (major 2nd, major 3rd, perfect 4th, perfect 5th, major 6th, major 7th, octave) shown on a staff, with an 'ear symbol' indicating these should be heard and recognized, not just read." />
+
+## The approach
+
+Interval recognition works in two directions:
+
+**Melodic intervals** — two pitches played one after another. You hear the first pitch, then the second, and identify the distance between them. This is the most common practice format, and melodic interval recognition is often easier to develop than harmonic.
+
+**Harmonic intervals** — two pitches played simultaneously. You hear both notes at once and identify their interval. This is harder because your ear has to separate the two pitches and compute the distance, rather than hearing them in succession.
+
+Most practice focuses on melodic intervals first, with harmonic intervals added later.
+
+## Reference song technique
+
+A practical method for memorizing intervals: associate each interval with the opening of a familiar song. When you hear an interval, you think "what song starts like that?"
+
+Common associations:
+
+**Ascending intervals:**
+- **Minor 2nd (half step)** — "Jaws" theme (da... dum)
+- **Major 2nd (whole step)** — "Happy Birthday" (opening two notes)
+- **Minor 3rd** — "Greensleeves" (opening two notes); also the first two notes of "Brahms's Lullaby"
+- **Major 3rd** — "When the Saints Go Marching In" (first two notes); "Oh When the Saints"
+- **Perfect 4th** — "Here Comes the Bride"; "Amazing Grace" (first two notes); "Away in a Manger"
+- **Tritone (augmented 4th / diminished 5th)** — "Maria" from West Side Story (opening); "The Simpsons" theme
+- **Perfect 5th** — "Twinkle, Twinkle Little Star"; Star Wars main theme (opening)
+- **Minor 6th** — "The Entertainer" (third to fourth notes); theme from "Love Story"
+- **Major 6th** — "My Bonnie Lies Over the Ocean"; NBC theme
+- **Minor 7th** — "Somewhere" from West Side Story; "Star Trek" theme (original series)
+- **Major 7th** — "Take On Me" (third to fourth notes); often quite hard to hear
+- **Perfect Octave** — "Somewhere Over the Rainbow" (first two notes); "The Christmas Song" (first two notes of "Chestnuts roasting...")
+
+**Descending intervals:**
+- **Minor 2nd** — "Joy to the World" (first two notes, descending scale)
+- **Major 2nd** — "Mary Had a Little Lamb" (first two notes); any descending scale
+- **Minor 3rd** — "Hey Jude" (opening)
+- **Major 3rd** — "Swing Low, Sweet Chariot" (opening of refrain); "Summertime" from Porgy and Bess
+- **Perfect 4th** — "I've Been Working on the Railroad" (opening)
+- **Perfect 5th** — "Feelings" (first two notes); Flintstones theme ("Flintstones")
+- **Major 6th** — "Nobody Knows the Trouble I've Seen" (opening of melody line)
+- **Minor 7th** — "The Winner Takes It All" (opening)
+- **Perfect Octave** — "Bali Ha'i" from South Pacific; any clear octave leap down
+
+Song references are highly individual — use the songs *you* know. If "Here Comes the Bride" doesn't resonate with you, find another tune that features a perfect 4th ascending and use that instead.
+
+## Alternative techniques
+
+**Quality-based hearing:**
+- **Major 3rd** — "bright, warm" quality
+- **Minor 3rd** — "darker, more plaintive" quality
+- **Perfect 5th** — "open, hollow" quality (very distinctive)
+- **Tritone** — "tense, unstable" quality (unmistakable once you know it)
+- **Major 7th** — "close, leaning" quality (wants to resolve up)
+- **Minor 7th** — "open, bluesy" quality
+- **Octave** — "the same note, higher" feeling
+
+Many experienced musicians eventually hear intervals by their quality alone, without needing a reference song. This develops naturally with extensive listening practice.
+
+**Solfège-based recognition:**
+
+If you know solfège, you can identify intervals by the syllables at each end:
+- Do-re = major 2nd
+- Do-mi = major 3rd
+- Do-fa = perfect 4th
+- Do-sol = perfect 5th
+- Do-la = major 6th
+- Do-ti = major 7th
+- Do-do (octave) = perfect octave
+
+This requires knowing which syllables appear where in the scale, but once you do, you can identify intervals by tracking the syllable distance. Ascending from mi to sol is a minor 3rd (because mi to sol in the major scale is a minor 3rd interval). Ascending from re to fa is also a minor 3rd.
+
+**The "half step test":**
+
+A rough approach: count half steps mentally between the two pitches. If the first note feels like it's a "short distance" to the second (one or two half steps), it's a 2nd. If the distance is "medium" (three or four half steps), it's a 3rd. And so on. This is imprecise but can get you in the right ballpark while you develop more refined skills.
+
+## Practice strategies
+
+**Focus on one interval at a time.** Don't try to drill all intervals at once. Work on major 3rds for a week until you can reliably identify them. Then add minor 3rds. Then 4ths and 5ths. Build up gradually.
+
+**Practice in both directions.** An ascending major 3rd (C to E) sounds different from a descending major 3rd (E to C). Work on both directions for each interval.
+
+**Practice in context.** Intervals in isolation are easier than intervals in musical context. Practice both — drilling intervals with random pitches, and also identifying intervals within melodies.
+
+**Use apps.** Many apps (EarMaster, Tenuto, Teoria, Auralia, etc.) provide reliable interval practice with instant feedback. A few minutes of daily practice on an app accelerates recognition significantly.
+
+**Transcribe melodies.** Write down melodies you hear. This applies interval recognition directly — every melodic move is an interval you need to identify.
+
+**Listen to music analytically.** Try to identify intervals in music you're listening to normally. What interval is the first leap in this melody? What interval forms the hook of this pop song? Making interval identification a habit builds skill over time.
+
+## Which intervals are hardest?
+
+Some intervals are trickier than others:
+
+**Major 7ths** — often confused with octaves (which they nearly reach). Requires careful listening to detect the "not quite an octave" quality.
+
+**Minor 6ths** — can be confused with major 6ths; the difference is subtle.
+
+**Tritones** — highly distinctive once you know them, but beginners sometimes confuse them with 4ths or 5ths.
+
+**Major 7ths vs. octaves** — trip up many intermediate students.
+
+**Harmonic intervals vs. melodic intervals** — even if you can identify a melodic 3rd instantly, the harmonic version (both notes at once) takes additional practice.
+
+Expect these to take longer than the "easy" intervals (octaves, perfect 5ths, major 3rds). With patience, they all become reliable.
+
+## Common questions
+
+**How long does it take to develop reliable interval recognition?**
+
+For the common intervals (within an octave, ascending and descending), 3-6 months of regular practice (10-20 minutes per day) usually produces reliable recognition. Some intervals (like major 7ths) might take longer. Expertise continues to develop for years.
+
+**Do I need absolute pitch to recognize intervals?**
+
+No. Relative pitch is the relevant skill. You don't need to know that the first note is an F♯ — you just need to know that the distance between the two notes is a perfect 5th. Relative pitch is learnable; absolute pitch is not essential.
+
+**Can I recognize intervals without solfège?**
+
+Yes. Solfège is a powerful tool but not the only way. You can use song references, qualitative descriptions, or half-step counting. Many musicians develop interval recognition without solfège at all.
+
+**What's the most practical interval to learn first?**
+
+Major and minor 3rds, or perfect 4ths and 5ths. These are extremely common in music and very useful. The 3rds are essential because they define chord qualities (major vs. minor). The 5th is distinctive and functionally important (it's the strongest interval in the overtone series). Start with these four intervals; the rest will follow.

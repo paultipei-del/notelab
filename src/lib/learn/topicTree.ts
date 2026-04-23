@@ -205,14 +205,14 @@ export const TOPIC_TREE: LearnTopic[] = [
     description:
       'How to hear what you read — interval recognition, chord quality, dictation, and the ear that every musician builds.',
     subtopics: [
-      { slug: 'what-aural-skills-are', title: 'What Aural Skills Are', hasPage: false },
-      { slug: 'hearing-intervals', title: 'Hearing Intervals', hasPage: false },
-      { slug: 'hearing-chord-qualities', title: 'Hearing Chord Qualities', hasPage: false },
-      { slug: 'hearing-scales-and-modes', title: 'Hearing Scales and Modes', hasPage: false },
-      { slug: 'hearing-cadences', title: 'Hearing Cadences', hasPage: false },
-      { slug: 'rhythmic-dictation', title: 'Rhythmic Dictation', hasPage: false },
-      { slug: 'melodic-dictation', title: 'Melodic Dictation', hasPage: false },
-      { slug: 'hearing-keys-and-modulation', title: 'Hearing Keys and Modulation', hasPage: false },
+      { slug: 'what-ear-training-is', title: 'What Ear Training Is', hasPage: true },
+      { slug: 'solfege-and-movable-do', title: 'Solfège and Movable Do', hasPage: true },
+      { slug: 'interval-recognition', title: 'Interval Recognition', hasPage: true },
+      { slug: 'chord-identification', title: 'Chord Identification', hasPage: true },
+      { slug: 'melodic-dictation', title: 'Melodic Dictation', hasPage: true },
+      { slug: 'rhythmic-dictation', title: 'Rhythmic Dictation', hasPage: true },
+      { slug: 'sight-singing', title: 'Sight-Singing', hasPage: true },
+      { slug: 'developing-your-ear-over-time', title: 'Developing Your Ear Over Time', hasPage: true },
     ],
   },
 ];
