@@ -1,0 +1,92 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { C_MAJOR_SCALE_ASCENDING_XML } from './notations'
+
+export const learnPage = {
+  topic: 'reading-and-notation',
+  subtopic: 'note-names-and-the-musical-alphabet',
+  title: 'Note Names and the Musical Alphabet',
+  oneSentence:
+    'Western music names pitches using the first seven letters of the alphabet — A, B, C, D, E, F, G — which repeat in every octave, giving every pitch a letter name that tells you its position in the musical alphabet.',
+  practice: [
+    { kind: 'flashcard', label: 'Treble Clef Notes Flashcards', detail: '15 cards', href: '/study/treble-clef-notes' },
+    { kind: 'flashcard', label: 'Bass Clef Notes Flashcards',   detail: '15 cards', href: '/study/bass-clef-notes' },
+  ],
+  related: [
+    { title: 'The Staff',                        href: '/learn/reading-and-notation/the-staff' },
+    { title: 'Clefs',                            href: '/learn/reading-and-notation/clefs' },
+    { title: 'Octaves and Pitch Classes',        href: '/learn/sound-and-hearing/octaves-and-pitch-classes' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Music uses only seven letter names — **A, B, C, D, E, F, G** — to name every possible pitch. After G, the alphabet loops back to A, and the pattern repeats. Because an octave contains exactly seven letter-named pitches (plus five additional sharps or flats that share these letter names), these seven letters are enough to label every note in every octave.
+
+The musical alphabet is short, cyclical, and universal. Learn it cold in both directions — forward and backward — and reading music becomes dramatically faster.
+
+## The visual
+
+<Notation
+  musicXml={C_MAJOR_SCALE_ASCENDING_XML}
+  caption="A full octave ascending from middle C to the C above it on a treble staff: C, D, E, F, G, A, B, C. The alphabet walks up the staff, alternating line and space."
+  ariaLabel="Treble staff showing eight quarter notes ascending from C4 to C5 — a C major scale. Notes: C, D, E, F, G, A, B, C."
+/>
+
+<DiagramPlaceholder description="A piano keyboard showing two octaves with every C highlighted and labeled — illustrating the cyclic nature of the seven-letter alphabet across octaves." />
+
+## The seven letters
+
+The musical alphabet:
+
+> **A, B, C, D, E, F, G** — back to A
+
+That's the entire system. Every pitch in Western music has one of these seven letters as its base name. Sharp and flat variants (C♯, B♭, etc.) keep the base letter and add an accidental — they're still part of the C family or the B family, just altered.
+
+Moving up one letter in the alphabet (from C to D, for example) moves up one "step" — sometimes a whole step, sometimes a half step, depending on which letters are involved. The distances aren't uniform, which we'll address when we cover intervals and scales. For naming, though, it doesn't matter: C is always C, regardless of what's around it.
+
+## The alphabet on the staff
+
+On a treble staff, the lines and spaces correspond to specific letters:
+
+- **Lines** (bottom to top): E, G, B, D, F
+- **Spaces** (bottom to top): F, A, C, E
+
+Reading up the staff, alternating line and space: E (line), F (space), G (line), A (space), B (line), C (space), D (line), E (space), F (line) — a continuous alphabetical walk from E to F.
+
+This is what every staff line and space is: a step in the musical alphabet. Once you understand that, reading pitch stops being memorization and becomes pattern recognition — you see a note one line above another and know it's two letters higher.
+
+## Why seven letters
+
+Historically, the seven-letter alphabet comes from the seven-note diatonic scale of Western music. Early European music notation (developing roughly a thousand years ago) used letter names to label pitches within this seven-note framework. When sharps and flats were added to the system, they kept the existing letters rather than getting new ones — so instead of inventing a name for the pitch between C and D, the system calls it either C♯ (C raised) or D♭ (D lowered).
+
+This is why the musical alphabet has seven letters even though the full chromatic scale has twelve pitches: the five "extra" pitches are modifications of the existing seven, not separate entities.
+
+## Reading notes fluently
+
+Fluent note reading is less about knowing the names and more about recognizing them instantly. Every sighted reader does the same thing with English letters — you don't decode "C-A-T" letter by letter; you see "cat" as a shape. Musical reading works the same way. The goal isn't to remember that the second space in treble clef is A; it's to see a note in that space and think "A" without any intermediate step.
+
+Reaching that fluency takes practice, but the path is simple: read music every day, even for just a few minutes. Name notes out loud as you read. Use flashcards to drill individual positions until they're instant. It's a muscle, and it builds.
+
+## Common questions
+
+**Why does the alphabet start at A but the most common scale starts at C?**
+
+Historical layering. The seven letters originally referred to the Greek tetrachord system, with A as a reference point. Later, the note C became the reference for the standard major scale (the "natural" scale — all white keys on a piano). The letters didn't renumber to match, so we inherited a system where the alphabet starts at A but the "home" major scale starts at C. It's not elegant, but it's consistent once you know it.
+
+**Do some languages use different note names?**
+
+Yes. German uses H for what English calls B, and B for what English calls B♭. Romance languages (Italian, Spanish, French) use solfège syllables (do, re, mi, fa, sol, la, ti) alongside or instead of letter names. Slavic languages often use the German system. For classical music study, the English letter system is the most common international convention, though solfège is widely used for ear training and sight-singing.
+
+**What about the "H" some people use?**
+
+In German-language music theory, **H** is used for the note English speakers call **B** (natural). Meanwhile, the German **B** means B♭. Bach famously encoded his own name as a motif (B♭–A–C–B♮ in English, which spells B-A-C-H in German notation). This quirk dates back to medieval notation and remains standard in German and some Scandinavian countries. If you see "H" in a piece of music theory text, check the language conventions.
+
+**Why do I still have to memorize the note names if reading is pattern recognition?**
+
+Because pattern recognition is built on top of memory. You need the names *first* — automatically, in all four clefs — before the higher-level pattern-reading can develop. Flashcards and drill exercises build the foundation. Real music reading reinforces it and extends it.

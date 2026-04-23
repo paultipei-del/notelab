@@ -1,0 +1,106 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { ENHARMONIC_PAIRS_XML, C_SHARP_VS_D_FLAT_IN_E_MAJOR_XML } from './notations'
+
+export const learnPage = {
+  topic: 'reading-and-notation',
+  subtopic: 'enharmonic-equivalents',
+  title: 'Enharmonic Equivalents',
+  oneSentence:
+    'Enharmonic equivalents are pitches that sound identical but are spelled differently — like F♯ and G♭ — and choosing between them is a matter of musical context, not physical pitch.',
+  practice: [],
+  related: [
+    { title: 'Accidentals',                 href: '/learn/reading-and-notation/accidentals' },
+    { title: 'The Chromatic Scale',         href: '/learn/sound-and-hearing/the-chromatic-scale' },
+    { title: 'Enharmonic Intervals',        href: '/learn/intervals/enharmonic-intervals' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+On a piano, every key plays one specific pitch. But in music theory, many of those pitches have two valid names. The black key between C and D can be called C♯ (C raised) or D♭ (D lowered). The white key we usually call F can also be called E♯ (E raised) in the right context. These pairs are called **enharmonic equivalents** — same sound, different spelling.
+
+Why two names for the same pitch? Because music isn't really about individual notes in isolation — it's about how notes relate to the key, the scale, and the surrounding harmony. A well-chosen spelling makes the music's logic visible on the page. A poorly chosen spelling makes it unreadable.
+
+## The visual
+
+<Notation
+  musicXml={ENHARMONIC_PAIRS_XML}
+  caption="The five common enharmonic pairs: C♯ / D♭, D♯ / E♭, F♯ / G♭, G♯ / A♭, A♯ / B♭. Each pair sounds identical but sits on different staff positions — the sharp spelling is always one letter below the flat spelling."
+  ariaLabel="Treble staff showing ten quarter notes across three measures — five pairs of enharmonic equivalents: C-sharp with D-flat, D-sharp with E-flat, F-sharp with G-flat, G-sharp with A-flat, A-sharp with B-flat."
+/>
+
+<Notation
+  musicXml={C_SHARP_VS_D_FLAT_IN_E_MAJOR_XML}
+  caption="The same pitch in E major, spelled two ways. Left: C♯ — no accidental drawn, the sharp is covered by the key signature. Right: D♭ — explicit flat accidental, required because D is already sharp in this key. Same sound; one reads cleanly, the other fights the key."
+  ariaLabel="Two whole notes in E major. The first is C-sharp, which inherits its sharp from the key signature. The second is D-flat, which requires an explicit flat accidental to cancel the key signature's D-sharp and lower D by a half step."
+/>
+
+## The five common pairs
+
+Within a single octave, there are five pairs of enharmonic equivalents — the five black keys on a piano, each with two names:
+
+- **C♯ = D♭**
+- **D♯ = E♭**
+- **F♯ = G♭**
+- **G♯ = A♭**
+- **A♯ = B♭**
+
+All five are pitches that sit between natural notes. Each can be spelled with a sharp (raising the lower note) or a flat (lowering the upper note). Both spellings refer to the exact same key on a piano, the exact same frequency, the exact same sound.
+
+## The less common pairs
+
+Some natural notes also have enharmonic equivalents, even though they're on white keys:
+
+- **B = C♭** — a B natural can be spelled as C-flat in keys where that fits better
+- **C = B♯** — a C natural can be spelled as B-sharp
+- **E = F♭** — an E natural can be spelled as F-flat
+- **F = E♯** — an F natural can be spelled as E-sharp
+
+These "white key" enharmonics are less common in everyday music but appear naturally in certain keys. The scale of G♯ minor, for example, includes F𝄪 (F double-sharp), which sounds the same as a natural G. The scale of C♯ major includes B♯, which sounds the same as a natural C.
+
+## Why context determines spelling
+
+A key signature commits a piece to a specific family of sharps or flats. In **E major** (four sharps: F♯, C♯, G♯, D♯), every altered pitch is spelled with a sharp. If the music temporarily moves through the pitch between C and D, it's called C♯ — because the rest of the piece is operating in the sharp family. Spelling it D♭ would be correct in terms of sound but wrong in terms of musical logic. The reader would stumble.
+
+In **A♭ major** (four flats: B♭, E♭, A♭, D♭), the same pitch is spelled D♭ — because the piece is in the flat family. Every reader and performer expects the flats. Spelling it C♯ would be equally wrong.
+
+This is the core rule: **spell pitches according to the key you're in, and according to the scale or chord the music is currently outlining.** The spelling that makes the music's logic visible is the correct spelling; the sound is identical either way.
+
+## Enharmonic modulation
+
+Composers sometimes use enharmonic equivalents as a pivot for modulation — switching keys mid-piece. A chord in one key can be respelled enharmonically to function as a different chord in a new key. A famous example: the German augmented sixth chord, which sounds identical to a dominant seventh but functions completely differently. Respelling it mid-phrase allows a seamless shift to an unexpected key.
+
+This is advanced harmony, but the mechanism is worth mentioning even at the reference level: **enharmonic spelling is a tool composers use to navigate key changes smoothly.** What looks like a simple respelling on the page can carry real harmonic meaning.
+
+## The three "same key" enharmonics
+
+Three pairs of major keys sound identical on a piano but are written with different signatures:
+
+- **F♯ major** (six sharps) **= G♭ major** (six flats)
+- **C♯ major** (seven sharps) **= D♭ major** (five flats)
+- **B major** (five sharps) **= C♭ major** (seven flats)
+
+Same physical pitches, different notation. Composers choose between them based on which signature involves fewer accidentals for the music at hand, or which fits the surrounding harmonic context. Most music in these registers chooses whichever is easier: D♭ major is far more common than C♯ major, for example, because five flats is easier to read than seven sharps.
+
+## Common questions
+
+**Why don't composers just use whichever spelling is easier?**
+
+Because musical context rules. The "easier" spelling in the abstract might disrupt the scale or chord the music is outlining. If an E major scale needs an altered note between A and B, that note must be spelled A♯ — because an A must exist in the scale, raised. Respelling it as B♭ would give the scale two Bs and no A, which is nonsense. Composers prioritize theoretical correctness over abstract simplicity, because correctness makes the music easier to read *in context*.
+
+**Do performers treat enharmonic equivalents as truly identical?**
+
+On fixed-pitch instruments like piano or guitar, yes — the keys are the same, and the pitches are the same frequency in equal temperament. On instruments with flexible pitch (strings, voice, wind instruments), players sometimes adjust the pitch slightly based on spelling. A C♯ might be played a touch higher than a D♭ in the same absolute position, reflecting the historical practice of just intonation where these pitches were actually slightly different frequencies. This is subtle and usually unconscious, but it's there.
+
+**What happens in keys that don't use these enharmonic equivalents?**
+
+Every major and minor key uses some enharmonic spellings. A piece in C major doesn't routinely need them, but if it borrows chords from other keys or modulates, it quickly does. Enharmonic equivalents aren't optional advanced material — they're part of the basic grammar of tonal music.
+
+**Why do double sharps and double flats exist when they just duplicate natural notes?**
+
+Because they maintain the letter-name pattern of the scale. In G♯ minor, the raised leading tone (one half step below the tonic G♯) must be F𝄪 (F double-sharp), not G natural. Using G natural would give the scale two Gs, which breaks the alphabetical sequence. The double sharp preserves the pattern, even though it sounds the same as the natural note.

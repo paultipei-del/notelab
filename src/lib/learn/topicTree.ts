@@ -39,14 +39,14 @@ export const TOPIC_TREE: LearnTopic[] = [
     description:
       'How pitches become symbols on a page — the staff, clefs, note names, and accidentals.',
     subtopics: [
-      { slug: 'the-staff', title: 'The Staff', hasPage: false },
-      { slug: 'clefs', title: 'Clefs', hasPage: false },
-      { slug: 'ledger-lines-and-the-grand-staff', title: 'Ledger Lines and the Grand Staff', hasPage: false },
-      { slug: 'middle-c-across-the-clefs', title: 'Middle C Across the Clefs', hasPage: false },
-      { slug: 'note-names-and-the-musical-alphabet', title: 'Note Names and the Musical Alphabet', hasPage: false },
-      { slug: 'octave-designations', title: 'Octave Designations', hasPage: false },
-      { slug: 'accidentals', title: 'Accidentals', hasPage: false },
-      { slug: 'enharmonic-equivalents', title: 'Enharmonic Equivalents', hasPage: false },
+      { slug: 'the-staff', title: 'The Staff', hasPage: true },
+      { slug: 'clefs', title: 'Clefs', hasPage: true },
+      { slug: 'ledger-lines-and-the-grand-staff', title: 'Ledger Lines and the Grand Staff', hasPage: true },
+      { slug: 'middle-c-across-the-clefs', title: 'Middle C Across the Clefs', hasPage: true },
+      { slug: 'note-names-and-the-musical-alphabet', title: 'Note Names and the Musical Alphabet', hasPage: true },
+      { slug: 'octave-designations', title: 'Octave Designations', hasPage: true },
+      { slug: 'accidentals', title: 'Accidentals', hasPage: true },
+      { slug: 'enharmonic-equivalents', title: 'Enharmonic Equivalents', hasPage: true },
     ],
   },
   {

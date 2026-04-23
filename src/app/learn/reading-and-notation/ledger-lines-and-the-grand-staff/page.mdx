@@ -1,0 +1,106 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { LEDGER_LINE_PROGRESSION_XML, GRAND_STAFF_MIDDLE_C_XML } from './notations'
+
+export const learnPage = {
+  topic: 'reading-and-notation',
+  subtopic: 'ledger-lines-and-the-grand-staff',
+  title: 'Ledger Lines and the Grand Staff',
+  oneSentence:
+    'Ledger lines extend the staff upward or downward for notes that fall outside its five-line range, and the grand staff combines treble and bass staves together for instruments like piano that span both ranges at once.',
+  practice: [],
+  related: [
+    { title: 'The Staff',                    href: '/learn/reading-and-notation/the-staff' },
+    { title: 'Clefs',                        href: '/learn/reading-and-notation/clefs' },
+    { title: 'Middle C Across the Clefs',    href: '/learn/reading-and-notation/middle-c-across-the-clefs' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+The five-line staff covers a useful but limited pitch range. Every instrument needs to play higher or lower than its staff naturally accommodates — a pianist regularly plays notes well below the bass staff and well above the treble staff, a violinist plays notes far above the treble staff, a cellist plays both below the bass staff and well above it into tenor range.
+
+Rather than invent a new staff every time, music uses two tools to extend the reach: **ledger lines** for individual notes outside the staff, and the **grand staff** to combine two staves for instruments that need extended range in both directions.
+
+## The visual
+
+<Notation
+  musicXml={LEDGER_LINE_PROGRESSION_XML}
+  caption="Four notes on a treble staff at progressively higher positions: middle C (one ledger line below), A5 (one ledger line above), C6 (two ledger lines above), E6 (three ledger lines above)."
+  ariaLabel="Treble staff showing four whole notes in ascending order: middle C below the staff, A5 above the staff on one ledger line, C6 on the second ledger line above, and E6 on the third ledger line above."
+/>
+
+<Notation
+  musicXml={GRAND_STAFF_MIDDLE_C_XML}
+  caption="The grand staff — treble staff on top, bass staff on bottom, joined by a brace. Middle C sits exactly between the two, one ledger line below the treble staff and (equivalently) one ledger line above the bass staff."
+  ariaLabel="A grand staff: treble and bass staves joined by a brace. Middle C is shown as a whole note on the treble staff, positioned one ledger line below it — the spot where it visually bridges the two staves."
+/>
+
+## Ledger lines
+
+A **ledger line** is a short horizontal line added above or below the staff to hold a note that doesn't fit within the five lines. Each ledger line represents another step up (or down) in pitch, following the same alternating line-space pattern as the staff itself.
+
+In the treble clef, going up past the top line (F5):
+- Line on top of F5 = the space above F5, which is G5
+- First ledger line above = A5
+- Space above that = B5
+- Second ledger line above = C6
+- And so on
+
+Going down past the bottom line (E4):
+- Space below E4 = D4
+- First ledger line below = C4 (middle C)
+- Space below that = B3
+- Second ledger line below = A3
+- And so on
+
+The same logic applies to every clef: the ledger lines simply extend the staff's alphabet pattern upward or downward.
+
+In practice, readers usually recognize up to three or four ledger lines on instinct — C6 in treble clef, for instance, is as familiar as any staff note. Past that, reading slows down, which is why most scores switch clefs or use an octave sign (discussed later) rather than continuing to pile up ledger lines.
+
+## The grand staff
+
+The **grand staff** is two staves bracketed together into a single system — a **treble staff on top** for higher pitches and a **bass staff on bottom** for lower pitches, joined by a curly bracket (called a **brace**) on the left side.
+
+The grand staff is used for:
+- Piano (right hand reads treble, left hand reads bass)
+- Harp, organ, and other two-handed instruments
+- Choral music sometimes (though SATB choral scores often use four separate staves)
+
+A crucial feature of the grand staff: **middle C** (C4) sits exactly between the two staves. Its specific position is one ledger line above the bass staff or one ledger line below the treble staff — the same physical pitch, shown in either context.
+
+This makes middle C the anchor point of the grand staff. Notes moving up from middle C go into the treble staff; notes moving down from middle C go into the bass staff. A note that's too high for the bass staff but too low for the treble staff sits on ledger lines near the middle — and could be notated in either clef, depending on what's easier to read.
+
+## Switching between staves on piano
+
+For pianists, the grand staff allows hands to cross between registers. A right-hand passage can extend down into the bass staff if it goes low enough; a left-hand passage can extend up into the treble staff. Composers choose whichever clef minimizes ledger lines for the passage at hand. Clef changes mid-staff are common on piano music for this reason.
+
+Very low bass-register passages can continue far below the bass staff. Very high treble-register passages can continue well above the treble staff. Ledger lines handle both cases, though composers often switch to the next octave transposition (8va or 8vb — covered separately) to reduce visual clutter.
+
+## Why the grand staff looks the way it does
+
+The treble and bass staves are separated by a visible gap — a single ledger line's worth of space — where middle C lives. The gap serves two purposes: it gives middle C its distinctive "floating" position, and it visually separates the treble and bass staves so the reader can quickly tell which hand is which.
+
+The brace joining the two staves signals that they're played simultaneously by one person (as on piano). Orchestral scores often have dozens of staves vertically stacked, but only instruments played by a single performer get bracketed together.
+
+## Common questions
+
+**How many ledger lines can I stack before switching to something else?**
+
+There's no hard rule, but three or four is the practical limit before reading gets slow. Beyond that, most composers use an **8va** sign (play an octave higher than written) or a clef change to pull the music back into the staff. The goal is always readability — if a passage would be cleaner in a different clef, use that clef.
+
+**Are ledger lines above and below the staff the same notes in different clefs?**
+
+No — each clef has its own context. The first ledger line below the treble staff is middle C (C4). The first ledger line above the bass staff is *also* middle C (C4). Same pitch, two different notations, depending on which staff you're reading. That overlap is exactly what makes middle C a natural bridge between the two staves of the grand staff.
+
+**Do ledger lines keep the same rhythm and symbol rules as staff lines?**
+
+Yes. A whole note on a ledger line still looks like a whole note. A dotted quarter still looks like a dotted quarter. Ledger lines change only the pitch position, not any rhythmic or articulation conventions.
+
+**What's the fastest way to learn ledger-line notes?**
+
+Learn them by relationship, not by counting. "Two ledger lines above the treble staff" becomes easier once you know it's a C (because C is one ledger line above F5, which is the top line — and the alphabet continues G-A-B-C). Relating ledger-line notes to the nearest staff line is faster than counting up from the bottom every time.

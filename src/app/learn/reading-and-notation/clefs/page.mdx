@@ -1,0 +1,98 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { FOUR_CLEFS_MIDDLE_C_XML } from './notations'
+
+export const learnPage = {
+  topic: 'reading-and-notation',
+  subtopic: 'clefs',
+  title: 'Clefs',
+  oneSentence:
+    'A clef is the symbol at the beginning of every staff that assigns specific pitches to the lines and spaces — without a clef, the staff is just a grid with no pitch meaning.',
+  practice: [
+    { kind: 'flashcard', label: 'Treble Clef Notes Flashcards',    detail: '15 cards', href: '/study/treble-clef-notes' },
+    { kind: 'flashcard', label: 'Bass Clef Notes Flashcards',      detail: '15 cards', href: '/study/bass-clef-notes' },
+    { kind: 'flashcard', label: 'Clefs & Time Signatures Flashcards', detail: '7 cards', href: '/study/symbols-clefs' },
+  ],
+  related: [
+    { title: 'The Staff',                              href: '/learn/reading-and-notation/the-staff' },
+    { title: 'Middle C Across the Clefs',              href: '/learn/reading-and-notation/middle-c-across-the-clefs' },
+    { title: 'Ledger Lines and the Grand Staff',       href: '/learn/reading-and-notation/ledger-lines-and-the-grand-staff' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Different instruments and voices cover different pitch ranges. A flute sits high; a cello sits low; a viola sits right in the middle. If every instrument used the same clef, high instruments would need constant ledger lines above the staff, and low instruments would need constant ledger lines below. The result would be unreadable.
+
+Clefs solve this by letting a staff be re-anchored to whatever pitch range suits the instrument. The four clefs you'll encounter — treble, bass, alto, tenor — each place a specific pitch on a specific line, shifting the staff's entire pitch meaning up or down. Once you know which clef is in use, you know exactly which note every line and space represents.
+
+## The visual
+
+<Notation
+  musicXml={FOUR_CLEFS_MIDDLE_C_XML}
+  caption="Four measures showing the four clefs side by side — treble, bass, alto, tenor — each with a whole-note middle C. Same pitch, four different staff positions."
+  ariaLabel="Four consecutive measures, each with a different clef: treble, bass, alto, tenor. Each measure contains a whole-note middle C, which appears at a different staff position on each clef."
+/>
+
+<DiagramPlaceholder description="The treble clef by itself, large, showing how the curl wraps around the G line (second line from the bottom)." />
+
+<DiagramPlaceholder description="The bass clef by itself, large, showing how the two dots straddle the F line (fourth line from the bottom)." />
+
+## The treble clef
+
+Also called the **G clef**, because its distinctive curl wraps around the line that represents **G4** (the G just above middle C). Every note above or below that G follows from there — the lines from bottom to top are **E4, G4, B4, D5, F5**, and the spaces are **F4, A4, C5, E5**.
+
+The treble clef is used for high-range instruments and voices: piano right hand, violin, flute, oboe, trumpet, soprano and alto voices, and many others. If you've ever seen sheet music in passing, the treble clef is almost certainly what you saw.
+
+Common mnemonic for the lines (E G B D F): *Every Good Boy Does Fine.*
+Common mnemonic for the spaces (F A C E): they spell **FACE**.
+
+## The bass clef
+
+Also called the **F clef**, because its two dots straddle the line that represents **F3** (the F below middle C). The lines from bottom to top are **G2, B2, D3, F3, A3**, and the spaces are **A2, C3, E3, G3**.
+
+The bass clef is used for low-range instruments and voices: piano left hand, cello, bassoon, trombone, tuba, baritone and bass voices. Most music written for two hands (piano, organ, harp) uses treble clef for the right hand and bass clef for the left.
+
+Common mnemonic for the lines (G B D F A): *Good Boys Do Fine Always* or *Great Big Dogs Fight Animals.*
+Common mnemonic for the spaces (A C E G): *All Cows Eat Grass.*
+
+## The alto clef
+
+A **C clef** — the center of the symbol marks middle C (**C4**). The alto clef places middle C on the **middle line** of the staff. From there, the lines are **F3, A3, C4, E4, G4** and the spaces are **G3, B3, D4, F4**.
+
+The alto clef is used primarily for the **viola**, which sits in the range between violin and cello. It's also sometimes used for alto trombone and historical vocal writing. If you play viola or read viola parts, the alto clef will become second nature; otherwise, you'll rarely encounter it.
+
+## The tenor clef
+
+Also a **C clef**, but positioned one line higher than the alto clef — middle C is on the **fourth line** (second from the top). The lines are **D3, F3, A3, C4, E4**, and the spaces are **E3, G3, B3, D4**.
+
+The tenor clef is used for the upper ranges of the **cello, bassoon, and trombone** — instruments that normally read bass clef but occasionally play high enough that bass clef would require too many ledger lines. Rather than cluttering the page with ledger lines, the clef shifts and the reading stays inside the staff.
+
+## A consistent logic behind all clefs
+
+Every clef is really a pointer — a symbol that fixes one specific pitch to one specific line. The treble clef points to G4 with its curl. The bass clef points to F3 with its two dots. The alto and tenor clefs point to middle C (C4) with the center of the C clef symbol. Once you know where the clef's reference note is, every other line and space is determined by counting up and down the musical alphabet.
+
+This also means that, in principle, a C clef can be placed on *any* line — placing it on the top line gives a **soprano clef**, on the second line from the bottom gives a **mezzo-soprano clef**, and so on. These variants exist in historical music but are rare today. The four modern clefs (treble, bass, alto, tenor) cover almost everything you'll read.
+
+## Common questions
+
+**Why do pianists read two clefs at once?**
+
+The piano's pitch range spans far more than a single staff can comfortably hold. The right hand usually covers middle and upper registers, which fit well on a treble staff; the left hand usually covers middle and lower registers, which fit well on a bass staff. Using both clefs simultaneously, via the grand staff, lets the full piano range sit on the page without excessive ledger lines.
+
+**Can a clef change mid-piece?**
+
+Yes, and it does frequently. A cellist reading bass clef might encounter a high passage that switches to tenor clef for a few measures, then back to bass clef when the range comes down. A pianist's left hand sometimes switches to treble clef for very high passages. The clef change is marked clearly at the point of the switch.
+
+**Why are there so many different clefs if most are rare?**
+
+Historical accumulation. Early music didn't have standardized instrument ranges, and composers used whatever clef placed the music most conveniently on the staff. As instruments and their standard ranges stabilized, most clefs fell out of use except for the four that map cleanly to the pitch ranges of modern instruments. Early music specialists still read soprano, mezzo-soprano, and baritone clefs when performing period works.
+
+**What's a "neutral" or "percussion" clef?**
+
+It's a clef (or clef-like symbol, often two vertical rectangles) used for unpitched percussion. Since there are no actual pitches to assign, the "clef" just signals to the reader that the notes on the staff represent rhythms played on drums or other unpitched instruments, with each line or space assigned to a specific drum rather than a pitch.
