@@ -1,0 +1,94 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ANACRUSIS_EXAMPLE_XML } from './notations'
+
+export const learnPage = {
+  topic: 'rhythm-and-time',
+  subtopic: 'anacrusis',
+  title: 'Anacrusis',
+  oneSentence:
+    'An anacrusis — also called a pickup or upbeat — is one or more notes that begin a phrase before the first full measure, leading into the downbeat rather than starting on it.',
+  practice: [],
+  related: [
+    { title: 'Pulse and Beat',         href: '/learn/rhythm-and-time/pulse-and-beat' },
+    { title: 'Time Signatures',        href: '/learn/rhythm-and-time/time-signatures' },
+    { title: 'Motive, Phrase, and Period', href: '/learn/form-and-structure/motive-phrase-and-period' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Not all music starts on beat one. Many melodies begin with a note or two that *lead into* the downbeat — a running start, a gathering breath, a pickup. "Happy Birthday" doesn't start on a downbeat; it starts on "Happy" (a pickup), arrives on "Birth" (the downbeat), and goes from there.
+
+That running start is called an **anacrusis** — from the Greek for "striking up" or "pushing up." It's also commonly called a **pickup** in English or an **upbeat** in conducting terms. Whatever name it goes by, it refers to notes that come *before* the first full measure of a piece or phrase, preparing the first downbeat rather than constituting it.
+
+## The visual
+
+<Notation
+  musicXml={ANACRUSIS_EXAMPLE_XML}
+  caption="An eighth-note pickup (G) leads into the first full measure. The pickup takes half a beat; the downbeat — the first note of the full measure — is the destination it reaches."
+  ariaLabel="A treble staff with a short pickup measure containing a single eighth note on G, followed by a full 4/4 measure with four quarter notes descending from C5 to G4."
+/>
+
+<DiagramPlaceholder description="The opening of 'Happy Birthday to You' — the pickup 'Hap-' marked as anacrusis and 'Birth-' falling on the downbeat of the first full measure." />
+
+## How anacrusis appears on the page
+
+A piece that begins with an anacrusis shows a **partial measure** at the very beginning, containing only the anacrusis notes. The first *full* measure follows, starting on the downbeat that the anacrusis was leading to.
+
+Because the opening partial measure doesn't contain the usual full number of beats, the final measure of the piece is often shortened by the same amount — so that the anacrusis and the final measure together add up to one full measure. This keeps the total beat count consistent with the time signature.
+
+For example: a piece in 4/4 might open with a single quarter-note anacrusis (a one-beat pickup). The last measure of the piece would then contain only three beats instead of four, so the final beat of the last measure plus the pickup at the beginning equals a full measure. This isn't strictly necessary — some pieces don't bother — but it's common practice.
+
+## Why anacrusis matters
+
+An anacrusis changes the feel of a phrase in a specific way: it creates *forward motion into the downbeat* rather than *arriving at it from rest*. The downbeat becomes a destination rather than a starting point.
+
+This matters for:
+
+- **Phrasing.** A phrase that starts on the downbeat feels grounded. A phrase that starts with a pickup feels like it's already in motion when it begins. Composers use the difference to shape how phrases breathe.
+- **Conducting.** The conductor's preparatory upbeat gesture before the first downbeat is essentially the anacrusis of an ensemble's coordinated start. Knowing where the anacrusis lies tells performers when to come in.
+- **Language-based music.** In songs with words, the anacrusis often aligns with unstressed syllables, and the downbeat aligns with the stressed one. "Hap-py BIRTH-day" — "Hap-py" is unstressed (pickup); "BIRTH" is stressed (downbeat).
+
+Composers choose between a downbeat start and an anacrusis start for expressive reasons. It's rarely arbitrary.
+
+## Anacrusis in phrases, not just openings
+
+Anacrusis isn't only about the start of a piece. Many phrases *within* a piece begin with anacrusis patterns — the first note of the phrase is a pickup to the next downbeat. This is especially common in music with strong phrase divisions, where each new phrase starts slightly before the measure it belongs to, leading into its own first downbeat.
+
+When analyzing the phrase structure of a piece, looking for where anacruses occur can clarify where the phrases truly begin and end. The notated bar lines don't always match the felt phrase boundaries.
+
+## Examples across styles
+
+Anacrusis appears in almost every musical tradition:
+
+- **Folk songs.** "Happy Birthday," "Auld Lang Syne," "The Star-Spangled Banner" all begin with anacruses.
+- **Hymns.** A huge proportion of Western hymns begin with pickup notes.
+- **Classical music.** Beethoven's Fifth Symphony famously opens with three eighth-note anacruses leading to the downbeat (the iconic "da-da-da-DUM").
+- **Pop and rock.** Countless popular songs start with vocal or instrumental pickups.
+- **Jazz.** Melodic heads frequently begin with anacruses, and improvisers use pickup phrases continuously while soloing.
+
+A start on the downbeat is deliberate and firm. A start with anacrusis is energetic and anticipatory. Both are legitimate; they produce different expressive results.
+
+## Common questions
+
+**Are "anacrusis," "pickup," and "upbeat" all the same thing?**
+
+Essentially yes, with small shades of usage. **Anacrusis** is the formal, music-theory term. **Pickup** is the common American English term, used casually by performers and teachers. **Upbeat** can refer either to the anacrusis itself or to any weak beat preceding a strong one; in conducting, the upbeat is specifically the conductor's preparatory motion before the downbeat. In most contexts, the three are interchangeable.
+
+**How many notes can an anacrusis contain?**
+
+There's no fixed limit. An anacrusis can be a single note, or several notes, or nearly a full measure of notes — as long as it's clear that these notes lead into a downbeat rather than constituting downbeats themselves. In practice, most anacruses are one, two, or three notes. Longer pickups start to blur into a full measure and lose the distinctive pickup feel.
+
+**Does an anacrusis affect the time signature?**
+
+No. The time signature of the piece is determined by the regular measures, not by the partial opening. A 4/4 piece with a quarter-note pickup is still in 4/4 — the pickup just doesn't fill a whole measure, and its notation as a partial measure makes the true downbeat location clear.
+
+**Is the first note of every piece an anacrusis if it comes before beat 1?**
+
+Only if it's actually leading into beat 1 of the first full measure rather than being beat 1 itself. The distinction is where the downbeat falls. If the piece notates the opening note as part of a full first measure, starting at beat 1, it's not an anacrusis — even if the melody happens to emphasize a later beat. Anacrusis is a notational/metrical phenomenon, not just a melodic one. Look for the partial first measure; that's the signal.

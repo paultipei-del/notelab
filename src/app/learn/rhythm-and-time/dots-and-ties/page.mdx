@@ -1,0 +1,120 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { DOTTED_HALF_XML, TIED_QUARTERS_XML, DOTTED_QUARTER_EIGHTH_XML } from './notations'
+
+export const learnPage = {
+  topic: 'rhythm-and-time',
+  subtopic: 'dots-and-ties',
+  title: 'Dots and Ties',
+  oneSentence:
+    'A dot after a note adds half of that note\'s value to its duration, and a tie connects two notes of the same pitch so they sound as a single longer note — both are tools for creating durations that a single note value can\'t express on its own.',
+  practice: [
+    { kind: 'flashcard', label: 'Dotted & Tied Notes Flashcards', detail: '10 cards', href: '/study/dotted-and-tied-notes' },
+  ],
+  related: [
+    { title: 'Note Values',       href: '/learn/rhythm-and-time/note-values' },
+    { title: 'Rest Values',       href: '/learn/rhythm-and-time/rest-values' },
+    { title: 'Time Signatures',   href: '/learn/rhythm-and-time/time-signatures' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+The basic note-value hierarchy gives us simple doublings: whole, half, quarter, eighth. But real rhythms often need in-between durations — a note that lasts a beat and a half, for instance, or a note that spans across a bar line.
+
+Dots and ties solve this. A **dot** is a small marking after a note that lengthens it by half its original value. A **tie** is a curved line that connects two notes of the same pitch, telling the performer to play them as a single sustained sound equal to the sum of their durations. Together, these two tools let you express any duration you need.
+
+## The visual
+
+<Notation
+  musicXml={DOTTED_HALF_XML}
+  caption="A dotted half note — worth three beats in 4/4 (a half note plus half its value)."
+  ariaLabel="A single 4/4 measure on a treble staff with a dotted half note followed by a quarter rest."
+/>
+
+<Notation
+  musicXml={TIED_QUARTERS_XML}
+  caption="Two quarter notes tied together — played as one sustained note lasting two beats."
+  ariaLabel="A single 4/4 measure on a treble staff with two tied quarter notes followed by a half rest."
+/>
+
+<Notation
+  musicXml={DOTTED_QUARTER_EIGHTH_XML}
+  caption="A dotted quarter followed by an eighth — the classic dotted rhythm that fills two beats."
+  ariaLabel="A single 4/4 measure on a treble staff with a dotted quarter note, an eighth note, and a half rest."
+/>
+
+## Dots
+
+A **dot** placed immediately after a notehead adds half of that note's duration to its total value:
+
+- **Dotted whole note** = whole note + half note = **6 beats** (in 4/4, this would span a full measure and a half, so it's rare; in 6/4 or 6/8, it fills an entire measure)
+- **Dotted half note** = half note + quarter note = **3 beats**
+- **Dotted quarter note** = quarter note + eighth note = **1 and 1/2 beats**
+- **Dotted eighth note** = eighth note + sixteenth note = **3/4 of a beat**
+
+The rule is consistent: the dot adds half the note's value. A dotted quarter note is a quarter note plus an eighth note; a dotted eighth is an eighth plus a sixteenth; and so on.
+
+Dots work the same way on rests. A **dotted quarter rest** lasts 1.5 beats of silence; a **dotted half rest** lasts 3 beats. In practice, dotted rests are slightly less common than dotted notes because there's often a cleaner way to notate the silence (for example, a quarter rest followed by an eighth rest instead of a dotted quarter rest), but dotted rests are valid and appear regularly in modern scores.
+
+## Double dots
+
+A **double dot** adds half of the first dot's value — meaning the total added is 3/4 of the original note's value:
+
+- **Double-dotted half note** = half + quarter + eighth = **3 and 1/2 beats**
+- **Double-dotted quarter note** = quarter + eighth + sixteenth = **1 and 3/4 beats**
+
+Double dots are less common than single dots but appear frequently in Baroque and Classical music, especially in French Overture style and ornamented slow movements. Each successive dot adds half the previous dot's added value, creating a geometric series.
+
+## Ties
+
+A **tie** is a curved line connecting two notes of the same pitch. It tells the performer to play them as a single sustained note, with a duration equal to the sum of the two notes' values.
+
+A half note tied to a quarter note sounds as a single note lasting 3 beats. A quarter note tied to an eighth note sounds as a single note lasting 1.5 beats. The ear hears one continuous sound; the page shows two notes because the rhythm of the piece requires two separate noteheads for some structural reason.
+
+## Why ties exist — durations that cross boundaries
+
+A tie is often needed because a single note can't express a duration that crosses a bar line. A note that starts on the last beat of a measure and lasts two beats can't be written as a half note, because a half note would exceed the measure's capacity. Instead, you write a quarter note tied to a quarter note — one per measure, connected by the tie.
+
+Ties are also used when a duration doesn't fit cleanly into a single note-value and can't be expressed by a dot either. For very unusual durations (a note lasting 5 eighths, for instance), ties provide the flexibility that dots alone don't.
+
+## Ties vs. dots
+
+When you need a duration of "a dotted quarter" (1.5 beats), you have a choice: write it as a dotted quarter, or write it as a quarter tied to an eighth. Both produce the same sound.
+
+**Within a single beat or cleanly within a measure,** the dotted form is usually preferred. A dotted quarter is one note with a dot — visually cleaner than a quarter tied to an eighth.
+
+**Across bar lines or across beat groupings,** the tied form is required. A dot can't extend a note across a bar line; you need a tie. Similarly, if a duration crosses the halfway point of a measure in a way that would obscure the beat structure, composers use ties to make the internal beats visible.
+
+There's a general principle in rhythmic notation: **notation should show the beat structure clearly.** If a single note symbol would obscure where the beats fall, breaking it into tied notes — even if a dotted version is mathematically equivalent — is better practice.
+
+## Ties vs. slurs
+
+A **tie** and a **slur** look identical — both are curved lines connecting notes. The difference is what they mean:
+
+- A **tie** connects two notes of the **same pitch**, sustaining them as one.
+- A **slur** connects two or more notes of **different pitches**, indicating a smooth, legato connection between them (phrasing, not duration).
+
+The way you tell them apart is by looking at the notes they connect. If the notes are the same pitch, it's a tie. If they're different pitches, it's a slur. We'll cover slurs separately in the notation details section.
+
+## Common questions
+
+**Can I dot a note that's already tied?**
+
+Yes. A dotted half tied to a quarter, for example, is perfectly valid. The dot acts on its own note first; the tie adds the next note's duration.
+
+**Can I tie more than two notes together?**
+
+Yes. A chain of tied notes — three or four in a row — is common in sustained passages or when a long note crosses multiple bar lines. Each tie connects two adjacent notes; you can chain them indefinitely.
+
+**When does a dot *not* work?**
+
+A dot always adds exactly half the note's value, so it can't express durations that aren't a simple 1.5× multiple. A duration of 1.25 beats, for instance, can't be a dotted quarter (which is 1.5) or a double-dotted quarter (which is 1.75). You'd need to use ties (like a quarter tied to a sixteenth) to express exactly 1.25.
+
+**Why do I sometimes see a tie between notes in the *same* measure?**
+
+Usually to clarify beat groupings within the measure. A note lasting 1.5 beats that starts on beat 2 of a 4/4 measure *could* be written as a dotted quarter, but some composers prefer a quarter tied to an eighth to make the beat-3 arrival visible. It's a notational choice aimed at readability — not a mistake.

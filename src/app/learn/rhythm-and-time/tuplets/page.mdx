@@ -1,0 +1,116 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { TRIPLET_IN_QUARTER_XML, DUPLET_IN_SIX_EIGHT_XML } from './notations'
+
+export const learnPage = {
+  topic: 'rhythm-and-time',
+  subtopic: 'tuplets',
+  title: 'Tuplets',
+  oneSentence:
+    'A tuplet is a group of notes played in the time of a different number of notes of the same value — like three notes in the time of two (a triplet) — letting composers temporarily escape the normal subdivision of the beat.',
+  practice: [
+    { kind: 'flashcard', label: 'Tuplets Flashcards', detail: '6 cards', href: '/study/tuplets' },
+  ],
+  related: [
+    { title: 'Simple and Compound Meter', href: '/learn/rhythm-and-time/simple-and-compound-meter' },
+    { title: 'Note Values',               href: '/learn/rhythm-and-time/note-values' },
+    { title: 'Hemiola',                   href: '/learn/rhythm-and-time/hemiola' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Simple meter divides each beat into two equal parts. Compound meter divides each beat into three. But what if, in the middle of a simple-meter piece, a composer wants a moment of three-against-the-grain — or five, or seven? What if a musical phrase asks for a rhythm that doesn't fit the normal subdivision at all?
+
+**Tuplets** solve this. A tuplet is a temporary, local change in how a beat is divided. A **triplet** squeezes three notes into the space of two. A **quintuplet** fits five into the space of four. Each tuplet is marked with a small number above or below the group, telling the performer how many notes to fit into a space that normally holds a different number.
+
+Tuplets make rhythm flexible. Instead of being locked into the time signature's built-in division, composers can create brief moments of rhythmic irregularity that add color, excitement, or expressive stretch.
+
+## The visual
+
+<Notation
+  musicXml={TRIPLET_IN_QUARTER_XML}
+  caption="An eighth-note triplet on beat 2 of a 4/4 measure — three notes squeezed into the space normally filled by two eighths. Marked with the '3' above the group."
+  ariaLabel="A 4/4 measure on a treble staff. Beat 1 is a quarter note, beat 2 is an eighth-note triplet (three notes), beats 3 and 4 are quarter notes."
+/>
+
+<DiagramPlaceholder description="A quintuplet — five notes in the space of four sixteenths — with the '5' above the beamed group." />
+
+<Notation
+  musicXml={DUPLET_IN_SIX_EIGHT_XML}
+  caption="A duplet in 6/8 — two notes filling beat 2 (a dotted quarter), where three eighths would normally go. The mirror image of a triplet."
+  ariaLabel="A 6/8 measure on a treble staff. Beat 1 is a dotted quarter note. Beat 2 is a duplet of two eighth notes marked with the number 2."
+/>
+
+## The triplet
+
+The most common tuplet by far. A **triplet** is three notes played in the time of two notes of the same value. In simple meter — 4/4, 2/4, 3/4 — where the beat normally divides into two eighth notes, a triplet divides it into three.
+
+The notation: three notes grouped with a "3" above or below the beam. If the three notes would be eighth notes, they're written as eighth notes with the 3. If they'd be quarter notes, quarter notes with the 3. The number tells the performer: three of these in the time of two normally.
+
+The feel of a triplet is a brief moment of compound-meter swing injected into simple-meter music. Count "1-and-a" for the triplet, then back to "2-and" for the next regular beat.
+
+Triplets can also appear at larger scales. A half-note triplet (three half notes in the time of two) fills two beats with three quarter-note-ish durations. An eighth-note triplet fits three eighth notes into one beat. The value of each note in the triplet adjusts to fit the total duration.
+
+## The duplet
+
+In **compound meter** (6/8, 9/8, 12/8), the default subdivision is three. A **duplet** is its opposite — two notes played in the time of three. Count three, fit two.
+
+Duplets are the mirror image of triplets. Where triplets inject a triple feel into simple meter, duplets inject a duple feel into compound meter. They appear in 6/8 music when a composer wants a brief two-against-three moment without changing the meter.
+
+Notation: two notes grouped with a "2" above or below. Each note's duration is 1.5× the normal subdivision — two duplet eighths in 6/8, for instance, fill the same time as three regular eighths.
+
+## Other tuplets
+
+Beyond triplets and duplets, tuplets can be any number:
+
+- **Quintuplet (5)** — five notes in the time of four. Adds a cross-rhythm feel.
+- **Sextuplet (6)** — six notes in the time of four. Essentially two triplets linked, but occasionally notated as a single sextuplet for phrasing reasons.
+- **Septuplet (7)** — seven notes in the time of four (or sometimes six). Rare but appears in ornate Romantic and 20th-century music.
+- **Nonuplet (9)** — nine notes in the time of eight. Very rare.
+
+Higher-number tuplets get increasingly difficult to play precisely. They're most common in dense instrumental music by composers like Chopin, Liszt, and later Romantic writers, where the exact rhythm matters less than the general rush of notes.
+
+## How tuplets are notated
+
+A tuplet is always marked with:
+
+1. **A number** indicating how many notes are in the tuplet (3 for triplet, 5 for quintuplet, etc.)
+2. **A bracket or beam** grouping the notes together
+3. Optionally, **a ratio** like "3:2" or "5:4" to be explicit about "three in the time of two" or "five in the time of four" — though for common tuplets, the ratio is assumed from the number alone
+
+The bracket is usually drawn above or below the group. For beamed notes (eighths and shorter), the beam itself often serves as the bracket, with the number sitting above or below it.
+
+## Counting tuplets
+
+Counting triplets aloud helps enormously when learning them. Common syllable systems:
+
+- **"Tri-pl-et"** or **"1-trip-let, 2-trip-let"** for eighth-note triplets
+- **"1-la-li"** or **"1-2-3"** for the three notes within each triplet
+
+Whatever syllables you use, the goal is to feel the three-against-two exactly — not rushed, not slurred. Play the triplet evenly across the beat, and land cleanly on the next downbeat.
+
+For less common tuplets (quintuplets, septuplets), most musicians don't try to count each note. Instead, they feel the *total duration* — one beat, say — and distribute the notes evenly across that duration, usually by internal feel rather than precise counting. This is one of the places where musical intuition takes over from strict mathematical subdivision.
+
+## Common questions
+
+**Is a triplet the same as 6/8?**
+
+No — and this is where the earlier distinction between meters matters. In 6/8, the entire meter is compound; every beat divides into three as the default. In 4/4, the meter is simple; a triplet is a temporary injection of three-against-two that lasts only as long as the tuplet. The triplet is local; the compound meter is structural.
+
+**Can I dot a note inside a tuplet?**
+
+Yes. A dotted note inside a triplet still adds half its value. A dotted-quarter triplet (three dotted-quarter notes in the time of two) is unusual but legal. These complex combinations are rare but occasionally seen in virtuosic and rhythmically adventurous music.
+
+**What's the difference between a triplet and a hemiola?**
+
+A triplet is a local, notated change in subdivision — three notes in the space of two. A **hemiola** is a longer structural pattern where a larger section of the music implies a different meter (often three measures of 2 feeling like two measures of 3, or similar). Both involve the 3:2 ratio, but triplets are momentary notation-level events, while hemiolas are phrase-level structural effects. We cover hemiola separately.
+
+**Why are some tuplets beamed together and others bracketed?**
+
+Convention. Tuplets of beamed notes (eighths, sixteenths) usually use the beam itself as a grouping, with a number above. Tuplets of unbeamed notes (quarters, halves) need an explicit bracket to show the grouping. The number is always present; the bracket appears only when the beam doesn't already do the job.

@@ -1,0 +1,103 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { STANDARD_ACCENTS_XML, SYNCOPATED_ACCENTS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'rhythm-and-time',
+  subtopic: 'syncopation',
+  title: 'Syncopation',
+  oneSentence:
+    'Syncopation is rhythm that emphasizes the weak beats or the offbeats — the "and"s between the main beats — creating a sense of forward push, unexpectedness, or groove.',
+  practice: [],
+  related: [
+    { title: 'Pulse and Beat',       href: '/learn/rhythm-and-time/pulse-and-beat' },
+    { title: 'Hemiola',              href: '/learn/rhythm-and-time/hemiola' },
+    { title: 'Time Signatures',      href: '/learn/rhythm-and-time/time-signatures' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Every measure has strong beats and weak beats. In 4/4, beats 1 and 3 are strong; 2 and 4 are weaker. The halfway points between beats — the "and"s — are weaker still. When music respects this hierarchy, accenting the strong beats and letting the weaker ones pass lightly, the rhythm feels orderly and grounded.
+
+**Syncopation** deliberately violates the hierarchy. It puts emphasis on a weak beat or an offbeat, pulling the listener's attention to where it isn't expected. The effect is a little push, a little unbalance — sometimes subtle, sometimes striking. Most popular music, jazz, Latin music, and a huge amount of classical music rely on syncopation to create energy and groove.
+
+## The visual
+
+<Notation
+  musicXml={STANDARD_ACCENTS_XML}
+  caption="A standard 4/4 accent pattern — accents fall on beats 1 and 3 (the strong beats). This is the default rhythmic hierarchy the ear expects."
+  ariaLabel="A 4/4 measure on a treble staff with four quarter notes. Beats 1 and 3 have accent marks; beats 2 and 4 do not."
+/>
+
+<Notation
+  musicXml={SYNCOPATED_ACCENTS_XML}
+  caption="A syncopated 4/4 pattern — accents fall on the 'and' of 2 and the 'and' of 4 (the weakest eighth-note positions). The ear is pulled to where accents don't belong, producing the syncopated push."
+  ariaLabel="A 4/4 measure on a treble staff with eight beamed eighth notes. The fourth and eighth eighth notes (the offbeats between beats 2-3 and 4-1) have accent marks."
+/>
+
+<DiagramPlaceholder description="A typical ragtime or reggae rhythm pattern with offbeats emphasized and held notes tied across beats — showing a canonical syncopated groove." />
+
+## Types of syncopation
+
+Syncopation comes in several flavors:
+
+**Offbeat emphasis.** Accenting the "and" between main beats. Common in reggae, ska, and ragtime. The main beats are present but understated; the offbeats carry the accent. Count "1 AND 2 AND 3 AND 4 AND" with heavy emphasis on each AND.
+
+**Tied syncopation.** A note begins on a weak beat or offbeat and is tied across a strong beat. The strong beat becomes the continuation of the previous note rather than the beginning of a new one. This effectively "skips" the downbeat's accent, creating a suspended feeling.
+
+**Anticipation.** The note that "should" land on a downbeat arrives early — on the "and" of the previous beat — and is tied or sustained across the downbeat. This creates forward motion, as if the music is reaching past the expected arrival point.
+
+**Displacement.** An entire rhythmic pattern is shifted by half a beat or a quarter beat, so the pattern's natural accents land in unexpected places. Common in jazz and funk.
+
+Most real syncopated passages combine several of these techniques. A funk groove might have offbeat accents, tied syncopations, and anticipations all happening simultaneously across different instruments. The result is a rich rhythmic complexity that sounds "groovy" even though each individual mechanism is simple.
+
+## Where syncopation comes from
+
+Syncopation isn't modern or uniquely American, though it's particularly associated with African-American musical traditions. Its roots run deep in many cultures' rhythmic practices:
+
+- **African music** features sophisticated polyrhythmic and syncopated patterns throughout the continent's many traditions. These patterns were carried to the Americas through the Atlantic slave trade and became foundational to jazz, blues, ragtime, rock, and hip-hop.
+- **Latin music** — from Cuban son and salsa to Brazilian samba and bossa nova — uses syncopation as a core structural element. The clave pattern, the backbone of much Afro-Cuban music, is itself a syncopated figure.
+- **European art music** has used syncopation at least since the Renaissance. Composers from Bach to Haydn to Brahms used it for specific expressive purposes, though often more restrainedly than popular music does.
+- **Ragtime**, emerging in late-1800s America, was the first Western popular style to put syncopation at the center of its identity. From ragtime, syncopation became ubiquitous in 20th-century popular music.
+
+## Syncopation and groove
+
+In popular music, syncopation is often tied to **groove** — the particular rhythmic feel that makes a song dance-able or head-nod-able. The groove of a funk song, a reggae song, or a hip-hop track usually depends on specific syncopated patterns that work against the main beat.
+
+This is why great rhythm sections feel *tight* even when their rhythms are complex: the players are all agreeing on which beats to emphasize, where the syncopations land, how the pattern breathes. Mastery of groove isn't just playing the notes — it's placing them with millisecond precision against an invisible pulse that everyone shares.
+
+In classical music, syncopation is usually more deliberate and local: a specific passage syncopates for a specific expressive reason, then the music returns to on-the-beat phrasing. In popular music, syncopation is often the default, with on-the-beat rhythms feeling square by comparison.
+
+## Counting syncopated rhythms
+
+Learning to play syncopated rhythms accurately requires counting *both* the beats and the offbeats:
+
+**"1 and 2 and 3 and 4 and"** — spoken or internalized steadily, with equal emphasis on every syllable.
+
+When the rhythm lands on an "and" instead of a number, you're already counting that "and," so the placement is precise. When a note is tied across a beat, the count continues underneath, keeping you anchored.
+
+Subdivision is the cure for rushed or sloppy syncopation. Many syncopated passages that feel "floaty" or "wrong" are actually just missing their precise placement in time. Counting aloud fixes this faster than almost any other technique.
+
+## Common questions
+
+**What's the difference between syncopation and swing?**
+
+Syncopation is placing emphasis on weak beats or offbeats. **Swing** is a specific feel where pairs of eighth notes are played with a long-short inequality — roughly a 2:1 ratio rather than the even 1:1 of straight eighths. Many jazz rhythms are both syncopated *and* swung, but the two are distinct concepts. Straight-eighth rock music can be heavily syncopated without being swung.
+
+**Can syncopation appear in any meter?**
+
+Yes. Syncopation works in 2/4, 3/4, 4/4, 6/8, 5/4, and any other meter you care to name. What changes is which beats are strong and weak — syncopation is always "emphasis on what's structurally weak in this meter," so the specifics shift. In 3/4, syncopation might emphasize beat 2 (the weakest) or offbeats between the beats. In 7/8, the strong-weak pattern itself is irregular, making syncopation more complex.
+
+**Does syncopation require accents?**
+
+Not necessarily. An accent is one way to syncopate, but rhythmic placement alone — putting a note where one isn't expected — creates syncopation even without dynamic emphasis. A long note starting on a weak beat and ending on a strong beat is syncopated whether or not it's played loud.
+
+**Why does syncopation feel so physical — why does it make me want to dance?**
+
+Likely because it engages the listener's body as a predictor. Your brain anticipates rhythmic events based on the established pulse. Syncopation creates tiny mismatches between anticipation and event, which the body resolves through movement. The groove you feel in good syncopated music is, in part, your motor system completing the pattern your ears are hearing.

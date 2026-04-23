@@ -1,0 +1,110 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { STANDARD_THREE_FOUR_XML, HEMIOLA_THREE_FOUR_XML } from './notations'
+
+export const learnPage = {
+  topic: 'rhythm-and-time',
+  subtopic: 'hemiola',
+  title: 'Hemiola',
+  oneSentence:
+    'A hemiola is a rhythmic pattern where three beats of equal value appear in the space normally occupied by two — a 3:2 cross-rhythm that creates the feeling of two meters momentarily coexisting.',
+  practice: [],
+  related: [
+    { title: 'Simple and Compound Meter', href: '/learn/rhythm-and-time/simple-and-compound-meter' },
+    { title: 'Tuplets',                   href: '/learn/rhythm-and-time/tuplets' },
+    { title: 'Syncopation',               href: '/learn/rhythm-and-time/syncopation' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Hemiola is what happens when the music briefly *changes its mind* about the meter without changing the time signature. A passage in 3/4 — with its natural "ONE-two-three" feel — suddenly groups its beats as if it were in 2/4 or 6/8: three quarter notes become two dotted-quarter beats, reorganizing the pulse without rewriting it.
+
+The ratio 3:2 is the key. Three against two. Two equal durations where three would be, or three equal durations where two would be. The result is a brief moment where the music feels like it's in two meters at once — or maybe neither — a wonderful destabilizing shimmer that composers have used for centuries to add rhythmic interest.
+
+The word *hemiola* comes from Greek — *hemiolios*, meaning "one and a half," which is exactly the 3:2 ratio.
+
+## The visual
+
+<Notation
+  musicXml={STANDARD_THREE_FOUR_XML}
+  caption="Two measures of 3/4 with standard accents — beat 1 of each measure is strong, beats 2 and 3 weaker. The natural triple-meter feel."
+  ariaLabel="Two 3/4 measures on a treble staff. Each measure has three quarter notes, with an accent on the first quarter note only."
+/>
+
+<Notation
+  musicXml={HEMIOLA_THREE_FOUR_XML}
+  caption="Same two measures of 3/4, but with accents falling every other quarter note (1, 3, 5) — implying a 2+2+2 duple grouping across the six beats. The time signature hasn't changed, but the felt meter has. This is horizontal hemiola."
+  ariaLabel="Two 3/4 measures on a treble staff. Six quarter notes in total, with accents on the 1st, 3rd, and 5th notes — producing a duple feel across the triple notation."
+/>
+
+<DiagramPlaceholder description="Vertical hemiola — a 6/8 measure with one voice playing two dotted-quarter beats against another voice playing three quarter notes. Two-against-three within a single measure." />
+
+## Horizontal hemiola — stretching across measures
+
+**Horizontal hemiola** happens when a passage written in triple meter (usually 3/4) is temporarily grouped as if it were in duple meter. Across two measures of 3/4, the six quarter notes that normally feel "ONE-two-three, ONE-two-three" are re-accented as "ONE-two, ONE-two, ONE-two" — three groups of two instead of two groups of three.
+
+This was especially common in Baroque and Renaissance music just before cadences. Two measures of 3/4 at a cadence would suddenly feel like three measures of 2/4, producing a kind of rhythmic breath or broadening just as the music resolved. Handel, Bach, and countless predecessors used this device constantly. It became a stylistic hallmark.
+
+The time signature never changes — the music is still in 3/4 on the page. But the accents, the ties, the phrasing all conspire to make the listener feel a duple meter for those two measures.
+
+## Vertical hemiola — happening at once
+
+**Vertical hemiola** is when two parts play simultaneously, with one part feeling triple and the other feeling duple, producing a three-against-two cross-rhythm within a single measure.
+
+The most common case: in 6/8 (compound duple, two beats of three eighths each), one voice plays two dotted-quarter beats while another plays three quarter notes. Both occupy the same total time (one measure), but they divide it differently. Two against three. Vertical hemiola.
+
+Brahms was particularly famous for this. His Third Symphony's first movement opens with hemiola at its heart — the main theme sits across a 6/4 meter that's simultaneously being felt as 3/2, creating a metric ambiguity that defines the movement's character.
+
+In African music, the 3:2 cross-rhythm is a fundamental building block of polyrhythmic texture. Ghanaian, Nigerian, and many other West African traditions use 3:2 patterns as the foundation of their rhythmic vocabulary. The same ratio that Brahms exploited for expressive ambiguity is the structural backbone of centuries of African drumming.
+
+## Hemiola vs. tuplet
+
+Triplets and hemiolas both involve the 3:2 ratio, but they're different things:
+
+- A **triplet** is a local, notated rhythmic event — three notes in the time of two, marked with a 3 above the group, usually lasting one beat.
+- A **hemiola** is a larger structural effect — usually spanning one to several measures — where the felt meter shifts without a notated change.
+
+A triplet is a moment. A hemiola is a passage. A triplet is announced by the tuplet notation. A hemiola is felt through accent, phrasing, and rhythmic grouping — you have to listen for it; it's not marked explicitly on the page.
+
+A passage full of triplets isn't a hemiola. A passage where the accents shift to create two-against-three at a phrase level is.
+
+## Why composers use hemiola
+
+Hemiola adds rhythmic energy without demanding a meter change. In a piece where the time signature stays constant, hemiola provides variety — a sense that the music is moving into a different metric space for a moment before returning.
+
+It also creates a specific emotional effect: a slight broadening, an urgency, a sense of arrival. In Baroque cadences, hemiola often precedes the final tonic chord and amplifies the feeling of resolution. In Brahms, it creates ambiguity and depth; you can't quite tell which meter you're in, and that uncertainty carries expressive weight.
+
+In Latin music, especially flamenco, the shift between 3/4 and 6/8 feels is so common it has its own name — the "Spanish hemiola" — and its rhythmic character is inseparable from the style.
+
+## Hearing hemiola
+
+Hemiola can be hard to notice at first. The meter doesn't change on the page, so you have to listen for the accents and groupings. Two tells:
+
+- **Sudden emphasis on unexpected beats.** If a 3/4 passage suddenly accents beat 2 in one measure and beat 3 in the next, the music may be implying a 2/4 overlay. Track the accents. If they cycle every two quarter notes instead of every three, you're hearing horizontal hemiola.
+- **Feeling the meter disappear.** If you've been tapping a 3/4 pulse and suddenly can't tell where "one" is anymore, a hemiola is probably happening. The rhythm feels floaty, reorganized, briefly outside the original meter.
+
+Once you've heard a few clearly identified hemiolas — in Brahms, in Handel, in a flamenco palo — your ear tunes to them and starts catching them in other music. It's one of those musical features that's invisible until you know to look, and then it's everywhere.
+
+## Common questions
+
+**Is hemiola the same as polyrhythm?**
+
+Closely related but not identical. A **polyrhythm** is two or more independent rhythms played simultaneously, creating a sustained cross-rhythm. A repeating vertical hemiola is a form of polyrhythm (3:2 specifically). But polyrhythm is a broader category that includes 4:3, 5:4, 7:5, and other ratios — while hemiola is specifically 3:2. All hemiolas are polyrhythms (if vertical) or metric shifts (if horizontal); not all polyrhythms are hemiolas.
+
+**Where else do I encounter hemiola outside classical music?**
+
+Constantly, in Latin and Afro-Caribbean styles. The famous rhythm from "America" in West Side Story is a textbook hemiola — alternating measures of 6/8 (two beats of three) and 3/4 (three beats of two) on the same six eighth notes. Flamenco *siguiriyas* and *bulerías* are built around 12-beat cycles that employ hemiola. Cuban *palo* and Brazilian rhythms use it extensively. Many African traditional music styles have hemiola as a foundational pattern.
+
+**Why is hemiola confusing for beginning students?**
+
+Because the meter on the page doesn't match the meter you're feeling. Students learn to count 3/4 as "one-two-three"; when a hemiola arrives and everything suddenly feels like duple, their counting stops matching the music. The solution is to understand that the counted meter (what the time signature says) and the felt meter (what the accents imply) can temporarily diverge, and that this divergence is the point, not a mistake.
+
+**Is hemiola the same as metric modulation?**
+
+No. **Metric modulation** is an actual, notated change in meter — a new time signature appears, and the beat genuinely becomes something different. Hemiola is an unnotated, temporary re-grouping within the existing meter. Metric modulation is a permanent shift; hemiola is a passing effect.
