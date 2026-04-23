@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" aria-labelledby="t d">
+  <title id="t">Whole and half steps on a keyboard</title>
+  <desc id="d">One octave of piano keyboard from C to C. Arrows between adjacent keys marked "H" (half step) between E–F and B–C, and "W" (whole step) elsewhere.</desc>
+  <style>
+    .w-key  { fill: #FDFAF3; stroke: #1a1a18; stroke-width: 1.2; }
+    .b-key  { fill: #1a1a18; }
+    .w-lbl  { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .step-H { font: 600 14px system-ui, sans-serif; fill: #a03f2e; }
+    .step-W { font: 600 14px system-ui, sans-serif; fill: #7A7060; }
+    .legend { font: 300 13px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+  </style>
+
+  <!-- 7 white keys, 80px wide each; full keyboard 560px; starts at x=80 -->
+  <!-- White keys (C D E F G A B C) -->
+  <rect class="w-key" x="80"  y="40" width="80" height="200"/>
+  <rect class="w-key" x="160" y="40" width="80" height="200"/>
+  <rect class="w-key" x="240" y="40" width="80" height="200"/>
+  <rect class="w-key" x="320" y="40" width="80" height="200"/>
+  <rect class="w-key" x="400" y="40" width="80" height="200"/>
+  <rect class="w-key" x="480" y="40" width="80" height="200"/>
+  <rect class="w-key" x="560" y="40" width="80" height="200"/>
+  <rect class="w-key" x="640" y="40" width="40" height="200"/>
+
+  <!-- Black keys (C# D# F# G# A#) positioned at key-borders -->
+  <rect class="b-key" x="140" y="40" width="40" height="120"/>
+  <rect class="b-key" x="220" y="40" width="40" height="120"/>
+  <rect class="b-key" x="380" y="40" width="40" height="120"/>
+  <rect class="b-key" x="460" y="40" width="40" height="120"/>
+  <rect class="b-key" x="540" y="40" width="40" height="120"/>
+
+  <!-- White-key letter labels at the bottom -->
+  <text class="w-lbl" x="115" y="230">C</text>
+  <text class="w-lbl" x="195" y="230">D</text>
+  <text class="w-lbl" x="275" y="230">E</text>
+  <text class="w-lbl" x="355" y="230">F</text>
+  <text class="w-lbl" x="435" y="230">G</text>
+  <text class="w-lbl" x="515" y="230">A</text>
+  <text class="w-lbl" x="595" y="230">B</text>
+  <text class="w-lbl" x="650" y="230">C</text>
+
+  <!-- Step labels above the keyboard -->
+  <!-- Between C and D (whole), D and E (whole), E and F (half), F and G (whole), G and A (whole), A and B (whole), B and C (half) -->
+  <text class="step-W" x="150" y="28">W</text>
+  <text class="step-W" x="230" y="28">W</text>
+  <text class="step-H" x="310" y="28">H</text>
+  <text class="step-W" x="390" y="28">W</text>
+  <text class="step-W" x="470" y="28">W</text>
+  <text class="step-W" x="550" y="28">W</text>
+  <text class="step-H" x="630" y="28">H</text>
+
+  <!-- Legend -->
+  <text class="legend" x="80" y="270">H = half step (1 semitone) · W = whole step (2 semitones)</text>
+</svg>

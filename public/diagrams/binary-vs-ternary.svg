@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" aria-labelledby="t d">
+  <title id="t">Binary and ternary form</title>
+  <desc id="d">Two horizontal bars. The top shows binary form — two sections A and B, each bracketed with repeat signs. The bottom shows ternary form — three sections A, B, A where the first and third A are identical.</desc>
+  <style>
+    .title   { font: 500 18px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .a-box   { fill: #F2EDDF; stroke: #1a1a18; stroke-width: 1.5; }
+    .b-box   { fill: #FDFAF3; stroke: #a03f2e; stroke-width: 1.5; }
+    .lbl     { font: 500 36px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .lbl-alt { font: 500 36px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; }
+    .repeat  { font: 500 20px "Cormorant Garamond", Georgia, serif; fill: #7A7060; text-anchor: middle; }
+    .note    { font: 300 13px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+  </style>
+
+  <!-- Binary row (top) -->
+  <text class="title" x="30" y="40">Binary form</text>
+  <text class="repeat" x="60" y="102">‖:</text>
+  <rect class="a-box" x="75" y="60" width="250" height="70"/>
+  <text class="lbl" x="200" y="105">A</text>
+  <text class="repeat" x="345" y="102">:‖:</text>
+  <rect class="b-box" x="375" y="60" width="250" height="70"/>
+  <text class="lbl-alt" x="500" y="105">B</text>
+  <text class="repeat" x="650" y="102">:‖</text>
+  <text class="note" x="75" y="155">Two sections. A moves from tonic to dominant; B returns home.</text>
+
+  <!-- Ternary row (bottom) -->
+  <text class="title" x="30" y="220">Ternary form</text>
+  <rect class="a-box" x="75"  y="240" width="180" height="70"/>
+  <text class="lbl" x="165" y="285">A</text>
+  <rect class="b-box" x="270" y="240" width="180" height="70"/>
+  <text class="lbl-alt" x="360" y="285">B</text>
+  <rect class="a-box" x="465" y="240" width="180" height="70"/>
+  <text class="lbl" x="555" y="285">A</text>
+  <text class="note" x="75" y="335">Three sections. The opening section returns at the end — a literal restatement.</text>
+</svg>

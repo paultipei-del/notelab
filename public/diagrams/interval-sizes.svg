@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" aria-labelledby="t d">
+  <title id="t">The seven diatonic intervals above C</title>
+  <desc id="d">A single treble staff showing seven ascending intervals from C4: M2 (C–D), M3 (C–E), P4 (C–F), P5 (C–G), M6 (C–A), M7 (C–B), P8 (C–C5). Each interval labeled beneath.</desc>
+  <style>
+    .staff  { stroke: #1a1a18; stroke-width: 1; }
+    .clef   { font: 500 56px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .note   { fill: #1a1a18; }
+    .ledger { stroke: #1a1a18; stroke-width: 1; }
+    .lbl    { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; }
+    .names  { font: 300 11px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+  </style>
+
+  <!-- Treble staff (5 lines) -->
+  <line class="staff" x1="30" y1="60"  x2="700" y2="60"/>
+  <line class="staff" x1="30" y1="76"  x2="700" y2="76"/>
+  <line class="staff" x1="30" y1="92"  x2="700" y2="92"/>
+  <line class="staff" x1="30" y1="108" x2="700" y2="108"/>
+  <line class="staff" x1="30" y1="124" x2="700" y2="124"/>
+
+  <text class="clef" x="40" y="124">𝄞</text>
+
+  <!-- Map of pitches on treble staff:
+       Lines from top: F5 (y=60), D5 (y=76), B4 (y=92), G4 (y=108), E4 (y=124)
+       Spaces: E5 (y=68), C5 (y=84), A4 (y=100), F4 (y=116)
+       C4 (middle C) sits on ledger line below, y=140 -->
+
+  <!-- Each interval: a C4 base note (below staff with ledger) + a second note -->
+  <!-- Spacing: 7 intervals, positioned from x=130 to x=640, step=85 -->
+
+  <!-- M2: C4 + D4 -->
+  <g>
+    <line class="ledger" x1="113" y1="140" x2="147" y2="140"/>
+    <ellipse class="note" cx="130" cy="140" rx="7" ry="5" transform="rotate(-18 130 140)"/>
+    <line class="ledger" x1="113" y1="132" x2="147" y2="132"/>
+    <ellipse class="note" cx="130" cy="132" rx="7" ry="5" transform="rotate(-18 130 132)"/>
+    <text class="lbl"   x="130" y="175">M2</text>
+    <text class="names" x="130" y="192">C – D</text>
+  </g>
+
+  <!-- M3: C4 + E4 -->
+  <g>
+    <line class="ledger" x1="198" y1="140" x2="232" y2="140"/>
+    <ellipse class="note" cx="215" cy="140" rx="7" ry="5" transform="rotate(-18 215 140)"/>
+    <ellipse class="note" cx="215" cy="124" rx="7" ry="5" transform="rotate(-18 215 124)"/>
+    <text class="lbl"   x="215" y="175">M3</text>
+    <text class="names" x="215" y="192">C – E</text>
+  </g>
+
+  <!-- P4: C4 + F4 -->
+  <g>
+    <line class="ledger" x1="283" y1="140" x2="317" y2="140"/>
+    <ellipse class="note" cx="300" cy="140" rx="7" ry="5" transform="rotate(-18 300 140)"/>
+    <ellipse class="note" cx="300" cy="116" rx="7" ry="5" transform="rotate(-18 300 116)"/>
+    <text class="lbl"   x="300" y="175">P4</text>
+    <text class="names" x="300" y="192">C – F</text>
+  </g>
+
+  <!-- P5: C4 + G4 -->
+  <g>
+    <line class="ledger" x1="368" y1="140" x2="402" y2="140"/>
+    <ellipse class="note" cx="385" cy="140" rx="7" ry="5" transform="rotate(-18 385 140)"/>
+    <ellipse class="note" cx="385" cy="108" rx="7" ry="5" transform="rotate(-18 385 108)"/>
+    <text class="lbl"   x="385" y="175">P5</text>
+    <text class="names" x="385" y="192">C – G</text>
+  </g>
+
+  <!-- M6: C4 + A4 -->
+  <g>
+    <line class="ledger" x1="453" y1="140" x2="487" y2="140"/>
+    <ellipse class="note" cx="470" cy="140" rx="7" ry="5" transform="rotate(-18 470 140)"/>
+    <ellipse class="note" cx="470" cy="100" rx="7" ry="5" transform="rotate(-18 470 100)"/>
+    <text class="lbl"   x="470" y="175">M6</text>
+    <text class="names" x="470" y="192">C – A</text>
+  </g>
+
+  <!-- M7: C4 + B4 -->
+  <g>
+    <line class="ledger" x1="538" y1="140" x2="572" y2="140"/>
+    <ellipse class="note" cx="555" cy="140" rx="7" ry="5" transform="rotate(-18 555 140)"/>
+    <ellipse class="note" cx="555" cy="92"  rx="7" ry="5" transform="rotate(-18 555 92)"/>
+    <text class="lbl"   x="555" y="175">M7</text>
+    <text class="names" x="555" y="192">C – B</text>
+  </g>
+
+  <!-- P8: C4 + C5 -->
+  <g>
+    <line class="ledger" x1="623" y1="140" x2="657" y2="140"/>
+    <ellipse class="note" cx="640" cy="140" rx="7" ry="5" transform="rotate(-18 640 140)"/>
+    <ellipse class="note" cx="640" cy="84"  rx="7" ry="5" transform="rotate(-18 640 84)"/>
+    <text class="lbl"   x="640" y="175">P8</text>
+    <text class="names" x="640" y="192">C – C</text>
+  </g>
+
+  <!-- Footnote -->
+  <text class="names" x="360" y="225">Each pair is a harmonic interval above C4 (middle C).</text>
+</svg>

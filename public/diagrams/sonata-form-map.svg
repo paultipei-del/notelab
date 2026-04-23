@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" role="img" aria-labelledby="t d">
+  <title id="t">Sonata form</title>
+  <desc id="d">A horizontal timeline of sonata form: Exposition (Primary theme in I, Transition, Secondary theme in V, Closing), Development (fragmentation, modulation, retransition), Recapitulation (same shape as exposition but with Secondary theme now in I). Key markers above show the tonal journey I → V → various → I.</desc>
+  <style>
+    .section-box { fill: #FDFAF3; stroke: #1a1a18; stroke-width: 1.5; }
+    .sub         { fill: #F2EDDF; stroke: #DDD8CA; stroke-width: 1; }
+    .section-lbl { font: 500 16px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .sub-lbl     { font: 500 13px system-ui, sans-serif; fill: #1a1a18; text-anchor: middle; }
+    .key-lbl     { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; font-style: italic; }
+    .axis        { stroke: #1a1a18; stroke-width: 1; }
+    .note        { font: 300 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+  </style>
+
+  <!-- Exposition: 0–300 on x-axis -->
+  <rect class="section-box" x="30"  y="120" width="260" height="80"/>
+  <text class="section-lbl" x="160" y="108">Exposition</text>
+  <!-- Sub-sections within Exposition -->
+  <rect class="sub" x="40"  y="140" width="55" height="50"/>
+  <text class="sub-lbl" x="67" y="170">P</text>
+  <rect class="sub" x="100" y="140" width="55" height="50"/>
+  <text class="sub-lbl" x="127" y="170">T</text>
+  <rect class="sub" x="160" y="140" width="60" height="50"/>
+  <text class="sub-lbl" x="190" y="170">S</text>
+  <rect class="sub" x="225" y="140" width="55" height="50"/>
+  <text class="sub-lbl" x="253" y="170">K</text>
+  <!-- Key labels above -->
+  <text class="key-lbl" x="67"  y="240">I</text>
+  <text class="key-lbl" x="127" y="240">I → V</text>
+  <text class="key-lbl" x="190" y="240">V</text>
+  <text class="key-lbl" x="253" y="240">V</text>
+
+  <!-- Development: 300–580 -->
+  <rect class="section-box" x="310" y="120" width="260" height="80"/>
+  <text class="section-lbl" x="440" y="108">Development</text>
+  <rect class="sub" x="320" y="140" width="80" height="50"/>
+  <text class="sub-lbl" x="360" y="170">Fragmentation</text>
+  <rect class="sub" x="405" y="140" width="80" height="50"/>
+  <text class="sub-lbl" x="445" y="170">Modulation</text>
+  <rect class="sub" x="490" y="140" width="70" height="50"/>
+  <text class="sub-lbl" x="525" y="170">Retrans.</text>
+  <text class="key-lbl" x="440" y="240">various keys → V</text>
+
+  <!-- Recapitulation: 600–870 -->
+  <rect class="section-box" x="590" y="120" width="280" height="80"/>
+  <text class="section-lbl" x="730" y="108">Recapitulation</text>
+  <rect class="sub" x="600" y="140" width="60" height="50"/>
+  <text class="sub-lbl" x="630" y="170">P</text>
+  <rect class="sub" x="665" y="140" width="60" height="50"/>
+  <text class="sub-lbl" x="695" y="170">T</text>
+  <rect class="sub" x="730" y="140" width="65" height="50"/>
+  <text class="sub-lbl" x="762" y="170">S</text>
+  <rect class="sub" x="800" y="140" width="60" height="50"/>
+  <text class="sub-lbl" x="830" y="170">K</text>
+  <text class="key-lbl" x="630" y="240">I</text>
+  <text class="key-lbl" x="695" y="240">I</text>
+  <text class="key-lbl" x="762" y="240">I (not V)</text>
+  <text class="key-lbl" x="830" y="240">I</text>
+
+  <!-- Axis -->
+  <line class="axis" x1="30" y1="260" x2="870" y2="260"/>
+  <text class="note" x="450" y="295">P = primary theme · T = transition · S = secondary theme · K = closing</text>
+  <text class="note" x="450" y="312">Key markers above each sub-section. The recap "resolves" S to the home key.</text>
+</svg>

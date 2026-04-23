@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-labelledby="t d">
+  <title id="t">The circle of fifths</title>
+  <desc id="d">A clock face of keys. Outer ring: major keys with C at 12 o'clock, proceeding clockwise by perfect fifths. Inner ring: relative minors.</desc>
+  <style>
+    .ring-o  { fill: none; stroke: #1a1a18; stroke-width: 1.2; }
+    .ring-i  { fill: none; stroke: #DDD8CA; stroke-width: 1; }
+    .major   { font: 500 22px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .minor   { font: 400 16px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; font-style: italic; }
+    .sig     { font: 300 11px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; }
+  </style>
+
+  <!-- Outer circle (majors), inner circle (minors) -->
+  <circle class="ring-o" cx="300" cy="300" r="250"/>
+  <circle class="ring-i" cx="300" cy="300" r="150"/>
+
+  <!-- MAJOR KEYS at the 12 clock positions on the outer ring.
+       Angle 0 = top (12 o'clock), going clockwise.
+       Radius for major text = 220; signature sits slightly outside at 260. -->
+  <!-- 12 o'clock: C -->
+  <text class="major" x="300" y="88">C</text>
+  <text class="sig"   x="300" y="48">—</text>
+  <!-- 1 o'clock: G (1♯) -->
+  <text class="major" x="410" y="120">G</text>
+  <text class="sig"   x="438" y="98">1♯</text>
+  <!-- 2 o'clock: D (2♯) -->
+  <text class="major" x="490" y="200">D</text>
+  <text class="sig"   x="520" y="180">2♯</text>
+  <!-- 3 o'clock: A (3♯) -->
+  <text class="major" x="520" y="307">A</text>
+  <text class="sig"   x="555" y="307">3♯</text>
+  <!-- 4 o'clock: E (4♯) -->
+  <text class="major" x="490" y="410">E</text>
+  <text class="sig"   x="520" y="430">4♯</text>
+  <!-- 5 o'clock: B (5♯) -->
+  <text class="major" x="410" y="492">B</text>
+  <text class="sig"   x="438" y="510">5♯</text>
+  <!-- 6 o'clock: F♯/G♭ -->
+  <text class="major" x="300" y="526">F♯ / G♭</text>
+  <text class="sig"   x="300" y="565">6♯ / 6♭</text>
+  <!-- 7 o'clock: D♭ (5♭) -->
+  <text class="major" x="190" y="492">D♭</text>
+  <text class="sig"   x="162" y="510">5♭</text>
+  <!-- 8 o'clock: A♭ (4♭) -->
+  <text class="major" x="110" y="410">A♭</text>
+  <text class="sig"   x="80" y="430">4♭</text>
+  <!-- 9 o'clock: E♭ (3♭) -->
+  <text class="major" x="80" y="307">E♭</text>
+  <text class="sig"   x="45" y="307">3♭</text>
+  <!-- 10 o'clock: B♭ (2♭) -->
+  <text class="major" x="110" y="200">B♭</text>
+  <text class="sig"   x="80" y="180">2♭</text>
+  <!-- 11 o'clock: F (1♭) -->
+  <text class="major" x="190" y="120">F</text>
+  <text class="sig"   x="162" y="98">1♭</text>
+
+  <!-- RELATIVE MINORS on the inner ring, matching clock positions -->
+  <text class="minor" x="300" y="180">a</text>
+  <text class="minor" x="368" y="200">e</text>
+  <text class="minor" x="420" y="248">b</text>
+  <text class="minor" x="438" y="307">f♯</text>
+  <text class="minor" x="420" y="370">c♯</text>
+  <text class="minor" x="368" y="418">g♯/a♭</text>
+  <text class="minor" x="300" y="438">e♭/d♯</text>
+  <text class="minor" x="232" y="418">b♭</text>
+  <text class="minor" x="180" y="370">f</text>
+  <text class="minor" x="162" y="307">c</text>
+  <text class="minor" x="180" y="248">g</text>
+  <text class="minor" x="232" y="200">d</text>
+</svg>

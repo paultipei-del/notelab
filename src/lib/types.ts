@@ -12,6 +12,12 @@ export type DeckCategory =
   | 'Pitch & Harmony'
   | 'Rhythm & Meter'
   | 'Form & Structure'
+  // Application & Review — cross-concept challenge decks that combine
+  // multiple skills in a single card.
+  | 'Reading & Analysis'
+  | 'Construction'
+  | 'Applied Reading'
+  | 'Applied Listening'
 
 // Visual preview shown in place of the deck tile's description, so tiles read
 // as differentiated at a glance. Text is plain body font; glyphs render in

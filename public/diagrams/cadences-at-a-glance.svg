@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" aria-labelledby="t d">
+  <title id="t">The four most common cadences in C major</title>
+  <desc id="d">Four side-by-side cadences — authentic (V→I), half (ii→V), plagal (IV→I), deceptive (V→vi). Each labeled with its Roman numerals and cadence name.</desc>
+  <style>
+    .box  { fill: #FDFAF3; stroke: #DDD8CA; stroke-width: 1.25; rx: 10; }
+    .rn   { font: 500 32px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .arrow { stroke: #a03f2e; stroke-width: 1.5; fill: none; }
+    .name { font: 500 16px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .note { font: 300 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+  </style>
+
+  <!-- Authentic -->
+  <g transform="translate(30, 40)">
+    <rect class="box" x="0" y="0" width="150" height="160" rx="10" ry="10"/>
+    <text class="rn" x="40"  y="100">V</text>
+    <path class="arrow" d="M 65 92 L 105 92 M 100 87 L 105 92 L 100 97"/>
+    <text class="rn" x="110" y="100">I</text>
+    <text class="name" x="75" y="200">Authentic Cadence</text>
+    <text class="note" x="75" y="220">conclusive — a musical period</text>
+  </g>
+
+  <!-- Half -->
+  <g transform="translate(200, 40)">
+    <rect class="box" x="0" y="0" width="150" height="160" rx="10" ry="10"/>
+    <text class="rn" x="40"  y="100">ii</text>
+    <path class="arrow" d="M 65 92 L 105 92 M 100 87 L 105 92 L 100 97"/>
+    <text class="rn" x="110" y="100">V</text>
+    <text class="name" x="75" y="200">Half Cadence</text>
+    <text class="note" x="75" y="220">inconclusive — a comma</text>
+  </g>
+
+  <!-- Plagal -->
+  <g transform="translate(370, 40)">
+    <rect class="box" x="0" y="0" width="150" height="160" rx="10" ry="10"/>
+    <text class="rn" x="40"  y="100">IV</text>
+    <path class="arrow" d="M 65 92 L 105 92 M 100 87 L 105 92 L 100 97"/>
+    <text class="rn" x="110" y="100">I</text>
+    <text class="name" x="75" y="200">Plagal Cadence</text>
+    <text class="note" x="75" y="220">"amen" — gentle closure</text>
+  </g>
+
+  <!-- Deceptive -->
+  <g transform="translate(540, 40)">
+    <rect class="box" x="0" y="0" width="150" height="160" rx="10" ry="10"/>
+    <text class="rn" x="40"  y="100">V</text>
+    <path class="arrow" d="M 65 92 L 105 92 M 100 87 L 105 92 L 100 97"/>
+    <text class="rn" x="110" y="100">vi</text>
+    <text class="name" x="75" y="200">Deceptive Cadence</text>
+    <text class="note" x="75" y="220">surprise — defers the close</text>
+  </g>
+
+  <!-- Key label -->
+  <text class="note" x="360" y="295" style="text-anchor: middle; font-size: 13px;">All four cadences shown in C major.</text>
+</svg>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="t d">
+  <title id="t">The classical period: antecedent and consequent</title>
+  <desc id="d">A horizontal diagram of an 8-measure period. Two 4-measure phrases, labeled Antecedent and Consequent. Antecedent ends with a half cadence; Consequent ends with an authentic cadence. A larger bracket above labels the whole 8-measure span as a period.</desc>
+  <style>
+    .period-brk   { stroke: #1a1a18; stroke-width: 1.5; fill: none; }
+    .phrase-box   { fill: #FDFAF3; stroke: #a03f2e; stroke-width: 1.25; }
+    .bar          { stroke: #1a1a18; stroke-width: 1; }
+    .period-lbl   { font: 500 15px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; letter-spacing: 0.03em; }
+    .phrase-lbl   { font: 500 18px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .cad-lbl      { font: 500 13px system-ui, sans-serif; fill: #a03f2e; text-anchor: middle; }
+    .cad-type     { font: 300 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+    .m-num        { font: 400 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; }
+    .axis         { stroke: #7A7060; stroke-width: 1; }
+  </style>
+
+  <!-- Period bracket (top) -->
+  <path class="period-brk" d="M 60 70 L 60 50 L 660 50 L 660 70"/>
+  <text class="period-lbl" x="360" y="40">Period (8 measures)</text>
+
+  <!-- Two phrases side by side, each 4 measures wide -->
+  <rect class="phrase-box" x="60"  y="100" width="300" height="80"/>
+  <rect class="phrase-box" x="360" y="100" width="300" height="80"/>
+
+  <text class="phrase-lbl" x="210" y="145">Antecedent</text>
+  <text class="phrase-lbl" x="510" y="145">Consequent</text>
+  <text class="cad-type"   x="210" y="168">(question)</text>
+  <text class="cad-type"   x="510" y="168">(answer)</text>
+
+  <!-- Cadence brackets below each phrase's final measure -->
+  <path class="period-brk" d="M 305 200 L 305 220 L 355 220 L 355 200"/>
+  <text class="cad-lbl" x="330" y="242">Half Cadence</text>
+  <text class="cad-type" x="330" y="258">(ends on V)</text>
+
+  <path class="period-brk" d="M 605 200 L 605 220 L 655 220 L 655 200"/>
+  <text class="cad-lbl" x="630" y="242">Authentic Cadence</text>
+  <text class="cad-type" x="630" y="258">(V → I)</text>
+
+  <!-- Measure tick marks along the bottom -->
+  <line class="axis" x1="60" y1="290" x2="660" y2="290"/>
+  <line class="bar" x1="60"  y1="285" x2="60"  y2="295"/>
+  <line class="bar" x1="135" y1="285" x2="135" y2="295"/>
+  <line class="bar" x1="210" y1="285" x2="210" y2="295"/>
+  <line class="bar" x1="285" y1="285" x2="285" y2="295"/>
+  <line class="bar" x1="360" y1="285" x2="360" y2="295"/>
+  <line class="bar" x1="435" y1="285" x2="435" y2="295"/>
+  <line class="bar" x1="510" y1="285" x2="510" y2="295"/>
+  <line class="bar" x1="585" y1="285" x2="585" y2="295"/>
+  <line class="bar" x1="660" y1="285" x2="660" y2="295"/>
+
+  <text class="m-num" x="97"  y="310">m. 1</text>
+  <text class="m-num" x="172" y="310">m. 2</text>
+  <text class="m-num" x="247" y="310">m. 3</text>
+  <text class="m-num" x="322" y="310">m. 4</text>
+  <text class="m-num" x="397" y="310">m. 5</text>
+  <text class="m-num" x="472" y="310">m. 6</text>
+  <text class="m-num" x="547" y="310">m. 7</text>
+  <text class="m-num" x="622" y="310">m. 8</text>
+</svg>

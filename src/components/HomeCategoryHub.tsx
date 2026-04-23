@@ -32,7 +32,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
       symbolColor: 'rgba(255,255,255,0.18)',
     },
     {
-      href: '/collection?tag=ear',
+      href: '/ear-training',
       label: `${earTopicCount} Topics`,
       title: 'Ear Training',
       subtitle: 'Listen to piano audio examples and identify intervals, triads, cadences, and scales by ear.',

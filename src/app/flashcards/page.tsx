@@ -27,7 +27,16 @@ const CATEGORY_ORDER: DeckCategory[] = [
   'Pitch & Harmony',
   'Rhythm & Meter',
   'Form & Structure',
+  'Reading & Analysis',
+  'Construction',
+  'Applied Reading',
+  'Applied Listening',
 ]
+
+const TIER_DESCRIPTIONS: Partial<Record<Tier, string>> = {
+  application:
+    'Cross-concept problems that test how theory fits together. Each card combines multiple ideas — recognition, construction, and reasoning — in the way real music theory questions appear.',
+}
 
 type TierCollapseState = Record<Tier, boolean>
 
@@ -205,11 +214,12 @@ export default function FlashcardsPage() {
 
               {!isCollapsed && (
                 <div style={{ paddingLeft: '0' }}>
-                  {tier === 'application' && empty ? (
-                    <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#7A7060', fontStyle: 'italic', margin: '4px 0 8px', lineHeight: 1.7 }}>
-                      Coming soon — cross-deck challenges that combine calculation, recognition, and multi-step theory problems.
+                  {TIER_DESCRIPTIONS[tier] && (
+                    <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#7A7060', fontStyle: 'italic', margin: '4px 0 20px', lineHeight: 1.7, maxWidth: '620px' }}>
+                      {TIER_DESCRIPTIONS[tier]}
                     </p>
-                  ) : empty ? (
+                  )}
+                  {empty ? (
                     <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#7A7060', fontStyle: 'italic', margin: '4px 0 8px' }}>
                       No decks in this tier yet.
                     </p>

@@ -65,4 +65,10 @@ export const DECK_PREVIEWS: Record<string, DeckPreview> = {
   'german-directions': { kind: 'text', content: 'langsam · lebhaft · mit Ausdruck' },
   'french-directions': { kind: 'text', content: 'doux · vif · avec mouvement' },
   'transposing-instruments': { kind: 'text', content: 'B♭ · F · E♭ transpositions' },
+
+  // ── TIER 4 — Application & Review ────────────────────────────────
+  'identify-and-explain':      { kind: 'text', content: 'key · cadence · form in one question' },
+  'build-and-transform':       { kind: 'text', content: 'build a scale, transpose, invert' },
+  'score-reading-quickfire':   { kind: 'text', content: "clef · key · dynamic · what's happening" },
+  'ear-to-paper':              { kind: 'text', content: 'hear it · identify it · write it' },
 }

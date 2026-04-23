@@ -64,6 +64,10 @@ import { SOLFEGE_AND_SCALE_DEGREES_CARDS } from './flashcards/solfege-and-scale-
 import { TRANSPOSING_INSTRUMENTS_CARDS } from './flashcards/transposing-instruments'
 import { RHYTHM_PATTERNS_CARDS } from './flashcards/rhythm-patterns'
 import { INTERVAL_SONG_ASSOCIATIONS_CARDS } from './flashcards/interval-song-associations'
+import { IDENTIFY_AND_EXPLAIN_CARDS } from './flashcards/identify-and-explain'
+import { BUILD_AND_TRANSFORM_CARDS } from './flashcards/build-and-transform'
+import { SCORE_READING_QUICKFIRE_CARDS } from './flashcards/score-reading-quickfire'
+import { EAR_TO_PAPER_CARDS } from './flashcards/ear-to-paper'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -764,6 +768,54 @@ export const DECKS: Deck[] = [
     category: 'Notation & Terms',
     tags: ['topic:notation', 'type:terminology'],
     cards: TRANSPOSING_INSTRUMENTS_CARDS,
+  },
+
+  // ── TIER 4: APPLICATION & REVIEW ──
+  // Multi-step challenge decks that combine recognition, construction,
+  // and reasoning in a single card. One deck per sub-category.
+  {
+    id: 'identify-and-explain',
+    title: 'Identify and Explain',
+    description: 'Multi-part phrases: identify key, cadence, and phrase function in one pass.',
+    tag: 'free',
+    tier: 'application',
+    tierOrder: 1,
+    category: 'Reading & Analysis',
+    tags: ['topic:analysis', 'type:calculation'],
+    cards: IDENTIFY_AND_EXPLAIN_CARDS,
+  },
+  {
+    id: 'build-and-transform',
+    title: 'Build and Transform',
+    description: 'Build scales and triads, compute intervals between degrees, transpose and invert.',
+    tag: 'free',
+    tier: 'application',
+    tierOrder: 1,
+    category: 'Construction',
+    tags: ['topic:construction', 'type:calculation'],
+    cards: BUILD_AND_TRANSFORM_CARDS,
+  },
+  {
+    id: 'score-reading-quickfire',
+    title: 'Score Reading Quickfire',
+    description: 'Clef, key, meter, tempo, dynamic, articulation — six features per card.',
+    tag: 'free',
+    tier: 'application',
+    tierOrder: 1,
+    category: 'Applied Reading',
+    tags: ['topic:notation', 'type:recognition'],
+    cards: SCORE_READING_QUICKFIRE_CARDS,
+  },
+  {
+    id: 'ear-to-paper',
+    title: 'Ear to Paper',
+    description: 'What you would hear and what it is: progressions, cadences, intervals in context.',
+    tag: 'free',
+    tier: 'application',
+    tierOrder: 1,
+    category: 'Applied Listening',
+    tags: ['topic:aural', 'type:calculation'],
+    cards: EAR_TO_PAPER_CARDS,
   },
 
   {

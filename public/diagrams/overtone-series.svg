@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" role="img" aria-labelledby="t d">
+  <title id="t">The first eight partials above a fundamental of C2</title>
+  <desc id="d">A vertical ladder of eight horizontal rungs, each labeled with a partial number, pitch name, and interval above the fundamental. Lower partials sit at the bottom; higher partials near the top.</desc>
+  <style>
+    .num   { font: 500 14px system-ui, sans-serif; fill: #7A7060; }
+    .pitch { font: 500 18px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .intv  { font: 300 13px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+    .line  { stroke: #a03f2e; stroke-width: 1.25; }
+    .dot   { fill: #a03f2e; }
+    .spine { stroke: #DDD8CA; stroke-width: 1; }
+  </style>
+  <!-- Vertical spine -->
+  <line class="spine" x1="80" y1="20" x2="80" y2="400"/>
+
+  <!-- 8 rungs: partial 1 at bottom, partial 8 at top -->
+  <!-- partial, pitch, interval from fundamental -->
+  <!-- Row 8: D5 (2 octaves + M2) -->
+  <line class="line" x1="80" y1="40" x2="140" y2="40"/>
+  <circle class="dot" cx="140" cy="40" r="4"/>
+  <text class="num"   x="30" y="44">8</text>
+  <text class="pitch" x="160" y="45">D5</text>
+  <text class="intv"  x="260" y="45">M2 above 7th partial</text>
+
+  <!-- Row 7: B♭4 (2 octaves + m7, slightly flat) -->
+  <line class="line" x1="80" y1="90" x2="140" y2="90"/>
+  <circle class="dot" cx="140" cy="90" r="4"/>
+  <text class="num"   x="30" y="94">7</text>
+  <text class="pitch" x="160" y="95">B♭4</text>
+  <text class="intv"  x="260" y="95">minor 7th (slightly flat)</text>
+
+  <!-- Row 6: G4 -->
+  <line class="line" x1="80" y1="140" x2="140" y2="140"/>
+  <circle class="dot" cx="140" cy="140" r="4"/>
+  <text class="num"   x="30" y="144">6</text>
+  <text class="pitch" x="160" y="145">G4</text>
+  <text class="intv"  x="260" y="145">perfect 5th above 5th partial</text>
+
+  <!-- Row 5: E4 -->
+  <line class="line" x1="80" y1="190" x2="140" y2="190"/>
+  <circle class="dot" cx="140" cy="190" r="4"/>
+  <text class="num"   x="30" y="194">5</text>
+  <text class="pitch" x="160" y="195">E4</text>
+  <text class="intv"  x="260" y="195">major 3rd above 4th partial</text>
+
+  <!-- Row 4: C4 -->
+  <line class="line" x1="80" y1="240" x2="140" y2="240"/>
+  <circle class="dot" cx="140" cy="240" r="4"/>
+  <text class="num"   x="30" y="244">4</text>
+  <text class="pitch" x="160" y="245">C4</text>
+  <text class="intv"  x="260" y="245">2 octaves above fundamental</text>
+
+  <!-- Row 3: G3 -->
+  <line class="line" x1="80" y1="290" x2="140" y2="290"/>
+  <circle class="dot" cx="140" cy="290" r="4"/>
+  <text class="num"   x="30" y="294">3</text>
+  <text class="pitch" x="160" y="295">G3</text>
+  <text class="intv"  x="260" y="295">octave + perfect 5th</text>
+
+  <!-- Row 2: C3 -->
+  <line class="line" x1="80" y1="340" x2="140" y2="340"/>
+  <circle class="dot" cx="140" cy="340" r="4"/>
+  <text class="num"   x="30" y="344">2</text>
+  <text class="pitch" x="160" y="345">C3</text>
+  <text class="intv"  x="260" y="345">octave above fundamental</text>
+
+  <!-- Row 1: C2 (fundamental) -->
+  <line class="line" x1="80" y1="390" x2="140" y2="390"/>
+  <circle class="dot" cx="140" cy="390" r="5"/>
+  <text class="num"   x="30" y="394">1</text>
+  <text class="pitch" x="160" y="395">C2</text>
+  <text class="intv"  x="260" y="395">fundamental</text>
+</svg>

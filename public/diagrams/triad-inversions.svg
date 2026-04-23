@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-labelledby="t d">
+  <title id="t">A C major triad in three inversions</title>
+  <desc id="d">A treble staff showing a C major triad in root position (C in bass), first inversion (E in bass), and second inversion (G in bass), each labeled with its figured-bass designation.</desc>
+  <style>
+    .staff  { stroke: #1a1a18; stroke-width: 1; }
+    .clef   { font: 500 64px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .note   { fill: #1a1a18; }
+    .ledger { stroke: #1a1a18; stroke-width: 1; }
+    .lbl    { font: 500 15px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .rn     { font: 500 16px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; }
+    .notes  { font: 300 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+  </style>
+
+  <!-- Treble staff -->
+  <line class="staff" x1="30" y1="80"  x2="620" y2="80"/>
+  <line class="staff" x1="30" y1="96"  x2="620" y2="96"/>
+  <line class="staff" x1="30" y1="112" x2="620" y2="112"/>
+  <line class="staff" x1="30" y1="128" x2="620" y2="128"/>
+  <line class="staff" x1="30" y1="144" x2="620" y2="144"/>
+
+  <text class="clef" x="40" y="144">𝄞</text>
+
+  <!-- Root position: C4 (ledger below), E4 (bottom line), G4 (2nd line) -->
+  <g>
+    <line class="ledger" x1="153" y1="160" x2="187" y2="160"/>
+    <ellipse class="note" cx="170" cy="160" rx="8" ry="6" transform="rotate(-18 170 160)"/>
+    <ellipse class="note" cx="170" cy="144" rx="8" ry="6" transform="rotate(-18 170 144)"/>
+    <ellipse class="note" cx="170" cy="128" rx="8" ry="6" transform="rotate(-18 170 128)"/>
+    <text class="lbl"   x="170" y="200">Root position</text>
+    <text class="rn"    x="170" y="222">I</text>
+    <text class="notes" x="170" y="242">bass: C (root)</text>
+  </g>
+
+  <!-- First inversion: E4 (bottom line), G4 (2nd), C5 (3rd space = y=104) -->
+  <g>
+    <ellipse class="note" cx="340" cy="144" rx="8" ry="6" transform="rotate(-18 340 144)"/>
+    <ellipse class="note" cx="340" cy="128" rx="8" ry="6" transform="rotate(-18 340 128)"/>
+    <ellipse class="note" cx="340" cy="104" rx="8" ry="6" transform="rotate(-18 340 104)"/>
+    <text class="lbl"   x="340" y="200">First inversion</text>
+    <text class="rn"    x="340" y="222">I⁶</text>
+    <text class="notes" x="340" y="242">bass: E (3rd)</text>
+  </g>
+
+  <!-- Second inversion: G4 (2nd line), C5 (3rd space), E5 (top space = y=88) -->
+  <g>
+    <ellipse class="note" cx="510" cy="128" rx="8" ry="6" transform="rotate(-18 510 128)"/>
+    <ellipse class="note" cx="510" cy="104" rx="8" ry="6" transform="rotate(-18 510 104)"/>
+    <ellipse class="note" cx="510" cy="88"  rx="8" ry="6" transform="rotate(-18 510 88)"/>
+    <text class="lbl"   x="510" y="200">Second inversion</text>
+    <text class="rn"    x="510" y="222">I⁶⁄₄</text>
+    <text class="notes" x="510" y="242">bass: G (5th)</text>
+  </g>
+</svg>

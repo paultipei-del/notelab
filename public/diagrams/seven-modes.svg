@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 420" role="img" aria-labelledby="t d">
+  <title id="t">The seven modes of the major scale</title>
+  <desc id="d">Seven rows, each showing the eight pitches of a mode starting on a different degree of the C major scale. Mode names on the left; pitches labeled horizontally; characteristic half-step positions marked with tilde-shaped brackets.</desc>
+  <style>
+    .row-lbl { font: 500 15px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: end; }
+    .tonic   { font: 500 15px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; }
+    .pitch   { font: 400 15px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .half    { stroke: #a03f2e; stroke-width: 1.5; fill: none; }
+    .hdr     { font: 600 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; text-transform: uppercase; letter-spacing: 0.1em; }
+    .note    { font: 300 12px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+  </style>
+
+  <!-- 8 columns for 8 scale-degree positions. x start = 200, step = 65. -->
+  <!-- Row heights: 45 starting at y=70 -->
+
+  <!-- Column headers: (no numbers; just labels) -->
+  <text class="hdr" x="100" y="55">mode</text>
+  <text class="hdr" x="470" y="55">pitches (each row from C major scale, starting on different degree)</text>
+
+  <!-- Ionian: C D E F G A B C -->
+  <text class="row-lbl" x="180" y="80">Ionian</text>
+  <text class="tonic"   x="220" y="80">C</text>
+  <text class="pitch"   x="285" y="80">D</text>
+  <text class="pitch"   x="350" y="80">E</text>
+  <text class="pitch"   x="415" y="80">F</text>
+  <text class="pitch"   x="480" y="80">G</text>
+  <text class="pitch"   x="545" y="80">A</text>
+  <text class="pitch"   x="610" y="80">B</text>
+  <text class="pitch"   x="675" y="80">C</text>
+  <!-- Half steps between E–F (positions 3–4) and B–C (positions 7–8) -->
+  <path class="half" d="M 367 84 Q 383 90 399 84"/>
+  <path class="half" d="M 627 84 Q 643 90 659 84"/>
+
+  <!-- Dorian: D E F G A B C D -->
+  <text class="row-lbl" x="180" y="125">Dorian</text>
+  <text class="tonic"   x="220" y="125">D</text>
+  <text class="pitch"   x="285" y="125">E</text>
+  <text class="pitch"   x="350" y="125">F</text>
+  <text class="pitch"   x="415" y="125">G</text>
+  <text class="pitch"   x="480" y="125">A</text>
+  <text class="pitch"   x="545" y="125">B</text>
+  <text class="pitch"   x="610" y="125">C</text>
+  <text class="pitch"   x="675" y="125">D</text>
+  <path class="half" d="M 302 129 Q 318 135 334 129"/>
+  <path class="half" d="M 562 129 Q 578 135 594 129"/>
+
+  <!-- Phrygian: E F G A B C D E -->
+  <text class="row-lbl" x="180" y="170">Phrygian</text>
+  <text class="tonic"   x="220" y="170">E</text>
+  <text class="pitch"   x="285" y="170">F</text>
+  <text class="pitch"   x="350" y="170">G</text>
+  <text class="pitch"   x="415" y="170">A</text>
+  <text class="pitch"   x="480" y="170">B</text>
+  <text class="pitch"   x="545" y="170">C</text>
+  <text class="pitch"   x="610" y="170">D</text>
+  <text class="pitch"   x="675" y="170">E</text>
+  <path class="half" d="M 237 174 Q 253 180 269 174"/>
+  <path class="half" d="M 497 174 Q 513 180 529 174"/>
+
+  <!-- Lydian: F G A B C D E F -->
+  <text class="row-lbl" x="180" y="215">Lydian</text>
+  <text class="tonic"   x="220" y="215">F</text>
+  <text class="pitch"   x="285" y="215">G</text>
+  <text class="pitch"   x="350" y="215">A</text>
+  <text class="pitch"   x="415" y="215">B</text>
+  <text class="pitch"   x="480" y="215">C</text>
+  <text class="pitch"   x="545" y="215">D</text>
+  <text class="pitch"   x="610" y="215">E</text>
+  <text class="pitch"   x="675" y="215">F</text>
+  <path class="half" d="M 432 219 Q 448 225 464 219"/>
+  <path class="half" d="M 627 219 Q 643 225 659 219"/>
+
+  <!-- Mixolydian: G A B C D E F G -->
+  <text class="row-lbl" x="180" y="260">Mixolydian</text>
+  <text class="tonic"   x="220" y="260">G</text>
+  <text class="pitch"   x="285" y="260">A</text>
+  <text class="pitch"   x="350" y="260">B</text>
+  <text class="pitch"   x="415" y="260">C</text>
+  <text class="pitch"   x="480" y="260">D</text>
+  <text class="pitch"   x="545" y="260">E</text>
+  <text class="pitch"   x="610" y="260">F</text>
+  <text class="pitch"   x="675" y="260">G</text>
+  <path class="half" d="M 367 264 Q 383 270 399 264"/>
+  <path class="half" d="M 562 264 Q 578 270 594 264"/>
+
+  <!-- Aeolian: A B C D E F G A -->
+  <text class="row-lbl" x="180" y="305">Aeolian</text>
+  <text class="tonic"   x="220" y="305">A</text>
+  <text class="pitch"   x="285" y="305">B</text>
+  <text class="pitch"   x="350" y="305">C</text>
+  <text class="pitch"   x="415" y="305">D</text>
+  <text class="pitch"   x="480" y="305">E</text>
+  <text class="pitch"   x="545" y="305">F</text>
+  <text class="pitch"   x="610" y="305">G</text>
+  <text class="pitch"   x="675" y="305">A</text>
+  <path class="half" d="M 302 309 Q 318 315 334 309"/>
+  <path class="half" d="M 497 309 Q 513 315 529 309"/>
+
+  <!-- Locrian: B C D E F G A B -->
+  <text class="row-lbl" x="180" y="350">Locrian</text>
+  <text class="tonic"   x="220" y="350">B</text>
+  <text class="pitch"   x="285" y="350">C</text>
+  <text class="pitch"   x="350" y="350">D</text>
+  <text class="pitch"   x="415" y="350">E</text>
+  <text class="pitch"   x="480" y="350">F</text>
+  <text class="pitch"   x="545" y="350">G</text>
+  <text class="pitch"   x="610" y="350">A</text>
+  <text class="pitch"   x="675" y="350">B</text>
+  <path class="half" d="M 237 354 Q 253 360 269 354"/>
+  <path class="half" d="M 432 354 Q 448 360 464 354"/>
+
+  <!-- Footnote -->
+  <text class="note" x="30" y="400">Red brackets mark half-step pairs — each mode's unique "fingerprint" is the position of its half steps within the 8-note pattern.</text>
+</svg>

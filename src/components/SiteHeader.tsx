@@ -15,11 +15,21 @@ const NAV_TEXT_ACTIVE_HOVER = '#1A1712'
 const NAV_TEXT_IDLE = '#7A7060'
 const NAV_TEXT_IDLE_HOVER = '#5E574A'
 
-const NAV = [
-  { label: 'Flashcards',   href: '/flashcards',         match: (p: string) => p === '/flashcards' },
-  { label: 'Ear Training', href: '/collection?tag=ear', match: (p: string) => p === '/collection' },
-  { label: 'Tools',        href: '/tools',              match: (p: string) => p === '/tools' },
-  { label: 'Programs',     href: '/programs',           match: (p: string) => p === '/programs' },
+// Two groups: content/curricula (Learn, Programs) and practice/utilities
+// (Flashcards, Ear Training, Tools). `groupBreakBefore` signals the renderer
+// to insert extra horizontal breathing room before that item — no divider,
+// just a wider gap than the default item-to-item spacing.
+const NAV: Array<{
+  label: string
+  href: string
+  match: (p: string) => boolean
+  groupBreakBefore?: boolean
+}> = [
+  { label: 'Learn',        href: '/learn',        match: (p: string) => p === '/learn' || p.startsWith('/learn/') },
+  { label: 'Programs',     href: '/programs',     match: (p: string) => p === '/programs' || p.startsWith('/programs/') },
+  { label: 'Flashcards',   href: '/flashcards',   match: (p: string) => p === '/flashcards', groupBreakBefore: true },
+  { label: 'Ear Training', href: '/ear-training', match: (p: string) => p === '/ear-training' || (p === '/collection' /* legacy fallback */) },
+  { label: 'Tools',        href: '/tools',        match: (p: string) => p === '/tools' },
 ]
 
 function getInitials(name: string | null | undefined, email: string): string {
@@ -162,6 +172,9 @@ export default function SiteHeader() {
                   background: 'transparent', border: 'none',
                   borderRadius: HDR_BTN_R,
                   padding: '7px 18px',
+                  // Extra left margin on the first item of group B (Flashcards)
+                  // creates subtle visual grouping without a divider.
+                  marginLeft: item.groupBreakBefore ? '14px' : undefined,
                   fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
                   color,
                   letterSpacing: '0.02em',
