@@ -1836,24 +1836,18 @@ body:has(.nl-study-viewport) {
   --deck-color-technique:  hsl( 42, 42%, 58%);  /* amber — craft */
 }
 
-/* Thin colored stripe on the left edge, drawn via a pseudo-element so the
-   tile's 1px border (and the hover accent-color border transition) stay
-   undisturbed. Tile must set `--deck-accent` via inline style.
-   `overflow: hidden` on the parent clips the stripe to the card's rounded
-   corners so the line ends flush with the curve instead of running past it. */
+/* Domain accent as an atmospheric wash — the color bleeds in from the left
+   edge and fades to the card's normal cream within ~70px. Reads as mood
+   rather than decoration; no hard stripe. Tile must set `--deck-accent` via
+   inline style. */
 .nl-card-surface[data-deck-accent] {
-  position: relative;
-  overflow: hidden;
-}
-.nl-card-surface[data-deck-accent]::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--deck-accent);
-  pointer-events: none;
+  background:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--deck-accent) 28%, transparent),
+      transparent 72px
+    ),
+    #fdfaf3;
 }
 
 .nl-card-surface--tight {
