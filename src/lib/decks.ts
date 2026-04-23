@@ -45,6 +45,21 @@ import { CHARACTER_TERMS_CORE_CARDS } from './flashcards/character-terms-core'
 import { CHARACTER_TERMS_EXTENDED_CARDS } from './flashcards/character-terms-extended'
 import { TEMPO_MODIFICATIONS_CARDS } from './flashcards/tempo-modifications'
 import { MODIFYING_WORDS_CARDS } from './flashcards/modifying-words'
+import { BAROQUE_ORNAMENT_EXECUTION_CARDS } from './flashcards/baroque-ornament-execution'
+import { CLASSICAL_ROMANTIC_ORNAMENT_EXECUTION_CARDS } from './flashcards/classical-romantic-ornament-execution'
+import { ROMAN_NUMERALS_CARDS } from './flashcards/roman-numerals'
+import { FIGURED_BASS_CARDS } from './flashcards/figured-bass'
+import { NON_CHORD_TONES_CARDS } from './flashcards/non-chord-tones'
+import { CADENCES_CARDS } from './flashcards/cadences'
+import { BINARY_TERNARY_FORMS_CARDS } from './flashcards/binary-ternary-forms'
+import { SONATA_FORM_CARDS } from './flashcards/sonata-form'
+import { FUGAL_TERMINOLOGY_CARDS } from './flashcards/fugal-terminology'
+import { PHRASE_STRUCTURE_CARDS } from './flashcards/phrase-structure'
+import { GERMAN_DIRECTIONS_CARDS } from './flashcards/german-directions'
+import { FRENCH_DIRECTIONS_CARDS } from './flashcards/french-directions'
+import { PEDAL_MARKINGS_CARDS } from './flashcards/pedal-markings'
+import { FINGERING_CONVENTIONS_CARDS } from './flashcards/fingering-conventions'
+import { PIANO_SPECIFIC_SYMBOLS_CARDS } from './flashcards/piano-specific-symbols'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -207,12 +222,14 @@ export const DECKS: Deck[] = [
     cards: CLEF_SYMBOL_CARDS,
   },
   {
+    // Retitled from "Ornaments" (Tier 1) to "Ornament Types" (Tier 3) per spec §3.3 —
+    // slug `symbols-ornaments` kept unchanged so user SM-2 progress carries over.
     id: 'symbols-ornaments',
-    title: 'Ornaments',
-    description: 'Identify trills, mordents, turns, and grace notes.',
+    title: 'Ornament Types',
+    description: 'The full family of ornaments — trills, mordents, turns, appoggiaturas, arpeggios and more.',
     tag: 'free' as const,
-    tier: 'foundations',
-    tierOrder: 7,
+    tier: 'advanced',
+    tierOrder: 1,
     category: 'Music symbols',
     tags: ['topic:expression', 'type:recognition'],
     cards: ORNAMENT_SYMBOL_CARDS,
@@ -530,6 +547,175 @@ export const DECKS: Deck[] = [
     category: 'Rhythm & Meter',
     tags: ['topic:rhythm', 'type:recognition'],
     cards: TUPLETS_CARDS,
+  },
+
+  // ── TIER 3 NEW DECKS ──
+  // A1 (symbols-ornaments) is registered above with its original slug —
+  // its tier was migrated from foundations to advanced in-place.
+  {
+    id: 'baroque-ornament-execution',
+    title: 'Baroque Ornament Execution',
+    description: 'How to perform ornaments in the Baroque style — trill starts, lengths, patterns.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 2,
+    category: 'Music symbols',
+    tags: ['topic:expression', 'type:terminology', 'era:baroque'],
+    cards: BAROQUE_ORNAMENT_EXECUTION_CARDS,
+  },
+  {
+    id: 'classical-romantic-ornament-execution',
+    title: 'Classical/Romantic Ornament Execution',
+    description: 'How performance practice for ornaments shifted after the Baroque era.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 3,
+    category: 'Music symbols',
+    tags: ['topic:expression', 'type:terminology', 'era:classical', 'era:romantic'],
+    cards: CLASSICAL_ROMANTIC_ORNAMENT_EXECUTION_CARDS,
+  },
+  {
+    id: 'pedal-markings',
+    title: 'Pedal Markings',
+    description: 'Sustain, una corda, sostenuto — reading pedal directions in scores.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 4,
+    category: 'Music symbols',
+    tags: ['topic:technique', 'type:recognition'],
+    cards: PEDAL_MARKINGS_CARDS,
+  },
+  {
+    id: 'fingering-conventions',
+    title: 'Fingering Conventions',
+    description: 'How fingering numbers work — crossing, substitution, and positions.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 5,
+    category: 'Music symbols',
+    tags: ['topic:technique', 'type:terminology'],
+    cards: FINGERING_CONVENTIONS_CARDS,
+  },
+  {
+    id: 'piano-specific-symbols',
+    title: 'Hand Division & Piano-Specific Symbols',
+    description: 'Hand labels, arpeggio rolls, 8va/8vb, and other piano-only notation.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 6,
+    category: 'Music symbols',
+    tags: ['topic:technique', 'type:recognition'],
+    cards: PIANO_SPECIFIC_SYMBOLS_CARDS,
+  },
+  {
+    id: 'roman-numerals',
+    title: 'Roman Numerals',
+    description: 'Labeling harmonies with Roman numerals — I ii iii IV V vi vii° and beyond.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 1,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:terminology'],
+    cards: ROMAN_NUMERALS_CARDS,
+  },
+  {
+    id: 'figured-bass',
+    title: 'Figured Bass Symbols',
+    description: 'Baroque shorthand — reading the numbers beneath a bass line.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 2,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:terminology', 'era:baroque'],
+    cards: FIGURED_BASS_CARDS,
+  },
+  {
+    id: 'non-chord-tones',
+    title: 'Non-Chord Tones',
+    description: 'Passing, neighbor, appoggiatura, suspension, and other NCTs.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 3,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:terminology'],
+    cards: NON_CHORD_TONES_CARDS,
+  },
+  {
+    id: 'cadences',
+    title: 'Cadences',
+    description: 'Authentic, half, plagal, deceptive, and Phrygian cadences.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 4,
+    category: 'Pitch & Harmony',
+    tags: ['topic:harmony', 'type:recognition'],
+    cards: CADENCES_CARDS,
+  },
+  {
+    id: 'binary-ternary-forms',
+    title: 'Binary & Ternary Forms',
+    description: 'AB and ABA — the two building-block forms of tonal music.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 1,
+    category: 'Form & Structure',
+    tags: ['topic:form', 'type:terminology'],
+    cards: BINARY_TERNARY_FORMS_CARDS,
+  },
+  {
+    id: 'sonata-form',
+    title: 'Sonata Form Sections',
+    description: 'Exposition, development, recapitulation — the Classical sonata plan.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 2,
+    category: 'Form & Structure',
+    tags: ['topic:form', 'type:terminology', 'era:classical'],
+    cards: SONATA_FORM_CARDS,
+  },
+  {
+    id: 'fugal-terminology',
+    title: 'Fugal Terminology',
+    description: 'Subject, answer, countersubject, stretto — the vocabulary of fugue.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 3,
+    category: 'Form & Structure',
+    tags: ['topic:form', 'type:terminology', 'era:baroque'],
+    cards: FUGAL_TERMINOLOGY_CARDS,
+  },
+  {
+    id: 'phrase-structure',
+    title: 'Phrase Structure',
+    description: 'Periods, sentences, antecedents, consequents — how phrases build up.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 4,
+    category: 'Form & Structure',
+    tags: ['topic:form', 'type:terminology'],
+    cards: PHRASE_STRUCTURE_CARDS,
+  },
+  {
+    id: 'german-directions',
+    title: 'German Performance Directions',
+    description: 'German expression markings from Schumann, Brahms, and contemporaries.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 1,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:german'],
+    cards: GERMAN_DIRECTIONS_CARDS,
+  },
+  {
+    id: 'french-directions',
+    title: 'French Performance Directions',
+    description: 'French expression markings from Debussy, Ravel, and the French school.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 2,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:french'],
+    cards: FRENCH_DIRECTIONS_CARDS,
   },
 
   {
