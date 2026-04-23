@@ -1,0 +1,125 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { REFERENCE_INTERVALS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'the-seven-reference-intervals',
+  title: 'The Seven Reference Intervals',
+  oneSentence:
+    'Within an octave, seven intervals serve as the reference set for all interval work — unison, major 2nd, major 3rd, perfect 4th, perfect 5th, major 6th, major 7th, and octave — and they correspond exactly to the notes of the major scale starting from any tonic.',
+  practice: [
+    { kind: 'flashcard', label: 'Intervals Flashcards', detail: '15 cards', href: '/study/intervals' },
+  ],
+  related: [
+    { title: 'Interval Number',    href: '/learn/intervals/interval-number' },
+    { title: 'Interval Quality',   href: '/learn/intervals/interval-quality' },
+    { title: 'The Major Scale',    href: '/learn/scales/the-major-scale' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+If you know the intervals of the major scale, you can identify any interval in music. That's because the major scale gives you a built-in reference for the seven "default" sizes of each interval number:
+
+- The major 2nd is the distance between scale degrees 1 and 2
+- The major 3rd is the distance between scale degrees 1 and 3
+- The perfect 4th is the distance between scale degrees 1 and 4
+- The perfect 5th is the distance between scale degrees 1 and 5
+- The major 6th is the distance between scale degrees 1 and 6
+- The major 7th is the distance between scale degrees 1 and 7
+- The octave is the distance between scale degrees 1 and 8 (which is the same as 1, an octave higher)
+
+Every other interval quality (minor, augmented, diminished) is derived by altering these reference sizes by a half step in one direction or the other. Learn these seven reference intervals — really learn them — and everything else in intervals becomes arithmetic.
+
+## The visual
+
+<Notation
+  musicXml={REFERENCE_INTERVALS_XML}
+  caption="The C major scale with each note labeled as its interval from the tonic C: unison, M2, M3, P4, P5, M6, M7, octave. These are the seven reference intervals."
+  ariaLabel="A C major scale ascending on a treble staff, from C4 to C5, with each note labeled as its interval from C: 1, M2, M3, P4, P5, M6, M7, 8ve."
+/>
+
+## Deriving the reference intervals from the major scale
+
+Take any major scale — we'll use C major for clarity. The scale is C, D, E, F, G, A, B, C. From the tonic (C), the interval to each subsequent note is:
+
+- **C to D** — major 2nd (2 half steps)
+- **C to E** — major 3rd (4 half steps)
+- **C to F** — perfect 4th (5 half steps)
+- **C to G** — perfect 5th (7 half steps)
+- **C to A** — major 6th (9 half steps)
+- **C to B** — major 7th (11 half steps)
+- **C to C** (higher) — perfect octave (12 half steps)
+
+These are the seven reference intervals. They're called "reference" because they define the default quality for each interval number within the major scale's context.
+
+The pattern repeats for every major scale, not just C. In G major, G to A is a major 2nd, G to B is a major 3rd, G to C is a perfect 4th, and so on. Any major scale gives you the same interval qualities from its tonic. This is a direct consequence of the major scale's intervallic structure, which we'll cover when we discuss scales.
+
+## Why major intervals are the reference
+
+This is sometimes confusing: "If the reference is major, is minor less important?" The answer is no — minor intervals are just as common and important. But the *reference point* for intervals with variable quality (seconds, thirds, sixths, sevenths) is the major version, and minor is derived from major by shrinking a half step.
+
+This is a historical convention more than a theoretical necessity. We could theoretically reference everything against minor scales, and minor would be "default" with major being "augmented minor." But the major scale — and therefore major intervals — became the reference set for Western theory, and the convention stuck. Learning the seven reference intervals from the major scale is the shortest path to fluency because all the theory books, flashcards, and lessons use this reference.
+
+## Using the reference intervals to identify any interval
+
+With the seven reference intervals memorized, you can identify any interval in three steps:
+
+1. **Count the letter names** — that gives you the number.
+2. **Check if the upper note belongs to the major scale starting on the lower note.**
+   - If yes, the interval is major or perfect (depending on which number it is).
+   - If no, it's been altered from the reference.
+3. **Count the alteration** — if the upper note is a half step lower than expected, it's minor (or diminished, for 4ths/5ths/8ths). If it's a half step higher, it's augmented.
+
+Example: is F♯ to C♯ a perfect 5th?
+- Count letters: F♯, G, A, B, C♯ — five letters, so it's a fifth.
+- F♯ major scale: F♯, G♯, A♯, B, C♯, D♯, E♯. C♯ is the fifth degree of this scale.
+- So F♯ to C♯ is a perfect fifth. ✓
+
+Example: is D to F a major third?
+- Count letters: D, E, F — three letters, so it's a third.
+- D major scale: D, E, F♯, G, A, B, C♯. The third of D major is F♯, not F.
+- D to F is one half step smaller than D to F♯. So it's a minor third, not a major third.
+
+## Why this method works
+
+The seven reference intervals are essentially the *default* alterations when you walk up the major scale. Any interval that stays within a major scale uses one of the seven reference qualities. Any interval that deviates from the major-scale default is named by its deviation — one half step smaller (minor or diminished) or one half step larger (augmented).
+
+This method is slightly slow at first but becomes fast with practice. Eventually you don't think "count letters, check scale, count alteration" — you just *see* the interval and know its name. But the underlying logic always comes back to the seven reference intervals.
+
+## Memorizing the reference intervals
+
+The fastest way to internalize them is to play them at the piano or sing them repeatedly:
+
+- **Major 2nd**: first two notes of "Happy Birthday" (down-up) or any scale's first two notes
+- **Major 3rd**: first two notes of "When the Saints Go Marching In"
+- **Perfect 4th**: first two notes of "Here Comes the Bride" or "Amazing Grace"
+- **Perfect 5th**: first two notes of "Twinkle, Twinkle Little Star" or the Star Wars main theme
+- **Major 6th**: first two notes of "My Bonnie Lies Over the Ocean"
+- **Major 7th**: the first two notes of "Somewhere Over the Rainbow" (actually an octave, but the major 7th is well-represented by the opening of "Take On Me" or the third and seventh notes of a major scale)
+- **Octave**: first two notes of "Somewhere Over the Rainbow" or the first two notes of "The Christmas Song" ("Chestnuts roasting...")
+
+Song references are a standard technique for building interval recognition. The brain connects the abstract interval to a concrete musical phrase, making it retrievable instantly.
+
+## Common questions
+
+**Do I have to memorize all seven songs to learn intervals?**
+
+No. You can use any reference points you like — songs you already know, scales you can sing, anything that works for you. The seven reference intervals are the fixed target; the songs are just a mnemonic pathway. Some musicians memorize intervals purely by sound or by feel, without reference songs.
+
+**Why is the minor 7th more common in practice than the major 7th?**
+
+Because minor 7ths appear in dominant seventh chords (the most common seventh chord in Western music), in blues, in jazz, and in countless pop songs. Major 7ths are more specialized — they appear in major 7th chords (bright, jazzy) and in certain classical contexts but less pervasively. Both are essential to know, but you'll hear minor 7ths more often.
+
+**What happens when an interval's upper note doesn't exist in the lower note's major scale — like F♯ to C?**
+
+F♯ major scale is F♯, G♯, A♯, B, C♯, D♯, E♯. C (natural) is not in F♯ major — C♯ is. So F♯ to C is one half step smaller than F♯ to C♯ (a perfect fifth). That makes F♯ to C a **diminished fifth**.
+
+**Is there an "always works" shortcut for hearing intervals?**
+
+Short answer: yes, but the shortcut is thousands of hours of exposure. Fluent ear training — identifying an interval purely by sound, with no reference — develops naturally from lots of listening and playing. The reference-interval method accelerates this by giving your brain a framework; after enough practice with the framework, the sound-to-name connection becomes direct and instant.

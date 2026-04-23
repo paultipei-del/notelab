@@ -1,0 +1,124 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { THIRD_VS_TENTH_XML, THREE_COMPOUND_INTERVALS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'compound-intervals',
+  title: 'Compound Intervals',
+  oneSentence:
+    'A compound interval is any interval larger than an octave — like a major 10th or a perfect 12th — essentially a simple interval plus one or more octaves, with similar sound and function to its reduced form.',
+  practice: [
+    { kind: 'flashcard', label: 'Compound Intervals Flashcards', detail: '8 cards', href: '/study/compound-intervals' },
+  ],
+  related: [
+    { title: 'Interval Number',    href: '/learn/intervals/interval-number' },
+    { title: 'Interval Quality',   href: '/learn/intervals/interval-quality' },
+    { title: 'Seventh Chords',     href: '/learn/harmony/seventh-chords' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+An interval within an octave — from C to any note C through the next C — is called a **simple interval**. Most theory focuses here, because these are the building blocks.
+
+But intervals can be larger than an octave. A C in one octave up to an E two octaves higher is an interval too. These larger intervals — longer than an octave — are called **compound intervals**. They're essentially a simple interval plus an octave (or more), and they function very similarly to their simple forms.
+
+Compound intervals matter in real music. Chord voicings spread across multiple octaves constantly use compound intervals. Extended jazz chords (9ths, 11ths, 13ths) are built on compound intervals. Counterpoint and orchestral scoring rely on compound intervals to create openness and space. Understanding them is essential.
+
+## The visual
+
+<Notation
+  musicXml={THIRD_VS_TENTH_XML}
+  caption="A simple major 3rd (C-E) next to its compound form, a major 10th (C-E an octave higher). Same harmonic function; wider registral space."
+  ariaLabel="Two measures on a treble staff. First: C4 and E4 stacked (major third). Second: C4 and E5 stacked (major tenth)."
+/>
+
+<Notation
+  musicXml={THREE_COMPOUND_INTERVALS_XML}
+  caption="Three compound intervals from C: m10 (minor 3rd + octave), P12 (perfect 5th + octave), M13 (major 6th + octave). Quality matches the simple form they reduce to."
+  ariaLabel="Three measures on a treble staff showing compound intervals from C: C-E flat 5 (minor 10th), C-G5 (perfect 12th), C-A5 (major 13th)."
+/>
+
+## Naming compound intervals
+
+Compound intervals continue the letter-name counting beyond 8:
+
+- **9th** — one octave plus a 2nd. C to D an octave higher.
+- **10th** — one octave plus a 3rd. C to E an octave higher.
+- **11th** — one octave plus a 4th. C to F an octave higher.
+- **12th** — one octave plus a 5th. C to G an octave higher.
+- **13th** — one octave plus a 6th. C to A an octave higher.
+- **14th** — one octave plus a 7th. C to B an octave higher.
+- **15th** — two octaves. C to C, two octaves up.
+
+After the 15th, names get rare. Most music refers to larger intervals as "two octaves plus a 3rd" or similar, rather than a 17th.
+
+## Quality of compound intervals
+
+Compound intervals take the same quality as their simple equivalents. A compound interval of a major 3rd is a **major 10th**. A compound perfect 5th is a **perfect 12th**. A compound minor 7th is a **minor 14th**.
+
+The formula: subtract 7 from the compound interval number to get its simple equivalent. A 10th minus 7 is a 3rd. A 12th minus 7 is a 5th. A 13th minus 7 is a 6th. Once you know the simple equivalent, you know the quality of the compound interval — it's the same.
+
+So:
+- **Major 10th** = major 3rd + octave
+- **Minor 10th** = minor 3rd + octave
+- **Perfect 11th** = perfect 4th + octave
+- **Perfect 12th** = perfect 5th + octave
+- **Major 13th** = major 6th + octave
+- **Minor 14th** = minor 7th + octave
+
+## Compound intervals and extended chords
+
+Compound intervals are central to extended chord theory in jazz, pop, and contemporary classical music. Chords built with extensions beyond the 7th use compound intervals:
+
+- **9th chord** — a 7th chord with a 9th added (C7 becomes C9 by adding D, which is a 9th above C)
+- **11th chord** — adds an 11th (F in C11)
+- **13th chord** — adds a 13th (A in C13)
+
+Notice these are *compound* numbers: the 9th is a 2nd an octave higher, the 11th is a 4th an octave higher, the 13th is a 6th an octave higher. They're distinguished from the simple intervals because they sit above the octave from the root, giving them a distinct harmonic flavor.
+
+## Why compound intervals function similarly to simple ones
+
+To the ear, an interval of a major 10th sounds very much like a major 3rd — just spread out across a wider pitch range. The function is the same (bright, open, consonant). The feel is a little airier because the two notes are further apart, but the fundamental relationship is the major 3rd.
+
+This is why music theory often reduces compound intervals to their simple form for analysis. "A major 10th from G" and "a major 3rd from G" share the same harmonic function; the compound version just has more register space between the notes.
+
+The main difference in practice: compound intervals often work better in voicings (chord arrangements) because the wider spacing creates more air and clarity. A major 3rd stacked tightly can sound muddy in some registers, while a major 10th — with an octave between — sounds open and resonant.
+
+## Reducing compound to simple
+
+In analysis, you often want to know the simple equivalent of a compound interval:
+
+1. Count letter names normally to get the compound number (say, 13).
+2. Subtract 7 to get the simple number (13 - 7 = 6, a 6th).
+3. Quality stays the same.
+
+A major 13th reduces to a major 6th. A perfect 12th reduces to a perfect 5th. A minor 14th reduces to a minor 7th.
+
+This reduction is useful when:
+- Analyzing chord structures, to strip compound elements down to their core
+- Identifying voice-leading relationships between parts, where the octave difference doesn't change the melodic function
+- Discussing harmonic theory, where "a 3rd" and "a 10th" play the same role
+
+## Common questions
+
+**Are compound intervals named differently in different contexts?**
+
+Mostly consistent across classical and jazz contexts. Classical analysis often uses compound names (a 10th is called a 10th). Jazz uses compound names especially for chord extensions (9, 11, 13). In very dense vertical analysis, some texts reduce compounds to simple forms for clarity. The naming is stable; the context-dependent emphasis changes.
+
+**Is there a difference in sound between a major 10th and a major 3rd in the same pitches?**
+
+They're the same pitch distance rearranged. A 10th has one note an octave higher than the other, while a 3rd has them in the same octave. The overall pitch distance is different (14 half steps vs. 4 half steps). The harmonic function is similar; the *resonance* feels different because of the additional octave.
+
+**Why does the compound-number minus 7 trick work?**
+
+Because an octave spans 7 letter-name positions (ignoring inclusive counting: C-D-E-F-G-A-B are 7 positions before returning to C). Subtracting 7 from the compound number "removes" one octave. A 10th minus 7 is a 3rd; that 3rd plus an octave equals the 10th.
+
+**Do compound intervals have enharmonic equivalents?**
+
+Yes, the same enharmonic rules apply. A compound augmented 11th equals a compound diminished 12th (both are a tritone plus an octave). The spelling follows the same principles we've covered for simple intervals — context determines which form is correct.

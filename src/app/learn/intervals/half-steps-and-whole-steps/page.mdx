@@ -1,0 +1,96 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { HALF_AND_WHOLE_STEP_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'half-steps-and-whole-steps',
+  title: 'Half Steps and Whole Steps',
+  oneSentence:
+    'A half step is the smallest interval in standard Western music — the distance from one note to the very next, like C to C♯ — and a whole step is two half steps stacked together.',
+  practice: [],
+  related: [
+    { title: 'What an Interval Is',   href: '/learn/intervals/what-an-interval-is' },
+    { title: 'The Chromatic Scale',   href: '/learn/sound-and-hearing/the-chromatic-scale' },
+    { title: 'The Major Scale',       href: '/learn/scales/the-major-scale' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+The chromatic scale has twelve notes per octave, spaced equally. The distance between any two consecutive notes — C to C♯, E to F, B to C — is called a **half step**. It's the smallest interval in standard Western music.
+
+Two half steps stacked together make a **whole step** — the distance from, say, C to D, or from E to F♯. Whole steps are twice as big as half steps, but they still feel close.
+
+These two small intervals are the atoms of melodic motion. Scales, chords, and harmonies are built by combining half steps and whole steps in specific patterns. Half and whole steps are as basic as the musical alphabet itself.
+
+## The visual
+
+<Notation
+  musicXml={HALF_AND_WHOLE_STEP_XML}
+  caption="C to C♯ — a half step. C to D — a whole step. Two half steps make a whole step."
+  ariaLabel="Two measures on a treble staff. First measure: C4 to C-sharp 4, labeled 'half step'. Second measure: C4 to D4, labeled 'whole step'."
+/>
+
+<DiagramPlaceholder description="A piano keyboard showing a half step (C to C♯) and a whole step (C to D) clearly marked." />
+
+## Half steps on a piano
+
+On a piano, a half step is the distance from one key to the **very next key**, whether it's black-to-white, white-to-black, or white-to-white. The five pairs of white keys that have no black key between them — **E to F** and **B to C** — are half steps between two white keys. Every other adjacent pair involves a black key.
+
+Half steps are the foundation of the chromatic scale. Playing every half step up from C to the next C gives you the full chromatic scale: C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B, C.
+
+## Whole steps on a piano
+
+A whole step skips one key. From C, going up a whole step lands on D (you pass C♯ on the way). From E, going up a whole step lands on F♯ (you pass F). From B, going up a whole step lands on C♯ (you pass C). In each case, a whole step is exactly *two* half steps.
+
+On the keyboard, whole steps alternate with half steps in most scales, creating the distinctive melodic shapes we recognize as major or minor.
+
+## Chromatic vs. diatonic half steps
+
+Not all half steps look the same on the page. There are two ways to notate the same half-step distance:
+
+**Chromatic half step** — same letter name, different accidental. C to C♯ is chromatic — both notes are "C family," one natural and one sharped. The letter name doesn't change; only the accidental does.
+
+**Diatonic half step** — different letter names. C♯ to D is diatonic. The two notes sound identical in distance to the chromatic version (one half step), but they're written with different letter names.
+
+Why does this matter? Because it determines how intervals are *spelled*. C to C♯ is a chromatic half step and, as an interval, is called an **augmented unison** or a **chromatic semitone**. C♯ to D is a diatonic half step and is called a **minor second** or **diatonic semitone**. Same sound, different interval names, different functions in music theory.
+
+This distinction matters for scale spelling, chord construction, and analysis. Early on, both kinds of half step can feel like "the same thing" — and they sound the same — but the spelling choice shapes how the music reads and functions.
+
+## Whole steps and letter names
+
+A whole step always moves by exactly **one letter name**, and always produces two half steps of distance. C to D, F to G, A to B — all whole steps. The letter-name change is what makes them whole steps rather than something else.
+
+The apparent exceptions are actually half steps, not whole steps: **E to F** and **B to C** are adjacent letter names but only one half step apart, so they're half steps, not whole steps. This uneven pattern — five whole steps and two half steps in every octave of the major scale — is what gives Western music its characteristic shape.
+
+## Why these two steps are enough
+
+In theory, we could talk about intervals purely as counts of half steps: "it's five half steps" or "it's seven half steps." Some systems (MIDI, for example) do exactly this. But musicians think in terms of whole steps and half steps for two reasons:
+
+**First, whole and half steps correspond to scale steps.** A major scale is a specific pattern of whole steps and half steps (W-W-H-W-W-W-H). Thinking in those units makes the pattern visible.
+
+**Second, whole and half steps correspond to melodic motion as heard.** Moving by a half step feels small and close. Moving by a whole step feels slightly more spacious. The two feel different, and naming them separately respects that difference.
+
+## Common questions
+
+**What's the relationship between half steps and letter names?**
+
+A half step *might* change the letter name (diatonic half step: E to F, B to C, C♯ to D) or *might not* (chromatic half step: C to C♯, G to G♭). The distance is the same; the spelling depends on context.
+
+**Is a half step the same as a semitone?**
+
+Yes. "Half step" is more common in American English; "semitone" is used in British English and academic contexts. They refer to the exact same interval — the smallest in standard Western music.
+
+**Can you have a step smaller than a half step?**
+
+In standard Western music, no. Microtonal music — common in some non-Western traditions and in certain 20th- and 21st-century classical music — uses **quarter steps** or other smaller divisions, with their own notation. These are outside the scope of most classical theory.
+
+**Why do E-F and B-C look like whole steps but are actually half steps?**
+
+Historical layering. The seven-letter musical alphabet (A-G) doesn't evenly divide the octave. Five of the seven letter-to-letter jumps are whole steps, and two (E-F and B-C) are half steps. This uneven pattern reflects the structure of the diatonic (major) scale — and since the letters were named before the scale's structure was formalized, we inherited the mismatch. It's one of the few genuinely confusing features of music notation, and it becomes natural with exposure.

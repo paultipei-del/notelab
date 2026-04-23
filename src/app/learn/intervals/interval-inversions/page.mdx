@@ -1,0 +1,114 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { FIFTH_AND_INVERSION_XML, THIRD_AND_INVERSION_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'interval-inversions',
+  title: 'Interval Inversions',
+  oneSentence:
+    'To invert an interval, move the lower note up an octave (or the upper note down an octave) — and there\'s a reliable pattern for what you get: a fifth inverts to a fourth, a third to a sixth, a second to a seventh, and the quality flips between major/minor and augmented/diminished (while perfect stays perfect).',
+  practice: [
+    { kind: 'flashcard', label: 'Interval Inversions Flashcards', detail: '10 cards', href: '/study/interval-inversions' },
+  ],
+  related: [
+    { title: 'Interval Number',                href: '/learn/intervals/interval-number' },
+    { title: 'Interval Quality',               href: '/learn/intervals/interval-quality' },
+    { title: 'The Seven Reference Intervals',  href: '/learn/intervals/the-seven-reference-intervals' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Take any interval and move one of its notes up or down by an octave. You get a new interval — usually smaller — that bears a precise relationship to the original. C up to G is a perfect fifth. Move the C up an octave, and you now have G up to C (now a fifth apart *on the other side*), which is a perfect fourth. Same two pitches; different arrangement; different interval name.
+
+This is called **inversion**, and it follows a reliable pattern. Every interval has an inversion, and the relationships between an interval and its inversion are fixed. Knowing the pattern lets you instantly figure out the inversion of any interval — and more importantly, it reveals deep connections between intervals that sound closely related.
+
+## The visual
+
+<Notation
+  musicXml={FIFTH_AND_INVERSION_XML}
+  caption="C up to G is a perfect 5th. Move the C up an octave (so G is now lower) and you get a perfect 4th. Perfect stays perfect under inversion."
+  ariaLabel="Two measures on a treble staff. First: C4 and G4 stacked (perfect fifth). Second: G4 and C5 stacked (perfect fourth)."
+/>
+
+<Notation
+  musicXml={THIRD_AND_INVERSION_XML}
+  caption="C up to E is a major 3rd. Invert it and you get E up to C — a minor 6th. Major flips to minor; the numbers sum to 9."
+  ariaLabel="Two measures on a treble staff. First: C4 and E4 stacked (major third). Second: E4 and C5 stacked (minor sixth)."
+/>
+
+## The number rule
+
+When you invert an interval, the two numbers always add up to **9**.
+
+- Unison (1) inverts to octave (8). 1 + 8 = 9.
+- Second (2) inverts to seventh (7). 2 + 7 = 9.
+- Third (3) inverts to sixth (6). 3 + 6 = 9.
+- Fourth (4) inverts to fifth (5). 4 + 5 = 9.
+- Fifth (5) inverts to fourth (4). 5 + 4 = 9.
+- Sixth (6) inverts to third (3). 6 + 3 = 9.
+- Seventh (7) inverts to second (2). 7 + 2 = 9.
+- Octave (8) inverts to unison (1). 8 + 1 = 9.
+
+This isn't mystical — it comes from the fact that a unison (both notes same) plus an octave (same two letter names one octave apart) spans nine letter-name positions, inclusively. Any inversion rearranges those letter names so the sum of the two intervals' letter counts is always 9.
+
+Practical implication: if you can identify any interval's number, you know its inversion's number automatically. Just subtract from 9.
+
+## The quality rule
+
+Quality inversion follows its own reliable pattern:
+
+- **Major** inverts to **minor**. C-E (major 3rd) inverts to E-C (minor 6th).
+- **Minor** inverts to **major**. C-E♭ (minor 3rd) inverts to E♭-C (major 6th).
+- **Perfect** inverts to **perfect**. C-G (perfect 5th) inverts to G-C (perfect 4th).
+- **Augmented** inverts to **diminished**. C-F♯ (augmented 4th) inverts to F♯-C (diminished 5th).
+- **Diminished** inverts to **augmented**. C-G♭ (diminished 5th) inverts to G♭-C (augmented 4th).
+
+So the qualities that are "opposites" invert into each other: major ↔ minor, augmented ↔ diminished. Perfect is its own inversion.
+
+Combined with the number rule, quality inversion lets you name any inversion instantly. "What's the inversion of a minor 3rd?" — the numbers: 3 inverts to 6. The qualities: minor inverts to major. So a minor 3rd inverts to a **major 6th**.
+
+## Why inversion works this way
+
+The patterns aren't arbitrary. They reflect the underlying structure of intervals as distances within an octave.
+
+Any interval plus its inversion must equal a perfect octave (12 half steps). That's the constraint. If you have a major 3rd (4 half steps), its inversion must be 12 - 4 = 8 half steps, which is a minor 6th. Check: minor 6th = 8 half steps. ✓
+
+If you have a perfect 5th (7 half steps), its inversion must be 12 - 7 = 5 half steps, which is a perfect 4th. ✓
+
+If you have an augmented 4th (6 half steps), its inversion is 12 - 6 = 6 half steps, which is a diminished 5th. ✓
+
+The math is clean. Any interval and its inversion must sum to 12 half steps, which matches the 9-letter-name rule (a unison plus an octave) at a different level of description.
+
+## Inversions in real music
+
+Interval inversions matter in practice, not just theory. A few places where they show up:
+
+**Voicing chords.** A C major chord (C-E-G) in root position has intervals of a major 3rd (C-E) and a minor 3rd (E-G). Invert the C up an octave, and the chord becomes E-G-C — now with intervals of a minor 3rd (E-G) and a perfect 4th (G-C). The intervals change under inversion, which is how we distinguish root position from first and second inversions in chord analysis.
+
+**Counterpoint.** Inversion is a core compositional technique. Composers write a two-voice passage and then invert it — the upper voice becomes the lower voice and vice versa. Since an interval and its inversion are related (but not identical), the inverted passage sounds similar to the original but differs in specific ways. This is how invertible counterpoint works.
+
+**Analysis.** When analyzing chord voicings or identifying the function of intervals in a dense texture, inversion lets you simplify. A "minor 6th above the bass" might function the same way as the inverted "major 3rd below the top note" — both refer to the same harmonic relationship seen from different directions.
+
+## Common questions
+
+**Why does perfect stay perfect under inversion?**
+
+Because perfect intervals are their own acoustic inversions. A perfect 5th (3:2 frequency ratio) inverts to a perfect 4th (4:3 ratio). Both are simple ratios; both are "perfect" by naming convention. The major/minor distinction doesn't apply to perfect intervals, so their inversions stay in the "perfect" category rather than flipping to something else.
+
+**Why does major invert to minor?**
+
+A major interval has a specific size (say, 4 half steps for a major 3rd). Its inversion is the remainder of the octave (12 - 4 = 8 half steps). 8 half steps is a minor 6th — and the minor 6th is the complement of the major 3rd within the octave. The major/minor flip reflects this symmetry: major thirds pair with minor sixths, major sevenths pair with minor seconds, and so on. Each major interval has a minor partner, and they're complements.
+
+**Can I invert an interval by moving the upper note down instead of the lower note up?**
+
+Yes. Both work, and they produce the same inverted interval. C (low) and E (high) can be inverted by moving C up an octave (giving you E-C, a minor 6th) or by moving E down an octave (giving you E-C at lower pitches, also a minor 6th). The interval relationship is the same either way.
+
+**What about compound intervals — how do they invert?**
+
+Compound intervals (larger than an octave) invert within an octave once you reduce them. A major 10th is a major 3rd plus an octave; it inverts to a minor 6th (at the compound level, a minor 13th, but people rarely name it that way). In practice, compound intervals are usually reduced to their simple form before inverting.

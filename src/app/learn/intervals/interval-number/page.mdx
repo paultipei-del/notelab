@@ -1,0 +1,125 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { SEVEN_INTERVALS_FROM_C_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'interval-number',
+  title: 'Interval Number',
+  oneSentence:
+    'An interval\'s number is how many letter names it spans, counted inclusively — so C to E is a third (C, D, E), and C to G is a fifth (C, D, E, F, G) — and it\'s determined entirely by the letter names, not by the accidentals.',
+  practice: [
+    { kind: 'flashcard', label: 'Intervals Flashcards', detail: '15 cards', href: '/study/intervals' },
+  ],
+  related: [
+    { title: 'Interval Quality',              href: '/learn/intervals/interval-quality' },
+    { title: 'The Seven Reference Intervals', href: '/learn/intervals/the-seven-reference-intervals' },
+    { title: 'What an Interval Is',           href: '/learn/intervals/what-an-interval-is' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+An interval has two pieces: a number and a quality. The number is the easier of the two — it's just how many letter names the interval spans, counting both endpoints.
+
+C to E spans three letters (C, D, E). That's a **third**.
+C to G spans five letters (C, D, E, F, G). That's a **fifth**.
+C to C (up an octave) spans eight letters. That's an **octave** (another name for an eighth).
+
+The number is entirely about letter names. It ignores accidentals — C to E, C to E♭, C to E♯ are all "thirds" because they all span three letter names. The accidental changes the *quality* of the interval (we'll cover that next), not its number.
+
+This makes finding an interval's number fast and reliable: count the letters, inclusive of both endpoints, and you have your answer.
+
+## The visual
+
+<Notation
+  musicXml={SEVEN_INTERVALS_FROM_C_XML}
+  caption="Seven intervals from C, each shown as a harmonic dyad: 2nd (C-D), 3rd (C-E), 4th (C-F), 5th (C-G), 6th (C-A), 7th (C-B), and octave (C-C5). Count letter names inclusively to find any number."
+  ariaLabel="Seven measures on a treble staff, each a harmonic interval from C to D, E, F, G, A, B, and C5 respectively — labeled as 2nd, 3rd, 4th, 5th, 6th, 7th, and octave."
+/>
+
+<DiagramPlaceholder description="Staff with letter-name labels showing how to count letter positions from the lower note to the upper note of an interval." />
+
+## The basic interval numbers
+
+Within a single octave, intervals range from unison to octave:
+
+- **Unison (1)** — both notes are the same letter. C to C in the same position. Sometimes called "prime."
+- **Second (2)** — spans two letters. C to D.
+- **Third (3)** — spans three letters. C to E.
+- **Fourth (4)** — spans four letters. C to F.
+- **Fifth (5)** — spans five letters. C to G.
+- **Sixth (6)** — spans six letters. C to A.
+- **Seventh (7)** — spans seven letters. C to B.
+- **Octave (8)** — spans eight letters, which is the same letter name an octave higher. C to C.
+
+These seven numbers (plus unison) cover every interval within an octave. Anything larger becomes a **compound interval**, which we'll explore on its own page — a ninth, a tenth, and so on.
+
+## Counting correctly
+
+The single most common mistake is counting intervals *like a ruler* — counting the space *between* endpoints instead of the endpoints themselves.
+
+To count an interval's number, include both the start and end letters. C to E:
+- **C** (1), **D** (2), **E** (3) — a third
+
+Not: "C to E is two letters apart." That's the difference between 3 and 1, which is 2. But intervals are counted *inclusively*, so C to E is a third, not a second.
+
+Another way to think about it: count each letter you say while walking from the lower note to the higher note, starting with the lower note as "1."
+
+## Letter names only, no accidentals
+
+The number is determined purely by letter names. Accidentals don't affect it.
+
+All of these intervals are **thirds** (spanning three letter names, C to E):
+- C to E
+- C to E♭
+- C to E♯
+- C♯ to E
+- C♯ to E♭
+
+They sound like different intervals — some larger, some smaller — because their qualities differ. But they're all thirds, because they all span three letters.
+
+This is why it's essential to look at the *letter names* when counting intervals, not at the sound or the accidentals. Two pitches might sound identical but be spelled as different intervals. C to F♯ is a fourth; C to G♭ is a fifth. Same sound (on a piano, at least), different interval number, because the letter count is different.
+
+## Why inclusive counting?
+
+The inclusive counting system has a historical reason: early music theory counted scale degrees, and the first note of a scale was counted as "1" (the tonic), not as "0." By the time an interval was analyzed as the distance between two scale degrees, both degrees were being counted. This became standard convention and never changed.
+
+It means the math seems slightly off at first. A third "contains two steps" between its endpoints, yet it's called a third. An octave contains seven steps but is called an eighth. The numbering includes both endpoints, which produces numbers that are always one higher than the "gap" they span.
+
+Once you internalize this, it becomes automatic. The number is the letter count, counting both ends.
+
+## Compound interval numbers
+
+Intervals larger than an octave get numbers that keep extending the count:
+
+- **Ninth (9)** — spans nine letter names. C to D, an octave higher than the original C. Equivalent in sound to a second plus an octave.
+- **Tenth (10)** — ten letter names. C to E, an octave higher. Equivalent to a third plus an octave.
+- **Eleventh (11)** — C to F, an octave higher. A fourth plus an octave.
+- **Twelfth (12)** — C to G, an octave higher. A fifth plus an octave.
+- **Thirteenth (13)** — C to A, an octave higher. A sixth plus an octave.
+
+Beyond a thirteenth, we usually just say "two octaves plus a third" or similar, rather than a fifteenth. Compound intervals have their own dedicated page.
+
+## Common questions
+
+**If I go from C to E, why isn't it a "second" (C and E are two letters apart)?**
+
+Because interval counting is *inclusive*. You count both endpoints. C, D, E — that's three letters, so it's a third. The "distance" between C and E is two scale steps, but the interval name counts three letters.
+
+**Does the direction change the number?**
+
+No. C up to E is a third. C down to E (i.e., C down to the E below) is also a third. The number reflects the letter span in either direction. We might say "ascending third" or "descending third" to indicate direction, but the number stays the same.
+
+**What if the interval is from C to another C, but the lower one is unison and the upper one is an octave apart?**
+
+If the two notes are at the exact same pitch (same octave), it's a **unison** — interval number 1. If the upper C is one octave above the lower C, it's an **octave** — interval number 8. These two intervals share the same letter name but have different octave positions, and the number reflects the letter-name distance plus the octave shift.
+
+**Can an interval have a fractional number?**
+
+No. All interval numbers are whole numbers. There are no "half thirds" or "two-and-a-half fourths." Every interval between two pitches has a specific letter-name count, and that count is always a positive integer.

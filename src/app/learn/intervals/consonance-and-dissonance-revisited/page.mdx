@@ -1,0 +1,119 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { CONSONANCE_DISSONANCE_SPECTRUM_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'consonance-and-dissonance-revisited',
+  title: 'Consonance and Dissonance Revisited',
+  oneSentence:
+    'Now that you know every interval by number and quality, you can place each one on the consonance-dissonance spectrum — a musical map that governs how composers build tension, create rest, and shape harmonic motion.',
+  practice: [],
+  related: [
+    { title: 'Consonance and Dissonance',  href: '/learn/sound-and-hearing/consonance-and-dissonance' },
+    { title: 'Interval Quality',            href: '/learn/intervals/interval-quality' },
+    { title: 'Triad Qualities',             href: '/learn/harmony/triad-qualities' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Earlier, we introduced consonance and dissonance as rooted in the physics of the overtone series. Some intervals — simple frequency ratios like 2:1 (octave) and 3:2 (perfect 5th) — sound stable. Others — complex ratios like 16:15 (minor 2nd) — sound unstable and tense.
+
+Now that you have the full vocabulary of intervals (number, quality, and the seven reference intervals), you can map every interval onto the consonance-dissonance spectrum. Some intervals are maximally stable. Some are maximally tense. Most sit somewhere in between. Understanding this map is the foundation for understanding harmony — which intervals resolve to which, which combinations feel restful, which feel restless, and how composers manipulate the balance to create musical motion.
+
+## The visual
+
+<Notation
+  musicXml={CONSONANCE_DISSONANCE_SPECTRUM_XML}
+  caption="Six dyads from C, arranged from maximally consonant to strongly dissonant: P8 (perfect octave), P5 (perfect fifth), M3 (major third), m3 (minor third), M2 (major second), TT (tritone). The further right, the more tension the ear registers."
+  ariaLabel="Six measures on a treble staff showing harmonic intervals from C: perfect octave, perfect fifth, major third, minor third, major second, tritone."
+/>
+
+## The consonance-dissonance spectrum
+
+All simple intervals can be sorted into a rough hierarchy:
+
+**Perfect consonances** — maximum stability:
+- **Perfect unison** (1:1) — total fusion. No interval, really.
+- **Perfect octave** (2:1) — near-total fusion. Two notes one octave apart blend almost into one.
+- **Perfect 5th** (3:2) — highly stable. The most distinctive consonant interval; "pure" sound.
+- **Perfect 4th** (4:3) — stable but context-dependent. Sometimes treated as a dissonance when it appears above the bass (more on this below).
+
+**Imperfect consonances** — stable but colored:
+- **Major 3rd** (5:4) — warm, bright, stable.
+- **Minor 3rd** (6:5) — warm, melancholy, stable.
+- **Major 6th** (5:3) — open, bright, stable.
+- **Minor 6th** (8:5) — slightly darker, stable.
+
+**Dissonances** — unstable:
+- **Major 2nd** (9:8) — mildly dissonant, "edge" in the harmony.
+- **Minor 2nd** (16:15) — strongly dissonant, the most biting interval within an octave.
+- **Major 7th** (15:8) — strongly dissonant, related to the minor 2nd by inversion.
+- **Minor 7th** (16:9 approximately) — mildly dissonant, softer than major 7th.
+- **Tritone** (either 45:32 or 25:18, depending on context) — strongly dissonant, most unstable interval.
+
+This hierarchy isn't just music-theory classification — it's an acoustic fact. Intervals with simpler ratios have more overtone overlap; intervals with complex ratios produce more beating between their overtones. The hierarchy reflects what the ear actually hears.
+
+## The perfect 4th's ambiguity
+
+The perfect 4th is famously ambiguous. Acoustically, it's a simple 4:3 ratio — very consonant. In melody, it sounds stable. But in harmony, specifically when it appears *above the bass note*, it's often treated as a dissonance that wants to resolve.
+
+Why? Because a perfect 4th above a bass note sounds like an incomplete harmonic setup. The bass note implies a root; the 4th above sounds like a temporary displacement from the 3rd (which would be the expected note above the root). So the 4th tends to "want to" resolve downward to the 3rd.
+
+This produces a rule that's held for centuries: when a 4th appears between the bass and an upper voice, it's treated as a dissonance and must be resolved. The ear-opener: not all intervals are consonant or dissonant in every context. Function and position matter too.
+
+In a two-voice melodic context (no bass), a perfect 4th is consonant. In a harmonic context above the bass, it's dissonant. Same interval, different treatment.
+
+## The role of the tritone
+
+The tritone is the most unstable interval within an octave. Both of its forms — augmented 4th and diminished 5th — are six half steps, and both produce strong beating and tension.
+
+Historically, the tritone was called *diabolus in musica* ("the devil in music") in medieval music theory and was carefully avoided. By the Baroque era, composers embraced it precisely *because* of its instability — the tritone became the central tension in the dominant seventh chord, driving the harmonic motion of tonal music. The V7-I cadence that ends most tonal pieces is a direct resolution of the tritone: its instability must resolve, and it resolves to the tonic chord.
+
+In practice, the tritone is the single most useful dissonance in tonal music. It creates a strong pull toward resolution, and composers have exploited that pull for centuries.
+
+## Context matters
+
+The consonance-dissonance labels aren't absolute. A given interval's stability depends on:
+
+- **Its position in the chord.** The same interval at different positions within a chord can function differently.
+- **Its direction of motion.** An ascending major 7th feels different from a descending one.
+- **The era and style.** Medieval ears heard major 3rds as dissonant. By the 19th century, extended dissonances (9ths, 11ths, 13ths) were routine. Each era has its own threshold.
+- **What surrounds it.** An interval that's dissonant in isolation might be perfectly consonant within a complex chord, because the listener perceives the chord as a whole rather than analyzing each dyad.
+
+The hierarchy above is a rough map, not an absolute truth. It's most useful as a starting point.
+
+## Consonance-dissonance and harmonic motion
+
+Understanding the spectrum reveals why Western music moves the way it does:
+
+**Dissonance creates tension.** When a piece uses dissonant intervals, the listener feels unease, forward motion, a demand for resolution.
+
+**Consonance creates rest.** When the piece arrives at a consonant interval, the listener feels release, arrival, stability.
+
+**Alternation creates motion.** By cycling between tension and release, a piece maintains interest and generates forward motion. Pure consonance gets boring; pure dissonance gets exhausting. Musical motion lives in the interplay.
+
+Every chord progression, every cadence, every phrase structure — all of it operates on this principle. The more you internalize which intervals are consonant and which are dissonant, the more you'll hear the logic of harmonic motion as it unfolds.
+
+## Common questions
+
+**Are some intervals "more consonant" than the perfect 5th?**
+
+Only the octave and the unison. The perfect 5th is the third-most consonant interval (after the unison and the octave), and it's generally treated as the most *useful* consonance because unisons and octaves feel like "the same note."
+
+**Why do some chords that contain "dissonant" intervals still sound consonant?**
+
+Because the whole is more than the parts. A major 7th chord contains a major 7th (dissonant in isolation) but sounds consonant overall because the major 7th is stabilized by the chord's other intervals. The ear processes chords holistically, not as a stack of isolated dyads.
+
+**Has the perception of consonance and dissonance really changed over history?**
+
+Yes. Medieval ears considered 3rds dissonant — they preferred open 4ths, 5ths, and octaves. Renaissance composers began using 3rds as consonances. Romantic composers pushed into chromatic dissonance that earlier ears would have rejected. 20th-century composers pushed further still. The physics of beating doesn't change; what changes is the cultural threshold for what's pleasant, expressive, or worth using.
+
+**Is there a single "most dissonant" interval?**
+
+The minor 2nd (16:15) is usually considered the most dissonant within an octave — it produces maximum beating between its pitches. The tritone (6 half steps) is the most destabilizing because it sits exactly halfway between the octaves and pulls strongly toward resolution. Both are strong candidates for "most dissonant" depending on which criterion you use: maximum acoustic beating (minor 2nd) or maximum functional tension in tonal music (tritone).

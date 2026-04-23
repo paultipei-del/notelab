@@ -1,0 +1,113 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { AUG4_VS_DIM5_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'enharmonic-intervals',
+  title: 'Enharmonic Intervals',
+  oneSentence:
+    'Enharmonic intervals sound identical but are spelled as different interval names — like an augmented fourth and a diminished fifth (both six half steps) — and choosing the right spelling is a matter of musical context, not pitch.',
+  practice: [
+    { kind: 'flashcard', label: 'Enharmonic Intervals Flashcards', detail: '8 cards', href: '/study/enharmonic-intervals' },
+  ],
+  related: [
+    { title: 'Interval Quality',        href: '/learn/intervals/interval-quality' },
+    { title: 'Enharmonic Equivalents',  href: '/learn/reading-and-notation/enharmonic-equivalents' },
+    { title: 'Interval Inversions',     href: '/learn/intervals/interval-inversions' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Two intervals can be identical in sound — exactly the same number of half steps — but have different names because they're spelled with different letter-name combinations. A C-to-F♯ interval and a C-to-G♭ interval are the same pitch on a piano, the same number of half steps apart, but one is an **augmented 4th** and the other is a **diminished 5th**. These are called **enharmonic intervals**: same sound, different spelling, different function.
+
+Why do both spellings exist? Because music theory is about context, not just pitch. The spelling tells you what the interval is *doing* — where it comes from in the scale, where it's going, how it functions harmonically. Choosing the right enharmonic spelling makes the music easier to read and more accurate in its meaning.
+
+## The visual
+
+<Notation
+  musicXml={AUG4_VS_DIM5_XML}
+  caption="C to F♯ on the left — an augmented 4th. C to G♭ on the right — a diminished 5th. Same sound (six half steps, the tritone), two different spellings."
+  ariaLabel="Two measures on a treble staff. First: C4 and F-sharp 4 stacked (augmented fourth). Second: C4 and G-flat 4 stacked (diminished fifth). Same pitch; different spelling."
+/>
+
+<DiagramPlaceholder description="The same tritone in two harmonic contexts — F♯ as the leading tone in E major (wanting to resolve upward), G♭ as a chromatic neighbor in D♭ major (wanting to resolve downward). Shows how spelling reflects function." />
+
+## Common enharmonic interval pairs
+
+Every interval has at least one enharmonic equivalent. Some of the most common:
+
+- **Augmented 4th ↔ Diminished 5th** (both 6 half steps) — the tritone, the most famous enharmonic pair
+- **Augmented 2nd ↔ Minor 3rd** (both 3 half steps) — common in harmonic minor scales
+- **Augmented 3rd ↔ Perfect 4th** (both 5 half steps) — C to E♯ equals C to F
+- **Diminished 4th ↔ Major 3rd** (both 4 half steps) — C to F♭ equals C to E
+- **Augmented 5th ↔ Minor 6th** (both 8 half steps) — C to G♯ equals C to A♭
+- **Augmented 6th ↔ Minor 7th** (both 10 half steps) — C to A♯ equals C to B♭
+- **Major 3rd ↔ Diminished 4th** (both 4 half steps) — C to E equals C to F♭
+- **Minor 3rd ↔ Augmented 2nd** (both 3 half steps) — C to E♭ equals C to D♯
+
+The pattern: any interval can be renamed as a different interval number by respelling one of its notes enharmonically, while the sound stays the same.
+
+## Why enharmonic intervals matter
+
+The choice of spelling affects *function*, which matters for analysis and for reading.
+
+**Augmented intervals point "outward."** An augmented 4th (C to F♯) implies that F♯ wants to resolve upward (usually to G). The spelling "C to F♯" frames F♯ as a raised note, inherently tense, with upward resolution tendency.
+
+**Diminished intervals point "inward."** A diminished 5th (C to G♭) implies that G♭ wants to resolve downward (usually to F). The spelling "C to G♭" frames G♭ as a lowered note, inherently tense, with downward resolution tendency.
+
+Even though C-F♯ and C-G♭ sound identical, the *spelling* tells a musician what the resolution tendency is. In an actual piece, the composer will spell the tritone as one or the other based on where the music is going. Getting the spelling wrong makes the music harder to read and can actively mislead a performer about the music's shape.
+
+## Enharmonic intervals in scales
+
+Scales provide built-in contexts for choosing enharmonic spellings. In the harmonic minor scale, the 6th and 7th degrees are a distance of an **augmented 2nd** (three half steps), not a minor 3rd — even though those two names describe the same sound.
+
+Why? Because in the scale, the interval must span two letter names (6th and 7th), making it a 2nd by number. The raising of the 7th (the characteristic "raised leading tone" of harmonic minor) gives it the augmented-2nd spelling rather than minor-3rd. Writing it as a minor 3rd would skip a letter name and break the scale's alphabetical integrity.
+
+This is a general principle: **the scale or key determines the correct enharmonic spelling of any interval within it.** If the music is in a sharp key, the spelling tends toward sharps. If in a flat key, toward flats. Altered tones get the spelling that maintains the letter-name sequence.
+
+## Enharmonic intervals in chords
+
+The tritone at the heart of a dominant 7th chord is always spelled as a diminished 5th (between the 3rd and the 7th of the chord). In C7 (C-E-G-B♭), the tritone lies between E and B♭ — E to B♭ is a diminished 5th (both have their natural letter names; the interval spans 5 letters: E, F, G, A, B).
+
+If you spelled it as an augmented 4th (E to A♯, for instance), the chord would have the wrong letter names — you'd have C-E-G-A♯, which isn't a C7 chord at all, but something quite different. The enharmonic choice preserves the chord's identity.
+
+This is another general principle: **chord identity depends on correct enharmonic spelling.** A C dominant 7th spelled as C-E-G-A♯ isn't a C dominant 7th; it's a different, misspelled chord.
+
+## When to use which spelling
+
+Four practical guidelines:
+
+1. **Follow the key signature.** In a sharp key, altered tones tend to be spelled with sharps; in a flat key, with flats. Augmented 4ths are more common in sharp keys; diminished 5ths in flat keys.
+
+2. **Maintain scale letter-name sequence.** If the scale needs specific letter names in order, accidentals adjust those letters rather than substituting different ones.
+
+3. **Respect resolution direction.** Augmented intervals spell upward-resolving alterations; diminished intervals spell downward-resolving ones.
+
+4. **Match chord construction.** The 3rd, 5th, and 7th of a chord must be 3rd, 5th, and 7th letter-positions above the root — the accidentals adjust those letter positions rather than replacing them.
+
+When these guidelines point in different directions (they sometimes do in highly chromatic music), the composer chooses the spelling that best reflects the music's direction at that moment.
+
+## Common questions
+
+**In equal temperament, do augmented 4ths and diminished 5ths actually sound the same?**
+
+Yes, exactly the same. Both are 6 half steps (one-half of the octave). In equal temperament, this is mathematically identical. In historical tuning systems like mean-tone or just intonation, the two could sound very slightly different — which is part of why the distinction existed historically. Modern ears usually don't distinguish them.
+
+**How important is enharmonic spelling in practice?**
+
+For reading: medium important. Most musicians will play the right pitches regardless of spelling. For analysis: very important. Roman numeral analysis, chord identification, and functional analysis all depend on correct spelling. For composition and arrangement: essential. Wrong enharmonic spellings produce misleading notation that makes music harder to read.
+
+**Can I always find an enharmonic equivalent for any interval?**
+
+For most intervals, yes. Major 3rds equal diminished 4ths. Minor 3rds equal augmented 2nds. Perfect 4ths equal augmented 3rds. Every interval has at least one enharmonic partner. The main exception is the perfect octave, which is its own enharmonic (C to C is always an octave).
+
+**Why is the tritone such a famous enharmonic?**
+
+Because it sits at the exact middle of the octave (6 half steps out of 12), it's the unique interval that inverts to itself. An augmented 4th inverts to a diminished 5th — both 6 half steps. Every other interval has an inversion with a different half-step count. The tritone's symmetry, combined with its historical reputation as *diabolus in musica*, makes it the most discussed enharmonic in music theory.
