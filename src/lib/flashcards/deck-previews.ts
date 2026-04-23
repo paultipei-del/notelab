@@ -1,5 +1,4 @@
 import { DeckPreview } from '../types'
-import { B } from '../bravura'
 
 /**
  * Deck tile content previews — shown in place of the deck description so tiles
@@ -17,37 +16,13 @@ export const DECK_PREVIEWS: Record<string, DeckPreview> = {
   // tempo: canonical tempo markings across the speed range.
   tempo: { kind: 'text', content: 'Largo · Andante · Allegro · Presto' },
 
-  // ── TIER 1 — Music symbols (glyph previews via Bravura) ───────────
-  'symbols-dynamics': {
-    kind: 'glyphs',
-    codepoints: [B.pp, B.p, B.mf, B.f, B.ff],
-    ariaLabel: 'Preview: pianissimo, piano, mezzo-forte, forte, fortissimo',
-  },
-  'symbols-articulation': {
-    kind: 'glyphs',
-    codepoints: [B.staccatoAbove, B.tenutoAbove, B.accentAbove, B.fermataAbove, B.staccatissimoAbove],
-    ariaLabel: 'Preview: staccato, tenuto, accent, fermata, staccatissimo',
-  },
-  'symbols-accidentals': {
-    kind: 'glyphs',
-    codepoints: [B.sharp, B.flat, B.natural, B.doubleSharp, B.doubleFlat],
-    ariaLabel: 'Preview: sharp, flat, natural, double sharp, double flat',
-  },
-  'symbols-note-values': {
-    kind: 'glyphs',
-    codepoints: [B.wholeNote, B.halfNoteUp, B.quarterNoteUp, B.eighthNoteUp],
-    ariaLabel: 'Preview: whole note, half note, quarter note, eighth note',
-  },
-  'symbols-repeats': {
-    kind: 'glyphs',
-    codepoints: [B.repeatBarlineLeft, B.repeatBarlineRight, 'D.C.'],
-    ariaLabel: 'Preview: begin repeat, end repeat, D.C.',
-  },
-  'symbols-clefs': {
-    kind: 'glyphs',
-    codepoints: [B.trebleClef, B.bassClef, B.altoClef],
-    ariaLabel: 'Preview: treble clef, bass clef, alto clef',
-  },
+  // ── TIER 1 — Music symbols ────────────────────────────────────────
+  'symbols-dynamics':    { kind: 'text', content: 'p · f · mf · ff · pp' },
+  'symbols-articulation': { kind: 'text', content: 'staccato · tenuto · accent · fermata' },
+  'symbols-accidentals': { kind: 'text', content: 'sharp · flat · natural · double sharp' },
+  'symbols-note-values': { kind: 'text', content: 'whole · half · quarter · eighth' },
+  'symbols-repeats':     { kind: 'text', content: 'D.C. · D.S. · Coda · Fine' },
+  'symbols-clefs':       { kind: 'text', content: 'treble · bass · alto · tenor' },
 
   // ── TIER 1 — Rhythm & Meter ───────────────────────────────────────
   'simple-meters':   { kind: 'text', content: '2/4    3/4    4/4' },
@@ -67,16 +42,9 @@ export const DECK_PREVIEWS: Record<string, DeckPreview> = {
   'tempo-modifications':      { kind: 'text', content: 'accel. · rit. · stringendo · morendo' },
   'modifying-words':          { kind: 'text', content: 'poco · molto · sempre · subito' },
 
-  // ── TIER 3 — Music symbols (glyph + text) ─────────────────────────
-  'symbols-ornaments': {
-    kind: 'glyphs',
-    codepoints: [B.trill, B.mordentUpper, B.mordentLower, B.turnSymbol],
-    ariaLabel: 'Preview: trill, upper mordent, lower mordent, turn',
-  },
-  // TODO: verify preview — Ped. / ✱ glyphs aren't in bravura.ts yet; using
-  // literal text as a pragmatic stand-in. Upgrade to glyph kind if the
-  // SMuFL pedal codepoints (E650 / E655) are added to the font map.
-  'pedal-markings': { kind: 'text', content: 'Ped.    ✱' },
+  // ── TIER 3 — Music symbols ────────────────────────────────────────
+  'symbols-ornaments': { kind: 'text', content: 'trill · mordent · turn · grace note' },
+  'pedal-markings':    { kind: 'text', content: 'Ped.    ✱' },
 
   'piano-specific-symbols': { kind: 'text', content: 'm.d. · m.s. · 8va · loco' },
 
