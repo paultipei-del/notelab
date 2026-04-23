@@ -1836,16 +1836,17 @@ body:has(.nl-study-viewport) {
   --deck-color-technique:  hsl( 42, 42%, 58%);  /* amber — craft */
 }
 
-/* Domain accent as an atmospheric wash — the color bleeds in from the left
-   edge and fades to the card's normal cream within ~70px. Reads as mood
-   rather than decoration; no hard stripe. Tile must set `--deck-accent` via
-   inline style. */
+/* Domain accent — just a hint of color at the two ends of the tile, card
+   stays cream through the middle. Both left and right edges get a small
+   fade so the color frames the tile quietly rather than washing it. */
 .nl-card-surface[data-deck-accent] {
   background:
     linear-gradient(
       to right,
-      color-mix(in srgb, var(--deck-accent) 28%, transparent),
-      transparent 72px
+      color-mix(in srgb, var(--deck-accent) 16%, transparent),
+      transparent 34px,
+      transparent calc(100% - 34px),
+      color-mix(in srgb, var(--deck-accent) 16%, transparent)
     ),
     #fdfaf3;
 }
