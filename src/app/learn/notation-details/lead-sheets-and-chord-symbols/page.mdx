@@ -1,0 +1,157 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'lead-sheets-and-chord-symbols',
+  title: 'Lead Sheets and Chord Symbols',
+  oneSentence:
+    'A lead sheet is a simplified score showing just the melody and chord symbols — the dominant notation for jazz, pop, and popular music — letting performers improvise harmonization and accompaniment while keeping the essential melodic and harmonic structure visible.',
+  practice: [],
+  related: [
+    { title: 'Roman Numeral Analysis',   href: '/learn/harmony/roman-numeral-analysis' },
+    { title: 'What a Chord Is',            href: '/learn/harmony/what-a-chord-is' },
+    { title: '32-Bar Song Form',           href: '/learn/form-and-structure/32-bar-song-form' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A **lead sheet** is a simplified score showing just the essentials of a song: the melody, the lyrics (if any), and chord symbols indicating the harmonic structure. Unlike a fully notated score where every note of the accompaniment is written out, a lead sheet gives the performer just enough to reconstruct the song — the tune and the chords — and leaves the specifics of the accompaniment to the performer's discretion.
+
+Lead sheets dominate jazz, pop, rock, and many popular music styles. A jazz standard like "Autumn Leaves" is printed as a lead sheet. A pop ballad's sheet music typically has chord symbols above the melody line. A rock or country song is often learned from a "fake book" full of lead sheets.
+
+The lead sheet format trades fixed notation for flexibility. Each performer decides how to voice the chords, whether to add fills, how to color the harmony — all within the basic framework the lead sheet provides. This is why the same jazz standard can sound so different in different performances: each performer is reconstructing it from the same lead sheet.
+
+This page covers how to read lead sheets, the system of chord symbols, and the conventions that vary across styles.
+
+## The visual
+
+<DiagramPlaceholder description="A lead sheet showing a melody line with chord symbols above each measure — including basic triads (C, Am, F, G), seventh chords (Cmaj7, Am7, Dm7, G7), and altered chords — with explanations of each symbol." />
+
+<DiagramPlaceholder description="A 'fake book' entry showing a complete lead sheet for a jazz standard, with melody, chord symbols, and clear section markers." />
+
+## The chord symbol system
+
+Chord symbols are compact representations of chords. Each symbol consists of a **root note** (a letter name) and optional **modifiers** specifying quality, extensions, and alterations.
+
+Basic elements:
+
+**Root note** — the letter name (A through G), sometimes with sharps or flats. The root is the primary pitch of the chord.
+
+**Quality** — major, minor, diminished, etc. Usually indicated by an abbreviation or symbol.
+
+**Seventh or extension** — adds a 7th, 9th, 11th, or 13th above the root.
+
+**Alterations** — sharps or flats modifying specific chord tones.
+
+**Bass note** — indicated by a slash if different from the root (e.g., C/E = C chord with E in the bass, meaning first-inversion C major).
+
+## Common chord symbols
+
+**Basic triads:**
+- **C** — C major triad
+- **Cm** or **C-** — C minor triad
+- **C°** or **Cdim** — C diminished triad
+- **C+** or **Caug** — C augmented triad
+- **Csus** or **Csus4** — C suspended (fourth replaces third): C-F-G
+- **Csus2** — C suspended second (second replaces third): C-D-G
+
+**Seventh chords:**
+- **C7** — C dominant 7 (C major triad + minor 7th): C-E-G-B♭
+- **Cmaj7** or **C△7** — C major 7 (C major triad + major 7th): C-E-G-B
+- **Cm7** or **C-7** — C minor 7: C-E♭-G-B♭
+- **Cm7♭5** or **Cø7** — C half-diminished 7: C-E♭-G♭-B♭
+- **C°7** or **Cdim7** — C fully diminished 7: C-E♭-G♭-A (or B♭♭)
+
+**Extended chords (9ths, 11ths, 13ths):**
+- **C9** — C dominant 9: C-E-G-B♭-D
+- **C11** — C dominant 11 (often without the 3rd): C-F-G-B♭-D
+- **C13** — C dominant 13: C-E-G-B♭-D-F-A (often abbreviated without all notes)
+- **Cmaj9** — C major 9: C-E-G-B-D
+- **Cm9** — C minor 9: C-E♭-G-B♭-D
+
+**Alterations:**
+- **C7♭9** — C dominant 7 with flat 9: C-E-G-B♭-D♭
+- **C7♯9** — C dominant 7 with sharp 9: C-E-G-B♭-D♯
+- **C7♯11** — C dominant 7 with sharp 11: C-E-G-B♭-F♯
+- **C7♭13** — C dominant 7 with flat 13: C-E-G-B♭-A♭
+
+**Slash chords (inversions or specific bass notes):**
+- **C/E** — C major with E in the bass (first inversion)
+- **C/G** — C major with G in the bass (second inversion)
+- **C/B♭** — C major with B♭ in the bass (C7 in third inversion, if you analyze it that way)
+
+## Reading a lead sheet
+
+When you play from a lead sheet:
+
+**1. Read the melody.** The melody line is written out, usually in treble clef, with rhythms that reflect the song's rhythmic character.
+
+**2. Read the chord symbols above each measure.** These tell you the harmony at each point. Chord symbols typically change at the beginning of each measure or at important beat divisions.
+
+**3. Construct the accompaniment.** As a performer, you decide how to realize the chord symbols — what voicings to play, what rhythmic patterns to use, what inversions to choose. A guitarist might strum basic chords; a pianist might play complex voicings; a bass player might play just the root note.
+
+**4. Add embellishments.** Lead sheets are deliberately minimal. Performers add their own fills, ornaments, and rhythmic variations based on the style.
+
+## Different styles, different conventions
+
+Lead sheet conventions vary by style:
+
+**Jazz standards** typically use sophisticated chord symbols with many extensions (9ths, 11ths, 13ths, alterations). Jazz musicians are expected to know complex voicings and substitution techniques that go beyond the literal chord symbols.
+
+**Pop and rock** lead sheets tend to be simpler, often using just basic triads and sevenths. Chord progressions are typically clearer and less chromatic.
+
+**Country** lead sheets follow pop conventions but often emphasize specific voicings characteristic of the style (open chords, specific strumming patterns).
+
+**Folk music** lead sheets are usually very simple, often showing just the most basic harmony.
+
+**Gospel and soul** lead sheets often assume specific accompaniment conventions (certain rhythmic patterns, walking bass lines, specific chord voicings) that musicians in the style are expected to know.
+
+Reading a lead sheet well requires knowing the style's expectations beyond what's literally written.
+
+## The Nashville Number System
+
+A variant of lead sheet notation, the **Nashville Number System** uses numbers (1, 2, 3, 4, 5, 6, 7) instead of letter names to represent scale degrees. Rather than "C, Am, F, G" for a progression in C major, you write "1, 6-, 4, 5" — using the scale-degree numbers.
+
+This allows easy transposition (if the band decides to play in a different key, the numbers stay the same; only the starting note changes). It's common in Nashville studio recording and country music.
+
+Though less common than standard chord symbols, it's worth recognizing if you encounter it.
+
+## Limitations of lead sheets
+
+Lead sheets give performers flexibility but have limitations:
+
+**Specific voicings aren't shown.** The lead sheet says "C" — but the performer must decide which voicing to use. Different voicings produce different sounds.
+
+**Rhythmic accompaniment isn't specified.** The lead sheet says "C, F, C, G" — but the performer must decide the rhythmic pattern of the chord changes.
+
+**Ornaments and fills aren't notated.** Each performer adds their own decorative figures.
+
+**Context-specific details must be inferred.** Lead sheets don't usually specify tempo, exact dynamics, or articulation in detail.
+
+This is why lead sheet performances vary so much between performers. The lead sheet is a skeleton; the performer fleshes it out.
+
+For teaching, practicing, or formal performance, you might want a fully notated score. For improvisation, ensemble playing in popular styles, and learning songs quickly, lead sheets are ideal.
+
+## Common questions
+
+**How is a lead sheet different from a "fake book"?**
+
+A **fake book** is a collection of lead sheets — typically hundreds of jazz standards in a single volume. The term comes from "fake" as in "faking" accompaniment when you don't know the full song. "The Real Book" is the most famous jazz fake book.
+
+**Do classical pieces ever use lead sheets?**
+
+Rarely. Classical music is typically fully notated — every note written out. Lead sheet-style notation is used in classical contexts only for specific situations (simple hymns, chord-chart versions of pieces for informal use).
+
+**Can I create a lead sheet from a fully notated piece?**
+
+Yes, this is called "reducing" or "creating a lead sheet." You extract the melody and the underlying chord progression, then write them as a lead sheet. It's a common exercise for musicians learning to analyze music.
+
+**Are chord symbols standardized?**
+
+Mostly, with some variations. The basic system (root + quality + extensions + alterations) is consistent. But specific notations can vary (e.g., m7♭5 vs. ø7, or Maj7 vs. △7). Different publishers and traditions have preferences. With exposure, you learn to recognize equivalent notations.

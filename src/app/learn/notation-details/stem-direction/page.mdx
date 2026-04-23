@@ -1,0 +1,111 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'stem-direction',
+  title: 'Stem Direction',
+  oneSentence:
+    'Stem direction follows specific conventions — pointing up for notes below the middle line, down for notes above, with special rules for multiple voices on the same staff — that keep the notation clean and the voices visually separable.',
+  practice: [],
+  related: [
+    { title: 'Note Values',                href: '/learn/rhythm-and-time/note-values' },
+    { title: 'Beaming Rules',               href: '/learn/notation-details/beaming-rules' },
+    { title: 'Voices on a Single Staff',    href: '/learn/notation-details/voices-on-a-single-staff' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Every note with a stem (quarter note, half note, eighth note, sixteenth note, etc.) has its stem pointing either up or down. The direction isn't arbitrary — it follows conventions based on where the note sits on the staff and how many voices occupy the same staff.
+
+Getting stem direction right is one of the most basic notational skills. Wrong stem directions make the music look amateurish and, worse, can obscure which voice each note belongs to when multiple voices share a staff. Getting it right is part of clean, readable notation.
+
+## The visual
+
+<DiagramPlaceholder description="A staff showing notes at various positions — notes below the middle line with stems going up, notes above the middle line with stems going down, notes on the middle line (case-by-case choice)." />
+
+<DiagramPlaceholder description="A two-voice example on a single staff — upper voice with all stems up, lower voice with all stems down, demonstrating voice separation by stem direction." />
+
+## The basic rule — single voice
+
+For a single voice on a staff:
+
+**Note below the middle line** — stem goes up (to the right of the notehead)
+
+**Note above the middle line** — stem goes down (to the left of the notehead)
+
+**Note on the middle line** — stem can go either up or down, chosen for visual balance with surrounding notes
+
+On a treble clef staff, the middle line is B (the middle B on the staff). Notes below B (A, G, F, E, D, C) have upward stems. Notes above B (C, D, E, F, G) have downward stems. B itself is flexible.
+
+On a bass clef staff, the middle line is D. Same logic: notes below D have upward stems; notes above D have downward stems.
+
+This convention keeps stems away from ledger lines and from the edges of the staff, producing cleaner visuals. A high note with an upward stem would have the stem extending far above the staff; a low note with a downward stem would extend far below. Using the opposite direction keeps stems within or near the staff.
+
+## Multiple voices — strict rules
+
+When two voices share a staff (as in a hymn's soprano-alto on one staff, or a keyboard piece's two-voice counterpoint), stem direction communicates which voice each note belongs to:
+
+**Upper voice (soprano/treble)** — stems up, always.
+**Lower voice (alto/bass in this context)** — stems down, always.
+
+This rule overrides the single-voice rule. In the upper voice, even a very high note has its stem pointing up, and even a very low note has its stem pointing up. The voice is identified by stem direction, not by pitch position.
+
+The same applies for three or four voices on a single staff. The conventions are clear in most cases:
+- Two voices: upper stems up, lower stems down.
+- Four voices (soprano, alto, tenor, bass on two staves, grand staff): on the treble staff, soprano stems up and alto stems down; on the bass staff, tenor stems up and bass stems down.
+
+When three voices share a single staff (less common), conventions vary — typically, the outer two voices use stems up and stems down, with the middle voice sharing the stem direction of whichever voice it's closer to.
+
+## Stem length
+
+Stems have a standard length — typically one octave (an octave's worth of space on the staff). A stem shorter than this looks too compressed; a stem much longer looks awkward.
+
+Exceptions:
+- **Stems extending outside the staff** (for high or low notes) are often slightly longer to reach a natural endpoint.
+- **Beamed groups** have stems of varied length, adjusted so the beam sits at a consistent position across the group.
+- **Chords** (multiple notes on one stem) have stem length adjusted to accommodate all the noteheads.
+
+Good engraving pays attention to stem length — stems that are too short or too long distract from reading.
+
+## Stems and chord notation
+
+When multiple notes share a single stem (forming a chord), stem direction follows the same basic rules, based on the outermost notes:
+
+- If most notes are below the middle line, stem up.
+- If most notes are above the middle line, stem down.
+- If notes span both sides, stem direction is chosen for visual balance.
+
+The notes in a chord sit on opposite sides of the stem, with higher notes above and lower notes below the central stem. When two notes are a second apart in a chord, they can't both be on the same side of the stem — the notehead of the higher note is placed on one side and the lower on the other, producing the characteristic "zigzag" look of second-apart notes in chords.
+
+## Stems and ornaments
+
+Notes with ornaments, accents, and other markings still follow stem direction rules. The ornament or marking sits above or below the note based on stem direction:
+
+- **Stem up** — markings (accent, staccato, etc.) typically placed *below* the note
+- **Stem down** — markings typically placed *above* the note
+
+This keeps the markings visible, since they're placed on the side of the note opposite the stem.
+
+## Common questions
+
+**What happens when there's no clear majority of notes above or below the line?**
+
+The engraver chooses what produces the cleanest visual. Sometimes the choice is arbitrary and depends on what's happening in surrounding notes. Modern engraving software often defaults to specific conventions; manual engravers make judgment calls.
+
+**Can I break stem direction rules for expressive reasons?**
+
+Generally, no — stem direction is a notational convention, not an expressive one. Violating it makes the score look unprofessional and confusing. If you want to emphasize a note, use dynamics, accents, or articulation markings, not stem direction.
+
+**Why do some scores have mixed stems in what looks like a single voice?**
+
+Usually because there are actually multiple voices, just not clearly labeled. A piano passage might have two independent voices in the right hand, with the upper voice having stems up and the lower voice having stems down. Both look like they're on a single staff, but the stems distinguish them. Look carefully — separate voices often reveal themselves through their stem directions.
+
+**Do choral scores follow the same rules?**
+
+Yes, with the common four-voice SATB convention. On the treble staff, soprano (upper voice) has stems up; alto (lower voice) has stems down. On the bass staff, tenor (upper voice) has stems up; bass (lower voice) has stems down. This makes each voice individually readable even when voices cross or come close together.

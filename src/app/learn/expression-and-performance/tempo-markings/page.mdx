@@ -1,0 +1,132 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'expression-and-performance',
+  subtopic: 'tempo-markings',
+  title: 'Tempo Markings',
+  oneSentence:
+    'Tempo markings at the start of a piece — Adagio, Andante, Allegro, Presto, and others — tell performers the speed of the pulse, usually as an Italian word indicating character (from "slow" to "very fast") or as a metronome marking with a specific beats-per-minute number.',
+  practice: [
+    { kind: 'flashcard', label: 'Tempo Markings Flashcards', detail: '12 cards', href: '/study/tempo' },
+  ],
+  related: [
+    { title: 'Tempo Changes',                 href: '/learn/expression-and-performance/tempo-changes' },
+    { title: 'Italian Performance Terms',      href: '/learn/expression-and-performance/italian-terms' },
+    { title: 'Pulse and Beat',                 href: '/learn/rhythm-and-time/pulse-and-beat' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+**Tempo** is the speed of music — how fast the beat goes. A piece marked *Allegro* moves briskly; a piece marked *Adagio* unfolds slowly. The tempo shapes how the music feels: a Mozart symphony Allegro feels energetic and confident; a Barber *Adagio for Strings* feels solemn and expansive. Speed affects everything — from how the phrases breathe to how the emotional content lands.
+
+Composers mark tempo at the beginning of each piece or movement. The most common convention uses Italian words that describe the tempo's character. A modern supplement is the metronome marking — a specific number of beats per minute (BPM) that gives an exact speed. Both systems are standard; composers often use one, the other, or both together.
+
+## The visual
+
+<DiagramPlaceholder description="The opening of three different movements with their tempo markings shown prominently above the first measure — e.g., 'Adagio' on a slow movement, 'Allegro' on a fast one, 'Moderato' on a middle-speed one." />
+
+<DiagramPlaceholder description="A vertical bar showing common Italian tempo terms from slowest (Grave, Largo) at the bottom to fastest (Prestissimo) at the top, with approximate BPM ranges." />
+
+## The Italian tempo terms
+
+The most common Italian tempo markings, roughly from slowest to fastest:
+
+**Grave** — solemn, very slow. 25-45 BPM range. Rare but used for especially heavy, serious passages.
+
+**Largo** — broad, slow. 40-60 BPM. Dignified and spacious.
+
+**Lento** — slow. 45-60 BPM. Similar to Largo but slightly less ponderous.
+
+**Adagio** — at ease, slow. 55-75 BPM. One of the most common slow markings. Implies a relaxed, melodic character.
+
+**Adagietto** — slightly faster than Adagio. 65-80 BPM.
+
+**Andante** — walking pace. 75-108 BPM. The tempo of a comfortable walking step. Gentle and flowing.
+
+**Andantino** — slightly faster than Andante (sometimes interpreted as slightly slower — the term is historically ambiguous). 80-108 BPM.
+
+**Moderato** — moderate. 108-120 BPM. A medium tempo, neither fast nor slow. Often used as a neutral starting point.
+
+**Allegretto** — moderately fast. 110-128 BPM. Slightly slower than Allegro.
+
+**Allegro** — fast, lively. 120-156 BPM. One of the most common tempo markings. Energetic and bright.
+
+**Vivace** — lively, vivacious. 156-176 BPM. Faster than Allegro, with extra vivacity.
+
+**Presto** — very fast. 168-200 BPM. Quick, exciting, often brilliant.
+
+**Prestissimo** — extremely fast. 200+ BPM. The fastest standard tempo marking. Rare but striking when used.
+
+Note that the BPM ranges overlap. This is because these are *characters* more than fixed speeds — one performer's Andante might be another performer's Andantino, depending on the piece and the interpretation.
+
+## Metronome markings
+
+A **metronome marking** gives a specific tempo in beats per minute (BPM). The format is typically:
+
+**♩ = 120**
+
+meaning "the quarter note equals 120 beats per minute." Sometimes a different note value is specified:
+
+- **♩ = 60** — quarter note at 60 BPM (one beat per second)
+- **𝅗𝅥 = 88** — half note at 88 BPM (for cut-time pieces)
+- **♪ = 144** — eighth note at 144 BPM (for pieces with eighth-note pulse)
+
+The metronome marking is precise. Unlike Italian tempo terms, it leaves no ambiguity — the performer should use a metronome to check. In practice, performers sometimes deviate from strict metronome markings for expressive reasons, but the written marking establishes the composer's intended baseline.
+
+## Combining Italian terms and metronome markings
+
+Many modern scores use both:
+
+**Allegro ♩ = 132**
+
+This combines the Italian character ("Allegro" — bright and fast) with a specific BPM. The character tells the performer what mood and energy to bring; the BPM tells them exactly how fast to play.
+
+Historically, metronome markings didn't exist — they became possible only after Mälzel's metronome was invented in 1815. Older music (Baroque, Classical, early Romantic) typically has only Italian terms. Later music tends to have metronome markings, often alongside Italian character terms.
+
+Beethoven was one of the first major composers to add metronome markings to his scores. Some of his markings are famously fast, leading to ongoing debates about whether to follow them strictly or interpret them with flexibility.
+
+## Character vs. speed
+
+Italian tempo markings convey both *speed* and *character* — a tempo term tells you not just "how fast" but also "in what mood." Consider:
+
+- **Largo** isn't just "slow"; it's "broad" — spacious, solemn, grand
+- **Andante** isn't just "medium-slow"; it's "walking" — flowing, natural, unforced
+- **Allegro** isn't just "fast"; it's "lively" — bright, cheerful, energetic
+- **Vivace** isn't just "faster than Allegro"; it's "vivacious" — crisp, sparkling
+
+A performer approaching these markings should pay attention to both aspects. Getting the right tempo number isn't enough; the piece should *feel* like the character the marking indicates.
+
+## Additional tempo qualifiers
+
+Composers often add qualifying words to tempo markings:
+
+**molto** — "very much." *Allegro molto* = very fast.
+**non troppo** — "not too much." *Allegro non troppo* = fast, but not too fast.
+**assai** — "enough" or "very." *Assai vivace* = very lively.
+**ma non troppo** — "but not too much." *Andante ma non troppo* = walking, but not too slowly.
+
+These qualifiers let composers fine-tune the tempo character. *Allegro molto* and *Allegro ma non troppo* both start from the same base (Allegro) but pull in different directions.
+
+## Common questions
+
+**What's the difference between Adagio and Andante?**
+
+Adagio is slower — typically 55-75 BPM — and has a more still, meditative character. Andante is faster — typically 75-108 BPM — and has a walking, flowing character. Adagio feels like stillness; Andante feels like motion.
+
+**Why are some pieces marked Allegro but played at different speeds by different performers?**
+
+Because "Allegro" covers a range (roughly 120-156 BPM) and because tempo is partly an interpretive choice. A performer might play the same piece at 126 BPM on one night and 144 BPM on another, depending on the acoustic, the mood, and the interpretation. Italian tempo markings establish a range; performers choose within it.
+
+**Does the metronome marking apply to every note or just the marked beat?**
+
+The metronome marking specifies the speed of a particular note value (usually the quarter note). All other note values scale proportionally — if the quarter note is 120 BPM, eighth notes are 240 per minute, half notes are 60 per minute, etc. The marking sets the pulse; all notes are measured against that pulse.
+
+**Should you always follow metronome markings exactly?**
+
+For practice purposes, yes — metronome markings are a good starting point. In performance, slight deviations are common and often desirable; music often breathes, speeds up at climaxes, slows at cadences. But the baseline tempo should be close to the marked one. Major deviations (much faster or much slower than marked) need a clear musical reason.

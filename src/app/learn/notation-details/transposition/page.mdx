@@ -1,0 +1,133 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'transposition',
+  title: 'Transposition',
+  oneSentence:
+    "Transposition moves music from one key to another — rewriting every pitch at a consistent interval from the original — either to match a singer's range, accommodate a transposing instrument, or explore the same music in a different tonal context.",
+  practice: [],
+  related: [
+    { title: 'Transposing Instruments',  href: '/learn/notation-details/transposing-instruments' },
+    { title: 'Modulation',                href: '/learn/pitch/modulation' },
+    { title: 'The Circle of Fifths',      href: '/learn/pitch/the-circle-of-fifths' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+**Transposition** is the process of taking a piece of music and rewriting it in a different key. Every pitch is shifted by the same interval — up a fourth, down a step, up a major third, whatever the target transposition requires. The melody, harmony, and all intervallic relationships stay identical; only the starting pitch (and all subsequent pitches) change.
+
+Transposition happens constantly in music. A soprano transposes a folk song down a third so she can sing it comfortably. A pianist transposes a piece to a different key for a teaching session. A band arranger transposes a song to fit a new singer. Orchestral scores are often in "concert pitch" while individual instrument parts are transposed for transposing instruments. Transposition is one of the most practical skills a musician can have.
+
+This page covers how transposition works, when it's needed, and the techniques for doing it by hand or in your head.
+
+## The visual
+
+<DiagramPlaceholder description="A melody in C major (original), the same melody transposed up a perfect fifth to G major (transposed version) — showing how every note shifts by the same interval while the melodic and harmonic structure stays identical." />
+
+<DiagramPlaceholder description="The same melody transposed down a minor third to A minor — showing how transposition works downward and into a minor key." />
+
+## How transposition works
+
+The core principle: **every pitch shifts by the same interval in the same direction.**
+
+If you transpose up a perfect fifth:
+- Every C becomes G
+- Every D becomes A
+- Every E becomes B
+- Every F becomes C
+- Every G becomes D
+- And so on — always the same interval, always the same direction
+
+The relationships between notes stay identical. A melody that moves C → E → G → C (a C major triad arpeggiated) becomes G → B → D → G (a G major triad arpeggiated) after transposing up a fifth. Same melodic shape, same harmonic structure, different pitch level.
+
+Transposition can happen in any direction (up or down) and by any interval (unison is "no transposition," octave is a change only in register, and everything else moves to a genuinely different key).
+
+## Common transpositions
+
+Some transpositions appear regularly:
+
+**Up or down an octave** — the easiest case. Every pitch moves to the same note name, just in a different octave. No key change, no accidentals change. Useful for accommodating different instruments' ranges.
+
+**Up or down a step or two** — moves the music to a neighboring key. A piece in C major transposed up a step becomes D major (two flats become two sharps, in key-signature terms). A piece in D transposed down a minor third becomes B minor (no key signature change because both have two sharps).
+
+**Up or down a fifth** — moves around the circle of fifths. A piece in C major transposed up a fifth becomes G major (adds a sharp); down a fifth becomes F major (removes a sharp). Very common for instrument accommodations and for exploring related keys.
+
+**Up or down a fourth** — the opposite of moving by fifths. Moves in the other direction around the circle.
+
+Each of these has practical applications, and being able to transpose in each of them is a valuable skill.
+
+## Transposing by interval
+
+To transpose a piece, choose the target interval and direction. Then:
+
+1. **Identify the starting pitch and the target pitch.** If transposing a C major piece up a fourth, the target key is F major.
+
+2. **Update the key signature.** The key signature changes to reflect the new key. C major has no sharps or flats; F major has one flat (B♭).
+
+3. **Move every pitch by the same interval.** Every C becomes F, every D becomes G, every E becomes A, and so on. Flats and sharps are re-spelled to fit the new key signature.
+
+4. **Verify with accidentals.** Any accidentals in the original become accidentals in the transposed version, adjusted to match the new pitch levels.
+
+Transposition preserves the intervallic structure. A third remains a third; a fifth remains a fifth; the quality of each interval (major, minor, perfect, etc.) stays identical. Only the specific pitches change.
+
+## Transposing by hand vs. in your head
+
+**By hand** — write out the transposed version. This is what you'd do when creating a new score or a part. Take the original, work pitch by pitch, and write the new notation. Time-consuming but foolproof.
+
+**In your head (sight-reading with transposition)** — read the original score while playing or singing the transposed version. This is a real skill that experienced musicians develop. When reading a piece and transposing it on the fly, the musician:
+- Mentally converts each pitch as they read
+- Adjusts for the new key signature
+- Keeps the same rhythmic and structural feel
+
+Some musicians become very fluent at this. A pianist accompanying a singer might transpose the accompaniment on the fly to accommodate the singer's range.
+
+**Via transposition on an instrument** — some instruments (like piano) can simply shift — play in a different key using the same fingering pattern at a different key. Other instruments require re-reading as transposition.
+
+## Transposition for vocal ranges
+
+Singers have different vocal ranges. A song written in G major might be too high for a bass or too low for a soprano. Transposing the song up or down a step, third, or other interval adjusts the range.
+
+Vocal ranges:
+- **Soprano** — roughly C4-A5 (with considerable individual variation)
+- **Alto** — roughly G3-E5
+- **Tenor** — roughly C3-A4
+- **Bass** — roughly E2-E4
+
+A song originally in a range suited for alto might be transposed up a fifth for soprano or down a third for bass. The exact amount depends on the specific song and the specific singer.
+
+## Transposition in arrangements
+
+When arranging a song for different instruments or ensembles, transposition is often necessary:
+
+**Different voicings** — a melody for trumpet might need to be transposed for a clarinet (a transposing instrument — see the next page).
+
+**Different instruments** — a piano piece transposed for guitar might benefit from moving to a key that's easier to play on guitar (like G major with its open strings).
+
+**Different ensemble configurations** — an arrangement might transpose parts up or down to fit the available instruments.
+
+**Key changes within a piece** — sometimes a piece modulates, effectively transposing itself mid-performance. Good arrangers plan these modulations carefully.
+
+## Common questions
+
+**Is transposition the same as modulation?**
+
+No. **Transposition** is rewriting an entire piece (or passage) at a different pitch level — every note moves by the same interval. **Modulation** is moving from one key to another within a piece — a harmonic journey that happens in real time. Transposition changes the key wholesale; modulation changes keys gradually.
+
+**Can you transpose by an interval like a diminished fourth or augmented fifth?**
+
+In theory, yes — you can transpose by any interval. In practice, it's unusual to transpose by such specific intervals because they produce awkward key signatures (like a diminished fourth from C gives F♭, which is enharmonically E but with an unusual spelling). Transpositions by major/minor seconds, thirds, fourths, fifths, sixths, and sevenths are far more common.
+
+**How do I know which direction and by how much to transpose?**
+
+Depends on the purpose. For vocal range adjustment, you transpose to fit the singer's voice. For instrument accommodation, you transpose to fit the instrument's natural range. For creative exploration, you transpose to explore new tonal colors (a dark piece in A minor sounds different when transposed up a minor third to C minor). Context determines the direction and amount.
+
+**Do I need to transpose if I'm just playing a piece in a different octave?**
+
+Not really — octave changes aren't true transposition (which changes keys). Moving a passage up or down an octave changes the register without changing the key. The key signature stays the same; the intervallic relationships stay the same; only the pitch level shifts.

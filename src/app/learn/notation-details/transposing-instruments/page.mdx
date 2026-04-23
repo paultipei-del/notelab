@@ -1,0 +1,137 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'transposing-instruments',
+  title: 'Transposing Instruments',
+  oneSentence:
+    'Some instruments — B♭ trumpet, B♭ clarinet, French horn, alto saxophone, English horn, and others — are written in a different key than they sound, requiring the player to read transposed notation and the listener (or score reader) to know the specific transposition to hear the "concert pitch."',
+  practice: [],
+  related: [
+    { title: 'Transposition',    href: '/learn/notation-details/transposition' },
+    { title: 'Score Reading',     href: '/learn/notation-details/score-reading' },
+    { title: 'Clefs',             href: '/learn/reading-and-notation/clefs' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Here's a confusing but important fact about orchestra and band music: several instruments are written in a key different from how they actually sound. When a B♭ clarinet player sees the note C on their part and plays it, a listener hears B♭. When a French horn player sees C and plays it, the listener hears F. When an English horn player sees C, the listener hears F (below). The player reads one pitch; the audience hears a different one.
+
+These are **transposing instruments**. Their notation is "transposed" — written at a pitch that's different from the sounding pitch. There are historical reasons for this (mostly having to do with how the instruments evolved and the keys players were trained to think in). Learning which instruments transpose, by how much, and in which direction is essential for reading orchestral scores, composing for ensemble, or arranging for band.
+
+This page explains the most common transposing instruments and how their transposition works.
+
+## The visual
+
+<DiagramPlaceholder description="A vertical bar showing several instruments — piano, violin, flute, B♭ clarinet, F horn, alto saxophone, English horn — each with a note C and the resulting concert pitch shown beside it." />
+
+<DiagramPlaceholder description="A C4 (middle C) shown as written for each of several instruments, alongside the concert pitch (how the audience hears it) for each." />
+
+## What "transposing" means for an instrument
+
+When an instrument is a transposing instrument, there's a consistent interval between **what the player reads** and **what the listener hears**. The interval is fixed for that instrument.
+
+- A **B♭ clarinet** sounds a major 2nd (whole step) lower than written. Player reads C; audience hears B♭.
+- A **French horn in F** sounds a perfect 5th lower than written. Player reads C; audience hears F.
+- An **alto saxophone** sounds a major 6th lower than written. Player reads C; audience hears E♭.
+- An **English horn in F** sounds a perfect 5th lower than written. Player reads C; audience hears F (below).
+
+The transposition is consistent — every note the player plays sounds at the same interval from what's written. The B♭ clarinet's G sounds as F; the horn's A sounds as D.
+
+## Why transposing instruments exist
+
+Historical reasons, mostly. The instruments evolved over time, and the conventions stuck.
+
+**Clarinets, horns, and trumpets** were originally designed in specific keys (B♭, F, D, E♭) that matched the music being played. Players who learned one instrument in one key could switch to another (say, from B♭ trumpet to E♭ trumpet) using similar fingerings. The "key" of the instrument stayed the same for the player, even as the sounding pitches changed between instruments. This made for practical versatility.
+
+**Saxophones** were invented in the 1840s as a family of instruments (soprano, alto, tenor, baritone) in related keys. Each saxophone transposes to a different interval, but the fingerings are consistent across the family — a fingering on one sax produces the "same note" (in the player's mental frame) on another. This made the family easy to learn.
+
+**English horn and cor anglais** descended from earlier instruments and kept their transposition conventions.
+
+The common thread: transposition allowed instrument families to share fingerings and conventions even as the instruments themselves differed in pitch.
+
+## The main transposing instruments
+
+**B♭ instruments** — sound a whole step lower than written:
+- B♭ clarinet
+- B♭ trumpet
+- B♭ soprano saxophone
+- B♭ tenor saxophone (sounds a major 9th lower — an octave plus a whole step)
+- B♭ bass clarinet (sounds a major 9th lower)
+- B♭ cornet, bugle
+
+**E♭ instruments** — sound a major 6th lower than written:
+- E♭ alto saxophone
+- E♭ alto clarinet (less common)
+- E♭ baritone saxophone (sounds an octave and major 6th lower)
+- E♭ horn (less common in modern orchestras)
+
+**F instruments** — sound a perfect 5th lower than written:
+- French horn in F (the most common horn)
+- English horn
+- Basset horn
+
+**A instruments** — sound a minor 3rd lower than written:
+- A clarinet (used when the key is more comfortable in A)
+
+**D instruments** — sound a major 2nd higher than written:
+- D clarinet (used for specific pieces, like Strauss's *Till Eulenspiegel*)
+
+These are the most common. A few others exist (C trumpet, soprano saxophone in C, etc.) but are less frequently encountered.
+
+## How to read transposed parts
+
+When looking at a transposing instrument's part, you read the written pitches. The player plays those written pitches, and the audience hears the transposed version.
+
+For example, reading a B♭ clarinet part:
+- You see notes on the page
+- The player plays those notes on their clarinet
+- The audience hears each note sounding a major 2nd lower
+
+To know what the audience will hear from a B♭ clarinet's C4 (middle C as written), you compute: C4 sounds B♭3.
+
+## Transposition in orchestral scores
+
+Orchestral scores are typically written "in concert pitch" — every instrument's part shows the actual sounding pitch, regardless of whether it's a transposing instrument. This is the conductor's view.
+
+Individual instrument parts, however, are in the transposed key that the player reads. So a conductor sees the clarinet line in concert pitch (say, A♭ major); the clarinet player's actual part is in B♭ major (transposed up a major 2nd).
+
+When reading scores, understand which format you're in — concert pitch or transposed. If it's a full score, it's almost certainly concert pitch, and you're seeing what the audience hears. If it's a single instrument part, it might be transposed.
+
+Some composers (20th-century and contemporary) write both the score and the parts in concert pitch, abandoning the transposition convention. This simplifies score reading but requires players to mentally re-transpose to their usual fingerings. The older convention of transposed parts is still standard in most traditions.
+
+## Writing for transposing instruments
+
+When composing or arranging for transposing instruments:
+
+1. **Decide on the concert pitch** — what you want the audience to hear.
+2. **Transpose for each instrument** — figure out what the player needs to read to produce that concert pitch.
+3. **Update the key signature** — the written key signature is different from the sounding key.
+
+Example: writing a C major passage for B♭ clarinet. The clarinet player reads in D major (a major 2nd up from C). The key signature on the clarinet part shows two sharps, even though the audience hears C major (no accidentals in that key).
+
+This is why orchestral scores can look "in different keys" for each instrument — each instrument's part is in its own transposed key, though they all produce the same concert pitch.
+
+## Common questions
+
+**Why don't all instruments play in concert pitch?**
+
+Historical reasons, not logical ones. Transposing instruments exist because their conventions emerged in times when instrumental family consistency (sharing fingerings, maintaining common key sensibilities) was practical. Moving to universal concert pitch has been discussed but would require massive disruption to existing repertoire, education, and player training. The current system works well despite the learning curve.
+
+**Is there an easy way to remember which instruments transpose?**
+
+The general rule: **most brass and woodwinds transpose; strings and piano don't.** Specifically, B♭ and E♭ instruments are the most common transposers. Keyboards, strings, and flute are concert-pitch (non-transposing). But there are exceptions, so when in doubt, check.
+
+**How do I transpose a part from one instrument to another?**
+
+Determine the difference in transposition between the two instruments. If a B♭ clarinet's music (sounding a major 2nd lower than written) needs to become a French horn in F's music (sounding a perfect 5th lower than written), the French horn part will be written a perfect 4th higher than the clarinet part (so that both sound at the same concert pitch).
+
+**What's "concert pitch" exactly?**
+
+Concert pitch is the actual sounding pitch, regardless of what any transposing instrument's part says. When orchestras tune to A440, that A is concert pitch. When a composer marks a passage "in C major," that's the concert-pitch key — the audience hears C major.

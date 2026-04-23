@@ -1,0 +1,141 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'score-reading',
+  title: 'Score Reading',
+  oneSentence:
+    'Reading a full orchestral score — multiple staves for multiple instruments stacked vertically — requires tracking several independent voices simultaneously, recognizing transposing instruments, following structural changes like tempo and dynamics across all parts, and eventually hearing the music in your head from the page alone.',
+  practice: [],
+  related: [
+    { title: 'Transposing Instruments',          href: '/learn/notation-details/transposing-instruments' },
+    { title: 'Voices on a Single Staff',          href: '/learn/notation-details/voices-on-a-single-staff' },
+    { title: 'Reading a Score\'s Opening',        href: '/learn/expression-and-performance/reading-a-scores-opening' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Reading a full orchestral score — a symphony score, an opera full score, or a chamber music score — is a specialized skill. Instead of reading one line of music, you're reading a dozen or more simultaneously stacked staves, each representing a different instrument or section. Woodwinds, brass, percussion, strings, sometimes voices — all combined vertically on each page.
+
+This can be overwhelming at first. The trick is not to try to read everything at once, but to develop strategies: focus on the most important lines at each moment, use the visual structure of the score to guide your eye, and gradually build the ability to hear the whole ensemble from the printed page.
+
+Score reading is a lifetime skill. A young conductor struggles to follow a Mahler symphony; a senior conductor hears every nuance from the page, recognizing patterns and textures at a glance. The skill develops with practice, exposure, and deliberate study.
+
+## The visual
+
+<DiagramPlaceholder description="A partial orchestral score showing a grand staff system for a symphony — woodwinds on top, brass below, percussion, then strings at the bottom — with the visual hierarchy clearly visible." />
+
+<DiagramPlaceholder description="A typical orchestral score layout showing the standard order of instruments from top to bottom." />
+
+## The standard order of instruments
+
+In orchestral scores, instruments are stacked in a consistent vertical order:
+
+**Woodwinds (top)** — typically in this order:
+- Piccolo (if present)
+- Flutes
+- Oboes
+- English horn (if present)
+- Clarinets
+- Bass clarinet (if present)
+- Bassoons
+- Contrabassoon (if present)
+
+**Brass (middle-upper)**:
+- French horns
+- Trumpets
+- Trombones
+- Tuba (if present)
+
+**Percussion (middle)**:
+- Timpani (often below brass)
+- Other percussion (snare, bass drum, etc.)
+- Mallet percussion (xylophone, marimba, vibraphone)
+
+**Harp(s) and keyboard (between percussion and strings, if present)**:
+- Harp
+- Piano, celesta, or organ (if present)
+
+**Voices (varies by position — sometimes between brass and strings, sometimes below)**:
+- Solo voices above chorus
+- Chorus (if present)
+
+**Strings (bottom)**:
+- Violin I
+- Violin II
+- Viola
+- Violoncello
+- Contrabass (double bass)
+
+This standardized order has been the norm for about two centuries. Modern composers sometimes vary the order for specific purposes, but the basic pattern is widely followed. Reading a score, you know roughly where to find each instrument based on this layout.
+
+## Concert pitch vs. transposed scores
+
+Modern orchestral scores come in two formats:
+
+**Concert pitch scores** — every instrument is shown at its actual sounding pitch, regardless of whether it's a transposing instrument. This is the "conductor's view" that shows what the audience actually hears.
+
+**Transposed scores** — each instrument is shown in its transposed key (B♭ clarinet in its transposed B♭ notation, F horn in its transposed F notation, etc.). This matches the individual instrument parts exactly.
+
+Most contemporary scores are concert pitch for readability. Older scores, and some contemporary specialty editions, are transposed. Score readers need to know which format they're using. A concert pitch score shows all instruments in the same key as the audience hears; a transposed score shows each instrument in its own notational key.
+
+## Reading strategies
+
+**Start with the melody.** In most orchestral passages, one instrument or section carries the main melody. Find it (often the first violins, a solo wind, or a prominent section) and track it. The other instruments are generally accompanying.
+
+**Track the bass line.** The bass instruments (contrabass, cello, bassoon) often carry the harmonic foundation. Following the bass line tells you where the harmony is at any moment.
+
+**Look at the texture.** Are all the instruments playing? Just a few? Is the brass prominent? Are the strings pizzicato? The texture at any moment tells you what kind of musical gesture is happening.
+
+**Use rehearsal marks and section divisions.** Most scores have rehearsal marks (A, B, C, or letters/numbers) or section markings. Use these as landmarks to orient yourself in the larger form.
+
+**Follow tempo and dynamic markings.** These apply across the whole ensemble (usually). Knowing when the piece is at ff or pp, accelerating or ritarding, tells you the general character at that moment.
+
+**Visual chunking.** With practice, your eye learns to chunk the score visually. You see "all the strings" as a unit, "all the woodwinds" as a unit, and process them as textures rather than individual lines. This is how experienced conductors process dense orchestral textures.
+
+## Skills that develop over time
+
+**Hearing the score in your head.** Experienced score readers can read a page and imagine the sound — which instruments are playing, what chord they're producing, the balance between them. This is a learnable skill that develops through exposure and study.
+
+**Recognizing instrumental idioms.** Each instrument has characteristic ranges, techniques, and textures. A string tremolo is instantly recognizable. A horn fanfare has a distinctive look and sound. Learning these idioms lets you read faster and hear more accurately.
+
+**Transposition at sight.** Handling transposing instruments without conversion becomes automatic with practice. A conductor sees a B♭ clarinet part in a transposed score and hears the sounding pitch instantly.
+
+**Pattern recognition.** Common orchestral gestures (a string passage alternating between two chords, a brass fanfare, a soft solo over string tremolos) become recognizable as visual patterns. You don't read each note individually — you see the pattern and know the effect.
+
+**Score analysis.** Beyond sight-reading, score readers learn to analyze large-scale structure — how themes develop, where climaxes occur, how the composer uses the orchestra's resources. This analytical skill enhances reading dramatically.
+
+## Using a piano reduction
+
+A **piano reduction** is a two-staff version of an orchestral score, with all the material compressed into what a pianist could play. Piano reductions are much easier to read than full scores and give you most of the important musical information.
+
+For beginning score readers, piano reductions are often a first step:
+1. Read the piano reduction to understand the overall structure
+2. Listen to recordings while following the reduction
+3. Gradually move to the full score, using the reduction as a reference
+
+Piano reductions lose some detail (instrumental color, specific voicing) but capture the essential melodic and harmonic information. They're a valuable tool for learning and study.
+
+## Common questions
+
+**Can I learn to read a full orchestral score as a non-conductor?**
+
+Yes, though it takes time. Serious listeners, composers, and musicologists often develop excellent score-reading skills without ever conducting. The skills are portable and valuable for anyone who loves orchestral music.
+
+**How long does it take to become fluent?**
+
+Years. Casual score reading develops quickly (you can follow simple passages within a few weeks). Deep fluency — hearing an entire Mahler symphony from the page — takes many years of dedicated practice. Most professional conductors develop their scores at the highest level through lifelong study.
+
+**Do I need perfect pitch to read scores?**
+
+No. Relative pitch (hearing intervals and chord qualities) is sufficient for most score reading. Perfect pitch can help with concert-pitch reading of transposing scores, but it's not essential. Many excellent score readers have relative pitch only.
+
+**Is it better to read while listening or before listening?**
+
+Both have value. Reading before listening trains your ear to anticipate what you'll hear. Listening while reading helps you correlate the page with the sound. Professional conductors do both — they study the score first, then compare with recordings to check their interpretation.

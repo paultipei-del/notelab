@@ -1,0 +1,139 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'tablature',
+  title: 'Tablature',
+  oneSentence:
+    'Tablature (or "tab") is a notation system specific to fretted string instruments — six horizontal lines representing the six strings of a guitar, with numbers indicating which fret to press — that shows exactly where and how to play each note, offering a more direct physical representation than standard notation.',
+  practice: [],
+  related: [
+    { title: 'Lead Sheets and Chord Symbols', href: '/learn/notation-details/lead-sheets-and-chord-symbols' },
+    { title: 'Stem Direction',                 href: '/learn/notation-details/stem-direction' },
+    { title: 'Beaming Rules',                   href: '/learn/notation-details/beaming-rules' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+**Tablature** (or "tab") is a notation system for fretted string instruments — guitar, bass, lute, ukulele, and others. Instead of showing pitches on a musical staff, tablature shows **where to press the strings on the fretboard**. A six-line staff represents the six strings of a guitar; numbers on each line tell you which fret to press on that string.
+
+Tab is older than standard notation and has remained popular, especially for guitar. Its main advantage: it tells you exactly where to put your fingers, without the abstraction of reading pitches and converting them to fingerings. Its main disadvantage: it doesn't show pitches directly, so it's less useful for analysis or for players who don't already know their instrument.
+
+For guitarists, bassists, and other fretboard players, tab is often the go-to notation — easier to learn, faster to read for specific riffs and solos, and directly connected to the physical act of playing.
+
+## The visual
+
+<DiagramPlaceholder description="A guitar tab showing the six-line staff representing the six strings, with numbers indicating fret positions — and a standard music staff above showing the same music in traditional notation, so the reader can compare the two systems." />
+
+<DiagramPlaceholder description="A short riff shown in both standard notation and tab, with an arrow indicating how to translate between them." />
+
+## How tablature works
+
+**The staff:** Tab uses a staff of six lines (for guitar) or four lines (for bass). Each line represents a string of the instrument.
+
+**Top line** — the highest-pitched string (on guitar, the high E string)
+**Bottom line** — the lowest-pitched string (on guitar, the low E string)
+
+The middle lines represent the strings in between, in their usual tuning order (guitar: E-A-D-G-B-E, from bottom to top).
+
+**Numbers indicate fret positions.** A number placed on a line tells you to press that string at that fret. "0" means an open string (no fret pressed). "1" means first fret. "2" means second fret. And so on.
+
+**Rhythm is often indicated above or below the tab.** Standard music notation's rhythm symbols (stems, beams, dots) are often included above or below the tab staff to show how long each note lasts. Some tab uses its own rhythmic conventions; some doesn't show rhythm at all (relying on the player's knowledge of the song).
+
+## Reading a simple guitar tab
+
+Consider a short tab:
+
+```
+E|--0--0--0--0--|
+B|--1--1--1--1--|
+G|--0--0--0--0--|
+D|--2--2--2--2--|
+A|--3--3--3--3--|
+E|--X--X--X--X--|
+```
+
+This represents a C major chord played four times. The X on the bottom line means don't play that string. The 3 on the A string, 2 on the D string, 0 on the G string, 1 on the B string, and 0 on the high E string — all played together — produce a C major chord.
+
+Each stacked vertical column represents a single chord or note. A horizontal sequence represents notes played one after another.
+
+## Rhythm in tab
+
+**Full notation tab** includes rhythm symbols above the tab staff — stems, beams, dots — just like standard notation. This is the most complete form and lets you play exactly as intended.
+
+**Tab with basic rhythm** might show just stems above each note without complete rhythmic notation.
+
+**Tab without rhythm** shows just the fret positions. You're expected to know the song already or to figure out the rhythm from hearing the original recording. This is common on web-based guitar tabs written by fans.
+
+For learning a piece seriously, tab with full rhythmic notation is best. For quickly recalling a riff you already know, rhythmless tab is often sufficient.
+
+## Tab for different instruments
+
+**Guitar tab** — six lines for the six strings. Standard tuning: E-A-D-G-B-E from lowest to highest.
+
+**Bass tab** — four lines for the four strings (on a standard bass). Standard tuning: E-A-D-G from lowest to highest.
+
+**Ukulele tab** — four lines for the four strings. Standard tuning: G-C-E-A.
+
+**Lute tab** — historically important. Lute tablature differs from modern guitar tab but uses similar principles (strings represented by lines or spaces, indicators showing fret positions).
+
+Each fretted string instrument can use its own tab notation, with the number of lines matching the number of strings.
+
+## Techniques notated in tab
+
+Beyond basic fret numbers, tab uses symbols for specific techniques:
+
+**h** — hammer-on (fret a note while the string is still vibrating from the previous note)
+**p** — pull-off (release a fretted note so the string rings on a lower fret or the open string)
+**b** — bend (push the string sideways to raise its pitch)
+**r** — release (return from a bend)
+**/** or **\\** — slide up or down
+**t** — tap (use the right hand to fret a note)
+**~** — vibrato (small rapid pitch fluctuation)
+**x** — mute or deadened note (hit but don't let ring)
+**()** — ghost note or note played softly
+
+These symbols are usually placed between fret numbers or above/below them. Reading them fluently takes practice, but they add significant information about how to play a passage.
+
+Example: "5b7" means "press fret 5, bend it up to sound like fret 7." "7h9" means "fret 7, then hammer-on to fret 9 without picking."
+
+## Standard notation vs. tab
+
+**Tab's advantages:**
+- Direct physical representation — you know where to put your fingers
+- Accessible to players who don't read standard notation
+- Quick to learn for guitarists
+- Good for idiomatic guitar techniques (bends, slides, hammer-ons) that are hard to express in standard notation
+
+**Standard notation's advantages:**
+- Shows pitches directly (useful for analysis, transposition, and for non-fretboard players)
+- Precise rhythm is always included
+- Universal across instruments
+- Required for classical guitar pedagogy and many professional situations
+- Enables reading for multiple instruments without separate notation systems
+
+Many guitarists learn both and use the appropriate system for the context. Rock, blues, and folk musicians might primarily use tab. Classical guitarists primarily use standard notation. Jazz guitarists often use both (lead sheets for chord progressions, standard notation for melodic material).
+
+## Common questions
+
+**Can everything in standard notation be represented in tab?**
+
+Mostly, yes — but with some caveats. Tab is tied to a specific instrument (and usually a specific tuning). Music on other instruments would need conversion. Also, some musical information (precise rhythmic timing for complex classical passages) is better expressed in standard notation than tab.
+
+**Is tab easier to learn than standard notation?**
+
+For guitarists, often yes — it directly shows where to put your fingers. For non-guitarists, standard notation is easier because it's universal. If you play multiple instruments, standard notation has clear advantages.
+
+**Can tab tell me the actual pitches I'm playing?**
+
+Indirectly. Knowing the tuning of the instrument and the fret positions, you can calculate the pitches. But tab doesn't show them explicitly — you'd need to know the instrument's layout.
+
+**Is tab standardized?**
+
+Largely yes, with some variations. The basic format (lines for strings, numbers for frets) is universal. Specific symbols for techniques can vary slightly between sources. "Full" tab (with rhythmic notation) is more standardized; "quick" tab without rhythm is more variable.

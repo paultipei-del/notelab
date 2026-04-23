@@ -1,0 +1,177 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'expression-and-performance',
+  subtopic: 'italian-terms',
+  title: 'Italian Performance Terms',
+  oneSentence:
+    'The Italian performance terms that pepper Western music scores — from tempo (Allegro, Adagio) to dynamics (piano, forte) to character (dolce, espressivo) — form a specialized vocabulary developed over centuries in Italy and standardized internationally.',
+  practice: [
+    { kind: 'flashcard', label: 'Tempo Terms — Core',        detail: 'Italian glossary',  href: '/study/tempo-terms-core' },
+    { kind: 'flashcard', label: 'Tempo Terms — Extended',    detail: 'Italian glossary',  href: '/study/tempo-terms-extended' },
+    { kind: 'flashcard', label: 'Character Terms — Core',    detail: 'Italian glossary',  href: '/study/character-terms-core' },
+    { kind: 'flashcard', label: 'Character Terms — Extended', detail: 'Italian glossary', href: '/study/character-terms-extended' },
+    { kind: 'flashcard', label: 'Tempo Modifications',       detail: 'Italian glossary',  href: '/study/tempo-modifications' },
+    { kind: 'flashcard', label: 'Modifying Words',            detail: 'Italian glossary',  href: '/study/modifying-words' },
+  ],
+  related: [
+    { title: 'Tempo Markings',                                 href: '/learn/expression-and-performance/tempo-markings' },
+    { title: 'Dynamics',                                        href: '/learn/expression-and-performance/dynamics' },
+    { title: 'German and French Performance Terms',            href: '/learn/expression-and-performance/german-and-french-terms' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Most of the performance vocabulary in Western classical music is in Italian. *Allegro, piano, staccato, crescendo, dolce, espressivo, a tempo* — these are all Italian words. This isn't arbitrary: Italy was the center of European music during the late Renaissance and early Baroque, and the practical vocabulary developed there was adopted internationally.
+
+Learning Italian performance terms is one of the first practical tasks for any classical musician. The vocabulary is large but finite. Most terms describe one of a few things: tempo, dynamics, character, or specific playing techniques. A working vocabulary of 50-100 terms will let you understand almost any Italian marking you encounter.
+
+## The visual
+
+<DiagramPlaceholder description="A short passage with various Italian markings — tempo, dynamics, character indications — labeled with translations below." />
+
+<DiagramPlaceholder description="A table of the most common categories of Italian terms: tempo, dynamics, character, technique." />
+
+## Tempo terms (summarized)
+
+Covered in detail on the Tempo Markings page, but briefly:
+
+**Slow to fast:** Grave, Largo, Lento, Adagio, Andante, Moderato, Allegretto, Allegro, Vivace, Presto, Prestissimo
+
+**Modifiers:** molto (very), poco (a little), non troppo (not too much), ma (but), assai (very), sempre (always)
+
+**Changes:** accelerando (getting faster), ritardando (getting slower), a tempo (back to tempo), tempo primo (back to first tempo), stringendo (pressing forward), allargando (broadening)
+
+## Dynamic terms (summarized)
+
+Covered in detail on the Dynamics page, but briefly:
+
+**Soft to loud:** pianississimo (ppp), pianissimo (pp), piano (p), mezzo-piano (mp), mezzo-forte (mf), forte (f), fortissimo (ff), fortississimo (fff)
+
+**Changes:** crescendo (getting louder), diminuendo (getting softer), decrescendo (getting softer), subito (suddenly), sforzando (sfz)
+
+## Character terms
+
+These terms describe the mood, feel, or character of the music:
+
+**affettuoso** — with affection, tenderly
+
+**agitato** — agitated, restless
+
+**amoroso** — lovingly, amorously
+
+**animato** — animated, lively
+
+**brillante** — brilliant, sparkling
+
+**cantabile** — in a singing style, songlike
+
+**con brio** — with vigor, with spirit
+
+**con fuoco** — with fire, passionate
+
+**dolce** — sweetly, gently
+
+**dolente** — sorrowfully, painfully
+
+**doloroso** — painfully, mournfully
+
+**energico** — energetically
+
+**espressivo** — expressively
+
+**giocoso** — playfully, merrily
+
+**grandioso** — grandly, majestically
+
+**grazioso** — gracefully
+
+**leggiero** — lightly, nimbly
+
+**maestoso** — majestically, stately
+
+**mesto** — sadly, mournfully
+
+**pesante** — heavy, weighty
+
+**risoluto** — resolutely, with resolve
+
+**scherzando** — playfully, jokingly
+
+**semplice** — simply, without ornamentation
+
+**serioso** — seriously, earnestly
+
+**sostenuto** — sustained, held
+
+**tranquillo** — tranquil, calm
+
+**vivo** — lively
+
+These character markings tell the performer the emotional context, which shapes how tempo, dynamics, and articulation are interpreted. A phrase marked *dolce* is played gently and sweetly, even if the underlying notes could theoretically be played harshly.
+
+## Technique and structural terms
+
+Beyond character, some Italian terms specify structural or technical matters:
+
+**da capo (D.C.)** — from the beginning. Indicates the performer should return to the start.
+
+**dal segno (D.S.)** — from the sign. Returns to a specific marked point in the score (indicated by the *segno* symbol 𝄋).
+
+**fine** — the end. Marks where the piece ends (often after a D.C.).
+
+**coda** — a concluding section, usually marked with a coda sign (𝄌).
+
+**segno** — sign. Used with dal segno to mark the return point.
+
+**simile** — similarly. Continue in the same manner (same articulation, dynamic, etc.).
+
+**solo** — alone. One voice or instrument plays.
+
+**tutti** — all. All voices or instruments play together.
+
+**divisi (div.)** — divided. String section splits into multiple parts.
+
+**unisoni (unis.)** — unison. String section plays in unison.
+
+**pizzicato (pizz.)** — plucked (for string instruments).
+
+**arco** — with the bow (returning to normal bowing after pizzicato).
+
+**con sordino (con sord.)** — with mute.
+
+**senza sordino (senza sord.)** — without mute.
+
+**col legno** — with the wood (striking strings with the back of the bow).
+
+**sul ponticello (sul pont.)** — on the bridge (bowing close to the bridge for a thin, glassy tone).
+
+**sul tasto** — on the fingerboard (bowing over the fingerboard for a soft, flute-like tone).
+
+**l.h. / r.h.** — left hand / right hand (piano).
+
+**sf / sfz** — sforzando (sudden accent).
+
+## Common questions
+
+**Why are performance terms in Italian rather than the composer's native language?**
+
+Because Italian became the international language of music during the 17th century, when standard performance vocabulary was being established. Italian composers, singers, and instrumentalists dominated European music, and their terminology became standard. Later composers adopted the Italian terms because they were universally understood, even when composing in German, French, or English.
+
+**Do I need to learn Italian to read music?**
+
+Not the full language — just the specific vocabulary used in music. About 50-100 terms cover the vast majority of what you'll encounter. Most musicians learn them over time as they come up in repertoire. You don't need to speak Italian; you need to recognize music-specific terms.
+
+**What if a composer uses their native language instead of Italian?**
+
+Some composers (especially French, German, and 20th-century English-speaking) use their native languages. Debussy writes in French; Mahler often writes in German; modern composers might use English. These are covered on the next page. The principle is the same — performance markings in any language just need to be learned.
+
+**Are Italian terms still added to modern scores?**
+
+Yes, though they're less dominant than in the past. Modern composers often mix Italian, their native language, and metronome markings. The Italian terms remain widely used because they're internationally understood and concise. A marking like *dolce* is instantly meaningful to performers worldwide, while its English equivalent "sweetly" might feel less precise.

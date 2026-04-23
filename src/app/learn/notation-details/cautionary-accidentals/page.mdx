@@ -1,0 +1,96 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'cautionary-accidentals',
+  title: 'Cautionary Accidentals',
+  oneSentence:
+    "A cautionary accidental is an extra sharp, flat, or natural sign added to a note to remove ambiguity — reminding the performer of a note's intended alteration even when the accidental would technically be implied by an earlier marking or by the key signature.",
+  practice: [],
+  related: [
+    { title: 'Accidentals',               href: '/learn/reading-and-notation/accidentals' },
+    { title: 'Enharmonic Equivalents',     href: '/learn/reading-and-notation/enharmonic-equivalents' },
+    { title: 'What a Key Signature Is',    href: '/learn/pitch/what-a-key-signature-is' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Accidentals (sharps, flats, and naturals) in music have specific rules about where they apply. A sharp applied to a note affects that note *for the rest of the measure*, but only for that specific pitch on that specific line or space. When the measure ends, the accidental's effect ends too; the note reverts to whatever the key signature dictates.
+
+But music is complex, and these rules can create ambiguity. What if a measure has an F♯ on beat 1 and then another F on beat 3? The F on beat 3 is implied to be F♯ (by the earlier accidental), but would the reader notice that? What if the same pitch appears as F♯ in one measure and then as F-natural at the start of the next measure — will the reader realize the natural has "returned"?
+
+**Cautionary accidentals** solve this. They're "redundant" accidentals — extra markings that remind the performer of a note's alteration even when the rules technically don't require the marking. They're a courtesy to the reader, making the music easier to read correctly.
+
+## The visual
+
+<DiagramPlaceholder description="A measure with an F♯ on beat 1, a natural sign cautionary accidental restating F♯ later in the measure (or a natural canceling the F♯ even if the key signature already has no F♯)." />
+
+<DiagramPlaceholder description="A measure-end / measure-beginning transition showing a cautionary natural at the start of the new measure, even though the accidental from the previous measure would have ended anyway." />
+
+## When cautionary accidentals are used
+
+**Within a single measure, when the pitch reappears.** If a measure has F♯ on beat 1 and another F on beat 4, most composers add a cautionary sharp or natural to the second note. Without it, the reader might miss that the F is still sharped (from beat 1), and sight-reading errors become common.
+
+**At the start of a new measure, when the same pitch class was altered in the previous measure.** If the previous measure had F♯ and the new measure has a regular F (natural), composers often add a cautionary natural to remind the reader that the previous sharp has ended. This is particularly useful in pieces with frequent chromatic alterations.
+
+**When an altered pitch appears in a different octave.** An accidental typically only applies to the specific staff position it marks. If you have F♯ on the top-space F (treble clef, space below the top line), an F on the space below (second line from the bottom) isn't automatically F♯ — it's unaltered (or follows the key signature). A cautionary sharp on the lower F might be added to clarify.
+
+**When the key signature is complex and the chromatic movement is unusual.** In pieces with many sharps or flats, unexpected chromatic alterations can trip up readers. Cautionary accidentals help keep the reader on track.
+
+**When there's a potential misreading.** If a composer knows that a particular passage could be misread, they might add cautionary accidentals for safety.
+
+## How cautionary accidentals are written
+
+Two styles of notation:
+
+**Parenthetical accidentals** — the accidental is enclosed in parentheses, like (♯) or (♭) or (♮). The parentheses explicitly signal that this is a cautionary accidental — a reminder, not a new alteration.
+
+**Plain accidentals used cautiously** — sometimes a composer just adds the accidental without parentheses, using it redundantly in a "courtesy" position. The reader has to interpret whether it's cautionary or if it's actually changing something.
+
+Modern editions often prefer parenthetical accidentals for clarity. Older editions might use the plain-accidental style.
+
+## When cautionary accidentals are NOT used
+
+Some situations might seem to call for a cautionary accidental but don't:
+
+**Standard key-signature alterations.** If a piece is in G major (one sharp, F♯), every F is sharp by default. A cautionary sharp on every F would clutter the page. The convention is: trust the key signature.
+
+**Immediate repetition of an altered note.** If a measure has F♯ on beat 1 and F (still natural from the note itself, per the accidental's ongoing effect) on beat 2, most composers don't add a cautionary accidental to the second note. The ongoing effect of the beat-1 sharp is clear enough.
+
+**In styles that don't use cautionary accidentals routinely.** Some Baroque and early Classical music uses fewer cautionaries than modern music. Readers of these styles are expected to apply the rules without extra help.
+
+**When the passage is otherwise obvious.** If the melodic and harmonic context makes a particular pitch clearly F♯ (or clearly F), a cautionary marking is unnecessary.
+
+Composers and editors choose when cautionary accidentals add clarity vs. when they clutter the page. Too many can look busy; too few can cause misreadings. The balance is a matter of taste and editorial judgment.
+
+## Why cautionary accidentals matter
+
+Reading music accurately at speed requires minimal ambiguity. Every place where the reader has to pause and think "wait, is that sharp or natural?" slows reading and increases errors. Cautionary accidentals eliminate these pauses by making the intended pitch explicit at any point where it might be unclear.
+
+Composers working on pieces that will be sight-read by performers (orchestral music, choral music, teaching repertoire) often use cautionary accidentals generously. Composers writing experimental or ornate works where chromatic complexity is expected might use them less.
+
+Readers learn to expect cautionary accidentals in certain contexts and to ignore them when they seem redundant. It's part of the musical literacy that comes with practice.
+
+## Common questions
+
+**Are cautionary accidentals required, or optional?**
+
+Optional. They're a notational courtesy, not a requirement. The rules about accidental effect (within-measure, specific-staff-position) apply regardless of whether a cautionary is added. Cautionaries just make the notation clearer for the reader.
+
+**How do I know if an accidental in parentheses is cautionary or something else?**
+
+If the accidental is in parentheses — (♯), (♭), (♮) — it's cautionary. Parentheses specifically indicate "this is a reminder, the pitch would be this even without my marking." If an accidental appears without parentheses but seems redundant, it's probably also cautionary but notated without the explicit parenthetical signal.
+
+**Do cautionary accidentals affect how I play the note?**
+
+No. A cautionary accidental doesn't change the pitch — it just confirms what the pitch is. You play the note the same whether the cautionary is there or not. The cautionary just helps you identify the correct pitch more reliably.
+
+**Do all editions use cautionary accidentals consistently?**
+
+No. Different editors have different philosophies. Some editions add cautionary accidentals liberally (useful for amateur performers); others add them sparingly (preferred for professional musicians who know the conventions). When playing from an edition, adjust to its particular style — if it's heavy with cautionaries, use them; if it's light, trust your reading skills.

@@ -1,0 +1,102 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'expression-and-performance',
+  subtopic: 'crescendo-and-decrescendo',
+  title: 'Crescendo and Decrescendo',
+  oneSentence:
+    "A crescendo (cresc. or < ) gradually gets louder; a decrescendo or diminuendo (decresc., dim., or > ) gradually gets softer — these gradual dynamic changes shape musical phrases and build long expressive arcs that static dynamic markings can't create.",
+  practice: [
+    { kind: 'flashcard', label: 'Dynamics Flashcards', detail: '10 cards', href: '/study/dynamics' },
+  ],
+  related: [
+    { title: 'Dynamics',                  href: '/learn/expression-and-performance/dynamics' },
+    { title: 'Italian Performance Terms', href: '/learn/expression-and-performance/italian-terms' },
+    { title: 'Phrasing and Slurs',        href: '/learn/expression-and-performance/phrasing-and-slurs' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Static dynamics (a passage marked *p* or *f*) create plateaus of volume. **Crescendos** and **decrescendos** create slopes — gradual changes between dynamic levels. A phrase might start at *p*, crescendo through the middle to arrive at *f*, then decrescendo back to *p*. This rise and fall — shaping the phrase dynamically — is one of the fundamental expressive techniques in music.
+
+Crescendos build tension and excitement. Decrescendos release tension and settle. Together, they shape the breathing of music — letting phrases expand, climax, and relax.
+
+## The visual
+
+<DiagramPlaceholder description="A passage with a crescendo hairpin (< opening rightward) spanning several measures, going from p to f — then a decrescendo hairpin (> closing rightward) going from f back to p." />
+
+<DiagramPlaceholder description="The same passage marked with the words 'cresc.' and 'dim.' instead of hairpins — showing the alternative notation." />
+
+## Notation
+
+Two ways to indicate gradual dynamic changes:
+
+**Hairpins.** A pair of diverging lines (< opening to the right) indicates a crescendo. A pair of converging lines (> closing to the right) indicates a decrescendo. The length of the hairpin shows how long the change takes to unfold — a long hairpin spans many measures; a short hairpin changes quickly.
+
+**Word markings.** *cresc.* (crescendo) or *dim.* (diminuendo) or *decresc.* (decrescendo) written beneath the staff, often with a dotted line indicating the duration. The word marking is used when the hairpin would be awkward (e.g., across a page turn, or when the change spans so many measures that the hairpin becomes hard to read).
+
+Both notations mean the same thing — a gradual volume change in the indicated direction. Composers choose based on readability and context.
+
+## Starting and ending dynamics
+
+Hairpins and word markings show the *direction* of the change (getting louder or softer) but not necessarily the starting and ending volume. That information usually comes from nearby dynamic markings.
+
+For example: a hairpin crescendo starting after a *p* marking and ending at an *f* marking means "crescendo from piano to forte over this span." The dynamics at each end are the endpoints; the hairpin shows the gradual transition between them.
+
+Sometimes the endpoints aren't marked — in that case, the performer judges based on context. A crescendo with no ending dynamic marked typically means "get louder, with the specific amount left to interpretation."
+
+## Crescendo/decrescendo length and pacing
+
+The length of the hairpin matters. A crescendo marked over two measures is fast — the performer needs to increase volume steadily and visibly across those two measures. A crescendo marked over 20 measures is a long, gradual buildup — the performer barely changes volume from one measure to the next, but the cumulative change over 20 measures is significant.
+
+Pacing a long crescendo is one of the more refined skills of musicianship. If you start loudest too early, you run out of room. If you delay the buildup too long, the climax feels rushed. A well-paced crescendo builds steadily, maintaining a sense of inevitable arrival.
+
+Decrescendos work the same way in reverse — gradual release rather than gradual buildup, but with the same pacing challenges.
+
+## Special terms
+
+Beyond the basic crescendo and decrescendo, composers sometimes use more specific terms:
+
+**poco a poco** — "little by little." Often written as *cresc. poco a poco* or *dim. poco a poco* to emphasize that the change should be very gradual.
+
+**molto crescendo / molto diminuendo** — "much" or "very much" crescendo/diminuendo. A more intense version, with stronger change.
+
+**subito** — "suddenly." *Subito piano* or *subito forte* means a sudden shift to the new dynamic — the opposite of crescendo/decrescendo, and often used *within* an ongoing gradual change for dramatic effect.
+
+**smorzando (smorz.)** — "dying away." Implies both a decrescendo *and* a slowing tempo, as if the music is fading out.
+
+**morendo** — "dying." Similar to smorzando; fade and slow together.
+
+**calando** — "lowering." Yet another term for fade and slow, used especially in later Romantic and some 20th-century music.
+
+These specialized markings give composers more expressive precision than simple crescendo/decrescendo markings alone.
+
+## How crescendos shape phrases
+
+A typical musical phrase has a shape: it rises toward its middle or three-quarter point, reaches a peak, then descends toward its cadence. Composers frequently align dynamic shape with melodic shape — crescendo as the phrase rises, decrescendo as it falls. This reinforces the phrase's natural contour and makes it feel expressively coherent.
+
+Even without explicit markings, performers often apply subtle crescendo/decrescendo to shape each phrase. This is partly a matter of style (some musical traditions favor more shaping; others favor a more even dynamic) and partly a matter of personal interpretation. Dynamic shaping is one of the most immediately audible differences between a mechanical performance and an expressive one.
+
+## Common questions
+
+**How do I tell the difference between a crescendo hairpin and an accent mark?**
+
+A crescendo hairpin is long — it spans multiple notes or measures. An accent mark (>) is short — it sits above or below a single note. The context makes them distinguishable, though the shapes are similar. Accents are covered on the articulation page.
+
+**Should a crescendo be perfectly even, or can it speed up toward the end?**
+
+Both approaches are used. A perfectly even crescendo builds predictably; an accelerating crescendo (soft for a long time, then rushing toward loud) creates more dramatic impact. The appropriate shape depends on the music's character and the composer's intentions. In Romantic music, accelerating crescendos are common and often desirable.
+
+**What if a crescendo is marked but there's no dynamic marking at either end?**
+
+The performer interprets based on context. Usually the music's surrounding level provides the starting point, and the performer increases by a reasonable amount — typically one or two dynamic levels. If uncertain, listen to recordings or consult an editor's suggestions, but trust your musical judgment about appropriate proportions.
+
+**Is decrescendo the same as diminuendo?**
+
+Yes — they mean the same thing. *Decrescendo* is Italian for "growing less"; *diminuendo* is Italian for "diminishing." Both are abbreviated as *decresc.* or *dim.* and both refer to gradually decreasing volume. Some composers prefer one term over the other, but functionally they're identical.

@@ -1,0 +1,142 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'notation-details',
+  subtopic: 'beaming-rules',
+  title: 'Beaming Rules',
+  oneSentence:
+    'Beams — the horizontal bars connecting flagged notes — follow specific conventions that group notes to reveal the underlying beat structure, with different rules for simple meter (beam in groups that match the beat) vs. compound meter (beam in groups of three eighths).',
+  practice: [],
+  related: [
+    { title: 'Note Values',               href: '/learn/rhythm-and-time/note-values' },
+    { title: 'Simple and Compound Meter', href: '/learn/rhythm-and-time/simple-and-compound-meter' },
+    { title: 'Time Signatures',           href: '/learn/rhythm-and-time/time-signatures' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+When eighth notes, sixteenth notes, or shorter values appear consecutively, they're typically joined by horizontal bars called **beams** rather than having individual flags. Two eighth notes beamed together are visually cleaner than two separately flagged eighth notes, and the beaming makes the rhythm easier to read at a glance.
+
+But beams aren't just cosmetic. They're structural. The way beams group notes tells the reader how the music is organized within the beat and the measure. Beams grouped in threes look like compound meter; beams grouped in twos or fours look like simple meter. A well-beamed score reveals its own metric structure visually; a poorly-beamed score looks confusing even when the notes themselves are correct.
+
+This page covers the conventions: how beams work, what grouping rules apply in different meters, and the exceptions that appear in specific contexts.
+
+## The visual
+
+<DiagramPlaceholder description="A measure of 4/4 with eight eighth notes — first shown incorrectly (all beamed together in one group of 8), then correctly (beamed in two groups of 4, matching the beat structure of 4/4)." />
+
+<DiagramPlaceholder description="A measure of 6/8 with six eighth notes — beamed in two groups of 3, showing compound duple meter." />
+
+<DiagramPlaceholder description="A measure with mixed values (quarter, two eighths, quarter, two eighths) — showing how eighths are beamed in pairs within the beat structure." />
+
+## The basic rule — beam within beats
+
+The fundamental principle: **beam notes to show the beat structure.**
+
+In a 4/4 measure with eight eighth notes, you beam them in two groups of four (one group per two beats) or four groups of two (one group per beat). You don't beam all eight together in a single long beam, because that would obscure the beat structure.
+
+In a 3/4 measure with six eighth notes, you beam them in three groups of two (one group per beat), not as one long beam of six.
+
+In a 6/8 measure with six eighth notes, you beam them in two groups of three (one group per dotted-quarter beat), not as three groups of two — because 6/8 is compound duple meter, with beats of three eighth notes each.
+
+Beaming follows the meter's implicit grouping. Reading a score, you can often tell the meter just from how the beams are grouped, even without looking at the time signature.
+
+## Simple meter beaming
+
+In simple meters (2/4, 3/4, 4/4), beams typically group notes by beat:
+
+**2/4 time:**
+- Four eighth notes: beam in two groups of two (one group per beat)
+- Eight sixteenths: beam in two groups of four, or four groups of two
+
+**3/4 time:**
+- Six eighth notes: beam in three groups of two
+- Twelve sixteenths: beam in three groups of four
+
+**4/4 time:**
+- Eight eighth notes: beam in two groups of four (halves of the measure), OR four groups of two (one per beat)
+- Sixteen sixteenths: beam in four groups of four (one group per beat)
+
+The "beam in groups of two halves" vs. "beam by beat" choice is a common stylistic variation. Modern scores often favor beaming by beat for clarity; older scores sometimes beam by half-measure for a cleaner visual.
+
+## Compound meter beaming
+
+In compound meters (6/8, 9/8, 12/8), beams group notes by the beat's three-eighth-note subdivision:
+
+**6/8 time:**
+- Six eighth notes: beam in two groups of three
+- Twelve sixteenths: beam in two groups of six (or four groups of three)
+
+**9/8 time:**
+- Nine eighth notes: beam in three groups of three
+- Eighteen sixteenths: beam in three groups of six
+
+**12/8 time:**
+- Twelve eighth notes: beam in four groups of three
+
+Compound meter's distinctive look — groups of three eighth notes beamed together — is what visually distinguishes it from simple meter at first glance.
+
+## Mixed values within beams
+
+When a beam contains mixed values (eighth and sixteenth notes, for example), the beam structure reflects both levels:
+
+A group of "eighth, two sixteenths" (totaling one beat in 4/4) is beamed with:
+- A single primary beam connecting all three notes (representing the eighth-note value they share)
+- A secondary beam between just the two sixteenths (representing the extra halving)
+
+The visual result: a long beam across all three notes, with a shorter beam on the right for the sixteenths.
+
+The rule: **primary beams represent the longest note value in the group; secondary beams add where smaller values appear.**
+
+## Rests within beamed groups
+
+When a beamed group is interrupted by a rest, the beam typically breaks at the rest. If you have eighth-eighth-rest-eighth-eighth, you don't draw a single beam across the rest — you beam the first pair, then beam the second pair, with the rest between.
+
+Some exceptions exist. In some modern editions, a beam continues *over* a rest if all the notes belong to the same beat unit — the beam is drawn through the rest's position to emphasize the rhythmic unity. This is stylistic and depends on the edition.
+
+## Cross-beat beaming (and why it's usually avoided)
+
+Beaming that crosses beats (e.g., the last eighth of beat 2 beamed with the first three eighths of beat 3) is generally avoided in conventional notation. It obscures the beat structure and makes the music harder to read.
+
+Exceptions:
+- **Syncopated patterns** sometimes use cross-beat beaming to emphasize the syncopation. An "eighth tied to eighth" across a beat might be beamed rather than split, visually representing the syncopation.
+- **Modern and contemporary music** occasionally beams across beats for specific notational purposes.
+- **Jazz** sometimes uses cross-beat beaming for swing patterns.
+
+In most Classical and Romantic music, cross-beat beaming is avoided. When it appears, it's usually deliberate and marks a specific rhythmic effect.
+
+## Beam direction (up or down)
+
+Beams go above or below the notes depending on the notes' pitches:
+
+**Beams above** — when the majority of notes in the group are below the middle line of the staff. The stems go up; the beam is at the top of the stems.
+
+**Beams below** — when the majority of notes are above the middle line. The stems go down; the beam is at the bottom of the stems.
+
+**Mixed cases** — when notes are roughly balanced across the middle line, the engraver chooses the direction that produces the cleanest visual. Sometimes this means stems in the same group mix directions, with the beam bending or flexing to accommodate.
+
+The choice of beam direction affects readability. Well-engraved scores put beams where they're easiest to read.
+
+## Common questions
+
+**Why is beaming important if you can figure out the meter from the time signature?**
+
+Because reading music is partly pattern recognition. When beaming matches the meter, you read the music faster and more accurately. When beaming is inconsistent with the meter, even correctly notated notes become harder to read. Good beaming is a form of visual clarity.
+
+**What if I see beaming that doesn't match the meter?**
+
+Sometimes composers beam against the meter deliberately — for syncopation, cross-rhythms, or to emphasize a specific grouping. Look at the musical context: if the beaming seems inconsistent, ask whether it's expressing something specific (a hemiola, a syncopated pattern, a cross-meter effect). Sometimes it's just a notational preference or an editorial choice that differs from modern conventions.
+
+**Should I beam or flag eighth notes?**
+
+Consecutive eighth notes within a beat are almost always beamed, not flagged. Flagged eighth notes are used when only one eighth note appears in isolation (not connected to others). The exception is vocal music — when a single syllable covers multiple notes, some composers use beaming even when the melismatic group would normally be flagged; others use separate flags. Modern vocal notation tends to use beaming like instrumental notation.
+
+**Do beaming conventions apply to all instruments?**
+
+Mostly yes, with instrument-specific exceptions. Vocal music historically used more flagged notes than instrumental music (because each note typically got its own syllable), though modern vocal scores tend to beam like instrumental scores. Guitar tablature uses its own beaming conventions tied to the fretboard layout. Otherwise, the rules are universal.

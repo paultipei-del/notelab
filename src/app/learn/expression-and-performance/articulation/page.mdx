@@ -1,0 +1,110 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'expression-and-performance',
+  subtopic: 'articulation',
+  title: 'Articulation',
+  oneSentence:
+    'Articulation markings tell performers how to attack and shape each note — staccato (short and detached), legato (smooth and connected), accent (emphasized), tenuto (held for full value) — creating the physical touch of the music at the finest level.',
+  practice: [
+    { kind: 'flashcard', label: 'Articulation Markings Flashcards', detail: 'symbols', href: '/study/symbols-articulation' },
+  ],
+  related: [
+    { title: 'Dynamics',                   href: '/learn/expression-and-performance/dynamics' },
+    { title: 'Phrasing and Slurs',          href: '/learn/expression-and-performance/phrasing-and-slurs' },
+    { title: 'Italian Performance Terms',   href: '/learn/expression-and-performance/italian-terms' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Dynamics tell you how loud; tempo tells you how fast. **Articulation** tells you how each note is *shaped* — how it starts, how long it lasts, whether it connects to the next note or stands apart. It's the finest grain of expressive detail, happening at the level of the individual note.
+
+Articulation markings are small symbols placed above or below the noteheads: a dot for staccato, a slur for legato, a horizontal bar for tenuto, an accent mark for emphasis. Each symbol specifies a specific physical treatment of the note. Together, these markings produce the tactile, gestural surface of the music.
+
+## The visual
+
+<DiagramPlaceholder description="A passage with various articulation markings — staccato dots on some notes, a slur over others, tenuto bars on a few, and an accent on one — all labeled." />
+
+<DiagramPlaceholder description="A chart showing the seven most common articulation symbols with their names and rough descriptions." />
+
+## The main articulation markings
+
+**Staccato (•)** — a small dot above or below the note. Means the note is played short, separated from the next note. The note should sound detached — typically half its normal length or less — with silence between it and what follows. Staccato creates a crisp, light, or playful character.
+
+**Staccatissimo (▪)** — an inverted wedge, sharper than staccato. Even shorter and more detached. Used when the composer wants an extra-crisp, punctuated effect.
+
+**Tenuto (‾ or —)** — a short horizontal bar above or below the note. Means the note is held for its full written value, with a slight emphasis. Tenuto creates weight — the note feels grounded and complete. Often used to mark notes that shouldn't be rushed or shortened.
+
+**Accent (>)** — a small wedge above or below the note, pointing to the right. Means the note is played with stronger emphasis — louder and more pronounced than surrounding notes. Creates a momentary dynamic boost.
+
+**Marcato (^)** — an inverted wedge, similar to accent but stronger and often implying a shorter note length. Creates a strongly emphasized, even aggressive attack.
+
+**Legato (slur curve)** — a curved line over a group of notes. Means the notes should be played smoothly and connected, without separation between them. Covered in more detail on the Phrasing and Slurs page.
+
+**Portato (dot under a slur)** — a dot beneath a slur. Means the notes should be slightly separated but still connected — somewhere between staccato and legato. Each note gets a gentle weight.
+
+## Combining articulations
+
+Articulation markings often combine. Common combinations:
+
+**Staccato + accent** — the note is both short and emphasized. Crisp and powerful.
+
+**Legato + accent** — the first note of a slurred group is emphasized, while the group as a whole is smooth. Creates a sense of "lean into" the opening of the phrase.
+
+**Tenuto + accent** — the note is held for full value and emphasized. Very grounded and emphatic.
+
+**Staccato + tenuto (sometimes portato)** — the note is slightly separated but given its full weight. Between staccato's shortness and tenuto's fullness.
+
+These combinations give composers precise control over the character of each note. A string of notes might carry a different articulation pattern to shape the phrase — some staccato, some legato, some accented — producing a more varied musical surface than uniform articulation would.
+
+## Style-specific articulation
+
+Different musical styles use articulations differently:
+
+**Baroque music** often uses a mixture of legato and detached strokes, with the specific articulation partially determined by convention rather than explicit marking. Baroque articulation is a specialty area of performance practice, with strong traditions (and debates) about what was intended.
+
+**Classical music** established a more formal articulation system with most markings notated explicitly. Mozart's and Haydn's scores contain careful staccato, legato, and accent markings.
+
+**Romantic music** often uses legato-heavy articulation, with extended slur lines and long expressive phrases. Shorter articulations exist but are relatively less common than in Classical music.
+
+**Jazz and popular music** use articulation patterns that don't always fit classical conventions. "Swing" eighth notes have a long-short articulation that's rarely explicitly marked but is inherent to the style. Funk and rock articulations emphasize attack and rhythmic precision in ways specific to those genres.
+
+Learning to interpret articulation well involves understanding both the explicit markings and the stylistic conventions of the music. A Baroque performer's staccato might be quite different from a Romantic performer's staccato, even with the same symbol on the page.
+
+## How articulation interacts with instruments
+
+Articulation varies significantly by instrument:
+
+**Wind and brass** produce articulation primarily through tonguing. Staccato notes use separate tongue strokes; legato notes are slurred together. The tongue controls the attack and separation.
+
+**Strings** produce articulation through bow technique. Staccato uses short, separated bow strokes; legato uses continuous bowing across multiple notes. Different bow strokes (spiccato, martelé, détaché, legato) correspond to different articulations.
+
+**Piano** produces articulation through finger and arm motion. Staccato notes have quick release; legato notes are held until the next note begins; tenuto notes are weight-supported.
+
+**Percussion** produces articulation through stroke type. Different sticks, different hitting surfaces, and different techniques create different articulation characters.
+
+A composer's articulation markings tell the performer *what* to achieve. The specific *how* — the technique to produce it — depends on the instrument.
+
+## Common questions
+
+**How short should a staccato note actually be?**
+
+About half its written value, though this varies by context. In a slow piece, a staccato quarter note might be held for an eighth note's duration, with an eighth rest of silence following. In a fast piece, staccato notes are proportionally shorter. The exact duration is a matter of interpretation and style.
+
+**Are articulation markings visible in all sheet music?**
+
+No. Some scores (especially older ones) have minimal articulation markings, leaving much to the performer's judgment. Modern critical editions usually add editorial articulation suggestions. Pop and jazz lead sheets often have almost no articulation — the performer is expected to know how the style should sound.
+
+**What's the difference between an accent and a sforzando?**
+
+An accent (>) emphasizes a single note, making it slightly louder. A sforzando (sfz) is a much stronger accent — it creates a dramatic emphasis, often much louder than surrounding notes. Sforzando is more intense; accent is more moderate. Both emphasize, but at different scales.
+
+**Why do articulation markings sometimes look like slurs?**
+
+Because some articulations are notated with curves. A slur is a curve over multiple notes meaning "play smoothly." A tie is a curve connecting two notes of the same pitch meaning "hold as one note." A staccato is a dot; an accent is a wedge. Context usually makes clear which is intended — curves over different pitches are slurs; curves over the same pitch are ties; small dots over single notes are staccatos.
