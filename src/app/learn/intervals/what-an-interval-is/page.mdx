@@ -1,0 +1,99 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import { SINGLE_PERFECT_FIFTH_XML, FOUR_INTERVALS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'intervals',
+  subtopic: 'what-an-interval-is',
+  title: 'What an Interval Is',
+  oneSentence:
+    'An interval is the distance between two pitches — the fundamental unit of measurement in music, from which scales, chords, and harmony are built.',
+  practice: [],
+  related: [
+    { title: 'Half Steps and Whole Steps', href: '/learn/intervals/half-steps-and-whole-steps' },
+    { title: 'Interval Number',            href: '/learn/intervals/interval-number' },
+    { title: 'Interval Quality',           href: '/learn/intervals/interval-quality' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Music isn't really about individual notes. It's about the *relationships* between notes. A C by itself has no melodic character. A C followed by a G has something — a specific interval, a specific feeling, a sense of motion. Play C and E together and you have a warm, stable sound. Play C and D♭ together and you have a tense, clashing one. What makes the difference isn't the notes — it's the distance between them.
+
+That distance is called an **interval**. Every melodic motion, every chord, every harmonic progression in Western music can be described as a collection of intervals. Learn intervals thoroughly and you have a vocabulary that unlocks everything downstream: scales, chords, keys, cadences, modulation, form.
+
+Intervals are the alphabet of musical relationships.
+
+## The visual
+
+<Notation
+  musicXml={SINGLE_PERFECT_FIFTH_XML}
+  caption="C and G played together — a perfect fifth. The interval is the distance between the two pitches."
+  ariaLabel="A treble staff showing C and G stacked as a harmonic interval — a perfect fifth."
+/>
+
+<Notation
+  musicXml={FOUR_INTERVALS_XML}
+  caption="Four intervals from C, side by side — a 2nd (C-D), a 3rd (C-E), a 5th (C-G), and an octave (C-C5). Each is a different distance between two pitches."
+  ariaLabel="Four measures on a treble staff, each showing a harmonic interval from C: C-D (second), C-E (third), C-G (fifth), C-C5 (octave)."
+/>
+
+## Two kinds of distance
+
+An interval has two dimensions, and both matter:
+
+**Number** — how many letter names the interval spans, counting inclusively. C to D is a second (two letter names: C, D). C to E is a third (three letter names: C, D, E). C to G is a fifth (C, D, E, F, G — five letters). This is the *quantity* of the interval.
+
+**Quality** — the exact size of the interval in half steps, which determines whether it sounds stable, tense, bright, dark, or something else. Two intervals can share the same number but have different qualities. C to E is a *major* third (four half steps); C to E♭ is a *minor* third (three half steps). Same "third" number, different quality.
+
+Together, number and quality completely identify an interval. "Major third" tells you everything — the distance spans three letter names and measures four half steps. Each component will get its own page, but the pair is what matters.
+
+## Two ways intervals appear
+
+Every interval shows up in one of two ways in real music:
+
+**Melodic intervals** are played in succession — one note, then another. When a melody goes from C up to G, that's a melodic perfect fifth.
+
+**Harmonic intervals** are played simultaneously — two notes sounding together. When C and G are both played at the same time, they form a harmonic perfect fifth.
+
+The interval itself is the same — same number, same quality. What changes is how the two notes relate in time. Melodic intervals create movement; harmonic intervals create color and texture. Most music uses both constantly, sometimes at the same moment.
+
+## Intervals within and beyond the octave
+
+Intervals within a single octave (from C4 up to C5, for example) are called **simple intervals**. Intervals larger than an octave — a tenth, an eleventh, a twelfth — are called **compound intervals**. A compound interval is essentially a simple interval plus an octave: a major tenth is a major third an octave higher, and the two sound functionally similar.
+
+Most theory focuses on simple intervals because they're the building blocks. Once you understand the seven intervals within an octave (and their chromatic variants), you understand compound intervals by extension.
+
+## Why intervals matter
+
+Everything in music theory past this point depends on intervals:
+
+- A **scale** is a specific sequence of intervals built from a starting note.
+- A **chord** is a stack of specific intervals.
+- A **key** is a tonal center defined by the intervals of its scale.
+- A **cadence** is a specific pattern of harmonic intervals creating tension and resolution.
+- A **modulation** is a movement between keys, often managed through specific interval relationships.
+
+Fluent interval recognition is the closest thing to a universal skill in music theory. Composers, performers, arrangers, analysts, improvisers, ear-trainers — all of them think in intervals constantly. The time you spend learning intervals pays off across every other musical activity.
+
+## Common questions
+
+**Why do we count letter names to find an interval's number? Why not just count semitones?**
+
+Because Western music is built around a seven-letter alphabet, and the letter-name count reveals the interval's *function* in a key or scale. Two intervals can sound the same (be the same number of semitones) but function differently in musical context. C to E♯ is the same pitch as C to F, but the first is an augmented third and the second is a perfect fourth — very different meanings in music theory even though they sound identical. Number counts letters; quality counts semitones; both are needed.
+
+**Can an interval be zero?**
+
+Two notes at the exact same pitch form a **unison** (sometimes called a "prime" in older texts). It's sometimes treated as a zero-interval, sometimes as a "first," depending on the system. In practice, a unison is the starting point — no distance between the notes. Its opposite, an octave, is the smallest interval that feels like "the same note at a different pitch."
+
+**What about microtonal intervals — notes between the usual 12?**
+
+Most Western theory works within the 12-note chromatic system, so intervals are measured in whole and half steps (and half of a half step doesn't officially exist). Microtonal music — common in Middle Eastern, Indian classical, and some contemporary Western styles — uses smaller divisions, with specific names and notation for intervals that fall "between the cracks" of the 12-note system. For the rest of this reference, we stay inside the 12-note world.
+
+**Do intervals sound the same in every key?**
+
+In equal temperament (modern tuning), yes — a major third in C sounds the same as a major third in F♯. That's one of equal temperament's advantages. In older tuning systems (mean-tone, just intonation), thirds and other intervals could sound slightly different in different keys, which gave each key its own distinct character. Equal temperament flattens this, trading key character for universal playability.
