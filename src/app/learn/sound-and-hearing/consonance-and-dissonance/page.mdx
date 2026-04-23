@@ -1,0 +1,86 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { CONSONANT_AND_DISSONANT_DYADS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'sound-and-hearing',
+  subtopic: 'consonance-and-dissonance',
+  title: 'Consonance and Dissonance',
+  oneSentence:
+    'Consonance is when two pitches sound stable and blended together; dissonance is when they clash and feel like they need to resolve — both rooted in the ratios between their frequencies.',
+  practice: [],
+  related: [
+    { title: 'The Overtone Series',  href: '/learn/sound-and-hearing/the-overtone-series' },
+    { title: 'What an Interval Is',  href: '/learn/intervals/what-an-interval-is' },
+    { title: 'Interval Quality',     href: '/learn/intervals/interval-quality' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Play two notes at the same time. Some combinations feel settled, as if the two notes belong together. Others feel tense, as if they're pulling apart or demanding a next move. The first kind are called **consonant**; the second, **dissonant**.
+
+This isn't a matter of taste. There's a physical reason some intervals sound stable and others sound restless, and it comes directly from the overtone series we just covered. Once you see it, you'll understand why music has tension and resolution at all.
+
+## The visual
+
+<Notation
+  musicXml={CONSONANT_AND_DISSONANT_DYADS_XML}
+  caption="Left: a perfect fifth (C and G) — consonant. Right: a minor second (C and D♭) — dissonant."
+  ariaLabel="Two dyads on a treble staff. First measure: C and G stacked (perfect fifth). Second measure: C and D-flat stacked (minor second)."
+/>
+
+<DiagramPlaceholder description="Waveforms of the two dyads — the perfect fifth produces a smooth repeating pattern; the minor second produces an irregular, beating pattern." />
+
+## Why simple ratios sound consonant
+
+Remember that the overtones above a single note are whole-number multiples of its fundamental. When you play two notes whose frequencies are in a simple ratio — 2:1, 3:2, 4:3, 5:4 — their overtone series *overlap* in many places. The overtones of one note reinforce the overtones of the other, producing a smooth, unified sound.
+
+The simpler the ratio, the more overlap, and the more consonant the interval feels:
+
+- **2:1 — octave.** Every overtone of the higher note is also an overtone of the lower note. Maximum fusion. The two pitches feel like the same note.
+- **3:2 — perfect fifth.** Enormous overtone overlap. Feels extremely stable.
+- **4:3 — perfect fourth.** Strong overlap. Also stable, though slightly more ambiguous in harmonic context.
+- **5:4 — major third.** Moderate overlap. Warm and stable.
+- **6:5 — minor third.** Slightly more complex ratio. Stable but a bit more colored.
+
+Intervals with more complex ratios produce less overlap and more *beating* — tiny pulses you can hear as a roughness or wavering in the combined sound. Those intervals feel dissonant:
+
+- **9:8 — major second.** Complex ratio, noticeable beating. Dissonant.
+- **16:15 — minor second.** Even more complex. Strongly dissonant.
+- **45:32 — tritone.** A notoriously unstable-sounding interval; complex ratio, poor overtone fit.
+
+## Beating — what dissonance actually sounds like
+
+When two frequencies are close but not identical, their waves periodically reinforce and cancel each other. This produces a pulsing effect called **beating** — an audible wobble in the combined sound. The closer the two frequencies, the slower the beating; the further apart, the faster, until it fuses into a perceived roughness.
+
+Dissonance is, in large part, the sensation of beating between a note and the overtones of another note. When two pitches have overtones that are close but not identical, those near-matches produce micro-beating that the ear registers as tension.
+
+This is why dissonance isn't purely subjective. A perfect fifth has almost no beating because the overtones line up; a minor second has lots of beating because the overtones are slightly mismatched at many places. The physical difference is real and measurable.
+
+## Consonance and dissonance are relative
+
+It would be wrong to say dissonance is "bad" and consonance is "good." Music needs both. A piece made entirely of consonant intervals would be static and lifeless. A piece made entirely of dissonant intervals would be exhausting. Composers use dissonance to create tension and consonance to create release, and the alternation between them is the engine of almost all Western tonal music.
+
+Our sense of what counts as consonant and dissonant has also shifted historically. In medieval music, thirds and sixths were considered dissonant; the "pure" consonances were octaves, fifths, and fourths. By the Renaissance, thirds and sixths had become accepted as consonant, and the dominant seventh chord — which contains a tritone — became the central engine of harmonic motion in the Classical era despite being built around that historically-dissonant interval.
+
+Twentieth-century composers further expanded the palette, treating what earlier ears would have called harsh dissonance as ordinary harmonic material. The physical basis of consonance and dissonance is stable, but *how much dissonance a style tolerates* is a matter of tradition, training, and ear.
+
+## Common questions
+
+**Is the perfect fourth consonant or dissonant?**
+
+It depends on context. On its own (two notes played together with no other context), the perfect fourth is clearly consonant — it's a 4:3 ratio, very simple. But *in harmony*, when it appears above the bass, it's often treated as a dissonance that wants to resolve downward to a third. This is one of the oldest and most consistent peculiarities in Western music theory. The ear hears it as stable in isolation and unstable in context.
+
+**Why is the tritone called "the devil in music"?**
+
+The tritone (an augmented fourth or diminished fifth — six half steps) has a highly complex frequency ratio and produces a lot of beating, making it the most dissonant interval within a single octave. Medieval music theorists called it *diabolus in musica* ("the devil in music") and avoided it. Later composers embraced it, especially as part of the dominant seventh chord, where its instability is exactly what makes it useful for creating tension that resolves to the tonic.
+
+**Can I train myself to hear dissonance differently?**
+
+Somewhat. Exposure to more adventurous music broadens what your ear accepts as normal — jazz musicians, for instance, hear complex chord extensions (9ths, 11ths, 13ths) as colorful rather than harsh. But at the physical level, beating is beating, and some combinations will always sound more settled than others. Training changes interpretation, not physics.

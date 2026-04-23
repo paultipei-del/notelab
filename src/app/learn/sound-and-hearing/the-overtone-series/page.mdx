@@ -1,0 +1,95 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { OVERTONE_SERIES_XML } from './notations'
+
+export const learnPage = {
+  topic: 'sound-and-hearing',
+  subtopic: 'the-overtone-series',
+  title: 'The Overtone Series',
+  oneSentence:
+    'When something vibrates to produce a single musical note, it actually produces many frequencies at once — a specific pattern called the overtone series that shapes nearly everything about Western music.',
+  practice: [],
+  related: [
+    { title: 'From Sound to Pitch',         href: '/learn/sound-and-hearing/from-sound-to-pitch' },
+    { title: 'Consonance and Dissonance',   href: '/learn/sound-and-hearing/consonance-and-dissonance' },
+    { title: 'What an Interval Is',         href: '/learn/intervals/what-an-interval-is' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Pluck a guitar string and you hear what seems like a single note. But that string isn't vibrating at just one frequency — it's vibrating at many frequencies simultaneously, all related to each other in a precise mathematical pattern. The lowest of those frequencies is called the **fundamental**, and it's the pitch you recognize. The others — the **overtones** or **partials** — are quieter, but they're there, and your ear hears them even if you can't pick them out individually.
+
+This isn't an acoustic curiosity. The overtone series is the reason certain notes sound good together. It's the reason a violin and a flute playing the same pitch sound different from each other. It's where the major chord comes from. It's arguably the origin of most of Western music's organizing principles. Understanding it changes how you hear everything else.
+
+## The visual
+
+<Notation
+  musicXml={OVERTONE_SERIES_XML}
+  caption="The first eight overtones above a C fundamental. Shown one octave up (starting on C3) for readability — the prose describes C2 as the physical fundamental. Notice the shape: C–C–G–C–E–G–B♭–C, the outline of a dominant seventh chord built into the physics of a single tone."
+  ariaLabel="First eight overtones of a C fundamental on a treble staff: C3, C4, G4, C5, E5, G5, B flat 5, C6"
+/>
+
+<DiagramPlaceholder description="A vibrating string showing the first four modes of vibration — whole string, divided in half, divided in thirds, divided in quarters." />
+
+## How the series works
+
+A vibrating string (or air column, or any resonant object) can vibrate in several modes at once. The whole string vibrates up and down as one unit — this produces the fundamental. But the string also vibrates in halves, in thirds, in fourths, and so on, with each mode producing a higher frequency.
+
+The math is simple: if the fundamental is some frequency *f*, the overtones are exactly 2*f*, 3*f*, 4*f*, 5*f*, and so on. All whole-number multiples.
+
+If you start with a low C at 65.4 Hz, the overtones are:
+
+- 1 × 65.4 = 65.4 Hz — the fundamental (C)
+- 2 × 65.4 = 130.8 Hz — one octave up (C)
+- 3 × 65.4 = 196.2 Hz — a perfect fifth above that (G)
+- 4 × 65.4 = 261.6 Hz — another octave up (C)
+- 5 × 65.4 = 327.0 Hz — a major third above that (E)
+- 6 × 65.4 = 392.4 Hz — a perfect fifth above that (G)
+- 7 × 65.4 = 457.8 Hz — a slightly flat B♭
+- 8 × 65.4 = 523.2 Hz — another octave up (C)
+
+Look at those first eight notes: C, C, G, C, E, G, B♭, C. That's almost a dominant seventh chord — the most fundamental harmonic sonority in Western music. And it's not imposed by a composer. It's *there*, built into the physics of a single vibrating string.
+
+## What the overtones give us
+
+Three enormous musical consequences emerge from the overtone series:
+
+**First, the octave.** The second overtone is exactly twice the fundamental. This 2:1 ratio is why the octave is the most basic musical relationship — two pitches an octave apart feel like the same note, just higher or lower. Every musical system in every culture recognizes the octave.
+
+**Second, the perfect fifth.** The third overtone sits at a 3:2 ratio above the second — a perfect fifth. This interval shows up in nearly every musical culture on Earth because it's the next simplest ratio after the octave. The "cycle of fifths" that organizes Western key signatures is built on this relationship.
+
+**Third, the major triad.** Look at the fourth, fifth, and sixth overtones — C, E, G. That's a major chord, built into the physical behavior of any vibrating string. When we say a major chord sounds "bright" or "stable," we're describing the fact that its notes already exist, naturally, inside a single tone.
+
+## What overtones do for timbre
+
+Every instrument produces the same overtone series when playing the same fundamental — that's physics. What differs is the *relative volume* of each overtone. A clarinet strongly emphasizes odd-numbered overtones (1, 3, 5, 7, 9) and quiets the even-numbered ones, giving it a hollow, reedy sound. A flute emphasizes the lower overtones and has very few high ones, producing its clean, pure tone. A brass instrument emphasizes the middle and upper overtones, which is what makes it bright and penetrating.
+
+This is what timbre really is: the fingerprint of an instrument's overtone mix. Two instruments play the same pitch; the overtone balance is different; your ear recognizes the difference instantly, even though the fundamental frequency is identical.
+
+## A footnote on tuning
+
+The overtones from a vibrating string don't perfectly match the notes on a modern piano. The seventh overtone of C is *flatter* than the B♭ on the piano. The fifth overtone (E) is slightly flatter than the piano's E. Modern Western tuning — equal temperament — is a compromise that slightly detunes every interval so that all twelve keys sound equally acceptable. The "pure" intervals of the overtone series don't quite fit our 12-note system. We'll return to this when we discuss the chromatic scale.
+
+## Common questions
+
+**Why don't I hear all those overtones separately?**
+
+Your brain combines them into a single perception. The whole point of pitch perception is that multiple related frequencies get heard as one note. You can train yourself to hear individual overtones (overtone singing is built on this skill), but by default, they fuse.
+
+**Do all instruments have overtones?**
+
+All pitched instruments do. Instruments with complex, inharmonic partials — like bells, gongs, or cymbals — have overtones that *aren't* simple whole-number multiples of a fundamental, which is why they sound less like a clear pitch and more like a cluster of frequencies.
+
+**Why does the overtone series stop mattering past a certain point?**
+
+It doesn't stop, exactly. Overtones continue indefinitely — the 20th, 30th, 100th partial — but they get quieter and quieter, and they become musically irrelevant past about the 16th. The intervals between high overtones also become microtonally small, finer than our standard 12-note system can represent.
+
+**Is the major chord really "natural" in some deep way?**
+
+Yes — in the sense that it's built into the physics of vibrating objects. Every culture that developed harmony independently arrived at something close to the major triad as a stable sonority. Whether that makes the major chord *universal* is a philosophical question, but the physical basis is real.

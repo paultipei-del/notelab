@@ -1,0 +1,94 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { FOUR_CS_STACKED_XML } from './notations'
+
+export const learnPage = {
+  topic: 'sound-and-hearing',
+  subtopic: 'octaves-and-pitch-classes',
+  title: 'Octaves and Pitch Classes',
+  oneSentence:
+    'An octave is the interval between two pitches where one is exactly double the frequency of the other — so similar in sound that we call them by the same name, even though they\'re distinct pitches.',
+  practice: [],
+  related: [
+    { title: 'The Overtone Series',    href: '/learn/sound-and-hearing/the-overtone-series' },
+    { title: 'The Chromatic Scale',    href: '/learn/sound-and-hearing/the-chromatic-scale' },
+    { title: 'Octave Designations',    href: '/learn/reading-and-notation/octave-designations' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Play any note. Now play the note that's exactly twice its frequency. You'll notice something remarkable: the second note feels like the *same note*, just higher. Not a different pitch entirely. Not a close relative. The same.
+
+This is the octave, and it's the most basic musical interval in human hearing. Every culture that has ever made music recognizes it. It's the reason we have only seven letter names (A through G) for what are technically hundreds of distinct pitches across a piano — because all the Cs sound like C, all the Gs sound like G, and so on.
+
+That sense of sameness across octaves is what **pitch class** formalizes. It's how we organize the infinite continuum of frequencies into a musical vocabulary that makes sense.
+
+## The visual
+
+<Notation
+  musicXml={FOUR_CS_STACKED_XML}
+  caption="Four Cs on a grand staff — C2 and C3 on the bass, C4 (middle C) and C5 on the treble. Frequencies: 65.4 Hz, 130.8 Hz, 261.6 Hz, 523.2 Hz. Each one is exactly double the frequency of the C below it, and our ears hear them as the same note at four different registers."
+  ariaLabel="Grand staff showing four Cs stacked vertically: C2 and C3 on the bass staff, C4 and C5 on the treble staff."
+/>
+
+<DiagramPlaceholder description="A piano keyboard with all the Cs highlighted across seven octaves." />
+
+## What makes the octave special
+
+The octave is the 2:1 frequency ratio — the simplest possible ratio other than unison. Remember from the overtone series: the second overtone of any note is exactly one octave above it. When you play two notes an octave apart, the higher note's fundamental matches the lower note's first overtone, and *every* overtone of the higher note coincides with an overtone of the lower note.
+
+This total overtone overlap is why octaves fuse so completely. Your ear can barely distinguish them — you hear one note, essentially, with a slight change in register. This is called **octave equivalence**, and it's recognized by virtually every musical culture on Earth.
+
+It's also why a child and an adult can sing "Happy Birthday" together without clashing, even though they're singing in different octaves. To the ear, they're singing the same notes.
+
+## Pitch classes
+
+If all Cs sound like "C," then from a musical organization standpoint, it makes sense to group them. A **pitch class** is the set of all pitches that share a note name across all octaves:
+
+- The pitch class C contains C1, C2, C3, C4, C5, C6, C7, C8 — every C on a piano, and beyond.
+- The pitch class G contains every G at every octave.
+- And so on for the twelve distinct pitch classes of Western music.
+
+There are exactly twelve pitch classes, matching the twelve pitches of the chromatic scale within a single octave. Music theory frequently works at the pitch-class level — when we say "the key of G major uses the notes G, A, B, C, D, E, and F♯," we mean the pitch classes, not specific octaves. A G major scale can be played in any octave; it's still a G major scale.
+
+## Why this matters
+
+Pitch classes are one of the most useful abstractions in music theory because they let us talk about music in a way that matches how we actually hear it.
+
+**Melody doesn't change when you transpose it up or down an octave.** "Happy Birthday" is the same song whether a child sings it or a baritone sings it. Naming the notes by pitch class (rather than by specific pitch) captures that invariance.
+
+**Chords are usually named by pitch class, not specific pitch.** A C major chord is C-E-G — three pitch classes. Whether those notes appear all in one octave, spread across three octaves, or doubled in different octaves, it's still a C major chord.
+
+**Scales are pitch-class collections.** A major scale isn't a specific sequence of frequencies. It's a pattern of seven pitch classes that you can start from any pitch and extend across any octaves.
+
+Once you see that music operates on pitch classes as much as on specific pitches, the whole theoretical system gets more elegant. You're not memorizing hundreds of notes; you're learning twelve pitch classes and the rules for how they combine.
+
+## Specific pitches still matter
+
+None of this is to say that octave placement is irrelevant. It matters enormously for voicing, for orchestration, for the emotional character of a passage. A melody played high sounds bright and delicate; the same melody played low sounds heavy and serious. A chord voiced in close position in the middle register sounds different from the same chord voiced widely across several octaves.
+
+So music has two levels of organization at once: pitch class (which note names are in play) and specific pitch (where they sit on the staff). Theory usually works at the pitch-class level; practical performance and arrangement works at the specific-pitch level. Both are real.
+
+## Common questions
+
+**Why are two notes an octave apart called by the same letter?**
+
+Because they sound like the same note. The naming follows perception. Seven letter names (A-G) cover all the perceptually distinct pitches within one octave; they repeat in the next octave because the ear hears them as equivalent. The letter system is therefore an elegant reflection of how hearing actually works.
+
+**How many octaves can a human hear?**
+
+About ten. Human hearing covers roughly 20 Hz to 20,000 Hz, and each doubling is an octave. Useful musical pitch is a subset of that range — roughly seven to eight octaves on a piano, for example — but the full auditory range extends higher and lower, though we don't perceive very low or very high frequencies as distinct pitches.
+
+**Is the octave really universal, or is that just a Western bias?**
+
+Essentially universal. Every musical culture studied recognizes octave equivalence. This is one of the few genuinely cross-cultural facts about music, and it's grounded in the physics of the overtone series and the structure of the human auditory system. Different cultures build wildly different scales within the octave, but the octave itself is a near-universal anchor.
+
+**What about inversion — when the same chord "doesn't sound the same" in different octaves?**
+
+Inversion is a specific arrangement of pitch classes that affects stability and harmonic color. A C major chord in root position sounds stable; the same three pitch classes in a second inversion (G on the bottom) sound more tense. So even though the pitch classes are identical, which specific pitch sits in the bass changes how the chord feels. This is a good example of both levels — pitch class and specific pitch — being musically real at the same time.

@@ -1,0 +1,98 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { CHROMATIC_SCALE_XML } from './notations'
+
+export const learnPage = {
+  topic: 'sound-and-hearing',
+  subtopic: 'the-chromatic-scale',
+  title: 'The Chromatic Scale',
+  oneSentence:
+    'The chromatic scale is the collection of all twelve pitches used in Western music, spaced equally within every octave — the full palette from which every other scale is drawn.',
+  practice: [
+    {
+      kind: 'flashcard',
+      label: 'Accidentals Flashcards',
+      detail: '8 cards',
+      href: '/study/symbols-accidentals',
+    },
+  ],
+  related: [
+    { title: 'Octaves and Pitch Classes',    href: '/learn/sound-and-hearing/octaves-and-pitch-classes' },
+    { title: 'Half Steps and Whole Steps',   href: '/learn/intervals/half-steps-and-whole-steps' },
+    { title: 'Chromatic Scale Spelling',     href: '/learn/scales/chromatic-scale-spelling' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Look at a piano. Between any note and its octave, there are twelve keys — seven white and five black. Those twelve keys are the chromatic scale. Every melody, every chord, every piece of Western music from Bach to Beyoncé uses some selection of these twelve pitches. Scales, keys, chords — all are subsets chosen from this fundamental twelve-note collection.
+
+The chromatic scale is the background, the master set. Understanding it is understanding the raw material of Western music.
+
+## The visual
+
+<Notation
+  musicXml={CHROMATIC_SCALE_XML}
+  caption="One octave of the chromatic scale ascending from C to C, spelled with sharps. Twelve half steps, thirteen notes total."
+  ariaLabel="Chromatic scale ascending from C4 to C5 on a treble staff, spelled with sharps: C, C-sharp, D, D-sharp, E, F, F-sharp, G, G-sharp, A, A-sharp, B, C."
+/>
+
+<DiagramPlaceholder description="A piano keyboard showing one octave, with all twelve keys labeled." />
+
+## How the chromatic scale is built
+
+Between any note and its octave, Western music places exactly twelve equally-spaced pitches. On a piano, each step from one key to the next — whether white-to-black, black-to-white, or the two white-to-white pairs (E-F and B-C) — is the same distance: a **half step** (also called a semitone).
+
+Twelve half steps make one octave. This is the basic unit of the chromatic system.
+
+The twelve pitches, starting from C:
+C, C♯/D♭, D, D♯/E♭, E, F, F♯/G♭, G, G♯/A♭, A, A♯/B♭, B, and then back to C an octave higher.
+
+Five of those twelve pitches have two names each (C♯ and D♭ are the same pitch, for example). These **enharmonic equivalents** exist because the naming system is tied to the seven-letter musical alphabet (A through G), not to the twelve pitches themselves. Whether a given pitch is spelled as a sharp or a flat depends on the musical context — the key, the scale, the direction of a melody. We'll return to enharmonic spelling in its own page.
+
+## Why twelve?
+
+This is the question that lies underneath all Western music theory, and the answer traces directly back to the overtone series.
+
+The most consonant interval after the octave is the perfect fifth (a 3:2 ratio). If you stack perfect fifths starting from any note — C up to G, G up to D, D up to A, and so on — and then compress each new note down into a single octave, you eventually cycle through twelve different pitches before approximately arriving back at your starting note. This is why the chromatic system has twelve notes rather than ten or fifteen: it's how many fifths fit (almost) exactly into an octave.
+
+"Almost" is important. Stacking twelve pure 3:2 fifths doesn't land exactly on seven octaves — it overshoots by a small amount, a discrepancy called the **Pythagorean comma**. Western music has resolved this in different ways throughout history. Modern **equal temperament** slightly compresses every fifth by a tiny amount so that twelve of them fit perfectly into seven octaves, at the cost of every interval being a hair off from pure.
+
+The short version: twelve notes per octave is the simplest system that gives us workable perfect fifths, major thirds, and other important intervals across all keys. It's a compromise, but an inspired one.
+
+## Equal temperament
+
+Equal temperament means every half step is exactly the same size — one twelfth of an octave. This lets you play in any key without re-tuning, lets instruments with fixed pitches (pianos, frets, organs) sound acceptable in all twelve keys, and made possible the complex modulations of Classical and Romantic music.
+
+Before equal temperament, various tuning systems favored some keys over others. Baroque pieces were often written with specific keys in mind because certain keys sounded noticeably better in the tuning of the time. Bach's *Well-Tempered Clavier* — two books of preludes and fugues in all twenty-four major and minor keys — was written partly as an argument for a tuning system that could handle every key acceptably.
+
+The tradeoff is that no interval in equal temperament is perfectly pure. The major thirds are slightly wide, the minor thirds slightly narrow, the fifths almost but not quite 3:2. You rarely notice unless you're comparing directly to a just-intonation system, but the impurity is real, and some musicians argue it's why electronic music (which can use any tuning) sometimes sounds cleaner than acoustic music playing the same notes.
+
+## The chromatic scale in practice
+
+Almost no melody uses all twelve pitches freely — that would be atonal music, and while it exists (Schoenberg, Webern, Berg), it's a specialized style. Most music draws its melody and harmony from a **seven-note subset** of the chromatic scale called a key or a diatonic scale. The chromatic scale is the reservoir; the key is the bucket you draw from.
+
+But the chromatic scale is still everywhere. Passing chromatic notes color melodies. Chromatic voice leading shapes harmony. Modulation moves between keys by way of pitches from the chromatic reservoir. Understanding the chromatic scale as the background lets you see what scales and keys really are: carefully chosen selections from it.
+
+## Common questions
+
+**Why are the black keys in groups of two and three?**
+
+Historical accident, mostly. The pattern matches the structure of the C major scale, with half steps between E-F and B-C (the two places where consecutive white keys have no black key between them). It makes the keyboard visually navigable — you can tell a C from an F at a glance because of the black-key pattern around them.
+
+**Do other musical cultures use twelve notes?**
+
+Some do; many don't. Indian classical music subdivides the octave into 22 unequal parts called *shrutis* and draws its scales from those. Arabic music uses 24 quarter-tones, allowing for smaller intervals than any Western scale. Javanese gamelan uses tuning systems with no fixed reference pitch, where each ensemble tunes slightly differently. Twelve is a Western choice, deeply elegant but not universal.
+
+**What about microtonal music?**
+
+Twentieth- and twenty-first-century composers have explored subdivisions finer than twelve — quarter tones (24 per octave), 19-tone equal temperament, 31-tone systems, and others. These produce notes that don't exist on a standard piano and require special instruments or electronic generation. Microtonal music is a real and active tradition, just outside the mainstream of what most students first learn.
+
+**Why does the chromatic scale feel "neutral" compared to a major or minor scale?**
+
+Because it has no tonic — no single pitch that feels like home. Major and minor scales create a hierarchy where one note is the resting point and the others have specific tendencies relative to it. The chromatic scale, with every note equidistant, has no such hierarchy. It can be beautiful, but it doesn't produce the sense of key or direction that tonal music relies on.

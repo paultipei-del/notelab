@@ -1,0 +1,70 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+
+export const learnPage = {
+  topic: 'sound-and-hearing',
+  subtopic: 'from-sound-to-pitch',
+  title: 'From Sound to Pitch',
+  oneSentence:
+    'Pitch is how high or low a sound feels — the perception your brain builds from the frequency of the vibration reaching your ears.',
+  practice: [],
+  related: [
+    { title: 'What Sound Is',              href: '/learn/sound-and-hearing/what-sound-is' },
+    { title: 'The Overtone Series',        href: '/learn/sound-and-hearing/the-overtone-series' },
+    { title: 'Octaves and Pitch Classes',  href: '/learn/sound-and-hearing/octaves-and-pitch-classes' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+A sound's *frequency* is a physical fact: a number of vibrations per second. Its *pitch* is a perception: how your brain interprets that frequency as a position on a high-to-low scale. The two are tightly linked but not identical. Frequency is something you could measure with a microphone; pitch is something you experience.
+
+Most of the time, higher frequency means higher pitch and lower frequency means lower pitch, and we can use the words almost interchangeably. But the distinction matters because music isn't really about numbers — it's about what those numbers feel like when we hear them.
+
+## The visual
+
+<DiagramPlaceholder description="Keyboard with arrows — left labeled 'lower pitch', right labeled 'higher pitch'." />
+
+<DiagramPlaceholder description="Single note on a staff (A4 at 440 Hz) with its frequency labeled beneath." />
+
+## Frequency and perception
+
+If you double a frequency — say, from 220 Hz to 440 Hz — the resulting pitch sounds exactly one octave higher. If you double it again to 880 Hz, it's another octave higher. Our perception of pitch is *logarithmic*: equal ratios of frequency produce equal intervals of pitch, not equal numeric differences.
+
+This is why the distance between 100 Hz and 200 Hz sounds the same as the distance between 400 Hz and 800 Hz. Both are a doubling; both are an octave. In each case the absolute numeric gap (100 Hz, then 400 Hz) is very different, but the *ratio* (2:1) is identical, and it's the ratio that the ear hears.
+
+This one fact — that equal ratios sound equal — is the single most important thing to know about pitch perception. Every interval, every scale, every chord is built on ratios between frequencies, not on numeric differences.
+
+## The reference pitch
+
+Modern Western music uses a standard reference pitch: the A above middle C vibrates at **440 Hz**. That single number anchors the entire tuning system. From it, every other pitch is derived by multiplying or dividing by specific ratios — an octave higher at 880 Hz, a perfect fifth higher at around 660 Hz, and so on.
+
+This reference wasn't chosen for any deep physical reason — it was settled by international agreement in the 20th century. Historical performances often used slightly lower reference pitches (Baroque music is frequently performed at A=415 Hz, for instance), and some orchestras today tune slightly sharp of A=440 to brighten their sound.
+
+## How pitch is heard
+
+Your ear is a remarkable frequency analyzer. Inside your cochlea — a snail-shaped structure in your inner ear — thousands of tiny hair cells are arranged along a membrane, each tuned to a slightly different frequency. When a sound wave enters the ear, different parts of the membrane vibrate depending on which frequencies are present. The hair cells translate those vibrations into nerve signals, and your brain assembles them into a single experience of pitch.
+
+This is why you can listen to an orchestra and pick out the flute even while the strings and brass are playing — your ear is separating the frequencies and your brain is tracking them independently.
+
+## The range of musical pitch
+
+The standard 88-key piano spans about seven and a quarter octaves, from roughly 27.5 Hz at the lowest A to about 4,186 Hz at the highest C. That range covers most of what we use in music. Lower frequencies (below about 60 Hz) start to feel more like rhythm or rumble than pitch. Higher frequencies (above 4,000 Hz) become harder to follow as melody; we hear them more as color and brightness than as distinct notes.
+
+## Common questions
+
+**Can animals hear pitches we can't?**
+
+Yes. Dogs hear well above 20,000 Hz — roughly twice the upper limit of adult human hearing. Bats use frequencies up to 100,000 Hz for echolocation. Elephants, at the other end, communicate using frequencies below 20 Hz, which humans feel more than hear.
+
+**Why do some people have "perfect pitch"?**
+
+Perfect pitch — the ability to name a note without a reference — is a rare skill, usually developed in early childhood through exposure to music. Most musicians don't have it and don't need it. What they develop instead is *relative pitch*: the ability to hear the distance between two notes and name the interval. Relative pitch is more useful for most musical work and can be trained at any age.
+
+**Does the volume of a sound affect its pitch?**
+
+In most cases, no — a note played softly or loudly sounds like the same pitch. But at extreme volumes or at the very top and bottom of the hearing range, there can be small perceived pitch shifts, a quirk of how the ear works. For practical music-making, you can treat pitch and volume as independent.

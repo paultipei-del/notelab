@@ -25,12 +25,12 @@ export const TOPIC_TREE: LearnTopic[] = [
     description:
       'Where music begins — vibration, pitch, the overtone series, and why Western music is built the way it is.',
     subtopics: [
-      { slug: 'what-sound-is', title: 'What Sound Is', hasPage: false },
-      { slug: 'from-sound-to-pitch', title: 'From Sound to Pitch', hasPage: false },
-      { slug: 'the-overtone-series', title: 'The Overtone Series', hasPage: false },
-      { slug: 'consonance-and-dissonance', title: 'Consonance and Dissonance', hasPage: false },
-      { slug: 'the-chromatic-scale', title: 'The Chromatic Scale', hasPage: false },
-      { slug: 'octaves-and-pitch-classes', title: 'Octaves and Pitch Classes', hasPage: false },
+      { slug: 'what-sound-is', title: 'What Sound Is', hasPage: true },
+      { slug: 'from-sound-to-pitch', title: 'From Sound to Pitch', hasPage: true },
+      { slug: 'the-overtone-series', title: 'The Overtone Series', hasPage: true },
+      { slug: 'consonance-and-dissonance', title: 'Consonance and Dissonance', hasPage: true },
+      { slug: 'the-chromatic-scale', title: 'The Chromatic Scale', hasPage: true },
+      { slug: 'octaves-and-pitch-classes', title: 'Octaves and Pitch Classes', hasPage: true },
     ],
   },
   {
