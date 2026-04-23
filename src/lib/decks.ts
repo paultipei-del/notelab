@@ -39,6 +39,12 @@ import { DOTTED_AND_TIED_NOTES_CARDS } from './flashcards/dotted-and-tied-notes'
 import { SIMPLE_METERS_CARDS } from './flashcards/simple-meters'
 import { COMPOUND_METERS_CARDS } from './flashcards/compound-meters'
 import { TUPLETS_CARDS } from './flashcards/tuplets'
+import { TEMPO_TERMS_CORE_CARDS } from './flashcards/tempo-terms-core'
+import { TEMPO_TERMS_EXTENDED_CARDS } from './flashcards/tempo-terms-extended'
+import { CHARACTER_TERMS_CORE_CARDS } from './flashcards/character-terms-core'
+import { CHARACTER_TERMS_EXTENDED_CARDS } from './flashcards/character-terms-extended'
+import { TEMPO_MODIFICATIONS_CARDS } from './flashcards/tempo-modifications'
+import { MODIFYING_WORDS_CARDS } from './flashcards/modifying-words'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -366,6 +372,74 @@ export const DECKS: Deck[] = [
     category: 'Pitch & Harmony',
     tags: ['topic:harmony', 'type:recognition'],
     cards: SEVENTH_CHORD_INVERSIONS_CARDS,
+  },
+
+  // Tier 2 Notation & Terms — Italian terminology curated from glossary-italian.json
+  {
+    id: 'tempo-terms-core',
+    title: 'Tempo Terms — Core',
+    description: 'The most common Italian tempo terms from Grave to Prestissimo.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 1,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:italian'],
+    cards: TEMPO_TERMS_CORE_CARDS,
+  },
+  {
+    id: 'tempo-terms-extended',
+    title: 'Tempo Terms — Extended',
+    description: 'Less common tempo terms and compound directions like “Allegro non troppo”.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 2,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:italian'],
+    cards: TEMPO_TERMS_EXTENDED_CARDS,
+  },
+  {
+    id: 'character-terms-core',
+    title: 'Character Terms — Core',
+    description: 'Italian expression words — dolce, legato, espressivo, marcato, and more.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 3,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:italian'],
+    cards: CHARACTER_TERMS_CORE_CARDS,
+  },
+  {
+    id: 'character-terms-extended',
+    title: 'Character Terms — Extended',
+    description: 'Rarer character markings — scherzando, maestoso, appassionato, and kin.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 4,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:italian'],
+    cards: CHARACTER_TERMS_EXTENDED_CARDS,
+  },
+  {
+    id: 'tempo-modifications',
+    title: 'Tempo Modifications',
+    description: 'Directions that change the tempo mid-phrase — accelerando, ritardando, and kin.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 5,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:italian'],
+    cards: TEMPO_MODIFICATIONS_CARDS,
+  },
+  {
+    id: 'modifying-words',
+    title: 'Modifying Words',
+    description: 'Italian qualifiers that pair with other directions — poco, molto, meno, più.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 6,
+    category: 'Notation & Terms',
+    tags: ['topic:expression', 'type:terminology', 'lang:italian'],
+    cards: MODIFYING_WORDS_CARDS,
   },
 
   // ── TIER 1 NEW DECKS ──
