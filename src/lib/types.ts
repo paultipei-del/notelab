@@ -2,6 +2,17 @@ export type CardType = 'text' | 'staff' | 'image' | 'symbol' | 'audio'
 
 export type DeckTag = 'free' | 'cm' | 'theory' | 'repertoire'
 
+// Pedagogical tier — separate from product-axis `DeckTag`. Drives grouping on
+// /flashcards. Application is reserved for cross-deck challenge decks (empty for now).
+export type Tier = 'foundations' | 'intermediate' | 'advanced' | 'application'
+
+export type DeckCategory =
+  | 'Notation & Terms'
+  | 'Music symbols'
+  | 'Pitch & Harmony'
+  | 'Rhythm & Meter'
+  | 'Form & Structure'
+
 export interface Card {
   id: number
   front: string
@@ -22,6 +33,8 @@ export interface Card {
   audioLabel?: string          // shown on front: e.g. 'Major Triad'
   audioHint?: string           // optional hint: e.g. 'Root position, C major'
   audioDuration?: string       // Tone.js duration e.g. '4n', '2n', '1n'
+  // Pedagogical tags — union-merged with the parent deck's tags for filtering.
+  tags?: string[]
 }
 
 export interface Deck {
@@ -32,6 +45,11 @@ export interface Deck {
   cards: Card[]
   browseCards?: Card[] // optional override for browse view
   group?: string       // optional section label for grouped collection views
+  // Pedagogical grouping — drives tier-sectioned /flashcards layout.
+  tier?: Tier
+  tierOrder?: number   // sort within (tier, category)
+  category?: DeckCategory
+  tags?: string[]      // pedagogical tags — controlled namespaces: era:, topic:, type:, lang:
 }
 
 export interface CardProgress {
