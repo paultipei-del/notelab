@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { Deck } from '@/lib/types'
+import { DECK_PREVIEWS } from '@/lib/flashcards/deck-previews'
+import DeckPreviewView from './DeckPreviewView'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -68,9 +70,13 @@ export default function DeckTile({ deck }: { deck: Deck }) {
         <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '24px', color: '#1A1A18', marginBottom: '8px', width: '100%', letterSpacing: '0.01em' }}>
           {deck.title}
         </h3>
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%', marginBottom: '14px' }}>
-          {deck.description}
-        </p>
+        {DECK_PREVIEWS[deck.id] ? (
+          <DeckPreviewView preview={DECK_PREVIEWS[deck.id]} />
+        ) : (
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.55, flex: 1, margin: 0, width: '100%', marginBottom: '14px' }}>
+            {deck.description}
+          </p>
+        )}
         <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, color: ACCENT, alignSelf: 'flex-end' }}>
           Start →
         </span>

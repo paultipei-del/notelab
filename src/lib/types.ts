@@ -13,6 +13,15 @@ export type DeckCategory =
   | 'Rhythm & Meter'
   | 'Form & Structure'
 
+// Visual preview shown in place of the deck tile's description, so tiles read
+// as differentiated at a glance. Text is plain body font; glyphs render in
+// Bravura; notation is inline SVG produced with SMuFL glyphs + staff lines.
+export type DeckPreview =
+  | { kind: 'text'; content: string }
+  | { kind: 'glyphs'; codepoints: string[]; ariaLabel?: string }
+  | { kind: 'notation'; svg: string; ariaLabel?: string }
+  | { kind: 'none' }
+
 export interface Card {
   id: number
   front: string
