@@ -5,6 +5,7 @@ import { DECKS } from '@/lib/decks'
 import { useAuth } from '@/hooks/useAuth'
 import { Deck, DeckCategory, Tier } from '@/lib/types'
 import DeckTile from '@/components/flashcards/DeckTile'
+import ContinueAnchor from '@/components/flashcards/ContinueAnchor'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -137,13 +138,16 @@ export default function FlashcardsPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 64px' }}>
-        <div style={{ marginBottom: '40px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>
             Flashcards
           </h1>
           <p style={{ fontFamily: F, fontSize: '15px', fontWeight: 300, color: '#7A7060', lineHeight: 1.7, maxWidth: '560px', margin: 0 }}>
             Spaced repetition collections for terms, symbols, and notation
           </p>
+        </div>
+        <div style={{ marginBottom: '20px' }}>
+          <ContinueAnchor />
         </div>
 
         {TIER_ORDER.map(tier => {

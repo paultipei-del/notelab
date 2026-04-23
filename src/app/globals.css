@@ -1815,6 +1815,14 @@ body:has(.nl-study-viewport) {
     0 36px 72px rgba(186, 117, 23, 0.11);
 }
 
+/* Minimal inline link above the tier list — muted by default, accent on hover. */
+.nl-continue-anchor {
+  transition: color 0.15s ease;
+}
+.nl-continue-anchor:hover {
+  color: #b5402a;
+}
+
 .nl-card-surface--tight {
   border-radius: 14px;
 }
