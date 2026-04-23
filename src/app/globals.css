@@ -1823,6 +1823,38 @@ body:has(.nl-study-viewport) {
   color: #b5402a;
 }
 
+/* Domain color tokens for deck tiles — low-saturation (≈30%), medium
+   lightness (≈60%), evenly spaced across the hue wheel so adjacent decks
+   in the grid read as visually distinct at scroll speed. */
+:root {
+  --deck-color-pitch:      hsl(215, 30%, 58%);  /* deep blue — structure */
+  --deck-color-rhythm:     hsl( 28, 38%, 60%);  /* warm orange — motion */
+  --deck-color-harmony:    hsl(276, 28%, 60%);  /* violet — complexity */
+  --deck-color-expression: hsl(  0, 35%, 65%);  /* warm rose — feeling */
+  --deck-color-notation:   hsl(210, 18%, 60%);  /* slate — informational */
+  --deck-color-form:       hsl(140, 26%, 55%);  /* green — architecture */
+  --deck-color-technique:  hsl( 42, 42%, 58%);  /* amber — craft */
+}
+
+/* Thin colored stripe on the left edge, drawn via a pseudo-element so the
+   tile's 1px border (and the hover accent-color border transition) stay
+   undisturbed. Tile must set `--deck-accent` via inline style. */
+.nl-card-surface[data-deck-accent] {
+  position: relative;
+}
+.nl-card-surface[data-deck-accent]::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--deck-accent);
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  pointer-events: none;
+}
+
 .nl-card-surface--tight {
   border-radius: 14px;
 }

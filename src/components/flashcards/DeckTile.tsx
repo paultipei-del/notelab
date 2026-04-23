@@ -7,12 +7,48 @@ const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 const ACCENT = '#B5402A'
 
+// Map of topic-tag namespace value → CSS variable carrying the deck's domain
+// accent color. Only the first `topic:*` tag on a deck contributes — one
+// stripe per tile, deterministic.
+const TOPIC_COLOR_VAR: Record<string, string> = {
+  pitch:      'var(--deck-color-pitch)',
+  rhythm:     'var(--deck-color-rhythm)',
+  harmony:    'var(--deck-color-harmony)',
+  expression: 'var(--deck-color-expression)',
+  notation:   'var(--deck-color-notation)',
+  form:       'var(--deck-color-form)',
+  technique:  'var(--deck-color-technique)',
+}
+
+function firstTopic(deck: Deck): string | null {
+  if (!deck.tags) return null
+  for (const t of deck.tags) {
+    if (t.startsWith('topic:')) return t.slice('topic:'.length)
+  }
+  return null
+}
+
 /**
  * Shared flashcard deck tile. Extracted so `/flashcards` (tier-grouped layout)
  * and `FlashcardsHub` (home + flashcards groups) render the identical surface —
  * changes to the tile stay in one place.
  */
 export default function DeckTile({ deck }: { deck: Deck }) {
+  const topic = firstTopic(deck)
+  const accentColor = topic ? TOPIC_COLOR_VAR[topic] : undefined
+  const surfaceStyle: React.CSSProperties = {
+    padding: '24px',
+    cursor: 'pointer',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  }
+  if (accentColor) {
+    (surfaceStyle as Record<string, string>)['--deck-accent'] = accentColor
+  }
+
   return (
     <Link
       key={deck.id}
@@ -21,15 +57,8 @@ export default function DeckTile({ deck }: { deck: Deck }) {
     >
       <div
         className="nl-card-surface"
-        style={{
-          padding: '24px',
-          cursor: 'pointer',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column' as const,
-          alignItems: 'flex-start' as const,
-        }}
+        data-deck-accent={topic ?? undefined}
+        style={surfaceStyle}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', width: '100%', marginBottom: '10px' }}>
           <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>
