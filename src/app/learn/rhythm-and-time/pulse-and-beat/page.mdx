@@ -1,0 +1,88 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import Notation from '@/components/learn/Notation'
+import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { FOUR_BEATS_XML } from './notations'
+
+export const learnPage = {
+  topic: 'rhythm-and-time',
+  subtopic: 'pulse-and-beat',
+  title: 'Pulse and Beat',
+  oneSentence:
+    'A pulse is the steady, recurring tick that underlies music — the thing you tap your foot to — and the beat is the unit of that pulse that the music uses as its basic measure of time.',
+  practice: [],
+  related: [
+    { title: 'Note Values',               href: '/learn/rhythm-and-time/note-values' },
+    { title: 'Time Signatures',           href: '/learn/rhythm-and-time/time-signatures' },
+    { title: 'Simple and Compound Meter', href: '/learn/rhythm-and-time/simple-and-compound-meter' },
+  ],
+}
+
+export default function Page({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Put on almost any piece of music and you'll find yourself tapping a foot, nodding a head, or moving some part of your body in regular time. That regularity isn't an accident. Music has a pulse — a steady, recurring tick — that runs underneath everything else. The melody rises and falls on top of it, the harmony shifts, the rhythm plays around it. But the pulse stays. It's the felt spine of the music.
+
+That pulse, broken into countable units, gives us the **beat**. Beats are what we count ("one, two, three, four") when we mark time in music. Pulse is the sensation; beat is its measurement.
+
+Before any notation, before any theory, pulse and beat are how music organizes time in the body.
+
+## The visual
+
+<Notation
+  musicXml={FOUR_BEATS_XML}
+  caption="Four evenly spaced quarter notes in 4/4 — one per beat. The numbers beneath show the beat count."
+  ariaLabel="A single measure of 4/4 time on a treble staff with four quarter notes, each labeled 1, 2, 3, or 4."
+/>
+
+<DiagramPlaceholder description="A timeline showing a continuous regular pulse of clicks, with every fourth click emphasized to show how beats group into measures." />
+
+## Pulse
+
+Pulse is pre-verbal. It's the sensation of musical time, felt rather than analyzed. A march has a strong pulse. A Bach prelude has a pulse. A jazz ballad has a pulse even when no drummer is keeping strict time. Pulse is what lets a room of strangers clap along to the same music without discussing it first.
+
+Physically, pulse is a regular recurrence in time — something happening at equal intervals. Musically, it's the listener's *perception* of that regularity. When you hear a tempo marked "♩ = 60" (one beat per second), your body naturally settles into a pulse of one tick per second. Everything else in the music is measured against that tick.
+
+Not all music has an obvious pulse. Some contemporary and avant-garde music deliberately obscures it. Some ritualistic or ambient music floats without a clear beat. But for the overwhelming majority of music in every culture — from folk to classical to jazz to electronic — pulse is the organizing principle, whether stated explicitly by a drum or implied quietly in the background.
+
+## Beat
+
+A beat is one unit of the pulse. If the pulse is a steady stream, beats are the individual drops.
+
+Beats are what you count when you learn a piece. "One-and-two-and-three-and-four-and" is a dancer or musician marking each beat (the numbers) and the halfway point between beats (the "ands"). Beats are how composers tell performers how long each note should last — a quarter note gets one beat, a half note gets two, an eighth note gets half.
+
+Beats come in groups. Most music organizes beats into small repeating cycles — groups of two, three, or four beats — that form **measures** (also called bars). The first beat of each measure usually feels stronger than the others, which is how listeners perceive the grouping without being told. Tap out "ONE-two-ONE-two" and you're feeling duple meter. Tap "ONE-two-three-ONE-two-three" and you're feeling triple meter. The pulse is the same; the grouping is what changes.
+
+## Tempo — how fast the pulse goes
+
+**Tempo** is the speed of the pulse. A slow tempo has widely spaced pulses (maybe one per second, or slower). A fast tempo has tightly packed pulses (several per second). Tempo is measured in **beats per minute (BPM)** — a tempo of 60 BPM means exactly one beat every second; 120 BPM means two beats per second.
+
+Tempo shapes how a piece feels enormously. The same melody played at 60 BPM feels reflective and spacious. At 140 BPM it feels urgent. At 200 BPM it feels frantic. Composers mark tempo at the start of a piece — either with an Italian term (Andante, Allegro) or with a specific BPM number, or both.
+
+Tempo can also change within a piece. A slow introduction might speed up into a fast main section. A dramatic movement might slow down at its ending. These tempo changes are marked with specific terms (accelerando, ritardando) covered elsewhere. The pulse is flexible — it can quicken and slow — but a performer's job is to control those changes deliberately, not drift randomly.
+
+## Subdivision
+
+Beats can be divided into smaller units. A single beat in 4/4 (a quarter note) can be split into two eighth notes, four sixteenth notes, or other subdivisions. **Subdivision** is the act of mentally dividing each beat into smaller equal parts, which helps musicians play complex rhythms precisely.
+
+Even when a piece doesn't contain sixteenth notes, many musicians subdivide internally — counting "1-e-and-a, 2-e-and-a" — because it helps keep the pulse steady and places each note in its exact position in time. Subdivision is one of the first techniques any serious rhythm student learns. It's the difference between "I'm close to the beat" and "I'm exactly on the beat."
+
+## Common questions
+
+**Is pulse the same as tempo?**
+
+Pulse is the *sensation* of regular recurrence. Tempo is *how fast* that recurrence goes. A pulse at 60 BPM and a pulse at 120 BPM are both pulses — they just move at different speeds. Tempo is the measurement; pulse is the experience.
+
+**Why do some pieces seem to have two pulses at once?**
+
+Because they do. In polyrhythmic music — common in African traditions, Latin music, and some European art music — different instruments play rhythms grouped in different ways simultaneously. A listener can feel, say, a duple pulse in one part and a triple pulse in another. Learning to hear multiple pulses at once is one of the more advanced skills of rhythmic listening.
+
+**How do I keep a steady pulse when I play?**
+
+Practice with a metronome. Short, regular sessions with a clicking reference train your internal clock better than almost anything else. Some musicians also count out loud while playing — "1 and 2 and 3 and 4 and" — to stay anchored. The more steady your pulse becomes, the more freedom you have to bend it expressively when the music calls for it.
+
+**Does every piece of music have a pulse?**
+
+Most do, but not all. Plainchant — Gregorian chant — flows with a free rhythm tied to the natural stress of the Latin text rather than a steady pulse. Some 20th- and 21st-century music deliberately avoids pulse for expressive reasons. Certain improvised and ritualistic traditions favor breath-based flow over metered time. Pulse is the default in most music, but it's not universal.
