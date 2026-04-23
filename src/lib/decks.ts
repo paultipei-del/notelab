@@ -60,6 +60,10 @@ import { FRENCH_DIRECTIONS_CARDS } from './flashcards/french-directions'
 import { PEDAL_MARKINGS_CARDS } from './flashcards/pedal-markings'
 import { FINGERING_CONVENTIONS_CARDS } from './flashcards/fingering-conventions'
 import { PIANO_SPECIFIC_SYMBOLS_CARDS } from './flashcards/piano-specific-symbols'
+import { SOLFEGE_AND_SCALE_DEGREES_CARDS } from './flashcards/solfege-and-scale-degrees'
+import { TRANSPOSING_INSTRUMENTS_CARDS } from './flashcards/transposing-instruments'
+import { RHYTHM_PATTERNS_CARDS } from './flashcards/rhythm-patterns'
+import { INTERVAL_SONG_ASSOCIATIONS_CARDS } from './flashcards/interval-song-associations'
 
 export const CM_BUNDLE_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_CM_PRICE_ID ?? ''
 export const PRO_PRICE_ID = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID ?? ''
@@ -390,6 +394,28 @@ export const DECKS: Deck[] = [
     tags: ['topic:harmony', 'type:recognition'],
     cards: SEVENTH_CHORD_INVERSIONS_CARDS,
   },
+  {
+    id: 'solfege-and-scale-degrees',
+    title: 'Solfège & Scale Degrees',
+    description: 'Movable-do syllables paired with scale-degree names — tonic, dominant, leading tone, and more.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 15,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:terminology'],
+    cards: SOLFEGE_AND_SCALE_DEGREES_CARDS,
+  },
+  {
+    id: 'interval-song-associations',
+    title: 'Interval Song Associations',
+    description: 'Familiar song openings as mnemonics for interval recognition — ascending and descending.',
+    tag: 'free',
+    tier: 'intermediate',
+    tierOrder: 16,
+    category: 'Pitch & Harmony',
+    tags: ['topic:pitch', 'type:recognition'],
+    cards: INTERVAL_SONG_ASSOCIATIONS_CARDS,
+  },
 
   // Tier 2 Notation & Terms — Italian terminology curated from glossary-italian.json
   {
@@ -547,6 +573,17 @@ export const DECKS: Deck[] = [
     category: 'Rhythm & Meter',
     tags: ['topic:rhythm', 'type:recognition'],
     cards: TUPLETS_CARDS,
+  },
+  {
+    id: 'rhythm-patterns',
+    title: 'Rhythm Patterns',
+    description: 'Syncopation, hemiola, swing, clave, and other rhythmic effects and figures across styles.',
+    tag: 'free',
+    tier: 'foundations',
+    tierOrder: 4,
+    category: 'Rhythm & Meter',
+    tags: ['topic:rhythm', 'type:terminology'],
+    cards: RHYTHM_PATTERNS_CARDS,
   },
 
   // ── TIER 3 NEW DECKS ──
@@ -716,6 +753,17 @@ export const DECKS: Deck[] = [
     category: 'Notation & Terms',
     tags: ['topic:expression', 'type:terminology', 'lang:french'],
     cards: FRENCH_DIRECTIONS_CARDS,
+  },
+  {
+    id: 'transposing-instruments',
+    title: 'Transposing Instruments',
+    description: 'How far B♭, F, E♭, and other transposing instruments sound from their written pitch.',
+    tag: 'free',
+    tier: 'advanced',
+    tierOrder: 3,
+    category: 'Notation & Terms',
+    tags: ['topic:notation', 'type:terminology'],
+    cards: TRANSPOSING_INSTRUMENTS_CARDS,
   },
 
   {

@@ -27,12 +27,15 @@ export const DECK_PREVIEWS: Record<string, DeckPreview> = {
   // ── TIER 1 — Rhythm & Meter ───────────────────────────────────────
   'simple-meters':   { kind: 'text', content: '2/4    3/4    4/4' },
   'compound-meters': { kind: 'text', content: '6/8    9/8    12/8' },
+  'rhythm-patterns': { kind: 'text', content: 'syncopation · hemiola · swing' },
 
   // ── TIER 2 — Pitch & Harmony (text previews) ──────────────────────
   'circle-of-fifths':      { kind: 'text', content: 'C → G → D → A → E →…' },
   modes:                   { kind: 'text', content: 'Ionian · Dorian · Phrygian …' },
   'other-scales':          { kind: 'text', content: 'Pentatonic · Blues · Whole tone' },
   'enharmonic-intervals':  { kind: 'text', content: 'F♯ = G♭' },
+  'solfege-and-scale-degrees':    { kind: 'text', content: 'do · re · mi · tonic · dominant' },
+  'interval-song-associations':   { kind: 'text', content: "'Here Comes the Bride' · P4 ascending" },
 
   // ── TIER 2 — Notation & Terms (terminology) ───────────────────────
   'tempo-terms-core':         { kind: 'text', content: 'Adagio · Andante · Allegro · Presto' },
@@ -61,4 +64,5 @@ export const DECK_PREVIEWS: Record<string, DeckPreview> = {
   // ── TIER 3 — Notation & Terms (other languages) ───────────────────
   'german-directions': { kind: 'text', content: 'langsam · lebhaft · mit Ausdruck' },
   'french-directions': { kind: 'text', content: 'doux · vif · avec mouvement' },
+  'transposing-instruments': { kind: 'text', content: 'B♭ · F · E♭ transpositions' },
 }

@@ -11,10 +11,19 @@ export type LearnSubtopic = {
   hasPage: boolean;
 };
 
+export type LearnTier =
+  | 'Foundations'
+  | 'Building blocks'
+  | 'Core theory'
+  | 'Practical reading'
+  | 'Practice';
+
 export type LearnTopic = {
   slug: string;
   title: string;
   description: string;
+  romanNumeral: string;
+  tier: LearnTier;
   subtopics: LearnSubtopic[];
 };
 
@@ -22,6 +31,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'sound-and-hearing',
     title: 'Sound and How We Hear It',
+    romanNumeral: 'I',
+    tier: 'Foundations',
     description:
       'Where music begins — vibration, pitch, the overtone series, and why Western music is built the way it is.',
     subtopics: [
@@ -36,6 +47,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'reading-and-notation',
     title: 'Reading and Writing Music',
+    romanNumeral: 'II',
+    tier: 'Foundations',
     description:
       'How pitches become symbols on a page — the staff, clefs, note names, and accidentals.',
     subtopics: [
@@ -52,6 +65,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'rhythm-and-time',
     title: 'Rhythm and Time',
+    romanNumeral: 'III',
+    tier: 'Foundations',
     description:
       'How music is organized in time — pulse, note values, meters, and the felt shape of rhythm.',
     subtopics: [
@@ -70,6 +85,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'intervals',
     title: 'Intervals',
+    romanNumeral: 'IV',
+    tier: 'Building blocks',
     description:
       'The distance between two pitches — the building block of scales, chords, and harmony.',
     subtopics: [
@@ -88,6 +105,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'scales',
     title: 'Scales',
+    romanNumeral: 'V',
+    tier: 'Building blocks',
     description:
       'Ordered collections of pitches that define the tonal world of a piece — major, minor, modal, and beyond.',
     subtopics: [
@@ -107,6 +126,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'pitch',
     title: 'Key Signatures',
+    romanNumeral: 'VI',
+    tier: 'Building blocks',
     description:
       'The shorthand for scales — how composers mark which notes are altered throughout a piece.',
     subtopics: [
@@ -122,6 +143,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'harmony',
     title: 'Chords and Harmony',
+    romanNumeral: 'VII',
+    tier: 'Core theory',
     description:
       'How notes combine — triads, seventh chords, inversions, Roman numerals, and the logic of progression.',
     subtopics: [
@@ -145,6 +168,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'form-and-structure',
     title: 'Form and Structure',
+    romanNumeral: 'VIII',
+    tier: 'Core theory',
     description:
       'How music is organized at the larger scale — phrases, sections, and complete forms.',
     subtopics: [
@@ -162,6 +187,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'expression-and-performance',
     title: 'Expression and Performance Practice',
+    romanNumeral: 'IX',
+    tier: 'Practical reading',
     description:
       'How composers tell performers what to do — dynamics, tempo, articulation, ornamentation, and the vocabulary of interpretation.',
     subtopics: [
@@ -184,6 +211,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'notation-details',
     title: 'Notation Details and Reading',
+    romanNumeral: 'X',
+    tier: 'Practical reading',
     description:
       "The mechanics of notation — beaming, stems, voices on a staff, transposition, score reading, lead sheets, tablature, and historical conventions.",
     subtopics: [
@@ -202,6 +231,8 @@ export const TOPIC_TREE: LearnTopic[] = [
   {
     slug: 'aural-skills',
     title: 'Aural Skills',
+    romanNumeral: 'XI',
+    tier: 'Practice',
     description:
       'How to hear what you read — interval recognition, chord quality, dictation, and the ear that every musician builds.',
     subtopics: [

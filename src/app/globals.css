@@ -1834,6 +1834,8 @@ body:has(.nl-study-viewport) {
   line-height: 1.7;
   color: #2A2318;
   max-width: 64ch;
+  margin-left: auto;
+  margin-right: auto;
 }
 .nl-learn-prose p {
   margin: 0 0 18px 0;
