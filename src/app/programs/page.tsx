@@ -28,8 +28,9 @@ const PROGRAMS = [
     href: '/programs/note-reading',
     title: 'Note Reading',
     subtitle: 'Staff & Sight-Reading',
-    description: 'Eight modules — treble, bass, and grand staff — built for college music students and serious adult learners. Pairs note identification with pitch detection.',
-    levels: '8 modules',
+    description: 'Nine modules — single-pitch recognition through intervallic and rhythmic reading — built for college music students and serious adult learners. Pairs note identification with pitch detection.',
+    priceLine: '9 modules · $29 — lifetime access',
+    levels: '9 modules',
     priceId: null,
     glyph: '𝄞',
     accent: { bg: 'rgba(59,109,17,0.22)', text: '#7DC44E', border: 'rgba(59,109,17,0.35)', ctaBg: 'rgba(59,109,17,0.15)', gradientGlyphColor: 'rgba(59,109,17,0.14)', gradient: 'linear-gradient(145deg, #060A04 0%, #101A08 50%, #182510 100%)' },
@@ -40,6 +41,7 @@ const PROGRAMS = [
     title: 'Rhythm Reading',
     subtitle: 'Three structured programs',
     description: 'Fundamentals, Personal Practice, and Conservatory Prep — 356 progressive exercises from basic note values through mixed meter and polyrhythm. Tap along with the metronome.',
+    priceLine: '356 progressive exercises · Free forever',
     levels: '356 exercises',
     priceId: null,
     free: true,
@@ -51,10 +53,6 @@ const PROGRAMS = [
 export default function ProgramsPage() {
   const { user } = useAuth()
   const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
-
-  function isUnlocked(priceId: string) {
-    return hasSubscription() || hasPurchased(priceId)
-  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
@@ -73,21 +71,26 @@ export default function ProgramsPage() {
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '14px' }}>
           {PROGRAMS.map(prog => {
             const isFree = !!(prog as { free?: boolean }).free
-            const unlocked = isFree ? true : prog.priceId ? isUnlocked(prog.priceId) : hasSubscription()
-            // Uppercase tag label: CM always shows "PROGRAM" (commerce
-            // surface); free programs show "FREE"; unlocked subscribed ones
-            // show "INCLUDED"; otherwise "LOCKED". Mirrors the tag styling
-            // used on flashcards tier headings.
-            const tagLabel = prog.id === 'cm'
-              ? 'Program'
-              : isFree ? 'Free'
-              : unlocked ? 'Included'
-              : 'Locked'
+            const owned = isFree
+              ? false
+              : hasSubscription() || (prog.priceId ? hasPurchased(prog.priceId) : false)
+            // Starting-price fallback per-program. Rhythm is free and is
+            // handled above; CM and NR fall back to "From $29" until a
+            // per-program price ID is wired through.
+            const fromPrice = prog.id === 'cm' ? 'From $29' : '$29'
+            // Consistent vocabulary: ownership-aware chip across all three
+            // programs. OWNED > FREE > FROM $X.
+            const tagLabel = owned ? '✓ Owned' : isFree ? 'Free' : fromPrice
+            const tagPalette = owned
+              ? { bg: '#E6F0D6', color: '#3B6D11' }
+              : isFree
+                ? { bg: '#EDE8DF', color: '#7A7060' }
+                : { bg: '#FAEEDA', color: '#B5402A' }
             // Right-side decorative glyph.
             const glyph = prog.id === 'cm' ? '♫♪'
               : prog.id === 'note-reading' ? '𝄞'
               : '♩♪♩♬'
-            const cta = prog.id === 'cm' ? 'View program →' : unlocked ? 'Browse levels →' : 'View program →'
+            const cta = 'View program →'
 
             return (
               <Link key={prog.id} href={prog.href} style={{ textDecoration: 'none', borderRadius: '16px', display: 'block' }}>
@@ -112,9 +115,12 @@ export default function ProgramsPage() {
                         fontFamily: F,
                         fontSize: '11px',
                         fontWeight: 500,
-                        letterSpacing: '0.14em',
+                        letterSpacing: '0.12em',
                         textTransform: 'uppercase' as const,
-                        color: tagLabel === 'Locked' ? '#B5402A' : '#7A7060',
+                        color: tagPalette.color,
+                        background: tagPalette.bg,
+                        borderRadius: '20px',
+                        padding: '3px 10px',
                         marginBottom: '10px',
                         width: 'fit-content',
                       }}

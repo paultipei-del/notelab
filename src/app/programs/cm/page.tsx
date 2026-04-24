@@ -116,7 +116,9 @@ function LevelCard({ level }: { level: CMLevel }) {
           overflow: 'hidden',
         }}
       >
-        {/* Tier decoration glyph */}
+        {/* Tier decoration glyph. Elementary uses a slightly higher
+            opacity because its single clef reads thinner than the
+            Intermediate double-clef and Advanced rhythm cluster. */}
         <span
           aria-hidden
           style={{
@@ -126,7 +128,7 @@ function LevelCard({ level }: { level: CMLevel }) {
             fontFamily: SERIF,
             fontSize: tierStyle.glyphSize,
             color: '#2A2318',
-            opacity: 0.06,
+            opacity: level.tier === 'elementary' ? 0.09 : 0.06,
             lineHeight: 1,
             userSelect: 'none',
             pointerEvents: 'none',

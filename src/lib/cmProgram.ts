@@ -39,7 +39,7 @@ export const CM_LEVELS: CMLevel[] = [
     deckId: 'cm-prep',
     tier: 'elementary',
     price: 29,
-    topicKeywords: 'signs & terms · note reading · five-finger patterns · basic scales & chords',
+    topicKeywords: 'signs & terms · note reading · five-finger · basic chords',
     whoFor: 'For first-time CM students. No prior theory experience required.',
     topics: [
       { name: 'Signs & Terms', blurb: 'Essential dynamic, tempo, and articulation markings.' },
@@ -54,7 +54,7 @@ export const CM_LEVELS: CMLevel[] = [
     deckId: 'cm-level1',
     tier: 'elementary',
     price: 29,
-    topicKeywords: 'signs & terms · note reading · intervals · rhythm · scales · chords · ear training',
+    topicKeywords: 'signs & terms · intervals · rhythm · scales',
     whoFor: 'For beginning students with a few months of instrument study.',
     topics: [
       { name: 'Signs & Terms', blurb: 'Expanding the basic terminology set.' },
@@ -85,7 +85,7 @@ export const CM_LEVELS: CMLevel[] = [
     deckId: 'cm-level3',
     tier: 'intermediate',
     price: 29,
-    topicKeywords: 'triad inversions · perfect & major intervals · signs & terms',
+    topicKeywords: 'triad inversions · major intervals · perfect intervals · signs & terms',
     whoFor: 'For students with at least a year of theory. First-inversion analysis and more intervals.',
     topics: [
       { name: 'Triad Inversions', blurb: 'Root, first, and second inversions.' },
@@ -100,7 +100,7 @@ export const CM_LEVELS: CMLevel[] = [
     deckId: 'cm-level4',
     tier: 'intermediate',
     price: 29,
-    topicKeywords: 'Roman numerals · minor & diminished intervals · history',
+    topicKeywords: 'Roman numerals · minor intervals · diminished intervals · history',
     whoFor: 'Introduces Roman-numeral analysis and minor/diminished intervals.',
     topics: [
       { name: 'Roman Numerals', blurb: 'Scale degrees labelled with I, ii, iii, IV, V, vi, vii°.' },
@@ -114,7 +114,7 @@ export const CM_LEVELS: CMLevel[] = [
     deckId: 'cm-level5',
     tier: 'intermediate',
     price: 29,
-    topicKeywords: 'all major keys · figured bass · dominant 7th · ornaments · history',
+    topicKeywords: 'major keys · figured bass · dominant 7th · ornaments',
     whoFor: 'Rounds out the major-key system and introduces the dominant 7th.',
     topics: [
       { name: 'All Major Keys', blurb: 'Every major key signature and its tonic.' },
@@ -129,7 +129,7 @@ export const CM_LEVELS: CMLevel[] = [
     deckId: 'cm-level6',
     tier: 'intermediate',
     price: 29,
-    topicKeywords: 'melodic minor · augmented & diminished intervals · deceptive cadence · modulation',
+    topicKeywords: 'melodic minor · aug/dim intervals · deceptive cadence · modulation',
     whoFor: 'The three minor-scale forms and the deceptive cadence.',
     topics: [
       { name: 'Melodic Minor', blurb: 'Ascending vs. descending melodic minor.' },
@@ -189,7 +189,7 @@ export const CM_LEVELS: CMLevel[] = [
     deckId: 'cm-advanced',
     tier: 'advanced',
     price: 29,
-    topicKeywords: 'fugue analysis · non-harmonic tones · serialism · compositional technique',
+    topicKeywords: 'fugue analysis · non-harmonic tones · serialism · composition',
     whoFor: 'The capstone level — fugue analysis and 20th-century techniques.',
     topics: [
       { name: 'Fugue Analysis', blurb: 'Complete fugue structural analysis.' },
