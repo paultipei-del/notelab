@@ -26,6 +26,10 @@ const NOTES_PER_MEASURE = 4
 const LEAD_IN_BEATS = 2      // count-in beats before the measure's notes begin
 const GAP_AFTER_MEASURE_MS = 700
 const DEFAULT_TEMPO = 60
+// Timing window: a press must land within this many ms of the beat tick
+// to count as "on time". Outside this window, the letter is treated as
+// a late press and marked wrong even if the letter is right.
+const BEAT_TIMING_TOLERANCE_MS = 300
 
 const CORRECT_FG = '#3B6D11'
 const CORRECT_BG = '#EAF3DE'
@@ -89,6 +93,11 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
   const ctxRef = useRef<AudioContext | null>(null)
   const timeoutsRef = useRef<number[]>([])
   const pressedThisBeatRef = useRef<Letter | null>(null)
+  // Timestamp of the press (for the 300ms-around-the-tick tolerance check).
+  // Stored alongside `pressedThisBeatRef` so finaliseBeat can compute offset.
+  const pressTimeMsRef = useRef<number | null>(null)
+  // Start time of the currently-active beat (performance.now()).
+  const beatStartRef = useRef<number>(0)
   const beatStatesRef = useRef<BeatState[]>(['pending', 'pending', 'pending', 'pending'])
   const qIdxRef = useRef(0)
   const runningRef = useRef(false)
@@ -140,15 +149,21 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
     if (!runningRef.current) return
     if (pressedThisBeatRef.current !== null) return    // only first press counts
     pressedThisBeatRef.current = letter
+    pressTimeMsRef.current = performance.now()
   }
 
   // Finalise the beat at index `beatIdx` of the given measure. Runs at
   // the moment the NEXT beat tick would sound (or the end of the measure
-  // for the last note).
+  // for the last note). A beat counts as correct only if the student
+  // pressed the right letter AND the press landed within
+  // BEAT_TIMING_TOLERANCE_MS of the beat tick.
   function finalizeBeat(measure: RhythmicMeasure, beatIdx: number) {
     const expected = pitchLetter(measure.notes[beatIdx])
     const pressed = pressedThisBeatRef.current
-    const isCorrect = pressed === expected
+    const pressTime = pressTimeMsRef.current
+    const letterMatch = pressed === expected
+    const onTime = pressTime !== null && (pressTime - beatStartRef.current) <= BEAT_TIMING_TOLERANCE_MS
+    const isCorrect = letterMatch && onTime
 
     const next = beatStatesRef.current.slice()
     next[beatIdx] = isCorrect ? 'correct' : 'wrong'
@@ -162,13 +177,15 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
     const fullPitch = measure.notes[beatIdx]
     if (!noteResultsRef.current[fullPitch]) noteResultsRef.current[fullPitch] = { attempts: 0, correct: 0 }
     noteResultsRef.current[fullPitch].attempts++
-    if (isCorrect) noteResultsRef.current[fullPitch].correct++
-    else {
+    if (isCorrect) {
+      noteResultsRef.current[fullPitch].correct++
+    } else {
       missedLettersRef.current[expected] = (missedLettersRef.current[expected] ?? 0) + 1
       measureHadMissRef.current = true
     }
 
     pressedThisBeatRef.current = null
+    pressTimeMsRef.current = null
   }
 
   function startMeasure(measureIdx: number) {
@@ -210,6 +227,11 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
         if (!runningRef.current) return
         // Finalise prior beat at the moment of this tick (its window ended).
         if (beat > 0) finalizeBeat(measure, beat - 1)
+        // Stamp the start time of the new beat so the press tolerance
+        // check can measure offset from the tick.
+        beatStartRef.current = performance.now()
+        pressedThisBeatRef.current = null
+        pressTimeMsRef.current = null
         setActiveBeat(beat)
         playClick(ctxRef.current!, beat === 0)
       }, tickAt)
@@ -492,7 +514,7 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
           transition: 'background 0.2s, border-color 0.2s',
         }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '10px' }}>
-            Press each letter on its beat · {currentMeasure.tempoBpm} BPM
+            Press each letter within {BEAT_TIMING_TOLERANCE_MS}ms of its beat · {currentMeasure.tempoBpm} BPM
           </p>
 
           <RhythmicMeasureStaff

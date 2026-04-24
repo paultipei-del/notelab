@@ -81,6 +81,13 @@ function isEquivalent(a: string, b: string): boolean {
 
 type AnswerState = 'idle' | 'correct' | 'wrong'
 
+// Session mode — Wave 1 pattern. Only 'standard' sessions count toward
+// mastery; 'quick' and 'practice' are warmups. Practice runs a long cap
+// (the student ends it via the bail-out button) rather than truly
+// unlimited, so the queue state stays bounded.
+type SessionMode = 'quick' | 'standard' | 'practice'
+const MODE_LENGTH: Record<SessionMode, number> = { quick: 10, standard: 20, practice: 60 }
+
 interface Props { params: Promise<{ moduleId: string }> }
 
 // Route entrypoint. Dispatches to the intervallic implementation for
@@ -107,6 +114,9 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   const isFreeModule = moduleId === 'landmarks'
 
   const mod = getNRModule(moduleId)
+  // `mode === null` means the chooser card is visible and no queue is
+  // built yet. Picking a mode kicks off the queue-build effect below.
+  const [mode, setMode] = useState<SessionMode | null>(null)
   const [queue, setQueue] = useState<QueueEntry[]>([])
   const [qIdx, setQIdx] = useState(0)
   const [answerState, setAnswerState] = useState<AnswerState>('idle')
@@ -143,23 +153,24 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
 
   useEffect(() => {
     if (!mod) return
+    if (!mode) return   // wait for the student to pick a mode
     const store = loadNRProgress()
     if (!isNRModuleUnlocked(moduleId, store)) {
       router.replace(`/programs/note-reading/${moduleId}`)
       return
     }
+    const targetLength = MODE_LENGTH[mode]
     const stats = getNoteStats(moduleId, 'identify', store)
-    const q = buildWeightedPool(mod.notes, stats, SESSION_LENGTH)
+    const q = buildWeightedPool(mod.notes, stats, targetLength)
     for (let i = 1; i < q.length; i++) {
       if (pitchClass(q[i]) === pitchClass(q[i - 1])) {
         const j = Math.min(i + 1 + Math.floor(Math.random() * 3), q.length - 1)
         if (j > i) [q[i], q[j]] = [q[j], q[i]]
       }
     }
-    // Cumulative review — pull 2-3 weak notes from prior completed modules
-    // and inject at non-adjacent interior positions. Returns the tagged
-    // queue unchanged if no completed prior modules exist.
-    const reviewPool = buildReviewPool(moduleId, 3)
+    // Review injection is only meaningful for Standard sessions — Quick
+    // and Practice are warmups that stay focused on the current module.
+    const reviewPool = mode === 'standard' ? buildReviewPool(moduleId, 3) : []
     setQueue(injectReviewQuestions(q, reviewPool))
     noteResultsRef.current = {}
     displayMissRef.current = {}
@@ -168,7 +179,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
     reviewHitsRef.current = { answered: 0, correct: 0 }
     moduleAnsweredRef.current = 0
     questionStartRef.current = performance.now()
-  }, [moduleId])
+  }, [moduleId, mode])
 
   // Reset the question-start timer whenever we move to a new card.
   useEffect(() => {
@@ -259,11 +270,12 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [handleAnswer])
 
-  // Save progress when done. Retry mini-sessions intentionally don't
-  // record — they exist to shore up weak notes without affecting pass/fail.
+  // Save progress when done. Quick / Practice / Retry sessions don't
+  // record — they exist to shore up weak notes without affecting mastery.
+  // Only Standard sessions feed the 3-session mastery gate.
   useEffect(() => {
     if (!done || !mod) return
-    if (retryMode) {
+    if (retryMode || mode !== 'standard') {
       setResult({ mp: { moduleId, identify: { completed: false }, play: { completed: false } } as unknown as ReturnType<typeof recordNRIdentifySession>['mp'], identifyJustMastered: false })
       return
     }
@@ -276,6 +288,81 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   }, [done])
 
   if (!mod) return null
+
+  // Mode chooser — shown before a session starts. Quick and Practice
+  // sessions don't count toward mastery, and the chooser says so upfront.
+  if (mode === null) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: 'clamp(32px,5vh,48px) clamp(24px,4vw,40px)', maxWidth: '480px', width: '100%' }}>
+          <button
+            onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', padding: 0, marginBottom: '12px' }}
+          >
+            ← Back
+          </button>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 6px' }}>
+            {mod.title} · Identify
+          </p>
+          <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(26px, 4vw, 34px)', color: '#2A2318', margin: '0 0 10px' }}>
+            Pick a session
+          </h2>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', lineHeight: 1.6, margin: '0 0 22px' }}>
+            Quick and Practice modes help you warm up but don&apos;t count toward mastery.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button
+              onClick={() => setMode('standard')}
+              style={{
+                textAlign: 'left', padding: '14px 18px', borderRadius: '12px',
+                border: '1px solid #DDD8CA', background: '#1A1A18', color: 'white',
+                cursor: 'pointer', fontFamily: F,
+              }}
+            >
+              <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, margin: '0 0 2px' }}>
+                Standard · 20 questions
+              </p>
+              <p style={{ fontSize: 'var(--nl-text-badge)', margin: 0, color: 'rgba(255,255,255,0.72)' }}>
+                Counts toward the 3-session mastery gate
+              </p>
+            </button>
+            <button
+              onClick={() => setMode('quick')}
+              style={{
+                textAlign: 'left', padding: '14px 18px', borderRadius: '12px',
+                border: '1px solid #DDD8CA', background: 'white', color: '#2A2318',
+                cursor: 'pointer', fontFamily: F,
+              }}
+            >
+              <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, margin: '0 0 2px' }}>
+                Quick · 10 questions
+              </p>
+              <p style={{ fontSize: 'var(--nl-text-badge)', margin: 0, color: '#7A7060' }}>
+                Faster warm-up. Doesn&apos;t count toward mastery.
+              </p>
+            </button>
+            <button
+              onClick={() => setMode('practice')}
+              style={{
+                textAlign: 'left', padding: '14px 18px', borderRadius: '12px',
+                border: '1px solid #DDD8CA', background: 'white', color: '#2A2318',
+                cursor: 'pointer', fontFamily: F,
+              }}
+            >
+              <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, margin: '0 0 2px' }}>
+                Practice · up to 60 questions
+              </p>
+              <p style={{ fontSize: 'var(--nl-text-badge)', margin: 0, color: '#7A7060' }}>
+                Drill until you&apos;re ready to stop. End session any time; doesn&apos;t count toward mastery.
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (!queue.length) return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ fontFamily: F, color: '#7A7060' }}>Loading…</p>
@@ -319,8 +406,16 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
     setShowEndConfirm(true)
   }
 
+  // Practice sessions end into the summary (no save — the practice-mode
+  // flag already prevents recording). Quick and Standard discard and go
+  // straight back to the module page.
   function confirmEnd() {
-    router.push(`/programs/note-reading/${moduleId}`)
+    if (mode === 'practice') {
+      setShowEndConfirm(false)
+      setDone(true)
+    } else {
+      router.push(`/programs/note-reading/${moduleId}`)
+    }
   }
 
   // ── Summary screen ──────────────────────────────────────────────────────────
@@ -355,16 +450,18 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
       timingsRef.current = []
       reviewHitsRef.current = { answered: 0, correct: 0 }
       moduleAnsweredRef.current = 0
+      const currentMode = mode ?? 'standard'
+      const targetLength = MODE_LENGTH[currentMode]
       const store = loadNRProgress()
       const stats = getNoteStats(moduleId, 'identify', store)
-      const q = buildWeightedPool(mod!.notes, stats, SESSION_LENGTH)
+      const q = buildWeightedPool(mod!.notes, stats, targetLength)
       for (let i = 1; i < q.length; i++) {
         if (pitchClass(q[i]) === pitchClass(q[i - 1])) {
           const j = Math.min(i + 1 + Math.floor(Math.random() * 3), q.length - 1)
           if (j > i) [q[i], q[j]] = [q[j], q[i]]
         }
       }
-      const reviewPool = buildReviewPool(moduleId, 3)
+      const reviewPool = currentMode === 'standard' ? buildReviewPool(moduleId, 3) : []
       setQueue(injectReviewQuestions(q, reviewPool))
       questionStartRef.current = performance.now()
     }
@@ -451,14 +548,24 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
             </div>
           )}
 
-          {/* Progress */}
-          {!retryMode && (
+          {/* Progress / mastery-counting state. Standard sessions feed the
+              3-session mastery gate; Quick and Practice are warmups and
+              say so explicitly. Retry mini-sessions carry no mastery
+              weight and suppress the block entirely. */}
+          {!retryMode && mode === 'standard' && (
             <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#EDE8DF', borderRadius: '10px' }}>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '0 0 4px' }}>
-                {passedThisSession ? '✓ Session passed' : '✗ Accuracy below target'} · {Math.round(threshold * 100)}% needed
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: passedThisSession ? CORRECT_FG : WRONG_FG, margin: '0 0 4px', fontWeight: 500 }}>
+                {passedThisSession ? '✓ Counted toward mastery' : `Session didn't count — need ${Math.round(threshold * 100)}% accuracy`}
               </p>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#2A2318', margin: 0, fontWeight: 400 }}>
                 {passingSessions} of {needed} consecutive passing sessions
+              </p>
+            </div>
+          )}
+          {!retryMode && mode !== 'standard' && (
+            <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#EDE8DF', borderRadius: '10px' }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
+                {mode === 'quick' ? 'Quick session' : 'Practice session'} · Doesn&apos;t count toward mastery
               </p>
             </div>
           )}
@@ -668,7 +775,9 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
           >
             <h3 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#2A2318', margin: '0 0 8px' }}>End this session?</h3>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 20px', lineHeight: 1.55 }}>
-              Progress for this session won&apos;t be saved.
+              {mode === 'practice'
+                ? "You'll see a summary of what you drilled so far."
+                : "Progress for this session won't be saved."}
             </p>
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
               <button
@@ -681,7 +790,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
                 onClick={confirmEnd}
                 style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 16px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
               >
-                End session
+                {mode === 'practice' ? 'End and see stats' : 'End session'}
               </button>
             </div>
           </div>

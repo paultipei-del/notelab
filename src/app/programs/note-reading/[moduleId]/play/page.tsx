@@ -412,10 +412,12 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
           )}
 
           <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#EDE8DF', borderRadius: '10px' }}>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '0 0 4px' }}>
-              {passedSession ? '✓ Session passed' : '✗ Criteria not met'}
-              {' · '}{Math.round(threshold * 100)}% accuracy needed
-              {msThreshold && ` · avg <${(msThreshold/1000).toFixed(1)}s needed`}
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: passedSession ? '#3B6D11' : '#A32D2D', margin: '0 0 4px', fontWeight: 500 }}>
+              {passedSession
+                ? '✓ Counted toward mastery'
+                : !passedAcc
+                  ? `Session didn't count — need ${Math.round(threshold * 100)}% accuracy`
+                  : `Great accuracy — but your average was ${avgMs !== null ? (avgMs / 1000).toFixed(1) : '?'}s. Need under ${msThreshold ? (msThreshold / 1000).toFixed(1) : '?'}s for this to count.`}
             </p>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#2A2318', margin: 0, fontWeight: 400 }}>
               {passingSessions} of {needed} consecutive passing sessions

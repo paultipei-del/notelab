@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { useFeatureAccess } from '@/hooks/useFeatureAccess'
 import GlyphBackdrop from '@/components/marketing/GlyphBackdrop'
+import { computeRetentionSummary, type RetentionSummary } from '@/lib/programs/note-reading/progress'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -154,6 +155,36 @@ function ProgramRing({ level, totalLevels, pct, label }: { level: number; totalL
   )
 }
 
+/** Small retention ring — mirrors ProgramRing but colours the stroke
+ *  based on how well the student is holding onto earlier-module notes. */
+function NoteReadingRetention({ summary }: { summary: RetentionSummary | null }) {
+  if (!summary || summary.totalAnswered === 0) {
+    return <p style={{ fontFamily: F, fontSize: '12px', color: '#7A7060', margin: 0 }}>No review data yet</p>
+  }
+  const pct = Math.round((summary.recent30Accuracy || summary.accuracy) * 100)
+  const r = 14
+  const c = 2 * Math.PI * r
+  const offset = c * (1 - pct / 100)
+  const stroke = pct >= 90 ? '#3B6D11' : pct >= 70 ? '#B5402A' : '#A32D2D'
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <svg className="nl-viz-ring" viewBox="0 0 36 36" aria-label={`${pct}% retention`}>
+        <circle cx="18" cy="18" r={r} fill="none" stroke="#EDE8DF" strokeWidth="3" />
+        <circle
+          cx="18" cy="18" r={r} fill="none"
+          stroke={stroke} strokeWidth="3"
+          strokeDasharray={c} strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform="rotate(-90 18 18)"
+        />
+      </svg>
+      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#4A4540' }}>
+        {pct}% retention
+      </span>
+    </div>
+  )
+}
+
 /** 11 dots indicating visited parts of the reference library. */
 function PartsDots({ visited, latestLabel }: { visited: boolean[]; latestLabel: string }) {
   return (
@@ -245,6 +276,7 @@ function ExploreTile({ label, title, body, href }: TileProps) {
 export default function Home() {
   const { user, loading } = useAuth()
   const [g, setG] = useState('')
+  const [retention, setRetention] = useState<RetentionSummary | null>(null)
 
   // Redirect logged-out users to landing page.
   useEffect(() => {
@@ -256,6 +288,7 @@ export default function Home() {
   // Avoid SSR hydration mismatch on the time-of-day greeting.
   useEffect(() => {
     setG(greeting())
+    setRetention(computeRetentionSummary())
   }, [])
 
   const resume = useResumeTarget()
@@ -383,6 +416,15 @@ export default function Home() {
               body="Listen and identify intervals, triads, cadences, scales."
               href="/ear-training"
               viz={<StreakBadge days={0} />}
+            />
+            <DayTile
+              label="Note reading retention"
+              title={retention && retention.totalAnswered > 0 ? 'Refresh your skills' : 'Start note reading'}
+              body={retention && retention.totalAnswered > 0
+                ? 'Review questions from completed modules track how well your note knowledge is sticking.'
+                : 'Build note-reading fluency — retention appears here once you complete a module.'}
+              href="/programs/note-reading"
+              viz={<NoteReadingRetention summary={retention} />}
             />
           </div>
         </section>

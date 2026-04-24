@@ -29,7 +29,12 @@ const GAP_AFTER_MEASURE_MS = 700
 const DEFAULT_TEMPO = 60
 // Swallow analyser output during the first slice of each beat so the
 // metronome click can't register as a detected pitch.
-const BEAT_DEAD_WINDOW_MS = 120
+const BEAT_DEAD_WINDOW_MS = 80
+// The played note must be detected within this many ms of the beat tick
+// to count as "on time". Detections after this window are marked wrong
+// even if the pitch itself was right — the drill trains timing, not just
+// pitch recall.
+const BEAT_TIMING_TOLERANCE_MS = 300
 const OCTAVE_BLEED_MS = 600
 
 const CORRECT_FG = '#3B6D11'
@@ -241,22 +246,31 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
       if (!isOctaveBleed) {
         const beatIdx = activeBeatRef.current!
         if (pitchMatch(result.name, target)) {
-          // Correct pitch within beat window.
+          // Right pitch — but it only counts as correct if detected within
+          // the timing tolerance. Late detections are locked as wrong so
+          // rhythmic accuracy matters, not just pitch recall.
           beatResolvedRef.current = true
           prevMidiRef.current = result.midi
           const responseMs = timeSinceBeat
-          responseTimesRef.current = [...responseTimesRef.current, responseMs]
+          const onTime = responseMs <= BEAT_TIMING_TOLERANCE_MS
           const next = beatStatesRef.current.slice()
-          next[beatIdx] = 'correct'
+          next[beatIdx] = onTime ? 'correct' : 'wrong'
           beatStatesRef.current = next
           setBeatStates(next)
-          correctRef.current++
           totalAnsweredRef.current++
-          setCorrectCount(correctRef.current)
           if (!noteResultsRef.current[target]) noteResultsRef.current[target] = { attempts: 0, correct: 0, responseMsTotal: 0 }
           noteResultsRef.current[target].attempts++
-          noteResultsRef.current[target].correct++
-          noteResultsRef.current[target].responseMsTotal = (noteResultsRef.current[target].responseMsTotal ?? 0) + responseMs
+          if (onTime) {
+            responseTimesRef.current = [...responseTimesRef.current, responseMs]
+            correctRef.current++
+            setCorrectCount(correctRef.current)
+            noteResultsRef.current[target].correct++
+            noteResultsRef.current[target].responseMsTotal = (noteResultsRef.current[target].responseMsTotal ?? 0) + responseMs
+          } else {
+            const letter = target.replace(/\d+$/, '')
+            missedLettersRef.current[letter] = (missedLettersRef.current[letter] ?? 0) + 1
+            measureHadMissRef.current = true
+          }
         } else {
           // Wrong pitch — lock the beat as wrong, don't keep listening.
           beatResolvedRef.current = true
@@ -639,7 +653,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
               transition: 'background 0.2s, border-color 0.2s',
             }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '10px' }}>
-                Play each note on its beat · {currentMeasure.tempoBpm} BPM
+                Play each note within {BEAT_TIMING_TOLERANCE_MS}ms of its beat · {currentMeasure.tempoBpm} BPM
               </p>
 
               <RhythmicMeasureStaff

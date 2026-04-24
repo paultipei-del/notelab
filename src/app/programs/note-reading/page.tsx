@@ -206,6 +206,9 @@ export default function NoteReadingPage() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#B0ACA4', margin: '0 0 4px' }}>{mod.title}</p>
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', margin: '0 0 6px', lineHeight: 1.5 }}>
+                      {mod.subtitle} · {[...new Set(mod.notes)].length} notes
+                    </p>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
                       <ClefBadge clef={mod.clef} />
                       {mod.tools.map(t => <ToolBadge key={t} tool={t} />)}
@@ -246,6 +249,12 @@ export default function NoteReadingPage() {
                       <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#2A2318', margin: 0 }}>{mod.title}</p>
                       {statusDot}
                     </div>
+                    {/* One-line scope description — uses the module's subtitle
+                        so it stays authoritative. Paired with the unique-note
+                        pool count so the scope is legible at a glance. */}
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '0 0 6px', lineHeight: 1.5 }}>
+                      {mod.subtitle} · {[...new Set(mod.notes)].length} notes
+                    </p>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
                       <ClefBadge clef={mod.clef} />
                       {mod.tools.map(t => <ToolBadge key={t} tool={t} />)}
@@ -254,6 +263,25 @@ export default function NoteReadingPage() {
                           {progressText}
                         </span>
                       )}
+                      {/* Per-module retention — only meaningful after the
+                          student has started seeing review questions drawn
+                          from this module. */}
+                      {(() => {
+                        const modRet = retention?.byModule[mod.id]
+                        if (!modRet || modRet.answered === 0) return null
+                        const pct = Math.round((modRet.correct / modRet.answered) * 100)
+                        return (
+                          <span style={{
+                            fontFamily: F, fontSize: 'var(--nl-text-badge)',
+                            letterSpacing: '0.06em', textTransform: 'uppercase' as const,
+                            padding: '2px 7px', borderRadius: '20px',
+                            background: pct >= 90 ? 'rgba(59,109,17,0.12)' : pct >= 70 ? 'rgba(181,64,42,0.10)' : 'rgba(163,45,45,0.12)',
+                            color: pct >= 90 ? '#3B6D11' : pct >= 70 ? '#B5402A' : '#A32D2D',
+                          }}>
+                            {pct}% retention
+                          </span>
+                        )
+                      })()}
                     </div>
                   </div>
 
