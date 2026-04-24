@@ -93,7 +93,10 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
     // Route explicitly to the owning collection rather than using history.
     // Without this, users who jumped between decks in a single session
     // would land on the *previous* deck instead of the index page.
-    const target = deck.id.startsWith('ear-') ? '/ear-training' : '/flashcards'
+    // Decks with a `tier` live on /flashcards (including `ear-to-paper`,
+    // which is an Application & Review deck despite its `ear-` id prefix).
+    const isEarTraining = deck.id.startsWith('ear-') && !deck.tier
+    const target = isEarTraining ? '/ear-training' : '/flashcards'
     router.push(target)
   }
 

@@ -7,7 +7,10 @@ const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 
 export default function EarTrainingPage() {
-  const decks = DECKS.filter(d => d.id.startsWith('ear-'))
+  // Real ear-training decks have an `id` prefixed with `ear-` AND no `tier`.
+  // Application & Review decks (e.g. `ear-to-paper`) also start with `ear-`
+  // but live on /flashcards via their tier — exclude them.
+  const decks = DECKS.filter(d => d.id.startsWith('ear-') && !d.tier)
 
   // Group decks by their `group` label (Intervals, Chords & Harmony, Scales).
   const groups: { label: string; decks: typeof decks }[] = []
