@@ -9,6 +9,19 @@ import SymbolCard from '@/components/cards/SymbolCard'
 import AudioCard from '@/components/cards/AudioCard'
 import AudioBrowseRow from '@/components/cards/AudioBrowseRow'
 import ExplainCard from '@/components/cards/ExplainCard'
+import ChallengeCard from '@/components/cards/ChallengeCard'
+
+// Application & Review decks use multi-part challenge cards that need a
+// dedicated reading-column UI. These deck IDs get:
+//   • ChallengeCard instead of FlipCard
+//   • Flip mode only (no MC / Explain / Play / Quiz buttons)
+//   • Standard prev/next navigation and topbar
+const CHALLENGE_DECK_IDS = new Set([
+  'identify-and-explain',
+  'build-and-transform',
+  'score-reading-quickfire',
+  'ear-to-paper',
+])
 import { stopMic } from '@/components/cards/PlayItCard2'
 import PlayItCard2 from '@/components/cards/PlayItCard2'
 import { useRouter } from 'next/navigation'
@@ -53,7 +66,9 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   const isAudioDeck = deck.cards.every(c => c.type === 'audio')
   const isStaffDeck = deck.cards.some(c => c.type === 'staff')
   const isSightReadDeck = deck.id.startsWith('sight-read-')
+  const isChallengeDeck = CHALLENGE_DECK_IDS.has(deck.id)
   const visibleModes = STUDY_MODES.filter(m => {
+    if (isChallengeDeck) return m.id === 'flip'
     if (isSightReadDeck) return m.id === 'play'
     if (isAudioDeck && ['explain', 'play'].includes(m.id)) return false
     if (!isStaffDeck && m.id === 'play') return false
@@ -66,6 +81,7 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   // back to the question is just as useful as flipping to the answer.
   const toggleFlipRevealed = () => setFlipRevealed(r => !r)
   const flipCardEl = !flipCard ? null
+    : isChallengeDeck ? <ChallengeCard card={flipCard} revealed={flipRevealed} onReveal={toggleFlipRevealed} />
     : flipCard.type === 'audio' ? <AudioCard card={flipCard} revealed={flipRevealed} onReveal={toggleFlipRevealed} />
     : flipCard.type === 'symbol' ? <SymbolCard card={flipCard} revealed={flipRevealed} onReveal={toggleFlipRevealed} />
     : <FlipCard card={flipCard as any} revealed={flipRevealed} onReveal={toggleFlipRevealed} />
@@ -274,9 +290,11 @@ return (
                 ))}
               </div>
               <div className="nl-study-mode-row nl-study-mode-row--actions">
-                <button type="button" className="nl-study-mode-btn nl-study-mode-btn--quiz" onClick={() => { stopMic(); onQuiz() }}>
-                  Quiz
-                </button>
+                {!isChallengeDeck && (
+                  <button type="button" className="nl-study-mode-btn nl-study-mode-btn--quiz" onClick={() => { stopMic(); onQuiz() }}>
+                    Quiz
+                  </button>
+                )}
                 <button type="button" className="nl-study-mode-btn nl-study-mode-btn--browse" onClick={() => { stopMic(); setViewMode('browse') }}>
                   Browse
                 </button>

@@ -17,7 +17,7 @@
 
 /* ── Study / quiz — fill viewport *below* global SiteHeader (footer hidden on /study) ─ */
 .nl-study-viewport {
-  background: #f2eddf;
+  background: #F2EDDF;
   display: flex;
   flex-direction: column;
   /* SiteHeader + this must fit in --nl-viewport-h (not raw 100dvh alone) */
@@ -41,7 +41,7 @@ body:has(.nl-study-viewport) {
 /* study/[deckId] loading + not-found — class-based only (avoids SSR/client inline style normalization mismatch) */
 .nl-study-page-shell {
   min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
-  background: #f2eddf;
+  background: #F2EDDF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,7 +85,7 @@ body:has(.nl-study-viewport) {
   flex-direction: column;
   gap: 8px;
   padding: 10px max(32px, env(safe-area-inset-left)) 8px max(32px, env(safe-area-inset-right));
-  background: #f2eddf;
+  background: #F2EDDF;
 }
 
 /* Ghost-outline back button used across the study viewport (topbar, browse
@@ -601,7 +601,7 @@ body:has(.nl-study-viewport) {
   min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
   display: flex;
   flex-direction: column;
-  background: #f2eddf;
+  background: #F2EDDF;
   box-sizing: border-box;
 }
 
@@ -749,7 +749,7 @@ body:has(.nl-study-viewport) {
 /* Clef-specific level list (treble / bass / grand) — header fixed, list scrolls */
 .nl-sight-read-clef-page {
   min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
-  background: #f2eddf;
+  background: #F2EDDF;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -866,7 +866,7 @@ body:has(.nl-study-viewport) {
 /* ── Key signatures explorer (/key-signatures) ─ */
 .nl-key-sig-page {
   min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
-  background: #f2eddf;
+  background: #F2EDDF;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -912,7 +912,7 @@ body:has(.nl-study-viewport) {
 }
 
 .nl-key-sig-panel__viz {
-  background: linear-gradient(180deg, #f6f1e8 0%, #f2eddf 100%);
+  background: linear-gradient(180deg, #f6f1e8 0%, #F2EDDF 100%);
   padding: clamp(12px, 2.5vw, 18px);
   display: flex;
   flex-direction: column;
@@ -1067,7 +1067,7 @@ body:has(.nl-study-viewport) {
   padding: 7px 14px;
   border-radius: 999px;
   border: 1px solid #ddd8ca;
-  background: #f2eddf;
+  background: #F2EDDF;
   color: #7a7060;
   font-family: var(--font-jost), sans-serif;
   font-size: var(--nl-text-compact);
@@ -1093,7 +1093,7 @@ body:has(.nl-study-viewport) {
 }
 
 .nl-key-sig-card {
-  background: #f2eddf;
+  background: #F2EDDF;
   border: 1px solid #ede8df;
   border-radius: 12px;
   padding: 12px 12px 14px;
@@ -1447,7 +1447,7 @@ body:has(.nl-study-viewport) {
 }
 
 .nl-key-drill-order-dot__circle--muted {
-  background: #f2eddf;
+  background: #F2EDDF;
   color: #ddd8ca;
 }
 
@@ -1478,7 +1478,7 @@ body:has(.nl-study-viewport) {
 }
 
 .nl-key-drill-reveal[data-revealed='true'] {
-  background: #f2eddf;
+  background: #F2EDDF;
   color: #1a1a18;
 }
 
@@ -1548,7 +1548,7 @@ body:has(.nl-study-viewport) {
   font-size: 18px;
   text-align: center;
   outline: none;
-  background: #f2eddf;
+  background: #F2EDDF;
   color: #2a2318;
 }
 
@@ -1600,7 +1600,7 @@ body:has(.nl-study-viewport) {
   height: 36px;
   border-radius: 50%;
   border: 2px solid #ddd8ca;
-  background: #f2eddf;
+  background: #F2EDDF;
   font-family: var(--font-cormorant), serif;
   font-size: 16px;
   text-align: center;
@@ -1766,7 +1766,7 @@ body:has(.nl-study-viewport) {
   justify-content: center;
   font-family: var(--font-cormorant), serif;
   font-size: 18px;
-  background: #f2eddf;
+  background: #F2EDDF;
   color: #2a2318;
   box-sizing: border-box;
 }
@@ -2433,7 +2433,7 @@ button:not(:disabled):active {
     z-index: 45;
     padding: 10px 12px;
     margin: 0;
-    background: #f2eddf;
+    background: #F2EDDF;
     border-bottom: 1px solid #ddd8ca;
     box-sizing: border-box;
   }
@@ -2487,7 +2487,7 @@ button:not(:disabled):active {
     -webkit-tap-highlight-color: transparent;
   }
   .nl-account-page__mobile-tab--active {
-    background: #f2eddf;
+    background: #F2EDDF;
     color: #2a2318;
   }
   .nl-account-page__mobile-tab svg {

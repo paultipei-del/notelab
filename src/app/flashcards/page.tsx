@@ -223,6 +223,16 @@ export default function FlashcardsPage() {
                     <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#7A7060', fontStyle: 'italic', margin: '4px 0 8px' }}>
                       No decks in this tier yet.
                     </p>
+                  ) : tier === 'application' ? (
+                    // Application & Review renders as a single flat grid —
+                    // no subsection labels — so one card per category doesn't
+                    // collapse to a narrow left-aligned column.
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px', alignItems: 'stretch' }}>
+                      {decks
+                        .slice()
+                        .sort((a, b) => (a.tierOrder ?? 0) - (b.tierOrder ?? 0))
+                        .map(deck => <DeckTile key={deck.id} deck={deck} />)}
+                    </div>
                   ) : (
                     categories.map(cat => {
                       const list = byCategory.get(cat) ?? []
