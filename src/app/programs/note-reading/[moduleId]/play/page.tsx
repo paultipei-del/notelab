@@ -430,9 +430,45 @@ export default function PlaySessionPage({ params }: Props) {
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,20px) 16px' }}>
         {micError ? (
-          <p style={{ fontFamily: F, color: '#A32D2D', textAlign: 'center', maxWidth: '360px' }}>{micError}</p>
+          // Friendly no-mic fallback — Play It listens through the mic (not
+          // MIDI), so a denied permission is a blocker. Offer a clear recovery
+          // path instead of a raw error string.
+          <div style={{
+            maxWidth: '440px', width: '100%', background: '#FDFAF3',
+            border: '1px solid #DDD8CA', borderRadius: '16px', padding: '28px 32px',
+            textAlign: 'center', boxShadow: '0 2px 20px rgba(26,26,24,0.06)',
+          }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 8px' }}>
+              Can&apos;t hear your piano
+            </p>
+            <h3 style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#2A2318', margin: '0 0 12px' }}>
+              Microphone access needed
+            </h3>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', lineHeight: 1.6, margin: '0 0 20px' }}>
+              Play It uses your microphone to listen for the note you play on your piano. Allow mic access in your browser&apos;s address bar, then reload this page.
+            </p>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+              <button
+                onClick={() => window.location.reload()}
+                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '11px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+              >
+                Reload and retry
+              </button>
+              <button
+                onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '11px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+              >
+                ← Back to module
+              </button>
+            </div>
+          </div>
         ) : !micReady ? (
-          <p style={{ fontFamily: F, color: '#7A7060' }}>Starting microphone…</p>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 300, color: '#2A2318', margin: '0 0 4px' }}>
+              Get your piano ready
+            </p>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>Warming up the microphone…</p>
+          </div>
         ) : (
           <div style={{ maxWidth: '560px', width: '100%' }}>
             <div style={{

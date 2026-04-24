@@ -1,7 +1,7 @@
 // Static curriculum config — no DB dependency.
 // Progress is tracked separately in Supabase / localStorage.
 
-export type NRTool = 'identify' | 'play'
+export type NRTool = 'identify' | 'locate' | 'play'
 
 export interface NRModuleDef {
   id: string
@@ -10,10 +10,11 @@ export interface NRModuleDef {
   description: string
   clef: 'treble' | 'bass' | 'grand'
   notes: string[]          // pitch strings: 'C4', 'F#4', 'Bb3'
-  tools: NRTool[]          // ordered — Play unlocks after Identify mastered
+  tools: NRTool[]          // ordered — Locate & Play unlock after Identify mastered
   unlockAfter: string[]    // ALL listed module IDs must be complete
   criteria: {
     identifyAccuracy?: number    // 0–1
+    locateAccuracy?: number      // 0–1
     playAccuracy?: number        // 0–1
     playAvgResponseMs?: number
     sessions: number             // consecutive passing sessions required
@@ -30,9 +31,15 @@ export const NOTE_READING_MODULES: NRModuleDef[] = [
       'Seven reference points that anchor everything else — Middle C, the open strings of each staff, and the spaces between. Make these automatic before drilling all notes.',
     clef: 'grand',
     notes: ['C4', 'G4', 'B4', 'D5', 'F5', 'B3', 'G3'],
-    tools: ['identify'],
+    tools: ['identify', 'locate', 'play'],
     unlockAfter: [],
-    criteria: { identifyAccuracy: 0.95, sessions: 3 },
+    criteria: {
+      identifyAccuracy: 0.95,
+      locateAccuracy: 0.95,
+      playAccuracy: 0.95,
+      playAvgResponseMs: 4500,
+      sessions: 3,
+    },
   },
   {
     id: 'treble-basics',

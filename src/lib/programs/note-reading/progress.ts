@@ -19,6 +19,7 @@ export interface NRToolProgress {
 
 export interface NRModuleProgress {
   identify: NRToolProgress
+  locate: NRToolProgress
   play: NRToolProgress
   completed: boolean
 }
@@ -28,8 +29,22 @@ export type NRProgressStore = Record<string, NRModuleProgress>
 function emptyModuleProgress(): NRModuleProgress {
   return {
     identify: { sessions: [], mastered: false },
+    locate: { sessions: [], mastered: false },
     play: { sessions: [], mastered: false },
     completed: false,
+  }
+}
+
+// Migration: modules saved before locate was introduced won't have the
+// locate slot. Backfill it on read so downstream code never sees undefined.
+function normalizeModuleProgress(raw: Partial<NRModuleProgress> | undefined): NRModuleProgress {
+  const base = emptyModuleProgress()
+  if (!raw) return base
+  return {
+    identify: raw.identify ?? base.identify,
+    locate: raw.locate ?? base.locate,
+    play: raw.play ?? base.play,
+    completed: raw.completed ?? false,
   }
 }
 
@@ -37,7 +52,11 @@ export function loadNRProgress(): NRProgressStore {
   if (typeof window === 'undefined') return {}
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : {}
+    if (!raw) return {}
+    const parsed = JSON.parse(raw) as Record<string, Partial<NRModuleProgress>>
+    const out: NRProgressStore = {}
+    for (const [id, mp] of Object.entries(parsed)) out[id] = normalizeModuleProgress(mp)
+    return out
   } catch {
     return {}
   }
@@ -62,6 +81,17 @@ export function isNRModuleUnlocked(moduleId: string, store?: NRProgressStore): b
 }
 
 export function isNRPlayUnlocked(moduleId: string, store?: NRProgressStore): boolean {
+  const mod = getNRModule(moduleId)
+  if (!mod) return false
+  if (!mod.tools.includes('identify')) return true
+  const s = store ?? loadNRProgress()
+  return s[moduleId]?.identify?.mastered === true
+}
+
+// Locate unlocks on the same rule as Play: identify must be mastered first
+// (or no identify requirement exists). Keeps the three-drill progression
+// consistent — learners prove recognition before switching to active recall.
+export function isNRLocateUnlocked(moduleId: string, store?: NRProgressStore): boolean {
   const mod = getNRModule(moduleId)
   if (!mod) return false
   if (!mod.tools.includes('identify')) return true
@@ -101,6 +131,38 @@ export function recordNRIdentifySession(
   return { mp, identifyJustMastered }
 }
 
+// Record a locate session. Mirrors the identify-session shape since the
+// drill is a visual-recall task with no response-time threshold.
+export function recordNRLocateSession(
+  moduleId: string,
+  accuracy: number,
+  noteResults: Record<string, NoteResult> = {},
+): { mp: NRModuleProgress; locateJustMastered: boolean } {
+  const mod = getNRModule(moduleId)
+  if (!mod) return { mp: emptyModuleProgress(), locateJustMastered: false }
+
+  const store = loadNRProgress()
+  const mp = store[moduleId] ?? emptyModuleProgress()
+
+  const wasMastered = mp.locate.mastered
+
+  const record: NRSessionRecord = { accuracy, timestamp: Date.now(), noteResults }
+  mp.locate.sessions = [...mp.locate.sessions, record]
+
+  const needed = mod.criteria.sessions
+  const threshold = mod.criteria.locateAccuracy ?? 0.9
+  const recent = mp.locate.sessions.slice(-needed)
+  mp.locate.mastered =
+    recent.length >= needed && recent.every(s => s.accuracy >= threshold)
+
+  const locateJustMastered = !wasMastered && mp.locate.mastered
+
+  mp.completed = checkModuleComplete(mod, mp)
+  store[moduleId] = mp
+  saveNRProgress(store)
+  return { mp, locateJustMastered }
+}
+
 // Record a play session.
 export function recordNRPlaySession(
   moduleId: string,
@@ -138,13 +200,14 @@ export function recordNRPlaySession(
 function checkModuleComplete(mod: ReturnType<typeof getNRModule>, mp: NRModuleProgress): boolean {
   if (!mod) return false
   if (mod.tools.includes('identify') && !mp.identify.mastered) return false
+  if (mod.tools.includes('locate') && !mp.locate.mastered) return false
   if (mod.tools.includes('play') && !mp.play.mastered) return false
   return true
 }
 
 export function nrConsecutivePassing(
   moduleId: string,
-  tool: 'identify' | 'play',
+  tool: 'identify' | 'locate' | 'play',
   store?: NRProgressStore,
 ): number {
   const mod = getNRModule(moduleId)
@@ -158,7 +221,9 @@ export function nrConsecutivePassing(
   const threshold =
     tool === 'identify'
       ? (mod.criteria.identifyAccuracy ?? 0.9)
-      : (mod.criteria.playAccuracy ?? 0.9)
+      : tool === 'locate'
+        ? (mod.criteria.locateAccuracy ?? 0.9)
+        : (mod.criteria.playAccuracy ?? 0.9)
   const msThreshold = tool === 'play' ? mod.criteria.playAvgResponseMs : undefined
 
   let count = 0
@@ -177,10 +242,10 @@ export function nrConsecutivePassing(
 }
 
 // Compute per-note stats by aggregating noteResults across all stored sessions.
-// tool: 'identify' | 'play' | 'both'
+// tool: 'identify' | 'locate' | 'play' | 'both'
 export function getNoteStats(
   moduleId: string,
-  tool: 'identify' | 'play' | 'both' = 'both',
+  tool: 'identify' | 'locate' | 'play' | 'both' = 'both',
   store?: NRProgressStore,
 ): NoteStats[] {
   const s = store ?? loadNRProgress()
@@ -202,6 +267,7 @@ export function getNoteStats(
   }
 
   if (tool === 'identify' || tool === 'both') aggregate(mp.identify.sessions)
+  if (tool === 'locate' || tool === 'both') aggregate(mp.locate.sessions)
   if (tool === 'play' || tool === 'both') aggregate(mp.play.sessions)
 
   return Object.entries(agg).map(([noteId, stats]) => {

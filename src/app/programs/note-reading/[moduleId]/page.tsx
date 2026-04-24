@@ -8,6 +8,7 @@ import {
   getNRModuleProgress,
   isNRModuleUnlocked,
   isNRPlayUnlocked,
+  isNRLocateUnlocked,
   nrConsecutivePassing,
   loadNRProgress,
   getNoteStats,
@@ -37,7 +38,7 @@ export default function ModuleOverviewPage({ params }: Props) {
   useEffect(() => {
     const s = loadNRProgress()
     setStore(s)
-    setMp(s[moduleId] ?? { identify: { sessions: [], mastered: false }, play: { sessions: [], mastered: false }, completed: false })
+    setMp(s[moduleId] ?? { identify: { sessions: [], mastered: false }, locate: { sessions: [], mastered: false }, play: { sessions: [], mastered: false }, completed: false })
     setNoteStats(getNoteStats(moduleId, 'both', s))
   }, [moduleId])
 
@@ -69,17 +70,20 @@ export default function ModuleOverviewPage({ params }: Props) {
   }
 
   const hasIdentify = mod.tools.includes('identify')
+  const hasLocate = mod.tools.includes('locate')
   const hasPlay = mod.tools.includes('play')
+  const locateUnlocked = isNRLocateUnlocked(moduleId, store)
   const playUnlocked = isNRPlayUnlocked(moduleId, store)
   const identifyPassing = nrConsecutivePassing(moduleId, 'identify', store)
+  const locatePassing = nrConsecutivePassing(moduleId, 'locate', store)
   const playPassing = nrConsecutivePassing(moduleId, 'play', store)
   const isModuleFree = moduleId === 'landmarks'
   const nextModule = NOTE_READING_MODULES.find(m => m.unlockAfter.includes(moduleId))
   const hasAnySessions = noteStats.some(s => s.attempts > 0) ||
     mp.identify.sessions.length > 0 || mp.play.sessions.length > 0
 
-  function handleStart(tool: 'identify' | 'play') {
-if (isLoading) return
+  function handleStart(tool: 'identify' | 'locate' | 'play') {
+    if (isLoading) return
     if (!isModuleFree && !isPro) { router.push('/account'); return }
     router.push(`/programs/note-reading/${moduleId}/${tool}`)
   }
@@ -158,6 +162,34 @@ if (isLoading) return
           </div>
         </div>
 
+        {/* Drill-mastery summary — a single source of truth for how the
+            module completes. `completed` is gated on every drill hitting
+            its accuracy threshold over the required session count. */}
+        {(() => {
+          const masteredCount =
+            (hasIdentify && mp.identify.mastered ? 1 : 0) +
+            (hasLocate && mp.locate.mastered ? 1 : 0) +
+            (hasPlay && mp.play.mastered ? 1 : 0)
+          const drillCount =
+            (hasIdentify ? 1 : 0) + (hasLocate ? 1 : 0) + (hasPlay ? 1 : 0)
+          if (drillCount <= 1) return null
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', padding: '4px 2px' }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>
+                Drills mastered — {masteredCount} of {drillCount}
+              </p>
+              <div style={{ display: 'flex', gap: '4px' }} aria-hidden="true">
+                {Array.from({ length: drillCount }).map((_, i) => (
+                  <span key={i} style={{
+                    width: '18px', height: '4px', borderRadius: '2px',
+                    background: i < masteredCount ? '#3B6D11' : '#DDD8CA',
+                  }} />
+                ))}
+              </div>
+            </div>
+          )
+        })()}
+
         {/* Tool cards */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
 
@@ -194,6 +226,58 @@ if (isLoading) return
                   <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
                     Last session: {Math.round((mp.identify.sessions.at(-1)?.accuracy ?? 0) * 100)}%
                     {' · '}Total sessions: {mp.identify.sessions.length}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {hasLocate && (
+            <div style={{
+              background: locateUnlocked ? 'white' : '#FDFAF3',
+              border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 24px',
+              opacity: locateUnlocked ? 1 : 0.6,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318', margin: 0 }}>
+                      Note Location
+                    </p>
+                    {mp.locate.mastered && <span style={{ color: '#3B6D11', fontSize: '13px' }}>✓</span>}
+                    {!locateUnlocked && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4' }}>🔒 Complete Identify first</span>}
+                  </div>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 10px' }}>
+                    See a note name — tap the correct line or space on the grand staff. 20 taps per session.
+                  </p>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
+                    {mp.locate.mastered
+                      ? 'Mastered'
+                      : `Progress: ${locatePassing} / ${mod.criteria.sessions} sessions`}
+                    {!mp.locate.mastered && mod.criteria.locateAccuracy && ` · ${Math.round(mod.criteria.locateAccuracy * 100)}% accuracy needed`}
+                  </p>
+                </div>
+                <button
+                  onClick={() => locateUnlocked && handleStart('locate')}
+                  disabled={!locateUnlocked}
+                  style={{
+                    flexShrink: 0,
+                    background: locateUnlocked ? '#1A1A18' : '#EDE8DF',
+                    color: locateUnlocked ? 'white' : '#B0ACA4',
+                    border: 'none', borderRadius: '10px', padding: '10px 20px',
+                    fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400,
+                    cursor: locateUnlocked ? 'pointer' : 'default',
+                  }}
+                >
+                  {mp.locate.mastered ? 'Review' : mp.locate.sessions.length > 0 ? 'Continue' : 'Start'}
+                </button>
+              </div>
+
+              {mp.locate.sessions.length > 0 && (
+                <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #EDE8DF' }}>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
+                    Last session: {Math.round((mp.locate.sessions.at(-1)?.accuracy ?? 0) * 100)}%
+                    {' · '}Total sessions: {mp.locate.sessions.length}
                   </p>
                 </div>
               )}
@@ -255,6 +339,17 @@ if (isLoading) return
             </div>
           )}
         </div>
+
+        {/* Unlock-next hint — only shown when the module has a follow-on
+            module that's still locked, and this module isn't yet complete.
+            Keeps the three-drill gating visible without being pushy. */}
+        {!mp.completed && nextModule && (
+          <div style={{ marginTop: '-12px', marginBottom: '28px', padding: '10px 14px', background: '#FDFAF3', border: '1px dashed #DDD8CA', borderRadius: '10px' }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0, lineHeight: 1.55 }}>
+              Complete all {(hasIdentify ? 1 : 0) + (hasLocate ? 1 : 0) + (hasPlay ? 1 : 0)} drills to unlock <strong style={{ fontFamily: SERIF, fontWeight: 400, color: '#2A2318' }}>{nextModule.title}</strong>.
+            </p>
+          </div>
+        )}
 
         {/* Note Heat Map — only when sessions exist */}
         {hasAnySessions && (

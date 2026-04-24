@@ -27,16 +27,18 @@ function ClefBadge({ clef }: { clef: 'treble' | 'bass' | 'grand' }) {
   )
 }
 
-function ToolBadge({ tool }: { tool: 'identify' | 'play' }) {
+function ToolBadge({ tool }: { tool: 'identify' | 'locate' | 'play' }) {
+  const label = tool === 'identify' ? 'Identify' : tool === 'locate' ? 'Locate' : 'Play It'
+  const dark = tool === 'play'
   return (
     <span style={{
       fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400,
       letterSpacing: '0.06em',
       padding: '2px 7px', borderRadius: '20px',
-      background: tool === 'play' ? '#1A1A18' : '#EDE8DF',
-      color: tool === 'play' ? 'white' : '#7A7060',
+      background: dark ? '#1A1A18' : '#EDE8DF',
+      color: dark ? 'white' : '#7A7060',
     }}>
-      {tool === 'identify' ? 'Identify' : 'Play It'}
+      {label}
     </span>
   )
 }
