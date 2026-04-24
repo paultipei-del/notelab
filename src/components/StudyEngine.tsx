@@ -276,18 +276,34 @@ return (
             <div className="nl-study-mode-toolbar">
               <div
                 className="nl-study-mode-row nl-study-mode-row--modes"
-                data-mode-count={Math.min(visibleModes.length, 4)}
+                data-mode-count={isChallengeDeck ? 1 : Math.min(visibleModes.length, 4)}
               >
-                {visibleModes.map(({ id, label }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => { stopMic(); setMode(id); if (id !== 'flip') resetSession() }}
-                    className={`nl-study-mode-btn${mode === id ? ' nl-study-mode-btn--active' : ''}`}
-                  >
-                    {label}
-                  </button>
-                ))}
+                {isChallengeDeck ? (
+                  // Challenge decks replace the "Flip" mode button with a
+                  // contextual "Hide answer" control that only appears once
+                  // the answer has been revealed. Before reveal, no button
+                  // renders — the reveal itself happens inside the card.
+                  flipRevealed && (
+                    <button
+                      type="button"
+                      className="nl-study-mode-btn nl-study-mode-btn--active"
+                      onClick={() => setFlipRevealed(false)}
+                    >
+                      Hide answer
+                    </button>
+                  )
+                ) : (
+                  visibleModes.map(({ id, label }) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => { stopMic(); setMode(id); if (id !== 'flip') resetSession() }}
+                      className={`nl-study-mode-btn${mode === id ? ' nl-study-mode-btn--active' : ''}`}
+                    >
+                      {label}
+                    </button>
+                  ))
+                )}
               </div>
               <div className="nl-study-mode-row nl-study-mode-row--actions">
                 {!isChallengeDeck && (
@@ -301,7 +317,18 @@ return (
               </div>
             </div>
           )}
-          <div className="nl-study-main">
+          <div
+            className="nl-study-main"
+            style={isChallengeDeck ? {
+              // Challenge cards are prose — center them vertically inside
+              // the available space instead of anchoring to the top.
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflowY: 'auto',
+              padding: '24px 24px',
+            } : undefined}
+          >
             {isFlipMode ? flipCardEl : (mode === 'mc' || mode === 'explain') && currentCard ? (
               <div className="nl-study-mc-stack">
                 {/* Streak moved out of the stack so MC/Explain's question

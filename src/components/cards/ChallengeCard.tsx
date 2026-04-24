@@ -109,12 +109,12 @@ export default function ChallengeCard({
     <div
       style={{
         width: '100%',
-        maxWidth: '720px',
+        maxWidth: '860px',
         margin: '0 auto',
         background: '#FDFAF3',
         border: '1px solid #DDD8CA',
         borderRadius: '16px',
-        padding: 'clamp(24px, 4vw, 40px)',
+        padding: 'clamp(28px, 4vw, 48px)',
         boxShadow:
           '0 1px 0 rgba(255,255,255,0.65) inset, 0 2px 6px rgba(26,26,24,0.05), 0 10px 28px rgba(26,26,24,0.07)',
       }}
