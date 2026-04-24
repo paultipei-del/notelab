@@ -1,11 +1,32 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import {
   GRAND_STAFF_LAYOUT_LARGE,
+  TREBLE_POSITIONS,
+  BASS_POSITIONS,
+  isOnTrebleStaff,
   buildGrandSnapGrid,
   pitchToYGrand,
 } from '@/lib/programs/note-reading/staffPositions'
+
+// Notehead + stem sizing tuned for the LARGE grand-staff layout
+// (step=12). Roughly 2× the values used by GrandStaffCard (step=6).
+// Bravura's em-square extends beyond the visible notehead, so fontSize
+// that looks right here is a touch less than the 2× multiplier suggests.
+const NOTEHEAD_FONT_SIZE = 84
+const STEM_LENGTH = 72
+const STEM_OFFSET = 11
+
+// Stem up/down convention: notes below the middle staff line get
+// stem-up, notes above get stem-down. Middle line defaults to stem-down.
+// For grand staff, we use the pitch's own clef-side middle line.
+function stemDirectionUpForPitch(pitch: string): boolean {
+  const natural = pitch.replace(/[#b]/, '')
+  const positions = isOnTrebleStaff(pitch) ? TREBLE_POSITIONS : BASS_POSITIONS
+  const pos = positions[natural]
+  return pos === undefined ? true : pos >= 4
+}
 
 /**
  * Interactive grand staff used by the Locate drill. Renders the same
@@ -45,6 +66,10 @@ export default function InteractiveGrandStaff({
 }: Props) {
   const L = GRAND_STAFF_LAYOUT_LARGE
   const svgRef = useRef<SVGSVGElement | null>(null)
+  // Hover preview — shows a ghost notehead at the snapped pitch under
+  // the pointer so the student can sight the placement before tapping.
+  // Clears on pointer-leave and whenever the feedback window is open.
+  const [hoverPitch, setHoverPitch] = useState<string | null>(null)
 
   // Pre-compute the snap grid once per render. Cheap — ~30 entries.
   const snapGrid = buildGrandSnapGrid(L)
@@ -68,6 +93,47 @@ export default function InteractiveGrandStaff({
         strokeWidth="1.2"
       />
     ))
+  }
+
+  // Resolve the pitch at a given pointer event by mapping screen coords
+  // into SVG space then snapping to the nearest pitch in the pool.
+  // Shared by handleTap (commit) and handleHover (preview).
+  function snapPitchFromEvent(e: React.MouseEvent<SVGRectElement> | React.TouchEvent<SVGRectElement>): { pitch: string; local: { x: number; y: number } } | null {
+    const svg = svgRef.current
+    if (!svg) return null
+    const pt = svg.createSVGPoint()
+    if ('touches' in e) {
+      const t = e.touches[0] ?? e.changedTouches[0]
+      if (!t) return null
+      pt.x = t.clientX
+      pt.y = t.clientY
+    } else {
+      pt.x = e.clientX
+      pt.y = e.clientY
+    }
+    const ctm = svg.getScreenCTM()
+    if (!ctm) return null
+    const local = pt.matrixTransform(ctm.inverse())
+    let best: { pitch: string; d: number } | null = null
+    for (const p of pool) {
+      const y = pitchToYGrand(p, L)
+      if (y === null) continue
+      const d = Math.abs(local.y - y)
+      if (best === null || d < best.d) best = { pitch: p, d }
+    }
+    if (!best) return null
+    return { pitch: best.pitch, local: { x: local.x, y: local.y } }
+  }
+
+  function handleHover(e: React.MouseEvent<SVGRectElement>) {
+    if (feedback) return
+    const snapped = snapPitchFromEvent(e)
+    if (!snapped) return
+    if (snapped.pitch !== hoverPitch) setHoverPitch(snapped.pitch)
+  }
+
+  function handleLeave() {
+    if (hoverPitch !== null) setHoverPitch(null)
   }
 
   function handleTap(e: React.MouseEvent<SVGRectElement> | React.TouchEvent<SVGRectElement>) {
@@ -238,36 +304,82 @@ export default function InteractiveGrandStaff({
 
       {/* Anchor notehead — used by Intervallic Locate to show the "first
           note" reference. Rendered non-interactively at the left column
-          of the staff body with ledger lines as needed. */}
-      {anchorPitch && anchorY !== null && (
-        <g>
-          {ledgerLinesFor(anchorPitch, '#1A1A18', anchorX)}
-          <text
-            x={anchorX}
-            y={anchorY}
-            fontSize="46"
-            fontFamily="Bravura, serif"
-            fill="#1A1A18"
-            textAnchor="middle"
-            dominantBaseline="central"
-            opacity={0.85}
-          >
-            {String.fromCodePoint(0xE0A4)}
-          </text>
-          {anchorLabel && (
+          of the staff body with ledger lines as needed. Notehead fontSize
+          and stem are scaled to the LARGE layout (step=12, ~2× the base
+          GrandStaffCard scale). */}
+      {anchorPitch && anchorY !== null && (() => {
+        const stemUp = stemDirectionUpForPitch(anchorPitch)
+        return (
+          <g opacity={0.85}>
+            {ledgerLinesFor(anchorPitch, '#1A1A18', anchorX)}
             <text
               x={anchorX}
-              y={H - 24}
+              y={anchorY}
+              fontSize={NOTEHEAD_FONT_SIZE}
+              fontFamily="Bravura, serif"
+              fill="#1A1A18"
               textAnchor="middle"
-              fontFamily="var(--font-cormorant), serif"
-              fontSize="18"
-              fill="#7A7060"
+              dominantBaseline="central"
             >
-              {anchorLabel}
+              {String.fromCodePoint(0xE0A4)}
             </text>
-          )}
-        </g>
+            <line
+              x1={stemUp ? anchorX + STEM_OFFSET : anchorX - STEM_OFFSET}
+              y1={anchorY}
+              x2={stemUp ? anchorX + STEM_OFFSET : anchorX - STEM_OFFSET}
+              y2={stemUp ? anchorY - STEM_LENGTH : anchorY + STEM_LENGTH}
+              stroke="#1A1A18"
+              strokeWidth="2.2"
+            />
+          </g>
+        )
+      })()}
+
+      {anchorLabel && anchorY !== null && (
+        <text
+          x={anchorX}
+          y={H - 24}
+          textAnchor="middle"
+          fontFamily="var(--font-cormorant), serif"
+          fontSize="18"
+          fill="#7A7060"
+        >
+          {anchorLabel}
+        </text>
       )}
+
+      {/* Ghost-notehead hover preview — renders under the tap zone so
+          the pointer still lands on the rect. Muted grey, same fontSize
+          as a real notehead so the preview is faithful to the result. */}
+      {hoverPitch && !feedback && (() => {
+        const gY = pitchToYGrand(hoverPitch, L)
+        if (gY === null) return null
+        const stemUp = stemDirectionUpForPitch(hoverPitch)
+        return (
+          <g opacity={0.3} pointerEvents="none">
+            {ledgerLinesFor(hoverPitch, '#7A7060', markerX)}
+            <text
+              x={markerX}
+              y={gY}
+              fontSize={NOTEHEAD_FONT_SIZE}
+              fontFamily="Bravura, serif"
+              fill="#7A7060"
+              textAnchor="middle"
+              dominantBaseline="central"
+            >
+              {String.fromCodePoint(0xE0A4)}
+            </text>
+            <line
+              x1={stemUp ? markerX + STEM_OFFSET : markerX - STEM_OFFSET}
+              y1={gY}
+              x2={stemUp ? markerX + STEM_OFFSET : markerX - STEM_OFFSET}
+              y2={stemUp ? gY - STEM_LENGTH : gY + STEM_LENGTH}
+              stroke="#7A7060"
+              strokeWidth="2.2"
+            />
+          </g>
+        )
+      })()}
 
       {/* Tap zone — large invisible rect covering the full tappable area.
           Captures both mouse and touch. */}
@@ -279,17 +391,68 @@ export default function InteractiveGrandStaff({
         fill="transparent"
         style={{ cursor: feedback ? 'default' : 'pointer' }}
         onClick={handleTap}
+        onMouseMove={handleHover}
+        onMouseLeave={handleLeave}
       />
 
-      {/* Correct-answer marker (shown on wrong) — outline dot */}
-      {feedback === 'wrong' && correctY !== null && (
-        <circle cx={markerX} cy={correctY} r={10} fill="none" stroke="#3B6D11" strokeWidth="2.5" strokeDasharray="3 3" />
-      )}
+      {/* Correct-answer marker (shown on wrong) — hollow half-note head
+          (U+E0A3) at the target position in green, with stem. Distinct
+          from the user's filled notehead so both read clearly. */}
+      {feedback === 'wrong' && correctPitch && correctY !== null && (() => {
+        const stemUp = stemDirectionUpForPitch(correctPitch)
+        return (
+          <g>
+            <text
+              x={markerX}
+              y={correctY}
+              fontSize={NOTEHEAD_FONT_SIZE}
+              fontFamily="Bravura, serif"
+              fill="#3B6D11"
+              textAnchor="middle"
+              dominantBaseline="central"
+            >
+              {String.fromCodePoint(0xE0A3)}
+            </text>
+            <line
+              x1={stemUp ? markerX + STEM_OFFSET : markerX - STEM_OFFSET}
+              y1={correctY}
+              x2={stemUp ? markerX + STEM_OFFSET : markerX - STEM_OFFSET}
+              y2={stemUp ? correctY - STEM_LENGTH : correctY + STEM_LENGTH}
+              stroke="#3B6D11"
+              strokeWidth="2.2"
+            />
+          </g>
+        )
+      })()}
 
-      {/* User's marker (solid dot) */}
-      {markerY !== null && (
-        <circle cx={markerX} cy={markerY} r={9} fill={markerColor} stroke="white" strokeWidth="1.5" />
-      )}
+      {/* User's marker — filled Bravura notehead (U+E0A4) + stem,
+          coloured by feedback state. */}
+      {markerPitch && markerY !== null && (() => {
+        const stemUp = stemDirectionUpForPitch(markerPitch)
+        return (
+          <g>
+            <text
+              x={markerX}
+              y={markerY}
+              fontSize={NOTEHEAD_FONT_SIZE}
+              fontFamily="Bravura, serif"
+              fill={markerColor}
+              textAnchor="middle"
+              dominantBaseline="central"
+            >
+              {String.fromCodePoint(0xE0A4)}
+            </text>
+            <line
+              x1={stemUp ? markerX + STEM_OFFSET : markerX - STEM_OFFSET}
+              y1={markerY}
+              x2={stemUp ? markerX + STEM_OFFSET : markerX - STEM_OFFSET}
+              y2={stemUp ? markerY - STEM_LENGTH : markerY + STEM_LENGTH}
+              stroke={markerColor}
+              strokeWidth="2.2"
+            />
+          </g>
+        )
+      })()}
     </svg>
   )
 }
