@@ -1,126 +1,378 @@
 'use client'
 
 import Link from 'next/link'
-import { DECKS, CM_BUNDLE_PRICE_ID } from '@/lib/decks'
-import { useAuth } from '@/hooks/useAuth'
-import { usePurchases } from '@/hooks/usePurchases'
+import { DECKS } from '@/lib/decks'
+import { useFeatureAccess } from '@/hooks/useFeatureAccess'
+import {
+  CM_LEVELS,
+  CM_BUNDLES,
+  TIER_ORDER,
+  TIER_LABEL,
+  TIER_DESCRIPTION,
+  type CMLevel,
+  type CMTier,
+} from '@/lib/cmProgram'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
+const ACCENT = '#B5402A'
 
-const cmDecks = DECKS.filter(d => d.tag === 'cm')
+// Each tier gets its own subtle background shade and glyph decoration.
+// All colours live inside the existing cream/charcoal palette.
+const TIER_STYLE: Record<CMTier, { bg: string; glyph: string; glyphSize: string }> = {
+  elementary: { bg: '#FDFAF3', glyph: '𝄞', glyphSize: '72px' },
+  intermediate: { bg: '#F8F1E2', glyph: '𝄞 𝄢', glyphSize: '56px' },
+  advanced: { bg: '#EFE6D2', glyph: '♩♬♩', glyphSize: '56px' },
+}
 
-function getLevelLabel(id: string): string {
-  if (id === 'cm-prep') return 'Preparatory'
-  if (id === 'cm-advanced') return 'Advanced'
-  const m = id.match(/cm-level(\d+)/)
-  return m ? `Level ${m[1]}` : id
+function cardCount(deckId: string): number {
+  return DECKS.find(d => d.id === deckId)?.cards.length ?? 0
+}
+
+function LevelCard({ level }: { level: CMLevel }) {
+  // Feature keys use label-1/label-2 pattern but the catalog we wrote
+  // earlier has level_1 / level_2 / level_3_plus. For this page we only
+  // need to know *is this accessible to the user*; we can reuse an
+  // existing catalog key that covers this level. Preparatory / L1 / L2
+  // map to the free level_1/level_2 keys (everyone has access today).
+  // L3+ map to level_3_plus (gated once monetisation activates).
+  // The master FREE_NOW switch means everyone currently sees "Free"
+  // chips — we present the per-level price label regardless, since
+  // that's information about the product, not about access.
+  const access = useFeatureAccess(
+    level.slug === 'preparatory' ? 'program:cm:level_1'
+      : level.slug === 'level-1'     ? 'program:cm:level_1'
+      : level.slug === 'level-2'     ? 'program:cm:level_2'
+      : 'program:cm:level_3_plus',
+  )
+  const tierStyle = TIER_STYLE[level.tier]
+  const freeTier = level.slug === 'preparatory' || level.slug === 'level-1' || level.slug === 'level-2'
+
+  // Ownership chip. Three states:
+  //  • Owned — user has the right (Plus, bundle, or individual purchase)
+  //    AND would otherwise have been gated (requiredPlan !== 'free').
+  //  • Free — this level is part of the free tier.
+  //  • Price — everyone else.
+  const ownedButWouldBeGated = access.hasAccess && access.requiredPlan !== 'free'
+  const chip = freeTier ? (
+    <span
+      style={{
+        fontFamily: F,
+        fontSize: '10px',
+        fontWeight: 500,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: '#7A7060',
+        background: '#EDE8DF',
+        borderRadius: '20px',
+        padding: '3px 10px',
+      }}
+    >
+      Free
+    </span>
+  ) : ownedButWouldBeGated ? (
+    <span
+      style={{
+        fontFamily: F,
+        fontSize: '10px',
+        fontWeight: 500,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: '#3B6D11',
+        background: '#E6F0D6',
+        borderRadius: '20px',
+        padding: '3px 10px',
+      }}
+    >
+      ✓ Owned
+    </span>
+  ) : (
+    <span
+      style={{
+        fontFamily: F,
+        fontSize: '11px',
+        fontWeight: 600,
+        color: ACCENT,
+        background: '#FAEEDA',
+        borderRadius: '20px',
+        padding: '3px 10px',
+      }}
+    >
+      ${level.price}
+    </span>
+  )
+
+  return (
+    <Link href={`/programs/cm/${level.slug}`} style={{ textDecoration: 'none' }}>
+      <div
+        className="nl-card-surface nl-tile-hover"
+        style={{
+          background: tierStyle.bg,
+          padding: '22px',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Tier decoration glyph */}
+        <span
+          aria-hidden
+          style={{
+            position: 'absolute',
+            right: '-8px',
+            bottom: '-14px',
+            fontFamily: SERIF,
+            fontSize: tierStyle.glyphSize,
+            color: '#2A2318',
+            opacity: 0.06,
+            lineHeight: 1,
+            userSelect: 'none',
+            pointerEvents: 'none',
+          }}
+        >
+          {tierStyle.glyph}
+        </span>
+
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '8px' }}>
+          <span
+            style={{
+              fontFamily: F,
+              fontSize: '11px',
+              fontWeight: 500,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#7A7060',
+            }}
+          >
+            {cardCount(level.deckId)} cards
+          </span>
+          {chip}
+        </div>
+        <h3
+          style={{
+            fontFamily: SERIF,
+            fontWeight: 500,
+            fontSize: '22px',
+            color: '#1A1A18',
+            margin: '0 0 8px 0',
+            letterSpacing: '0.01em',
+          }}
+        >
+          {level.label}
+        </h3>
+        <p
+          style={{
+            fontFamily: F,
+            fontSize: '12px',
+            fontWeight: 300,
+            color: '#7A7060',
+            lineHeight: 1.55,
+            margin: 0,
+          }}
+        >
+          {level.topicKeywords}
+        </p>
+      </div>
+    </Link>
+  )
+}
+
+function BundleCard({ bundle }: { bundle: (typeof CM_BUNDLES)[number] }) {
+  const checkoutHref = `/checkout?item=${encodeURIComponent(bundle.title)}&price=${bundle.price}`
+  return (
+    <div
+      className="nl-tile-hover"
+      style={{
+        background: '#FDFAF3',
+        border: `2px solid ${ACCENT}`,
+        borderRadius: '16px',
+        padding: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        boxShadow: '0 4px 16px rgba(186,117,23,0.08)',
+      }}
+    >
+      <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '22px', color: '#1A1A18', margin: 0, letterSpacing: '0.01em' }}>
+        {bundle.title}
+      </h3>
+      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#4A4540', lineHeight: 1.6, margin: 0 }}>
+        {bundle.subtitle} · {bundle.contentsSummary}
+      </p>
+      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, fontStyle: 'italic', color: '#7A7060', margin: 0 }}>
+        {bundle.tagline}
+      </p>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: '6px' }}>
+        <span style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#2A2318', letterSpacing: '-0.01em' }}>
+          ${bundle.price}
+        </span>
+        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: ACCENT }}>
+          save ${bundle.savings}
+        </span>
+      </div>
+      <Link
+        href={checkoutHref}
+        style={{
+          display: 'block',
+          textAlign: 'center',
+          padding: '10px',
+          borderRadius: '10px',
+          background: '#1A1A18',
+          color: 'white',
+          textDecoration: 'none',
+          fontFamily: F,
+          fontSize: '14px',
+          fontWeight: 500,
+          marginTop: '4px',
+        }}
+      >
+        Buy bundle →
+      </Link>
+      <Link
+        href="/pricing"
+        style={{
+          fontFamily: F,
+          fontSize: '12px',
+          fontWeight: 400,
+          color: '#7A7060',
+          textDecoration: 'none',
+          textAlign: 'center',
+          marginTop: '2px',
+        }}
+      >
+        Or get it free with NoteLab Plus →
+      </Link>
+    </div>
+  )
 }
 
 export default function CMProgramPage() {
-  const { user } = useAuth()
-  const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
+  // We look at a representative gated feature to decide whether to show
+  // the Plus callout at the bottom. While FREE_NOW is active, everyone
+  // registers as requiring Plus — that's correct (no one has Plus yet).
+  const plusCheck = useFeatureAccess('program:cm:level_3_plus')
+  const hasPlus = plusCheck.hasAccess && plusCheck.requiredPlan === 'plus' && plusCheck.reason === 'Included in Plus'
 
-  const unlocked = hasSubscription() || hasPurchased(CM_BUNDLE_PRICE_ID)
+  const levelsByTier = TIER_ORDER.reduce<Record<CMTier, CMLevel[]>>((acc, tier) => {
+    acc[tier] = CM_LEVELS.filter(l => l.tier === tier)
+    return acc
+  }, { elementary: [], intermediate: [], advanced: [] })
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
-
         {/* Breadcrumb */}
         <div style={{ marginBottom: '32px' }}>
           <Link href="/programs" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.04em' }}>
+            <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#7A7060', letterSpacing: '0.04em' }}>
               ← Programs
             </span>
           </Link>
         </div>
 
         {/* Header */}
-        <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>
+        <div style={{ marginBottom: '48px' }}>
+          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '12px' }}>
             Certificate of Merit · California
           </p>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>
+          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(32px, 4.5vw, 48px)', color: '#2A2318', marginBottom: '14px', letterSpacing: '-0.01em' }}>
             CM Theory Prep
           </h1>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060', maxWidth: '520px', lineHeight: 1.7, marginBottom: '0' }}>
-            Complete flashcard collections for every CM level — Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training.
+          <p style={{ fontFamily: F, fontSize: '16px', fontWeight: 400, color: '#4A4540', maxWidth: '620px', lineHeight: 1.7, margin: 0 }}>
+            Complete flashcard collections for every CM level — Preparatory through Advanced. Covers signs &amp; terms, scales, intervals, chords, history, and ear training.
           </p>
         </div>
 
-        {/* Unlock banner */}
-        {!unlocked && (
-          <div style={{
-            background: '#1A1A18', borderRadius: '16px', padding: '24px 28px',
-            marginBottom: '36px', display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' as const,
-          }}>
-            <div>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: 'white', marginBottom: '4px' }}>
-                Unlock all {cmDecks.length} levels
-              </p>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
-                One-time purchase — study every level without limits
-              </p>
+        {/* Tier sections */}
+        {TIER_ORDER.map(tier => (
+          <section key={tier} style={{ marginBottom: '48px' }}>
+            <p
+              style={{
+                fontFamily: F,
+                fontSize: '12px',
+                fontWeight: 500,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: '#2A2318',
+                margin: '0 0 6px 0',
+              }}
+            >
+              {TIER_LABEL[tier]}
+            </p>
+            <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.65, margin: '0 0 18px 0', maxWidth: '640px' }}>
+              {TIER_DESCRIPTION[tier]}
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                gap: '12px',
+              }}
+            >
+              {levelsByTier[tier].map(level => (
+                <LevelCard key={level.slug} level={level} />
+              ))}
             </div>
-            <Link href="/account" style={{ textDecoration: 'none', flexShrink: 0 }}>
-              <span style={{
-                display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400,
-                color: '#2A2318', background: '#B5402A', borderRadius: '20px',
-                padding: '10px 24px', letterSpacing: '0.02em',
-              }}>
-                Purchase program →
-              </span>
-            </Link>
+          </section>
+        ))}
+
+        {/* Bundle section */}
+        <section style={{ marginTop: '64px', marginBottom: '40px' }}>
+          <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#2A2318', margin: '0 0 6px 0' }}>
+            Save with a bundle
+          </p>
+          <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.65, margin: '0 0 20px 0', maxWidth: '640px' }}>
+            Buy a tier-wide bundle or the full program and save vs. purchasing levels individually.
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '14px',
+            }}
+          >
+            {CM_BUNDLES.map(b => (
+              <BundleCard key={b.id} bundle={b} />
+            ))}
           </div>
+        </section>
+
+        {/* Plus callout */}
+        {!hasPlus && (
+          <section
+            style={{
+              marginTop: '48px',
+              padding: '20px 24px',
+              background: '#FDFAF3',
+              border: '1px solid #DDD8CA',
+              borderRadius: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '12px',
+            }}
+          >
+            <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318', lineHeight: 1.6, margin: 0, maxWidth: '520px' }}>
+              Already have NoteLab Plus? All CM levels are included in your subscription — open any level to start studying.
+            </p>
+            <Link
+              href="/pricing"
+              style={{
+                fontFamily: F,
+                fontSize: '13px',
+                fontWeight: 500,
+                color: ACCENT,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              See Plus →
+            </Link>
+          </section>
         )}
-
-        {/* Level grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
-          {cmDecks.map((deck) => {
-            const label = getLevelLabel(deck.id)
-            const isPrep = deck.id === 'cm-prep'
-            const locked = !unlocked && !isPrep
-
-            if (locked) {
-              return (
-                <div
-                  key={deck.id}
-                  style={{
-                    background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
-                    padding: '20px', opacity: 0.6, cursor: 'default',
-                    display: 'flex', flexDirection: 'column' as const,
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#C8C4BA' }}>{deck.cards.length} cards</span>
-                    <span style={{ fontSize: 'var(--nl-text-compact)', color: '#C8C4BA' }}>🔒</span>
-                  </div>
-                  <p style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '17px', color: '#B0ACA4', marginBottom: '0', lineHeight: 1.2 }}>{label}</p>
-                </div>
-              )
-            }
-
-            return (
-              <Link key={deck.id} href={isPrep ? '/programs/cm/prep' : `/study/${deck.id}`} style={{ textDecoration: 'none' }}>
-                <div
-                  className="nl-card-surface nl-card-surface--tight"
-                  style={{
-                    padding: '20px', cursor: 'pointer',
-                    display: 'flex', flexDirection: 'column' as const, height: '100%',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</span>
-                  </div>
-                  <p style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '17px', color: '#2A2318', marginBottom: '0', lineHeight: 1.2 }}>{label}</p>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
-
       </div>
     </div>
   )

@@ -17,6 +17,7 @@ const PROGRAMS = [
     title: 'Certificate of Merit',
     subtitle: 'CM — California',
     description: 'Complete theory exam preparation from Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training.',
+    priceLine: '11 levels · From $29 per level · Full program $199',
     levels: `${cmDecks.length} levels`,
     priceId: CM_BUNDLE_PRICE_ID,
     glyph: 'CM',
@@ -100,11 +101,16 @@ export default function ProgramsPage() {
                     <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(30px, 3.2vw, 42px)', color: 'white', marginBottom: '12px', letterSpacing: '0.01em', lineHeight: 1.05 }}>
                       {prog.title}
                     </h2>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: '24px', maxWidth: '380px' }}>
+                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: '10px', maxWidth: '380px' }}>
                       {prog.description}
                     </p>
+                    {(prog as { priceLine?: string }).priceLine && (
+                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.02em', marginBottom: '20px' }}>
+                        {(prog as { priceLine?: string }).priceLine}
+                      </p>
+                    )}
                     <span style={{ display: 'inline-flex', alignItems: 'center', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.05em', color: a.text, padding: '7px 16px', borderRadius: '20px', background: a.ctaBg, border: `1px solid ${a.border}`, width: 'fit-content' }}>
-                      {unlocked ? 'Browse levels →' : 'View program →'}
+                      {prog.id === 'cm' ? 'View program →' : unlocked ? 'Browse levels →' : 'View program →'}
                     </span>
                   </div>
 
