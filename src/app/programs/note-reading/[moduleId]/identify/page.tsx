@@ -19,6 +19,7 @@ import {
 import type { NoteResult } from '@/lib/programs/note-reading/types'
 import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
+import StaffPreview from '@/components/programs/note-reading/StaffPreview'
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 import { playPitch } from '@/lib/pianoPlayback'
@@ -349,9 +350,24 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
           <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(26px, 4vw, 34px)', color: '#2A2318', margin: '0 0 10px' }}>
             Pick a session
           </h2>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', lineHeight: 1.6, margin: '0 0 22px' }}>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', lineHeight: 1.6, margin: '0 0 18px' }}>
             Quick and Practice modes help you warm up but don&apos;t count toward mastery.
           </p>
+
+          {/* Compact reference preview — confirms what the student is
+              about to drill before they commit to a mode. Skipped for
+              accidentals (too dense at compact size) and modules with
+              no flat / sharp pool entries. */}
+          {moduleId !== 'accidentals' && (
+            <div style={{ marginBottom: '20px' }}>
+              <StaffPreview
+                notes={[...new Set(mod.notes)]}
+                clef={mod.clef}
+                showLabels
+                compact
+              />
+            </div>
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <button

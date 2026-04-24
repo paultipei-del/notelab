@@ -16,6 +16,31 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 import NoteHeatMap from '@/components/programs/note-reading/NoteHeatMap'
+import StaffPreview from '@/components/programs/note-reading/StaffPreview'
+import IntervallicPreview from '@/components/programs/note-reading/IntervallicPreview'
+import RhythmicMeasureStaff from '@/components/cards/RhythmicMeasureStaff'
+
+// Module 1 landmark labels — small italic captions under each notehead
+// in the StaffPreview reference chart. Other modules render letter
+// labels only (no landmark captions).
+const LANDMARK_PREVIEW_LABELS: Record<string, string> = {
+  G3: 'Bass G line',
+  B3: 'Bass top line',
+  C4: 'Middle C',
+  G4: 'Treble G line',
+  B4: 'Middle line',
+  D5: '4th line',
+  F5: 'Top line',
+}
+
+// A condensed sample for Module 6 — too many accidentals to render all
+// 30 cleanly, so the preview shows ten representative pitches and the
+// module page surfaces a caption explaining the rest.
+const ACCIDENTALS_PREVIEW_SAMPLE = ['Bb3', 'Eb4', 'C#4', 'F#4', 'A#4', 'Ab4', 'Bb4', 'Db5', 'Eb5', 'F#5']
+
+// Module 9 demo measure — a simple tonic-anchored motif the student
+// will read in time with the metronome.
+const RHYTHMIC_PREVIEW_MEASURE = ['C4', 'E4', 'G4', 'E4']
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -145,21 +170,74 @@ export default function ModuleOverviewPage({ params }: Props) {
           </p>
         </div>
 
-        {/* Notes in this module */}
-        <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px' }}>
+        {/* What you'll learn — visual reference chart of the module's
+            note pool. The preview component dispatched on variant +
+            module id replaces the old letter-code chip list, which was
+            unhelpful for beginners (the codes are what they're trying
+            to learn). */}
+        <div style={{ marginBottom: '20px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '10px' }}>
-            Note pool — {[...new Set(mod.notes)].length} notes
+            What you&apos;ll learn — {[...new Set(mod.notes)].length} notes
           </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {[...new Set(mod.notes)].map(pitch => (
-              <span key={pitch} style={{
-                fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400,
-                color: '#2A2318', background: '#EDE8DF', borderRadius: '6px', padding: '3px 8px',
-              }}>
-                {pitch}
-              </span>
-            ))}
-          </div>
+          {(() => {
+            if (mod.variant === 'intervallic') {
+              return <IntervallicPreview caption="Read notes as intervals from a reference pitch." />
+            }
+            if (mod.variant === 'rhythmic') {
+              return (
+                <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 22px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <RhythmicMeasureStaff
+                      notes={RHYTHMIC_PREVIEW_MEASURE}
+                      activeIndex={null}
+                      revealLetters
+                    />
+                  </div>
+                  <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '14px 0 0', textAlign: 'center', lineHeight: 1.55 }}>
+                    Notes in time with a metronome.
+                  </p>
+                </div>
+              )
+            }
+            if (moduleId === 'landmarks') {
+              return (
+                <StaffPreview
+                  notes={['G3', 'B3', 'C4', 'G4', 'B4', 'D5', 'F5']}
+                  clef="grand"
+                  showLabels
+                  showLandmarks
+                  landmarkLabels={LANDMARK_PREVIEW_LABELS}
+                />
+              )
+            }
+            if (moduleId === 'accidentals') {
+              return (
+                <StaffPreview
+                  notes={ACCIDENTALS_PREVIEW_SAMPLE}
+                  clef="grand"
+                  showLabels
+                  caption="Also includes additional sharps and flats across the grand staff."
+                />
+              )
+            }
+            if (moduleId === 'speed-drills') {
+              return (
+                <StaffPreview
+                  notes={mod.notes.filter(n => !/[#b]/.test(n))}
+                  clef="grand"
+                  showLabels
+                  caption="All notes from Modules 1–6 at speed — 95% accuracy in under 1.5 seconds per note."
+                />
+              )
+            }
+            return (
+              <StaffPreview
+                notes={[...new Set(mod.notes)]}
+                clef={mod.clef}
+                showLabels
+              />
+            )
+          })()}
         </div>
 
         {/* Drill-mastery summary — a single source of truth for how the
