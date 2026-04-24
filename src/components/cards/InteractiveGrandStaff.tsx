@@ -179,10 +179,18 @@ export default function InteractiveGrandStaff({
 
   // Ledger lines for the marker / correct pitch so users can see where
   // the note sits even in the overlap / out-of-staff zone.
+  //
+  // Derive `onTreble` from the pitch itself — same rule pitchToYGrand
+  // uses — rather than from the Y coordinate. Pitches in the gap
+  // between the two staves (B3 on treble, for example) have a Y that
+  // sits below the midpoint between trebleTop and bassTop, which
+  // previously flipped the detection to bass and drew ledger lines
+  // relative to the wrong staff — putting them below the notehead
+  // instead of above.
   function ledgerLinesFor(pitch: string, color: string, centerX?: number) {
     const y = pitchToYGrand(pitch, L)
     if (y === null) return null
-    const onTreble = y < (L.trebleTop + L.bassTop) / 2
+    const onTreble = isOnTrebleStaff(pitch)
     const top = onTreble ? L.trebleTop : L.bassTop
     const pos = Math.round((y - top) / L.step)
     const lines: React.ReactElement[] = []
@@ -190,12 +198,12 @@ export default function InteractiveGrandStaff({
     if (pos >= 10) {
       for (let p = 10; p <= pos; p += 2) {
         const ly = top + p * L.step
-        lines.push(<line key={`lb-${pitch}-${p}`} x1={markerX - 22} y1={ly} x2={markerX + 22} y2={ly} stroke={color} strokeWidth="1.2" />)
+        lines.push(<line key={`lb-${pitch}-${p}`} x1={markerX - 26} y1={ly} x2={markerX + 26} y2={ly} stroke={color} strokeWidth="1.2" />)
       }
     } else if (pos <= -2) {
       for (let p = -2; p >= pos; p -= 2) {
         const ly = top + p * L.step
-        lines.push(<line key={`la-${pitch}-${p}`} x1={markerX - 22} y1={ly} x2={markerX + 22} y2={ly} stroke={color} strokeWidth="1.2" />)
+        lines.push(<line key={`la-${pitch}-${p}`} x1={markerX - 26} y1={ly} x2={markerX + 26} y2={ly} stroke={color} strokeWidth="1.2" />)
       }
     }
     return lines
@@ -298,9 +306,11 @@ export default function InteractiveGrandStaff({
       ))}
 
       {/* Ledger lines for correct & marker (drawn before the tap zone so
-          the pointer can still receive events above them). */}
-      {correctPitch && feedback === 'wrong' && ledgerLinesFor(correctPitch, '#A32D2D')}
-      {markerPitch && feedback && ledgerLinesFor(markerPitch, markerColor)}
+          the pointer can still receive events above them). Centered on
+          markerX — without this, the lines default to staff centre and
+          render 20px left of the noteheads. */}
+      {correctPitch && feedback === 'wrong' && ledgerLinesFor(correctPitch, '#A32D2D', markerX)}
+      {markerPitch && feedback && ledgerLinesFor(markerPitch, markerColor, markerX)}
 
       {/* Anchor notehead — used by Intervallic Locate to show the "first
           note" reference. Rendered non-interactively at the left column
