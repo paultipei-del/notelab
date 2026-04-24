@@ -28,6 +28,14 @@ export default function SiteFooter() {
       </span>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+        <Link href="/pricing" style={{ textDecoration: 'none' }}>
+          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
+          >
+            Pricing
+          </span>
+        </Link>
         <Link href="/feedback" style={{ textDecoration: 'none' }}>
           <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}

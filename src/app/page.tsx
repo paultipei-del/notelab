@@ -1,168 +1,380 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { DECKS } from '@/lib/decks'
-import { Deck, DeckTag } from '@/lib/types'
-import { loadUserDecks, createDeck } from '@/lib/userDecks'
-import DeckEditor from '@/components/DeckEditor'
-import HomeCategoryHub from '@/components/HomeCategoryHub'
 import { useAuth } from '@/hooks/useAuth'
+import { useFeatureAccess } from '@/hooks/useFeatureAccess'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
+const ACCENT = '#B5402A'
+
+function greeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Good morning'
+  if (h < 18) return 'Good afternoon'
+  return 'Good evening'
+}
+
+type ResumeTarget = {
+  label: string
+  href: string
+  line: string
+}
+
+/**
+ * Stub resume logic. In a future pass we'll wire this to actual
+ * session telemetry (last deck studied / last learn page read / last
+ * program level). For now we return a generic "ready to pick up"
+ * invitation — which also covers brand-new users.
+ */
+function useResumeTarget(): ResumeTarget {
+  return {
+    label: 'Continue',
+    href: '/learn',
+    line: 'Ready to pick up where you left off?',
+  }
+}
+
+type TileProps = {
+  label: string
+  title: string
+  body: string
+  href: string
+}
+
+function DayTile({ label, title, body, href }: TileProps) {
+  return (
+    <Link href={href} style={{ textDecoration: 'none' }}>
+      <div
+        className="nl-card-surface nl-card-surface--tight"
+        style={{
+          padding: '20px 22px',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: F,
+            fontSize: '11px',
+            fontWeight: 500,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: '#7A7060',
+          }}
+        >
+          {label}
+        </span>
+        <p style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#1A1A18', margin: '4px 0 2px 0', letterSpacing: '0.01em' }}>
+          {title}
+        </p>
+        <p style={{ fontFamily: F, fontWeight: 300, fontSize: '13px', color: '#7A7060', lineHeight: 1.6, margin: 0 }}>
+          {body}
+        </p>
+        <span
+          style={{
+            fontFamily: F,
+            fontSize: '13px',
+            fontWeight: 500,
+            color: ACCENT,
+            marginTop: 'auto',
+            paddingTop: '10px',
+          }}
+        >
+          →
+        </span>
+      </div>
+    </Link>
+  )
+}
+
+function ExploreTile({ label, title, body, href }: TileProps) {
+  return (
+    <Link href={href} style={{ textDecoration: 'none' }}>
+      <div
+        className="nl-card-surface"
+        style={{
+          padding: '28px',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        <span
+          style={{
+            fontFamily: F,
+            fontSize: '11px',
+            fontWeight: 500,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: ACCENT,
+          }}
+        >
+          {label}
+        </span>
+        <h3
+          style={{
+            fontFamily: SERIF,
+            fontWeight: 400,
+            fontSize: '22px',
+            color: '#2A2318',
+            margin: '4px 0 4px 0',
+            letterSpacing: '0.01em',
+          }}
+        >
+          {title}
+        </h3>
+        <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
+          {body}
+        </p>
+        <span
+          style={{
+            fontFamily: F,
+            fontSize: '14px',
+            fontWeight: 500,
+            color: ACCENT,
+            marginTop: 'auto',
+            paddingTop: '12px',
+          }}
+        >
+          Open →
+        </span>
+      </div>
+    </Link>
+  )
+}
 
 export default function Home() {
-
   const { user, loading } = useAuth()
+  const [g, setG] = useState('')
 
-  // Redirect logged-out users to landing page
+  // Redirect logged-out users to landing page.
   useEffect(() => {
     if (!loading && !user) {
       window.location.href = '/landing'
     }
   }, [loading, user])
-  const [userDecks, setUserDecks] = useState<Deck[]>([])
-  const [, setDecksLoading] = useState(true)
-  const [editingDeck, setEditingDeck] = useState<Deck | null>(null)
-  const [showNewDeck, setShowNewDeck] = useState(false)
-  const [newTitle, setNewTitle] = useState('')
-  const [newDesc, setNewDesc] = useState('')
-  const [newTag, setNewTag] = useState<DeckTag>('free')
 
+  // Avoid SSR hydration mismatch on the time-of-day greeting.
   useEffect(() => {
-    if (loading) return
-    setDecksLoading(true)
-    if (user) localStorage.removeItem('notelab-user-decks')
-    loadUserDecks(user?.id ?? null).then(decks => {
-      setUserDecks(decks)
-      setDecksLoading(false)
-    })
-  }, [user, loading])
+    setG(greeting())
+  }, [])
 
-  async function handleCreateDeck() {
-    if (!newTitle.trim()) return
-    const deck = await createDeck(newTitle.trim(), newDesc.trim(), newTag, user?.id ?? null)
-    setUserDecks(prev => [...prev, deck])
-    setNewTitle(''); setNewDesc(''); setNewTag('free'); setShowNewDeck(false)
-    setEditingDeck(deck)
+  const resume = useResumeTarget()
+
+  // Plus-plan check. While FREE_NOW is active `useFeatureAccess` always
+  // returns hasAccess, so we use the `requiredPlan` to determine whether
+  // to show the upgrade strip. Once gating activates, this will map to
+  // the user's actual plan.
+  const plusCheck = useFeatureAccess('flashcards:intermediate')
+  // If requiredPlan === 'free', user wouldn't need Plus. If it's 'plus',
+  // upgrade strip shows. Logic below.
+  const showUpgradeStrip = plusCheck.requiredPlan === 'plus'
+
+  const displayName: string = (user?.user_metadata?.display_name as string | undefined)?.split(' ')[0]
+    ?? (user?.email ? user.email.split('@')[0] : 'there')
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: F, fontWeight: 300, color: '#7A7060' }}>Loading…</p>
+      </div>
+    )
   }
-
-  function handleDeckUpdate(updated: Deck) {
-    setUserDecks(prev => prev.map(d => d.id === updated.id ? updated : d))
-    if (editingDeck?.id === updated.id) setEditingDeck(updated)
-  }
-
-  function handleDeckDelete(deckId: string) {
-    setUserDecks(prev => prev.filter(d => d.id !== deckId))
-    setEditingDeck(null)
-  }
-
-  const earTopicCount = DECKS.filter(d => d.id.startsWith('ear-')).length
-  const cmLevelCount = DECKS.filter(d => d.tag === 'cm').length
+  if (!user) return null
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
-
-      {/* Header */}
-
-      {/* Hero */}
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '52px 32px 44px' }}>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, margin: '0', lineHeight: 1, width: 'fit-content' }}>
-          <span style={{ display: 'block', fontSize: 'clamp(38px, 5.5vw, 64px)', color: 'rgba(136,135,128,0.55)', letterSpacing: '-0.01em', fontWeight: 300, marginBottom: '-0.05em' }}>
-            Music theory,
-          </span>
-          <span style={{ display: 'block', fontSize: 'clamp(64px, 9.5vw, 110px)', color: '#2A2318', letterSpacing: '-0.03em', lineHeight: 0.9, fontStyle: 'italic' }}>
-            practiced.
-          </span>
-          <span style={{ display: 'block', width: '100%', textAlign: 'right' as const, fontSize: 'clamp(20px, 2.2vw, 28px)', color: '#B5402A', letterSpacing: '0.01em', fontStyle: 'italic', fontWeight: 300, marginTop: '0.5em' }}>
-            reimagined.
-          </span>
-        </h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', margin: '28px 0 0' }}>
-          <div style={{ width: '40px', height: '1.5px', background: '#B5402A', flexShrink: 0 }} />
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060', margin: 0, lineHeight: 1.7 }}>
-            Interactive tools and flashcard collections for students at every level.
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px' }}>
+        {/* Greeting */}
+        <header style={{ marginBottom: '28px' }}>
+          <h1
+            style={{
+              fontFamily: SERIF,
+              fontWeight: 300,
+              fontSize: 'clamp(32px, 4.5vw, 48px)',
+              color: '#2A2318',
+              letterSpacing: '-0.01em',
+              margin: '0 0 8px 0',
+            }}
+          >
+            {g || 'Welcome'}, {displayName}.
+          </h1>
+          <p
+            style={{
+              fontFamily: F,
+              fontWeight: 300,
+              fontSize: '16px',
+              color: '#7A7060',
+              lineHeight: 1.6,
+              margin: '0 0 20px 0',
+            }}
+          >
+            {resume.line}
           </p>
-        </div>
-      </div>
+          <Link
+            href={resume.href}
+            style={{
+              display: 'inline-block',
+              padding: '12px 24px',
+              borderRadius: '10px',
+              background: '#1A1A18',
+              color: 'white',
+              textDecoration: 'none',
+              fontFamily: F,
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            {resume.label} →
+          </Link>
+        </header>
 
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '0 32px 80px' }}>
-
-        <HomeCategoryHub earTopicCount={earTopicCount} cmLevelCount={cmLevelCount} />
-          {/* ── My Decks ─────────────────────────────────────────────────── */}
-        {userDecks.length > 0 && (
-          <div style={{ marginBottom: '48px' }}>
-            <div style={{ marginBottom: '20px' }}>
-              <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#2A2318', marginBottom: '4px' }}>My Decks</h2>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>{userDecks.length} custom collection{userDecks.length !== 1 ? 's' : ''}</p>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
-              {userDecks.map(deck => (
-                <div key={deck.id} style={{ position: 'relative' }}>
-                  <Link href={`/study/${deck.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-                    <div
-                      className="nl-card-surface nl-card-surface--tight"
-                      style={{ padding: '20px', cursor: 'pointer' }}
-                    >
-                      <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '18px', color: '#2A2318', marginBottom: '4px' }}>{deck.title}</h3>
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>{deck.cards.length} cards</p>
-                    </div>
-                  </Link>
-                  <button onClick={() => setEditingDeck(deck)}
-                    style={{ position: 'absolute', top: '10px', right: '10px', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '4px 9px', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', cursor: 'pointer', fontFamily: F }}>
-                    Edit
-                  </button>
-                </div>
-              ))}
-            </div>
+        {/* Your day */}
+        <section style={{ marginTop: '48px', marginBottom: '48px' }}>
+          <p
+            style={{
+              fontFamily: F,
+              fontSize: '11px',
+              fontWeight: 500,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#7A7060',
+              margin: '0 0 14px 0',
+            }}
+          >
+            Your day
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '12px',
+            }}
+          >
+            <DayTile
+              label="Due for review"
+              title="Start a session"
+              body="Work through SRS cards across your active decks."
+              href="/flashcards"
+            />
+            <DayTile
+              label="Current program"
+              title="Pick a program"
+              body="Certificate of Merit, Note Reading, or Rhythm tracks."
+              href="/programs"
+            />
+            <DayTile
+              label="Latest reading"
+              title="Open the library"
+              body="110+ pages across 11 parts — dip in anywhere."
+              href="/learn"
+            />
+            <DayTile
+              label="Ear training"
+              title="Try a session"
+              body="Listen and identify intervals, triads, cadences, scales."
+              href="/ear-training"
+            />
           </div>
+        </section>
+
+        {/* Explore */}
+        <section>
+          <p
+            style={{
+              fontFamily: F,
+              fontSize: '11px',
+              fontWeight: 500,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: '#7A7060',
+              margin: '0 0 14px 0',
+            }}
+          >
+            Explore
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '14px',
+            }}
+          >
+            <ExploreTile
+              label="Reference"
+              title="Learn"
+              body="The 11-part library — sound, notation, rhythm, harmony, form, and more."
+              href="/learn"
+            />
+            <ExploreTile
+              label="Curriculum"
+              title="Programs"
+              body="Curriculum tracks: Certificate of Merit, Note Reading, Rhythm."
+              href="/programs"
+            />
+            <ExploreTile
+              label="Practice"
+              title="Flashcards"
+              body="37+ spaced-repetition decks for every theory topic."
+              href="/flashcards"
+            />
+            <ExploreTile
+              label="Listening"
+              title="Ear Training"
+              body="Train your ear with real piano audio — listen and identify."
+              href="/ear-training"
+            />
+          </div>
+        </section>
+
+        {/* Upgrade prompt (only on Free) */}
+        {showUpgradeStrip && (
+          <section
+            style={{
+              marginTop: '56px',
+              padding: '24px 28px',
+              background: '#FDFAF3',
+              border: '1px solid #DDD8CA',
+              borderRadius: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '16px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div style={{ flex: '1 1 260px', minWidth: '260px' }}>
+              <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 4px 0' }}>
+                You’re on the Free plan
+              </p>
+              <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 400, color: '#2A2318', lineHeight: 1.6, margin: 0 }}>
+                NoteLab Plus unlocks all programs, all flashcards, and the full ear training library.
+              </p>
+            </div>
+            <Link
+              href="/pricing"
+              style={{
+                fontFamily: F,
+                fontSize: '14px',
+                fontWeight: 500,
+                color: 'white',
+                background: '#1A1A18',
+                padding: '10px 20px',
+                borderRadius: '10px',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Try Plus free for 14 days →
+            </Link>
+          </section>
         )}
-
       </div>
-
-      {/* New deck modal */}
-      {showNewDeck && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,24,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          onClick={e => e.target === e.currentTarget && setShowNewDeck(false)}>
-          <div style={{ background: '#F2EDDF', borderRadius: '16px', padding: '36px', width: '100%', maxWidth: '480px', boxShadow: '0 8px 48px rgba(26,26,24,0.2)' }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', marginBottom: '24px', color: '#2A2318' }}>New Collection</h2>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Title</label>
-              <input style={{ width: '100%', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
-                value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="e.g. My Practice Deck" autoFocus onKeyDown={e => e.key === 'Enter' && handleCreateDeck()} />
-            </div>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Description</label>
-              <input style={{ width: '100%', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '10px 14px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
-                value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Brief description…" />
-            </div>
-            <div style={{ marginBottom: '28px' }}>
-              <label style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', display: 'block', marginBottom: '6px' }}>Category</label>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
-                {(['free', 'cm', 'theory', 'repertoire'] as DeckTag[]).map(tag => (
-                  <button key={tag} onClick={() => setNewTag(tag)}
-                    style={{ padding: '6px 14px', borderRadius: '20px', border: `1px solid ${newTag === tag ? '#1A1A18' : '#DDD8CA'}`, background: newTag === tag ? '#1A1A18' : 'transparent', color: newTag === tag ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', textTransform: 'capitalize' as const }}>
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={handleCreateDeck} disabled={!newTitle.trim()}
-                style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: newTitle.trim() ? 'pointer' : 'default', opacity: newTitle.trim() ? 1 : 0.4 }}>
-                Create & Add Cards
-              </button>
-              <button onClick={() => setShowNewDeck(false)}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '12px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {editingDeck && <DeckEditor deck={editingDeck} onUpdate={handleDeckUpdate} onDelete={handleDeckDelete} onClose={() => setEditingDeck(null)} userId={user?.id ?? null} />}
     </div>
   )
 }
