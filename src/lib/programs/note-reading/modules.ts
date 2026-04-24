@@ -189,10 +189,17 @@ export const NOTE_READING_MODULES: NRModuleDef[] = [
     // Diatonic naturals centered on the treble staff. Rhythmic questions
     // draw four notes per measure from this pool.
     notes: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5'],
-    tools: ['identify'],
+    tools: ['identify', 'play'],
     unlockAfter: ['intervallic-reading'],
     variant: 'rhythmic',
-    criteria: { identifyAccuracy: 0.9, sessions: 3 },
+    criteria: {
+      identifyAccuracy: 0.9,
+      playAccuracy: 0.85,
+      // Generous response-time threshold — students have up to one full
+      // beat per note, and detection lag + dead-window eats ~120ms.
+      playAvgResponseMs: 900,
+      sessions: 3,
+    },
   },
 ]
 

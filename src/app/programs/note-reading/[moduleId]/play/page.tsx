@@ -19,6 +19,7 @@ import { SADPitchDetector } from '@/lib/sadDetector'
 import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import IntervallicPlaySession from './IntervallicPlaySession'
+import RhythmicPlaySession from './RhythmicPlaySession'
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 
@@ -102,6 +103,9 @@ export default function PlaySessionPage({ params }: Props) {
   const mod = getNRModule(moduleId)
   if (mod?.variant === 'intervallic') {
     return <IntervallicPlaySession moduleId={moduleId} />
+  }
+  if (mod?.variant === 'rhythmic') {
+    return <RhythmicPlaySession moduleId={moduleId} />
   }
   return <StandardPlaySession moduleId={moduleId} />
 }
