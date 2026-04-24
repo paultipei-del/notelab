@@ -90,7 +90,11 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   function goPrev() { setFlipIndex(i => Math.max(i - 1, 0)); setFlipRevealed(false) }
   function goBack() {
     if (mode === 'play') { stopMic() }
-    router.back()
+    // Route explicitly to the owning collection rather than using history.
+    // Without this, users who jumped between decks in a single session
+    // would land on the *previous* deck instead of the index page.
+    const target = deck.id.startsWith('ear-') ? '/ear-training' : '/flashcards'
+    router.push(target)
   }
 
   const isPlayMode = mode === 'play'
