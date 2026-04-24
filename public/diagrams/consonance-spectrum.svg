@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" role="img" aria-labelledby="t d">
+  <title id="t">Consonance to dissonance spectrum</title>
+  <desc id="d">A horizontal bar from most consonant (unison, octave, perfect fifth) on the left to most dissonant (tritone, minor 2nd, major 7th) on the right. Each interval labeled along the axis.</desc>
+  <style>
+    .bar-bg { fill: #EDE8DF; }
+    .mark   { stroke: #1a1a18; stroke-width: 1; }
+    .lbl    { font: 500 12px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .hdr    { font: 600 12px system-ui, sans-serif; fill: #7A7060; text-transform: uppercase; letter-spacing: 0.12em; }
+    .note   { font: 300 12px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+  </style>
+
+  <!-- Headers -->
+  <text class="hdr" x="60" y="40">Most consonant</text>
+  <text class="hdr" x="700" y="40" text-anchor="end">Most dissonant</text>
+
+  <!-- Gradient bar: pure CSS-free via rect with a linear gradient -->
+  <defs>
+    <linearGradient id="spec" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F2EDDF"/>
+      <stop offset="50%" stop-color="#DCCEC0"/>
+      <stop offset="100%" stop-color="#a03f2e"/>
+    </linearGradient>
+  </defs>
+  <rect x="60" y="60" width="640" height="36" rx="18" fill="url(#spec)" stroke="#DDD8CA" stroke-width="1"/>
+
+  <!-- Interval tick marks + labels, left to right -->
+  <!-- Positions along the bar (px from 60 to 700, 640 wide). Evenly 11 ticks. -->
+  <!-- labels: Unison, Octave, P5, P4, M3, m3, M6, m6, Tritone, m2, M7 -->
+  <g class="mark" fill="#1a1a18">
+    <line x1="64"  y1="96" x2="64"  y2="108"/>
+    <line x1="120" y1="96" x2="120" y2="108"/>
+    <line x1="184" y1="96" x2="184" y2="108"/>
+    <line x1="248" y1="96" x2="248" y2="108"/>
+    <line x1="312" y1="96" x2="312" y2="108"/>
+    <line x1="376" y1="96" x2="376" y2="108"/>
+    <line x1="440" y1="96" x2="440" y2="108"/>
+    <line x1="504" y1="96" x2="504" y2="108"/>
+    <line x1="568" y1="96" x2="568" y2="108"/>
+    <line x1="632" y1="96" x2="632" y2="108"/>
+    <line x1="696" y1="96" x2="696" y2="108"/>
+  </g>
+
+  <text class="lbl" x="64"  y="128">Unison</text>
+  <text class="lbl" x="120" y="128">Octave</text>
+  <text class="lbl" x="184" y="128">P5</text>
+  <text class="lbl" x="248" y="128">P4</text>
+  <text class="lbl" x="312" y="128">M3</text>
+  <text class="lbl" x="376" y="128">m3</text>
+  <text class="lbl" x="440" y="128">M6</text>
+  <text class="lbl" x="504" y="128">m6</text>
+  <text class="lbl" x="568" y="128">Tritone</text>
+  <text class="lbl" x="632" y="128">m2</text>
+  <text class="lbl" x="696" y="128">M7</text>
+
+  <!-- Group brackets under the bar -->
+  <text class="note" x="60"  y="172">perfect consonances</text>
+  <text class="note" x="300" y="172">imperfect consonances</text>
+  <text class="note" x="540" y="172">dissonances</text>
+
+  <text class="note" x="60" y="210">Unisons, octaves, and fifths sit at the stable end; minor seconds, major sevenths, and the tritone sit at the unstable end.</text>
+</svg>

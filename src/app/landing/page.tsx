@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import AuthModal from '@/components/AuthModal'
 import { useAuth } from '@/hooks/useAuth'
+import HeroStaffAnimation from '@/components/marketing/HeroStaffAnimation'
+import GlyphBackdrop from '@/components/marketing/GlyphBackdrop'
+import ScrollReveal from '@/components/marketing/ScrollReveal'
+import { MicroFlashcard, MicroPianoDetect, MicroProgress } from '@/components/marketing/MicroDemos'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -12,14 +16,11 @@ const ACCENT = '#B5402A'
 export default function LandingPage() {
   const [showAuth, setShowAuth] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [activeNote, setActiveNote] = useState(0)
   const { user, loading } = useAuth()
 
   // Note: landing is viewable by signed-in users too (per spec §2E), so no auto-redirect.
   useEffect(() => {
     setMounted(true)
-    const interval = setInterval(() => setActiveNote(n => (n + 1) % 5), 1200)
-    return () => clearInterval(interval)
   }, [])
 
   // Hide auth buttons for signed-in users and swap them for a "Go to app" link.
@@ -195,61 +196,15 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Hero preview — keep existing real-time detection widget */}
+        {/* Hero preview — animated staff with cycling note */}
         <div style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.7s ease 0.3s', display: 'flex', justifyContent: 'center' }}>
-          <div
-            style={{
-              background: '#FDFAF3',
-              borderRadius: '24px',
-              border: '1px solid #DDD8CA',
-              padding: '48px 56px',
-              boxShadow: '0 8px 48px rgba(26,26,24,0.08)',
-              position: 'relative',
-              width: 'min(320px, 100%)',
-            }}
-          >
-            <div style={{ position: 'relative', height: '120px', marginBottom: '32px' }}>
-              <svg width="100%" height="120" viewBox="0 0 240 120">
-                {[20, 36, 52, 68, 84].map((y, i) => (
-                  <line key={i} x1="0" y1={y} x2="240" y2={y} stroke="#DDD8CA" strokeWidth="1" />
-                ))}
-                <text x="8" y="72" fontSize="80" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="middle">𝄞</text>
-                {[{ x: 160, y: 84 }, { x: 160, y: 68 }, { x: 160, y: 52 }, { x: 160, y: 36 }, { x: 160, y: 20 }].map((pos, i) => (
-                  <g key={i} style={{ opacity: activeNote === i ? 1 : 0, transition: 'opacity 0.3s' }}>
-                    <text x={pos.x} y={pos.y} fontSize="32" fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xe0a4)}</text>
-                    <line x1={pos.x + 6} y1={pos.y} x2={pos.x + 6} y2={pos.y - 32} stroke="#1A1A18" strokeWidth="1.5" />
-                  </g>
-                ))}
-              </svg>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 16px', background: '#F2EDDF', borderRadius: '10px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4CAF50', boxShadow: '0 0 0 3px rgba(76,175,80,0.2)' }} />
-              <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#7A7060' }}>Listening for your piano…</span>
-            </div>
-            <div
-              style={{
-                position: 'absolute',
-                top: '-16px',
-                right: '-16px',
-                background: ACCENT,
-                color: 'white',
-                borderRadius: '10px',
-                padding: '6px 14px',
-                fontFamily: F,
-                fontSize: '12px',
-                fontWeight: 400,
-                letterSpacing: '0.08em',
-                boxShadow: '0 4px 12px rgba(186,117,23,0.3)',
-              }}
-            >
-              Real-time detection
-            </div>
-          </div>
+          <HeroStaffAnimation />
         </div>
       </section>
 
       {/* What's inside */}
-      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px clamp(24px,4vw,48px) 80px' }}>
+      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px clamp(24px,4vw,48px) 80px', position: 'relative' }}>
+        <GlyphBackdrop density={6} seed={7} />
         <p
           style={{
             fontFamily: F,
@@ -277,7 +232,9 @@ export default function LandingPage() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
           {/* Card 1: Reference Library (wider, spans 2 cols on wide screens) */}
-          <div
+          <ScrollReveal
+            delayMs={0}
+            className="nl-tile-hover"
             style={{
               background: '#FDFAF3',
               borderRadius: '20px',
@@ -296,32 +253,38 @@ export default function LandingPage() {
             <Link href="/learn" style={{ fontFamily: F, fontSize: '14px', fontWeight: 500, color: ACCENT, textDecoration: 'none' }}>
               Explore the library →
             </Link>
-          </div>
+          </ScrollReveal>
 
-          {/* Card 2: Programs */}
-          <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px' }}>
+          {/* Card 2: Programs — level progression demo */}
+          <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Programs</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               Curriculum-aligned, level by level.
             </h3>
-            <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
+            <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: '0 0 18px 0' }}>
               Certificate of Merit from Preparatory through Level 10. Note Reading across treble, bass, and grand staff. Rhythm Reading from whole notes through polyrhythm. Each program is self-contained.
             </p>
-          </div>
+            <div style={{ marginTop: 'auto' }}>
+              <MicroProgress />
+            </div>
+          </ScrollReveal>
 
-          {/* Card 3: Flashcards */}
-          <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px' }}>
+          {/* Card 3: Flashcards — flip demo */}
+          <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Flashcards</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               400+ cards across three tiers.
             </h3>
-            <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
+            <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: '0 0 18px 0' }}>
               Spaced repetition for every music-theory concept: notation, terms, keys, intervals, chords, form. Drill what you don’t know. Skip what you do.
             </p>
-          </div>
+            <div style={{ marginTop: 'auto' }}>
+              <MicroFlashcard />
+            </div>
+          </ScrollReveal>
 
           {/* Card 4: Ear Training */}
-          <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px' }}>
+          <ScrollReveal delayMs={240} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Ear training</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               Real piano audio.
@@ -329,18 +292,21 @@ export default function LandingPage() {
             <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
               Listen, identify, move on. Intervals, triads, cadences, scales. Train the part of musicianship a textbook can’t teach.
             </p>
-          </div>
+          </ScrollReveal>
 
-          {/* Card 5: Piano detection */}
-          <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px' }}>
+          {/* Card 5: Piano detection — live staff demo */}
+          <ScrollReveal delayMs={320} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Piano detection</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               It hears what you play.
             </h3>
-            <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
+            <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: '0 0 18px 0' }}>
               Plug in any MIDI keyboard. Real-time pitch detection checks your work in practice drills — no mouse-clicking correct answers you didn’t actually play.
             </p>
-          </div>
+            <div style={{ marginTop: 'auto' }}>
+              <MicroPianoDetect />
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -368,31 +334,32 @@ export default function LandingPage() {
             Built for serious learners.
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-            <div style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
+            <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
               <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Certificate of Merit students</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
                 Every level, every topic on the syllabus. Theory, terms, rhythm, aural skills — aligned to MTAC’s Level 1 through 10 requirements.
               </p>
-            </div>
-            <div style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
+            </ScrollReveal>
+            <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
               <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>College music students</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
                 Fundamentals through first-year theory. A reference you can actually use mid-homework.
               </p>
-            </div>
-            <div style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
+            </ScrollReveal>
+            <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
               <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Serious adult learners</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
                 If you play an instrument and wish you understood the theory, this was built for you.
               </p>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Pricing preview */}
-      <section id="pricing" style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,4vw,48px)' }}>
-        <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
+      <section id="pricing" style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,4vw,48px)', position: 'relative' }}>
+        <GlyphBackdrop density={6} seed={23} />
+        <div style={{ maxWidth: '1040px', margin: '0 auto', position: 'relative' }}>
           <div style={{ marginBottom: '48px' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Simple pricing</p>
             <h2
@@ -411,7 +378,7 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
             {/* Free */}
-            <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '32px' }}>
+            <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '32px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7A7060', margin: '0 0 12px 0' }}>Free</p>
               <div style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#2A2318', lineHeight: 1, marginBottom: '20px' }}>$0</div>
               {[
@@ -445,10 +412,12 @@ export default function LandingPage() {
               >
                 Start free
               </button>
-            </div>
+            </ScrollReveal>
 
             {/* Plus (highlighted) */}
-            <div
+            <ScrollReveal
+              delayMs={80}
+              className="nl-tile-hover"
               style={{
                 background: '#FDFAF3',
                 border: `2px solid ${ACCENT}`,
@@ -496,10 +465,10 @@ export default function LandingPage() {
               >
                 Start 14-day trial
               </button>
-            </div>
+            </ScrollReveal>
 
             {/* Programs */}
-            <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '32px' }}>
+            <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '32px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7A7060', margin: '0 0 12px 0' }}>Programs à la carte</p>
               <div style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#2A2318', lineHeight: 1, marginBottom: '20px' }}>$29+</div>
               {[
@@ -536,7 +505,7 @@ export default function LandingPage() {
               >
                 Browse programs
               </Link>
-            </div>
+            </ScrollReveal>
           </div>
 
           <p

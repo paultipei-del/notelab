@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { useFeatureAccess } from '@/hooks/useFeatureAccess'
+import GlyphBackdrop from '@/components/marketing/GlyphBackdrop'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -43,7 +44,13 @@ type TileProps = {
   href: string
 }
 
-function DayTile({ label, title, body, href }: TileProps) {
+function DayTile({
+  label,
+  title,
+  body,
+  href,
+  viz,
+}: TileProps & { viz?: React.ReactNode }) {
   return (
     <Link href={href} style={{ textDecoration: 'none' }}>
       <div
@@ -74,6 +81,7 @@ function DayTile({ label, title, body, href }: TileProps) {
         <p style={{ fontFamily: F, fontWeight: 300, fontSize: '13px', color: '#7A7060', lineHeight: 1.6, margin: 0 }}>
           {body}
         </p>
+        {viz && <div style={{ marginTop: '10px' }}>{viz}</div>}
         <span
           style={{
             fontFamily: F,
@@ -88,6 +96,92 @@ function DayTile({ label, title, body, href }: TileProps) {
         </span>
       </div>
     </Link>
+  )
+}
+
+/** Horizontal progress bar (studied / total). */
+function ReviewBar({ studied, total }: { studied: number; total: number }) {
+  if (total === 0) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontFamily: F, fontSize: '12px', color: '#7A7060' }}>
+        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4CAF50' }} />
+        You’re caught up
+      </div>
+    )
+  }
+  const pct = Math.min(100, Math.round((studied / total) * 100))
+  return (
+    <div>
+      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#4A4540', margin: '0 0 4px 0' }}>
+        {studied} of {total} studied
+      </p>
+      <div className="nl-viz-bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+        <div className="nl-viz-bar__fill" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  )
+}
+
+/** 36px ring showing program level completion. */
+function ProgramRing({ level, totalLevels, pct, label }: { level: number; totalLevels: number; pct: number; label: string }) {
+  if (totalLevels === 0) {
+    return <p style={{ fontFamily: F, fontSize: '12px', color: '#7A7060', margin: 0 }}>Not started</p>
+  }
+  const r = 14
+  const c = 2 * Math.PI * r
+  const offset = c * (1 - pct / 100)
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <svg className="nl-viz-ring" viewBox="0 0 36 36" aria-label={`${pct}% complete`}>
+        <circle cx="18" cy="18" r={r} fill="none" stroke="#EDE8DF" strokeWidth="3" />
+        <circle
+          cx="18"
+          cy="18"
+          r={r}
+          fill="none"
+          stroke="#B5402A"
+          strokeWidth="3"
+          strokeDasharray={c}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform="rotate(-90 18 18)"
+        />
+      </svg>
+      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#4A4540' }}>
+        {label} · {pct}%
+      </span>
+    </div>
+  )
+}
+
+/** 11 dots indicating visited parts of the reference library. */
+function PartsDots({ visited, latestLabel }: { visited: boolean[]; latestLabel: string }) {
+  return (
+    <div>
+      <div className="nl-viz-dots" aria-label={`${visited.filter(Boolean).length} of 11 parts visited`}>
+        {visited.map((v, i) => (
+          <span key={i} className={`nl-viz-dot${v ? ' nl-viz-dot--filled' : ''}`} />
+        ))}
+      </div>
+      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#4A4540', margin: '6px 0 0 0' }}>
+        {latestLabel}
+      </p>
+    </div>
+  )
+}
+
+/** Streak indicator for ear training. */
+function StreakBadge({ days }: { days: number }) {
+  if (days === 0) {
+    return <p style={{ fontFamily: F, fontSize: '12px', color: '#7A7060', margin: 0 }}>Start a streak</p>
+  }
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+      <span aria-hidden style={{ fontSize: '14px', color: '#B5402A', lineHeight: 1 }}>★</span>
+      <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 500, color: '#4A4540' }}>
+        {days}-day streak
+      </span>
+    </div>
   )
 }
 
@@ -188,8 +282,9 @@ export default function Home() {
   if (!user) return null
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px' }}>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF', position: 'relative' }}>
+      <GlyphBackdrop density={3} seed={101} />
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px', position: 'relative' }}>
         {/* Greeting */}
         <header style={{ marginBottom: '28px' }}>
           <h1
@@ -261,24 +356,33 @@ export default function Home() {
               title="Start a session"
               body="Work through SRS cards across your active decks."
               href="/flashcards"
+              viz={<ReviewBar studied={0} total={0} />}
             />
             <DayTile
               label="Current program"
               title="Pick a program"
               body="Certificate of Merit, Note Reading, or Rhythm tracks."
               href="/programs"
+              viz={<ProgramRing level={0} totalLevels={0} pct={0} label="Not started" />}
             />
             <DayTile
               label="Latest reading"
               title="Open the library"
               body="110+ pages across 11 parts — dip in anywhere."
               href="/learn"
+              viz={
+                <PartsDots
+                  visited={Array(11).fill(false)}
+                  latestLabel="No sessions yet"
+                />
+              }
             />
             <DayTile
               label="Ear training"
               title="Try a session"
               body="Listen and identify intervals, triads, cadences, scales."
               href="/ear-training"
+              viz={<StreakBadge days={0} />}
             />
           </div>
         </section>

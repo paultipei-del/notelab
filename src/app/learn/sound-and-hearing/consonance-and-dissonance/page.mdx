@@ -1,6 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import Diagram from '@/components/learn/Diagram'
 import { CONSONANT_AND_DISSONANT_DYADS_XML } from './notations'
 
 export const learnPage = {
@@ -35,7 +36,7 @@ This isn't a matter of taste. There's a physical reason some intervals sound sta
   ariaLabel="Two dyads on a treble staff. First measure: C and G stacked (perfect fifth). Second measure: C and D-flat stacked (minor second)."
 />
 
-<DiagramPlaceholder description="Waveforms of the two dyads — the perfect fifth produces a smooth repeating pattern; the minor second produces an irregular, beating pattern." />
+<Diagram src="/diagrams/consonance-spectrum.svg" caption="Intervals plotted from most consonant (left) to most dissonant (right)." />
 
 ## Why simple ratios sound consonant
 

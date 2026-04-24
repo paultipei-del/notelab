@@ -1,6 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import Diagram from '@/components/learn/Diagram'
 import { FOUR_QUARTERS_4_4_XML } from './notations'
 
 export const learnPage = {
@@ -31,7 +32,7 @@ These visual features are called **note values**. They form a simple doubling hi
 
 ## The visual
 
-<DiagramPlaceholder description="The note-value hierarchy as a reference chart — whole note, half note, quarter note, eighth note, sixteenth note, thirty-second note — each labeled with its name and its fraction of a whole note (1, 1/2, 1/4, 1/8, 1/16, 1/32)." />
+<Diagram src="/diagrams/note-value-tree.svg" caption="Each note value is exactly half the duration of the one above it. Whole → half → quarter → eighth → sixteenth." />
 
 <Notation
   musicXml={FOUR_QUARTERS_4_4_XML}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" role="img" aria-labelledby="t d">
+  <title id="t">Three minor scale forms compared</title>
+  <desc id="d">A natural minor, A harmonic minor, and A melodic minor ascending side by side. Raised scale degrees in harmonic and melodic minor are circled.</desc>
+  <style>
+    .row-lbl { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: end; }
+    .note    { font: 500 20px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .note-alt { font: 500 20px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; }
+    .deg     { font: 300 11px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+    .circle  { fill: none; stroke: #a03f2e; stroke-width: 1.5; }
+    .caption { font: 300 12px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+  </style>
+
+  <!-- Shared x columns — 8 scale degrees from x=200 to x=700, step=70 -->
+  <!-- Header for degrees -->
+  <text class="deg" x="200" y="40">1</text>
+  <text class="deg" x="270" y="40">2</text>
+  <text class="deg" x="340" y="40">3</text>
+  <text class="deg" x="410" y="40">4</text>
+  <text class="deg" x="480" y="40">5</text>
+  <text class="deg" x="550" y="40">6</text>
+  <text class="deg" x="620" y="40">7</text>
+  <text class="deg" x="690" y="40">8</text>
+
+  <!-- Row 1: A natural minor — A B C D E F G A -->
+  <text class="row-lbl" x="180" y="90">Natural minor</text>
+  <text class="note" x="200" y="90">A</text>
+  <text class="note" x="270" y="90">B</text>
+  <text class="note" x="340" y="90">C</text>
+  <text class="note" x="410" y="90">D</text>
+  <text class="note" x="480" y="90">E</text>
+  <text class="note" x="550" y="90">F</text>
+  <text class="note" x="620" y="90">G</text>
+  <text class="note" x="690" y="90">A</text>
+
+  <!-- Row 2: A harmonic minor — A B C D E F G♯ A -->
+  <text class="row-lbl" x="180" y="160">Harmonic minor</text>
+  <text class="note" x="200" y="160">A</text>
+  <text class="note" x="270" y="160">B</text>
+  <text class="note" x="340" y="160">C</text>
+  <text class="note" x="410" y="160">D</text>
+  <text class="note" x="480" y="160">E</text>
+  <text class="note" x="550" y="160">F</text>
+  <text class="note-alt" x="620" y="160">G♯</text>
+  <circle class="circle" cx="620" cy="156" r="17"/>
+  <text class="note" x="690" y="160">A</text>
+
+  <!-- Row 3: A melodic minor ascending — A B C D E F♯ G♯ A -->
+  <text class="row-lbl" x="180" y="230">Melodic minor (ascending)</text>
+  <text class="note" x="200" y="230">A</text>
+  <text class="note" x="270" y="230">B</text>
+  <text class="note" x="340" y="230">C</text>
+  <text class="note" x="410" y="230">D</text>
+  <text class="note" x="480" y="230">E</text>
+  <text class="note-alt" x="550" y="230">F♯</text>
+  <circle class="circle" cx="550" cy="226" r="17"/>
+  <text class="note-alt" x="620" y="230">G♯</text>
+  <circle class="circle" cx="620" cy="226" r="17"/>
+  <text class="note" x="690" y="230">A</text>
+
+  <!-- Footnote -->
+  <text class="caption" x="30" y="290">Circled pitches mark the raised scale degrees. Harmonic minor raises the 7th (G→G♯) to restore the leading tone for a proper V–i cadence.</text>
+  <text class="caption" x="30" y="312">Ascending melodic minor raises both the 6th (F→F♯) and 7th (G→G♯) to avoid the harmonic minor’s augmented 2nd.</text>
+  <text class="caption" x="30" y="334">Descending melodic minor (not shown) reverts to natural minor.</text>
+</svg>

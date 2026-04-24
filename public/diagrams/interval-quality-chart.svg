@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 440" role="img" aria-labelledby="t d">
+  <title id="t">Interval quality chart</title>
+  <desc id="d">A grid of interval numbers (unison through octave) across columns of quality (diminished, minor, perfect, major, augmented). Filled cells show which combinations are valid; perfect-quality intervals sit at one center, major/minor pairs at the other.</desc>
+  <style>
+    .hdr   { font: 600 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; text-transform: uppercase; letter-spacing: 0.12em; }
+    .row   { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: end; }
+    .cell  { stroke: #DDD8CA; stroke-width: 1; fill: #FDFAF3; }
+    .valid { fill: #a03f2e; }
+    .perf  { fill: #1a1a18; }
+    .mark  { font: 600 14px system-ui, sans-serif; fill: #FDFAF3; text-anchor: middle; }
+    .legend { font: 300 12px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+  </style>
+
+  <!-- Column headers -->
+  <text class="hdr" x="200" y="40">Diminished</text>
+  <text class="hdr" x="300" y="40">Minor</text>
+  <text class="hdr" x="400" y="40">Perfect</text>
+  <text class="hdr" x="500" y="40">Major</text>
+  <text class="hdr" x="600" y="40">Augmented</text>
+
+  <!-- Helper to build rows quickly — each row has row label + 5 cells -->
+  <!-- Unison -->
+  <text class="row" x="130" y="78">Unison</text>
+  <rect class="cell"         x="160" y="60" width="80" height="36"/>
+  <rect class="cell"         x="260" y="60" width="80" height="36"/>
+  <rect class="cell perf"    x="360" y="60" width="80" height="36"/>
+  <rect class="cell"         x="460" y="60" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="60" width="80" height="36"/>
+  <text class="mark" x="400" y="83">●</text>
+  <text class="mark" x="600" y="83">●</text>
+
+  <!-- 2nd -->
+  <text class="row" x="130" y="118">2nd</text>
+  <rect class="cell valid"   x="160" y="100" width="80" height="36"/>
+  <rect class="cell valid"   x="260" y="100" width="80" height="36"/>
+  <rect class="cell"         x="360" y="100" width="80" height="36"/>
+  <rect class="cell valid"   x="460" y="100" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="100" width="80" height="36"/>
+  <text class="mark" x="200" y="123">●</text>
+  <text class="mark" x="300" y="123">●</text>
+  <text class="mark" x="500" y="123">●</text>
+  <text class="mark" x="600" y="123">●</text>
+
+  <!-- 3rd -->
+  <text class="row" x="130" y="158">3rd</text>
+  <rect class="cell valid"   x="160" y="140" width="80" height="36"/>
+  <rect class="cell valid"   x="260" y="140" width="80" height="36"/>
+  <rect class="cell"         x="360" y="140" width="80" height="36"/>
+  <rect class="cell valid"   x="460" y="140" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="140" width="80" height="36"/>
+  <text class="mark" x="200" y="163">●</text>
+  <text class="mark" x="300" y="163">●</text>
+  <text class="mark" x="500" y="163">●</text>
+  <text class="mark" x="600" y="163">●</text>
+
+  <!-- 4th -->
+  <text class="row" x="130" y="198">4th</text>
+  <rect class="cell valid"   x="160" y="180" width="80" height="36"/>
+  <rect class="cell"         x="260" y="180" width="80" height="36"/>
+  <rect class="cell perf"    x="360" y="180" width="80" height="36"/>
+  <rect class="cell"         x="460" y="180" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="180" width="80" height="36"/>
+  <text class="mark" x="200" y="203">●</text>
+  <text class="mark" x="400" y="203">●</text>
+  <text class="mark" x="600" y="203">●</text>
+
+  <!-- 5th -->
+  <text class="row" x="130" y="238">5th</text>
+  <rect class="cell valid"   x="160" y="220" width="80" height="36"/>
+  <rect class="cell"         x="260" y="220" width="80" height="36"/>
+  <rect class="cell perf"    x="360" y="220" width="80" height="36"/>
+  <rect class="cell"         x="460" y="220" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="220" width="80" height="36"/>
+  <text class="mark" x="200" y="243">●</text>
+  <text class="mark" x="400" y="243">●</text>
+  <text class="mark" x="600" y="243">●</text>
+
+  <!-- 6th -->
+  <text class="row" x="130" y="278">6th</text>
+  <rect class="cell valid"   x="160" y="260" width="80" height="36"/>
+  <rect class="cell valid"   x="260" y="260" width="80" height="36"/>
+  <rect class="cell"         x="360" y="260" width="80" height="36"/>
+  <rect class="cell valid"   x="460" y="260" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="260" width="80" height="36"/>
+  <text class="mark" x="200" y="283">●</text>
+  <text class="mark" x="300" y="283">●</text>
+  <text class="mark" x="500" y="283">●</text>
+  <text class="mark" x="600" y="283">●</text>
+
+  <!-- 7th -->
+  <text class="row" x="130" y="318">7th</text>
+  <rect class="cell valid"   x="160" y="300" width="80" height="36"/>
+  <rect class="cell valid"   x="260" y="300" width="80" height="36"/>
+  <rect class="cell"         x="360" y="300" width="80" height="36"/>
+  <rect class="cell valid"   x="460" y="300" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="300" width="80" height="36"/>
+  <text class="mark" x="200" y="323">●</text>
+  <text class="mark" x="300" y="323">●</text>
+  <text class="mark" x="500" y="323">●</text>
+  <text class="mark" x="600" y="323">●</text>
+
+  <!-- Octave -->
+  <text class="row" x="130" y="358">Octave</text>
+  <rect class="cell valid"   x="160" y="340" width="80" height="36"/>
+  <rect class="cell"         x="260" y="340" width="80" height="36"/>
+  <rect class="cell perf"    x="360" y="340" width="80" height="36"/>
+  <rect class="cell"         x="460" y="340" width="80" height="36"/>
+  <rect class="cell valid"   x="560" y="340" width="80" height="36"/>
+  <text class="mark" x="200" y="363">●</text>
+  <text class="mark" x="400" y="363">●</text>
+  <text class="mark" x="600" y="363">●</text>
+
+  <!-- Legend -->
+  <text class="legend" x="130" y="410">Unisons, 4ths, 5ths, octaves take perfect quality; 2nds, 3rds, 6ths, 7ths take major or minor. Diminished and augmented sit outside either system.</text>
+</svg>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 260" role="img" aria-labelledby="t d">
+  <title id="t">Diatonic triads of C major</title>
+  <desc id="d">Seven triads built on each scale degree of C major, labeled with Roman numerals I, ii, iii, IV, V, vi, vii° and their qualities.</desc>
+  <style>
+    .staff { stroke: #1a1a18; stroke-width: 1; }
+    .clef  { font: 500 56px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .note  { fill: #1a1a18; }
+    .ledger { stroke: #1a1a18; stroke-width: 1; }
+    .rn    { font: 500 20px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; }
+    .chord { font: 400 13px system-ui, sans-serif; fill: #1a1a18; text-anchor: middle; }
+    .quality { font: 300 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+  </style>
+
+  <!-- Treble staff -->
+  <line class="staff" x1="30" y1="60"  x2="740" y2="60"/>
+  <line class="staff" x1="30" y1="76"  x2="740" y2="76"/>
+  <line class="staff" x1="30" y1="92"  x2="740" y2="92"/>
+  <line class="staff" x1="30" y1="108" x2="740" y2="108"/>
+  <line class="staff" x1="30" y1="124" x2="740" y2="124"/>
+
+  <text class="clef" x="40" y="124">𝄞</text>
+
+  <!-- Seven triads at x: 130, 210, 290, 370, 450, 530, 610, 690 -->
+  <!-- Pitch y-map on treble staff:
+       E4 = 124, F4 = 116, G4 = 108, A4 = 100, B4 = 92, C5 = 84,
+       D5 = 76, E5 = 68, F5 = 60. Middle C (C4) = 140 on ledger line. -->
+
+  <!-- I: C-E-G — root C4 (ledger), E4, G4 -->
+  <g>
+    <line class="ledger" x1="115" y1="140" x2="145" y2="140"/>
+    <ellipse class="note" cx="130" cy="140" rx="7" ry="5" transform="rotate(-18 130 140)"/>
+    <ellipse class="note" cx="130" cy="124" rx="7" ry="5" transform="rotate(-18 130 124)"/>
+    <ellipse class="note" cx="130" cy="108" rx="7" ry="5" transform="rotate(-18 130 108)"/>
+    <text class="rn" x="130" y="180">I</text>
+    <text class="chord" x="130" y="200">C</text>
+    <text class="quality" x="130" y="220">major</text>
+  </g>
+
+  <!-- ii: D-F-A -->
+  <g>
+    <ellipse class="note" cx="210" cy="132" rx="7" ry="5" transform="rotate(-18 210 132)"/>
+    <ellipse class="note" cx="210" cy="116" rx="7" ry="5" transform="rotate(-18 210 116)"/>
+    <ellipse class="note" cx="210" cy="100" rx="7" ry="5" transform="rotate(-18 210 100)"/>
+    <text class="rn" x="210" y="180">ii</text>
+    <text class="chord" x="210" y="200">Dm</text>
+    <text class="quality" x="210" y="220">minor</text>
+  </g>
+
+  <!-- iii: E-G-B -->
+  <g>
+    <ellipse class="note" cx="290" cy="124" rx="7" ry="5" transform="rotate(-18 290 124)"/>
+    <ellipse class="note" cx="290" cy="108" rx="7" ry="5" transform="rotate(-18 290 108)"/>
+    <ellipse class="note" cx="290" cy="92"  rx="7" ry="5" transform="rotate(-18 290 92)"/>
+    <text class="rn" x="290" y="180">iii</text>
+    <text class="chord" x="290" y="200">Em</text>
+    <text class="quality" x="290" y="220">minor</text>
+  </g>
+
+  <!-- IV: F-A-C -->
+  <g>
+    <ellipse class="note" cx="370" cy="116" rx="7" ry="5" transform="rotate(-18 370 116)"/>
+    <ellipse class="note" cx="370" cy="100" rx="7" ry="5" transform="rotate(-18 370 100)"/>
+    <ellipse class="note" cx="370" cy="84"  rx="7" ry="5" transform="rotate(-18 370 84)"/>
+    <text class="rn" x="370" y="180">IV</text>
+    <text class="chord" x="370" y="200">F</text>
+    <text class="quality" x="370" y="220">major</text>
+  </g>
+
+  <!-- V: G-B-D -->
+  <g>
+    <ellipse class="note" cx="450" cy="108" rx="7" ry="5" transform="rotate(-18 450 108)"/>
+    <ellipse class="note" cx="450" cy="92"  rx="7" ry="5" transform="rotate(-18 450 92)"/>
+    <ellipse class="note" cx="450" cy="76"  rx="7" ry="5" transform="rotate(-18 450 76)"/>
+    <text class="rn" x="450" y="180">V</text>
+    <text class="chord" x="450" y="200">G</text>
+    <text class="quality" x="450" y="220">major</text>
+  </g>
+
+  <!-- vi: A-C-E -->
+  <g>
+    <ellipse class="note" cx="530" cy="100" rx="7" ry="5" transform="rotate(-18 530 100)"/>
+    <ellipse class="note" cx="530" cy="84"  rx="7" ry="5" transform="rotate(-18 530 84)"/>
+    <ellipse class="note" cx="530" cy="68"  rx="7" ry="5" transform="rotate(-18 530 68)"/>
+    <text class="rn" x="530" y="180">vi</text>
+    <text class="chord" x="530" y="200">Am</text>
+    <text class="quality" x="530" y="220">minor</text>
+  </g>
+
+  <!-- vii°: B-D-F -->
+  <g>
+    <ellipse class="note" cx="610" cy="92"  rx="7" ry="5" transform="rotate(-18 610 92)"/>
+    <ellipse class="note" cx="610" cy="76"  rx="7" ry="5" transform="rotate(-18 610 76)"/>
+    <ellipse class="note" cx="610" cy="60"  rx="7" ry="5" transform="rotate(-18 610 60)"/>
+    <text class="rn" x="610" y="180">vii°</text>
+    <text class="chord" x="610" y="200">B°</text>
+    <text class="quality" x="610" y="220">dim.</text>
+  </g>
+</svg>

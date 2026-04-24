@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" aria-labelledby="t d">
+  <title id="t">Enharmonic equivalents on the keyboard</title>
+  <desc id="d">One octave of piano keyboard with the five black-key enharmonic pairs: C♯=D♭, D♯=E♭, F♯=G♭, G♯=A♭, A♯=B♭.</desc>
+  <style>
+    .w-key { fill: #FDFAF3; stroke: #1a1a18; stroke-width: 1.2; }
+    .b-key { fill: #1a1a18; }
+    .w-lbl { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .pair  { font: 500 12px "Cormorant Garamond", Georgia, serif; fill: #FDFAF3; text-anchor: middle; }
+    .arrow { stroke: #a03f2e; stroke-width: 1.5; fill: none; }
+    .note  { font: 300 12px system-ui, sans-serif; fill: #7A7060; font-style: italic; text-anchor: middle; }
+  </style>
+
+  <!-- 7 white keys from C to C -->
+  <rect class="w-key" x="80"  y="60" width="80" height="200"/>
+  <rect class="w-key" x="160" y="60" width="80" height="200"/>
+  <rect class="w-key" x="240" y="60" width="80" height="200"/>
+  <rect class="w-key" x="320" y="60" width="80" height="200"/>
+  <rect class="w-key" x="400" y="60" width="80" height="200"/>
+  <rect class="w-key" x="480" y="60" width="80" height="200"/>
+  <rect class="w-key" x="560" y="60" width="80" height="200"/>
+  <rect class="w-key" x="640" y="60" width="40" height="200"/>
+
+  <!-- 5 black keys -->
+  <rect class="b-key" x="140" y="60" width="40" height="120"/>
+  <rect class="b-key" x="220" y="60" width="40" height="120"/>
+  <rect class="b-key" x="380" y="60" width="40" height="120"/>
+  <rect class="b-key" x="460" y="60" width="40" height="120"/>
+  <rect class="b-key" x="540" y="60" width="40" height="120"/>
+
+  <!-- White key letter labels -->
+  <text class="w-lbl" x="115" y="250">C</text>
+  <text class="w-lbl" x="195" y="250">D</text>
+  <text class="w-lbl" x="275" y="250">E</text>
+  <text class="w-lbl" x="355" y="250">F</text>
+  <text class="w-lbl" x="435" y="250">G</text>
+  <text class="w-lbl" x="515" y="250">A</text>
+  <text class="w-lbl" x="595" y="250">B</text>
+  <text class="w-lbl" x="650" y="250">C</text>
+
+  <!-- Enharmonic pair labels inside each black key -->
+  <text class="pair" x="160" y="110">C♯</text>
+  <text class="pair" x="160" y="130">=</text>
+  <text class="pair" x="160" y="150">D♭</text>
+
+  <text class="pair" x="240" y="110">D♯</text>
+  <text class="pair" x="240" y="130">=</text>
+  <text class="pair" x="240" y="150">E♭</text>
+
+  <text class="pair" x="400" y="110">F♯</text>
+  <text class="pair" x="400" y="130">=</text>
+  <text class="pair" x="400" y="150">G♭</text>
+
+  <text class="pair" x="480" y="110">G♯</text>
+  <text class="pair" x="480" y="130">=</text>
+  <text class="pair" x="480" y="150">A♭</text>
+
+  <text class="pair" x="560" y="110">A♯</text>
+  <text class="pair" x="560" y="130">=</text>
+  <text class="pair" x="560" y="150">B♭</text>
+
+  <text class="note" x="360" y="40">Each black key has two valid names — a sharp of the white key to its left, a flat of the white key to its right.</text>
+</svg>

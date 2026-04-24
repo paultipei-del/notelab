@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 400" role="img" aria-labelledby="t d">
+  <title id="t">Ledger lines above and below the staves</title>
+  <desc id="d">Five ledger lines above the treble staff with their note names (A, B, C, D, E) and five ledger lines below the bass staff (G, F, E, D, C).</desc>
+  <style>
+    .staff { stroke: #1a1a18; stroke-width: 1; }
+    .ledger { stroke: #1a1a18; stroke-width: 1; }
+    .clef { font: 500 44px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .lbl  { font: 500 13px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; }
+    .title { font: 600 12px system-ui, sans-serif; fill: #7A7060; text-transform: uppercase; letter-spacing: 0.12em; }
+  </style>
+
+  <!-- TREBLE block -->
+  <text class="title" x="40" y="30">Above treble</text>
+  <!-- Treble staff lines at y=110,124,138,152,166 -->
+  <line class="staff" x1="100" y1="110" x2="500" y2="110"/>
+  <line class="staff" x1="100" y1="124" x2="500" y2="124"/>
+  <line class="staff" x1="100" y1="138" x2="500" y2="138"/>
+  <line class="staff" x1="100" y1="152" x2="500" y2="152"/>
+  <line class="staff" x1="100" y1="166" x2="500" y2="166"/>
+  <text class="clef" x="105" y="160">𝄞</text>
+
+  <!-- 5 ledger lines above: A5, B5, C6, D6, E6 (y decreasing from 96 to 40 in 14px steps) -->
+  <line class="ledger" x1="300" y1="96" x2="340" y2="96"/>
+  <text class="lbl" x="350" y="100">A5 (space above top line)</text>
+
+  <line class="ledger" x1="300" y1="82" x2="340" y2="82"/>
+  <text class="lbl" x="350" y="86">B5</text>
+
+  <line class="ledger" x1="300" y1="68" x2="340" y2="68"/>
+  <text class="lbl" x="350" y="72">C6</text>
+
+  <line class="ledger" x1="300" y1="54" x2="340" y2="54"/>
+  <text class="lbl" x="350" y="58">D6</text>
+
+  <line class="ledger" x1="300" y1="40" x2="340" y2="40"/>
+  <text class="lbl" x="350" y="44">E6</text>
+
+  <!-- BASS block -->
+  <text class="title" x="40" y="215">Below bass</text>
+  <!-- Bass staff lines at y=240,254,268,282,296 -->
+  <line class="staff" x1="100" y1="240" x2="500" y2="240"/>
+  <line class="staff" x1="100" y1="254" x2="500" y2="254"/>
+  <line class="staff" x1="100" y1="268" x2="500" y2="268"/>
+  <line class="staff" x1="100" y1="282" x2="500" y2="282"/>
+  <line class="staff" x1="100" y1="296" x2="500" y2="296"/>
+  <text class="clef" x="105" y="260">𝄢</text>
+
+  <!-- 5 ledger lines below: G2, F2, E2, D2, C2 (y increasing from 310 to 366) -->
+  <line class="ledger" x1="300" y1="310" x2="340" y2="310"/>
+  <text class="lbl" x="350" y="314">G2</text>
+
+  <line class="ledger" x1="300" y1="324" x2="340" y2="324"/>
+  <text class="lbl" x="350" y="328">F2</text>
+
+  <line class="ledger" x1="300" y1="338" x2="340" y2="338"/>
+  <text class="lbl" x="350" y="342">E2</text>
+
+  <line class="ledger" x1="300" y1="352" x2="340" y2="352"/>
+  <text class="lbl" x="350" y="356">D2</text>
+
+  <line class="ledger" x1="300" y1="366" x2="340" y2="366"/>
+  <text class="lbl" x="350" y="370">C2</text>
+</svg>

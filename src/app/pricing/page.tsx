@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import ScrollReveal from '@/components/marketing/ScrollReveal'
+import GlyphBackdrop from '@/components/marketing/GlyphBackdrop'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -94,10 +96,12 @@ const FAQ: Array<{ q: string; a: string }> = [
   },
 ]
 
-function PlanCardView({ plan }: { plan: PlanCard }) {
+function PlanCardView({ plan, delayMs = 0 }: { plan: PlanCard; delayMs?: number }) {
   const isHi = plan.highlighted
   return (
-    <div
+    <ScrollReveal
+      delayMs={delayMs}
+      className="nl-tile-hover"
       style={{
         background: isHi ? '#FDFAF3' : '#F2EDDF',
         border: `${isHi ? 2 : 1}px solid ${isHi ? ACCENT : '#DDD8CA'}`,
@@ -199,7 +203,7 @@ function PlanCardView({ plan }: { plan: PlanCard }) {
           {plan.smallPrint}
         </p>
       )}
-    </div>
+    </ScrollReveal>
   )
 }
 
@@ -281,8 +285,9 @@ export default function PricingPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
-      <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '48px 32px 96px' }}>
+    <div style={{ minHeight: '100vh', background: '#F2EDDF', position: 'relative' }}>
+      <GlyphBackdrop density={9} seed={51} />
+      <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '48px 32px 96px', position: 'relative' }}>
         {/* Hero */}
         <div style={{ marginBottom: '56px', maxWidth: '680px' }}>
           <h1
@@ -320,9 +325,9 @@ export default function PricingPage() {
             marginBottom: '80px',
           }}
         >
-          <PlanCardView plan={FREE_PLAN} />
-          <PlanCardView plan={PLUS_PLAN} />
-          <PlanCardView plan={PROGRAMS_PLAN} />
+          <PlanCardView plan={FREE_PLAN} delayMs={0} />
+          <PlanCardView plan={PLUS_PLAN} delayMs={100} />
+          <PlanCardView plan={PROGRAMS_PLAN} delayMs={200} />
         </div>
 
         {/* FAQ */}
@@ -340,8 +345,10 @@ export default function PricingPage() {
             Questions
           </h2>
           <div>
-            {FAQ.map(f => (
-              <FAQItem key={f.q} q={f.q} a={f.a} />
+            {FAQ.map((f, i) => (
+              <ScrollReveal key={f.q} delayMs={i * 50}>
+                <FAQItem q={f.q} a={f.a} />
+              </ScrollReveal>
             ))}
           </div>
         </section>

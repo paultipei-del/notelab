@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 260" role="img" aria-labelledby="t d">
+  <title id="t">The five seventh-chord qualities built on C</title>
+  <desc id="d">Five seventh chords side by side: C major 7, C dominant 7, C minor 7, C half-diminished 7, C fully diminished 7, each labeled with its symbol and the interval structure.</desc>
+  <style>
+    .staff { stroke: #1a1a18; stroke-width: 1; }
+    .clef  { font: 500 56px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .note  { fill: #1a1a18; }
+    .ledger { stroke: #1a1a18; stroke-width: 1; }
+    .acc   { font: 500 16px system-ui, sans-serif; fill: #1a1a18; }
+    .sym   { font: 600 16px system-ui, sans-serif; fill: #a03f2e; text-anchor: middle; }
+    .name  { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+  </style>
+
+  <!-- Treble staff -->
+  <line class="staff" x1="30" y1="60"  x2="800" y2="60"/>
+  <line class="staff" x1="30" y1="76"  x2="800" y2="76"/>
+  <line class="staff" x1="30" y1="92"  x2="800" y2="92"/>
+  <line class="staff" x1="30" y1="108" x2="800" y2="108"/>
+  <line class="staff" x1="30" y1="124" x2="800" y2="124"/>
+
+  <text class="clef" x="40" y="124">𝄞</text>
+
+  <!-- Each chord at x: 160, 290, 420, 550, 680, 810 -->
+  <!-- All built on C4 (ledger at y=140). -->
+  <!-- C4=140, D4=132, E4=124, F4=116, G4=108, A4=100, Bb4/B4=92 -->
+
+  <!-- CM7: C-E-G-B -->
+  <g>
+    <line class="ledger" x1="145" y1="140" x2="175" y2="140"/>
+    <ellipse class="note" cx="160" cy="140" rx="7" ry="5" transform="rotate(-18 160 140)"/>
+    <ellipse class="note" cx="160" cy="124" rx="7" ry="5" transform="rotate(-18 160 124)"/>
+    <ellipse class="note" cx="160" cy="108" rx="7" ry="5" transform="rotate(-18 160 108)"/>
+    <ellipse class="note" cx="160" cy="92"  rx="7" ry="5" transform="rotate(-18 160 92)"/>
+    <text class="sym"  x="160" y="180">CM7</text>
+    <text class="name" x="160" y="200">major 7</text>
+  </g>
+
+  <!-- C7 (dominant): C-E-G-B♭ -->
+  <g>
+    <line class="ledger" x1="275" y1="140" x2="305" y2="140"/>
+    <ellipse class="note" cx="290" cy="140" rx="7" ry="5" transform="rotate(-18 290 140)"/>
+    <ellipse class="note" cx="290" cy="124" rx="7" ry="5" transform="rotate(-18 290 124)"/>
+    <ellipse class="note" cx="290" cy="108" rx="7" ry="5" transform="rotate(-18 290 108)"/>
+    <text class="acc" x="268" y="98">♭</text>
+    <ellipse class="note" cx="290" cy="92"  rx="7" ry="5" transform="rotate(-18 290 92)"/>
+    <text class="sym"  x="290" y="180">C7</text>
+    <text class="name" x="290" y="200">dominant 7</text>
+  </g>
+
+  <!-- Cm7: C-E♭-G-B♭ -->
+  <g>
+    <line class="ledger" x1="405" y1="140" x2="435" y2="140"/>
+    <ellipse class="note" cx="420" cy="140" rx="7" ry="5" transform="rotate(-18 420 140)"/>
+    <text class="acc" x="398" y="130">♭</text>
+    <ellipse class="note" cx="420" cy="124" rx="7" ry="5" transform="rotate(-18 420 124)"/>
+    <ellipse class="note" cx="420" cy="108" rx="7" ry="5" transform="rotate(-18 420 108)"/>
+    <text class="acc" x="398" y="98">♭</text>
+    <ellipse class="note" cx="420" cy="92"  rx="7" ry="5" transform="rotate(-18 420 92)"/>
+    <text class="sym"  x="420" y="180">Cm7</text>
+    <text class="name" x="420" y="200">minor 7</text>
+  </g>
+
+  <!-- Cø7: C-E♭-G♭-B♭ -->
+  <g>
+    <line class="ledger" x1="535" y1="140" x2="565" y2="140"/>
+    <ellipse class="note" cx="550" cy="140" rx="7" ry="5" transform="rotate(-18 550 140)"/>
+    <text class="acc" x="528" y="130">♭</text>
+    <ellipse class="note" cx="550" cy="124" rx="7" ry="5" transform="rotate(-18 550 124)"/>
+    <text class="acc" x="528" y="114">♭</text>
+    <ellipse class="note" cx="550" cy="108" rx="7" ry="5" transform="rotate(-18 550 108)"/>
+    <text class="acc" x="528" y="98">♭</text>
+    <ellipse class="note" cx="550" cy="92"  rx="7" ry="5" transform="rotate(-18 550 92)"/>
+    <text class="sym"  x="550" y="180">Cø7</text>
+    <text class="name" x="550" y="200">half-dim 7</text>
+  </g>
+
+  <!-- C°7: C-E♭-G♭-B♭♭ (enharmonic A) -->
+  <g>
+    <line class="ledger" x1="665" y1="140" x2="695" y2="140"/>
+    <ellipse class="note" cx="680" cy="140" rx="7" ry="5" transform="rotate(-18 680 140)"/>
+    <text class="acc" x="658" y="130">♭</text>
+    <ellipse class="note" cx="680" cy="124" rx="7" ry="5" transform="rotate(-18 680 124)"/>
+    <text class="acc" x="658" y="114">♭</text>
+    <ellipse class="note" cx="680" cy="108" rx="7" ry="5" transform="rotate(-18 680 108)"/>
+    <text class="acc" x="656" y="102">♭♭</text>
+    <ellipse class="note" cx="680" cy="92"  rx="7" ry="5" transform="rotate(-18 680 92)"/>
+    <text class="sym"  x="680" y="180">C°7</text>
+    <text class="name" x="680" y="200">fully dim 7</text>
+  </g>
+</svg>

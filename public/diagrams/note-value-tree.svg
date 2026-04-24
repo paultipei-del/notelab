@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="t d">
+  <title id="t">Note-value tree</title>
+  <desc id="d">A tree showing how each note value halves into smaller ones: whole note branches to two halves, four quarters, eight eighths, sixteen sixteenths.</desc>
+  <style>
+    .line  { stroke: #a03f2e; stroke-width: 1; fill: none; }
+    .lbl   { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .frac  { font: 300 11px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+    .glyph { font: 400 24px "Bravura", serif; fill: #1a1a18; text-anchor: middle; }
+    .row   { font: 600 11px system-ui, sans-serif; fill: #9A9081; text-anchor: end; text-transform: uppercase; letter-spacing: 0.1em; }
+  </style>
+
+  <!-- Row labels left -->
+  <text class="row" x="80" y="50">1</text>
+  <text class="row" x="80" y="120">1/2</text>
+  <text class="row" x="80" y="190">1/4</text>
+  <text class="row" x="80" y="260">1/8</text>
+  <text class="row" x="80" y="330">1/16</text>
+
+  <!-- Level 1: whole note at center -->
+  <text class="glyph" x="320" y="52">𝅝</text>
+  <text class="frac" x="320" y="74">whole</text>
+
+  <!-- Branches to 2 halves -->
+  <line class="line" x1="320" y1="80" x2="220" y2="100"/>
+  <line class="line" x1="320" y1="80" x2="420" y2="100"/>
+  <text class="glyph" x="220" y="122">𝅗𝅥</text>
+  <text class="glyph" x="420" y="122">𝅗𝅥</text>
+  <text class="frac" x="220" y="142">half</text>
+  <text class="frac" x="420" y="142">half</text>
+
+  <!-- Branches to 4 quarters -->
+  <line class="line" x1="220" y1="148" x2="170" y2="168"/>
+  <line class="line" x1="220" y1="148" x2="270" y2="168"/>
+  <line class="line" x1="420" y1="148" x2="370" y2="168"/>
+  <line class="line" x1="420" y1="148" x2="470" y2="168"/>
+  <text class="glyph" x="170" y="192">♩</text>
+  <text class="glyph" x="270" y="192">♩</text>
+  <text class="glyph" x="370" y="192">♩</text>
+  <text class="glyph" x="470" y="192">♩</text>
+  <text class="frac" x="320" y="212">four quarters</text>
+
+  <!-- Branches to 8 eighths -->
+  <line class="line" x1="170" y1="200" x2="145" y2="232"/>
+  <line class="line" x1="170" y1="200" x2="195" y2="232"/>
+  <line class="line" x1="270" y1="200" x2="245" y2="232"/>
+  <line class="line" x1="270" y1="200" x2="295" y2="232"/>
+  <line class="line" x1="370" y1="200" x2="345" y2="232"/>
+  <line class="line" x1="370" y1="200" x2="395" y2="232"/>
+  <line class="line" x1="470" y1="200" x2="445" y2="232"/>
+  <line class="line" x1="470" y1="200" x2="495" y2="232"/>
+  <text class="glyph" x="145" y="260" font-size="18">♪</text>
+  <text class="glyph" x="195" y="260" font-size="18">♪</text>
+  <text class="glyph" x="245" y="260" font-size="18">♪</text>
+  <text class="glyph" x="295" y="260" font-size="18">♪</text>
+  <text class="glyph" x="345" y="260" font-size="18">♪</text>
+  <text class="glyph" x="395" y="260" font-size="18">♪</text>
+  <text class="glyph" x="445" y="260" font-size="18">♪</text>
+  <text class="glyph" x="495" y="260" font-size="18">♪</text>
+  <text class="frac" x="320" y="282">eight eighths</text>
+
+  <!-- Branches to 16 sixteenths — show as continuous ticks -->
+  <g stroke="#a03f2e" stroke-width="1" fill="none">
+    <line x1="132" y1="290" x2="508" y2="290"/>
+    <!-- tick marks -->
+    <g>
+      <line x1="132" y1="290" x2="132" y2="310"/>
+      <line x1="157" y1="290" x2="157" y2="310"/>
+      <line x1="182" y1="290" x2="182" y2="310"/>
+      <line x1="207" y1="290" x2="207" y2="310"/>
+      <line x1="232" y1="290" x2="232" y2="310"/>
+      <line x1="257" y1="290" x2="257" y2="310"/>
+      <line x1="282" y1="290" x2="282" y2="310"/>
+      <line x1="307" y1="290" x2="307" y2="310"/>
+      <line x1="332" y1="290" x2="332" y2="310"/>
+      <line x1="357" y1="290" x2="357" y2="310"/>
+      <line x1="382" y1="290" x2="382" y2="310"/>
+      <line x1="407" y1="290" x2="407" y2="310"/>
+      <line x1="432" y1="290" x2="432" y2="310"/>
+      <line x1="457" y1="290" x2="457" y2="310"/>
+      <line x1="482" y1="290" x2="482" y2="310"/>
+      <line x1="507" y1="290" x2="507" y2="310"/>
+    </g>
+  </g>
+  <text class="frac" x="320" y="330">sixteen sixteenths</text>
+  <text class="lbl" x="320" y="395">Each row has the same total duration. Halving doubles the note count.</text>
+</svg>

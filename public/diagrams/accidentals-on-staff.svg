@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 240" role="img" aria-labelledby="t d">
+  <title id="t">Accidentals on the staff</title>
+  <desc id="d">Five versions of C on a treble staff: C-natural, C-sharp, C-flat, C-double-sharp, C-double-flat, each labeled with its name.</desc>
+  <style>
+    .staff { stroke: #1a1a18; stroke-width: 1; }
+    .clef  { font: 500 56px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .note  { fill: #1a1a18; }
+    .ledger { stroke: #1a1a18; stroke-width: 1; }
+    .acc   { font: 500 26px system-ui, sans-serif; fill: #1a1a18; text-anchor: middle; }
+    .lbl   { font: 500 14px "Cormorant Garamond", Georgia, serif; fill: #a03f2e; text-anchor: middle; }
+  </style>
+
+  <!-- Treble staff -->
+  <line class="staff" x1="30" y1="60"  x2="660" y2="60"/>
+  <line class="staff" x1="30" y1="76"  x2="660" y2="76"/>
+  <line class="staff" x1="30" y1="92"  x2="660" y2="92"/>
+  <line class="staff" x1="30" y1="108" x2="660" y2="108"/>
+  <line class="staff" x1="30" y1="124" x2="660" y2="124"/>
+
+  <text class="clef" x="40" y="124">𝄞</text>
+
+  <!-- 5 versions of middle C4 (ledger line y=140) -->
+  <!-- Positions: 160, 280, 400, 520, 620 -->
+
+  <!-- Natural -->
+  <g>
+    <line class="ledger" x1="145" y1="140" x2="175" y2="140"/>
+    <ellipse class="note" cx="160" cy="140" rx="8" ry="6" transform="rotate(-18 160 140)"/>
+    <text class="acc" x="138" y="148">♮</text>
+    <text class="lbl" x="160" y="180">C♮</text>
+    <text class="lbl" x="160" y="198">natural</text>
+  </g>
+
+  <!-- Sharp -->
+  <g>
+    <line class="ledger" x1="265" y1="140" x2="295" y2="140"/>
+    <ellipse class="note" cx="280" cy="140" rx="8" ry="6" transform="rotate(-18 280 140)"/>
+    <text class="acc" x="258" y="148">♯</text>
+    <text class="lbl" x="280" y="180">C♯</text>
+    <text class="lbl" x="280" y="198">sharp</text>
+  </g>
+
+  <!-- Flat -->
+  <g>
+    <line class="ledger" x1="385" y1="140" x2="415" y2="140"/>
+    <ellipse class="note" cx="400" cy="140" rx="8" ry="6" transform="rotate(-18 400 140)"/>
+    <text class="acc" x="378" y="148">♭</text>
+    <text class="lbl" x="400" y="180">C♭</text>
+    <text class="lbl" x="400" y="198">flat</text>
+  </g>
+
+  <!-- Double sharp -->
+  <g>
+    <line class="ledger" x1="505" y1="140" x2="535" y2="140"/>
+    <ellipse class="note" cx="520" cy="140" rx="8" ry="6" transform="rotate(-18 520 140)"/>
+    <text class="acc" x="498" y="148" font-size="20">𝄪</text>
+    <text class="lbl" x="520" y="180">C𝄪</text>
+    <text class="lbl" x="520" y="198">double sharp</text>
+  </g>
+
+  <!-- Double flat -->
+  <g>
+    <line class="ledger" x1="605" y1="140" x2="635" y2="140"/>
+    <ellipse class="note" cx="620" cy="140" rx="8" ry="6" transform="rotate(-18 620 140)"/>
+    <text class="acc" x="594" y="148" font-size="20">𝄫</text>
+    <text class="lbl" x="620" y="180">C𝄫</text>
+    <text class="lbl" x="620" y="198">double flat</text>
+  </g>
+</svg>

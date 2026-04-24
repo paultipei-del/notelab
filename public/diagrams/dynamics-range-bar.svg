@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180" role="img" aria-labelledby="t d">
+  <title id="t">Dynamic range</title>
+  <desc id="d">A horizontal gradient bar from pp (very soft) on the left to ff (very loud) on the right, with all standard dynamics marked: pp, p, mp, mf, f, ff.</desc>
+  <style>
+    .tick   { stroke: #1a1a18; stroke-width: 1; }
+    .dyn    { font: italic 700 18px serif; fill: #1a1a18; text-anchor: middle; }
+    .desc   { font: 300 11px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+    .axis   { font: 600 11px system-ui, sans-serif; fill: #7A7060; text-transform: uppercase; letter-spacing: 0.12em; }
+  </style>
+
+  <!-- Bar with gradient (pale on left, dark on right) -->
+  <defs>
+    <linearGradient id="dyn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"  stop-color="#F2EDDF"/>
+      <stop offset="100%" stop-color="#a03f2e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Axis labels -->
+  <text class="axis" x="40"  y="40">Soft</text>
+  <text class="axis" x="680" y="40" text-anchor="end">Loud</text>
+
+  <rect x="40" y="60" width="640" height="36" rx="18" fill="url(#dyn)" stroke="#DDD8CA"/>
+
+  <!-- Tick marks and labels: pp, p, mp, mf, f, ff — spaced evenly -->
+  <!-- Positions: 96, 200, 304, 408, 512, 616 (center of each sixth) -->
+  <g>
+    <line class="tick" x1="96"  y1="96" x2="96"  y2="108"/>
+    <line class="tick" x1="200" y1="96" x2="200" y2="108"/>
+    <line class="tick" x1="304" y1="96" x2="304" y2="108"/>
+    <line class="tick" x1="408" y1="96" x2="408" y2="108"/>
+    <line class="tick" x1="512" y1="96" x2="512" y2="108"/>
+    <line class="tick" x1="616" y1="96" x2="616" y2="108"/>
+  </g>
+
+  <text class="dyn" x="96"  y="130">pp</text>
+  <text class="dyn" x="200" y="130">p</text>
+  <text class="dyn" x="304" y="130">mp</text>
+  <text class="dyn" x="408" y="130">mf</text>
+  <text class="dyn" x="512" y="130">f</text>
+  <text class="dyn" x="616" y="130">ff</text>
+
+  <text class="desc" x="96"  y="150">pianissimo</text>
+  <text class="desc" x="200" y="150">piano</text>
+  <text class="desc" x="304" y="150">mezzo-piano</text>
+  <text class="desc" x="408" y="150">mezzo-forte</text>
+  <text class="desc" x="512" y="150">forte</text>
+  <text class="desc" x="616" y="150">fortissimo</text>
+</svg>

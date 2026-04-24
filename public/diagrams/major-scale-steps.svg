@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-labelledby="t d">
+  <title id="t">The major scale step pattern</title>
+  <desc id="d">The C major scale laid out horizontally with W (whole step) and H (half step) labels between each pair of notes. The pattern is W-W-H-W-W-W-H.</desc>
+  <style>
+    .note { font: 500 22px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; text-anchor: middle; }
+    .step-w { font: 700 14px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; }
+    .step-h { font: 700 14px system-ui, sans-serif; fill: #a03f2e; text-anchor: middle; }
+    .arrow { stroke: #DDD8CA; stroke-width: 1; fill: none; }
+    .note-circle { fill: #FDFAF3; stroke: #DDD8CA; stroke-width: 1; }
+    .deg { font: 400 12px system-ui, sans-serif; fill: #7A7060; text-anchor: middle; font-style: italic; }
+    .note-circle-tonic { fill: #a03f2e; }
+    .note-tonic { fill: #FDFAF3; }
+    .title { font: 500 16px "Cormorant Garamond", Georgia, serif; fill: #1a1a18; }
+    .caption { font: 300 13px system-ui, sans-serif; fill: #7A7060; font-style: italic; }
+  </style>
+
+  <text class="title" x="60" y="40">C major</text>
+
+  <!-- 8 notes, evenly spaced from x=80 to x=660 -->
+  <!-- Tonic C -->
+  <circle class="note-circle note-circle-tonic" cx="80"  cy="100" r="22"/>
+  <circle class="note-circle" cx="170" cy="100" r="22"/>
+  <circle class="note-circle" cx="260" cy="100" r="22"/>
+  <circle class="note-circle" cx="350" cy="100" r="22"/>
+  <circle class="note-circle" cx="440" cy="100" r="22"/>
+  <circle class="note-circle" cx="530" cy="100" r="22"/>
+  <circle class="note-circle" cx="620" cy="100" r="22"/>
+  <circle class="note-circle note-circle-tonic" cx="710" cy="100" r="22"/>
+
+  <!-- Letter names -->
+  <text class="note note-tonic" x="80"  y="107">C</text>
+  <text class="note" x="170" y="107">D</text>
+  <text class="note" x="260" y="107">E</text>
+  <text class="note" x="350" y="107">F</text>
+  <text class="note" x="440" y="107">G</text>
+  <text class="note" x="530" y="107">A</text>
+  <text class="note" x="620" y="107">B</text>
+  <text class="note note-tonic" x="710" y="107">C</text>
+
+  <!-- Scale-degree numbers beneath -->
+  <text class="deg" x="80"  y="150">1</text>
+  <text class="deg" x="170" y="150">2</text>
+  <text class="deg" x="260" y="150">3</text>
+  <text class="deg" x="350" y="150">4</text>
+  <text class="deg" x="440" y="150">5</text>
+  <text class="deg" x="530" y="150">6</text>
+  <text class="deg" x="620" y="150">7</text>
+  <text class="deg" x="710" y="150">8</text>
+
+  <!-- Step labels between notes (W W H W W W H) — placed above the note row -->
+  <text class="step-w" x="125" y="70">W</text>
+  <text class="step-w" x="215" y="70">W</text>
+  <text class="step-h" x="305" y="70">H</text>
+  <text class="step-w" x="395" y="70">W</text>
+  <text class="step-w" x="485" y="70">W</text>
+  <text class="step-w" x="575" y="70">W</text>
+  <text class="step-h" x="665" y="70">H</text>
+
+  <!-- Caption -->
+  <text class="caption" x="60" y="195">W = whole step (2 half steps) · H = half step (1 semitone). The pattern W-W-H-W-W-W-H defines every major scale.</text>
+</svg>
