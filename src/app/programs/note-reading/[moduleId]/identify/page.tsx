@@ -63,6 +63,19 @@ function staffReference(pitch: string): string | null {
   return TREBLE_LINE[pitch] || TREBLE_SPACE[pitch] || BASS_LINE[pitch] || BASS_SPACE[pitch] || null
 }
 
+// Extended reference that understands accidentals: the note renders at
+// its natural's line/space with a sharp or flat sign, so we look up the
+// natural's position and tag the accidental. Used on Module 6 misses.
+function staffReferenceWithAccidental(pitch: string): string | null {
+  const m = pitch.match(/^([A-G])(#|b|)(\d+)$/)
+  if (!m) return null
+  const [, letter, acc, octave] = m
+  const base = staffReference(`${letter}${octave}`)
+  if (!base) return null
+  if (!acc) return base
+  return `${base}, ${acc === '#' ? 'sharp' : 'flat'}`
+}
+
 function pitchClass(pitch: string): string {
   return pitch.replace(/\d+$/, '')
 }
@@ -71,12 +84,36 @@ function hasAccidentals(notes: string[]): boolean {
   return notes.some(n => /[#b]/.test(n))
 }
 
+// Same-octave enharmonic spelling. Returns null for naturals and for
+// spellings that would cross octave boundaries (e.g. Cb / B#). The
+// Module 6 pool only includes same-octave swappable accidentals.
+const ENHARMONIC_PAIRS: Record<string, string> = {
+  'C#':'Db','Db':'C#','D#':'Eb','Eb':'D#',
+  'F#':'Gb','Gb':'F#','G#':'Ab','Ab':'G#',
+  'A#':'Bb','Bb':'A#',
+}
+function enharmonicPitch(pitch: string): string | null {
+  const m = pitch.match(/^([A-G])(#|b)(\d+)$/)
+  if (!m) return null
+  const pc = m[1] + m[2]
+  const otherPc = ENHARMONIC_PAIRS[pc]
+  if (!otherPc) return null
+  return otherPc + m[3]
+}
+
 function isEquivalent(a: string, b: string): boolean {
   if (a === b) return true
   const pairs: Array<[string, string]> = [
     ['F#','Gb'],['C#','Db'],['D#','Eb'],['G#','Ab'],['A#','Bb'],
   ]
   return pairs.some(([x, y]) => (a === x && b === y) || (a === y && b === x))
+}
+
+// Strict-spelling modules don't accept enharmonic equivalents — the
+// whole point is to train the student on the difference between F# and
+// Gb as a single-step recognition. Currently scoped to Module 6.
+function isStrictSpellingModule(moduleId: string): boolean {
+  return moduleId === 'accidentals'
 }
 
 type AnswerState = 'idle' | 'correct' | 'wrong'
@@ -191,12 +228,17 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   const currentPitchClass = pitchClass(currentPitch)
   const currentReview = currentEntry?.review ?? null
   const useAccidentalLayout = mod ? hasAccidentals(mod.notes) : false
+  const strictSpelling = isStrictSpellingModule(moduleId)
 
   const handleAnswer = useCallback((answer: string) => {
     if (processingRef.current || done || !currentPitch) return
     processingRef.current = true
 
-    const isCorrect = isEquivalent(answer, currentPitchClass)
+    // Strict modules require the exact enharmonic spelling shown on the
+    // staff; permissive modules accept either spelling.
+    const isCorrect = strictSpelling
+      ? answer === currentPitchClass
+      : isEquivalent(answer, currentPitchClass)
 
     // Measure time for this question (correct or wrong — we keep both so the
     // summary can distinguish "fast correct" from "slow / second guess").
@@ -259,7 +301,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
       }
       processingRef.current = false
     }, isCorrect ? CORRECT_ADVANCE_MS : WRONG_ADVANCE_MS)
-  }, [currentPitch, currentPitchClass, currentReview, qIdx, done, retryMode, sessionLength])
+  }, [currentPitch, currentPitchClass, currentReview, qIdx, done, retryMode, sessionLength, strictSpelling])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -385,8 +427,9 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
       cursor: answerState !== 'idle' ? 'default' : 'pointer',
       transition: 'background 0.15s, border-color 0.15s, color 0.15s',
     }
-    const isClicked = clickedAnswer !== null && isEquivalent(answer, clickedAnswer)
-    const isCorrectTarget = isEquivalent(answer, currentPitchClass)
+    const matcher = (x: string, y: string) => strictSpelling ? x === y : isEquivalent(x, y)
+    const isClicked = clickedAnswer !== null && matcher(answer, clickedAnswer)
+    const isCorrectTarget = matcher(answer, currentPitchClass)
     // The user clicked this button: flash the clicked button itself.
     if (isClicked) {
       if (answerState === 'correct') return { ...base, background: CORRECT_BG, borderColor: CORRECT_BORDER, color: CORRECT_FG }
@@ -637,7 +680,15 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   }
 
   // ── Session screen ──────────────────────────────────────────────────────────
-  const reference = answerState === 'wrong' ? staffReference(currentPitch) : null
+  // On a miss, the primary line names the target + its staff reference;
+  // on strict-spelling modules, we also surface the enharmonic partner so
+  // the miss becomes a teaching moment about sharp vs. flat spelling.
+  const reference = answerState === 'wrong'
+    ? (strictSpelling ? staffReferenceWithAccidental(currentPitch) : staffReference(currentPitch))
+    : null
+  const enharmonicHint = answerState === 'wrong' && strictSpelling
+    ? enharmonicPitch(currentPitch)
+    : null
 
   return (
     <div style={{ height: '100dvh', overflow: 'hidden', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
@@ -692,18 +743,23 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
             }
           </div>
 
-          <div style={{ minHeight: '52px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ minHeight: '72px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             {answerState === 'correct' && (
               <span style={{ fontFamily: SERIF, fontSize: '28px', color: CORRECT_FG }}>✓ {currentPitchClass}</span>
             )}
             {answerState === 'wrong' && (
               <>
                 <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: WRONG_FG }}>
-                  ✗ That&apos;s <strong style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400 }}>{currentPitchClass}</strong>
+                  ✗ That&apos;s <strong style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400 }}>{currentPitch}</strong>
                 </span>
                 {reference && (
                   <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', marginTop: '4px', letterSpacing: '0.04em' }}>
-                    {reference}
+                    {currentPitch} — {reference}
+                  </span>
+                )}
+                {enharmonicHint && (
+                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', marginTop: '2px', fontStyle: 'italic' as const }}>
+                    Enharmonic: {enharmonicHint}. Watch for sharp vs. flat.
                   </span>
                 )}
               </>
