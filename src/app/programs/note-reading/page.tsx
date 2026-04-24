@@ -114,7 +114,7 @@ export default function NoteReadingPage() {
             From First Notes to Full Fluency
           </h1>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060', maxWidth: '520px', lineHeight: 1.7 }}>
-            Eight modules — treble, bass, and grand staff — built for college music students and serious adult learners. Each module pairs note identification with pitch detection to build both cognitive recognition and motor response.
+            Nine modules — single-pitch recognition through intervallic and rhythmic reading — built for college music students and serious adult learners. Each module pairs note identification with pitch detection to build both cognitive recognition and motor response.
           </p>
         </div>
 

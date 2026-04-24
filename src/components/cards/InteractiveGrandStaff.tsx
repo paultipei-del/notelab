@@ -27,6 +27,8 @@ interface Props {
   onTap: (pitch: string, meta: { tapY: number; snappedY: number }) => void
   markerPitch?: string | null       // user's picked answer
   correctPitch?: string | null      // correct answer (for wrong-reveal)
+  anchorPitch?: string | null       // non-interactive reference note (e.g. "first note" in an intervallic prompt)
+  anchorLabel?: string | null       // short label rendered next to the anchor
   feedback?: 'correct' | 'wrong' | null
   className?: string
 }
@@ -36,6 +38,8 @@ export default function InteractiveGrandStaff({
   onTap,
   markerPitch,
   correctPitch,
+  anchorPitch,
+  anchorLabel,
   feedback,
   className,
 }: Props) {
@@ -104,17 +108,19 @@ export default function InteractiveGrandStaff({
 
   const markerY = markerPitch ? pitchToYGrand(markerPitch, L) : null
   const correctY = correctPitch ? pitchToYGrand(correctPitch, L) : null
+  const anchorY = anchorPitch ? pitchToYGrand(anchorPitch, L) : null
+  const anchorX = L.staffLeft + L.staffWidth * 0.3    // left-of-center column for the anchor
 
   // Ledger lines for the marker / correct pitch so users can see where
   // the note sits even in the overlap / out-of-staff zone.
-  function ledgerLinesFor(pitch: string, color: string) {
+  function ledgerLinesFor(pitch: string, color: string, centerX?: number) {
     const y = pitchToYGrand(pitch, L)
     if (y === null) return null
     const onTreble = y < (L.trebleTop + L.bassTop) / 2
     const top = onTreble ? L.trebleTop : L.bassTop
     const pos = Math.round((y - top) / L.step)
     const lines: React.ReactElement[] = []
-    const markerX = (L.staffLeft + staffRight) / 2
+    const markerX = centerX ?? (L.staffLeft + staffRight) / 2
     if (pos >= 10) {
       for (let p = 10; p <= pos; p += 2) {
         const ly = top + p * L.step
@@ -229,6 +235,39 @@ export default function InteractiveGrandStaff({
           the pointer can still receive events above them). */}
       {correctPitch && feedback === 'wrong' && ledgerLinesFor(correctPitch, '#A32D2D')}
       {markerPitch && feedback && ledgerLinesFor(markerPitch, markerColor)}
+
+      {/* Anchor notehead — used by Intervallic Locate to show the "first
+          note" reference. Rendered non-interactively at the left column
+          of the staff body with ledger lines as needed. */}
+      {anchorPitch && anchorY !== null && (
+        <g>
+          {ledgerLinesFor(anchorPitch, '#1A1A18', anchorX)}
+          <text
+            x={anchorX}
+            y={anchorY}
+            fontSize="46"
+            fontFamily="Bravura, serif"
+            fill="#1A1A18"
+            textAnchor="middle"
+            dominantBaseline="central"
+            opacity={0.85}
+          >
+            {String.fromCodePoint(0xE0A4)}
+          </text>
+          {anchorLabel && (
+            <text
+              x={anchorX}
+              y={H - 24}
+              textAnchor="middle"
+              fontFamily="var(--font-cormorant), serif"
+              fontSize="18"
+              fill="#7A7060"
+            >
+              {anchorLabel}
+            </text>
+          )}
+        </g>
+      )}
 
       {/* Tap zone — large invisible rect covering the full tappable area.
           Captures both mouse and touch. */}

@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { getNRModule, buildWeightedPool, NOTE_READING_MODULES } from '@/lib/programs/note-reading/modules'
+import IntervallicIdentifySession from './IntervallicIdentifySession'
+import RhythmicIdentifySession from './RhythmicIdentifySession'
 import {
   recordNRIdentifySession,
   isNRModuleUnlocked,
@@ -81,8 +83,22 @@ type AnswerState = 'idle' | 'correct' | 'wrong'
 
 interface Props { params: Promise<{ moduleId: string }> }
 
+// Route entrypoint. Dispatches to the intervallic implementation for
+// Module 8+ variants; otherwise renders the standard single-pitch drill
+// that shipped in Wave 1/2.
 export default function IdentifySessionPage({ params }: Props) {
   const { moduleId } = use(params)
+  const mod = getNRModule(moduleId)
+  if (mod?.variant === 'intervallic') {
+    return <IntervallicIdentifySession moduleId={moduleId} />
+  }
+  if (mod?.variant === 'rhythmic') {
+    return <RhythmicIdentifySession moduleId={moduleId} />
+  }
+  return <StandardIdentifySession moduleId={moduleId} />
+}
+
+function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
   const { hasSubscription, loading: purchasesLoading } = usePurchases(user?.id ?? null)

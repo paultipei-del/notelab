@@ -1,24 +1,24 @@
 'use client'
 
-import { useState, useEffect, useRef, use } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { getNRModule, buildWeightedPool, NOTE_READING_MODULES } from '@/lib/programs/note-reading/modules'
+import { getNRModule, NOTE_READING_MODULES } from '@/lib/programs/note-reading/modules'
 import {
   recordNRPlaySession,
   isNRPlayUnlocked,
   loadNRProgress,
   nrConsecutivePassing,
-  getNoteStats,
-  buildReviewPool,
-  injectReviewQuestions,
-  recordRetention,
-  type QueueEntry,
 } from '@/lib/programs/note-reading/progress'
 import type { NoteResult } from '@/lib/programs/note-reading/types'
+import {
+  buildIntervallicQueue,
+  INTERVAL_LABELS,
+  pitchToLetterPos,
+  type IntervallicQuestion,
+  type IntervalSize,
+} from '@/lib/programs/note-reading/intervallic'
 import { SADPitchDetector } from '@/lib/sadDetector'
-import StaffCard from '@/components/cards/StaffCard'
 import GrandStaffCard from '@/components/cards/GrandStaffCard'
-import IntervallicPlaySession from './IntervallicPlaySession'
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 
@@ -26,7 +26,7 @@ const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 const SESSION_LENGTH = 20
 
-// SAD constants — same as PlayItCard2
+// SAD tuning — same constants as standard Play.
 const DEAD_WINDOW_MS: Record<string, number> = { 'C5': 1200, 'B4': 900, 'C4': 900, 'B3': 900 }
 const DEFAULT_DEAD_MS = 600
 const WRONG_COOLDOWN_MS = 1000
@@ -39,6 +39,11 @@ const ENHARMONICS: Record<string,string> = {
   'F#':'Gb','Gb':'F#','G#':'Ab','Ab':'G#','A#':'Bb','Bb':'A#',
 }
 
+const INTERVAL_SIZES: IntervalSize[] = [2, 3, 4, 5, 6, 7, 8]
+
+const RENDER_MIN = pitchToLetterPos('C3') ?? 21
+const RENDER_MAX = pitchToLetterPos('E5') ?? 37
+
 function noteToMidi(name: string): number {
   const m = name.match(/^([A-Gb#]+)(\d)$/)
   if (!m) return 60
@@ -48,65 +53,26 @@ function noteToMidi(name: string): number {
 
 function pitchMatch(played: string, target: string): boolean {
   if (played === target) return true
-  const pp = played.replace(/\d+$/,''), tp = target.replace(/\d+$/,'')
+  const pp = played.replace(/\d+$/, ''), tp = target.replace(/\d+$/, '')
   const po = played.match(/\d+$/)?.[0], to = target.match(/\d+$/)?.[0]
   return po === to && ENHARMONICS[tp] === pp
 }
 
-function buildQueue(notes: string[], length: number): string[] {
-  const unique = [...new Set(notes)]
-  const result: string[] = []
-  while (result.length < length) {
-    result.push(...[...unique].sort(() => Math.random() - 0.5))
-  }
-  const q = result.slice(0, length)
-  for (let i = 1; i < q.length; i++) {
-    if (q[i].replace(/\d+$/,'') === q[i-1].replace(/\d+$/,'')) {
-      const j = Math.min(i + 1 + Math.floor(Math.random() * 3), q.length - 1)
-      if (j > i) [q[i], q[j]] = [q[j], q[i]]
-    }
-  }
-  return q
-}
-
-// Unused — `buildQueue` is retained for reference but the actual session
-// builds a weighted pool (via buildWeightedPool) and then injects review
-// questions to produce a tagged QueueEntry[]. Kept to avoid churning
-// exports outside the file.
-void buildQueue
-
-// Shared audio pipeline (module-level, like PlayItCard2)
-let sadStream: MediaStream | null = null
-let sadCtx: AudioContext | null = null
-let sadAnalyser: AnalyserNode | null = null
-let sadDetector: SADPitchDetector | null = null
-let sadBuf: Float32Array | null = null
-let rafHandle = 0
-
-function stopMic() {
-  cancelAnimationFrame(rafHandle)
-  sadStream?.getTracks().forEach(t => t.stop())
-  sadStream = null
-  sadCtx?.close().catch(() => {})
-  sadCtx = null
-  sadAnalyser = null
-  sadDetector = null
+// Component-scoped mic handles. Unlike the standard Play drill we don't
+// keep a module-level singleton — the intervallic session owns the mic
+// for its own lifetime and releases it on unmount.
+type MicRefs = {
+  stream: MediaStream | null
+  ctx: AudioContext | null
+  analyser: AnalyserNode | null
+  detector: SADPitchDetector | null
+  buf: Float32Array | null
+  raf: number
 }
 
 type NoteStatus = 'listening' | 'correct' | 'wrong'
 
-interface Props { params: Promise<{ moduleId: string }> }
-
-export default function PlaySessionPage({ params }: Props) {
-  const { moduleId } = use(params)
-  const mod = getNRModule(moduleId)
-  if (mod?.variant === 'intervallic') {
-    return <IntervallicPlaySession moduleId={moduleId} />
-  }
-  return <StandardPlaySession moduleId={moduleId} />
-}
-
-function StandardPlaySession({ moduleId }: { moduleId: string }) {
+export default function IntervallicPlaySession({ moduleId }: { moduleId: string }) {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
   const { hasSubscription, loading: purchasesLoading } = usePurchases(user?.id ?? null)
@@ -114,7 +80,7 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
   const isLoading = authLoading || purchasesLoading
 
   const mod = getNRModule(moduleId)
-  const [queue, setQueue] = useState<QueueEntry[]>([])
+  const [queue, setQueue] = useState<IntervallicQuestion[]>([])
   const [qIdx, setQIdx] = useState(0)
   const [noteStatus, setNoteStatus] = useState<NoteStatus>('listening')
   const [detected, setDetected] = useState<string | null>(null)
@@ -124,19 +90,17 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
   const [savedMp, setSavedMp] = useState<ReturnType<typeof recordNRPlaySession> | null>(null)
   const [micError, setMicError] = useState<string | null>(null)
   const [micReady, setMicReady] = useState(false)
-  // Per-note tracking
-  const noteResultsRef = useRef<Record<string, NoteResult>>({})
-  const displayMissRef = useRef<Record<string, number>>({})
-  const hadWrongThisNoteRef = useRef(false)
-  // Review bookkeeping — mirrors identify/locate.
-  const reviewHitsRef = useRef<{ answered: number; correct: number }>({ answered: 0, correct: 0 })
-  const moduleAnsweredRef = useRef<number>(0)
-  // Tracks the review-flag for the currently active question so the
-  // tick-loop callback can branch on it without re-reading React state.
-  const currentReviewRef = useRef<{ sourceModuleId: string } | null>(null)
 
-  // Shared refs for RAF loop
+  const noteResultsRef = useRef<Record<string, NoteResult>>({})
+  const intervalMissRef = useRef<Record<IntervalSize, number>>(
+    INTERVAL_SIZES.reduce((acc, s) => { acc[s] = 0; return acc }, {} as Record<IntervalSize, number>),
+  )
+  const hadWrongThisNoteRef = useRef(false)
+  const missedQuestionsRef = useRef<IntervallicQuestion[]>([])
+
+  const mic = useRef<MicRefs>({ stream: null, ctx: null, analyser: null, detector: null, buf: null, raf: 0 })
   const targetRef = useRef('')
+  const currentQuestionRef = useRef<IntervallicQuestion | null>(null)
   const cardStartRef = useRef(0)
   const acceptStartRef = useRef(0)
   const doneNoteRef = useRef(false)
@@ -146,6 +110,13 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
   const correctRef = useRef(0)
   const responseTimesRef = useRef<number[]>([])
   const sessionDoneRef = useRef(false)
+
+  function stopMic() {
+    cancelAnimationFrame(mic.current.raf)
+    mic.current.stream?.getTracks().forEach(t => t.stop())
+    mic.current.ctx?.close().catch(() => {})
+    mic.current = { stream: null, ctx: null, analyser: null, detector: null, buf: null, raf: 0 }
+  }
 
   useEffect(() => {
     if (!isLoading && !isPro) router.replace('/account')
@@ -158,149 +129,130 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
       router.replace(`/programs/note-reading/${moduleId}`)
       return
     }
-    const stats = getNoteStats(moduleId, 'play', store)
-    const base = buildWeightedPool(mod.notes, stats, SESSION_LENGTH)
-    const reviewPool = buildReviewPool(moduleId, 3)
-    setQueue(injectReviewQuestions(base, reviewPool))
+    const q = buildIntervallicQueue(mod.notes, SESSION_LENGTH, { min: RENDER_MIN, max: RENDER_MAX })
+    setQueue(q)
     qIdxRef.current = 0
     correctRef.current = 0
     responseTimesRef.current = []
     sessionDoneRef.current = false
     noteResultsRef.current = {}
-    displayMissRef.current = {}
+    intervalMissRef.current = INTERVAL_SIZES.reduce((acc, s) => { acc[s] = 0; return acc }, {} as Record<IntervalSize, number>)
+    missedQuestionsRef.current = []
     hadWrongThisNoteRef.current = false
-    reviewHitsRef.current = { answered: 0, correct: 0 }
-    moduleAnsweredRef.current = 0
   }, [moduleId])
 
-  // Start mic + begin session when queue is ready
+  // Start mic when queue is ready
   useEffect(() => {
     if (!queue.length || !mod) return
-
+    let cancelled = false
     async function init() {
       try {
-        if (!sadStream || !sadStream.active || !sadStream.getTracks().every(t => t.readyState === 'live')) {
-          sadStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-          sadCtx = null; sadAnalyser = null; sadDetector = null
-        }
-        if (!sadCtx || sadCtx.state === 'closed') sadCtx = new AudioContext()
-        if (sadCtx.state === 'suspended') await sadCtx.resume()
-        if (!sadAnalyser) {
-          const src = sadCtx.createMediaStreamSource(sadStream!)
-          sadAnalyser = sadCtx.createAnalyser()
-          sadAnalyser.fftSize = 4096
-          src.connect(sadAnalyser)
-          sadBuf = new Float32Array(4096)
-          sadDetector = new SADPitchDetector(sadCtx.sampleRate)
-        }
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        if (cancelled) { stream.getTracks().forEach(t => t.stop()); return }
+        const ctx = new AudioContext()
+        if (ctx.state === 'suspended') await ctx.resume()
+        const src = ctx.createMediaStreamSource(stream)
+        const analyser = ctx.createAnalyser()
+        analyser.fftSize = 4096
+        src.connect(analyser)
+        const buf = new Float32Array(4096)
+        const detector = new SADPitchDetector(ctx.sampleRate)
+        mic.current = { stream, ctx, analyser, detector, buf, raf: 0 }
         setMicReady(true)
         startNote(queue[0], 0)
       } catch {
         setMicError('Microphone access denied. Please allow microphone access and reload.')
       }
     }
-
     init()
-    return () => { stopMic() }
+    return () => { cancelled = true; stopMic() }
   }, [queue])
 
-  function startNote(entry: QueueEntry, idx: number) {
-    cancelAnimationFrame(rafHandle)
-    targetRef.current = entry.pitch
-    currentReviewRef.current = entry.review
+  function startNote(q: IntervallicQuestion, idx: number) {
+    cancelAnimationFrame(mic.current.raf)
+    targetRef.current = q.secondPitch
+    currentQuestionRef.current = q
     qIdxRef.current = idx
     cardStartRef.current = Date.now()
     acceptStartRef.current = 0
     doneNoteRef.current = false
     hadWrongThisNoteRef.current = false
-    sadDetector?.clearVotes()
+    mic.current.detector?.clearVotes()
     setNoteStatus('listening')
     setDetected(null)
     setQIdx(idx)
-    rafHandle = requestAnimationFrame(tick)
+    mic.current.raf = requestAnimationFrame(tick)
   }
 
   function tick() {
-    if (!sadAnalyser || !sadBuf || !sadDetector || sessionDoneRef.current) return
-    sadAnalyser.getFloatTimeDomainData(sadBuf as unknown as Float32Array<ArrayBuffer>)
+    const m = mic.current
+    if (!m.analyser || !m.buf || !m.detector || sessionDoneRef.current) return
+    m.analyser.getFloatTimeDomainData(m.buf as unknown as Float32Array<ArrayBuffer>)
     const now = Date.now()
     const timeOnCard = now - cardStartRef.current
     const target = targetRef.current
     const deadMs = DEAD_WINDOW_MS[target.replace(/[#b]/g, '')] ?? DEFAULT_DEAD_MS
 
-    if (timeOnCard < deadMs) { rafHandle = requestAnimationFrame(tick); return }
+    if (timeOnCard < deadMs) { m.raf = requestAnimationFrame(tick); return }
     if (acceptStartRef.current === 0) acceptStartRef.current = now
 
-    const result = sadDetector.update(sadBuf)
+    const result = m.detector.update(m.buf)
     if (result?.stable) {
       setDetected(result.name)
       const targetMidi = noteToMidi(target)
       const timeSinceAccept = now - acceptStartRef.current
       const isOctaveBleed =
         ((prevMidiRef.current >= 0 && (result.midi === prevMidiRef.current - 12 || result.midi === prevMidiRef.current + 12)) ||
-         result.midi === targetMidi - 12 || result.midi === targetMidi + 12) &&
+          result.midi === targetMidi - 12 || result.midi === targetMidi + 12) &&
         timeSinceAccept < OCTAVE_BLEED_MS
 
-      if (isOctaveBleed) { rafHandle = requestAnimationFrame(tick); return }
+      if (isOctaveBleed) { m.raf = requestAnimationFrame(tick); return }
 
       if (pitchMatch(result.name, target)) {
         if (doneNoteRef.current) return
         doneNoteRef.current = true
         prevMidiRef.current = result.midi
         const responseMs = now - acceptStartRef.current
-        const review = currentReviewRef.current
         const firstTry = !hadWrongThisNoteRef.current
+        correctRef.current += 1
+        responseTimesRef.current = [...responseTimesRef.current, responseMs]
+        setCorrectCount(correctRef.current)
+        setResponseTimes([...responseTimesRef.current])
         setNoteStatus('correct')
 
-        if (review) {
-          // Log retention; don't touch module accuracy or response-time bucket.
-          recordRetention({
-            sourceModuleId: review.sourceModuleId,
-            pitch: target,
-            correct: firstTry,
-          })
-          reviewHitsRef.current.answered++
-          if (firstTry) reviewHitsRef.current.correct++
-        } else {
-          correctRef.current += 1
-          responseTimesRef.current = [...responseTimesRef.current, responseMs]
-          setCorrectCount(correctRef.current)
-          setResponseTimes([...responseTimesRef.current])
-          moduleAnsweredRef.current++
-          if (!noteResultsRef.current[target]) noteResultsRef.current[target] = { attempts: 0, correct: 0, responseMsTotal: 0 }
-          noteResultsRef.current[target].attempts++
-          noteResultsRef.current[target].correct += firstTry ? 1 : 0
-          noteResultsRef.current[target].responseMsTotal = (noteResultsRef.current[target].responseMsTotal ?? 0) + responseMs
-        }
+        if (!noteResultsRef.current[target]) noteResultsRef.current[target] = { attempts: 0, correct: 0, responseMsTotal: 0 }
+        noteResultsRef.current[target].attempts++
+        noteResultsRef.current[target].correct += firstTry ? 1 : 0
+        noteResultsRef.current[target].responseMsTotal = (noteResultsRef.current[target].responseMsTotal ?? 0) + responseMs
 
-        setTimeout(() => advanceNote(), 200)
+        setTimeout(() => advanceNote(), 300)
         return
       } else {
         const semDist = Math.abs(result.midi - noteToMidi(target))
         const isOctOfPrev = prevMidiRef.current >= 0 &&
           (result.midi === prevMidiRef.current + 12 || result.midi === prevMidiRef.current - 12)
         if (semDist <= WRONG_SEMITONE_RANGE && !isOctOfPrev && now - lastWrongRef.current > WRONG_COOLDOWN_MS) {
-          hadWrongThisNoteRef.current = true
+          if (!hadWrongThisNoteRef.current) {
+            hadWrongThisNoteRef.current = true
+            const q = currentQuestionRef.current
+            if (q) {
+              intervalMissRef.current[q.intervalSize]++
+              missedQuestionsRef.current.push(q)
+            }
+          }
           setNoteStatus('wrong')
           lastWrongRef.current = now
-          // Only record the wrong-note tally when this isn't a review
-          // question — review misses stay in the retention log instead.
-          if (!currentReviewRef.current) {
-            const pc = target.replace(/\d+$/,'')
-            displayMissRef.current[pc] = (displayMissRef.current[pc] ?? 0) + 1
-          }
         }
       }
     }
-
-    if (!doneNoteRef.current) rafHandle = requestAnimationFrame(tick)
+    if (!doneNoteRef.current) m.raf = requestAnimationFrame(tick)
   }
 
   function advanceNote() {
     const next = qIdxRef.current + 1
-    if (next >= queue.length) {
+    if (next >= SESSION_LENGTH) {
       sessionDoneRef.current = true
-      cancelAnimationFrame(rafHandle)
+      cancelAnimationFrame(mic.current.raf)
       setDone(true)
     } else {
       startNote(queue[next], next)
@@ -309,10 +261,7 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
 
   useEffect(() => {
     if (!done || !mod) return
-    // Accuracy + avg-response denominators use module-question counts only —
-    // review answers are excluded so they don't skew mastery.
-    const moduleAnswered = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
-    const accuracy = correctRef.current / moduleAnswered
+    const accuracy = correctRef.current / SESSION_LENGTH
     const avgMs = responseTimesRef.current.length > 0
       ? responseTimesRef.current.reduce((a, b) => a + b, 0) / responseTimesRef.current.length
       : 9999
@@ -322,24 +271,25 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
 
   if (!mod) return null
 
-  const currentEntry = queue[qIdx]
-  const currentPitch = currentEntry?.pitch ?? ''
-  const currentReview = currentEntry?.review ?? null
+  const currentQ = queue[qIdx]
+  const currentTarget = currentQ?.secondPitch ?? ''
   const avgResponseSec = responseTimes.length > 0
     ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length / 1000).toFixed(1)
     : '—'
   const bgColor = noteStatus === 'correct' ? '#EAF3DE' : noteStatus === 'wrong' ? '#FFF0F0' : 'white'
   const borderColor = noteStatus === 'correct' ? '#C0DD97' : noteStatus === 'wrong' ? '#F09595' : '#DDD8CA'
 
-  // ── Summary ─────────────────────────────────────────────────────────────────
+  // ── Summary ────────────────────────────────────────────────────────────────
   if (done && savedMp) {
-    const moduleAnsweredDenom = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
-    const accuracy = correctRef.current / moduleAnsweredDenom
+    const accuracy = correctRef.current / SESSION_LENGTH
     const pct = Math.round(accuracy * 100)
     const avgMs = responseTimesRef.current.length > 0
       ? responseTimesRef.current.reduce((a, b) => a + b, 0) / responseTimesRef.current.length
       : null
-    const missedNotes = Object.entries(displayMissRef.current).sort((a, b) => b[1] - a[1]).map(([n]) => n)
+    const missedIntervalEntries = INTERVAL_SIZES
+      .filter(s => intervalMissRef.current[s] > 0)
+      .map(s => ({ size: s, count: intervalMissRef.current[s] }))
+      .sort((a, b) => b.count - a.count)
     const passingSessions = nrConsecutivePassing(moduleId, 'play', loadNRProgress())
     const needed = mod.criteria.sessions
     const threshold = mod.criteria.playAccuracy ?? 0.9
@@ -352,18 +302,15 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
     function retry() {
       setDone(false); setSavedMp(null); setQIdx(0); setCorrectCount(0)
       setResponseTimes([]); setNoteStatus('listening'); setDetected(null)
-      noteResultsRef.current = {}; displayMissRef.current = {}
+      noteResultsRef.current = {}
+      intervalMissRef.current = INTERVAL_SIZES.reduce((acc, s) => { acc[s] = 0; return acc }, {} as Record<IntervalSize, number>)
+      missedQuestionsRef.current = []
       prevMidiRef.current = -1; sessionDoneRef.current = false
       correctRef.current = 0; responseTimesRef.current = []
-      reviewHitsRef.current = { answered: 0, correct: 0 }
-      moduleAnsweredRef.current = 0
-      const store = loadNRProgress()
-      const stats = getNoteStats(moduleId, 'play', store)
-      const base = buildWeightedPool(mod!.notes, stats, SESSION_LENGTH)
-      const reviewPool = buildReviewPool(moduleId, 3)
-      const tagged = injectReviewQuestions(base, reviewPool)
-      setQueue(tagged)
-      setTimeout(() => startNote(tagged[0], 0), 50)
+      hadWrongThisNoteRef.current = false
+      const q = buildIntervallicQueue(mod!.notes, SESSION_LENGTH, { min: RENDER_MIN, max: RENDER_MAX })
+      setQueue(q)
+      setTimeout(() => startNote(q[0], 0), 50)
     }
 
     return (
@@ -373,7 +320,7 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
             Session Complete
           </p>
           <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '28px' }}>
-            Staff Recognition
+            Intervallic Play It
           </h2>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '24px' }}>
@@ -383,26 +330,17 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
             </div>
             {avgMs !== null && (
               <div>
-                <p style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: passedMs ? '#3B6D11' : '#2A2318', margin: 0 }}>{(avgMs/1000).toFixed(1)}s</p>
+                <p style={{ fontFamily: SERIF, fontSize: '36px', fontWeight: 300, color: passedMs ? '#3B6D11' : '#2A2318', margin: 0 }}>{(avgMs / 1000).toFixed(1)}s</p>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const, margin: 0 }}>Avg Response</p>
               </div>
             )}
           </div>
 
-          {missedNotes.length > 0 && (
+          {missedIntervalEntries.length > 0 && (
             <div style={{ marginBottom: '16px', padding: '12px 16px', background: '#FCEBEB', border: '1px solid #F09595', borderRadius: '10px' }}>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#A32D2D', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 4px' }}>Missed</p>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#A32D2D', margin: 0 }}>{missedNotes.join(', ')}</p>
-            </div>
-          )}
-
-          {reviewHitsRef.current.answered > 0 && (
-            <div style={{ marginBottom: '16px', padding: '10px 14px', background: '#F7F3E8', border: '1px solid #E4DDC7', borderRadius: '10px', textAlign: 'left' }}>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 4px' }}>
-                Review from earlier modules
-              </p>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', margin: 0 }}>
-                {reviewHitsRef.current.correct} of {reviewHitsRef.current.answered} played right
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#A32D2D', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 4px' }}>Intervals you missed</p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#A32D2D', margin: 0 }}>
+                {missedIntervalEntries.map(e => e.count > 1 ? `${INTERVAL_LABELS[e.size]} ×${e.count}` : INTERVAL_LABELS[e.size]).join(', ')}
               </p>
             </div>
           )}
@@ -411,14 +349,13 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '0 0 4px' }}>
               {passedSession ? '✓ Session passed' : '✗ Criteria not met'}
               {' · '}{Math.round(threshold * 100)}% accuracy needed
-              {msThreshold && ` · avg <${(msThreshold/1000).toFixed(1)}s needed`}
+              {msThreshold && ` · avg <${(msThreshold / 1000).toFixed(1)}s needed`}
             </p>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#2A2318', margin: 0, fontWeight: 400 }}>
               {passingSessions} of {needed} consecutive passing sessions
             </p>
           </div>
 
-          {/* Module complete banner */}
           {savedMp.completed && (
             <div style={{ marginBottom: '20px', padding: '14px 16px', background: '#EAF3DE', border: '1px solid #C0DD97', borderRadius: '10px', textAlign: 'left' }}>
               <p style={{ fontFamily: SERIF, fontSize: '18px', color: '#3B6D11', margin: '0 0 2px' }}>
@@ -433,14 +370,14 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
           )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {savedMp.completed && nextModule ? (
+            {savedMp.completed && nextModule && (
               <button
-                onClick={() => router.push(`/programs/note-reading/${nextModule.id}`)}
+                onClick={() => { stopMic(); router.push(`/programs/note-reading/${nextModule.id}`) }}
                 style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
               >
                 Next Module →
               </button>
-            ) : null}
+            )}
             <button
               onClick={retry}
               style={{
@@ -456,9 +393,8 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
             <button
               onClick={() => {
                 stopMic()
-                savedMp.completed
-                  ? router.push('/programs/note-reading')
-                  : router.push(`/programs/note-reading/${moduleId}`)
+                if (savedMp.completed) router.push('/programs/note-reading')
+                else router.push(`/programs/note-reading/${moduleId}`)
               }}
               style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
             >
@@ -470,7 +406,10 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
     )
   }
 
-  // ── Session screen ───────────────────────────────────────────────────────────
+  // ── Session screen ──────────────────────────────────────────────────────────
+  if (!currentQ) return null
+  const directionWord = currentQ.direction === 'up' ? 'up' : 'down'
+
   return (
     <div style={{ height: '100dvh', overflow: 'hidden', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', flexShrink: 0 }}>
@@ -479,14 +418,12 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
           ← Back
         </button>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: currentReview ? '#B5402A' : '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
-            {currentReview
-              ? `Review · from ${NOTE_READING_MODULES.find(m => m.id === currentReview.sourceModuleId)?.title ?? 'earlier module'}`
-              : `${mod.title} · Play It`}
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
+            {mod.title} · Play It
           </p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>{qIdx + 1} / {queue.length || SESSION_LENGTH}</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>{qIdx + 1} / {SESSION_LENGTH}</p>
           {responseTimes.length > 0 && (
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', margin: 0 }}>avg {avgResponseSec}s</p>
           )}
@@ -494,14 +431,11 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
       </div>
 
       <div style={{ height: '2px', background: '#EDE8DF', flexShrink: 0 }}>
-        <div style={{ height: '100%', background: '#1A1A18', width: `${queue.length ? (qIdx / queue.length) * 100 : 0}%`, transition: 'width 0.3s' }} />
+        <div style={{ height: '100%', background: '#1A1A18', width: `${(qIdx / SESSION_LENGTH) * 100}%`, transition: 'width 0.3s' }} />
       </div>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,20px) 16px' }}>
         {micError ? (
-          // Friendly no-mic fallback — Play It listens through the mic (not
-          // MIDI), so a denied permission is a blocker. Offer a clear recovery
-          // path instead of a raw error string.
           <div style={{
             maxWidth: '440px', width: '100%', background: '#FDFAF3',
             border: '1px solid #DDD8CA', borderRadius: '16px', padding: '28px 32px',
@@ -514,7 +448,7 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
               Microphone access needed
             </h3>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', lineHeight: 1.6, margin: '0 0 20px' }}>
-              Play It uses your microphone to listen for the note you play on your piano. Allow mic access in your browser&apos;s address bar, then reload this page.
+              Play It uses your microphone to listen for the note you play. Allow mic access in your browser&apos;s address bar, then reload.
             </p>
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
               <button
@@ -546,18 +480,19 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
               textAlign: 'center', transition: 'all 0.15s',
               boxShadow: '0 2px 20px rgba(26,26,24,0.06)',
             }}>
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: 'clamp(8px,1.5vh,20px)' }}>
-                {noteStatus === 'correct' ? '✓ Correct' : 'Play this note'}
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: 'clamp(4px,1vh,10px)' }}>
+                {noteStatus === 'correct' ? '✓ Correct' : 'Play the interval'}
+              </p>
+              <p style={{ fontFamily: SERIF, fontSize: 'clamp(22px,4vw,30px)', fontWeight: 300, color: '#2A2318', margin: '0 0 clamp(8px,1.5vh,16px)' }}>
+                <span style={{ color: '#7A7060' }}>From</span> {currentQ.firstPitch} ·
+                <span style={{ color: '#B5402A' }}> {directionWord} a {INTERVAL_LABELS[currentQ.intervalSize]}</span>
               </p>
 
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(8px,1.5vh,20px)' }}>
-                {mod.clef === 'grand'
-                  ? <GrandStaffCard note={currentPitch} />
-                  : <StaffCard note={currentPitch} clef={mod.clef} />
-                }
+                <GrandStaffCard note={currentQ.firstPitch} />
               </div>
 
-              <div style={{ minHeight: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <div style={{ minHeight: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 {noteStatus === 'listening' && (
                   <>
                     <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#B5402A', animation: 'pulse 1s infinite' }} />
@@ -566,9 +501,14 @@ function StandardPlaySession({ moduleId }: { moduleId: string }) {
                     </span>
                   </>
                 )}
+                {noteStatus === 'correct' && (
+                  <span style={{ fontFamily: SERIF, fontSize: '22px', color: '#3B6D11' }}>
+                    ✓ {currentTarget}
+                  </span>
+                )}
                 {noteStatus === 'wrong' && detected && (
                   <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#A32D2D' }}>
-                    ✗ That's {detected} — try {currentPitch.replace(/\d+$/, '')}
+                    ✗ That&apos;s {detected} — target is {currentTarget.replace(/\d+$/, '')}
                   </span>
                 )}
               </div>
