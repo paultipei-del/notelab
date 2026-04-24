@@ -72,53 +72,87 @@ export default function ProgramsPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '14px' }}>
           {PROGRAMS.map(prog => {
-            const unlocked = (prog as { free?: boolean }).free ? true : prog.priceId ? isUnlocked(prog.priceId) : hasSubscription()
-            const a = prog.accent
+            const isFree = !!(prog as { free?: boolean }).free
+            const unlocked = isFree ? true : prog.priceId ? isUnlocked(prog.priceId) : hasSubscription()
+            // Uppercase tag label: CM always shows "PROGRAM" (commerce
+            // surface); free programs show "FREE"; unlocked subscribed ones
+            // show "INCLUDED"; otherwise "LOCKED". Mirrors the tag styling
+            // used on flashcards tier headings.
+            const tagLabel = prog.id === 'cm'
+              ? 'Program'
+              : isFree ? 'Free'
+              : unlocked ? 'Included'
+              : 'Locked'
+            // Right-side decorative glyph.
+            const glyph = prog.id === 'cm' ? '♫♪'
+              : prog.id === 'note-reading' ? '𝄞'
+              : '♩♪♩♬'
+            const cta = prog.id === 'cm' ? 'View program →' : unlocked ? 'Browse levels →' : 'View program →'
+
             return (
-              <Link key={prog.id} href={prog.href} style={{ textDecoration: 'none', borderRadius: '20px', display: 'block' }}>
+              <Link key={prog.id} href={prog.href} style={{ textDecoration: 'none', borderRadius: '16px', display: 'block' }}>
                 <div
-                  className="nl-cat-tile-inner"
+                  className="nl-tile-hover"
                   style={{
-                    background: '#1A1A18',
-                    border: '1px solid #2E2E2C',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.35), 0 14px 40px rgba(0,0,0,0.22)',
-                    transition: 'transform 0.24s cubic-bezier(0.33, 1, 0.68, 1), box-shadow 0.24s cubic-bezier(0.33, 1, 0.68, 1)',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-6px) scale(1.01)'
-                    e.currentTarget.style.boxShadow = '0 10px 28px rgba(0,0,0,0.45), 0 28px 72px rgba(0,0,0,0.28)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.35), 0 14px 40px rgba(0,0,0,0.22)'
+                    background: '#FDFAF3',
+                    border: '1px solid #DDD8CA',
+                    borderRadius: '16px',
+                    display: 'grid',
+                    gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 320px)',
+                    minHeight: '240px',
+                    overflow: 'hidden',
+                    boxShadow: '0 1px 0 rgba(255,255,255,0.65) inset, 0 2px 6px rgba(26,26,24,0.05), 0 10px 28px rgba(26,26,24,0.07)',
                   }}
                 >
                   {/* Text side */}
-                  <div style={{ flex: 1, padding: '36px 40px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
-                    <span style={{ display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, padding: '4px 10px', borderRadius: '20px', background: a.bg, color: a.text, marginBottom: '14px', width: 'fit-content' }}>
-                      {(prog as { free?: boolean }).free ? prog.levels : unlocked ? 'Unlocked' : prog.levels}
+                  <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        fontFamily: F,
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        letterSpacing: '0.14em',
+                        textTransform: 'uppercase' as const,
+                        color: tagLabel === 'Locked' ? '#B5402A' : '#7A7060',
+                        marginBottom: '10px',
+                        width: 'fit-content',
+                      }}
+                    >
+                      {tagLabel}
                     </span>
-                    <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(30px, 3.2vw, 42px)', color: 'white', marginBottom: '12px', letterSpacing: '0.01em', lineHeight: 1.05 }}>
+                    <h2 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 'clamp(26px, 3vw, 34px)', color: '#1A1A18', marginBottom: '10px', letterSpacing: '0.01em', lineHeight: 1.1 }}>
                       {prog.title}
                     </h2>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: 'rgba(255,255,255,0.5)', lineHeight: 1.65, marginBottom: '10px', maxWidth: '380px' }}>
+                    <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 400, color: '#4A4540', lineHeight: 1.65, marginBottom: (prog as { priceLine?: string }).priceLine ? '8px' : '18px', maxWidth: '420px' }}>
                       {prog.description}
                     </p>
                     {(prog as { priceLine?: string }).priceLine && (
-                      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.02em', marginBottom: '20px' }}>
+                      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#7A7060', letterSpacing: '0.02em', marginBottom: '18px' }}>
                         {(prog as { priceLine?: string }).priceLine}
                       </p>
                     )}
-                    <span style={{ display: 'inline-flex', alignItems: 'center', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.05em', color: a.text, padding: '7px 16px', borderRadius: '20px', background: a.ctaBg, border: `1px solid ${a.border}`, width: 'fit-content' }}>
-                      {prog.id === 'cm' ? 'View program →' : unlocked ? 'Browse levels →' : 'View program →'}
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        fontFamily: F,
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        color: 'white',
+                        background: '#1A1A18',
+                        padding: '9px 18px',
+                        borderRadius: '10px',
+                        width: 'fit-content',
+                      }}
+                    >
+                      {cta}
                     </span>
                   </div>
 
-                  {/* Gradient side */}
+                  {/* Decorative side — same cream background, single faint glyph */}
                   <div
-                    className="nl-cat-tile-gradient"
                     style={{
-                      background: a.gradient,
                       position: 'relative',
                       overflow: 'hidden',
                       display: 'flex',
@@ -126,8 +160,21 @@ export default function ProgramsPage() {
                       justifyContent: 'center',
                     }}
                   >
-                    <span aria-hidden="true" style={{ fontFamily: SERIF, fontSize: prog.id === 'note-reading' ? '180px' : '140px', fontWeight: 300, color: a.gradientGlyphColor, lineHeight: 1, userSelect: 'none' as const, pointerEvents: 'none' as const, letterSpacing: '-0.04em' }}>
-                      {prog.glyph}
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        fontFamily: prog.id === 'note-reading' ? SERIF : 'Bravura, serif',
+                        fontSize: prog.id === 'note-reading' ? '180px' : '120px',
+                        fontWeight: 300,
+                        color: '#2A2318',
+                        opacity: 0.08,
+                        lineHeight: 1,
+                        userSelect: 'none' as const,
+                        pointerEvents: 'none' as const,
+                        letterSpacing: '-0.04em',
+                      }}
+                    >
+                      {glyph}
                     </span>
                   </div>
                 </div>
