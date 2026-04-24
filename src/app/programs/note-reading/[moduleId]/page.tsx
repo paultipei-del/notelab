@@ -20,17 +20,21 @@ import StaffPreview from '@/components/programs/note-reading/StaffPreview'
 import IntervallicPreview from '@/components/programs/note-reading/IntervallicPreview'
 import RhythmicMeasureStaff from '@/components/cards/RhythmicMeasureStaff'
 
-// Module 1 landmark labels — small italic captions under each notehead
-// in the StaffPreview reference chart. Other modules render letter
-// labels only (no landmark captions).
+// Module 1 landmark labels — italic captions under each notehead in the
+// StaffPreview chart. Pool follows the Path 3 canonical set: three
+// C-octave anchors (C3, C4, C5), the two clef-defined lines (F3, G4),
+// the treble middle line (B4), and the treble boundary top (F5).
+// Two-line landmark captions — the StaffPreview renders these with one
+// <tspan> per line so the long-form references stay readable at
+// per-column widths. Newline-delimited.
 const LANDMARK_PREVIEW_LABELS: Record<string, string> = {
-  G3: 'Bass G line',
-  B3: 'Bass top line',
+  G2: 'Bass\nbottom line',
+  C3: 'Bass C\n(octave below)',
+  F3: 'Bass F line\n(the F clef)',
   C4: 'Middle C',
-  G4: 'Treble G line',
-  B4: 'Middle line',
-  D5: '4th line',
-  F5: 'Top line',
+  G4: 'Treble G line\n(the G clef)',
+  C5: 'Treble C\n(octave above)',
+  F5: 'Treble\ntop line',
 }
 
 // A condensed sample for Module 6 — too many accidentals to render all
@@ -202,7 +206,7 @@ export default function ModuleOverviewPage({ params }: Props) {
             if (moduleId === 'landmarks') {
               return (
                 <StaffPreview
-                  notes={['G3', 'B3', 'C4', 'G4', 'B4', 'D5', 'F5']}
+                  notes={['G2', 'C3', 'F3', 'C4', 'G4', 'C5', 'F5']}
                   clef="grand"
                   showLabels
                   showLandmarks

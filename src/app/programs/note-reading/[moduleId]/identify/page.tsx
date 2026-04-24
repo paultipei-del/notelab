@@ -41,15 +41,18 @@ const WRONG_BORDER = '#F09595'
 const NATURAL_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 const ACCIDENTAL_NOTES = ['C#','Db','D#','Eb','F#','Gb','G#','Ab','A#','Bb']
 
-// Landmark (key reference) notes taught on /learn. Shown on wrong answers
-// to reinforce the reading anchors rather than a raw pitch label.
+// Canonical landmark notes for Module 1 — three C-octave anchors plus
+// the clef-defined lines (F3 for the bass / F clef, G4 for the treble /
+// G clef) and the boundary top of the treble staff. Shown as the
+// secondary line on wrong answers so the miss reinforces the reading
+// anchor rather than just labelling the pitch.
 const LANDMARK_REFS: Record<string, string> = {
+  G2: 'Bass bottom line',
+  C3: 'Bass C (octave below middle)',
+  F3: 'Bass F line (the F clef)',
   C4: 'Middle C',
-  G3: 'Bass 4th line',
-  B3: 'Bass top line',
-  D5: 'Treble 4th line',
-  G4: 'Treble 2nd line',
-  B4: 'Treble middle line',
+  G4: 'Treble G line (the G clef)',
+  C5: 'Treble C (octave above middle)',
   F5: 'Treble top line',
 }
 

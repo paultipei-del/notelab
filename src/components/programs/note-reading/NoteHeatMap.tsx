@@ -87,8 +87,14 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
   const step = 6
   const staffLeft = 58
   const staffWidth = 390          // total staff line width
-  const noteAreaLeft = 112        // where note circles start (after clef glyphs)
-  const noteAreaRight = staffLeft + staffWidth - 8
+  // First note sits a comfortable distance past the clef glyph. The
+  // treble clef at fontSize 44 occupies roughly 28-30px to the right
+  // of its anchor (staffLeft + 6), so noteAreaLeft = staffLeft + 64
+  // leaves ~30px clearance between the clef and the first notehead.
+  // Last note sits just inside the right staff edge so notes are
+  // evenly distributed across the remaining bar.
+  const noteAreaLeft = staffLeft + 64
+  const noteAreaRight = staffLeft + staffWidth - 18
   const R = 5                     // circle radius
   const trebleTop = 48
   const bassTop = trebleTop + 8 * step + 44
@@ -97,24 +103,24 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
   const showTreble = clef === 'treble' || clef === 'grand'
   const showBass = clef === 'bass' || clef === 'grand'
 
-  const trebleNotes = showTreble
-    ? notePool.filter(n => isOnTreble(n)).sort((a, b) => noteToMidi(a) - noteToMidi(b))
-    : []
-  const bassNotes = showBass
-    ? notePool.filter(n => !isOnTreble(n)).sort((a, b) => noteToMidi(a) - noteToMidi(b))
-    : []
+  // Single sorted-ascending sequence shared across both staves so the
+  // dashboard reads left-to-right low-to-high. Each column holds one
+  // note, on whichever staff is appropriate. Midi-threshold dispatch
+  // (≥ 60 → treble) keeps gap-zone notes on their natural clef.
+  const sortedAscending = [...notePool].sort((a, b) => noteToMidi(a) - noteToMidi(b))
+  function preferTreble(n: string): boolean {
+    return noteToMidi(n) >= 60
+  }
 
-  // For single-staff modules, also include notes the other way if only one staff
-  const allNotesOnOneSide = clef !== 'grand'
-  const singleNotes = allNotesOnOneSide
-    ? notePool.sort((a, b) => noteToMidi(a) - noteToMidi(b))
-    : []
-
-  // X position for the i-th note in a pool of n
+  // X position for the i-th note in a pool of n. Evenly distributes
+  // notes from noteAreaLeft (first note) to noteAreaRight (last note),
+  // not the +1/(n+1) offset that left a noticeable gap before the
+  // first note. Single-note case centres in the area.
   function noteX(i: number, n: number): number {
     if (n === 0) return noteAreaLeft
+    if (n === 1) return (noteAreaLeft + noteAreaRight) / 2
     const span = noteAreaRight - noteAreaLeft
-    return noteAreaLeft + ((i + 1) * span) / (n + 1)
+    return noteAreaLeft + (i * span) / (n - 1)
   }
 
   // Y position from staff top + position table
@@ -189,7 +195,7 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
               textAnchor="middle"
               opacity="0.9"
             >
-              {accInfo.acc === 'sharp' ? '\uE262' : '\uE260'}
+              {accInfo.acc === 'sharp' ? String.fromCodePoint(0xE262) : String.fromCodePoint(0xE260)}
             </text>
           )}
           {/* Bravura filled notehead U+E0A4 */}
@@ -248,7 +254,9 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
           )
         })()}
 
-        {/* Treble staff */}
+        {/* Staff lines + clef glyphs (no notes here — the notes layer
+            uses a single shared x-axis across both staves so the
+            dashboard reads ascending pitch left-to-right). */}
         {showTreble && (
           <>
             {staffLines(trebleTop, 't')}
@@ -257,16 +265,8 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
               fontSize="44" fontFamily="Bravura, serif"
               fill="#1A1A18" dominantBaseline="auto" opacity="0.5"
             >𝄞</text>
-            {renderNotes(
-              clef === 'grand' ? trebleNotes : singleNotes,
-              trebleTop,
-              TREBLE_POSITIONS,
-              clef === 'grand' ? trebleNotes : singleNotes,
-            )}
           </>
         )}
-
-        {/* Bass staff */}
         {showBass && (
           <>
             {staffLines(bassTop, 'b')}
@@ -275,14 +275,56 @@ export default function NoteHeatMap({ notePool, noteStats, clef }: NoteHeatMapPr
               fontSize="46" fontFamily="Bravura, serif"
               fill="#1A1A18" dominantBaseline="auto" opacity="0.5"
             >𝄢</text>
-            {renderNotes(
-              clef === 'grand' ? bassNotes : singleNotes,
-              bassTop,
-              BASS_POSITIONS,
-              clef === 'grand' ? bassNotes : singleNotes,
-            )}
           </>
         )}
+
+        {/* Notes — single mapping over the ascending-sorted pool. Each
+            note gets one column based on its position in the sequence;
+            the staff side is decided per-note. */}
+        {sortedAscending.map((note, i) => {
+          const useTreble = clef === 'grand' ? preferTreble(note) : clef === 'treble'
+          const top = useTreble ? trebleTop : bassTop
+          const posTable = useTreble ? TREBLE_POSITIONS : BASS_POSITIONS
+          const stats = noteStats.find(s => s.noteId === note)
+          const level = stats?.masteryLevel ?? 'unseen'
+          const fill = MASTERY_COLORS[level]
+          const cx = noteX(i, sortedAscending.length)
+          const cy = noteY(note, top, posTable)
+          const accInfo = ACCIDENTAL_MAP[note]
+          return (
+            <g key={`note-${note}-${i}`}>
+              {ledgerLines(note, cx, cy, top, posTable)}
+              {accInfo && (
+                <text
+                  x={cx - R - 8}
+                  y={cy}
+                  fontSize="14"
+                  fontFamily="Bravura, serif"
+                  fill={fill}
+                  dominantBaseline="central"
+                  textAnchor="middle"
+                  opacity="0.9"
+                >
+                  {accInfo.acc === 'sharp' ? '' : ''}
+                </text>
+              )}
+              <text
+                x={cx} y={cy}
+                fontSize="44"
+                fontFamily="Bravura, serif"
+                fill={fill}
+                textAnchor="middle"
+                dominantBaseline="central"
+                style={{ cursor: 'pointer', userSelect: 'none' }}
+                onMouseEnter={() => setTooltip({ noteId: note, x: cx, y: cy, stats })}
+                onMouseLeave={() => setTooltip(null)}
+                onClick={() => setTooltip(t => t?.noteId === note ? null : { noteId: note, x: cx, y: cy, stats })}
+              >
+                {String.fromCodePoint(0xE0A4)}
+              </text>
+            </g>
+          )
+        })}
 
         {/* Tooltip (SVG foreignObject) */}
         {tooltip && (() => {

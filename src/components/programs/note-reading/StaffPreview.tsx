@@ -4,7 +4,6 @@ import React from 'react'
 import {
   TREBLE_POSITIONS,
   BASS_POSITIONS,
-  isOnTrebleStaff,
 } from '@/lib/programs/note-reading/staffPositions'
 
 /**
@@ -67,6 +66,16 @@ function asciiSharpFlat(pitch: string): string {
   return pitch.replace('#', '♯').replace('b', '♭')
 }
 
+// Decide which clef of a grand staff a pitch belongs on. Threshold at
+// middle C (MIDI 60): C4 and above → treble, below → bass. This puts
+// gap-zone notes like B3 / A3 / G3 on the bass staff (top line / space
+// above) instead of as ledger-line notes below the treble — matching
+// musical convention. Local to StaffPreview to avoid touching the
+// shared `isOnTrebleStaff` used by other staff components.
+function preferTreble(pitch: string): boolean {
+  return pitchToMidi(pitch) >= 60
+}
+
 export default function StaffPreview({
   notes,
   clef,
@@ -79,18 +88,27 @@ export default function StaffPreview({
 }: Props) {
   const sorted = [...notes].sort((a, b) => pitchToMidi(a) - pitchToMidi(b))
 
-  // Sizing — notehead font size sits at ~7.3× step to match the
-  // GrandStaffCard reference (step=6, fontSize=46). Spacing is generous
-  // enough that adjacent letter labels and ledger lines don't collide.
-  const step = compact ? 7 : 11
-  const noteSpacing = compact ? 50 : 72
-  const labelGap = compact ? 18 : 26
-  const accidentalOffset = compact ? -17 : -26
-  const noteFontSize = compact ? 52 : 80
-  const labelFontSize = compact ? 13 : 16
-  const landmarkFontSize = compact ? 11 : 13
+  // Sizing — notehead font size sits at ~7× step (matching the
+  // GrandStaffCard reference at step=6, fontSize=46). All other
+  // dimensions are derived to keep the chart visually proportional.
+  const step = compact ? 8 : 12
+  const noteFontSize = compact ? 56 : 84
+  const noteSpacing = compact ? 60 : 84
+  const labelGap = compact ? 22 : 32
+  const accidentalOffset = compact ? -18 : -26
+  const labelFontSize = compact ? 18 : 22
+  // Larger landmark caption since the new 2-line wrapping gives the
+  // caption visual presence — at smaller sizes it read as a footnote.
+  const landmarkFontSize = compact ? 14 : 18
 
-  const staffPad = compact ? 36 : 56      // left padding for clef
+  // staffPad — left margin from svg edge to where the staff lines
+  // start. Sized to leave engraving-style breathing room for the brace
+  // on grand-staff modules; the brace glyph extends ~half its em-width
+  // around its anchor and should sit fully left of the staff bar.
+  // clefRoom — horizontal space INSIDE the staff reserved for the clef
+  // glyph. Notes start at staffPad + clefRoom.
+  const staffPad = compact ? 36 : 56
+  const clefRoom = compact ? 38 : 56
   const rightPad = compact ? 14 : 20
 
   // Y position of a pitch's notehead within its own clef section.
@@ -110,10 +128,13 @@ export default function StaffPreview({
   // Single-staff (treble or bass) — render all notes on one staff.
   if (clef !== 'grand') {
     const yPosFn = clef === 'treble' ? trebleY : bassY
-    const trebleTop = compact ? 38 : 56
-    const staffWidth = staffPad + rightPad + sorted.length * noteSpacing
+    const trebleTop = compact ? 36 : 52
+    const noteAreaLeft = staffPad + clefRoom
+    const staffWidth = noteAreaLeft + rightPad + sorted.length * noteSpacing
+    // Landmark captions wrap to two lines, so reserve 2× the font
+    // height for them when present.
     const labelBlockH = (showLabels ? labelGap + labelFontSize + 4 : 0) +
-      (showLandmarks ? labelGap : 0)
+      (showLandmarks ? landmarkFontSize * 2.4 + 8 : 0)
     const H = (trebleTop + 8 * step + 6 * step) + labelBlockH + (caption ? 28 : 12)
 
     return (
@@ -126,12 +147,12 @@ export default function StaffPreview({
           aria-label={`${clef} staff preview: ${sorted.join(', ')}`}
         >
           <StaffLines top={trebleTop} step={step} left={staffPad} right={staffWidth - rightPad} />
-          <Clef clef={clef} top={trebleTop} step={step} x={staffPad - 24} />
+          <Clef clef={clef} top={trebleTop} step={step} x={staffPad + 4} />
 
           {sorted.map((pitch, i) => {
             const y = yPosFn(pitch, trebleTop)
             if (y === null) return null
-            const x = staffPad + i * noteSpacing + noteSpacing / 2
+            const x = noteAreaLeft + i * noteSpacing + noteSpacing / 2
             return (
               <g key={`n-${pitch}-${i}`}>
                 <LedgerLines pitch={pitch} clefSide={clef} top={trebleTop} step={step} x={x} />
@@ -146,17 +167,12 @@ export default function StaffPreview({
                   />
                 )}
                 {showLandmarks && landmarkLabels?.[pitch] && (
-                  <text
+                  <LandmarkCaption
+                    label={landmarkLabels[pitch]}
                     x={x}
-                    y={trebleTop + 8 * step + labelGap + labelFontSize + landmarkFontSize + 4}
-                    textAnchor="middle"
-                    fontFamily="var(--font-cormorant), serif"
+                    y={trebleTop + 8 * step + labelGap + labelFontSize + landmarkFontSize + 6}
                     fontSize={landmarkFontSize}
-                    fontStyle="italic"
-                    fill="#7A7060"
-                  >
-                    {landmarkLabels[pitch]}
-                  </text>
+                  />
                 )}
               </g>
             )
@@ -168,13 +184,19 @@ export default function StaffPreview({
   // Grand staff — split notes by clef, share x-axis so columns align.
   // Stave-to-stave gap leaves room for both staves' ledger zones plus
   // labels under treble notes that sit in the middle-C overlap.
-  const trebleTop = compact ? 40 : 64
-  const staveGap = compact ? 64 : 96
+  const trebleTop = compact ? 36 : 56
+  const staveGap = compact ? 56 : 84
   const bassTop = trebleTop + 8 * step + staveGap
+  // 2-line landmark captions on grand staff — reserve enough vertical
+  // room below the bass staff for both letter label and 2-line caption.
   const labelBlockH = (showLabels ? labelGap + labelFontSize + 6 : 0) +
-    (showLandmarks ? landmarkFontSize + 6 : 0)
+    (showLandmarks ? landmarkFontSize * 2.4 + 8 : 0)
   const H = bassTop + 8 * step + (compact ? 18 : 28) + labelBlockH + (caption ? 28 : 12)
-  const staffWidth = staffPad + rightPad + sorted.length * noteSpacing
+  const noteAreaLeft = staffPad + clefRoom
+  const staffWidth = noteAreaLeft + rightPad + sorted.length * noteSpacing
+  const braceTop = trebleTop
+  const braceBottom = bassTop + 8 * step
+  const braceHeight = braceBottom - braceTop
 
   return (
     <PreviewFrame caption={caption} compact={compact}>
@@ -185,22 +207,42 @@ export default function StaffPreview({
         xmlns="http://www.w3.org/2000/svg"
         aria-label={`Grand staff preview: ${sorted.join(', ')}`}
       >
-        {/* Connecting line + clefs */}
+        {/* Bravura brace glyph. textAnchor=middle and a small fixed
+            offset from staffPad puts the brace's right edge a few px
+            short of the staff bar — the engraving gap is small but
+            present, matching standard notation practice. */}
+        <text
+          x={staffPad - 6}
+          y={braceTop + braceHeight}
+          fontSize={braceHeight}
+          fontFamily="Bravura, serif"
+          fill="#1A1A18"
+          textAnchor="end"
+          dominantBaseline="auto"
+        >
+          {String.fromCodePoint(0xE000)}
+        </text>
+        {/* Vertical connecting line where the brace meets the staves. */}
         <line x1={staffPad} y1={trebleTop} x2={staffPad} y2={bassTop + 8 * step} stroke="#1A1A18" strokeWidth="1.5" />
         <StaffLines top={trebleTop} step={step} left={staffPad} right={staffWidth - rightPad} />
         <StaffLines top={bassTop} step={step} left={staffPad} right={staffWidth - rightPad} />
-        <Clef clef="treble" top={trebleTop} step={step} x={staffPad - 24} />
-        <Clef clef="bass" top={bassTop} step={step} x={staffPad - 24} />
+        <Clef clef="treble" top={trebleTop} step={step} x={staffPad + 4} />
+        <Clef clef="bass" top={bassTop} step={step} x={staffPad + 4} />
 
         {sorted.map((pitch, i) => {
-          const useTreble = groupByClef ? isOnTrebleStaff(pitch) : true
+          const useTreble = groupByClef ? preferTreble(pitch) : true
           const top = useTreble ? trebleTop : bassTop
           const y = useTreble ? trebleY(pitch, top) : bassY(pitch, top)
           if (y === null) return null
-          const x = staffPad + i * noteSpacing + noteSpacing / 2
+          const x = noteAreaLeft + i * noteSpacing + noteSpacing / 2
           // Per-clef label band so treble notes don't end up with labels
           // far below the bass staff.
-          const labelY = (useTreble ? trebleTop + 8 * step : bassTop + 8 * step) + labelGap + labelFontSize
+          // All grand-staff labels live in a single band below the bass
+          // staff. Column-x alignment with the notehead above makes it
+          // clear which label goes with which note, and the gap between
+          // the two staves stays clean (no per-clef captions crowding
+          // the middle-C zone).
+          const labelY = bassTop + 8 * step + labelGap + labelFontSize
           return (
             <g key={`n-${pitch}-${i}`}>
               <LedgerLines pitch={pitch} clefSide={useTreble ? 'treble' : 'bass'} top={top} step={step} x={x} />
@@ -210,17 +252,12 @@ export default function StaffPreview({
                 <NoteLabel pitch={pitch} x={x} y={labelY} fontSize={labelFontSize} />
               )}
               {showLandmarks && landmarkLabels?.[pitch] && (
-                <text
+                <LandmarkCaption
+                  label={landmarkLabels[pitch]}
                   x={x}
-                  y={labelY + landmarkFontSize + 4}
-                  textAnchor="middle"
-                  fontFamily="var(--font-cormorant), serif"
+                  y={labelY + landmarkFontSize + 6}
                   fontSize={landmarkFontSize}
-                  fontStyle="italic"
-                  fill="#7A7060"
-                >
-                  {landmarkLabels[pitch]}
-                </text>
+                />
               )}
             </g>
           )
@@ -267,16 +304,19 @@ function StaffLines({ top, step, left, right }: { top: number; step: number; lef
 }
 
 function Clef({ clef, top, step, x }: { clef: 'treble' | 'bass'; top: number; step: number; x: number }) {
-  const fontSize = step * 8.2
+  // Clef glyph sits inside the staff. The treble glyph extends well
+  // above and below its anchor; the bass glyph is shorter and sits near
+  // the top of the staff. Sizing tuned to fill ~70% of the staff height
+  // without crowding the reserved clefRoom.
   if (clef === 'bass') {
     return (
-      <text x={x + 14} y={top + step * 2.2} fontSize={fontSize} fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
+      <text x={x} y={top + step * 2.2} fontSize={step * 7.4} fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
         𝄢
       </text>
     )
   }
   return (
-    <text x={x + 12} y={top + step * 6} fontSize={fontSize} fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
+    <text x={x} y={top + step * 6} fontSize={step * 8} fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
       𝄞
     </text>
   )
@@ -304,6 +344,30 @@ function NoteLabel({ pitch, x, y, fontSize }: { pitch: string; x: number; y: num
   return (
     <text x={x} y={y} textAnchor="middle" fontFamily="var(--font-jost), sans-serif" fontSize={fontSize} fill="#2A2318">
       {asciiSharpFlat(pitch)}
+    </text>
+  )
+}
+
+// Multi-line landmark caption. Long labels like "Bass C (octave below
+// middle)" don't fit a single column, so they render across two tspans
+// with the line break supplied as `\n` in the label string.
+function LandmarkCaption({ label, x, y, fontSize }: { label: string; x: number; y: number; fontSize: number }) {
+  const lines = label.split('\n')
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor="middle"
+      fontFamily="var(--font-cormorant), serif"
+      fontSize={fontSize}
+      fontStyle="italic"
+      fill="#5A4F40"
+    >
+      {lines.map((line, idx) => (
+        <tspan key={idx} x={x} dy={idx === 0 ? 0 : fontSize * 1.15}>
+          {line}
+        </tspan>
+      ))}
     </text>
   )
 }

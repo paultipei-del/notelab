@@ -37,7 +37,7 @@ export const NOTE_READING_MODULES: NRModuleDef[] = [
     description:
       'Seven landmark notes across the grand staff. Learn these first — everything else is measured from them.',
     clef: 'grand',
-    notes: ['C4', 'G4', 'B4', 'D5', 'F5', 'B3', 'G3'],
+    notes: ['G2', 'C3', 'F3', 'C4', 'G4', 'C5', 'F5'],
     tools: ['identify', 'locate', 'play'],
     unlockAfter: [],
     criteria: {
