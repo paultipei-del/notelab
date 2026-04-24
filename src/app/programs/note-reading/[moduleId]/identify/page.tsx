@@ -9,6 +9,10 @@ import {
   loadNRProgress,
   nrConsecutivePassing,
   getNoteStats,
+  buildReviewPool,
+  injectReviewQuestions,
+  recordRetention,
+  type QueueEntry,
 } from '@/lib/programs/note-reading/progress'
 import type { NoteResult } from '@/lib/programs/note-reading/types'
 import StaffCard from '@/components/cards/StaffCard'
@@ -87,7 +91,7 @@ export default function IdentifySessionPage({ params }: Props) {
   const isFreeModule = moduleId === 'landmarks'
 
   const mod = getNRModule(moduleId)
-  const [queue, setQueue] = useState<string[]>([])
+  const [queue, setQueue] = useState<QueueEntry[]>([])
   const [qIdx, setQIdx] = useState(0)
   const [answerState, setAnswerState] = useState<AnswerState>('idle')
   const [clickedAnswer, setClickedAnswer] = useState<string | null>(null)
@@ -97,7 +101,8 @@ export default function IdentifySessionPage({ params }: Props) {
   const [retryMode, setRetryMode] = useState(false)
   const [showEndConfirm, setShowEndConfirm] = useState(false)
   const processingRef = useRef(false)
-  // Per-note tracking: full pitch → {attempts, correct}
+  // Per-note tracking: full pitch → {attempts, correct}. Module-only —
+  // review answers never land here.
   const noteResultsRef = useRef<Record<string, NoteResult>>({})
   // Display misses: pitchClass → count (for summary "Missed: C, G" list)
   const displayMissRef = useRef<Record<string, number>>({})
@@ -107,8 +112,14 @@ export default function IdentifySessionPage({ params }: Props) {
   // appeared; timingsRef accumulates ms-to-correct-answer across the run.
   const questionStartRef = useRef<number>(0)
   const timingsRef = useRef<number[]>([])
+  // Review tally for the session summary.
+  const reviewHitsRef = useRef<{ answered: number; correct: number }>({ answered: 0, correct: 0 })
+  // Total module questions answered (regardless of correctness). Drives the
+  // denominator when computing module accuracy so injected review questions
+  // don't dilute it.
+  const moduleAnsweredRef = useRef<number>(0)
 
-  const sessionLength = retryMode ? Math.min(RETRY_LENGTH, queue.length) : SESSION_LENGTH
+  const sessionLength = retryMode ? Math.min(RETRY_LENGTH, queue.length) : queue.length
 
   useEffect(() => {
     if (!isLoading && !isFreeModule && !isPro) router.replace('/account')
@@ -129,11 +140,17 @@ export default function IdentifySessionPage({ params }: Props) {
         if (j > i) [q[i], q[j]] = [q[j], q[i]]
       }
     }
-    setQueue(q)
+    // Cumulative review — pull 2-3 weak notes from prior completed modules
+    // and inject at non-adjacent interior positions. Returns the tagged
+    // queue unchanged if no completed prior modules exist.
+    const reviewPool = buildReviewPool(moduleId, 3)
+    setQueue(injectReviewQuestions(q, reviewPool))
     noteResultsRef.current = {}
     displayMissRef.current = {}
     missedPitchesRef.current = new Set()
     timingsRef.current = []
+    reviewHitsRef.current = { answered: 0, correct: 0 }
+    moduleAnsweredRef.current = 0
     questionStartRef.current = performance.now()
   }, [moduleId])
 
@@ -142,8 +159,10 @@ export default function IdentifySessionPage({ params }: Props) {
     if (answerState === 'idle') questionStartRef.current = performance.now()
   }, [qIdx, answerState])
 
-  const currentPitch = queue[qIdx] ?? ''
+  const currentEntry = queue[qIdx]
+  const currentPitch = currentEntry?.pitch ?? ''
   const currentPitchClass = pitchClass(currentPitch)
+  const currentReview = currentEntry?.review ?? null
   const useAccidentalLayout = mod ? hasAccidentals(mod.notes) : false
 
   const handleAnswer = useCallback((answer: string) => {
@@ -161,36 +180,43 @@ export default function IdentifySessionPage({ params }: Props) {
     // playPitch so they never affect drill flow.
     void playPitch(currentPitch)
 
-    const nr = noteResultsRef.current
-    if (!nr[currentPitch]) nr[currentPitch] = { attempts: 0, correct: 0 }
-    nr[currentPitch].attempts++
-    if (isCorrect) {
-      nr[currentPitch].correct++
-      setCorrectCount(c => c + 1)
+    if (currentReview) {
+      // Review question: log to retention, don't touch module accuracy.
+      recordRetention({
+        sourceModuleId: currentReview.sourceModuleId,
+        pitch: currentPitch,
+        correct: isCorrect,
+      })
+      reviewHitsRef.current.answered++
+      if (isCorrect) reviewHitsRef.current.correct++
     } else {
-      displayMissRef.current[currentPitchClass] = (displayMissRef.current[currentPitchClass] ?? 0) + 1
-      missedPitchesRef.current.add(currentPitch)
+      moduleAnsweredRef.current++
+      const nr = noteResultsRef.current
+      if (!nr[currentPitch]) nr[currentPitch] = { attempts: 0, correct: 0 }
+      nr[currentPitch].attempts++
+      if (isCorrect) {
+        nr[currentPitch].correct++
+        setCorrectCount(c => c + 1)
+      } else {
+        displayMissRef.current[currentPitchClass] = (displayMissRef.current[currentPitchClass] ?? 0) + 1
+        missedPitchesRef.current.add(currentPitch)
+      }
     }
 
     setClickedAnswer(answer)
     setAnswerState(isCorrect ? 'correct' : 'wrong')
 
-    // Intra-session reweight: when the learner misses, splice two extra
-    // copies of that pitch into random future positions (within the
-    // remaining window). Mild — avoids immediate repeat but keeps pressure
-    // on the troublesome note. Skipped in retry mode (already a targeted
-    // mini-session of misses).
-    if (!isCorrect && !retryMode) {
+    // Intra-session reweight: module misses only. Review misses don't
+    // multiply — they belong to a prior module's bucket.
+    if (!isCorrect && !retryMode && !currentReview) {
       setQueue(prev => {
         const next = prev.slice()
         const len = next.length
         const insertPositions = [qIdx + 2, qIdx + 4]
           .map(p => Math.min(p + Math.floor(Math.random() * 3), len))
           .filter(p => p > qIdx + 1 && p <= len)
-        // Splice from highest index down so earlier splices don't shift
-        // later positions.
         insertPositions.sort((a, b) => b - a)
-        for (const pos of insertPositions) next.splice(pos, 0, currentPitch)
+        for (const pos of insertPositions) next.splice(pos, 0, { pitch: currentPitch, review: null })
         return next
       })
     }
@@ -206,7 +232,7 @@ export default function IdentifySessionPage({ params }: Props) {
       }
       processingRef.current = false
     }, isCorrect ? CORRECT_ADVANCE_MS : WRONG_ADVANCE_MS)
-  }, [currentPitch, currentPitchClass, qIdx, done, retryMode, sessionLength])
+  }, [currentPitch, currentPitchClass, currentReview, qIdx, done, retryMode, sessionLength])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -225,7 +251,10 @@ export default function IdentifySessionPage({ params }: Props) {
       setResult({ mp: { moduleId, identify: { completed: false }, play: { completed: false } } as unknown as ReturnType<typeof recordNRIdentifySession>['mp'], identifyJustMastered: false })
       return
     }
-    const accuracy = correctCount / SESSION_LENGTH
+    // Accuracy uses the module-question denominator only, so injected
+    // review questions don't dilute the threshold.
+    const denom = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
+    const accuracy = correctCount / denom
     const res = recordNRIdentifySession(moduleId, accuracy, noteResultsRef.current)
     setResult(res)
   }, [done])
@@ -238,7 +267,9 @@ export default function IdentifySessionPage({ params }: Props) {
   )
 
   const progressPct = (qIdx / sessionLength) * 100
-  const accuracy = done ? correctCount / sessionLength : correctCount / SESSION_LENGTH
+  // Module accuracy denominator excludes injected review questions.
+  const moduleDenom = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
+  const accuracy = done ? correctCount / moduleDenom : correctCount / moduleDenom
 
   function buttonStyle(answer: string, isAccidental: boolean): React.CSSProperties {
     const base: React.CSSProperties = {
@@ -306,6 +337,8 @@ export default function IdentifySessionPage({ params }: Props) {
       displayMissRef.current = {}
       missedPitchesRef.current = new Set()
       timingsRef.current = []
+      reviewHitsRef.current = { answered: 0, correct: 0 }
+      moduleAnsweredRef.current = 0
       const store = loadNRProgress()
       const stats = getNoteStats(moduleId, 'identify', store)
       const q = buildWeightedPool(mod!.notes, stats, SESSION_LENGTH)
@@ -315,7 +348,8 @@ export default function IdentifySessionPage({ params }: Props) {
           if (j > i) [q[i], q[j]] = [q[j], q[i]]
         }
       }
-      setQueue(q)
+      const reviewPool = buildReviewPool(moduleId, 3)
+      setQueue(injectReviewQuestions(q, reviewPool))
       questionStartRef.current = performance.now()
     }
 
@@ -328,7 +362,6 @@ export default function IdentifySessionPage({ params }: Props) {
         q.push(missedPitches[i % missedPitches.length])
         i++
       }
-      // Shuffle and avoid consecutive duplicates where possible.
       for (let k = q.length - 1; k > 0; k--) {
         const j = Math.floor(Math.random() * (k + 1))
         ;[q[k], q[j]] = [q[j], q[k]]
@@ -345,7 +378,11 @@ export default function IdentifySessionPage({ params }: Props) {
       displayMissRef.current = {}
       missedPitchesRef.current = new Set()
       timingsRef.current = []
-      setQueue(q)
+      reviewHitsRef.current = { answered: 0, correct: 0 }
+      moduleAnsweredRef.current = 0
+      // Retry mini-sessions skip review injection — they exist to shore up
+      // module-specific weak notes, not to spread attention across modules.
+      setQueue(q.map(p => ({ pitch: p, review: null })))
       questionStartRef.current = performance.now()
     }
 
@@ -381,6 +418,19 @@ export default function IdentifySessionPage({ params }: Props) {
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: WRONG_FG, letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>Missed notes</p>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: WRONG_FG, margin: 0 }}>
                 {missedEntries.map(([n, c]) => c > 1 ? `${n} ×${c}` : n).join(', ')}
+              </p>
+            </div>
+          )}
+
+          {/* Review tally — only appears if review questions were in the session. */}
+          {reviewHitsRef.current.answered > 0 && (
+            <div style={{ marginBottom: '16px', padding: '10px 14px', background: '#F7F3E8', border: '1px solid #E4DDC7', borderRadius: '10px', textAlign: 'left' }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 4px' }}>
+                Review from earlier modules
+              </p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', margin: 0 }}>
+                {reviewHitsRef.current.correct} of {reviewHitsRef.current.answered} correct ·
+                <span style={{ color: '#7A7060' }}> doesn&apos;t affect this module&apos;s accuracy</span>
               </p>
             </div>
           )}
@@ -475,8 +525,10 @@ export default function IdentifySessionPage({ params }: Props) {
           ← Back
         </button>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
-            {mod.title} · {retryMode ? 'Retry' : 'Identify'}
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: currentReview ? '#B5402A' : '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
+            {currentReview
+              ? `Review · from ${NOTE_READING_MODULES.find(m => m.id === currentReview.sourceModuleId)?.title ?? 'earlier module'}`
+              : `${mod.title} · ${retryMode ? 'Retry' : 'Identify'}`}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

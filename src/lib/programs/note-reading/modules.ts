@@ -46,97 +46,105 @@ export const NOTE_READING_MODULES: NRModuleDef[] = [
     title: 'Treble Clef — White Keys',
     subtitle: 'E4 through F5',
     description:
-      'All natural notes on the treble staff, from E4 on the first line to F5 on the top line. No ledger lines, no accidentals — just the five lines and four spaces.',
+      'All natural notes on the treble staff from E4 (bottom line) to F5 (top line). Build automatic recognition of each line and space.',
     clef: 'treble',
     notes: ['E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5'],
-    tools: ['identify', 'play'],
+    tools: ['identify', 'locate', 'play'],
     unlockAfter: ['landmarks'],
-    criteria: { identifyAccuracy: 0.9, playAccuracy: 0.9, playAvgResponseMs: 4000, sessions: 2 },
+    criteria: { identifyAccuracy: 0.95, locateAccuracy: 0.95, playAccuracy: 0.95, playAvgResponseMs: 4000, sessions: 3 },
   },
   {
     id: 'bass-basics',
     title: 'Bass Clef — White Keys',
     subtitle: 'G2 through A3',
     description:
-      'All natural notes on the bass staff, from G2 on the first line to A3 on the fifth line. The mirror image of the treble — build fluency before combining the staves.',
+      'All natural notes on the bass staff from G2 (bottom line) to A3 (top line). Solidify bass reading as independent from treble.',
     clef: 'bass',
     notes: ['G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'F3', 'G3', 'A3'],
-    tools: ['identify', 'play'],
+    tools: ['identify', 'locate', 'play'],
     unlockAfter: ['landmarks'],
-    criteria: { identifyAccuracy: 0.9, playAccuracy: 0.9, playAvgResponseMs: 4000, sessions: 2 },
+    criteria: { identifyAccuracy: 0.95, locateAccuracy: 0.95, playAccuracy: 0.95, playAvgResponseMs: 4000, sessions: 3 },
   },
   {
     id: 'grand-integration',
     title: 'Grand Staff Integration',
-    subtitle: 'Both staves at once',
+    subtitle: 'Both clefs, drawn randomly',
     description:
-      'Treble and bass notes mixed unpredictably. The clef switches without warning — you must identify the staff first, then the note. Requires both treble and bass mastery.',
+      'Both clefs, drawn randomly. Train your ability to switch between treble and bass reading on the fly.',
     clef: 'grand',
     notes: [
       'E4','F4','G4','A4','B4','C5','D5','E5','F5',  // treble
       'G2','A2','B2','C3','D3','E3','F3','G3','A3',  // bass
     ],
-    tools: ['play'],
+    tools: ['identify', 'locate', 'play'],
     unlockAfter: ['treble-basics', 'bass-basics'],
-    criteria: { playAccuracy: 0.9, playAvgResponseMs: 3500, sessions: 3 },
+    criteria: { identifyAccuracy: 0.95, locateAccuracy: 0.95, playAccuracy: 0.95, playAvgResponseMs: 3500, sessions: 3 },
   },
   {
     id: 'ledger-lines',
     title: 'Ledger Lines',
     subtitle: 'Above, below, and in between',
     description:
-      'Notes that require ledger lines — one line above and below each staff, plus the critical middle-C overlap zone shared by treble and bass.',
+      'Notes outside the staff — up to three ledger lines above treble and below bass. Learn to count intervals from landmarks rather than memorizing positions.',
     clef: 'grand',
     notes: [
-      // Above treble
-      'G5','A5','B5',
-      // Below treble (middle C zone)
-      'D4','C4',
-      // Above bass
-      'C4','D4',
-      // Below bass
-      'F2','E2',
+      // Above treble (up to 3 ledger lines)
+      'A5','B5','C6','D6','E6',
+      // Overlap / middle-C zone
+      'B3','C4','D4','A3',
+      // Below bass (up to 3 ledger lines)
+      'F2','E2','D2','C2','B1',
     ],
-    tools: ['identify', 'play'],
+    tools: ['identify', 'locate', 'play'],
     unlockAfter: ['grand-integration'],
-    criteria: { identifyAccuracy: 0.9, playAccuracy: 0.9, playAvgResponseMs: 4000, sessions: 2 },
+    criteria: { identifyAccuracy: 0.95, locateAccuracy: 0.95, playAccuracy: 0.95, playAvgResponseMs: 4500, sessions: 3 },
   },
   {
     id: 'accidentals',
     title: 'Accidentals in Context',
-    subtitle: 'Sharps and flats on the grand staff',
+    subtitle: 'Sharps, flats, and naturals on the grand staff',
     description:
-      'Sharps and flats layered onto the notes you already know. The staff position is the same — but now you must read the accidental too. Enharmonic precision required.',
+      'Notes with sharps, flats, and naturals. Read the accidental and the letter as a single recognition, not two steps.',
     clef: 'grand',
     notes: [
-      'F#4','Bb4','Eb4','C#5','F#5',
-      'Ab3','Bb3','F#3','Eb3','C#3',
+      // Treble sharps
+      'F#4','G#4','A#4','C#5','D#5','F#5','C#6',
+      // Treble flats
+      'Eb4','Gb4','Ab4','Bb4','Db5','Eb5','Gb5','Bb5',
+      // Bass sharps
+      'F#2','G#2','C#3','D#3','F#3','G#3','A#3',
+      // Bass flats
+      'Ab2','Bb2','Db3','Eb3','Gb3','Ab3','Bb3',
+      // Overlap-zone accidentals
+      'Db4','D#4',
     ],
-    tools: ['identify', 'play'],
+    tools: ['identify', 'locate', 'play'],
     unlockAfter: ['ledger-lines'],
-    criteria: { identifyAccuracy: 0.88, playAccuracy: 0.88, sessions: 2 },
+    criteria: { identifyAccuracy: 0.95, locateAccuracy: 0.95, playAccuracy: 0.95, playAvgResponseMs: 4500, sessions: 3 },
   },
   {
     id: 'speed-drills',
     title: 'Full Range Speed Drills',
-    subtitle: 'Everything, fast',
+    subtitle: "Everything you've learned, at speed",
     description:
-      'The entire note pool — white keys, accidentals, all ledger line zones. Target: under 2.5 seconds per note. Three passing sessions to complete.',
+      "Everything you've learned, at speed. Master criteria: 95% accuracy at 1.5 seconds or faster per note.",
     clef: 'grand',
     notes: [
-      // Treble
+      // Treble naturals
       'E4','F4','G4','A4','B4','C5','D5','E5','F5',
-      'F#4','Bb4','Eb4','C#5','F#5',
-      'G5','A5','B5',
-      'C4','D4',
-      // Bass
+      // Bass naturals
       'G2','A2','B2','C3','D3','E3','F3','G3','A3',
-      'Ab3','Bb3','F#3','Eb3','C#3',
-      'F2','E2',
+      // Ledger zones
+      'A5','B5','C6','D6','E6',
+      'B3','C4','D4',
+      'F2','E2','D2','C2','B1',
+      // Common accidentals
+      'F#4','Bb4','Eb4','C#5','F#5','Ab4','G#4','D#5',
+      'F#3','C#3','Bb3','Eb3','Ab3','G#2','A#3','Db4',
     ],
-    tools: ['play'],
+    tools: ['identify', 'locate', 'play'],
     unlockAfter: ['accidentals'],
-    criteria: { playAccuracy: 0.88, playAvgResponseMs: 2500, sessions: 3 },
+    criteria: { identifyAccuracy: 0.95, locateAccuracy: 0.95, playAccuracy: 0.95, playAvgResponseMs: 1500, sessions: 3 },
   },
   {
     id: 'melodic-fragments',

@@ -7,7 +7,9 @@ import {
   loadNRProgress,
   isNRModuleUnlocked,
   nrConsecutivePassing,
+  computeRetentionSummary,
   type NRProgressStore,
+  type RetentionSummary,
 } from '@/lib/programs/note-reading/progress'
 
 const F = 'var(--font-jost), sans-serif'
@@ -24,6 +26,44 @@ function ClefBadge({ clef }: { clef: 'treble' | 'bass' | 'grand' }) {
     }}>
       {label}
     </span>
+  )
+}
+
+function RetentionRing({ pct }: { pct: number }) {
+  const size = 56
+  const stroke = 5
+  const r = (size - stroke) / 2
+  const circumference = 2 * Math.PI * r
+  const offset = circumference * (1 - Math.max(0, Math.min(100, pct)) / 100)
+  // Color sweeps from burgundy at 0% to green at 100% via an amber midpoint.
+  const color = pct >= 90 ? '#3B6D11' : pct >= 70 ? '#B5402A' : '#A32D2D'
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }} aria-hidden="true">
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#EDE8DF" strokeWidth={stroke} />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke={color}
+        strokeWidth={stroke}
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+      />
+      <text
+        x={size / 2}
+        y={size / 2 + 4}
+        textAnchor="middle"
+        fontFamily="var(--font-cormorant), serif"
+        fontSize="16"
+        fontWeight={400}
+        fill="#2A2318"
+      >
+        {pct}
+      </text>
+    </svg>
   )
 }
 
@@ -45,10 +85,14 @@ function ToolBadge({ tool }: { tool: 'identify' | 'locate' | 'play' }) {
 
 export default function NoteReadingPage() {
   const [store, setStore] = useState<NRProgressStore>({})
+  const [retention, setRetention] = useState<RetentionSummary | null>(null)
 
   useEffect(() => {
     setStore(loadNRProgress())
+    setRetention(computeRetentionSummary())
   }, [])
+
+  const anyModuleCompleted = NOTE_READING_MODULES.some(m => store[m.id]?.completed === true)
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
@@ -73,6 +117,28 @@ export default function NoteReadingPage() {
             Eight modules — treble, bass, and grand staff — built for college music students and serious adult learners. Each module pairs note identification with pitch detection to build both cognitive recognition and motor response.
           </p>
         </div>
+
+        {/* Retention indicator — appears once a module is completed and the
+            learner has started seeing review questions in later sessions.
+            Accuracy reflects how well past-module notes are holding up. */}
+        {anyModuleCompleted && retention && retention.totalAnswered > 0 && (
+          <div style={{ marginBottom: '32px', padding: '16px 20px', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '18px' }}>
+            <RetentionRing pct={Math.round((retention.recent30Accuracy || retention.accuracy) * 100)} />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 4px' }}>
+                Note-reading retention
+              </p>
+              <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400, color: '#2A2318', margin: '0 0 2px', lineHeight: 1.2 }}>
+                {Math.round((retention.recent30Accuracy || retention.accuracy) * 100)}% on review questions
+              </p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
+                {retention.totalAnswered < 30
+                  ? `${retention.totalCorrect} of ${retention.totalAnswered} correct so far · drawn from modules you've completed`
+                  : `Rolling last 30 answers · ${retention.totalCorrect} of ${retention.totalAnswered} lifetime`}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Module list */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

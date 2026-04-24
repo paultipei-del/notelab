@@ -1,9 +1,31 @@
 'use client'
 
-import { getNRModule } from './modules'
+import { getNRModule, NOTE_READING_MODULES } from './modules'
+import { canRenderOnClef } from './staffPositions'
 import type { NoteResult, NoteStats, MasteryLevel } from './types'
 
 const STORAGE_KEY = 'notelab-nr-progress-v1'
+const RETENTION_KEY = 'notelab-nr-retention-v1'
+const RETENTION_CAP = 500     // keep the most recent N retention answers
+
+// A single "review" answer logged during a later module's session. Used to
+// compute the dashboard retention score and to bias future review picks
+// toward historically weak notes.
+export interface RetentionRecord {
+  sourceModuleId: string
+  pitch: string
+  correct: boolean
+  timestamp: number
+}
+
+export interface RetentionSummary {
+  totalAnswered: number
+  totalCorrect: number
+  accuracy: number           // 0–1 across all retention answers
+  recent30Accuracy: number   // rolling window over last 30 answers
+  byModule: Record<string, { answered: number; correct: number }>
+  lastAnsweredAt: number | null
+}
 
 export interface NRSessionRecord {
   accuracy: number
@@ -279,4 +301,159 @@ export function getNoteStats(
       accuracy < 0.90 ? 'developing' : 'strong'
     return { noteId, attempts: stats.attempts, correct: stats.correct, accuracy, avgResponseMs, masteryLevel }
   })
+}
+
+// ── Cumulative review & retention ──────────────────────────────────────────
+// Review questions are injected into later modules' drill sessions, pulled
+// from the weakest notes across already-completed modules. They're logged
+// to a separate retention store so they don't affect the current module's
+// mastery calculation, but do surface a dashboard-level "forgetting curve"
+// signal.
+
+export function loadRetention(): RetentionRecord[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(RETENTION_KEY)
+    return raw ? (JSON.parse(raw) as RetentionRecord[]) : []
+  } catch {
+    return []
+  }
+}
+
+export function recordRetention(entry: Omit<RetentionRecord, 'timestamp'>): void {
+  if (typeof window === 'undefined') return
+  const list = loadRetention()
+  list.push({ ...entry, timestamp: Date.now() })
+  const capped = list.length > RETENTION_CAP ? list.slice(-RETENTION_CAP) : list
+  try {
+    localStorage.setItem(RETENTION_KEY, JSON.stringify(capped))
+  } catch {
+    /* quota / privacy mode — ignore */
+  }
+}
+
+export function computeRetentionSummary(): RetentionSummary {
+  const list = loadRetention()
+  const byModule: Record<string, { answered: number; correct: number }> = {}
+  let totalCorrect = 0
+  for (const r of list) {
+    if (!byModule[r.sourceModuleId]) byModule[r.sourceModuleId] = { answered: 0, correct: 0 }
+    byModule[r.sourceModuleId].answered++
+    if (r.correct) {
+      byModule[r.sourceModuleId].correct++
+      totalCorrect++
+    }
+  }
+  const totalAnswered = list.length
+  const recent = list.slice(-30)
+  const recentCorrect = recent.filter(r => r.correct).length
+  return {
+    totalAnswered,
+    totalCorrect,
+    accuracy: totalAnswered > 0 ? totalCorrect / totalAnswered : 0,
+    recent30Accuracy: recent.length > 0 ? recentCorrect / recent.length : 0,
+    byModule,
+    lastAnsweredAt: list.length > 0 ? list[list.length - 1].timestamp : null,
+  }
+}
+
+// Build a review pool of weak-note candidates drawn from completed modules
+// OTHER than the current one. Returns up to `count` pitches paired with
+// their source module ID. Candidates are filtered to pitches that can be
+// rendered sensibly on the current module's clef, skip any pitch already
+// in the current module's own note pool, and are weighted toward lower
+// historical accuracy.
+export function buildReviewPool(
+  currentModuleId: string,
+  count: number,
+): Array<{ pitch: string; sourceModuleId: string }> {
+  const mod = getNRModule(currentModuleId)
+  if (!mod) return []
+  const store = loadNRProgress()
+  const completedModules = NOTE_READING_MODULES.filter(
+    m => m.id !== currentModuleId && store[m.id]?.completed === true,
+  )
+  if (completedModules.length === 0) return []
+
+  type Candidate = { pitch: string; sourceModuleId: string; weakness: number }
+  const candidates: Candidate[] = []
+  const currentPoolSet = new Set(mod.notes)
+
+  for (const sourceMod of completedModules) {
+    const stats = getNoteStats(sourceMod.id, 'both', store)
+    for (const s of stats) {
+      if (s.attempts < 2) continue
+      if (s.accuracy >= 0.95) continue
+      if (currentPoolSet.has(s.noteId)) continue
+      if (!canRenderOnClef(s.noteId, mod.clef)) continue
+      candidates.push({
+        pitch: s.noteId,
+        sourceModuleId: sourceMod.id,
+        weakness: 1 - s.accuracy,
+      })
+    }
+  }
+
+  // Fallback: if the user hasn't missed anything from completed modules
+  // yet, still surface a small sample of earlier-module pitches so review
+  // happens even for a perfect learner.
+  if (candidates.length === 0) {
+    for (const sourceMod of completedModules) {
+      for (const pitch of [...new Set(sourceMod.notes)]) {
+        if (currentPoolSet.has(pitch)) continue
+        if (!canRenderOnClef(pitch, mod.clef)) continue
+        candidates.push({ pitch, sourceModuleId: sourceMod.id, weakness: 0.05 })
+      }
+    }
+  }
+
+  if (candidates.length === 0) return []
+
+  candidates.sort((a, b) => b.weakness - a.weakness)
+  const topSlice = candidates.slice(0, Math.max(count * 3, 6))
+  for (let i = topSlice.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[topSlice[i], topSlice[j]] = [topSlice[j], topSlice[i]]
+  }
+  return topSlice.slice(0, count).map(c => ({
+    pitch: c.pitch,
+    sourceModuleId: c.sourceModuleId,
+  }))
+}
+
+// Given a raw weighted queue of module pitches, replace 2–3 non-consecutive
+// interior positions with review entries. Returns the tagged queue. Edge
+// positions (first two / last two) are avoided so the session opens and
+// closes with the current module's own material.
+export interface QueueEntry {
+  pitch: string
+  review: { sourceModuleId: string } | null
+}
+
+export function injectReviewQuestions(
+  baseQueue: string[],
+  reviewPool: Array<{ pitch: string; sourceModuleId: string }>,
+): QueueEntry[] {
+  const tagged: QueueEntry[] = baseQueue.map(pitch => ({ pitch, review: null }))
+  if (reviewPool.length === 0 || baseQueue.length < 8) return tagged
+
+  const minIdx = 2
+  const maxIdx = baseQueue.length - 3
+  const spots: number[] = []
+  for (let i = minIdx; i <= maxIdx; i++) spots.push(i)
+  for (let i = spots.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[spots[i], spots[j]] = [spots[j], spots[i]]
+  }
+  const placements: number[] = []
+  for (const spot of spots) {
+    if (placements.length >= reviewPool.length) break
+    if (placements.every(p => Math.abs(p - spot) > 1)) placements.push(spot)
+  }
+
+  for (let i = 0; i < placements.length && i < reviewPool.length; i++) {
+    const r = reviewPool[i]
+    tagged[placements[i]] = { pitch: r.pitch, review: { sourceModuleId: r.sourceModuleId } }
+  }
+  return tagged
 }

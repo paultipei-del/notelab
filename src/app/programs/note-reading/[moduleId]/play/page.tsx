@@ -9,6 +9,10 @@ import {
   loadNRProgress,
   nrConsecutivePassing,
   getNoteStats,
+  buildReviewPool,
+  injectReviewQuestions,
+  recordRetention,
+  type QueueEntry,
 } from '@/lib/programs/note-reading/progress'
 import type { NoteResult } from '@/lib/programs/note-reading/types'
 import { SADPitchDetector } from '@/lib/sadDetector'
@@ -64,6 +68,12 @@ function buildQueue(notes: string[], length: number): string[] {
   return q
 }
 
+// Unused — `buildQueue` is retained for reference but the actual session
+// builds a weighted pool (via buildWeightedPool) and then injects review
+// questions to produce a tagged QueueEntry[]. Kept to avoid churning
+// exports outside the file.
+void buildQueue
+
 // Shared audio pipeline (module-level, like PlayItCard2)
 let sadStream: MediaStream | null = null
 let sadCtx: AudioContext | null = null
@@ -95,7 +105,7 @@ export default function PlaySessionPage({ params }: Props) {
   const isLoading = authLoading || purchasesLoading
 
   const mod = getNRModule(moduleId)
-  const [queue, setQueue] = useState<string[]>([])
+  const [queue, setQueue] = useState<QueueEntry[]>([])
   const [qIdx, setQIdx] = useState(0)
   const [noteStatus, setNoteStatus] = useState<NoteStatus>('listening')
   const [detected, setDetected] = useState<string | null>(null)
@@ -109,6 +119,12 @@ export default function PlaySessionPage({ params }: Props) {
   const noteResultsRef = useRef<Record<string, NoteResult>>({})
   const displayMissRef = useRef<Record<string, number>>({})
   const hadWrongThisNoteRef = useRef(false)
+  // Review bookkeeping — mirrors identify/locate.
+  const reviewHitsRef = useRef<{ answered: number; correct: number }>({ answered: 0, correct: 0 })
+  const moduleAnsweredRef = useRef<number>(0)
+  // Tracks the review-flag for the currently active question so the
+  // tick-loop callback can branch on it without re-reading React state.
+  const currentReviewRef = useRef<{ sourceModuleId: string } | null>(null)
 
   // Shared refs for RAF loop
   const targetRef = useRef('')
@@ -134,8 +150,9 @@ export default function PlaySessionPage({ params }: Props) {
       return
     }
     const stats = getNoteStats(moduleId, 'play', store)
-    const q = buildWeightedPool(mod.notes, stats, SESSION_LENGTH)
-    setQueue(q)
+    const base = buildWeightedPool(mod.notes, stats, SESSION_LENGTH)
+    const reviewPool = buildReviewPool(moduleId, 3)
+    setQueue(injectReviewQuestions(base, reviewPool))
     qIdxRef.current = 0
     correctRef.current = 0
     responseTimesRef.current = []
@@ -143,6 +160,8 @@ export default function PlaySessionPage({ params }: Props) {
     noteResultsRef.current = {}
     displayMissRef.current = {}
     hadWrongThisNoteRef.current = false
+    reviewHitsRef.current = { answered: 0, correct: 0 }
+    moduleAnsweredRef.current = 0
   }, [moduleId])
 
   // Start mic + begin session when queue is ready
@@ -176,9 +195,10 @@ export default function PlaySessionPage({ params }: Props) {
     return () => { stopMic() }
   }, [queue])
 
-  function startNote(pitch: string, idx: number) {
+  function startNote(entry: QueueEntry, idx: number) {
     cancelAnimationFrame(rafHandle)
-    targetRef.current = pitch
+    targetRef.current = entry.pitch
+    currentReviewRef.current = entry.review
     qIdxRef.current = idx
     cardStartRef.current = Date.now()
     acceptStartRef.current = 0
@@ -219,17 +239,30 @@ export default function PlaySessionPage({ params }: Props) {
         doneNoteRef.current = true
         prevMidiRef.current = result.midi
         const responseMs = now - acceptStartRef.current
-        correctRef.current += 1
-        responseTimesRef.current = [...responseTimesRef.current, responseMs]
-        setCorrectCount(correctRef.current)
-        setResponseTimes([...responseTimesRef.current])
+        const review = currentReviewRef.current
+        const firstTry = !hadWrongThisNoteRef.current
         setNoteStatus('correct')
 
-        // Record per-note result: correct=1 if no wrong detection before this, else 0
-        if (!noteResultsRef.current[target]) noteResultsRef.current[target] = { attempts: 0, correct: 0, responseMsTotal: 0 }
-        noteResultsRef.current[target].attempts++
-        noteResultsRef.current[target].correct += hadWrongThisNoteRef.current ? 0 : 1
-        noteResultsRef.current[target].responseMsTotal = (noteResultsRef.current[target].responseMsTotal ?? 0) + responseMs
+        if (review) {
+          // Log retention; don't touch module accuracy or response-time bucket.
+          recordRetention({
+            sourceModuleId: review.sourceModuleId,
+            pitch: target,
+            correct: firstTry,
+          })
+          reviewHitsRef.current.answered++
+          if (firstTry) reviewHitsRef.current.correct++
+        } else {
+          correctRef.current += 1
+          responseTimesRef.current = [...responseTimesRef.current, responseMs]
+          setCorrectCount(correctRef.current)
+          setResponseTimes([...responseTimesRef.current])
+          moduleAnsweredRef.current++
+          if (!noteResultsRef.current[target]) noteResultsRef.current[target] = { attempts: 0, correct: 0, responseMsTotal: 0 }
+          noteResultsRef.current[target].attempts++
+          noteResultsRef.current[target].correct += firstTry ? 1 : 0
+          noteResultsRef.current[target].responseMsTotal = (noteResultsRef.current[target].responseMsTotal ?? 0) + responseMs
+        }
 
         setTimeout(() => advanceNote(), 200)
         return
@@ -241,8 +274,12 @@ export default function PlaySessionPage({ params }: Props) {
           hadWrongThisNoteRef.current = true
           setNoteStatus('wrong')
           lastWrongRef.current = now
-          const pc = target.replace(/\d+$/,'')
-          displayMissRef.current[pc] = (displayMissRef.current[pc] ?? 0) + 1
+          // Only record the wrong-note tally when this isn't a review
+          // question — review misses stay in the retention log instead.
+          if (!currentReviewRef.current) {
+            const pc = target.replace(/\d+$/,'')
+            displayMissRef.current[pc] = (displayMissRef.current[pc] ?? 0) + 1
+          }
         }
       }
     }
@@ -252,7 +289,7 @@ export default function PlaySessionPage({ params }: Props) {
 
   function advanceNote() {
     const next = qIdxRef.current + 1
-    if (next >= SESSION_LENGTH) {
+    if (next >= queue.length) {
       sessionDoneRef.current = true
       cancelAnimationFrame(rafHandle)
       setDone(true)
@@ -263,7 +300,10 @@ export default function PlaySessionPage({ params }: Props) {
 
   useEffect(() => {
     if (!done || !mod) return
-    const accuracy = correctRef.current / SESSION_LENGTH
+    // Accuracy + avg-response denominators use module-question counts only —
+    // review answers are excluded so they don't skew mastery.
+    const moduleAnswered = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
+    const accuracy = correctRef.current / moduleAnswered
     const avgMs = responseTimesRef.current.length > 0
       ? responseTimesRef.current.reduce((a, b) => a + b, 0) / responseTimesRef.current.length
       : 9999
@@ -273,7 +313,9 @@ export default function PlaySessionPage({ params }: Props) {
 
   if (!mod) return null
 
-  const currentPitch = queue[qIdx] ?? ''
+  const currentEntry = queue[qIdx]
+  const currentPitch = currentEntry?.pitch ?? ''
+  const currentReview = currentEntry?.review ?? null
   const avgResponseSec = responseTimes.length > 0
     ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length / 1000).toFixed(1)
     : '—'
@@ -282,7 +324,8 @@ export default function PlaySessionPage({ params }: Props) {
 
   // ── Summary ─────────────────────────────────────────────────────────────────
   if (done && savedMp) {
-    const accuracy = correctRef.current / SESSION_LENGTH
+    const moduleAnsweredDenom = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
+    const accuracy = correctRef.current / moduleAnsweredDenom
     const pct = Math.round(accuracy * 100)
     const avgMs = responseTimesRef.current.length > 0
       ? responseTimesRef.current.reduce((a, b) => a + b, 0) / responseTimesRef.current.length
@@ -303,11 +346,15 @@ export default function PlaySessionPage({ params }: Props) {
       noteResultsRef.current = {}; displayMissRef.current = {}
       prevMidiRef.current = -1; sessionDoneRef.current = false
       correctRef.current = 0; responseTimesRef.current = []
+      reviewHitsRef.current = { answered: 0, correct: 0 }
+      moduleAnsweredRef.current = 0
       const store = loadNRProgress()
       const stats = getNoteStats(moduleId, 'play', store)
-      const q = buildWeightedPool(mod!.notes, stats, SESSION_LENGTH)
-      setQueue(q)
-      setTimeout(() => startNote(q[0], 0), 50)
+      const base = buildWeightedPool(mod!.notes, stats, SESSION_LENGTH)
+      const reviewPool = buildReviewPool(moduleId, 3)
+      const tagged = injectReviewQuestions(base, reviewPool)
+      setQueue(tagged)
+      setTimeout(() => startNote(tagged[0], 0), 50)
     }
 
     return (
@@ -337,6 +384,17 @@ export default function PlaySessionPage({ params }: Props) {
             <div style={{ marginBottom: '16px', padding: '12px 16px', background: '#FCEBEB', border: '1px solid #F09595', borderRadius: '10px' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#A32D2D', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 4px' }}>Missed</p>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#A32D2D', margin: 0 }}>{missedNotes.join(', ')}</p>
+            </div>
+          )}
+
+          {reviewHitsRef.current.answered > 0 && (
+            <div style={{ marginBottom: '16px', padding: '10px 14px', background: '#F7F3E8', border: '1px solid #E4DDC7', borderRadius: '10px', textAlign: 'left' }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 4px' }}>
+                Review from earlier modules
+              </p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', margin: 0 }}>
+                {reviewHitsRef.current.correct} of {reviewHitsRef.current.answered} played right
+              </p>
             </div>
           )}
 
@@ -412,12 +470,14 @@ export default function PlaySessionPage({ params }: Props) {
           ← Back
         </button>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
-            {mod.title} · Play It
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: currentReview ? '#B5402A' : '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
+            {currentReview
+              ? `Review · from ${NOTE_READING_MODULES.find(m => m.id === currentReview.sourceModuleId)?.title ?? 'earlier module'}`
+              : `${mod.title} · Play It`}
           </p>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>{qIdx + 1} / {SESSION_LENGTH}</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>{qIdx + 1} / {queue.length || SESSION_LENGTH}</p>
           {responseTimes.length > 0 && (
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', margin: 0 }}>avg {avgResponseSec}s</p>
           )}
@@ -425,7 +485,7 @@ export default function PlaySessionPage({ params }: Props) {
       </div>
 
       <div style={{ height: '2px', background: '#EDE8DF', flexShrink: 0 }}>
-        <div style={{ height: '100%', background: '#1A1A18', width: `${(qIdx / SESSION_LENGTH) * 100}%`, transition: 'width 0.3s' }} />
+        <div style={{ height: '100%', background: '#1A1A18', width: `${queue.length ? (qIdx / queue.length) * 100 : 0}%`, transition: 'width 0.3s' }} />
       </div>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,20px) 16px' }}>

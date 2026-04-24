@@ -44,6 +44,21 @@ export function isOnTrebleStaff(pitch: string): boolean {
   return TREBLE_NOTES.has(natural)
 }
 
+// True if a pitch can be drawn sensibly on the given clef — i.e. it falls
+// within a small ledger-line radius of the staff. Used by the cumulative-
+// review injector so a treble-only module doesn't end up showing a bass
+// pitch it would have to draw six ledger lines below the staff.
+export function canRenderOnClef(pitch: string, clef: 'treble' | 'bass' | 'grand'): boolean {
+  if (clef === 'grand') return true
+  const natural = pitch.replace(/[#b]/, '')
+  if (clef === 'treble') {
+    const pos = TREBLE_POSITIONS[natural]
+    return pos !== undefined && pos >= -6 && pos <= 13
+  }
+  const pos = BASS_POSITIONS[natural]
+  return pos !== undefined && pos >= -6 && pos <= 13
+}
+
 // Shared layout constants — must stay in sync with GrandStaffCard.tsx so
 // the interactive overlay lands on the same pixels as the rendered staff.
 export const GRAND_STAFF_LAYOUT = {

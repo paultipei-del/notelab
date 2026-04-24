@@ -10,6 +10,10 @@ import {
   loadNRProgress,
   nrConsecutivePassing,
   getNoteStats,
+  buildReviewPool,
+  injectReviewQuestions,
+  recordRetention,
+  type QueueEntry,
 } from '@/lib/programs/note-reading/progress'
 import type { NoteResult } from '@/lib/programs/note-reading/types'
 import InteractiveGrandStaff from '@/components/cards/InteractiveGrandStaff'
@@ -49,7 +53,7 @@ export default function LocateSessionPage({ params }: Props) {
   const isFreeModule = moduleId === 'landmarks'
 
   const mod = getNRModule(moduleId)
-  const [queue, setQueue] = useState<string[]>([])
+  const [queue, setQueue] = useState<QueueEntry[]>([])
   const [qIdx, setQIdx] = useState(0)
   const [answerState, setAnswerState] = useState<AnswerState>('idle')
   const [clickedPitch, setClickedPitch] = useState<string | null>(null)
@@ -64,8 +68,10 @@ export default function LocateSessionPage({ params }: Props) {
   const missedPitchesRef = useRef<Set<string>>(new Set())
   const questionStartRef = useRef<number>(0)
   const timingsRef = useRef<number[]>([])
+  const reviewHitsRef = useRef<{ answered: number; correct: number }>({ answered: 0, correct: 0 })
+  const moduleAnsweredRef = useRef<number>(0)
 
-  const sessionLength = retryMode ? Math.min(RETRY_LENGTH, queue.length) : SESSION_LENGTH
+  const sessionLength = retryMode ? Math.min(RETRY_LENGTH, queue.length) : queue.length
 
   useEffect(() => {
     if (!isLoading && !isFreeModule && !isPro) router.replace('/account')
@@ -90,11 +96,14 @@ export default function LocateSessionPage({ params }: Props) {
         if (j > i) [q[i], q[j]] = [q[j], q[i]]
       }
     }
-    setQueue(q)
+    const reviewPool = buildReviewPool(moduleId, 3)
+    setQueue(injectReviewQuestions(q, reviewPool))
     noteResultsRef.current = {}
     displayMissRef.current = {}
     missedPitchesRef.current = new Set()
     timingsRef.current = []
+    reviewHitsRef.current = { answered: 0, correct: 0 }
+    moduleAnsweredRef.current = 0
     questionStartRef.current = performance.now()
   }, [moduleId])
 
@@ -102,7 +111,9 @@ export default function LocateSessionPage({ params }: Props) {
     if (answerState === 'idle') questionStartRef.current = performance.now()
   }, [qIdx, answerState])
 
-  const currentPitch = queue[qIdx] ?? ''
+  const currentEntry = queue[qIdx]
+  const currentPitch = currentEntry?.pitch ?? ''
+  const currentReview = currentEntry?.review ?? null
 
   const handleTap = useCallback((picked: string) => {
     if (processingRef.current || done || !currentPitch) return
@@ -114,21 +125,32 @@ export default function LocateSessionPage({ params }: Props) {
 
     void playPitch(currentPitch)
 
-    const nr = noteResultsRef.current
-    if (!nr[currentPitch]) nr[currentPitch] = { attempts: 0, correct: 0 }
-    nr[currentPitch].attempts++
-    if (isCorrect) {
-      nr[currentPitch].correct++
-      setCorrectCount(c => c + 1)
+    if (currentReview) {
+      recordRetention({
+        sourceModuleId: currentReview.sourceModuleId,
+        pitch: currentPitch,
+        correct: isCorrect,
+      })
+      reviewHitsRef.current.answered++
+      if (isCorrect) reviewHitsRef.current.correct++
     } else {
-      displayMissRef.current[pitchClass(currentPitch)] = (displayMissRef.current[pitchClass(currentPitch)] ?? 0) + 1
-      missedPitchesRef.current.add(currentPitch)
+      moduleAnsweredRef.current++
+      const nr = noteResultsRef.current
+      if (!nr[currentPitch]) nr[currentPitch] = { attempts: 0, correct: 0 }
+      nr[currentPitch].attempts++
+      if (isCorrect) {
+        nr[currentPitch].correct++
+        setCorrectCount(c => c + 1)
+      } else {
+        displayMissRef.current[pitchClass(currentPitch)] = (displayMissRef.current[pitchClass(currentPitch)] ?? 0) + 1
+        missedPitchesRef.current.add(currentPitch)
+      }
     }
 
     setClickedPitch(picked)
     setAnswerState(isCorrect ? 'correct' : 'wrong')
 
-    if (!isCorrect && !retryMode) {
+    if (!isCorrect && !retryMode && !currentReview) {
       setQueue(prev => {
         const next = prev.slice()
         const len = next.length
@@ -136,7 +158,7 @@ export default function LocateSessionPage({ params }: Props) {
           .map(p => Math.min(p + Math.floor(Math.random() * 3), len))
           .filter(p => p > qIdx + 1 && p <= len)
         insertPositions.sort((a, b) => b - a)
-        for (const pos of insertPositions) next.splice(pos, 0, currentPitch)
+        for (const pos of insertPositions) next.splice(pos, 0, { pitch: currentPitch, review: null })
         return next
       })
     }
@@ -152,7 +174,7 @@ export default function LocateSessionPage({ params }: Props) {
       }
       processingRef.current = false
     }, isCorrect ? CORRECT_ADVANCE_MS : WRONG_ADVANCE_MS)
-  }, [currentPitch, qIdx, done, retryMode, sessionLength])
+  }, [currentPitch, currentReview, qIdx, done, retryMode, sessionLength])
 
   useEffect(() => {
     if (!done || !mod) return
@@ -160,7 +182,8 @@ export default function LocateSessionPage({ params }: Props) {
       setResult({ mp: { moduleId, identify: { completed: false }, locate: { completed: false }, play: { completed: false } } as unknown as ReturnType<typeof recordNRLocateSession>['mp'], locateJustMastered: false })
       return
     }
-    const accuracy = correctCount / SESSION_LENGTH
+    const denom = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
+    const accuracy = correctCount / denom
     const res = recordNRLocateSession(moduleId, accuracy, noteResultsRef.current)
     setResult(res)
   }, [done])
@@ -173,7 +196,8 @@ export default function LocateSessionPage({ params }: Props) {
   )
 
   const progressPct = (qIdx / sessionLength) * 100
-  const accuracy = done ? correctCount / sessionLength : correctCount / SESSION_LENGTH
+  const moduleDenom = moduleAnsweredRef.current > 0 ? moduleAnsweredRef.current : 1
+  const accuracy = correctCount / moduleDenom
 
   function handleEndSession() { setShowEndConfirm(true) }
   function confirmEnd() { router.push(`/programs/note-reading/${moduleId}`) }
@@ -194,7 +218,7 @@ export default function LocateSessionPage({ params }: Props) {
       : 0
     const fastestMs = timingsRef.current.length ? Math.round(Math.min(...timingsRef.current)) : 0
 
-    function resetForNewSession(newQueue: string[], newRetryMode: boolean) {
+    function resetForNewSession(newQueue: QueueEntry[], newRetryMode: boolean) {
       setDone(false)
       setResult(null)
       setQIdx(0)
@@ -207,6 +231,8 @@ export default function LocateSessionPage({ params }: Props) {
       displayMissRef.current = {}
       missedPitchesRef.current = new Set()
       timingsRef.current = []
+      reviewHitsRef.current = { answered: 0, correct: 0 }
+      moduleAnsweredRef.current = 0
       setQueue(newQueue)
       questionStartRef.current = performance.now()
     }
@@ -221,7 +247,8 @@ export default function LocateSessionPage({ params }: Props) {
           if (j > i) [q[i], q[j]] = [q[j], q[i]]
         }
       }
-      resetForNewSession(q, false)
+      const reviewPool = buildReviewPool(moduleId, 3)
+      resetForNewSession(injectReviewQuestions(q, reviewPool), false)
     }
 
     function retryMissed() {
@@ -236,7 +263,8 @@ export default function LocateSessionPage({ params }: Props) {
         const j = Math.floor(Math.random() * (k + 1))
         ;[q[k], q[j]] = [q[j], q[k]]
       }
-      resetForNewSession(q, true)
+      // Retry mini-sessions skip review injection — targeted on missed notes.
+      resetForNewSession(q.map(p => ({ pitch: p, review: null })), true)
     }
 
     const moduleFinished = !retryMode && savedMp.completed
@@ -275,6 +303,18 @@ export default function LocateSessionPage({ params }: Props) {
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: WRONG_FG, letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>Missed notes</p>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: WRONG_FG, margin: 0 }}>
                 {missedEntries.map(([n, c]) => c > 1 ? `${n} ×${c}` : n).join(', ')}
+              </p>
+            </div>
+          )}
+
+          {reviewHitsRef.current.answered > 0 && (
+            <div style={{ marginBottom: '16px', padding: '10px 14px', background: '#F7F3E8', border: '1px solid #E4DDC7', borderRadius: '10px', textAlign: 'left' }}>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.06em', textTransform: 'uppercase' as const, margin: '0 0 4px' }}>
+                Review from earlier modules
+              </p>
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', margin: 0 }}>
+                {reviewHitsRef.current.correct} of {reviewHitsRef.current.answered} correct ·
+                <span style={{ color: '#7A7060' }}> doesn&apos;t affect this module&apos;s accuracy</span>
               </p>
             </div>
           )}
@@ -348,8 +388,10 @@ export default function LocateSessionPage({ params }: Props) {
           ← Back
         </button>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
-            {mod.title} · {retryMode ? 'Retry' : 'Locate'}
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: currentReview ? '#B5402A' : '#7A7060', margin: 0, letterSpacing: '0.06em', textTransform: 'uppercase' as const }}>
+            {currentReview
+              ? `Review · from ${NOTE_READING_MODULES.find(m => m.id === currentReview.sourceModuleId)?.title ?? 'earlier module'}`
+              : `${mod.title} · ${retryMode ? 'Retry' : 'Locate'}`}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
