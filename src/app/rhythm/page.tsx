@@ -933,6 +933,8 @@ export default function RhythmPage() {
   const userOffsetRef = useRef(0)
   /** Per-device visual lead in seconds — how much the JS state change leads the heard click to absorb display + render lag. */
   const visualLeadRef = useRef(0)
+  /** Pre-scheduled setTimeout ids for the countdown digit transitions; cleared on stop. */
+  const countdownTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const [showCalibration, setShowCalibration] = useState(false)
   const [showVisualCal, setShowVisualCal] = useState(false)
 
@@ -1255,6 +1257,32 @@ export default function RhythmPage() {
     }
 
     const countdownStart = now
+    // Pre-schedule each digit transition via setTimeout. setState calls polled
+    // inside an rAF loop are subject to React's render-priority queue and the
+    // browser's frame budget — across 4 beats the queue can stretch each call
+    // by 1–3 extra frames, which the eye reads as cumulative drift between
+    // the digit and the heard click. setTimeout fires the JS state change at
+    // a precise time computed once at countdown start; the digit transitions
+    // are then independent of rAF jitter.
+    {
+      const lat0 = audioOutLatencyRef.current
+      const clickDelay0 = !useMobileLayout ? DESKTOP_METRO_CLICK_DELAY_SEC : 0
+      const displayLead0 = visualLeadRef.current > 0 ? visualLeadRef.current : Math.max(0, COUNTDOWN_DISPLAY_LEAD_SEC)
+      countdownTimeoutsRef.current.forEach(t => clearTimeout(t))
+      countdownTimeoutsRef.current = []
+      const wallAnchorMs = performance.now()
+      const ctxAnchor = ctx.currentTime
+      for (let N = 0; N < feltBeats; N++) {
+        // tAdj reaches N*feltBeatDuration when ctx-time = countdownStart + N*feltBeatDuration + lat + clickDelay - displayLead.
+        const targetCtxTime = countdownStart + N * feltBeatDuration + lat0 + clickDelay0 - displayLead0
+        const delayMs = Math.max(0, (targetCtxTime - ctxAnchor) * 1000 + (wallAnchorMs - performance.now()))
+        const tid = setTimeout(() => {
+          setCountdown(Math.min(N + 1, feltBeats))
+        }, delayMs)
+        countdownTimeoutsRef.current.push(tid)
+      }
+    }
+
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
@@ -1262,17 +1290,10 @@ export default function RhythmPage() {
       const clickDelay = !useMobileLayout ? DESKTOP_METRO_CLICK_DELAY_SEC : 0
       const countdownElapsed = ctx2.currentTime - lat - countdownStart
       if (countdownElapsed < countdownDuration) {
-        // Heard click k ≈ countdownElapsed === clickDelay + k * feltBeatDuration. Display lead shifts all beat boundaries earlier
-        // to compensate for React commit + display vsync + panel response. Per-device value (tuned via VisualCalibrationModal,
-        // default DEFAULT_VISUAL_LEAD_MS) takes precedence over the constant fallback below.
+        // Digit transitions are scheduled above via setTimeout; the rAF tick continues to handle the overlay
+        // fade-out animation and the pre-downbeat playhead reveal, both of which need every-frame updates.
         const displayLead = visualLeadRef.current > 0 ? visualLeadRef.current : Math.max(0, COUNTDOWN_DISPLAY_LEAD_SEC)
         const tAdj = countdownElapsed - clickDelay + displayLead
-        if (tAdj < 0) {
-          setCountdown(null)
-        } else {
-          const idx = Math.floor(tAdj / feltBeatDuration)
-          setCountdown(Math.min(idx + 1, feltBeats))
-        }
         const lastBeatT = (feltBeats - 1) * feltBeatDuration
         if (tAdj >= lastBeatT) {
           const te = (tAdj - lastBeatT) / feltBeatDuration
@@ -1399,6 +1420,8 @@ export default function RhythmPage() {
 
   const stop = () => {
     cancelAnimationFrame(rafRef.current)
+    countdownTimeoutsRef.current.forEach(t => clearTimeout(t))
+    countdownTimeoutsRef.current = []
     setTapReady(false)
     tapReadyRef.current = false
     // Close audio context to cancel all scheduled clicks
