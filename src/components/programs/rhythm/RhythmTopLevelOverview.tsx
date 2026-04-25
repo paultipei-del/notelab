@@ -58,7 +58,7 @@ export default function RhythmTopLevelOverview({ entries }: Props) {
           return (
             <Link
               key={entry.slug}
-              href={`/programs/rhythm/${entry.slug}`}
+              href={`/programs/rhythm#${entry.slug}`}
               style={{ textDecoration: 'none', display: 'block' }}
             >
               <div

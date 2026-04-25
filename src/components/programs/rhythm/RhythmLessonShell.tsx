@@ -53,7 +53,7 @@ export default function RhythmLessonShell({
 
         <div style={{ marginTop: '20px', marginBottom: '28px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>
-            <Link href={`/programs/rhythm/${programSlug}`} style={{ color: '#7A7060', textDecoration: 'none' }}>
+            <Link href={`/programs/rhythm#${programSlug}`} style={{ color: '#7A7060', textDecoration: 'none' }}>
               {programTitle}
             </Link>
             {' · '}

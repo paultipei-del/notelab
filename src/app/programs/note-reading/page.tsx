@@ -11,6 +11,7 @@ import {
   type NRProgressStore,
   type RetentionSummary,
 } from '@/lib/programs/note-reading/progress'
+import ModuleRow from '@/components/programs/ModuleRow'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -151,15 +152,20 @@ export default function NoteReadingPage() {
             const playMastered = mp?.play?.mastered ?? false
             const completed = mp?.completed ?? false
 
-            const statusDot = completed
-              ? <span style={{ color: '#3B6D11', fontSize: '11px' }}>✓</span>
-              : unlocked && (mp?.identify?.sessions.length || mp?.play?.sessions.length)
-              ? <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#B5402A', display: 'inline-block', verticalAlign: 'middle' }} />
-              : null
+            const subtitle = `${mod.subtitle} · ${[...new Set(mod.notes)].length} notes`
+            const inProgress = !completed && unlocked && Boolean(
+              mp?.identify?.sessions.length || mp?.play?.sessions.length
+            )
+            const titleIcon = inProgress
+              ? <span aria-hidden="true" style={{
+                  width: '6px', height: '6px', borderRadius: '50%',
+                  background: '#B5402A', display: 'inline-block', verticalAlign: 'middle',
+                }} />
+              : undefined
 
             const progressText = (() => {
               if (completed) return 'Complete'
-              if (mod.comingSoon) return ''
+              if (mod.comingSoon || !unlocked) return ''
               const parts: string[] = []
               if (mod.tools.includes('identify')) {
                 parts.push(identifyMastered ? 'Identify ✓' : `Identify ${identifyPassing}/${mod.criteria.sessions}`)
@@ -173,122 +179,77 @@ export default function NoteReadingPage() {
               return mp ? parts.join(' · ') : ''
             })()
 
-            if (mod.comingSoon) {
-              return (
-                <div key={mod.id} style={{
-                  background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
-                  padding: '18px 20px', opacity: 0.55,
-                  display: 'flex', alignItems: 'center', gap: '16px',
+            const lockReason = (!unlocked && !mod.comingSoon && mod.unlockAfter.length > 0)
+              ? (() => {
+                  const titles = mod.unlockAfter
+                    .map(id => NOTE_READING_MODULES.find(m => m.id === id)?.title)
+                    .filter((t): t is string => Boolean(t))
+                  if (titles.length === 0) return ''
+                  const phrase = titles.length === 1
+                    ? titles[0]
+                    : titles.length === 2
+                    ? `${titles[0]} and ${titles[1]}`
+                    : `${titles.slice(0, -1).join(', ')}, and ${titles[titles.length - 1]}`
+                  return `Complete ${phrase} to unlock`
+                })()
+              : ''
+
+            const secondaryText = !unlocked ? lockReason : progressText
+
+            const modRet = retention?.byModule[mod.id]
+            const retentionPct = modRet && modRet.answered > 0
+              ? Math.round((modRet.correct / modRet.answered) * 100)
+              : null
+            const trailingChip = retentionPct !== null && unlocked
+              ? (
+                <span style={{
+                  fontFamily: F, fontSize: 'var(--nl-text-badge)',
+                  letterSpacing: '0.06em', textTransform: 'uppercase' as const,
+                  padding: '2px 7px', borderRadius: '20px',
+                  background: retentionPct >= 90 ? 'rgba(59,109,17,0.12)' : retentionPct >= 70 ? 'rgba(181,64,42,0.10)' : 'rgba(163,45,45,0.12)',
+                  color: retentionPct >= 90 ? '#3B6D11' : retentionPct >= 70 ? '#B5402A' : '#A32D2D',
                 }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#EDE8DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4' }}>{idx + 1}</span>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#B0ACA4', margin: 0 }}>{mod.title}</p>
-                      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#DDD8CA', letterSpacing: '0.06em' }}>Coming Soon</span>
-                    </div>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', margin: 0 }}>{mod.subtitle}</p>
-                  </div>
-                </div>
+                  {retentionPct}% retention
+                </span>
               )
-            }
+              : undefined
 
-            if (!unlocked) {
-              return (
-                <div key={mod.id} style={{
-                  background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
-                  padding: '18px 20px', opacity: 0.5,
-                  display: 'flex', alignItems: 'center', gap: '16px',
-                }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#EDE8DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4' }}>{idx + 1}</span>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#B0ACA4', margin: '0 0 4px' }}>{mod.title}</p>
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', margin: '0 0 6px', lineHeight: 1.5 }}>
-                      {mod.subtitle} · {[...new Set(mod.notes)].length} notes
-                    </p>
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-                      <ClefBadge clef={mod.clef} />
-                      {mod.tools.map(t => <ToolBadge key={t} tool={t} />)}
-                    </div>
-                  </div>
-                  <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', flexShrink: 0 }}>🔒</span>
-                </div>
-              )
-            }
-
-            return (
-              <Link key={mod.id} href={`/programs/note-reading/${mod.id}`} style={{ textDecoration: 'none' }}>
-                <div
-                  style={{
-                    background: completed ? '#F7F4ED' : 'white',
-                    border: `1px solid ${completed ? '#C8C4BA' : '#DDD8CA'}`,
-                    borderRadius: '14px',
-                    padding: '18px 20px',
-                    display: 'flex', alignItems: 'center', gap: '16px',
-                    cursor: 'pointer', transition: 'border-color 0.15s',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = completed ? '#C8C4BA' : '#DDD8CA' }}
-                >
-                  <div style={{
-                    width: '28px', height: '28px', borderRadius: '50%',
-                    background: completed ? '#3B6D11' : '#1A1A18',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                  }}>
-                    {completed
-                      ? <span style={{ color: 'white', fontSize: '12px', fontWeight: 400 }}>✓</span>
-                      : <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: 'white' }}>{idx + 1}</span>
-                    }
-                  </div>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '5px', flexWrap: 'wrap' }}>
-                      <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: '#2A2318', margin: 0 }}>{mod.title}</p>
-                      {statusDot}
-                    </div>
-                    {/* One-line scope description — uses the module's subtitle
-                        so it stays authoritative. Paired with the unique-note
-                        pool count so the scope is legible at a glance. */}
-                    <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: '0 0 6px', lineHeight: 1.5 }}>
-                      {mod.subtitle} · {[...new Set(mod.notes)].length} notes
-                    </p>
-                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-                      <ClefBadge clef={mod.clef} />
-                      {mod.tools.map(t => <ToolBadge key={t} tool={t} />)}
-                      {progressText && (
-                        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', marginLeft: '2px' }}>
-                          {progressText}
-                        </span>
-                      )}
-                      {/* Per-module retention — only meaningful after the
-                          student has started seeing review questions drawn
-                          from this module. */}
-                      {(() => {
-                        const modRet = retention?.byModule[mod.id]
-                        if (!modRet || modRet.answered === 0) return null
-                        const pct = Math.round((modRet.correct / modRet.answered) * 100)
-                        return (
-                          <span style={{
-                            fontFamily: F, fontSize: 'var(--nl-text-badge)',
-                            letterSpacing: '0.06em', textTransform: 'uppercase' as const,
-                            padding: '2px 7px', borderRadius: '20px',
-                            background: pct >= 90 ? 'rgba(59,109,17,0.12)' : pct >= 70 ? 'rgba(181,64,42,0.10)' : 'rgba(163,45,45,0.12)',
-                            color: pct >= 90 ? '#3B6D11' : pct >= 70 ? '#B5402A' : '#A32D2D',
-                          }}>
-                            {pct}% retention
-                          </span>
-                        )
-                      })()}
-                    </div>
-                  </div>
-
-                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', flexShrink: 0 }}>→</span>
-                </div>
-              </Link>
+            const chips = (
+              <>
+                <ClefBadge clef={mod.clef} />
+                {mod.tools.map(t => <ToolBadge key={t} tool={t} />)}
+              </>
             )
+
+            const state = mod.comingSoon
+              ? 'coming-soon'
+              : !unlocked
+              ? 'locked'
+              : completed
+              ? 'completed'
+              : 'unlocked'
+
+            const commonProps = {
+              number: idx + 1,
+              title: mod.title,
+              titleIcon,
+              subtitle,
+              chips: state === 'coming-soon' ? undefined : chips,
+              trailingChip: state === 'coming-soon' ? undefined : trailingChip,
+              secondaryText: secondaryText || undefined,
+            }
+
+            if (state === 'unlocked' || state === 'completed') {
+              return (
+                <ModuleRow
+                  key={mod.id}
+                  {...commonProps}
+                  state={state}
+                  href={`/programs/note-reading/${mod.id}`}
+                />
+              )
+            }
+            return <ModuleRow key={mod.id} {...commonProps} state={state} />
           })}
         </div>
 

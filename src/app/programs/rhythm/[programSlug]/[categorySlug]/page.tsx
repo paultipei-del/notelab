@@ -98,7 +98,7 @@ export default function RhythmCategoryPage({ params }: Props) {
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
-        <Link href={`/programs/rhythm/${programSlug}`} style={{ textDecoration: 'none' }}>
+        <Link href={`/programs/rhythm#${programSlug}`} style={{ textDecoration: 'none' }}>
           <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>
             ← {program.title}
           </span>

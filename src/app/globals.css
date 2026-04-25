@@ -2030,6 +2030,21 @@ a.nl-home-category-tile:focus-visible {
   border-radius: 20px;
 }
 
+a.nl-module-row-link:focus-visible {
+  outline: 2px solid #1A1A18;
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+@keyframes nl-anchor-fade {
+  0%   { background-color: rgba(186, 117, 23, 0.18); }
+  100% { background-color: transparent; }
+}
+.nl-anchor-highlight {
+  animation: nl-anchor-fade 1.5s ease-out;
+  border-radius: 14px;
+}
+
 @media (hover: hover) {
   button:not(:disabled):hover {
     transform: translateY(-1px);
