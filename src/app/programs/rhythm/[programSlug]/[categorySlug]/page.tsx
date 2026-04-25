@@ -13,6 +13,7 @@ import ExerciseList from '@/components/programs/rhythm/ExerciseList'
 import CategoryProgressBar from '@/components/programs/rhythm/CategoryProgressBar'
 import RhythmStaffPreview from '@/components/programs/rhythm/RhythmStaffPreview'
 import { getTeachingSummary } from '@/lib/programs/rhythm/teaching-summaries'
+import { hasLessonConcept } from '@/lib/programs/rhythm/lesson-content'
 import type { RhythmExerciseMeta, RhythmProgress, RhythmCategoryNode } from '@/lib/rhythmLibrary'
 
 const F = 'var(--font-jost), sans-serif'
@@ -136,7 +137,16 @@ export default function RhythmCategoryPage({ params }: Props) {
           </div>
         )}
 
-        {loaded && category && previewExercise && (
+        {loaded && category && hasLessonConcept(categorySlug) && (
+          <LessonDashboard
+            programSlug={programSlug}
+            categorySlug={categorySlug}
+            doneTotal={total}
+            done={done}
+          />
+        )}
+
+        {loaded && category && previewExercise && !hasLessonConcept(categorySlug) && (
           <div style={{ marginBottom: '24px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 10px 0' }}>
               What you&rsquo;ll learn
@@ -151,15 +161,88 @@ export default function RhythmCategoryPage({ params }: Props) {
         )}
 
         {loaded && category && (
-          <ExerciseList
-            programSlug={programSlug}
-            categorySlug={categorySlug}
-            levels={category.levels}
-            progress={progress}
-            unlockOrder={unlockOrder}
-          />
+          <div id="open-practice">
+            {hasLessonConcept(categorySlug) && (
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '32px 0 12px 0' }}>
+                Open practice
+              </p>
+            )}
+            <ExerciseList
+              programSlug={programSlug}
+              categorySlug={categorySlug}
+              levels={category.levels}
+              progress={progress}
+              unlockOrder={unlockOrder}
+            />
+          </div>
         )}
 
+      </div>
+    </div>
+  )
+}
+
+interface DashboardProps {
+  programSlug: string
+  categorySlug: string
+  done: number
+  doneTotal: number
+}
+
+/**
+ * Lesson dashboard shown at the top of topic pages that have curated concept
+ * content. Renders a 2x2 grid of step cards (Concept / Listen / Practice / Check)
+ * each linking into the corresponding lesson route. The existing exercise list
+ * remains below as "open practice" — tap-anywhere browsing for users who want
+ * to skip the curriculum flow.
+ */
+function LessonDashboard({ programSlug, categorySlug, done, doneTotal }: DashboardProps) {
+  const topicHref = `/programs/rhythm/${programSlug}/${categorySlug}`
+  const practiceComplete = doneTotal > 0 && done >= doneTotal
+  const cards: Array<{ kind: string; label: string; description: string; href: string; status?: string }> = [
+    { kind: 'concept',  label: 'Concept',  description: 'Theory + a notation example.',                href: `${topicHref}/concept` },
+    { kind: 'listen',   label: 'Listen',   description: 'Hear the rhythm before you tap it.',          href: `${topicHref}/listen` },
+    { kind: 'practice', label: 'Practice', description: doneTotal > 0 ? `${done} / ${doneTotal} exercises complete` : 'Tap exercises in order.', href: `${topicHref}#open-practice`, status: practiceComplete ? 'done' : done > 0 ? 'in-progress' : undefined },
+    { kind: 'check',    label: 'Check',    description: 'Hit 90% timing to mark this topic complete.', href: `${topicHref}/check` },
+  ]
+
+  return (
+    <div style={{ marginBottom: '24px' }}>
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 12px 0' }}>
+        Lesson
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px' }}>
+        {cards.map((card, i) => (
+          <Link key={card.kind} href={card.href} style={{ textDecoration: 'none', display: 'block', borderRadius: '14px' }}>
+            <div style={{
+              background: 'white', border: '1px solid #DDD8CA', borderRadius: '14px',
+              padding: '18px 20px', height: '100%',
+              display: 'flex', flexDirection: 'column' as const, justifyContent: 'space-between',
+              minHeight: '120px',
+              transition: 'border-color 0.15s, transform 0.15s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA' }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                  <span style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060' }}>
+                    {i + 1}
+                  </span>
+                  <span style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400, color: '#1A1A18' }}>
+                    {card.label}
+                  </span>
+                  {card.status === 'done' && <span style={{ fontFamily: F, fontSize: '12px', color: '#3B6D11', fontWeight: 500, marginLeft: 'auto' }}>✓</span>}
+                  {card.status === 'in-progress' && <span style={{ fontFamily: F, fontSize: '12px', color: '#E8A84A', fontWeight: 500, marginLeft: 'auto' }}>●</span>}
+                </div>
+                <p style={{ fontFamily: F, fontSize: '13px', color: '#4A4540', lineHeight: 1.5, margin: 0 }}>
+                  {card.description}
+                </p>
+              </div>
+              <span style={{ fontFamily: F, fontSize: '13px', color: '#7A7060', marginTop: '12px', alignSelf: 'flex-end' }}>→</span>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   )
