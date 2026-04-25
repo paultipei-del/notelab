@@ -66,7 +66,14 @@ export default function CalibrationModal({ open, onClose, onCalibrated }: Props)
   const verifyTapsRef = useRef<number[]>([])
   const verifyClicksRef = useRef<number[]>([])
   const offsetSecRef = useRef(0)
-  const beatTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const rafRef = useRef<number | null>(null)
+
+  /** Reads ctx.outputLatency in seconds — what sits between scheduling and being heard. */
+  const getOutputLatencySec = useCallback((ctx: AudioContext) => {
+    const ex = ctx as AudioContext & { outputLatency?: number }
+    return typeof ex.outputLatency === 'number' && Number.isFinite(ex.outputLatency) && ex.outputLatency > 0
+      ? ex.outputLatency : 0
+  }, [])
 
   // Keep a phaseRef in sync so async callbacks always see the latest state.
   useEffect(() => { phaseRef.current = phase }, [phase])
@@ -90,9 +97,9 @@ export default function CalibrationModal({ open, onClose, onCalibrated }: Props)
   }, [open, getCtx])
 
   const reset = useCallback(() => {
-    if (beatTimerRef.current) {
-      clearInterval(beatTimerRef.current)
-      beatTimerRef.current = null
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
     }
     setPhase('idle')
     setTaps([])
@@ -172,22 +179,24 @@ export default function CalibrationModal({ open, onClose, onCalibrated }: Props)
 
     setPhase('measuring')
 
-    // Drive a UI beat indicator at the same rate.
-    beatTimerRef.current = setInterval(() => {
-      const elapsedSec = ctx.currentTime - startTime
-      const beat = Math.max(0, Math.floor(elapsedSec / beatDurSec))
+    // Drive the UI beat indicator via rAF so it stays smooth, and subtract
+    // outputLatency so the dot flips at the moment the user *hears* the click,
+    // not at the moment audio was scheduled.
+    const outputLatencySec = getOutputLatencySec(ctx)
+    const tick = () => {
+      const heardElapsedSec = ctx.currentTime - startTime - outputLatencySec
+      const beat = Math.max(0, Math.floor(heardElapsedSec / beatDurSec))
       setActiveBeat(beat)
       if (beat >= totalBeats) {
-        if (beatTimerRef.current) {
-          clearInterval(beatTimerRef.current)
-          beatTimerRef.current = null
-        }
-        // Move to compute phase after a small grace window so the last tap
-        // can still register.
+        rafRef.current = null
+        // Grace window so a tap on the final beat can still register.
         setTimeout(() => compute(), 250)
+        return
       }
-    }, 30)
-  }, [getCtx, scheduleClicks])
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+  }, [getCtx, scheduleClicks, getOutputLatencySec])
 
   const compute = useCallback(() => {
     setPhase('computing')
@@ -263,19 +272,21 @@ export default function CalibrationModal({ open, onClose, onCalibrated }: Props)
     })
 
     const beatDurSec = 60 / TEMPO_BPM
-    beatTimerRef.current = setInterval(() => {
-      const elapsedSec = ctx.currentTime - startTime
-      const beat = Math.max(0, Math.floor(elapsedSec / beatDurSec))
+    const totalBeats = WARMUP_BEATS + VERIFY_BEATS
+    const outputLatencySec = getOutputLatencySec(ctx)
+    const tick = () => {
+      const heardElapsedSec = ctx.currentTime - startTime - outputLatencySec
+      const beat = Math.max(0, Math.floor(heardElapsedSec / beatDurSec))
       setActiveBeat(beat)
-      if (beat >= WARMUP_BEATS + VERIFY_BEATS) {
-        if (beatTimerRef.current) {
-          clearInterval(beatTimerRef.current)
-          beatTimerRef.current = null
-        }
+      if (beat >= totalBeats) {
+        rafRef.current = null
         setTimeout(() => finalize(), 250)
+        return
       }
-    }, 30)
-  }, [getCtx, scheduleClicks])
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+  }, [getCtx, scheduleClicks, getOutputLatencySec])
 
   const finalize = useCallback(() => {
     const offsetMs = savedOffsetMs ?? 0
@@ -356,9 +367,9 @@ export default function CalibrationModal({ open, onClose, onCalibrated }: Props)
       }
     }
     return () => {
-      if (beatTimerRef.current) {
-        clearInterval(beatTimerRef.current)
-        beatTimerRef.current = null
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
       }
     }
   }, [open, reset])
