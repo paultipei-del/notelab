@@ -2927,24 +2927,47 @@ export default function RhythmPage() {
             {/* Bottom: Mixer + Preview + Start/Stop + TAP (desktop) */}
             <div className="nl-rt-tapbar" style={{ flexShrink: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', marginBottom: '10px', width: '100%' }}>
-                <button
-                  type="button"
-                  onClick={() => setShowMixer(v => !v)}
-                  style={{
-                    padding: '8px 14px',
-                    borderRadius: '20px',
-                    border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'),
-                    background: showMixer ? '#1A1A18' : 'white',
-                    color: showMixer ? 'white' : '#7A7060',
-                    fontFamily: F,
-                    fontSize: 'var(--nl-text-compact)',
-                    fontWeight: 400,
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                  }}
-                >
-                  Mixer
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowCalibration(true)}
+                    disabled={playing}
+                    title="Calibrate audio timing for your headphones / device"
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '20px',
+                      border: '1px solid #DDD8CA',
+                      background: 'white',
+                      color: '#7A7060',
+                      fontFamily: F,
+                      fontSize: 'var(--nl-text-compact)',
+                      fontWeight: 400,
+                      cursor: playing ? 'default' : 'pointer',
+                      opacity: playing ? 0.4 : 1,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Calibrate
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowMixer(v => !v)}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '20px',
+                      border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'),
+                      background: showMixer ? '#1A1A18' : 'white',
+                      color: showMixer ? 'white' : '#7A7060',
+                      fontFamily: F,
+                      fontSize: 'var(--nl-text-compact)',
+                      fontWeight: 400,
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                    }}
+                  >
+                    Mixer
+                  </button>
+                </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
                   <button
                     type="button"
