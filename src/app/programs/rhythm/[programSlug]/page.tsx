@@ -7,6 +7,8 @@ import { summariseProgress } from '@/lib/programs/rhythm/progress'
 import { fetchExerciseLibrary, fetchProgress, sortRhythmExercises, buildRhythmLibraryTree } from '@/lib/rhythmLibrary'
 import { useAuth } from '@/hooks/useAuth'
 import CategoryCard from '@/components/programs/rhythm/CategoryCard'
+import RhythmRetentionStrip from '@/components/programs/rhythm/RhythmRetentionStrip'
+import type { RetentionEntry } from '@/components/programs/rhythm/RhythmRetentionStrip'
 import type { RhythmExerciseMeta, RhythmProgress, RhythmCategoryNode } from '@/lib/rhythmLibrary'
 
 const F = 'var(--font-jost), sans-serif'
@@ -92,6 +94,21 @@ export default function RhythmProgramDetailPage({ params }: Props) {
             </div>
           )}
         </div>
+
+        {loaded && categories.length > 0 && (
+          <div style={{ marginBottom: '28px' }}>
+            <RhythmRetentionStrip entries={categories.map((cat): RetentionEntry => {
+              const exs = exercisesByCategory[cat.name] ?? []
+              const done = exs.filter(e => progress[e.id]?.completed).length
+              return {
+                name: cat.name,
+                href: `/programs/rhythm/${programSlug}/${categorySlug(cat.name)}`,
+                done,
+                total: exs.length,
+              }
+            })} />
+          </div>
+        )}
 
         {!loaded && (
           <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>

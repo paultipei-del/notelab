@@ -8,6 +8,8 @@ import { fetchExerciseLibrary } from '@/lib/rhythmLibrary'
 import { fetchProgress } from '@/lib/rhythmLibrary'
 import { useAuth } from '@/hooks/useAuth'
 import ProgramCard from '@/components/programs/rhythm/ProgramCard'
+import RhythmTopLevelOverview from '@/components/programs/rhythm/RhythmTopLevelOverview'
+import type { OverviewEntry } from '@/components/programs/rhythm/RhythmTopLevelOverview'
 import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
 
 const F = 'var(--font-jost), sans-serif'
@@ -51,6 +53,21 @@ export default function RhythmProgramsPage() {
             Three structured paths — from core fundamentals through conservatory-level reading. Every exercise is generated from notation and tapped in real time with the metronome.
           </p>
         </div>
+
+        {loaded && exercises.length > 0 && (
+          <RhythmTopLevelOverview
+            entries={RHYTHM_PROGRAMS.map((program): OverviewEntry => {
+              const programExercises = exercises.filter(e => e.program_slug === program.slug)
+              const done = programExercises.filter(e => progress[e.id]?.completed).length
+              return {
+                slug: program.slug,
+                title: program.title,
+                done,
+                total: programExercises.length,
+              }
+            })}
+          />
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '14px' }}>
           {RHYTHM_PROGRAMS.map(program => {
