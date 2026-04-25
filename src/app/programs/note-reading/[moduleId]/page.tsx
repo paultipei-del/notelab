@@ -242,11 +242,20 @@ export default function ModuleOverviewPage({ params }: Props) {
                 />
               )
             }
+            // Module 5 (Ledger Lines): gap-zone notes need to flip to
+            // the OPPOSITE clef so they actually read as ledger-line
+            // notes — A3/B3 on treble (with ledger lines below), C4/D4
+            // on bass (with ledger lines above). The pool's other
+            // notes dispatch on midi threshold as usual.
+            const override = moduleId === 'ledger-lines'
+              ? { A3: 'treble' as const, B3: 'treble' as const, C4: 'bass' as const, D4: 'bass' as const }
+              : undefined
             return (
               <StaffPreview
                 notes={[...new Set(mod.notes)]}
                 clef={mod.clef}
                 showLabels
+                clefOverride={override}
               />
             )
           })()}

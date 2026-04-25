@@ -72,6 +72,16 @@ interface Props {
    */
   noteStats?: NoteStats[]
   /**
+   * Per-pitch clef override for grand-staff modules. Use this for
+   * pools where the midi-threshold default would put a pitch on its
+   * "natural" clef but the module's pedagogy wants it as a ledger
+   * note on the opposite clef — e.g. Module 5 (Ledger Lines) wants
+   * A3 / B3 rendered on treble (as ledger notes below) and C4 / D4
+   * on bass (as ledger notes above). Keys are pitch strings, values
+   * are the clef to force.
+   */
+  clefOverride?: Record<string, 'treble' | 'bass'>
+  /**
    * Show the four-dot mastery legend below the staff. Only meaningful
    * when `noteStats` is provided. Hide on a fresh user (no sessions
    * yet) — there's nothing to explain.
@@ -113,7 +123,14 @@ export default function StaffPreview({
   compact = false,
   noteStats,
   showLegend,
+  clefOverride,
 }: Props) {
+  // Resolve a pitch to its clef side, honouring any caller-supplied
+  // override first, then falling back to the midi-threshold rule.
+  function clefSideFor(pitch: string): 'treble' | 'bass' {
+    if (clefOverride && clefOverride[pitch]) return clefOverride[pitch]
+    return preferTreble(pitch) ? 'treble' : 'bass'
+  }
   const sorted = [...notes].sort((a, b) => pitchToMidi(a) - pitchToMidi(b))
   // Default the legend visibility to the presence of noteStats — if
   // we're rendering as a progress dashboard the legend explains the
@@ -154,9 +171,14 @@ export default function StaffPreview({
   // on grand-staff modules; the brace glyph extends ~half its em-width
   // around its anchor and should sit fully left of the staff bar.
   // clefRoom — horizontal space INSIDE the staff reserved for the clef
-  // glyph. Notes start at staffPad + clefRoom.
+  // glyph. Notes start at staffPad + clefRoom. When the pool contains
+  // accidentals, the first note's accidental glyph sits ~26px left of
+  // the notehead centre, so clefRoom is bumped to keep that glyph
+  // clear of the clef.
   const staffPad = compact ? 36 : 56
-  const clefRoom = compact ? 38 : 56
+  const baseClefRoom = compact ? 38 : 56
+  const poolHasAccidental = sorted.some(p => ACCIDENTAL_MAP[p])
+  const clefRoom = baseClefRoom + (poolHasAccidental ? (compact ? 18 : 26) : 0)
   const rightPad = compact ? 14 : 20
 
   // Y position of a pitch's notehead within its own clef section.
@@ -173,17 +195,46 @@ export default function StaffPreview({
     return pos === undefined ? null : top + pos * step
   }
 
+  // Scan the pool to find how far above / below the staves it extends.
+  // Ledger notes (C6, D6, E6 above treble; B1, C2 below bass) need room
+  // in the viewBox and push the label band further down so it doesn't
+  // overlap with the lowest noteheads.
+  // Extent of the pool beyond the grand-staff outer boundaries. A
+  // treble-side note with pos < 0 extends above the treble staff; a
+  // bass-side note with pos > 8 extends below the bass staff. Gap-zone
+  // notes (C4 on bass pos −2, A3 on treble pos 12, etc.) sit between
+  // the staves and don't need extra vertical room.
+  let extentAbove = 0
+  let extentBelow = 0
+  for (const p of sorted) {
+    const natural = p.replace(/[#b]/, '')
+    const useTreble = clef === 'grand'
+      ? (groupByClef ? clefSideFor(p) === 'treble' : true)
+      : clef === 'treble'
+    if (useTreble) {
+      const pos = TREBLE_POSITIONS[natural]
+      if (pos !== undefined && pos < 0) extentAbove = Math.max(extentAbove, -pos)
+    } else {
+      const pos = BASS_POSITIONS[natural]
+      if (pos !== undefined && pos > 8) extentBelow = Math.max(extentBelow, pos - 8)
+    }
+  }
+  const notePadding = noteFontSize * 0.35    // half a notehead's visible height
+
   // Single-staff (treble or bass) — render all notes on one staff.
   if (clef !== 'grand') {
     const yPosFn = clef === 'treble' ? trebleY : bassY
-    const trebleTop = compact ? 36 : 52
+    // trebleTop needs to sit below any ledger-line notes above the staff.
+    const baseTop = compact ? 36 : 52
+    const trebleTop = Math.max(baseTop, extentAbove * step + notePadding + 8)
     const noteAreaLeft = staffPad + clefRoom
     const staffWidth = noteAreaLeft + rightPad + sorted.length * noteSpacing
-    // Landmark captions wrap to two lines, so reserve 2× the font
-    // height for them when present.
+    // Staff bottom → deepest note → label band. Labels sit below the
+    // lowest notehead so ledger-line notes don't crash into the letter.
+    const lowestNoteY = trebleTop + 8 * step + extentBelow * step + notePadding
     const labelBlockH = (showLabels ? labelGap + labelFontSize + 4 : 0) +
       (showLandmarks ? landmarkFontSize * 2.4 + 8 : 0)
-    const H = (trebleTop + 8 * step + 6 * step) + labelBlockH + (caption ? 28 : 12)
+    const H = lowestNoteY + labelBlockH + (caption ? 28 : 12)
 
     return (
       <PreviewFrame caption={caption} compact={compact} legend={renderLegend ? <MasteryLegend /> : null}>
@@ -216,7 +267,7 @@ export default function StaffPreview({
                   <NoteLabel
                     pitch={pitch}
                     x={x}
-                    y={trebleTop + 8 * step + labelGap + labelFontSize}
+                    y={lowestNoteY + labelGap + labelFontSize}
                     fontSize={labelFontSize}
                   />
                 )}
@@ -224,7 +275,7 @@ export default function StaffPreview({
                   <LandmarkCaption
                     label={landmarkLabels[pitch]}
                     x={x}
-                    y={trebleTop + 8 * step + labelGap + labelFontSize + landmarkFontSize + 6}
+                    y={lowestNoteY + labelGap + labelFontSize + landmarkFontSize + 6}
                     fontSize={landmarkFontSize}
                   />
                 )}
@@ -243,16 +294,17 @@ export default function StaffPreview({
     )
   }
   // Grand staff — split notes by clef, share x-axis so columns align.
-  // Stave-to-stave gap leaves room for both staves' ledger zones plus
-  // labels under treble notes that sit in the middle-C overlap.
-  const trebleTop = compact ? 36 : 56
+  // trebleTop slides down to leave room for any above-staff ledger
+  // notes (C6, D6, E6 in Module 5). Bass bottom → lowest ledger note →
+  // label band.
+  const baseGrandTop = compact ? 36 : 56
+  const trebleTop = Math.max(baseGrandTop, extentAbove * step + notePadding + 10)
   const staveGap = compact ? 56 : 84
   const bassTop = trebleTop + 8 * step + staveGap
-  // 2-line landmark captions on grand staff — reserve enough vertical
-  // room below the bass staff for both letter label and 2-line caption.
+  const lowestNoteY = bassTop + 8 * step + extentBelow * step + notePadding
   const labelBlockH = (showLabels ? labelGap + labelFontSize + 6 : 0) +
     (showLandmarks ? landmarkFontSize * 2.4 + 8 : 0)
-  const H = bassTop + 8 * step + (compact ? 18 : 28) + labelBlockH + (caption ? 28 : 12)
+  const H = lowestNoteY + labelBlockH + (caption ? 28 : 12)
   const noteAreaLeft = staffPad + clefRoom
   const staffWidth = noteAreaLeft + rightPad + sorted.length * noteSpacing
   const braceTop = trebleTop
@@ -291,12 +343,12 @@ export default function StaffPreview({
         <Clef clef="bass" top={bassTop} step={step} x={staffPad + 4} />
 
         {sorted.map((pitch, i) => {
-          const useTreble = groupByClef ? preferTreble(pitch) : true
+          const useTreble = groupByClef ? clefSideFor(pitch) === 'treble' : true
           const top = useTreble ? trebleTop : bassTop
           const y = useTreble ? trebleY(pitch, top) : bassY(pitch, top)
           if (y === null) return null
           const x = noteAreaLeft + i * noteSpacing + noteSpacing / 2
-          const labelY = bassTop + 8 * step + labelGap + labelFontSize
+          const labelY = lowestNoteY + labelGap + labelFontSize
           const hoverHandlers = interactive ? {
             onMouseEnter: () => setTooltip({ noteId: pitch, x, y }),
             onMouseLeave: () => setTooltip(null),
