@@ -28,10 +28,10 @@ interface DeviceCalibration {
 /** Default countdown / playhead visual lead for devices that haven't been visually calibrated yet. */
 export const DEFAULT_VISUAL_LEAD_MS = 50
 
-/** Soft bounds on the slider — beyond these the value is almost certainly wrong. */
+/** Soft bounds on the slider — wide enough to cover slow panels, TV-as-monitor setups, and other compositor lag. */
 export const VISUAL_LEAD_LIMITS = {
   minMs: 0,
-  maxMs: 150,
+  maxMs: 400,
 }
 
 interface CalibrationStore {
