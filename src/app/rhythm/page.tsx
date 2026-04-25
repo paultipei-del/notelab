@@ -44,11 +44,13 @@ const NOTATION_PAGE_SCROLL_LEAD_BEATS = 0.5
 /** Desktop: schedule metronome clicks slightly later so heard click aligns with playhead/notation. */
 const DESKTOP_METRO_CLICK_DELAY_SEC = 0.03
 
-/** Countdown digits switch earlier by up to this many seconds; on desktop capped by metro clickDelay so it always does something.
- * The JS setCountdown call doesn't paint immediately — it goes through React's commit phase plus the next display-vsync, which
- * adds ~16–33ms before the new number is visible. Advancing the JS update by ~25ms keeps the *visible* digit change aligned
- * with the *heard* click on a typical 60Hz panel. */
-const COUNTDOWN_DISPLAY_LEAD_SEC = 0.025
+/** Countdown digits switch earlier by up to this many seconds.
+ * The JS setCountdown call doesn't paint immediately — it goes through React's commit phase plus the next display vsync,
+ * plus the panel's own response time. On observed desktop hardware this lag exceeds the 30ms click-scheduling delay, so
+ * the cap that previously clamped this value to clickDelay has been lifted. 50ms compensates for ~3 frames of 60Hz display
+ * lag plus typical panel response. The visual digit will fire slightly before the click is even scheduled on the audio
+ * thread, but by the time the pixel actually paints it lands on the heard click. */
+const COUNTDOWN_DISPLAY_LEAD_SEC = 0.050
 
 const DIFFICULTY_COLORS: Record<number, string> = {
   1: '#EDE8DF', 2: '#EDE8DF', 3: '#EDE8DF', 4: '#EDE8DF', 5: '#EDE8DF'
@@ -1252,9 +1254,11 @@ export default function RhythmPage() {
       const clickDelay = !useMobileLayout ? DESKTOP_METRO_CLICK_DELAY_SEC : 0
       const countdownElapsed = ctx2.currentTime - lat - countdownStart
       if (countdownElapsed < countdownDuration) {
-        // Heard click k ≈ countdownElapsed === clickDelay + k * feltBeatDuration. Display lead shifts all beat boundaries earlier.
-        // Cap lead to clickDelay: larger values used to collapse uiAnchor to 0 and looked identical to any big number.
-        const displayLead = Math.min(Math.max(0, COUNTDOWN_DISPLAY_LEAD_SEC), clickDelay)
+        // Heard click k ≈ countdownElapsed === clickDelay + k * feltBeatDuration. Display lead shifts all beat boundaries earlier
+        // to compensate for React commit + display vsync + panel response. No upper cap — typical desktop lag exceeds clickDelay
+        // and a value of e.g. 50ms with clickDelay=30ms simply means the JS state changes 20ms before the click is scheduled,
+        // which is fine: by the time the pixel actually appears the heard click is just arriving.
+        const displayLead = Math.max(0, COUNTDOWN_DISPLAY_LEAD_SEC)
         const tAdj = countdownElapsed - clickDelay + displayLead
         if (tAdj < 0) {
           setCountdown(null)
