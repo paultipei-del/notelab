@@ -32,6 +32,60 @@ export interface LessonConcept {
 }
 
 const CONCEPTS: Record<string, LessonConcept> = {
+  // categorySlug('Pulse Games & Meter Basics') === 'pulse-games--meter-basics'
+  // (the existing slugifier collapses the ampersand, leaving a double dash —
+  // ugly but consistent with other topics like 'core-values--rests').
+  'pulse-games--meter-basics': {
+    title: 'Pulse and Meter',
+    subtitle: 'Where the beat lives, and how it groups.',
+    paragraphs: [
+      {
+        heading: 'What is the pulse?',
+        body: 'Pulse is the steady beat that runs underneath every piece of music. If you tap your foot while listening to a song, that\'s the pulse. It doesn\'t change when the rhythm gets complicated — the pulse keeps moving regardless.',
+      },
+      {
+        heading: 'What is meter?',
+        body: 'Meter is how we group those pulses. Some music groups beats in twos (march time, 2/4), some in threes (waltz time, 3/4), and most popular music groups them in fours (4/4). The first beat of each group feels the strongest — that\'s the downbeat.',
+      },
+      {
+        heading: 'Reading time signatures',
+        body: 'A time signature like 4/4 has two numbers stacked on top of each other. The top number tells you how many beats are in each measure. The bottom number tells you what kind of note gets one beat — a 4 means the quarter note. So 4/4 reads as "four quarter notes per measure."',
+      },
+      {
+        heading: 'What you\'ll practice here',
+        body: 'You\'ll tap quarter notes — one tap per beat — across three time signatures. Start in 4/4, then move to 3/4 (waltz time), then 2/4 (march time). The notes themselves are the same; only the way they group changes.',
+      },
+    ],
+    goalBpm: 80,
+    remember: 'The pulse keeps moving. The time signature tells you how to group it.',
+  },
+
+  // categorySlug('Quarter/Half/Whole Notes') === 'quarterhalfwhole-notes'
+  'quarterhalfwhole-notes': {
+    title: 'Note Values',
+    subtitle: 'Notes have lengths. The shape tells you how long to hold.',
+    paragraphs: [
+      {
+        heading: 'Quarter, half, whole',
+        body: 'These are the three foundational note values you\'ll see most often. A quarter note lasts one beat. A half note lasts two beats. A whole note lasts four beats — a full measure of 4/4. Each one is drawn slightly differently so you can tell them apart at a glance.',
+      },
+      {
+        heading: 'How to read them',
+        body: 'Tap once on the start of each note. Then count out loud — "one, two" for a half note, "one, two, three, four" for a whole note — while letting that single tap "ring" through the held beats. The tap doesn\'t happen again until the next note starts.',
+      },
+      {
+        heading: 'Why mixing matters',
+        body: 'Music breathes when you alternate short and long notes. A whole note after a string of quarters gives the listener (and you) a place to settle. Reading these mixed values is the foundation of everything else — once you can hold a note for the right number of beats, every other rhythm builds on top.',
+      },
+      {
+        heading: 'What you\'ll practice here',
+        body: 'You\'ll start with quarter and half notes in 4/4, then add whole notes, then move the same vocabulary into 3/4. By the end, your hand will know what "two beats" and "four beats" feel like without you having to count.',
+      },
+    ],
+    goalBpm: 80,
+    remember: 'Quarter = 1 beat. Half = 2. Whole = 4. Tap once at the start; let it ring.',
+  },
+
   'basic-rests': {
     title: 'Basic Rests',
     subtitle: 'Silence is a rhythm too — learning to hold a beat without playing it.',

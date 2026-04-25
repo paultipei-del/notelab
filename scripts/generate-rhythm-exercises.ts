@@ -52,6 +52,16 @@ const BLUEPRINT: BlueprintEntry[] = [
 
   // ─── SCHOOL BEGINNERS ─────────────────────────────────────────────────────
 
+  // Pulse Games & Meter Basics — feel the beat in three time signatures, no rhythmic complexity
+  { programSlug: 'fundamentals', programSort: 1, category: 'Pulse Games & Meter Basics', categorySort: 1, level: 1, title: 'Steady 4/4',   beats: 4, beatType: 4, measures: 4, noteValues: ['quarter'], dotted: [], rests: false, ties: false, difficulty: 1, exerciseCount: 7 },
+  { programSlug: 'fundamentals', programSort: 1, category: 'Pulse Games & Meter Basics', categorySort: 1, level: 2, title: 'Waltz Time',   beats: 3, beatType: 4, measures: 4, noteValues: ['quarter'], dotted: [], rests: false, ties: false, difficulty: 1, exerciseCount: 7 },
+  { programSlug: 'fundamentals', programSort: 1, category: 'Pulse Games & Meter Basics', categorySort: 1, level: 3, title: 'March Time',   beats: 2, beatType: 4, measures: 4, noteValues: ['quarter'], dotted: [], rests: false, ties: false, difficulty: 1, exerciseCount: 7 },
+
+  // Quarter/Half/Whole Notes — the three foundational note values, then the same values in 3/4
+  { programSlug: 'fundamentals', programSort: 1, category: 'Quarter/Half/Whole Notes', categorySort: 2, level: 1, title: 'Quarter & Half',       beats: 4, beatType: 4, measures: 4, noteValues: ['quarter','half'],          dotted: [], rests: false, ties: false, difficulty: 1, exerciseCount: 8 },
+  { programSlug: 'fundamentals', programSort: 1, category: 'Quarter/Half/Whole Notes', categorySort: 2, level: 2, title: 'Adding Whole',         beats: 4, beatType: 4, measures: 4, noteValues: ['quarter','half','whole'],  dotted: [], rests: false, ties: false, difficulty: 1, exerciseCount: 7 },
+  { programSlug: 'fundamentals', programSort: 1, category: 'Quarter/Half/Whole Notes', categorySort: 2, level: 3, title: 'Note Values in 3/4',  beats: 3, beatType: 4, measures: 4, noteValues: ['quarter','half'],          dotted: [], rests: false, ties: false, difficulty: 1, exerciseCount: 7 },
+
   { programSlug: 'fundamentals', programSort: 1, category: 'Basic Rests',        categorySort: 3, level: 1, title: 'Quarter Rests',       beats: 4, beatType: 4, measures: 4, noteValues: ['quarter'],               dotted: [],            rests: true,  ties: false, difficulty: 1, exerciseCount: 4 },
   { programSlug: 'fundamentals', programSort: 1, category: 'Basic Rests',        categorySort: 3, level: 2, title: 'Half & Whole Rests',   beats: 4, beatType: 4, measures: 4, noteValues: ['whole','half','quarter'], dotted: [],            rests: true,  ties: false, difficulty: 1, exerciseCount: 2 },
   { programSlug: 'fundamentals', programSort: 1, category: 'Basic Rests',        categorySort: 3, level: 2, title: 'Half & Whole Rests',   beats: 3, beatType: 4, measures: 4, noteValues: ['half','quarter'],        dotted: [],            rests: true,  ties: false, difficulty: 1, exerciseCount: 2 },
