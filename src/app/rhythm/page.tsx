@@ -44,8 +44,11 @@ const NOTATION_PAGE_SCROLL_LEAD_BEATS = 0.5
 /** Desktop: schedule metronome clicks slightly later so heard click aligns with playhead/notation. */
 const DESKTOP_METRO_CLICK_DELAY_SEC = 0.03
 
-/** Countdown digits switch earlier by up to this many seconds; on desktop capped by metro clickDelay so it always does something. */
-const COUNTDOWN_DISPLAY_LEAD_SEC = 0
+/** Countdown digits switch earlier by up to this many seconds; on desktop capped by metro clickDelay so it always does something.
+ * The JS setCountdown call doesn't paint immediately — it goes through React's commit phase plus the next display-vsync, which
+ * adds ~16–33ms before the new number is visible. Advancing the JS update by ~25ms keeps the *visible* digit change aligned
+ * with the *heard* click on a typical 60Hz panel. */
+const COUNTDOWN_DISPLAY_LEAD_SEC = 0.025
 
 const DIFFICULTY_COLORS: Record<number, string> = {
   1: '#EDE8DF', 2: '#EDE8DF', 3: '#EDE8DF', 4: '#EDE8DF', 5: '#EDE8DF'
