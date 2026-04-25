@@ -1296,7 +1296,9 @@ export default function RhythmPage() {
       }
       setCountdown(null)
       setCountdownOverlayOpacity(1)
-      const elapsed = ctx2.currentTime - lat - userOffsetRef.current - startTimeRef.current
+      // Visual elapsed: also advance by visualLead so the playhead pixel-on-screen lines up with the heard click,
+      // matching what the countdown digit does. Tap scoring computes its own audio-aligned elapsed elsewhere.
+      const elapsed = ctx2.currentTime - lat - userOffsetRef.current + visualLeadRef.current - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
       if (beatFloat >= effectiveTotalBeats) {
@@ -1493,7 +1495,9 @@ export default function RhythmPage() {
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
-      const elapsed = ctx2.currentTime - lat - userOffsetRef.current - startTimeRef.current
+      // Visual elapsed: also advance by visualLead so the playhead pixel-on-screen lines up with the heard click,
+      // matching what the countdown digit does. Tap scoring computes its own audio-aligned elapsed elsewhere.
+      const elapsed = ctx2.currentTime - lat - userOffsetRef.current + visualLeadRef.current - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = totalQBeats
       setPlayhead(beatFloat)
