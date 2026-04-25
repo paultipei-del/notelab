@@ -6,6 +6,7 @@ import { getRhythmProgram, categoryNameFromSlug } from '@/lib/programs/rhythm/co
 import { fetchExerciseLibrary, sortRhythmExercises } from '@/lib/rhythmLibrary'
 import RhythmLessonShell from '@/components/programs/rhythm/RhythmLessonShell'
 import RhythmStaffPreview from '@/components/programs/rhythm/RhythmStaffPreview'
+import RhythmAudioDemo from '@/components/programs/rhythm/RhythmAudioDemo'
 import { getLessonConcept } from '@/lib/programs/rhythm/lesson-content'
 import type { RhythmExerciseMeta } from '@/lib/rhythmLibrary'
 import type { LessonStep } from '@/components/programs/rhythm/RhythmLessonShell'
@@ -72,20 +73,11 @@ export default function ListenPage({ params }: Props) {
         </div>
       )}
 
-      {/* v1 placeholder copy until the embedded looping audio demo ships */}
-      <div style={{
-        background: '#FDFAF3', border: '1px dashed #DDD8CA', borderRadius: '12px',
-        padding: '16px 20px', maxWidth: '600px',
-        marginBottom: '24px',
-      }}>
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 8px 0' }}>
-          Coming soon
-        </p>
-        <p style={{ fontFamily: F, fontSize: '14px', color: '#4A4540', lineHeight: 1.6, margin: 0 }}>
-          A looping audio demo will play the rhythm at goal tempo right here so you can hear it before you try tapping it.
-          For now, click <strong>Open in trainer</strong> below to hear the rhythm via the preview button (▶).
-        </p>
-      </div>
+      {loaded && exerciseId && (
+        <div style={{ marginBottom: '24px' }}>
+          <RhythmAudioDemo exerciseId={exerciseId} bpm={concept?.goalBpm ?? 80} />
+        </div>
+      )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', maxWidth: '600px' }}>
         {exerciseId && (
