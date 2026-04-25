@@ -60,12 +60,16 @@ export default function RhythmProgramsPage() {
             const { done, total } = loaded
               ? summariseProgress(programExercises, progress)
               : { done: 0, total: 0 }
+            const topicCount = loaded
+              ? new Set(programExercises.map(e => e.category)).size
+              : 0
             return (
               <ProgramCard
                 key={program.slug}
                 program={program}
                 totalExercises={total}
                 doneExercises={done}
+                topicCount={topicCount}
               />
             )
           })}

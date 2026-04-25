@@ -28,7 +28,10 @@ export default function CategoryCard({
   const completed = done === exerciseCount && exerciseCount > 0
 
   return (
-    <Link href={`/programs/rhythm/${programSlug}/${categorySlug}`} style={{ textDecoration: 'none' }}>
+    <Link
+      href={`/programs/rhythm/${programSlug}/${categorySlug}`}
+      style={{ textDecoration: 'none', display: 'block', borderRadius: '14px' }}
+    >
       <div
         style={{
           background: completed ? '#F7F4ED' : 'white',

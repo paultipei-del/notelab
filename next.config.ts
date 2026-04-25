@@ -14,6 +14,23 @@ const nextConfig: NextConfig = {
         destination: '/ear-training',
         permanent: true,
       },
+      // The Rhythm Reading program lives at /programs/rhythm. Catch the
+      // natural alias users (and external links) reach for.
+      {
+        source: '/programs/rhythm-reading',
+        destination: '/programs/rhythm',
+        permanent: true,
+      },
+      {
+        source: '/programs/rhythm-reading/:path*',
+        destination: '/programs/rhythm/:path*',
+        permanent: true,
+      },
+      {
+        source: '/rhythm-reading',
+        destination: '/programs/rhythm',
+        permanent: true,
+      },
     ]
   },
 };
