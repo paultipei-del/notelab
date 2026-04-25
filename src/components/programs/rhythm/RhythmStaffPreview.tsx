@@ -44,6 +44,11 @@ export default function RhythmStaffPreview({ exerciseId, maxHeight = 220 }: Prop
         drawLyricist: false,
         drawPartNames: false,
         drawPartAbbreviations: false,
+        // The rhythm exercise MXL files don't contain explicit <beam> markup —
+        // the trainer auto-beams on the fly via its own algorithm. OSMD
+        // respects the XML literally by default (i.e. flagged eighths). Enable
+        // OSMD's own auto-beamer so the static preview matches the trainer.
+        autoBeam: true,
       })
       osmd.EngravingRules.StretchLastSystemLine = true
       osmd.EngravingRules.LastSystemMaxScalingFactor = 3
