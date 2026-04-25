@@ -12,6 +12,29 @@ interface Props {
 }
 
 /**
+ * Pick a "measures per system" target that gives the most even split across
+ * lines. OSMD's natural width-based layout often produces lopsided results
+ * (e.g. 5+1 for a 6-bar exercise). Returning `null` lets OSMD use its default.
+ */
+function pickMeasuresPerLine(total: number): number | null {
+  if (total <= 4) return null
+  // Hand-picked splits up to 12 — covers every Fundamentals exercise length.
+  const TABLE: Record<number, number> = {
+    5: 3,   // 3+2
+    6: 3,   // 3+3
+    7: 4,   // 4+3
+    8: 4,   // 4+4
+    9: 3,   // 3+3+3
+    10: 4,  // 4+4+2  (5+5 would also work but OSMD forces equal lines)
+    11: 4,  // 4+4+3
+    12: 4,  // 4+4+4
+  }
+  if (TABLE[total]) return TABLE[total]
+  // Beyond the table, default to 4 — slightly long lines beat lopsided.
+  return 4
+}
+
+/**
  * Static OSMD render of a rhythm exercise's MusicXML, used as a non-interactive
  * preview on launcher and topic pages. The trainer at /rhythm owns playback —
  * this component only mounts a frozen snapshot of the same notation.
@@ -55,6 +78,13 @@ export default function RhythmStaffPreview({ exerciseId, maxHeight = 220 }: Prop
       const blob = new Blob([buffer], { type: 'application/vnd.recordare.musicxml+zip' })
       osmd.load(blob).then(() => {
         if (cancelled) return
+        // OSMD's natural layout fits as many measures per system as the width allows.
+        // For 6 bars in a moderately-wide container that yields 5+1 — visually awful.
+        // Force a more even split by picking a target measures-per-line based on the
+        // total count. Aims for 3- or 4-bar systems, whichever divides more evenly.
+        const total = (osmd.Sheet?.SourceMeasures ?? []).length
+        const perLine = pickMeasuresPerLine(total)
+        if (perLine != null) osmd.EngravingRules.RenderXMeasuresPerLineAkaSystem = perLine
         osmd.render()
         setReady(true)
       }).catch((e: unknown) => {
