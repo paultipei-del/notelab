@@ -1282,7 +1282,7 @@ export default function RhythmPage() {
       }
       setCountdown(null)
       setCountdownOverlayOpacity(1)
-      const elapsed = ctx2.currentTime - lat - startTimeRef.current
+      const elapsed = ctx2.currentTime - lat - userOffsetRef.current - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = exercise.measures.length * exercise.timeSignature.beats * (4 / exercise.timeSignature.beatType)
       if (beatFloat >= effectiveTotalBeats) {
@@ -1475,7 +1475,7 @@ export default function RhythmPage() {
     const tick = () => {
       const ctx2 = ctxRef.current; if (!ctx2) return
       const lat = audioOutLatencyRef.current
-      const elapsed = ctx2.currentTime - lat - startTimeRef.current
+      const elapsed = ctx2.currentTime - lat - userOffsetRef.current - startTimeRef.current
       const beatFloat = elapsed / effectiveBeatDuration
       const effectiveTotalBeats = totalQBeats
       setPlayhead(beatFloat)
