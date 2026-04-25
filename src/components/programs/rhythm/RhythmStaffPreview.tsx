@@ -7,7 +7,7 @@ const F = 'var(--font-jost), sans-serif'
 
 interface Props {
   exerciseId: string
-  /** Approximate visible height in px. Notation overflowing this is clipped (preview only). */
+  /** Soft min-height placeholder while notation loads. The container itself grows freely past this — no hard clip. */
   maxHeight?: number
 }
 
@@ -76,8 +76,9 @@ export default function RhythmStaffPreview({ exerciseId, maxHeight = 220 }: Prop
         borderRadius: '14px',
         padding: '16px 18px',
         position: 'relative',
-        minHeight: `${maxHeight}px`,
-        maxHeight: `${maxHeight}px`,
+        minHeight: ready ? 'auto' : `${maxHeight}px`,
+        // No max-height — the container grows to fit OSMD's full layout so
+        // multi-system notation isn't clipped at the bottom.
         overflow: 'hidden',
       }}
     >
