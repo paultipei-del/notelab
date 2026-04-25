@@ -82,7 +82,7 @@ export default function ListenPage({ params }: Props) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', maxWidth: '600px' }}>
         {exerciseId && (
           <a
-            href={`/rhythm?exercise=${exerciseId}&returnTo=${encodeURIComponent(`${topicHref}/listen`)}`}
+            href={`/rhythm?exercise=${exerciseId}&returnTo=${encodeURIComponent(`${topicHref}/listen`)}&mode=lesson`}
             style={{ textDecoration: 'none', fontFamily: F, fontSize: '13px', color: '#7A7060', borderBottom: '1px solid #DDD8CA' }}
           >
             Open in trainer →

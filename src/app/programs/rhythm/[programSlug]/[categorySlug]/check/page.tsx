@@ -7,6 +7,7 @@ import { fetchExerciseLibrary, sortRhythmExercises, fetchProgress } from '@/lib/
 import { useAuth } from '@/hooks/useAuth'
 import RhythmLessonShell from '@/components/programs/rhythm/RhythmLessonShell'
 import { getLessonConcept } from '@/lib/programs/rhythm/lesson-content'
+import { categorySlug as makeCategorySlug } from '@/lib/programs/rhythm/config'
 import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
 import type { LessonStep } from '@/components/programs/rhythm/RhythmLessonShell'
 
@@ -29,15 +30,24 @@ export default function CheckPage({ params }: Props) {
   const [topicName, setTopicName] = useState<string>('')
   const [exercises, setExercises] = useState<RhythmExerciseMeta[]>([])
   const [progress, setProgress] = useState<Record<string, RhythmProgress>>({})
+  const [nextTopic, setNextTopic] = useState<{ name: string; slug: string } | null>(null)
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     fetchExerciseLibrary().then(({ flat }) => {
       const sorted = sortRhythmExercises(flat.filter(e => e.program_slug === programSlug))
-      const names = Array.from(new Set(sorted.map(e => e.category)))
-      const matchedName = categoryNameFromSlug(categorySlug, names) ?? names[0] ?? ''
+      // Build the canonical ordered topic list for this sub-program (by category_sort, then name).
+      const seen = new Map<string, number>()
+      for (const ex of sorted) if (!seen.has(ex.category)) seen.set(ex.category, ex.category_sort)
+      const orderedNames = Array.from(seen.entries())
+        .sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0]))
+        .map(([name]) => name)
+      const matchedName = categoryNameFromSlug(categorySlug, orderedNames) ?? orderedNames[0] ?? ''
       setTopicName(matchedName)
       setExercises(sorted.filter(e => e.category === matchedName))
+      const idx = orderedNames.indexOf(matchedName)
+      const next = idx >= 0 && idx + 1 < orderedNames.length ? orderedNames[idx + 1] : null
+      setNextTopic(next ? { name: next, slug: makeCategorySlug(next) } : null)
       setLoaded(true)
     })
   }, [programSlug, categorySlug])
@@ -100,7 +110,7 @@ export default function CheckPage({ params }: Props) {
             </p>
           ) : null}
           <a
-            href={`/rhythm?exercise=${checkExercise.id}&returnTo=${encodeURIComponent(`${topicHref}/check`)}`}
+            href={`/rhythm?exercise=${checkExercise.id}&returnTo=${encodeURIComponent(`${topicHref}/check`)}&mode=lesson`}
             style={{ textDecoration: 'none' }}
           >
             <span style={{
@@ -115,17 +125,58 @@ export default function CheckPage({ params }: Props) {
         </div>
       )}
 
-      <div style={{
-        background: '#FDFAF3', border: '1px dashed #DDD8CA', borderRadius: '12px',
-        padding: '16px 20px', maxWidth: '600px',
-      }}>
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 8px 0' }}>
-          Coming soon
-        </p>
-        <p style={{ fontFamily: F, fontSize: '14px', color: '#4A4540', lineHeight: 1.6, margin: 0 }}>
-          Mastery gating, confetti on pass, and topic-unlock progression land in v2. For now this page just points you at the final exercise.
-        </p>
-      </div>
+      {/* Pass celebration + next-topic link */}
+      {passed && (
+        <div style={{
+          background: '#E6F0D6', border: '1px solid #3B6D11', borderRadius: '14px',
+          padding: '20px 24px', maxWidth: '600px',
+        }}>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#3B6D11', margin: '0 0 6px 0' }}>
+            ✓ Topic complete
+          </p>
+          <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400, color: '#1A1A18', margin: '0 0 8px 0' }}>
+            You hit {checkProgress?.best_timing ?? 0}% timing on {topicName}.
+          </p>
+          {nextTopic ? (
+            <>
+              <p style={{ fontFamily: F, fontSize: '14px', color: '#4A4540', margin: '0 0 14px 0' }}>
+                Ready for the next topic? <strong>{nextTopic.name}</strong> picks up where this leaves off.
+              </p>
+              <Link
+                href={`/programs/rhythm/${programSlug}/${nextTopic.slug}/concept`}
+                style={{ textDecoration: 'none' }}
+              >
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center',
+                  fontFamily: F, fontSize: '14px', fontWeight: 500,
+                  color: 'white', background: '#3B6D11',
+                  padding: '10px 22px', borderRadius: '10px',
+                }}>
+                  Start {nextTopic.name} →
+                </span>
+              </Link>
+            </>
+          ) : (
+            <p style={{ fontFamily: F, fontSize: '14px', color: '#4A4540', margin: 0 }}>
+              You&rsquo;ve completed every topic in <strong>{program.title}</strong>. Pick up the next sub-program from the rhythm program home.
+            </p>
+          )}
+        </div>
+      )}
+
+      {!passed && (
+        <div style={{
+          background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
+          padding: '16px 20px', maxWidth: '600px',
+        }}>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 8px 0' }}>
+            How mastery works
+          </p>
+          <p style={{ fontFamily: F, fontSize: '14px', color: '#4A4540', lineHeight: 1.6, margin: 0 }}>
+            Hit <strong>90% timing</strong> at <strong>{goalBpm} BPM</strong> on the final exercise above. Once you do, this page unlocks the next topic in {program.title}.
+          </p>
+        </div>
+      )}
     </RhythmLessonShell>
   )
 }

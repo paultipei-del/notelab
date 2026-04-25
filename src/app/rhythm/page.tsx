@@ -803,6 +803,8 @@ export default function RhythmPage() {
   const searchParams = useSearchParams()
   const programExerciseId = searchParams.get('exercise')
   const returnTo = searchParams.get('returnTo')
+  /** Lesson mode hides the library panel + secondary chrome so the trainer feels embedded in a curriculum step. */
+  const lessonMode = searchParams.get('mode') === 'lesson'
   const [exercise, setExercise] = useState<RhythmExercise | null>(null)
   const [currentMeta, setCurrentMeta] = useState<RhythmExerciseMeta | null>(null)
   const [view, setView] = useState<'notation' | 'grid'>('notation')
@@ -2286,7 +2288,7 @@ export default function RhythmPage() {
             })()}
             </div>
           </div>
-        ) : (
+        ) : lessonMode ? null : (
           <div ref={containerRef} className="nl-hide-scrollbar" style={{ flex: 1, overflowY: 'auto' as const, padding: '4px 0 8px' }}>
             <LibraryPanel onSelect={loadExercise} onDrop={onDrop} dragOver={dragOver} setDragOver={setDragOver} progress={progress} currentId={currentMeta?.id} userId={user?.id} onProgressReset={() => import('@/lib/rhythmLibrary').then(({fetchProgress}) => fetchProgress(user?.id ?? null).then(setProgress))} tree={libraryTree} unlockOrder={accessibleUnlockOrder} loading={libraryLoading} canAccessProgram={canAccessProgram} onUnlockCollection={handleUnlockRhythmCollection} checkingOut={checkingOutRhythm} />
           </div>
@@ -2466,7 +2468,7 @@ export default function RhythmPage() {
         </div>
 
         {/* Library view */}
-        {!exercise && (
+        {!exercise && !lessonMode && (
           <LibraryPanel
             onSelect={loadExercise}
             onDrop={onDrop}

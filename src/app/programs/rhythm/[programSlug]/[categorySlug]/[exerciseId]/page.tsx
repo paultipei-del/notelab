@@ -73,8 +73,9 @@ export default function RhythmExercisePage({ params }: Props) {
 
   const a = program.accent
   const returnTo = `/programs/rhythm/${programSlug}/${categorySlug}`
+  // Launches the trainer in lesson mode so the library panel is hidden — keeps focus on the exercise the lesson chose.
   const practiceUrl = exercise
-    ? `/rhythm?exercise=${exercise.id}&returnTo=${encodeURIComponent(returnTo)}`
+    ? `/rhythm?exercise=${exercise.id}&returnTo=${encodeURIComponent(returnTo)}&mode=lesson`
     : '#'
 
   const exerciseProgress = exercise ? progress[exercise.id] : undefined
