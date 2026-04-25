@@ -41,8 +41,12 @@ export default function VisualCalibrationModal({ open, onClose, onCalibrated }: 
 
   const ctxRef = useRef<AudioContext | null>(null)
   const startCtxTimeRef = useRef(0)
-  const nextScheduleIdxRef = useRef(0)
-  const rafRef = useRef<number | null>(null)
+  /** Next click index the audio scheduler will commit. Audio is sample-accurate once scheduled — never re-scheduled. */
+  const nextAudioIdxRef = useRef(0)
+  /** Next click index the visual scheduler will commit. Independent so slider changes can reset it without touching audio. */
+  const nextVisualIdxRef = useRef(0)
+  /** Pending setTimeout ids for upcoming digit transitions; cleared when slider changes or stop fires. */
+  const visualTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const schedulerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const leadRef = useRef(DEFAULT_VISUAL_LEAD_MS)
 
@@ -88,12 +92,14 @@ export default function VisualCalibrationModal({ open, onClose, onCalibrated }: 
     osc.start(t); osc.stop(t + 0.06)
   }, [])
 
+  const clearPendingVisuals = useCallback(() => {
+    visualTimeoutsRef.current.forEach(t => clearTimeout(t))
+    visualTimeoutsRef.current = []
+  }, [])
+
   const stop = useCallback(() => {
     setRunning(false)
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current)
-      rafRef.current = null
-    }
+    clearPendingVisuals()
     if (schedulerRef.current !== null) {
       clearInterval(schedulerRef.current)
       schedulerRef.current = null
@@ -103,58 +109,78 @@ export default function VisualCalibrationModal({ open, onClose, onCalibrated }: 
       ctxRef.current = null
     }
     setActiveDigit(0)
-  }, [])
+  }, [clearPendingVisuals])
 
   const start = useCallback(async () => {
     const ctx = getCtx()
     if (ctx.state === 'suspended') await ctx.resume()
     const beatDurSec = 60 / TEMPO_BPM
     startCtxTimeRef.current = ctx.currentTime + 0.3
-    nextScheduleIdxRef.current = 0
+    nextAudioIdxRef.current = 0
+    nextVisualIdxRef.current = 0
+    clearPendingVisuals()
     setRunning(true)
     setActiveDigit(0)
 
-    // Audio scheduler — runs every 100ms, schedules any clicks landing within
-    // the next SCHEDULE_LOOKAHEAD_S window. This mirrors the standard "look-ahead
-    // metronome" pattern so audio scheduling never falls behind even if the JS
-    // thread stalls.
+    // Combined scheduler — runs every 100ms. Audio clicks are scheduled
+    // sample-accurately on the Web Audio thread; the corresponding visual
+    // digit transitions are pre-scheduled via setTimeout at precise wall-clock
+    // times computed from the same anchor. Both share `startCtxTimeRef` and
+    // `beatDurSec` so they can't drift apart.
+    //
+    // The previous design polled `Math.floor(elapsed / beatDurSec)` inside an
+    // rAF loop and called setActiveDigit(...) every frame. React's state-
+    // update queue gave each `0→1`, `1→2`, etc. transition variable amounts
+    // of frame slack, which the eye reads as cumulative drift across beats.
     schedulerRef.current = setInterval(() => {
       const c = ctxRef.current
       if (!c || c.state === 'closed') return
+      // 1. Audio scheduling — committed once, never re-scheduled.
       while (true) {
-        const idx = nextScheduleIdxRef.current
+        const idx = nextAudioIdxRef.current
         const t = startCtxTimeRef.current + idx * beatDurSec
         if (t > c.currentTime + SCHEDULE_LOOKAHEAD_S) break
         if (t < c.currentTime - 0.05) {
-          // Fell behind; skip but advance the index.
-          nextScheduleIdxRef.current = idx + 1
+          nextAudioIdxRef.current = idx + 1
           continue
         }
         playClick(c, t, idx % COUNT_DIGITS === 0)
-        nextScheduleIdxRef.current = idx + 1
+        nextAudioIdxRef.current = idx + 1
       }
-    }, 100)
-
-    // Visual rAF loop — flips activeDigit when the *perceived* moment of click
-    // arrives, accounting for output latency and the slider-controlled lead.
-    const tick = () => {
-      const c = ctxRef.current
-      if (!c || c.state === 'closed') {
-        rafRef.current = null
-        return
-      }
+      // 2. Visual scheduling — re-scheduled when the slider changes (effect below).
       const outputLatencySec = getOutputLatencySec(c)
       const leadSec = leadRef.current / 1000
-      // Perceived elapsed = scheduled elapsed + outputLatency − leadSec
-      // (we want the visual to fire `lead` early so display lag lands it on the heard click)
-      const elapsedHeard = c.currentTime - startCtxTimeRef.current - outputLatencySec
-      const elapsedAdjusted = elapsedHeard + leadSec
-      const beat = Math.max(0, Math.floor(elapsedAdjusted / beatDurSec))
-      setActiveDigit(beat % COUNT_DIGITS)
-      rafRef.current = requestAnimationFrame(tick)
-    }
-    rafRef.current = requestAnimationFrame(tick)
-  }, [getCtx, getOutputLatencySec, playClick])
+      while (true) {
+        const idx = nextVisualIdxRef.current
+        // Click idx is heard at ctx-time `startCtx + idx*beatDur + outputLatency`.
+        // We want the JS state change to fire `leadSec` earlier so display lag
+        // brings the visible digit change onto the heard click.
+        const targetCtxTime = startCtxTimeRef.current + idx * beatDurSec + outputLatencySec - leadSec
+        if (targetCtxTime > c.currentTime + SCHEDULE_LOOKAHEAD_S) break
+        const delayMs = Math.max(0, (targetCtxTime - c.currentTime) * 1000)
+        const capturedIdx = idx
+        const tid = setTimeout(() => {
+          setActiveDigit(capturedIdx % COUNT_DIGITS)
+        }, delayMs)
+        visualTimeoutsRef.current.push(tid)
+        nextVisualIdxRef.current = idx + 1
+      }
+    }, 100)
+  }, [getCtx, getOutputLatencySec, playClick, clearPendingVisuals])
+
+  // When the slider moves, invalidate the pending visual timeouts and rewind
+  // the visual index to the first beat that hasn't been heard yet, so the next
+  // scheduler tick re-schedules with the new lead value.
+  useEffect(() => {
+    if (!running) return
+    const c = ctxRef.current
+    if (!c || c.state === 'closed') return
+    clearPendingVisuals()
+    const beatDurSec = 60 / TEMPO_BPM
+    const outputLatencySec = getOutputLatencySec(c)
+    const elapsedHeardSec = c.currentTime - startCtxTimeRef.current - outputLatencySec
+    nextVisualIdxRef.current = Math.max(0, Math.floor(elapsedHeardSec / beatDurSec) + 1)
+  }, [leadMs, running, clearPendingVisuals, getOutputLatencySec])
 
   const save = useCallback(() => {
     try {
