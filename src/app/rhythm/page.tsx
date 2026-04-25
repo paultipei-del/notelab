@@ -3036,6 +3036,16 @@ export default function RhythmPage() {
         )}
       </div>
       {showAuthRhythm && <AuthModal onClose={() => setShowAuthRhythm(false)} onSuccess={() => setShowAuthRhythm(false)} />}
+      <CalibrationModal
+        open={showCalibration}
+        onClose={() => setShowCalibration(false)}
+        onCalibrated={() => {
+          try {
+            const ctx = ctxRef.current
+            if (ctx) userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
+          } catch {}
+        }}
+      />
     </div>
   )
 }
