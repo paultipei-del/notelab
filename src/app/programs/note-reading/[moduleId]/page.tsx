@@ -174,14 +174,17 @@ export default function ModuleOverviewPage({ params }: Props) {
           </p>
         </div>
 
-        {/* What you'll learn — visual reference chart of the module's
-            note pool. The preview component dispatched on variant +
-            module id replaces the old letter-code chip list, which was
-            unhelpful for beginners (the codes are what they're trying
-            to learn). */}
+        {/* Reference chart of the module's note pool. The preview
+            component dispatched on variant + module id replaces the old
+            letter-code chip list. For Module 1, this section also
+            doubles as the student's progress dashboard — noteheads
+            colour by mastery state and a legend appears below the staff
+            once the student has any practice data. */}
         <div style={{ marginBottom: '20px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '10px' }}>
-            What you&apos;ll learn — {[...new Set(mod.notes)].length} notes
+            {moduleId === 'landmarks'
+              ? `Your grand staff — ${[...new Set(mod.notes)].length} landmark notes`
+              : `What you'll learn — ${[...new Set(mod.notes)].length} notes`}
           </p>
           {(() => {
             if (mod.variant === 'intervallic') {
@@ -204,13 +207,18 @@ export default function ModuleOverviewPage({ params }: Props) {
               )
             }
             if (moduleId === 'landmarks') {
+              // Compact size + mastery colours so this single section
+              // serves as both teaching reference and progress
+              // dashboard. Labels explicitly disabled — showLabels
+              // defaults to true in StaffPreview.
               return (
                 <StaffPreview
                   notes={['G2', 'C3', 'F3', 'C4', 'G4', 'C5', 'F5']}
                   clef="grand"
-                  showLabels
-                  showLandmarks
-                  landmarkLabels={LANDMARK_PREVIEW_LABELS}
+                  showLabels={false}
+                  compact
+                  noteStats={noteStats}
+                  showLegend
                 />
               )
             }
@@ -433,8 +441,12 @@ export default function ModuleOverviewPage({ params }: Props) {
           </div>
         )}
 
-        {/* Note Heat Map — only when sessions exist */}
-        {hasAnySessions && (
+        {/* Note Heat Map — only when sessions exist. Module 1
+            (Landmarks) folds the same data into the unified "Your grand
+            staff" section at the top of the page, so we skip the
+            duplicate dashboard here. Modules 2-9 still render the
+            separate heatmap until the unified pattern is rolled out. */}
+        {hasAnySessions && moduleId !== 'landmarks' && (
           <div style={{ marginBottom: '28px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>
               Your note map

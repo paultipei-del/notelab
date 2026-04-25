@@ -1,10 +1,23 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import {
   TREBLE_POSITIONS,
   BASS_POSITIONS,
 } from '@/lib/programs/note-reading/staffPositions'
+import type { NoteStats } from '@/lib/programs/note-reading/types'
+
+// Mastery colours used when the preview doubles as the student's
+// progress dashboard (Module 1's unified "Your grand staff" section).
+// Same palette as the original NoteHeatMap so the visual language is
+// consistent across the program.
+const MASTERY_COLORS = {
+  unseen:     '#D9D6CE',
+  weak:       '#C9614A',
+  developing: '#D4963A',
+  strong:     '#5A8A5E',
+} as const
+type MasteryLevel = keyof typeof MASTERY_COLORS
 
 /**
  * Static "what you'll learn" reference chart for a Note Reading module.
@@ -51,6 +64,19 @@ interface Props {
   groupByClef?: boolean
   caption?: string
   compact?: boolean
+  /**
+   * Optional mastery data. When present, each notehead is filled with
+   * the colour for that note's masteryLevel — the preview becomes the
+   * student's progress dashboard. When absent, noteheads render in
+   * the standard charcoal.
+   */
+  noteStats?: NoteStats[]
+  /**
+   * Show the four-dot mastery legend below the staff. Only meaningful
+   * when `noteStats` is provided. Hide on a fresh user (no sessions
+   * yet) — there's nothing to explain.
+   */
+  showLegend?: boolean
 }
 
 const NATURAL_BASE_MIDI: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }
@@ -85,8 +111,30 @@ export default function StaffPreview({
   groupByClef = clef === 'grand',
   caption,
   compact = false,
+  noteStats,
+  showLegend,
 }: Props) {
   const sorted = [...notes].sort((a, b) => pitchToMidi(a) - pitchToMidi(b))
+  // Default the legend visibility to the presence of noteStats — if
+  // we're rendering as a progress dashboard the legend explains the
+  // colours; in plain teaching-reference mode there's nothing to
+  // explain. Caller can still force on/off by passing `showLegend`.
+  const renderLegend = showLegend ?? noteStats !== undefined
+
+  // Per-pitch mastery colour. Falls back to the unseen tone when no
+  // stats are supplied so the chart still reads as a teaching reference.
+  function colorFor(pitch: string): string {
+    if (!noteStats) return '#1A1A18'
+    const stat = noteStats.find(s => s.noteId === pitch)
+    if (!stat || stat.attempts === 0) return MASTERY_COLORS.unseen
+    return MASTERY_COLORS[stat.masteryLevel as MasteryLevel] ?? MASTERY_COLORS.unseen
+  }
+
+  // Hover tooltip — only meaningful when noteStats is provided. State
+  // tracks the active note and its anchor in svg coordinates; the
+  // tooltip renders via a foreignObject overlay near the notehead.
+  const [tooltip, setTooltip] = useState<{ noteId: string; x: number; y: number } | null>(null)
+  const interactive = noteStats !== undefined
 
   // Sizing — notehead font size sits at ~7× step (matching the
   // GrandStaffCard reference at step=6, fontSize=46). All other
@@ -138,7 +186,7 @@ export default function StaffPreview({
     const H = (trebleTop + 8 * step + 6 * step) + labelBlockH + (caption ? 28 : 12)
 
     return (
-      <PreviewFrame caption={caption} compact={compact}>
+      <PreviewFrame caption={caption} compact={compact} legend={renderLegend ? <MasteryLegend /> : null}>
         <svg
           width="100%"
           viewBox={`0 0 ${staffWidth} ${H}`}
@@ -153,11 +201,17 @@ export default function StaffPreview({
             const y = yPosFn(pitch, trebleTop)
             if (y === null) return null
             const x = noteAreaLeft + i * noteSpacing + noteSpacing / 2
+            const hoverHandlers = interactive ? {
+              onMouseEnter: () => setTooltip({ noteId: pitch, x, y }),
+              onMouseLeave: () => setTooltip(null),
+              onClick: () => setTooltip(t => t?.noteId === pitch ? null : { noteId: pitch, x, y }),
+              style: { cursor: 'pointer' as const },
+            } : {}
             return (
-              <g key={`n-${pitch}-${i}`}>
+              <g key={`n-${pitch}-${i}`} {...hoverHandlers}>
                 <LedgerLines pitch={pitch} clefSide={clef} top={trebleTop} step={step} x={x} />
-                <Notehead x={x} y={y} fontSize={noteFontSize} />
-                <Accidental pitch={pitch} x={x + accidentalOffset} y={y} fontSize={noteFontSize} />
+                <Notehead x={x} y={y} fontSize={noteFontSize} fill={colorFor(pitch)} />
+                <Accidental pitch={pitch} x={x + accidentalOffset} y={y} fontSize={noteFontSize} fill={colorFor(pitch)} />
                 {showLabels && (
                   <NoteLabel
                     pitch={pitch}
@@ -177,6 +231,13 @@ export default function StaffPreview({
               </g>
             )
           })}
+          {tooltip && noteStats && (
+            <TooltipOverlay
+              tooltip={tooltip}
+              stats={noteStats.find(s => s.noteId === tooltip.noteId)}
+              svgWidth={staffWidth}
+            />
+          )}
         </svg>
       </PreviewFrame>
     )
@@ -199,7 +260,7 @@ export default function StaffPreview({
   const braceHeight = braceBottom - braceTop
 
   return (
-    <PreviewFrame caption={caption} compact={compact}>
+    <PreviewFrame caption={caption} compact={compact} legend={renderLegend ? <MasteryLegend /> : null}>
       <svg
         width="100%"
         viewBox={`0 0 ${staffWidth} ${H}`}
@@ -216,14 +277,14 @@ export default function StaffPreview({
           y={braceTop + braceHeight}
           fontSize={braceHeight}
           fontFamily="Bravura, serif"
-          fill="#1A1A18"
+          fill="#6B6459"
           textAnchor="end"
           dominantBaseline="auto"
         >
           {String.fromCodePoint(0xE000)}
         </text>
         {/* Vertical connecting line where the brace meets the staves. */}
-        <line x1={staffPad} y1={trebleTop} x2={staffPad} y2={bassTop + 8 * step} stroke="#1A1A18" strokeWidth="1.5" />
+        <line x1={staffPad} y1={trebleTop} x2={staffPad} y2={bassTop + 8 * step} stroke="#6B6459" strokeWidth="1.5" />
         <StaffLines top={trebleTop} step={step} left={staffPad} right={staffWidth - rightPad} />
         <StaffLines top={bassTop} step={step} left={staffPad} right={staffWidth - rightPad} />
         <Clef clef="treble" top={trebleTop} step={step} x={staffPad + 4} />
@@ -235,19 +296,18 @@ export default function StaffPreview({
           const y = useTreble ? trebleY(pitch, top) : bassY(pitch, top)
           if (y === null) return null
           const x = noteAreaLeft + i * noteSpacing + noteSpacing / 2
-          // Per-clef label band so treble notes don't end up with labels
-          // far below the bass staff.
-          // All grand-staff labels live in a single band below the bass
-          // staff. Column-x alignment with the notehead above makes it
-          // clear which label goes with which note, and the gap between
-          // the two staves stays clean (no per-clef captions crowding
-          // the middle-C zone).
           const labelY = bassTop + 8 * step + labelGap + labelFontSize
+          const hoverHandlers = interactive ? {
+            onMouseEnter: () => setTooltip({ noteId: pitch, x, y }),
+            onMouseLeave: () => setTooltip(null),
+            onClick: () => setTooltip(t => t?.noteId === pitch ? null : { noteId: pitch, x, y }),
+            style: { cursor: 'pointer' as const },
+          } : {}
           return (
-            <g key={`n-${pitch}-${i}`}>
+            <g key={`n-${pitch}-${i}`} {...hoverHandlers}>
               <LedgerLines pitch={pitch} clefSide={useTreble ? 'treble' : 'bass'} top={top} step={step} x={x} />
-              <Notehead x={x} y={y} fontSize={noteFontSize} />
-              <Accidental pitch={pitch} x={x + accidentalOffset} y={y} fontSize={noteFontSize} />
+              <Notehead x={x} y={y} fontSize={noteFontSize} fill={colorFor(pitch)} />
+              <Accidental pitch={pitch} x={x + accidentalOffset} y={y} fontSize={noteFontSize} fill={colorFor(pitch)} />
               {showLabels && (
                 <NoteLabel pitch={pitch} x={x} y={labelY} fontSize={labelFontSize} />
               )}
@@ -262,12 +322,19 @@ export default function StaffPreview({
             </g>
           )
         })}
+        {tooltip && noteStats && (
+          <TooltipOverlay
+            tooltip={tooltip}
+            stats={noteStats.find(s => s.noteId === tooltip.noteId)}
+            svgWidth={staffWidth}
+          />
+        )}
       </svg>
     </PreviewFrame>
   )
 }
 
-function PreviewFrame({ caption, compact, children }: { caption?: string; compact?: boolean; children: React.ReactNode }) {
+function PreviewFrame({ caption, compact, children, legend }: { caption?: string; compact?: boolean; children: React.ReactNode; legend?: React.ReactNode }) {
   return (
     <div style={{
       background: '#FDFAF3',
@@ -277,6 +344,7 @@ function PreviewFrame({ caption, compact, children }: { caption?: string; compac
       overflow: 'hidden',
     }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>{children}</div>
+      {legend}
       {caption && (
         <p style={{
           fontFamily: 'var(--font-jost), sans-serif',
@@ -293,11 +361,84 @@ function PreviewFrame({ caption, compact, children }: { caption?: string; compac
   )
 }
 
+// Hover tooltip — shows the student's accuracy / attempts / response
+// time for the note under the pointer. Positioned via a foreignObject
+// overlay anchored near the notehead's svg coordinates so it follows
+// the staff layout without needing screen-coordinate math.
+function TooltipOverlay({ tooltip, stats, svgWidth }: {
+  tooltip: { noteId: string; x: number; y: number }
+  stats: NoteStats | undefined
+  svgWidth: number
+}) {
+  const F = 'var(--font-jost), sans-serif'
+  const SERIF = 'var(--font-cormorant), serif'
+  const tipW = 150
+  const tipH = stats && stats.avgResponseMs > 0 ? 78 : 62
+  let tx = tooltip.x - tipW / 2
+  let ty = tooltip.y - tipH - 14
+  if (tx < 4) tx = 4
+  if (tx + tipW > svgWidth - 4) tx = svgWidth - tipW - 4
+  if (ty < 4) ty = tooltip.y + 18
+  return (
+    <foreignObject x={tx} y={ty} width={tipW} height={tipH}>
+      <div
+        // @ts-ignore — foreignObject children can carry an xmlns hint
+        xmlns="http://www.w3.org/1999/xhtml"
+        style={{
+          background: '#1A1A18',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          pointerEvents: 'none',
+        }}
+      >
+        <p style={{ fontFamily: SERIF, fontSize: '17px', fontWeight: 400, color: 'white', margin: '0 0 2px' }}>
+          {tooltip.noteId.replace('#', '♯').replace('b', '♭')}
+        </p>
+        {stats && stats.attempts > 0 ? (
+          <>
+            <p style={{ fontFamily: F, fontSize: '11px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+              {Math.round(stats.accuracy * 100)}% · {stats.attempts} attempt{stats.attempts !== 1 ? 's' : ''}
+            </p>
+            {stats.avgResponseMs > 0 && (
+              <p style={{ fontFamily: F, fontSize: '11px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+                avg {(stats.avgResponseMs / 1000).toFixed(1)}s response
+              </p>
+            )}
+          </>
+        ) : (
+          <p style={{ fontFamily: F, fontSize: '11px', color: 'rgba(255,255,255,0.55)', margin: 0 }}>
+            Not yet attempted
+          </p>
+        )}
+      </div>
+    </foreignObject>
+  )
+}
+
+function MasteryLegend() {
+  const F = 'var(--font-jost), sans-serif'
+  return (
+    <div style={{ display: 'flex', gap: '16px', marginTop: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+      {(Object.entries(MASTERY_COLORS) as [MasteryLevel, string][]).map(([level, color]) => (
+        <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{
+            width: '10px', height: '10px', borderRadius: '50%',
+            background: color, border: '1px solid #FDFAF3', flexShrink: 0,
+          }} />
+          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', textTransform: 'capitalize' as const }}>
+            {level}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function StaffLines({ top, step, left, right }: { top: number; step: number; left: number; right: number }) {
   return (
     <g>
       {[0, 2, 4, 6, 8].map(p => (
-        <line key={p} x1={left} y1={top + p * step} x2={right} y2={top + p * step} stroke="#1A1A18" strokeWidth="1.1" />
+        <line key={p} x1={left} y1={top + p * step} x2={right} y2={top + p * step} stroke="#6B6459" strokeWidth="1.1" />
       ))}
     </g>
   )
@@ -310,31 +451,31 @@ function Clef({ clef, top, step, x }: { clef: 'treble' | 'bass'; top: number; st
   // without crowding the reserved clefRoom.
   if (clef === 'bass') {
     return (
-      <text x={x} y={top + step * 2.2} fontSize={step * 7.4} fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
+      <text x={x} y={top + step * 2.2} fontSize={step * 7.4} fontFamily="Bravura, serif" fill="#6B6459" dominantBaseline="auto">
         𝄢
       </text>
     )
   }
   return (
-    <text x={x} y={top + step * 6} fontSize={step * 8} fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
+    <text x={x} y={top + step * 6} fontSize={step * 8} fontFamily="Bravura, serif" fill="#6B6459" dominantBaseline="auto">
       𝄞
     </text>
   )
 }
 
-function Notehead({ x, y, fontSize }: { x: number; y: number; fontSize: number }) {
+function Notehead({ x, y, fontSize, fill = '#1A1A18' }: { x: number; y: number; fontSize: number; fill?: string }) {
   return (
-    <text x={x} y={y} fontSize={fontSize} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
+    <text x={x} y={y} fontSize={fontSize} fontFamily="Bravura, serif" fill={fill} textAnchor="middle" dominantBaseline="central">
       {String.fromCodePoint(0xE0A4)}
     </text>
   )
 }
 
-function Accidental({ pitch, x, y, fontSize }: { pitch: string; x: number; y: number; fontSize: number }) {
+function Accidental({ pitch, x, y, fontSize, fill = '#1A1A18' }: { pitch: string; x: number; y: number; fontSize: number; fill?: string }) {
   const m = ACCIDENTAL_MAP[pitch]
   if (!m) return null
   return (
-    <text x={x} y={y} fontSize={fontSize * 0.78} fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">
+    <text x={x} y={y} fontSize={fontSize * 0.78} fontFamily="Bravura, serif" fill={fill} textAnchor="middle" dominantBaseline="central">
       {m.acc === 'sharp' ? String.fromCodePoint(0xE262) : String.fromCodePoint(0xE260)}
     </text>
   )
@@ -383,12 +524,12 @@ function LedgerLines({ pitch, clefSide, top, step, x }: { pitch: string; clefSid
   if (pos >= 10) {
     for (let p = 10; p <= pos; p += 2) {
       const ly = top + p * step
-      lines.push(<line key={`lb-${p}`} x1={x - halfWidth} y1={ly} x2={x + halfWidth} y2={ly} stroke="#1A1A18" strokeWidth="1.1" />)
+      lines.push(<line key={`lb-${p}`} x1={x - halfWidth} y1={ly} x2={x + halfWidth} y2={ly} stroke="#6B6459" strokeWidth="1.1" />)
     }
   } else if (pos <= -2) {
     for (let p = -2; p >= pos; p -= 2) {
       const ly = top + p * step
-      lines.push(<line key={`la-${p}`} x1={x - halfWidth} y1={ly} x2={x + halfWidth} y2={ly} stroke="#1A1A18" strokeWidth="1.1" />)
+      lines.push(<line key={`la-${p}`} x1={x - halfWidth} y1={ly} x2={x + halfWidth} y2={ly} stroke="#6B6459" strokeWidth="1.1" />)
     }
   }
   return <g>{lines}</g>
