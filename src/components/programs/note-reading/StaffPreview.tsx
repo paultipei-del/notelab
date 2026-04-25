@@ -12,7 +12,10 @@ import type { NoteStats } from '@/lib/programs/note-reading/types'
 // Same palette as the original NoteHeatMap so the visual language is
 // consistent across the program.
 const MASTERY_COLORS = {
-  unseen:     '#D9D6CE',
+  // Unseen sits between the staff gray (#6B6459) and the previous very
+  // light tone — visible enough to read as "a note", but clearly not
+  // graded yet.
+  unseen:     '#A8A39A',
   weak:       '#C9614A',
   developing: '#D4963A',
   strong:     '#5A8A5E',
@@ -138,10 +141,13 @@ export default function StaffPreview({
   // explain. Caller can still force on/off by passing `showLegend`.
   const renderLegend = showLegend ?? noteStats !== undefined
 
-  // Per-pitch mastery colour. Falls back to the unseen tone when no
-  // stats are supplied so the chart still reads as a teaching reference.
+  // Per-pitch mastery colour. With no stats supplied (the mode-chooser
+  // mini-preview and other plain-reference uses), noteheads render in
+  // the same muted gray as the staff so the whole chart reads as one
+  // pre-drill reference visual. With stats, each notehead picks up its
+  // mastery colour.
   function colorFor(pitch: string): string {
-    if (!noteStats) return '#1A1A18'
+    if (!noteStats) return '#6B6459'
     const stat = noteStats.find(s => s.noteId === pitch)
     if (!stat || stat.attempts === 0) return MASTERY_COLORS.unseen
     return MASTERY_COLORS[stat.masteryLevel as MasteryLevel] ?? MASTERY_COLORS.unseen
