@@ -13,7 +13,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 import AuthModal from '@/components/AuthModal'
 import CalibrationModal from '@/components/programs/rhythm/CalibrationModal'
-import { getDeviceKey, getStoredOffsetSec } from '@/lib/programs/rhythm/calibration'
+import VisualCalibrationModal from '@/components/programs/rhythm/VisualCalibrationModal'
+import { getDeviceKey, getStoredOffsetSec, getVisualLeadSec } from '@/lib/programs/rhythm/calibration'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -930,7 +931,10 @@ export default function RhythmPage() {
   const audioOutLatencyRef = useRef(0)
   /** User-specific timing offset (seconds) from CalibrationModal — covers Bluetooth latency, NMA, etc. */
   const userOffsetRef = useRef(0)
+  /** Per-device visual lead in seconds — how much the JS state change leads the heard click to absorb display + render lag. */
+  const visualLeadRef = useRef(0)
   const [showCalibration, setShowCalibration] = useState(false)
+  const [showVisualCal, setShowVisualCal] = useState(false)
 
   const beatDuration = 60 / bpm
   const totalBeats = exercise ? exercise.timeSignature.beats * exercise.measures.length : 0
@@ -1199,7 +1203,11 @@ export default function RhythmPage() {
     // Poll until the clock is actually ticking before reading currentTime.
     await waitForCtxClock(ctx)
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
-    userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
+    {
+      const k = getDeviceKey(ctx)
+      userOffsetRef.current = getStoredOffsetSec(k)
+      visualLeadRef.current = getVisualLeadSec(k)
+    }
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; trailUiTickRef.current = 0; setTrail([]); setDiagLog([])
     setTapReady(false)
@@ -1255,10 +1263,9 @@ export default function RhythmPage() {
       const countdownElapsed = ctx2.currentTime - lat - countdownStart
       if (countdownElapsed < countdownDuration) {
         // Heard click k ≈ countdownElapsed === clickDelay + k * feltBeatDuration. Display lead shifts all beat boundaries earlier
-        // to compensate for React commit + display vsync + panel response. No upper cap — typical desktop lag exceeds clickDelay
-        // and a value of e.g. 50ms with clickDelay=30ms simply means the JS state changes 20ms before the click is scheduled,
-        // which is fine: by the time the pixel actually appears the heard click is just arriving.
-        const displayLead = Math.max(0, COUNTDOWN_DISPLAY_LEAD_SEC)
+        // to compensate for React commit + display vsync + panel response. Per-device value (tuned via VisualCalibrationModal,
+        // default DEFAULT_VISUAL_LEAD_MS) takes precedence over the constant fallback below.
+        const displayLead = visualLeadRef.current > 0 ? visualLeadRef.current : Math.max(0, COUNTDOWN_DISPLAY_LEAD_SEC)
         const tAdj = countdownElapsed - clickDelay + displayLead
         if (tAdj < 0) {
           setCountdown(null)
@@ -1414,7 +1421,11 @@ export default function RhythmPage() {
     // Safari: currentTime may remain 0 for many frames after resume() resolves.
     await waitForCtxClock(ctx)
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
-    userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
+    {
+      const k = getDeviceKey(ctx)
+      userOffsetRef.current = getStoredOffsetSec(k)
+      visualLeadRef.current = getVisualLeadSec(k)
+    }
     cancelAnimationFrame(rafRef.current)
     setPreviewing(true)
     setPlaying(false)
@@ -1862,7 +1873,11 @@ export default function RhythmPage() {
     const ctx = getCtx(); if (!ctx) return
     void ctx.resume()
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
-    userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
+    {
+      const k = getDeviceKey(ctx)
+      userOffsetRef.current = getStoredOffsetSec(k)
+      visualLeadRef.current = getVisualLeadSec(k)
+    }
     if (DEBUG_TAPS) console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current)
     if (soundEnabledRef.current) {
       // Schedule slightly in the future — never subtract latency for tap audio,
@@ -2275,6 +2290,11 @@ export default function RhythmPage() {
                 style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'white', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: playing ? 'default' : 'pointer', opacity: playing ? 0.4 : 1 }}>
                 Calibrate
               </button>
+              <button onClick={() => setShowVisualCal(true)} disabled={playing}
+                title="Tune the countdown so the digit matches the click sound"
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'white', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: playing ? 'default' : 'pointer', opacity: playing ? 0.4 : 1 }}>
+                Visual sync
+              </button>
               <button onClick={() => setShowMixer(v => !v)}
                 style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                 Mixer
@@ -2309,6 +2329,16 @@ export default function RhythmPage() {
             try {
               const ctx = ctxRef.current
               if (ctx) userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
+            } catch {}
+          }}
+        />
+        <VisualCalibrationModal
+          open={showVisualCal}
+          onClose={() => setShowVisualCal(false)}
+          onCalibrated={() => {
+            try {
+              const ctx = ctxRef.current
+              if (ctx) visualLeadRef.current = getVisualLeadSec(getDeviceKey(ctx))
             } catch {}
           }}
         />
@@ -2967,6 +2997,27 @@ export default function RhythmPage() {
                   </button>
                   <button
                     type="button"
+                    onClick={() => setShowVisualCal(true)}
+                    disabled={playing}
+                    title="Tune the countdown so the digit matches the click sound"
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '20px',
+                      border: '1px solid #DDD8CA',
+                      background: 'white',
+                      color: '#7A7060',
+                      fontFamily: F,
+                      fontSize: 'var(--nl-text-compact)',
+                      fontWeight: 400,
+                      cursor: playing ? 'default' : 'pointer',
+                      opacity: playing ? 0.4 : 1,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Visual sync
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setShowMixer(v => !v)}
                     style={{
                       padding: '8px 14px',
@@ -3059,6 +3110,16 @@ export default function RhythmPage() {
           try {
             const ctx = ctxRef.current
             if (ctx) userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
+          } catch {}
+        }}
+      />
+      <VisualCalibrationModal
+        open={showVisualCal}
+        onClose={() => setShowVisualCal(false)}
+        onCalibrated={() => {
+          try {
+            const ctx = ctxRef.current
+            if (ctx) visualLeadRef.current = getVisualLeadSec(getDeviceKey(ctx))
           } catch {}
         }}
       />

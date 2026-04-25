@@ -19,6 +19,19 @@ interface DeviceCalibration {
   offsetMs: number
   rmseMs: number
   measuredAt: string
+  /** Visual lead in ms — how much earlier the JS state change should fire so the rendered pixel arrives with the heard click.
+   * Undefined falls back to {@link DEFAULT_VISUAL_LEAD_MS} on read. Tuned per device via VisualCalibrationModal. */
+  visualLeadMs?: number
+  visualMeasuredAt?: string
+}
+
+/** Default countdown / playhead visual lead for devices that haven't been visually calibrated yet. */
+export const DEFAULT_VISUAL_LEAD_MS = 50
+
+/** Soft bounds on the slider — beyond these the value is almost certainly wrong. */
+export const VISUAL_LEAD_LIMITS = {
+  minMs: 0,
+  maxMs: 150,
 }
 
 interface CalibrationStore {
@@ -84,10 +97,45 @@ export function hasCalibration(deviceKey: string): boolean {
 
 export function setCalibration(deviceKey: string, offsetMs: number, rmseMs: number): void {
   const store = readStore()
+  const prev = store[deviceKey]
   store[deviceKey] = {
     offsetMs: Math.round(offsetMs * 10) / 10,
     rmseMs: Math.round(rmseMs * 10) / 10,
     measuredAt: new Date().toISOString(),
+    // Preserve visual calibration if it was set previously — audio and visual
+    // calibrations are independent measurements per device.
+    visualLeadMs: prev?.visualLeadMs,
+    visualMeasuredAt: prev?.visualMeasuredAt,
+  }
+  writeStore(store)
+}
+
+/** Visual lead in ms for the given device, with sensible default. */
+export function getVisualLeadMs(deviceKey: string): number {
+  const entry = readStore()[deviceKey]
+  return entry?.visualLeadMs ?? DEFAULT_VISUAL_LEAD_MS
+}
+
+/** Convenience: visual lead in seconds (for ctx.currentTime math). */
+export function getVisualLeadSec(deviceKey: string): number {
+  return getVisualLeadMs(deviceKey) / 1000
+}
+
+/**
+ * Persist a manually-tuned visual lead. The audio calibration record (offsetMs / rmseMs)
+ * is preserved if it exists; otherwise a fresh record is created with offsetMs = 0
+ * (i.e. no audio calibration assumed) so the visual setting alone is durable.
+ */
+export function setVisualLead(deviceKey: string, leadMs: number): void {
+  const clamped = Math.max(VISUAL_LEAD_LIMITS.minMs, Math.min(VISUAL_LEAD_LIMITS.maxMs, leadMs))
+  const store = readStore()
+  const prev = store[deviceKey]
+  store[deviceKey] = {
+    offsetMs: prev?.offsetMs ?? 0,
+    rmseMs: prev?.rmseMs ?? 0,
+    measuredAt: prev?.measuredAt ?? new Date().toISOString(),
+    visualLeadMs: Math.round(clamped),
+    visualMeasuredAt: new Date().toISOString(),
   }
   writeStore(store)
 }
