@@ -12,6 +12,8 @@ import { canAccessRhythmProgram, getRhythmProgramEntitlement, rhythmProgramRequi
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
 import AuthModal from '@/components/AuthModal'
+import CalibrationModal from '@/components/programs/rhythm/CalibrationModal'
+import { getDeviceKey, getStoredOffsetSec } from '@/lib/programs/rhythm/calibration'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -921,6 +923,9 @@ export default function RhythmPage() {
   const startTimeRef = useRef(0)
   /** Subtracted from ctx.currentTime when driving playhead / tap beat so UI matches heard output (Safari). */
   const audioOutLatencyRef = useRef(0)
+  /** User-specific timing offset (seconds) from CalibrationModal — covers Bluetooth latency, NMA, etc. */
+  const userOffsetRef = useRef(0)
+  const [showCalibration, setShowCalibration] = useState(false)
 
   const beatDuration = 60 / bpm
   const totalBeats = exercise ? exercise.timeSignature.beats * exercise.measures.length : 0
@@ -1189,6 +1194,7 @@ export default function RhythmPage() {
     // Poll until the clock is actually ticking before reading currentTime.
     await waitForCtxClock(ctx)
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
+    userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
     initSampler()  // load piano on first gesture
     setTaps([]); setScore(null); setTapResults([]); setTapDurations([]); trailRef.current = []; trailUiTickRef.current = 0; setTrail([]); setDiagLog([])
     setTapReady(false)
@@ -1401,6 +1407,7 @@ export default function RhythmPage() {
     // Safari: currentTime may remain 0 for many frames after resume() resolves.
     await waitForCtxClock(ctx)
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
+    userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
     cancelAnimationFrame(rafRef.current)
     setPreviewing(true)
     setPlaying(false)
@@ -1563,7 +1570,7 @@ export default function RhythmPage() {
           }
         }
       }
-      const kbElapsed = ctx.currentTime - audioOutLatencyRef.current - startTimeRef.current
+      const kbElapsed = ctx.currentTime - audioOutLatencyRef.current - userOffsetRef.current - startTimeRef.current
       if (kbElapsed < -beatDuration * 1.5) return
       const beatFloat2 = kbElapsed < 0 ? 0 : kbElapsed / effectiveBeatDurationRef.current
       const beat = Math.round(beatFloat2)
@@ -1839,6 +1846,7 @@ export default function RhythmPage() {
     const ctx = getCtx(); if (!ctx) return
     void ctx.resume()
     audioOutLatencyRef.current = getAudioOutputLatencySec(ctx)
+    userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
     if (DEBUG_TAPS) console.log('TAP: state='+ctx.state+' pianoBuffer='+!!pianoBufferRef.current+' pianoGain='+!!pianoGainRef.current)
     if (soundEnabledRef.current) {
       // Schedule slightly in the future — never subtract latency for tap audio,
@@ -1871,7 +1879,7 @@ export default function RhythmPage() {
         osc1.stop(when + 1.5); osc2.stop(when + 1.5)
       }
     }
-    const elapsed = ctx.currentTime - audioOutLatencyRef.current - startTimeRef.current
+    const elapsed = ctx.currentTime - audioOutLatencyRef.current - userOffsetRef.current - startTimeRef.current
     if (elapsed < -beatDuration * 1.5) return
     const beatFloatP = elapsed < 0 ? 0 : elapsed / effectiveBeatDurationRef.current
     const beat = Math.round(beatFloatP)
@@ -2246,6 +2254,11 @@ export default function RhythmPage() {
               <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
                 style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
               <div style={{ flex: 1 }} />
+              <button onClick={() => setShowCalibration(true)} disabled={playing}
+                title="Calibrate audio timing for your headphones / device"
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'white', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: playing ? 'default' : 'pointer', opacity: playing ? 0.4 : 1 }}>
+                Calibrate
+              </button>
               <button onClick={() => setShowMixer(v => !v)}
                 style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                 Mixer
@@ -2271,6 +2284,18 @@ export default function RhythmPage() {
         </div>
 
         {showAuthRhythm && <AuthModal onClose={() => setShowAuthRhythm(false)} onSuccess={() => setShowAuthRhythm(false)} />}
+        <CalibrationModal
+          open={showCalibration}
+          onClose={() => setShowCalibration(false)}
+          onCalibrated={() => {
+            // Refresh the trainer's cached offset so the next start() picks up the new value
+            // even if the user starts an exercise before the modal closes.
+            try {
+              const ctx = ctxRef.current
+              if (ctx) userOffsetRef.current = getStoredOffsetSec(getDeviceKey(ctx))
+            } catch {}
+          }}
+        />
       </div>
     )
   }
