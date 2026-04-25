@@ -11,6 +11,8 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import ExerciseList from '@/components/programs/rhythm/ExerciseList'
 import CategoryProgressBar from '@/components/programs/rhythm/CategoryProgressBar'
+import RhythmStaffPreview from '@/components/programs/rhythm/RhythmStaffPreview'
+import { getTeachingSummary } from '@/lib/programs/rhythm/teaching-summaries'
 import type { RhythmExerciseMeta, RhythmProgress, RhythmCategoryNode } from '@/lib/rhythmLibrary'
 
 const F = 'var(--font-jost), sans-serif'
@@ -76,6 +78,13 @@ export default function RhythmCategoryPage({ params }: Props) {
   const a = program.accent
   const { done, total } = loaded ? summariseProgress(exercises, progress) : { done: 0, total: 0 }
 
+  // Representative exercise for the "What you'll learn" preview — first
+  // exercise of the lowest-numbered level. Falls back to the first overall
+  // exercise if no levels exist (defensive — empty topic).
+  const previewExercise: RhythmExerciseMeta | undefined =
+    category?.levels[0]?.exercises[0] ?? exercises[0]
+  const teachingSummary = category ? getTeachingSummary(category.name) : ''
+
   // Difficulty range
   const difficulties = exercises.map(e => e.difficulty)
   const minDiff = difficulties.length > 0 ? Math.min(...difficulties) : 1
@@ -124,6 +133,20 @@ export default function RhythmCategoryPage({ params }: Props) {
             {[1, 2, 3].map(i => (
               <div key={i} style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: '14px', height: '140px', opacity: 0.5 }} />
             ))}
+          </div>
+        )}
+
+        {loaded && category && previewExercise && (
+          <div style={{ marginBottom: '24px' }}>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 10px 0' }}>
+              What you&rsquo;ll learn
+            </p>
+            <RhythmStaffPreview exerciseId={previewExercise.id} maxHeight={220} />
+            {teachingSummary && (
+              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#4A4540', lineHeight: 1.6, margin: '12px 4px 0' }}>
+                {teachingSummary}
+              </p>
+            )}
           </div>
         )}
 

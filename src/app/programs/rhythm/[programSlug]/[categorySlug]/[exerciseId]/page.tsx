@@ -10,6 +10,7 @@ import {
 } from '@/lib/rhythmLibrary'
 import { useAuth } from '@/hooks/useAuth'
 import SessionSummary from '@/components/programs/rhythm/SessionSummary'
+import RhythmStaffPreview from '@/components/programs/rhythm/RhythmStaffPreview'
 import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
 
 const F = 'var(--font-jost), sans-serif'
@@ -118,6 +119,11 @@ export default function RhythmExercisePage({ params }: Props) {
                   Level {exercise.level}
                 </span>
               </div>
+            </div>
+
+            {/* Static notation preview — frozen snapshot of what the trainer renders. */}
+            <div style={{ marginBottom: '16px' }}>
+              <RhythmStaffPreview exerciseId={exercise.id} maxHeight={220} />
             </div>
 
             {/* Progress summary */}

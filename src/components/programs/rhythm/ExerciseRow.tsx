@@ -6,10 +6,6 @@ import type { RhythmExerciseMeta, RhythmProgress } from '@/lib/rhythmLibrary'
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 
-const DIFFICULTY_LABEL: Record<number, string> = {
-  1: 'Beginner', 2: 'Elementary', 3: 'Intermediate', 4: 'Advanced', 5: 'Expert',
-}
-
 interface Props {
   exercise: RhythmExerciseMeta
   progress: RhythmProgress | undefined
@@ -36,7 +32,7 @@ export default function ExerciseRow({ exercise, progress, globalIndex, href, isU
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{exercise.title}</p>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0AEA8', margin: 0 }}>
-            {exercise.beats}/{exercise.beat_type} · {DIFFICULTY_LABEL[exercise.difficulty]}
+            {exercise.beats}/{exercise.beat_type}
           </p>
         </div>
         <span style={{ fontSize: 'var(--nl-text-compact)', opacity: 0.5, flexShrink: 0 }}>🔒</span>
@@ -61,7 +57,7 @@ export default function ExerciseRow({ exercise, progress, globalIndex, href, isU
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#1A1A18', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{exercise.title}</p>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>
-            {exercise.beats}/{exercise.beat_type} · {DIFFICULTY_LABEL[exercise.difficulty]}
+            {exercise.beats}/{exercise.beat_type}
           </p>
         </div>
         {completed && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#3B6D11', fontWeight: 500, flexShrink: 0 }}>✓</span>}
