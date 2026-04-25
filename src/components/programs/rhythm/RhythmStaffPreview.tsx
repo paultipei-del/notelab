@@ -17,9 +17,10 @@ interface Props {
  * (e.g. 5+1 for a 6-bar exercise). Returning `null` lets OSMD use its default.
  */
 function pickMeasuresPerLine(total: number): number | null {
-  if (total <= 4) return null
+  if (total <= 3) return null
   // Hand-picked splits up to 12 — covers every Fundamentals exercise length.
   const TABLE: Record<number, number> = {
+    4: 2,   // 2+2
     5: 3,   // 3+2
     6: 3,   // 3+3
     7: 4,   // 4+3
