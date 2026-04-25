@@ -1626,21 +1626,30 @@ export default function RhythmPage() {
               return newResults
             })
           } else if (nearOnsetKB && onRestKB) {
-            // Find the actual note near this beat
+            // Find the *single* nearest non-rest note onset across the whole
+            // exercise (don't break early inside one measure — `posNR` would
+            // freeze and every later measure's first non-rest note would
+            // falsely re-match against the same beat position).
             let posNR = 0
+            let bestNR: { mi: number; ni: number; dist: number } | null = null
             for (let miNR = 0; miNR < exercise.measures.length; miNR++) {
               for (let niNR = 0; niNR < exercise.measures[miNR].notes.length; niNR++) {
                 const nNR = exercise.measures[miNR].notes[niNR]
-                if (!nNR.rest && Math.abs(posNR - clampedBeat) <= 0.75) {
-                  setTapResults(prev => {
-                    const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
-                    if (newResults[miNR][niNR] !== 'hit') newResults[miNR][niNR] = 'hit'
-                    return newResults
-                  })
-                  break
+                if (!nNR.rest) {
+                  const d = Math.abs(posNR - clampedBeat)
+                  if (d <= 0.75 && (!bestNR || d < bestNR.dist)) {
+                    bestNR = { mi: miNR, ni: niNR, dist: d }
+                  }
                 }
                 posNR += nNR.durationBeats
               }
+            }
+            if (bestNR) {
+              setTapResults(prev => {
+                const newResults = exercise.measures.map((m, mi) => prev[mi] ? [...prev[mi]] : m.notes.map(() => 'none' as const))
+                if (newResults[bestNR.mi][bestNR.ni] !== 'hit') newResults[bestNR.mi][bestNR.ni] = 'hit'
+                return newResults
+              })
             }
           }
         }
