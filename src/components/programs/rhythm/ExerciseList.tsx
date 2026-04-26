@@ -15,10 +15,16 @@ interface Props {
   unlockOrder: RhythmExerciseMeta[]
 }
 
+// Local override for previewing locked content during development. The env
+// check makes it physically impossible for this to be true in a production
+// build — flip `&& false` to `&& true` only while iterating.
+const DEV_UNLOCK_ALL = process.env.NODE_ENV === 'development' && false
+
 export default function ExerciseList({ programSlug, categorySlug, levels, progress, unlockOrder }: Props) {
   const unlockMap = new Map(unlockOrder.map((e, i) => [e.id, i]))
 
   function isUnlocked(ex: RhythmExerciseMeta): boolean {
+    if (DEV_UNLOCK_ALL) return true
     const idx = unlockMap.get(ex.id) ?? -1
     if (idx <= 0) return true
     const prev = unlockOrder[idx - 1]

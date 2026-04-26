@@ -80,7 +80,11 @@ export default function RhythmExercisePage({ params }: Props) {
 
   const exerciseProgress = exercise ? progress[exercise.id] : undefined
   const idx = exercise ? unlockOrder.findIndex(e => e.id === exercise.id) : -1
-  const isUnlocked = idx <= 0 || (progress[unlockOrder[idx - 1]?.id]?.completed ?? false)
+  // Local override for previewing locked content during development. The
+  // env check makes it physically impossible for this to be true in a
+  // production build — flip `&& false` to `&& true` only while iterating.
+  const DEV_UNLOCK_ALL = process.env.NODE_ENV === 'development' && false
+  const isUnlocked = DEV_UNLOCK_ALL || idx <= 0 || (progress[unlockOrder[idx - 1]?.id]?.completed ?? false)
 
   // Next exercise for summary
   const nextCatSlug = nextExercise
