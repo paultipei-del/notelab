@@ -9,6 +9,7 @@ interface KeyboardProps {
   y?: number
   T: LearnTokens
   highlightedMidis?: number[]
+  dimmedMidis?: number[]
   highlightColor?: string
   onKeyEnter?: (midi: number, pitch: string) => void
   onKeyLeave?: (midi: number, pitch: string) => void
@@ -26,11 +27,12 @@ function isWhiteKey(midi: number): boolean {
 export function Keyboard({
   startMidi = 60, endMidi = 72,
   x = 0, y = 0, T,
-  highlightedMidis = [], highlightColor,
+  highlightedMidis = [], dimmedMidis = [], highlightColor,
   onKeyEnter, onKeyLeave, onKeyClick,
   showLabels = 'c-only',
 }: KeyboardProps) {
   const highlights = new Set(highlightedMidis)
+  const dimmed = new Set(dimmedMidis)
   const whiteKeys: number[] = []
   for (let m = startMidi; m <= endMidi; m++) {
     if (isWhiteKey(m)) whiteKeys.push(m)
@@ -60,7 +62,11 @@ export function Keyboard({
             <rect
               x={x + i * ww} y={y}
               width={ww} height={wh}
-              fill={isHighlighted ? (highlightColor ?? T.highlightFill) : T.keyboardWhiteKeyFill}
+              fill={
+                isHighlighted
+                  ? (dimmed.has(midi) ? T.bgCream : (highlightColor ?? T.highlightFill))
+                  : T.keyboardWhiteKeyFill
+              }
               stroke={T.ink} strokeWidth={T.keyboardKeyStroke}
               style={{ transition: T.hoverTransition }}
             />
@@ -99,7 +105,11 @@ export function Keyboard({
             <rect
               x={blackX} y={y}
               width={bw} height={bh}
-              fill={isHighlighted ? T.highlightAccent : T.keyboardBlackKeyFill}
+              fill={
+                isHighlighted
+                  ? (dimmed.has(blackMidi) ? T.inkSubtle : T.highlightAccent)
+                  : T.keyboardBlackKeyFill
+              }
               style={{ transition: T.hoverTransition }}
             />
           </g>

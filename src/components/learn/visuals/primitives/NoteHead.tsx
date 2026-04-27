@@ -13,6 +13,7 @@ interface NoteHeadProps {
   T: LearnTokens
   duration?: 'whole' | 'half' | 'quarter'
   noStem?: boolean
+  dimmed?: boolean
   highlight?: boolean
   highlightColor?: string
   onMouseEnter?: () => void
@@ -25,6 +26,7 @@ export function NoteHead({
   pitch, staffTop, x, clef, T,
   duration = 'quarter',
   noStem = false,
+  dimmed = false,
   highlight = false,
   highlightColor,
   onMouseEnter, onMouseLeave, onClick, ariaLabel,
@@ -33,7 +35,9 @@ export function NoteHead({
   if (!parsed) return null
   const pos = staffPosition(parsed, clef)
   const noteY = staffTop + pos * T.step
-  const fill = highlight ? (highlightColor ?? T.highlightAccent) : T.ink
+  const fill = highlight
+    ? (highlightColor ?? T.highlightAccent)
+    : (dimmed ? T.inkSubtle : T.ink)
 
   // Stems-up for notes BELOW middle line (pos > 4), stems-down otherwise.
   // Stems-up attach to RIGHT of notehead, stems-down attach to LEFT.

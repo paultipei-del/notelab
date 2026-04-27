@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 
 export const learnPage = {
   topic: 'scales',
@@ -29,9 +30,19 @@ Pentatonic scales appear in virtually every culture on Earth, independently. Chi
 
 ## The visual
 
-<DiagramPlaceholder description="A C major pentatonic scale ascending on a treble staff — C, D, E, G, A, C — showing the two omitted degrees (F and B) as gray or missing." />
+<ScaleExplorer
+  scale="major"
+  tonic={60}
+  dimmedMidis={[65, 71]}
+  caption="C major pentatonic — the major scale with the 4th (F) and 7th (B) removed. Those two omitted degrees are shown in gray."
+/>
 
-<DiagramPlaceholder description="A minor pentatonic — A, C, D, E, G, A — shown alongside for comparison." />
+<ScaleExplorer
+  scale="natural-minor"
+  tonic={69}
+  dimmedMidis={[71, 77]}
+  caption="A minor pentatonic — A natural minor with the 2nd (B) and 6th (F) removed. Same pattern, different starting note: minor pentatonic is the relative minor of major pentatonic."
+/>
 
 ## The major pentatonic
 

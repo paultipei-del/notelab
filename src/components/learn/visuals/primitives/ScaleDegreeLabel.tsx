@@ -8,6 +8,7 @@ interface ScaleDegreeLabelProps {
   T: LearnTokens
   variant?: 'caret' | 'roman' | 'plain'
   highlight?: boolean
+  dimmed?: boolean
 }
 
 const ROMAN: Record<number, string> = {
@@ -16,7 +17,7 @@ const ROMAN: Record<number, string> = {
 
 export function ScaleDegreeLabel({
   x, y, degree, T,
-  variant = 'caret', highlight = false,
+  variant = 'caret', highlight = false, dimmed = false,
 }: ScaleDegreeLabelProps) {
   const text = variant === 'caret' ? `${degree}\u0302`
     : variant === 'roman' ? ROMAN[degree]
@@ -26,7 +27,7 @@ export function ScaleDegreeLabel({
       x={x} y={y}
       fontSize={T.labelFontSize}
       fontFamily={T.fontLabel}
-      fill={highlight ? T.highlightAccent : T.inkMuted}
+      fill={highlight ? T.highlightAccent : (dimmed ? T.inkSubtle : T.inkMuted)}
       textAnchor="middle"
       fontWeight={500}
     >

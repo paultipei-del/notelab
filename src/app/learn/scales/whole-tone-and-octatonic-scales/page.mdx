@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 
 export const learnPage = {
   topic: 'scales',
@@ -31,9 +32,17 @@ Symmetric scales produce a different kind of music. Without a strong tonic, they
 
 ## The visual
 
-<DiagramPlaceholder description="The C whole tone scale ascending — C, D, E, F♯, G♯, A♯, C — labeled." />
+<ScaleExplorer
+  scale="whole-tone"
+  tonic={60}
+  caption="The C whole tone scale — six notes per octave, all separated by whole steps. The uniform interval pattern is what gives the scale its floating, ambiguous quality."
+/>
 
-<DiagramPlaceholder description="The C octatonic scale (half-whole variety) ascending — C, D♭, E♭, E, F♯, G, A, B♭, C — labeled." />
+<ScaleExplorer
+  intervals={[0, 1, 3, 4, 6, 7, 9, 10, 12]}
+  tonic={60}
+  caption="The C octatonic scale (half-whole variety) — eight notes per octave alternating half and whole steps. Used heavily in 20th-century composition for its symmetric, otherworldly color."
+/>
 
 ## The whole tone scale
 

@@ -1,8 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
-import { A_HARMONIC_MINOR_XML } from './notations'
 
 export const learnPage = {
   topic: 'scales',
@@ -34,10 +33,10 @@ The name tells you what it's for. It's the minor scale adjusted to make proper t
 
 ## The visual
 
-<Notation
-  musicXml={A_HARMONIC_MINOR_XML}
+<ScaleExplorer
+  scale="harmonic-minor"
+  tonic={69}
   caption="A harmonic minor ascending, labeled with the interval pattern W-H-W-W-H-aug2-H. The augmented 2nd between the 6th and 7th degrees is harmonic minor's distinctive feature."
-  ariaLabel="A harmonic minor scale ascending with interval labels, showing the augmented 2nd between F and G-sharp."
 />
 
 <Diagram src="/diagrams/three-minor-forms.svg" caption="Natural, harmonic, and melodic A minor. The raised 7th (G♯) is what distinguishes harmonic from natural minor." />

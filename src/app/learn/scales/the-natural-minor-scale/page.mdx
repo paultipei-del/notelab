@@ -1,8 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
-import { A_NATURAL_MINOR_STEPS_XML } from './notations'
 
 export const learnPage = {
   topic: 'scales',
@@ -32,10 +31,10 @@ The natural minor scale is one of three forms of minor in Western music. The oth
 
 ## The visual
 
-<Notation
-  musicXml={A_NATURAL_MINOR_STEPS_XML}
+<ScaleExplorer
+  scale="natural-minor"
+  tonic={69}
   caption="A natural minor scale ascending, labeled with the interval pattern W-H-W-W-H-W-W."
-  ariaLabel="A natural minor scale ascending with whole and half step labels."
 />
 
 <Diagram src="/diagrams/three-minor-forms.svg" caption="The three forms of A minor — natural, harmonic, melodic — compared side by side." />

@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { SineWaveDiagram } from '@/components/learn/visuals/SineWaveDiagram'
+import { VibratingStringDiagram } from '@/components/learn/visuals/VibratingStringDiagram'
 
 export const learnPage = {
   topic: 'sound-and-hearing',
@@ -26,9 +28,9 @@ That's all sound is, at its root: a pattern of air pressure changing over time. 
 
 ## The visual
 
-<DiagramPlaceholder description="Simple sine wave with labeled amplitude and wavelength." />
+<SineWaveDiagram caption="A sine wave — the simplest possible sound. Amplitude (the height) determines loudness; wavelength (the distance between peaks) determines pitch. Drag the sliders and play the tone to hear how each shapes what we perceive." />
 
-<DiagramPlaceholder description="A vibrating string with waves propagating outward through air molecules." />
+<VibratingStringDiagram caption="When a string vibrates, it pushes against the surrounding air. Those pushes ripple outward as pressure waves — what we ultimately hear as sound." />
 
 ## What makes one sound different from another
 

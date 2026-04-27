@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 
 export const learnPage = {
   topic: 'scales',
@@ -29,9 +30,33 @@ The blues scale is the foundation of the blues itself, of course, but it's also 
 
 ## The visual
 
-<DiagramPlaceholder description="A minor pentatonic with an added E♭ as the blue note — producing A, C, D, E♭, E, G, A — the full A minor blues scale." />
+<ScaleExplorer
+  scale="blues"
+  tonic={69}
+  caption="A minor blues scale — A, C, D, E♭, E, G, A. The flatted 5th (E♭) is the blue note: it sits between the natural 4th (D) and natural 5th (E), giving the scale its distinctive sound."
+/>
 
-<DiagramPlaceholder description="C major pentatonic and C minor blues scale side by side, showing the different characters." />
+<figure style={{ margin: '24px auto', textAlign: 'center' }}>
+  <div style={{ display: 'flex', gap: 32, justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+    <ScaleExplorer
+      scale="major"
+      tonic={60}
+      dimmedMidis={[65, 71]}
+      size="small"
+      showKeyboard={false}
+      showAudio={false}
+      caption="C major pentatonic — open, consonant."
+    />
+    <ScaleExplorer
+      scale="blues"
+      tonic={60}
+      size="small"
+      showKeyboard={false}
+      showAudio={false}
+      caption="C minor blues — bluesy, expressive."
+    />
+  </div>
+</figure>
 
 ## The minor blues scale
 

@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import { MajorScaleExplorer } from '@/components/learn/visuals/MajorScaleExplorer'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 
 export const learnPage = {
   topic: 'scales',
@@ -29,11 +29,11 @@ Its structure is simple: seven notes in a specific interval pattern, with an oct
 
 ## The visual
 
-<MajorScaleExplorer
+<ScaleExplorer
   caption="C major scale ascending. Each note is labeled with the interval type (W = whole step, H = half step) to the next note. Pattern: W-W-H-W-W-W-H."
 />
 
-<MajorScaleExplorer
+<ScaleExplorer
   tonic={67}
   caption="G major scale ascending. Same W-W-H-W-W-W-H pattern, starting from G — requires F♯ to preserve the pattern."
 />

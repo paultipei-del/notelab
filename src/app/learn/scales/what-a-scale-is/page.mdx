@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import { C_MAJOR_WITH_DEGREES_XML } from './notations'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 
 export const learnPage = {
   topic: 'scales',
@@ -31,10 +30,12 @@ Scales are the tonal vocabulary of music. A piece "in C major" uses the C major 
 
 ## The visual
 
-<Notation
-  musicXml={C_MAJOR_WITH_DEGREES_XML}
+<ScaleExplorer
+  scale="major"
+  tonic={60}
+  degreeVariant="plain"
+  showBrackets={false}
   caption="A C major scale ascending from C4 to C5, with scale-degree numbers 1 through 8 beneath each note."
-  ariaLabel="C major scale ascending with degree numbers 1 through 8."
 />
 
 <DiagramPlaceholder description="A piano keyboard with the white keys of C major highlighted, showing the 'home' shape of the scale." />
