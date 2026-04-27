@@ -91,13 +91,18 @@ export function MicroPianoDetect() {
   return (
     <div aria-hidden="true" style={{ width: '100%', maxWidth: '240px', margin: '0 auto' }}>
       <svg viewBox="0 0 240 80" width="100%" height="80" role="img">
-        {/* Staff */}
+        {/* Staff (sw=12, top line at y=12). */}
         {[12, 24, 36, 48, 60].map((y, i) => (
           <line key={i} x1="0" y1={y} x2="240" y2={y} stroke="#DDD8CA" strokeWidth="1" />
         ))}
-        <text x="4" y="44" fontSize="52" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="middle">𝄞</text>
+        {/* Treble clef baseline on the G4 line (= top + 3*sw = 48). Codebase
+            canonical from StaffCard / TwoNoteGrandStaff: fontSize/sw ≈ 4.17;
+            here pulled to 44 to keep the scroll inside the 80-tall viewbox. */}
+        <text x="4" y="48" fontSize="44" fontFamily="Bravura, serif" fill="#1A1A18">𝄞</text>
 
-        {/* 5 notes on each line (treble: E4, G4, B4, D5, F5) */}
+        {/* 5 notes on each line (treble: E4, G4, B4, D5, F5). Notehead
+            fontSize = 3.5*sw renders the head at ~1 staff-space tall, the
+            visual proportion that reads as "a note on a line". */}
         {[
           { x: 80, y: 60, cls: 'nl-micro-note-1' },   // E4
           { x: 115, y: 48, cls: 'nl-micro-note-2' },  // G4
@@ -106,8 +111,8 @@ export function MicroPianoDetect() {
           { x: 220, y: 12, cls: 'nl-micro-note-5' },  // F5
         ].map((n, i) => (
           <g key={i} style={{ opacity: 0, animation: `${n.cls} 4s ease-in-out infinite` }}>
-            <text x={n.x} y={n.y} fontSize="20" fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xe0a4)}</text>
-            <circle cx={n.x} cy={n.y} r="9" fill="none" stroke="#4CAF50" strokeWidth="1.2" opacity="0.6" />
+            <text x={n.x} y={n.y} fontSize="42" fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xe0a4)}</text>
+            <circle cx={n.x} cy={n.y} r="14" fill="none" stroke="#4CAF50" strokeWidth="1.2" opacity="0.6" />
           </g>
         ))}
       </svg>

@@ -64,15 +64,20 @@ export default function HeroStaffAnimation() {
           {[20, 36, 52, 68, 84].map((y, i) => (
             <line key={i} x1="0" y1={y} x2="240" y2={y} stroke="#DDD8CA" strokeWidth="1" />
           ))}
-          {/* Treble clef */}
-          <text x="8" y="72" fontSize="80" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="middle">𝄞</text>
+          {/* Treble clef. Bravura's alphabetic baseline anchors the G-curl,
+              so y is placed on the G4 line (top + 3*sw = 68 here). Matches
+              StaffCard / TwoNoteGrandStaff / MultiNoteStaff (codebase
+              canonical: y=trebleTop+36, fontSize=50 at sw=12 → ratio 4.17).
+              Scaled to sw=16: fontSize = 4.17*16 ≈ 66; clamped to 64 to
+              keep the scroll inside the 120-tall viewbox. */}
+          <text x="8" y="68" fontSize="64" fontFamily="Bravura, serif" fill="#1A1A18">𝄞</text>
 
           {/* Pulse ring (keyed so it restarts each note change) */}
           <circle
             key={`pulse-${pulseKey}`}
             cx="160"
             cy={pos.y}
-            r="12"
+            r="15"
             fill="none"
             stroke="#B5402A"
             strokeWidth="1.5"
@@ -83,13 +88,24 @@ export default function HeroStaffAnimation() {
             }}
           />
 
-          {/* Active note */}
+          {/* Active note. Notehead fontSize = 3.5*sw renders the head at
+              ~1 staff-space tall. Stem direction follows convention:
+              notes above the middle line (B4, y=52) get stem DOWN on the
+              left side; notes on or below the middle line get stem UP on
+              the right side. Stem length = 3*sw = 48, the standard
+              quarter-note stem. */}
           <g
             key={`note-${pulseKey}`}
             style={{ opacity: 0, animation: 'nl-hero-note-cycle 1.5s ease-in-out' }}
           >
-            <text x="160" y={pos.y} fontSize="32" fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xe0a4)}</text>
-            <line x1="166" y1={pos.y} x2="166" y2={pos.y - 32} stroke="#1A1A18" strokeWidth="1.5" />
+            <text x="160" y={pos.y} fontSize="56" fontFamily="Bravura, serif" fill="#1A1A18" textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xe0a4)}</text>
+            {pos.y < 52 ? (
+              // Above middle line → stem down on left side of notehead
+              <line x1="152" y1={pos.y} x2="152" y2={pos.y + 48} stroke="#1A1A18" strokeWidth="1.6" />
+            ) : (
+              // On or below middle line → stem up on right side of notehead
+              <line x1="168" y1={pos.y} x2="168" y2={pos.y - 48} stroke="#1A1A18" strokeWidth="1.6" />
+            )}
           </g>
         </svg>
       </div>
