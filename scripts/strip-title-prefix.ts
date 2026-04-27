@@ -46,6 +46,25 @@ function stripPrefix(title: string): string {
   return title.replace(PREFIX_RE, '')
 }
 
+/**
+ * BUG NOTE (2026-04-27): we extract <work-title> via a literal regex, which
+ * yields the *raw XML-encoded* form ("Half &amp; Whole Rests"). The DB
+ * `title` column stores the decoded form ("Half & Whole Rests"). Comparing
+ * raw-encoded against decoded produces a false diff for any title with an
+ * XML-special character (& < > " '), and the script re-encodes → writes →
+ * reports "changed" on every run. Decoding here restores idempotence.
+ */
+function decodeXmlEntities(s: string): string {
+  // Order matters: decode &amp; last so other entities don't double-decode
+  // (e.g. a literal "&amp;lt;" should become "&lt;", not "<").
+  return s
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, '&')
+}
+
 async function rewriteWorkTitle(base64: string, newTitle: string): Promise<{
   newBase64: string
   oldWorkTitle: string
@@ -62,7 +81,7 @@ async function rewriteWorkTitle(base64: string, newTitle: string): Promise<{
   if (!scoreFile) throw new Error(`missing score file at ${scorePath}`)
   const scoreXml = await scoreFile.async('text')
   const wtMatch = scoreXml.match(/<work-title>([^<]*)<\/work-title>/)
-  const oldWorkTitle = wtMatch ? wtMatch[1] : ''
+  const oldWorkTitle = wtMatch ? decodeXmlEntities(wtMatch[1]) : ''
   if (oldWorkTitle === newTitle) {
     return { newBase64: base64, oldWorkTitle, changed: false }
   }
