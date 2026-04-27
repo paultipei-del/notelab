@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
 
 export const learnPage = {
   topic: 'harmony',
@@ -29,9 +30,36 @@ Western tonal music has organized chords into a remarkably coherent system, buil
 
 ## The visual
 
-<DiagramPlaceholder description="A C major triad (C-E-G) on a treble staff, labeled — showing three notes stacked vertically." />
+<ChordExplorer
+  pitches={['C4', 'E4', 'G4']}
+  caption="C major triad: three notes — C, E, G — sounded together as a single harmonic entity."
+/>
 
-<DiagramPlaceholder description="The same C major triad shown next to a two-note dyad (C-E) and a single note (C), illustrating how adding notes builds from tone to interval to chord." />
+<figure style={{ margin: '24px auto', textAlign: 'center' }}>
+  <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+    <ChordExplorer
+      pitches={['C4']}
+      size="small"
+      showKeyboard={false}
+      showAudio={false}
+      caption="One note: a tone."
+    />
+    <ChordExplorer
+      pitches={['C4', 'E4']}
+      size="small"
+      showKeyboard={false}
+      showAudio={false}
+      caption="Two notes: a dyad (interval)."
+    />
+    <ChordExplorer
+      pitches={['C4', 'E4', 'G4']}
+      size="small"
+      showKeyboard={false}
+      showAudio={false}
+      caption="Three notes: a chord."
+    />
+  </div>
+</figure>
 
 ## The minimum definition
 

@@ -52,6 +52,12 @@ export default function RootLayout({
                  url('/Bravura.woff2') format('woff');
             font-display: block;
           }
+          @font-face {
+            font-family: 'Bravura Learn';
+            src: url('/Bravura.woff2') format('woff2');
+            font-display: swap;
+            unicode-range: U+E000-F8FF, U+1D100-1D1FF;
+          }
         `}</style>
       </head>
       <body className={`${cormorant.variable} ${jost.variable}`}>

@@ -62,9 +62,9 @@ export default function Notation({ musicXml, caption, ariaLabel, zoom = 1 }: Not
       className="nl-notation"
       role="figure"
       aria-label={ariaLabel}
-      style={{ margin: '24px 0', textAlign: 'center' }}
+      style={{ margin: '24px auto', textAlign: 'center' }}
     >
-      <div id={divId} style={{ overflowX: 'auto', width: '100%' }} />
+      <div id={divId} style={{ overflowX: 'auto', width: '100%', textAlign: 'center' }} />
       {caption && (
         <figcaption
           style={{
