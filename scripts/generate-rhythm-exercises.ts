@@ -236,8 +236,11 @@ async function main() {
 
     for (let i = 1; i <= entry.exerciseCount; i++) {
       n++
-      const title = `#${i} - ${entry.title}`
-      const safeTitle = slugify(title)
+      // The blueprint title is the final user-facing title. Sequence within a
+      // (program, category, level) tuple is communicated by `order_index`, not
+      // by an in-title "#N -" prefix.
+      const title = entry.title
+      const safeTitle = slugify(`${title}-${i}`)
       const filePath = `generated/${safeProg}/${safeCat}/${safeTitle}-${Date.now()}.mxl`
 
       const exercise = generateExercise({
@@ -265,7 +268,7 @@ async function main() {
         difficulty:    entry.difficulty,
         beats:         entry.beats,
         beat_type:     entry.beatType,
-        order_index:   i - 1,
+        order_index:   i,
         program_slug:  entry.programSlug,
         program_sort:  entry.programSort,
         category_sort: entry.categorySort,

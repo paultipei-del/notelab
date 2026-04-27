@@ -89,7 +89,8 @@ async function main() {
   for (const v of VARIANTS) {
     const dotPool: NoteValue[] = v.dotted as NoteValue[]
     for (let i = 1; i <= v.exerciseCount; i++) {
-      const title = `#${i} - ${v.baseTitle} (3/4)`
+      // Final user-facing title — sequence is communicated via order_index.
+      const title = `${v.baseTitle} (3/4)`
       // Idempotency check: do we already have this row?
       const { data: existing } = await supabase
         .from('rhythm_exercises')
@@ -115,7 +116,7 @@ async function main() {
       const filePath = `generated/${slugify(v.programSlug)}/${slugify(v.category)}/${slugify(title)}-${Date.now()}.mxl`
       const { error } = await supabase.from('rhythm_exercises').insert({
         title, category: v.category, difficulty: v.difficulty,
-        beats: v.beats, beat_type: v.beatType, order_index: i - 1,
+        beats: v.beats, beat_type: v.beatType, order_index: i,
         program_slug: v.programSlug, program_sort: v.programSort,
         category_sort: v.categorySort, level: v.level,
         file_path: filePath, file_data: base64,
