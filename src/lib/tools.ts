@@ -73,6 +73,22 @@ export const TOOLS: ToolCard[] = [
     group: 'Practice',
   },
   {
+    href: '/click-counter',
+    title: 'Click Counter',
+    desc: 'Track reps and sets during practice with targets, undo, and session summaries.',
+    badge: 'Free',
+    cta: 'Count →',
+    group: 'Practice',
+  },
+  {
+    href: '/order-of-practice',
+    title: 'Order of Practice',
+    desc: 'Practice ideas and progressions through harmonic cycles in a structured sequence.',
+    badge: 'Free',
+    cta: 'Run →',
+    group: 'Practice',
+  },
+  {
     href: '/rhythm',
     title: 'Rhythm Trainer',
     desc: 'Practice rhythmic patterns with a guided play-along — tap along to the beat or follow the notation.',
