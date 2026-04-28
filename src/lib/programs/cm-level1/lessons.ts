@@ -16,7 +16,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'letter-names-of-notes',
     number: '1',
-    title: 'Lesson 1: Letter Names of Notes',
+    title: 'Letter Names of Notes',
     subtitle: 'Treble, bass, and ledger lines',
     description:
       'Learn (and drill) the letter names on both staves, then extend your reading with a small set of ledger-line notes. You’ll practice by naming notes, placing notes on the staff, and identifying a handful of notes beyond the staff.',
@@ -28,7 +28,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'sharps-flats-and-naturals',
     number: '2',
-    title: 'Lesson 2: Sharps, Flats, and Naturals',
+    title: 'Sharps, Flats, and Naturals',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 2.',
     type: 'lesson',
@@ -39,7 +39,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'half-steps-and-whole-steps',
     number: '3',
-    title: 'Lesson 3: Half Steps and Whole Steps',
+    title: 'Half Steps and Whole Steps',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 3.',
     type: 'lesson',
@@ -50,7 +50,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'intervals',
     number: '4',
-    title: 'Lesson 4: Intervals',
+    title: 'Intervals',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 4.',
     type: 'lesson',
@@ -72,7 +72,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'major-key-signatures-c-g-d-f',
     number: '5',
-    title: 'Lesson 5: Major Key Signatures: C, G, D, and F',
+    title: 'Major Key Signatures: C, G, D, and F',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 5.',
     type: 'lesson',
@@ -83,7 +83,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'major-scales-c-g-d-f',
     number: '6',
-    title: 'Lesson 6: Major Scales: C, G, D, and F',
+    title: 'Major Scales: C, G, D, and F',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 6.',
     type: 'lesson',
@@ -105,7 +105,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'five-finger-patterns-triads-c-g-f-major-minor',
     number: '7',
-    title: 'Lesson 7: C, G, and F Major and Minor Five-Finger Patterns and Triads',
+    title: 'C, G, and F Major and Minor Five-Finger Patterns and Triads',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 7.',
     type: 'lesson',
@@ -116,7 +116,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'five-finger-patterns-triads-d-a-e-bb-major-minor',
     number: '8',
-    title: 'Lesson 8: D, A, E, and Bb Major and Minor Five-Finger Patterns and Triads',
+    title: 'D, A, E, and Bb Major and Minor Five-Finger Patterns and Triads',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 8.',
     type: 'lesson',
@@ -138,7 +138,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'triads-of-the-scale',
     number: '9',
-    title: 'Lesson 9: Triads of the Scale',
+    title: 'Triads of the Scale',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 9.',
     type: 'lesson',
@@ -149,7 +149,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'primary-triads',
     number: '10',
-    title: 'Lesson 10: Primary Triads',
+    title: 'Primary Triads',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 10.',
     type: 'lesson',
@@ -182,7 +182,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'time-signatures',
     number: '11',
-    title: 'Lesson 11: Time Signatures',
+    title: 'Time Signatures',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 11.',
     type: 'lesson',
@@ -193,7 +193,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'signs-and-terms',
     number: '12',
-    title: 'Lesson 12: Signs and Terms',
+    title: 'Signs and Terms',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 12.',
     type: 'lesson',
@@ -204,7 +204,7 @@ export const CM_LEVEL1_LESSONS: CMLevel1Lesson[] = [
   {
     slug: 'motif-and-repetition',
     number: '13',
-    title: 'Lesson 13: Motif and Repetition',
+    title: 'Motif and Repetition',
     subtitle: 'Placeholder content',
     description: 'Placeholder lesson shell for Level 1 Lesson 13.',
     type: 'lesson',
