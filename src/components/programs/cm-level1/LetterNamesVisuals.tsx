@@ -366,10 +366,12 @@ export function LedgerLineSampler() {
     return lines
   }
 
-  // Notehead size matches the Treble/Bass measure visuals on this page
-  // (NH_FS = 3 × sw). Ledger line width = 1.75 × sw — proper musical
-  // proportion, narrow enough that adjacent notes' ledgers don't collide.
-  const NH_FS = 48
+  // Notehead size: 3.5 × sw — fills ~0.875 of a staff space so the head
+  // sits comfortably centered between adjacent lines. The earlier 3 × sw
+  // (fs=48) read as visibly small in the gap. Ledger line hw=14 (1.75×sw)
+  // is the standard musical proportion and narrow enough that adjacent
+  // notes' ledgers don't collide given NOTE_AREA/4 ≈ 33 units apart.
+  const NH_FS = 56
   const LEDGER_HW = 14
 
   return (
