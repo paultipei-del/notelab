@@ -102,8 +102,12 @@ function LevelCard({ level }: { level: CMLevel }) {
     </span>
   )
 
+  // Preparatory has its own lessons hub at /programs/cm/prep — the rest still
+  // route through the generic flashcard-deck page at /programs/cm/[levelSlug].
+  const href = level.slug === 'preparatory' ? '/programs/cm/prep' : `/programs/cm/${level.slug}`
+
   return (
-    <Link href={`/programs/cm/${level.slug}`} style={{ textDecoration: 'none' }}>
+    <Link href={href} style={{ textDecoration: 'none' }}>
       <div
         className="nl-card-surface nl-tile-hover"
         style={{
