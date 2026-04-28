@@ -349,9 +349,11 @@ export function LedgerLineSampler() {
     return lines
   }
 
-  // We widened the internal staff so notes sit cleanly inside each measure,
-  // but we cap the rendered width so it doesn't *look* bigger than the Prep visuals.
-  const DISPLAY_MAX_W = 520
+  // Display cap. Earlier this was 520 — too narrow for a 4-measure grand
+  // staff, which made the rendered ledger lines and noteheads bunch up
+  // visually. 720 lets the SVG fill the available card width on the lesson
+  // page (~640px after card padding) at near 1:1 with the viewBox.
+  const DISPLAY_MAX_W = 720
 
   return (
     <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
@@ -393,7 +395,10 @@ export function LedgerLineSampler() {
             return (
               <g key={`${mi}-${p}`}>
                 {lines.map(lp => (
-                  <LedgerLine key={lp} cx={cx} cy={m.clef === 'treble' ? posToY_T(lp) : posToY_B(lp)} color={ACCENT} hw={20} />
+                  // Tightened from hw=20 — at 3-notes-per-measure spacing
+                  // (~30 viewBox units between notes), a 40-wide ledger
+                  // line ran into its neighbours.
+                  <LedgerLine key={lp} cx={cx} cy={m.clef === 'treble' ? posToY_T(lp) : posToY_B(lp)} color={ACCENT} hw={12} />
                 ))}
                 <BravuraNote cx={cx} cy={cy} color={ACCENT} fs={60} />
               </g>
