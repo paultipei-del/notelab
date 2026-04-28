@@ -367,12 +367,12 @@ export function LedgerLineSampler() {
   }
 
   // Notehead size: 3.5 × sw — fills ~0.875 of a staff space so the head
-  // sits comfortably centered between adjacent lines. The earlier 3 × sw
-  // (fs=48) read as visibly small in the gap. Ledger line hw=14 (1.75×sw)
-  // is the standard musical proportion and narrow enough that adjacent
-  // notes' ledgers don't collide given NOTE_AREA/4 ≈ 33 units apart.
+  // sits comfortably centered between adjacent lines. Ledger line hw=16
+  // (line width 32 ≈ 2 × sw, ≈ 2 × notehead width) — standard musical
+  // proportion. Adjacent notes are NOTE_AREA/4 ≈ 40 units apart, so the
+  // 32-wide ledgers leave ~8 units of clear gap between them.
   const NH_FS = 56
-  const LEDGER_HW = 14
+  const LEDGER_HW = 16
 
   return (
     <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
