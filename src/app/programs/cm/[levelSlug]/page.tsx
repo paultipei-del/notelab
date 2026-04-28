@@ -48,6 +48,7 @@ export default function CMLevelPage({ params }: Props) {
   const checkoutBundleHref = bundle
     ? `/checkout?item=${encodeURIComponent(bundle.title)}&price=${bundle.price}`
     : '/pricing'
+  const startHref = level.slug === 'level-1' ? '/programs/cm/l1' : `/study/${level.deckId}`
 
   return (
     <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
@@ -101,7 +102,7 @@ export default function CMLevelPage({ params }: Props) {
                   {cardCount} cards ready to study.
                 </p>
                 <Link
-                  href={`/study/${level.deckId}`}
+                  href={startHref}
                   style={{
                     display: 'block',
                     textAlign: 'center',
@@ -272,7 +273,7 @@ export default function CMLevelPage({ params }: Props) {
                 Ready to study {level.label}?
               </p>
               <Link
-                href={`/study/${level.deckId}`}
+                href={startHref}
                 style={{
                   display: 'inline-block',
                   padding: '12px 28px',
