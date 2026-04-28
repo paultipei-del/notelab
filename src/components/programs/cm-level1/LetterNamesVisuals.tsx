@@ -22,7 +22,7 @@ function StaffLines({ x1, x2, top, step }: { x1: number; x2: number; top: number
   )
 }
 
-function BravuraNote({ cx, cy, color = DARK, fs = 48 }: { cx: number; cy: number; color?: string; fs?: number }) {
+function BravuraNote({ cx, cy, color = DARK, fs = 52 }: { cx: number; cy: number; color?: string; fs?: number }) {
   return (
     <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={fs} fill={color} textAnchor="middle" dominantBaseline="central">
       {'\uE0A2'}
@@ -449,7 +449,7 @@ export default function LetterNamesVisuals() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div>
-          <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 400, color: DARK, margin: '0 0 8px' }}>Treble clef letter names</p>
+          <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 400, color: DARK, margin: '0 0 8px' }}>Treble Clef Letter Names</p>
           <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 12px', lineHeight: 1.7 }}>
             Here are the note letters on a treble staff. The first bar highlights the <strong style={{ color: LINE_C }}>line notes</strong>; the second bar shows the <strong style={{ color: SPACE_C }}>space notes</strong>.
           </p>
@@ -457,7 +457,7 @@ export default function LetterNamesVisuals() {
         </div>
 
         <div>
-          <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 400, color: DARK, margin: '0 0 8px' }}>Bass clef letter names</p>
+          <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 400, color: DARK, margin: '0 0 8px' }}>Bass Clef Letter Names</p>
           <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 12px', lineHeight: 1.7 }}>
             Same idea in the bass clef: one bar for <strong style={{ color: LINE_C }}>line notes</strong>, then one bar for <strong style={{ color: SPACE_C }}>space notes</strong>.
           </p>
@@ -465,7 +465,7 @@ export default function LetterNamesVisuals() {
         </div>
 
         <div>
-          <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 400, color: DARK, margin: '0 0 8px' }}>A few ledger-line examples</p>
+          <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 400, color: DARK, margin: '0 0 8px' }}>A Few Ledger-Line Examples</p>
           <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 12px', lineHeight: 1.7 }}>
             Ledger lines extend the staff when notes go higher or lower. These examples include notes below treble, above bass, above treble, and below bass.
           </p>
