@@ -288,9 +288,12 @@ export function BassLetterNamesMeasures() {
 
 // ── Visual 3: Ledger note sampler on grand staff ───────────────────────────────
 export function LedgerLineSampler() {
-  const step = 10
+  // step = half a staff-space. Matches the Treble/Bass measure visuals on
+  // the same page so all three staves render the same size — the previous
+  // step=10 made this sampler look noticeably bigger than its peers.
+  const step = 8
   const sL = 32
-  const sR = 660
+  const sR = 740
   const W = sR + 16
 
   const tTop = 30
@@ -313,26 +316,40 @@ export function LedgerLineSampler() {
   }
 
   const staffBottom = lineY_B(1)
-  const PAD_Y = 44
-  // The lowest note in the sampler is C2 (bass pos = -2), four staff-spaces
-  // below the bass staff. Sizing viewMaxY off `staffBottom` clips it; we
-  // need room for the deepest pos plus padding for the notehead + ledger
-  // lines and a margin below.
+  const PAD_Y = 36
+  // Lowest rendered note is C2 (bass pos = -2), four staff-spaces below the
+  // bass staff. The viewBox extends to it plus padding for notehead + ledgers.
   const viewMinY = posToY_T(14) - PAD_Y // top: C6 (treble pos 14)
   const viewMaxY = posToY_B(-2) + PAD_Y // bottom: C2 (bass pos -2)
   const H = viewMaxY - viewMinY
 
-  // Wider, evenly spaced measures so notes don't collide with barlines.
-  const contentLeft = sL + 110
-  const contentRight = sR - 34
-  const measureCount = 4
-  const measureW = (contentRight - contentLeft) / measureCount
+  // Measure layout. The brace + clefs sit *inside* measure 1, so it ends up
+  // wider than measures 2-4 (which carry only notes). Each measure has the
+  // same NOTE_AREA, so the three notes within each measure are positioned
+  // identically regardless of which measure they're in.
+  const CLEF_SPACE = 70                                    // clef glyph room
+  const NOTE_AREA = (sR - sL - CLEF_SPACE) / 4             // note area shared by m1-m4
+  const m1Width = CLEF_SPACE + NOTE_AREA
+  const m1NoteStart = sL + CLEF_SPACE                      // notes begin after clef in m1
 
-  const measures = [
-    { x0: contentLeft + 0 * measureW, x1: contentLeft + 1 * measureW, clef: 'treble' as const, pos: [0, -1, -2] }, // C4, B3, A3 (below treble)
-    { x0: contentLeft + 1 * measureW, x1: contentLeft + 2 * measureW, clef: 'bass' as const, pos: [12, 13, 14] }, // C4, D4, E4 (above bass)
-    { x0: contentLeft + 2 * measureW, x1: contentLeft + 3 * measureW, clef: 'treble' as const, pos: [12, 13, 14] }, // A5, B5, C6 (above treble)
-    { x0: contentLeft + 3 * measureW, x1: contentLeft + 4 * measureW, clef: 'bass' as const, pos: [0, -1, -2] }, // E2, D2, C2 (below bass)
+  type Measure = {
+    x0: number
+    x1: number
+    noteStart: number
+    noteEnd: number
+    clef: 'treble' | 'bass'
+    pos: number[]
+  }
+
+  const m2x0 = sL + m1Width
+  const m3x0 = m2x0 + NOTE_AREA
+  const m4x0 = m3x0 + NOTE_AREA
+
+  const measures: Measure[] = [
+    { x0: sL,    x1: sL + m1Width, noteStart: m1NoteStart, noteEnd: sL + m1Width, clef: 'treble', pos: [0, -1, -2] }, // C4, B3, A3 below treble
+    { x0: m2x0,  x1: m3x0,         noteStart: m2x0,        noteEnd: m3x0,         clef: 'bass',   pos: [12, 13, 14] }, // C4, D4, E4 above bass
+    { x0: m3x0,  x1: m4x0,         noteStart: m3x0,        noteEnd: m4x0,         clef: 'treble', pos: [12, 13, 14] }, // A5, B5, C6 above treble
+    { x0: m4x0,  x1: sR,           noteStart: m4x0,        noteEnd: sR,           clef: 'bass',   pos: [0, -1, -2] }, // E2, D2, C2 below bass
   ]
 
   function ledgerLinesFor(clef: 'treble' | 'bass', pos: number): number[] {
@@ -349,15 +366,15 @@ export function LedgerLineSampler() {
     return lines
   }
 
-  // Display cap. Earlier this was 520 — too narrow for a 4-measure grand
-  // staff, which made the rendered ledger lines and noteheads bunch up
-  // visually. 720 lets the SVG fill the available card width on the lesson
-  // page (~640px after card padding) at near 1:1 with the viewBox.
-  const DISPLAY_MAX_W = 720
+  // Notehead size matches the Treble/Bass measure visuals on this page
+  // (NH_FS = 3 × sw). Ledger line width = 1.75 × sw — proper musical
+  // proportion, narrow enough that adjacent notes' ledgers don't collide.
+  const NH_FS = 48
+  const LEDGER_HW = 14
 
   return (
     <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
-      <svg viewBox={`0 ${viewMinY} ${W} ${H}`} width="100%" style={{ maxWidth: DISPLAY_MAX_W, display: 'block', margin: '0 auto' }}>
+      <svg viewBox={`0 ${viewMinY} ${W} ${H}`} width="100%" style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
         {/* staff lines */}
         {[1, 2, 3, 4, 5].map(n => (
           <line key={'t' + n} x1={sL} y1={lineY_T(n)} x2={sR} y2={lineY_T(n)} stroke={DARK} strokeWidth={STROKE} />
@@ -372,8 +389,8 @@ export function LedgerLineSampler() {
         <text x={sL - 8} y={tTop + (staffBottom - tTop)} fontFamily="Bravura, serif" fontSize={staffBottom - tTop} fill={DARK} textAnchor="middle" dominantBaseline="auto">
           {'\uE000'}
         </text>
-        <TrebleClef x={sL + 4} y={tTop + 6 * step} fs={72} />
-        <BassClef x={sL + 4} y={bTop + 2 * step + 2} fs={78} />
+        <TrebleClef x={sL + 4} y={tTop + 6 * step} fs={50} />
+        <BassClef x={sL + 4} y={bTop + 2 * step + 2} fs={56} />
 
         {/* barlines */}
         {measures.slice(0, 3).map((m, i) => (
@@ -389,18 +406,17 @@ export function LedgerLineSampler() {
         {measures.flatMap((m, mi) => {
           const slots = m.pos.length + 1
           return m.pos.map((p, i) => {
-            const cx = m.x0 + ((i + 1) / slots) * (m.x1 - m.x0)
+            // Use noteStart/noteEnd (not x0/x1) so measure 1's note placement
+            // skips past the clef space and matches the spacing in m2-m4.
+            const cx = m.noteStart + ((i + 1) / slots) * (m.noteEnd - m.noteStart)
             const cy = m.clef === 'treble' ? posToY_T(p) : posToY_B(p)
             const lines = ledgerLinesFor(m.clef, p)
             return (
               <g key={`${mi}-${p}`}>
                 {lines.map(lp => (
-                  // Tightened from hw=20 — at 3-notes-per-measure spacing
-                  // (~30 viewBox units between notes), a 40-wide ledger
-                  // line ran into its neighbours.
-                  <LedgerLine key={lp} cx={cx} cy={m.clef === 'treble' ? posToY_T(lp) : posToY_B(lp)} color={ACCENT} hw={12} />
+                  <LedgerLine key={lp} cx={cx} cy={m.clef === 'treble' ? posToY_T(lp) : posToY_B(lp)} color={ACCENT} hw={LEDGER_HW} />
                 ))}
-                <BravuraNote cx={cx} cy={cy} color={ACCENT} fs={60} />
+                <BravuraNote cx={cx} cy={cy} color={ACCENT} fs={NH_FS} />
               </g>
             )
           })
