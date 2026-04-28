@@ -314,8 +314,12 @@ export function LedgerLineSampler() {
 
   const staffBottom = lineY_B(1)
   const PAD_Y = 44
-  const viewMinY = posToY_T(14) - PAD_Y // high treble ledger notes can be above y=0
-  const viewMaxY = staffBottom + PAD_Y
+  // The lowest note in the sampler is C2 (bass pos = -2), four staff-spaces
+  // below the bass staff. Sizing viewMaxY off `staffBottom` clips it; we
+  // need room for the deepest pos plus padding for the notehead + ledger
+  // lines and a margin below.
+  const viewMinY = posToY_T(14) - PAD_Y // top: C6 (treble pos 14)
+  const viewMaxY = posToY_B(-2) + PAD_Y // bottom: C2 (bass pos -2)
   const H = viewMaxY - viewMinY
 
   // Wider, evenly spaced measures so notes don't collide with barlines.
@@ -374,14 +378,16 @@ export function LedgerLineSampler() {
           <line key={i} x1={m.x1} y1={tTop} x2={m.x1} y2={staffBottom} stroke={DARK} strokeWidth={STROKE} />
         ))}
 
-        {/* notes */}
-        {measures.flatMap((m, mi) =>
-          m.pos.map((p, i) => {
-            // Keep notes away from the barlines.
-            const inset = 26
-            const left = m.x0 + inset
-            const right = m.x1 - inset
-            const cx = left + (i / 2) * (right - left)
+        {/* notes — placed at (i+1)/(n+1) of each measure so the n notes
+            are evenly spaced inside the measure with breathing room at
+            both barlines (1/4, 2/4, 3/4 for n=3). The previous formula
+            put the first/last notes at the barlines themselves, which
+            made the across-barline gap visually wider than the within-
+            measure gap. */}
+        {measures.flatMap((m, mi) => {
+          const slots = m.pos.length + 1
+          return m.pos.map((p, i) => {
+            const cx = m.x0 + ((i + 1) / slots) * (m.x1 - m.x0)
             const cy = m.clef === 'treble' ? posToY_T(p) : posToY_B(p)
             const lines = ledgerLinesFor(m.clef, p)
             return (
@@ -392,8 +398,8 @@ export function LedgerLineSampler() {
                 <BravuraNote cx={cx} cy={cy} color={ACCENT} fs={60} />
               </g>
             )
-          }),
-        )}
+          })
+        })}
       </svg>
     </div>
   )
