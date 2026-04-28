@@ -4,7 +4,7 @@ export type ToolCard = {
   desc: string
   badge: string
   cta: string
-  group: 'Drills' | 'Theory' | 'Reference'
+  group: 'Drills' | 'Theory' | 'Practice' | 'Reference'
 }
 
 export const TOOLS: ToolCard[] = [
@@ -46,7 +46,31 @@ export const TOOLS: ToolCard[] = [
     desc: 'Two-octave major and minor scale fingerings for both hands, with keyboard and staff views.',
     badge: 'Free',
     cta: 'Study →',
-    group: 'Theory',
+    group: 'Practice',
+  },
+  {
+    href: '/tap-tempo',
+    title: 'Tap Tempo Finder',
+    desc: 'Tap or press a key in time — read the BPM and the matching Italian tempo marking instantly.',
+    badge: 'Free',
+    cta: 'Tap →',
+    group: 'Practice',
+  },
+  {
+    href: '/metronome',
+    title: 'Metronome',
+    desc: 'Adjust tempo from 20–400 BPM and keep a steady pulse with keyboard and slider control.',
+    badge: 'Free',
+    cta: 'Play →',
+    group: 'Practice',
+  },
+  {
+    href: '/note-chord-generator',
+    title: 'Note & Chord Generator',
+    desc: 'Generate random notes and chord qualities with timing controls, notation modes, and filters.',
+    badge: 'Free',
+    cta: 'Start →',
+    group: 'Practice',
   },
   {
     href: '/rhythm',
@@ -74,8 +98,9 @@ export const TOOLS: ToolCard[] = [
   },
 ]
 
-export const TOOL_GROUPS: { label: 'Drills' | 'Theory' | 'Reference'; description: string }[] = [
+export const TOOL_GROUPS: { label: 'Drills' | 'Theory' | 'Practice' | 'Reference'; description: string }[] = [
   { label: 'Drills', description: 'Interactive exercises — identify and respond in real time.' },
   { label: 'Theory', description: 'Build and explore music theory concepts hands-on.' },
+  { label: 'Practice', description: 'Utilities for the practice room — keep time, find tempos, work fingerings.' },
   { label: 'Reference', description: 'Look things up — terms, fingerings, repertoire.' },
 ]
