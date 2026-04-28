@@ -417,7 +417,10 @@ const LEDGER_POOL: LedgerItem[] = [
   { note: 'C2', answer: 'C', clef: 'bass', pos: -2 },
 ]
 
-const step_G = 10
+// Scaled down from step_G=10 → 8 to match the rest of the lesson (Ex 1/2
+// inline staves and the LedgerLineSampler visual). Everything else here
+// (clef sizes, notehead size, ledger line width) follows that ratio.
+const step_G = 8
 const tTop_G = 30
 const GS_GAP = 4 * step_G
 const bTop_G = tTop_G + 12 * step_G + GS_GAP
@@ -454,10 +457,10 @@ function GrandStaffBase() {
       <text x={sL_G - 8} y={tTop_G + braceH} fontFamily="Bravura, serif" fontSize={braceH} fill={DARK} textAnchor="middle" dominantBaseline="auto">
         {'\uE000'}
       </text>
-      <text x={sL_G + 4} y={tTop_G + 6 * step_G} fontFamily="Bravura, serif" fontSize={72} fill={DARK} dominantBaseline="auto">
+      <text x={sL_G + 4} y={tTop_G + 6 * step_G} fontFamily="Bravura, serif" fontSize={56} fill={DARK} dominantBaseline="auto">
         {'\uD834\uDD1E'}
       </text>
-      <text x={sL_G + 4} y={bTop_G + 2 * step_G + 2} fontFamily="Bravura, serif" fontSize={78} fill={DARK} dominantBaseline="auto">
+      <text x={sL_G + 4} y={bTop_G + 2 * step_G + 2} fontFamily="Bravura, serif" fontSize={62} fill={DARK} dominantBaseline="auto">
         {'\uD834\uDD22'}
       </text>
     </>
@@ -466,14 +469,14 @@ function GrandStaffBase() {
 
 function GsBravuraNote({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
   return (
-    <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={72} fill={color} textAnchor="middle" dominantBaseline="central">
+    <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={56} fill={color} textAnchor="middle" dominantBaseline="central">
       {'\uE0A2'}
     </text>
   )
 }
 
 function GsLedgerLine({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
-  return <line x1={cx - 20} y1={cy} x2={cx + 20} y2={cy} stroke={color} strokeWidth={2.5} />
+  return <line x1={cx - 16} y1={cy} x2={cx + 16} y2={cy} stroke={color} strokeWidth={2} />
 }
 
 function renderLedgerLinesFor({
@@ -949,10 +952,6 @@ export default function LetterNamesLesson({ passingScore, previouslyCompleted = 
           onDone={scored}
         />
       )}
-
-      <p style={{ fontFamily: F, fontSize: 12, color: '#B0ACA4', marginTop: 18, marginBottom: 0, lineHeight: 1.6 }}>
-        Passing score: <strong style={{ color: DARK }}>{Math.round(passingScore * 100)}%</strong>
-      </p>
     </div>
   )
 }
