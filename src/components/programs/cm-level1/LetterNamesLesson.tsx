@@ -847,6 +847,19 @@ export default function LetterNamesLesson({ passingScore, previouslyCompleted = 
   const [furthestIdx, setFurthestIdx] = useState(previouslyCompleted ? Math.max(0, PHASE_ORDER.length - 1) : 0)
   const phaseScoresRef = useRef<Map<Phase, { correct: number; total: number }>>(new Map())
 
+  // The lesson page loads progress from localStorage in a useEffect, so the
+  // first render passes previouslyCompleted=false, then re-renders with it
+  // true once the store hydrates. The useState initializer above only runs
+  // on the first mount, so without this effect the Forward nav stays
+  // disabled even though the lesson is already completed. Bumping
+  // furthestIdx when the prop becomes true unlocks the Forward button on
+  // re-entry.
+  useEffect(() => {
+    if (previouslyCompleted) {
+      setFurthestIdx(idx => Math.max(idx, PHASE_ORDER.length - 1))
+    }
+  }, [previouslyCompleted])
+
   const currentIdx = PHASE_ORDER.indexOf(phase)
   const canGoBack = currentIdx > 0
   const canGoForward = currentIdx >= 0 && currentIdx < furthestIdx
