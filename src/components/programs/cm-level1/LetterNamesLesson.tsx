@@ -417,10 +417,11 @@ const LEDGER_POOL: LedgerItem[] = [
   { note: 'C2', answer: 'C', clef: 'bass', pos: -2 },
 ]
 
-// Scaled down from step_G=10 → 8 to match the rest of the lesson (Ex 1/2
-// inline staves and the LedgerLineSampler visual). Everything else here
-// (clef sizes, notehead size, ledger line width) follows that ratio.
-const step_G = 8
+// Ex 3 renders on a grand staff (two staves + gap), so even at the same
+// `step` as the single-staff visuals it ends up roughly 2× as tall on
+// screen. Pulled down to step_G=6 (sw=12) so the whole card sits at a
+// comfortable size; clef/notehead/ledger sizes follow that ratio.
+const step_G = 6
 const tTop_G = 30
 const GS_GAP = 4 * step_G
 const bTop_G = tTop_G + 12 * step_G + GS_GAP
@@ -457,10 +458,10 @@ function GrandStaffBase() {
       <text x={sL_G - 8} y={tTop_G + braceH} fontFamily="Bravura, serif" fontSize={braceH} fill={DARK} textAnchor="middle" dominantBaseline="auto">
         {'\uE000'}
       </text>
-      <text x={sL_G + 4} y={tTop_G + 6 * step_G} fontFamily="Bravura, serif" fontSize={56} fill={DARK} dominantBaseline="auto">
+      <text x={sL_G + 4} y={tTop_G + 6 * step_G} fontFamily="Bravura, serif" fontSize={44} fill={DARK} dominantBaseline="auto">
         {'\uD834\uDD1E'}
       </text>
-      <text x={sL_G + 4} y={bTop_G + 2 * step_G + 2} fontFamily="Bravura, serif" fontSize={62} fill={DARK} dominantBaseline="auto">
+      <text x={sL_G + 4} y={bTop_G + 2 * step_G + 2} fontFamily="Bravura, serif" fontSize={48} fill={DARK} dominantBaseline="auto">
         {'\uD834\uDD22'}
       </text>
     </>
@@ -469,14 +470,14 @@ function GrandStaffBase() {
 
 function GsBravuraNote({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
   return (
-    <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={56} fill={color} textAnchor="middle" dominantBaseline="central">
+    <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={44} fill={color} textAnchor="middle" dominantBaseline="central">
       {'\uE0A2'}
     </text>
   )
 }
 
 function GsLedgerLine({ cx, cy, color = DARK }: { cx: number; cy: number; color?: string }) {
-  return <line x1={cx - 16} y1={cy} x2={cx + 16} y2={cy} stroke={color} strokeWidth={2} />
+  return <line x1={cx - 12} y1={cy} x2={cx + 12} y2={cy} stroke={color} strokeWidth={1.5} />
 }
 
 function renderLedgerLinesFor({
@@ -539,10 +540,13 @@ function LedgerNameExercise({
   const cx = gsW / 2
   const cy = item.clef === 'treble' ? gsPosToY_T(item.pos) : gsPosToY_B(item.pos)
 
-  // Stable, roomy viewBox so the frame doesn't shift per note.
-  // Includes negative-Y space for high treble ledger notes (B5/C6), and extra
-  // bottom padding for low bass ledger notes (C2).
-  const VIEW_PAD = 70
+  // Stable viewBox so the frame doesn't shift per note. The bounds extend
+  // past the highest-pitch (C6, treble pos 14) and lowest-pitch (C2, bass
+  // pos -2) positions plus enough padding to fit the notehead and any
+  // ledger lines without clipping. PAD reduced from 70 to 28 — at sw=12,
+  // the notehead is ~13 units tall, so 28 leaves clear breathing room
+  // above C6 / below C2 while keeping the card height in check.
+  const VIEW_PAD = 28
   const viewMinY = Math.min(gsPosToY_T(14), gsPosToY_B(14)) - VIEW_PAD
   const viewMaxY = Math.max(gsPosToY_T(-2), gsPosToY_B(-2)) + VIEW_PAD
   const viewH = viewMaxY - viewMinY
