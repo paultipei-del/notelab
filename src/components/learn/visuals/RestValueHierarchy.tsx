@@ -21,7 +21,7 @@ const ROWS: Array<{ value: string; glyph: string; label: string; fraction: strin
 export function RestValueHierarchy({ size = 'inline', caption }: RestValueHierarchyProps) {
   const T = tokensFor(size)
   const margin = Math.round(20 * T.scale + 8)
-  const rowHeight = Math.round(56 * T.scale)
+  const rowHeight = Math.round(86 * T.scale)
   const glyphColX = Math.round(60 * T.scale)
   const labelColX = Math.round(140 * T.scale)
   const fractionColX = Math.round(360 * T.scale)

@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import { NoteValueHierarchy } from '@/components/learn/visuals/NoteValueHierarchy'
-import { FOUR_QUARTERS_4_4_XML } from './notations'
+import { BeatCountExample } from '@/components/learn/visuals/BeatCountExample'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -33,11 +32,7 @@ These visual features are called **note values**. They form a simple doubling hi
 
 <NoteValueHierarchy caption="Each note value is exactly half the duration of the one above it. The whole note holds the same time as two halves, four quarters, eight eighths (beamed in pairs), or sixteen sixteenths (beamed in groups of four)." />
 
-<Notation
-  musicXml={FOUR_QUARTERS_4_4_XML}
-  caption="Four quarter notes in a measure of 4/4 — each one gets one beat, and together they fill the measure."
-  ariaLabel="A measure of 4/4 time on a treble staff with four quarter notes."
-/>
+<BeatCountExample caption="Four quarter notes in a measure of 4/4 — each one gets one beat, and together they fill the measure. Click any to hear it." />
 
 ## The basic hierarchy
 

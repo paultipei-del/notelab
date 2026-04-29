@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import { RestValueHierarchy } from '@/components/learn/visuals/RestValueHierarchy'
-import { ALTERNATING_NOTES_RESTS_XML } from './notations'
+import { AlternatingRestsExample } from '@/components/learn/visuals/AlternatingRestsExample'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -33,11 +32,7 @@ Rests aren't empty space on the page. They're active silences — moments when t
 
 <RestValueHierarchy caption="The six common rest values. Each rest is exactly half the duration of the one above it — the same doubling hierarchy as note values, just in silence. A whole rest fills a 4/4 measure; a half rest fills two beats; and so on down." />
 
-<Notation
-  musicXml={ALTERNATING_NOTES_RESTS_XML}
-  caption="Note, rest, note, rest — four beats in 4/4 alternating. Rests take time just like notes do."
-  ariaLabel="A measure of 4/4 with four quarter-note values alternating between a pitched note and a quarter rest."
-/>
+<AlternatingRestsExample caption="Note, rest, note, rest — four beats in 4/4 alternating. Rests take time just like notes do. Click either note to hear it." />
 
 ## The basic hierarchy
 
