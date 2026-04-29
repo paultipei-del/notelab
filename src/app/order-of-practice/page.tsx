@@ -28,7 +28,6 @@ export default function OrderOfPracticePage() {
 
   const stage = STAGES[stageIdx]
   const route = stage.routes[routeIdx]
-
   const displayedRoute = useMemo(() => (reversed ? [...route].reverse() : route), [reversed, route])
 
   const switchStage = (idx: number) => {
@@ -50,6 +49,84 @@ export default function OrderOfPracticePage() {
         padding: '24px',
       }}
     >
+      <style>{`
+        .oop-pill {
+          font-family: ${F};
+          font-size: 11px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          border-radius: 999px;
+          padding: 6px 12px;
+          border: 1px solid #D8D0C4;
+          background: transparent;
+          color: #7A7060;
+          cursor: pointer;
+          transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+        }
+        .oop-pill:hover {
+          background: rgba(42, 35, 24, 0.05);
+          color: #2A2318;
+          border-color: #B8AE9C;
+        }
+        .oop-pill[data-active="true"] {
+          background: #2A2318;
+          color: #F2EDDF;
+          border-color: #2A2318;
+        }
+        .oop-pill[data-active="true"]:hover {
+          background: #1A140C;
+        }
+
+        .oop-note {
+          font-family: ${SERIF};
+          font-size: 15px;
+          line-height: 1;
+          border-radius: 999px;
+          padding: 5px 11px;
+          min-width: 38px;
+          border: 1px solid #D8D0C4;
+          background: transparent;
+          color: #2A2318;
+          cursor: pointer;
+          transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+        }
+        .oop-note:hover {
+          background: rgba(42, 35, 24, 0.05);
+          border-color: #B8AE9C;
+        }
+        .oop-note[data-active="true"] {
+          background: #2A2318;
+          color: #F2EDDF;
+          border-color: #2A2318;
+        }
+        .oop-note[data-active="true"]:hover {
+          background: #1A140C;
+        }
+
+        .oop-reverse {
+          font-family: ${F};
+          font-size: 10px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          padding: 7px 16px;
+          border: 1px solid #2A2318;
+          background: transparent;
+          color: #2A2318;
+          cursor: pointer;
+          border-radius: 999px;
+          transition: background 160ms ease, color 160ms ease;
+        }
+        .oop-reverse:hover {
+          background: rgba(42, 35, 24, 0.08);
+        }
+        .oop-reverse[data-active="true"] {
+          background: #2A2318;
+          color: #F2EDDF;
+        }
+        .oop-reverse[data-active="true"]:hover {
+          background: #1A140C;
+        }
+      `}</style>
       <div style={{ maxWidth: 980, margin: '0 auto' }}>
         <h1
           style={{
@@ -69,7 +146,7 @@ export default function OrderOfPracticePage() {
             fontSize: 14,
             lineHeight: 1.7,
             maxWidth: 760,
-            marginBottom: 20,
+            marginBottom: 24,
           }}
         >
           Use this sequence to cycle your ideas, voicings, and progressions through harmonic movement patterns.
@@ -78,102 +155,112 @@ export default function OrderOfPracticePage() {
 
         <div
           style={{
-            padding: 20,
+            padding: 28,
             marginBottom: 14,
             display: 'grid',
-            gap: 16,
+            gap: 28,
             border: '1px solid #D8D0C4',
             background: 'rgba(255,255,255,0.25)',
           }}
         >
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {STAGES.map((s, i) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => switchStage(i)}
-                style={{
-                  fontFamily: F,
-                  fontSize: 12,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  borderRadius: 999,
-                  padding: '7px 13px',
-                  border: '1px solid #CFC6B8',
-                  background: i === stageIdx ? '#2A2318' : 'transparent',
-                  color: i === stageIdx ? '#F2EDDF' : '#7A7060',
-                  cursor: 'pointer',
-                }}
-              >
-                {s.title.replace(/^\d+\.\s/, '')}
-              </button>
-            ))}
-          </div>
+          <section style={{ display: 'grid', gap: 10, justifyItems: 'center', textAlign: 'center' }}>
+            <SectionLabel>Pattern</SectionLabel>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
+              {STAGES.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="oop-pill"
+                  data-active={i === stageIdx}
+                  onClick={() => switchStage(i)}
+                >
+                  {s.title.replace(/^\d+\.\s/, '')}
+                </button>
+              ))}
+            </div>
+          </section>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-            <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060' }}>
-              Starting note
-            </span>
-            {stage.routes.map((r, i) => (
-              <button
-                key={`${stage.id}-${i}`}
-                type="button"
-                onClick={() => switchRoute(i)}
-                style={{
-                  fontFamily: SERIF,
-                  fontSize: 16,
-                  borderRadius: 999,
-                  padding: '4px 12px',
-                  border: '1px solid #CFC6B8',
-                  background: i === routeIdx ? '#2A2318' : 'transparent',
-                  color: i === routeIdx ? '#F2EDDF' : '#2A2318',
-                  cursor: 'pointer',
-                }}
-              >
-                {r[0]}
-              </button>
-            ))}
-          </div>
-          <p style={{ fontFamily: F, fontSize: 12, color: '#7A7060', marginTop: -2 }}>
-            Choose where this cycle begins. The same pattern starts from each option.
-          </p>
+          <section style={{ display: 'grid', gap: 10, justifyItems: 'center', textAlign: 'center' }}>
+            <SectionLabel>Starting note</SectionLabel>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
+              {stage.routes.map((r, i) => (
+                <button
+                  key={`${stage.id}-${i}`}
+                  type="button"
+                  className="oop-note"
+                  data-active={i === routeIdx}
+                  onClick={() => switchRoute(i)}
+                >
+                  {r[0]}
+                </button>
+              ))}
+            </div>
+          </section>
 
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ fontFamily: F, fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060' }}>
-              Play this route forward, then tap Reverse to practice the return path
-            </p>
-            <p style={{ fontFamily: SERIF, color: '#2A2318', display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', alignItems: 'baseline' }}>
+          <div style={{ borderTop: '1px solid #E2DCCE', margin: '0 -28px' }} />
+
+          <section style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+            <div
+              style={{
+                fontFamily: SERIF,
+                color: '#2A2318',
+                display: 'flex',
+                flexWrap: 'nowrap',
+                columnGap: 'clamp(4px, 1.1vw, 14px)',
+                justifyContent: 'center',
+                alignItems: 'baseline',
+                lineHeight: 1.2,
+                width: '100%',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {displayedRoute.map((note, i) => (
-                <span key={`${note}-${i}`} style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6 }}>
-                  <span style={{ fontSize: 36, lineHeight: 1 }}>{note}</span>
+                <span key={`${note}-${i}`} style={{ display: 'inline-flex', alignItems: 'baseline', gap: 'clamp(4px, 1.1vw, 14px)' }}>
+                  <span style={{ fontSize: 'clamp(13px, 2.6vw, 32px)', lineHeight: 1 }}>{note}</span>
                   {i < displayedRoute.length - 1 && (
-                    <span style={{ fontSize: 28, lineHeight: 1, color: '#A39A8D' }}>→</span>
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        fontSize: 'clamp(8px, 1.4vw, 16px)',
+                        lineHeight: 1,
+                        color: '#2A2318',
+                        opacity: 0.18,
+                      }}
+                    >
+                      —
+                    </span>
                   )}
                 </span>
               ))}
-            </p>
+            </div>
+
             <button
               type="button"
+              className="oop-reverse"
+              data-active={reversed}
               onClick={() => setReversed((v) => !v)}
-              style={{
-                marginTop: 10,
-                fontFamily: F,
-                fontSize: 11,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                padding: '8px 12px',
-                border: '1px solid #CFC6B8',
-                background: reversed ? '#2A2318' : 'transparent',
-                color: reversed ? '#F2EDDF' : '#2A2318',
-                cursor: 'pointer',
-              }}
             >
               Reverse
             </button>
-          </div>
+          </section>
         </div>
       </div>
     </div>
   )
 }
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        fontFamily: F,
+        fontSize: 11,
+        letterSpacing: '0.16em',
+        textTransform: 'uppercase',
+        color: '#9A8F7E',
+      }}
+    >
+      {children}
+    </span>
+  )
+}
