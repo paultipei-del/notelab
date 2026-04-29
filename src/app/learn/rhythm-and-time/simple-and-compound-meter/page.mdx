@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { THREE_FOUR_VS_SIX_EIGHT_XML, FOUR_FOUR_VS_TWELVE_EIGHT_XML } from './notations'
+import { MeterBeamingComparison } from '@/components/learn/visuals/MeterBeamingComparison'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -31,14 +30,20 @@ Most beginning students learn 3/4 and 6/8 and find them confusing because both h
 
 ## The visual
 
-<Notation
-  musicXml={THREE_FOUR_VS_SIX_EIGHT_XML}
+<MeterBeamingComparison
+  measures={[
+    { numerator: 3, denominator: 4, beamGroups: [2, 2, 2] },
+    { numerator: 6, denominator: 8, beamGroups: [3, 3] },
+  ]}
   caption="Six eighth notes, grouped two ways. 3/4 beams them in three pairs (three beats, each split in two). 6/8 beams them in two triplets (two beats, each split in three). Same notes, different feel."
   ariaLabel="Two measures on a treble staff. First measure in 3/4 with six beamed eighth notes grouped in three pairs. Second measure in 6/8 with six beamed eighth notes grouped in two triplets."
 />
 
-<Notation
-  musicXml={FOUR_FOUR_VS_TWELVE_EIGHT_XML}
+<MeterBeamingComparison
+  measures={[
+    { numerator: 4, denominator: 4, beamGroups: [2, 2, 2, 2] },
+    { numerator: 12, denominator: 8, beamGroups: [3, 3, 3, 3] },
+  ]}
   caption="4/4 beams eighth notes in four pairs — simple quadruple. 12/8 beams them in four triplets — compound quadruple. Both have four beats per measure; the beat divides differently."
   ariaLabel="Two measures on a treble staff. First measure in 4/4 with eight beamed eighth notes in four pairs. Second measure in 12/8 with twelve beamed eighth notes in four triplets."
 />

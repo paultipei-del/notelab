@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { DOTTED_HALF_XML, TIED_QUARTERS_XML, DOTTED_QUARTER_EIGHTH_XML } from './notations'
+import { RhythmMeasureExample } from '@/components/learn/visuals/RhythmMeasureExample'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -30,22 +29,30 @@ Dots and ties solve this. A **dot** is a small marking after a note that lengthe
 
 ## The visual
 
-<Notation
-  musicXml={DOTTED_HALF_XML}
+<RhythmMeasureExample
+  elements={[
+    { kind: 'note', value: 'half', dotted: true },
+    { kind: 'rest', value: 'quarter' },
+  ]}
   caption="A dotted half note — worth three beats in 4/4 (a half note plus half its value)."
-  ariaLabel="A single 4/4 measure on a treble staff with a dotted half note followed by a quarter rest."
 />
 
-<Notation
-  musicXml={TIED_QUARTERS_XML}
+<RhythmMeasureExample
+  elements={[
+    { kind: 'note', value: 'quarter', tieToNext: true },
+    { kind: 'note', value: 'quarter' },
+    { kind: 'rest', value: 'half' },
+  ]}
   caption="Two quarter notes tied together — played as one sustained note lasting two beats."
-  ariaLabel="A single 4/4 measure on a treble staff with two tied quarter notes followed by a half rest."
 />
 
-<Notation
-  musicXml={DOTTED_QUARTER_EIGHTH_XML}
+<RhythmMeasureExample
+  elements={[
+    { kind: 'note', value: 'quarter', dotted: true },
+    { kind: 'note', value: 'eighth' },
+    { kind: 'rest', value: 'half' },
+  ]}
   caption="A dotted quarter followed by an eighth — the classic dotted rhythm that fills two beats."
-  ariaLabel="A single 4/4 measure on a treble staff with a dotted quarter note, an eighth note, and a half rest."
 />
 
 ## Dots

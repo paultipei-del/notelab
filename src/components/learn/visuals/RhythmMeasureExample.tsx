@@ -55,10 +55,10 @@ export function RhythmMeasureExample({
   const pos = staffPosition(parsed, 'treble')
 
   const margin = Math.round(20 * T.scale + 8)
-  const staffWidth = Math.round(370 * T.scale)
+  const staffWidth = Math.round(480 * T.scale)
   const staffX = margin
   const staffY = margin + Math.round(40 * T.scale)
-  const totalH = staffY + 8 * T.step + Math.round(40 * T.scale) + margin
+  const totalH = staffY + 8 * T.step + Math.round(40 * T.scale) + 4
   const totalW = staffX + staffWidth + margin
 
   const tsX = staffX + Math.round(86 * T.scale) + 6
@@ -66,17 +66,25 @@ export function RhythmMeasureExample({
   const noteAreaEnd = staffX + staffWidth - Math.round(20 * T.scale)
   const noteAreaWidth = noteAreaEnd - noteAreaStart
 
-  // Compute beat positions for each element. Each element occupies its own
-  // duration; x is the START of that duration mapped onto the staff width.
+  // Beat-anchored positioning: every element sits at the x of its STARTING
+  // beat. Beat 1/2/3/4 (and sub-beats like 2.5) map to fixed positions that
+  // are identical across all examples on the page. A half rest at beat 3
+  // sits at the same x as a quarter note at beat 3, etc.
   const totalBeats = 4
+  // Each beat occupies 1/4 of the note area; the anchor sits at the
+  // (beat + 0.5)/4 fraction so that beat 1 and beat 4 have equal padding from
+  // the time signature and the right barline respectively.
+  const beatX = (b: number) => noteAreaStart + ((b + 0.5) / totalBeats) * noteAreaWidth
+
   let cursor = 0
   const placed = elements.map((el) => {
     const beatStart = cursor
     const dur = DURATION[el.value] * (el.dotted ? 1.5 : 1)
     cursor += dur
-    // Center the element inside its beat span
-    const xCenter = noteAreaStart + ((beatStart + dur / 2) / totalBeats) * noteAreaWidth
-    return { el, beatStart, dur, x: xCenter }
+    // Eighth notes sit 2px to the left of their beat anchor so the flag
+    // doesn't crowd whatever follows on the next beat.
+    const nudge = el.kind === 'note' && el.value === 'eighth' ? -4 : 0
+    return { el, beatStart, dur, x: beatX(beatStart) + nudge }
   })
 
   const noteY = lineY(staffY, 0, T) + pos * T.step
@@ -158,7 +166,11 @@ export function RhythmMeasureExample({
           Loading piano samples…
         </div>
       )}
-      {caption && <Caption T={T}>{caption}</Caption>}
+      {caption && (
+        <div style={{ marginTop: -2 }}>
+          <Caption T={T}>{caption}</Caption>
+        </div>
+      )}
     </figure>
   )
 }

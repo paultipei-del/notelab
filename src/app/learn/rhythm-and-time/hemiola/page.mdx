@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import { HemiolaDisplay } from '@/components/learn/visuals/HemiolaDisplay'
-import { STANDARD_THREE_FOUR_XML, HEMIOLA_THREE_FOUR_XML } from './notations'
+import { AccentedMeasures } from '@/components/learn/visuals/AccentedMeasures'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -31,14 +30,52 @@ The word *hemiola* comes from Greek — *hemiolios*, meaning "one and a half," w
 
 ## The visual
 
-<Notation
-  musicXml={STANDARD_THREE_FOUR_XML}
+<AccentedMeasures
+  measures={[
+    {
+      numerator: 3,
+      denominator: 4,
+      notes: [
+        { value: 'quarter', accent: true },
+        { value: 'quarter' },
+        { value: 'quarter' },
+      ],
+    },
+    {
+      numerator: 3,
+      denominator: 4,
+      notes: [
+        { value: 'quarter', accent: true },
+        { value: 'quarter' },
+        { value: 'quarter' },
+      ],
+    },
+  ]}
   caption="Two measures of 3/4 with standard accents — beat 1 of each measure is strong, beats 2 and 3 weaker. The natural triple-meter feel."
   ariaLabel="Two 3/4 measures on a treble staff. Each measure has three quarter notes, with an accent on the first quarter note only."
 />
 
-<Notation
-  musicXml={HEMIOLA_THREE_FOUR_XML}
+<AccentedMeasures
+  measures={[
+    {
+      numerator: 3,
+      denominator: 4,
+      notes: [
+        { value: 'quarter', accent: true },
+        { value: 'quarter' },
+        { value: 'quarter', accent: true },
+      ],
+    },
+    {
+      numerator: 3,
+      denominator: 4,
+      notes: [
+        { value: 'quarter' },
+        { value: 'quarter', accent: true },
+        { value: 'quarter' },
+      ],
+    },
+  ]}
   caption="Same two measures of 3/4, but with accents falling every other quarter note (1, 3, 5) — implying a 2+2+2 duple grouping across the six beats. The time signature hasn't changed, but the felt meter has. This is horizontal hemiola."
   ariaLabel="Two 3/4 measures on a treble staff. Six quarter notes in total, with accents on the 1st, 3rd, and 5th notes — producing a duple feel across the triple notation."
 />

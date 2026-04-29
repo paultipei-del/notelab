@@ -44,9 +44,18 @@ export function RestValueHierarchy({ size = 'inline', caption }: RestValueHierar
         {ROWS.map((row, i) => {
           const rowTop = margin + i * rowHeight
           const rowMid = rowTop + rowHeight / 2
-          const dy = row.isWhole ? -Math.round(8 * T.scale)
-            : row.isHalf ? -Math.round(4 * T.scale)
+          const dy = row.isWhole ? 0
+            : row.isHalf ? Math.round(3 * T.scale)
             : 0
+          // Reference staff-line for whole and half rests so the reader can
+          // see which one hangs (whole, line above) and which sits (half,
+          // line below — looks like a hat).
+          const refLineHalfWidth = Math.round(16 * T.scale)
+          const refLineY = row.isWhole
+            ? rowMid + dy - Math.round(T.noteheadFontSize * 0.02) + 0.5
+            : row.isHalf
+            ? rowMid + dy + Math.round(T.noteheadFontSize * 0.02) - 1
+            : null
           return (
             <g key={row.value}>
               {/* Row hairline (skip first) */}
@@ -58,6 +67,17 @@ export function RestValueHierarchy({ size = 'inline', caption }: RestValueHierar
                   y2={rowTop}
                   stroke={'#DDD8CA'}
                   strokeWidth={1}
+                />
+              )}
+              {/* Reference staff line for whole/half rests */}
+              {refLineY !== null && (
+                <line
+                  x1={margin + glyphColX - refLineHalfWidth}
+                  y1={refLineY}
+                  x2={margin + glyphColX + refLineHalfWidth}
+                  y2={refLineY}
+                  stroke={T.ink}
+                  strokeWidth={Math.max(1, Math.round(1.4 * T.scale))}
                 />
               )}
               {/* Glyph */}

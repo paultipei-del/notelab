@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import { SyncopationPattern } from '@/components/learn/visuals/SyncopationPattern'
-import { STANDARD_ACCENTS_XML, SYNCOPATED_ACCENTS_XML } from './notations'
+import { AccentedMeasures } from '@/components/learn/visuals/AccentedMeasures'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -31,14 +30,37 @@ Every measure has strong beats and weak beats. In 4/4, beats 1 and 3 are strong;
 
 ## The visual
 
-<Notation
-  musicXml={STANDARD_ACCENTS_XML}
+<AccentedMeasures
+  measures={[{
+    numerator: 4,
+    denominator: 4,
+    notes: [
+      { value: 'quarter', accent: true },
+      { value: 'quarter' },
+      { value: 'quarter', accent: true },
+      { value: 'quarter' },
+    ],
+  }]}
   caption="A standard 4/4 accent pattern — accents fall on beats 1 and 3 (the strong beats). This is the default rhythmic hierarchy the ear expects."
   ariaLabel="A 4/4 measure on a treble staff with four quarter notes. Beats 1 and 3 have accent marks; beats 2 and 4 do not."
 />
 
-<Notation
-  musicXml={SYNCOPATED_ACCENTS_XML}
+<AccentedMeasures
+  measures={[{
+    numerator: 4,
+    denominator: 4,
+    notes: [
+      { value: 'eighth' },
+      { value: 'eighth' },
+      { value: 'eighth' },
+      { value: 'eighth', accent: true },
+      { value: 'eighth' },
+      { value: 'eighth' },
+      { value: 'eighth' },
+      { value: 'eighth', accent: true },
+    ],
+    beamGroups: [2, 2, 2, 2],
+  }]}
   caption="A syncopated 4/4 pattern — accents fall on the 'and' of 2 and the 'and' of 4 (the weakest eighth-note positions). The ear is pulled to where accents don't belong, producing the syncopated push."
   ariaLabel="A 4/4 measure on a treble staff with eight beamed eighth notes. The fourth and eighth eighth notes (the offbeats between beats 2-3 and 4-1) have accent marks."
 />

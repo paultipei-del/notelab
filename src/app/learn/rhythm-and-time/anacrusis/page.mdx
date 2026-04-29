@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import { AnacrusisExample } from '@/components/learn/visuals/AnacrusisExample'
-import { ANACRUSIS_EXAMPLE_XML } from './notations'
+import { SimpleAnacrusisExample } from '@/components/learn/visuals/SimpleAnacrusisExample'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -29,8 +28,7 @@ That running start is called an **anacrusis** — from the Greek for "striking u
 
 ## The visual
 
-<Notation
-  musicXml={ANACRUSIS_EXAMPLE_XML}
+<SimpleAnacrusisExample
   caption="An eighth-note pickup (G) leads into the first full measure. The pickup takes half a beat; the downbeat — the first note of the full measure — is the destination it reaches."
   ariaLabel="A treble staff with a short pickup measure containing a single eighth note on G, followed by a full 4/4 measure with four quarter notes descending from C5 to G4."
 />

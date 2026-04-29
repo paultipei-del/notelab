@@ -14,20 +14,20 @@ interface TieProps {
 }
 
 export function Tie({ x1, x2, y, direction = 'over', T }: TieProps) {
-  const offset = Math.round(8 * T.scale)
-  const arcSign = direction === 'over' ? -1 : 1
-  const ctrlY = y + arcSign * offset
-  const startY = y + arcSign * Math.round(2 * T.scale)
-  const endY = startY
-  // Quadratic bezier with control point offset perpendicular for the arc.
-  const path = `M ${x1} ${startY} Q ${(x1 + x2) / 2} ${ctrlY}, ${x2} ${endY}`
-  return (
-    <path
-      d={path}
-      fill="none"
-      stroke={T.ink}
-      strokeWidth={Math.max(1, Math.round(1.4 * T.scale))}
-      strokeLinecap="round"
-    />
-  )
+  const sign = direction === 'over' ? -1 : 1
+  const span = Math.abs(x2 - x1)
+  // Endpoints sit just inside the noteheads, slightly offset away from the heads.
+  const inset = Math.max(2, Math.round(2 * T.scale))
+  const sx1 = x1 + inset
+  const sx2 = x2 - inset
+  const midX = (sx1 + sx2) / 2
+  // Outer arc and inner arc — difference creates the tapered "lens" thickness.
+  const arc = Math.max(8, Math.round(span * 0.22 + 4 * T.scale))
+  const thickness = Math.max(2.2, +(2.6 * T.scale + 1.2).toFixed(2))
+  const startY = y
+  const outerCY = y + sign * arc
+  const innerCY = y + sign * (arc - thickness)
+  // Closed path: outer curve out, inner curve back. Filled (no stroke) for a clean lens.
+  const d = `M ${sx1} ${startY} Q ${midX} ${outerCY}, ${sx2} ${startY} Q ${midX} ${innerCY}, ${sx1} ${startY} Z`
+  return <path d={d} fill={T.ink} stroke="none" />
 }

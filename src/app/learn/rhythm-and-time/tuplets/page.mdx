@@ -1,7 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { TupletDemo } from '@/components/learn/visuals/TupletDemo'
-import { TRIPLET_IN_QUARTER_XML, DUPLET_IN_SIX_EIGHT_XML } from './notations'
+import { TripletInMeasure } from '@/components/learn/visuals/TripletInMeasure'
+import { QuintupletInMeasure } from '@/components/learn/visuals/QuintupletInMeasure'
+import { DupletInSixEight } from '@/components/learn/visuals/DupletInSixEight'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -33,19 +33,17 @@ Tuplets make rhythm flexible. Instead of being locked into the time signature's 
 
 ## The visual
 
-<Notation
-  musicXml={TRIPLET_IN_QUARTER_XML}
+<TripletInMeasure
   caption="An eighth-note triplet on beat 2 of a 4/4 measure — three notes squeezed into the space normally filled by two eighths. Marked with the '3' above the group."
   ariaLabel="A 4/4 measure on a treble staff. Beat 1 is a quarter note, beat 2 is an eighth-note triplet (three notes), beats 3 and 4 are quarter notes."
 />
 
-<TupletDemo
-  count={5}
-  caption="A quintuplet: five notes in the space of four sixteenths. The bracket and the number 5 above the beamed group tell you the unusual subdivision. Click play to hear the five-against-four feel."
+<QuintupletInMeasure
+  caption="A 4/4 measure with two quintuplets — five notes squeezed into the space of four sixteenths, twice — separated by single quarter notes. The bracketed '5' marks each unusual subdivision. Click any note or press play to hear the five-against-four feel."
+  ariaLabel="A 4/4 measure on a treble staff: a quintuplet of five beamed sixteenths, a quarter note, another quintuplet, and a final quarter note."
 />
 
-<Notation
-  musicXml={DUPLET_IN_SIX_EIGHT_XML}
+<DupletInSixEight
   caption="A duplet in 6/8 — two notes filling beat 2 (a dotted quarter), where three eighths would normally go. The mirror image of a triplet."
   ariaLabel="A 6/8 measure on a treble staff. Beat 1 is a dotted quarter note. Beat 2 is a duplet of two eighth notes marked with the number 2."
 />

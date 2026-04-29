@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import { PulseTimeline } from '@/components/learn/visuals/PulseTimeline'
-import { FOUR_BEATS_XML } from './notations'
+import { BeatCountStaff } from '@/components/learn/visuals/BeatCountStaff'
 
 export const learnPage = {
   topic: 'rhythm-and-time',
@@ -31,8 +30,8 @@ Before any notation, before any theory, pulse and beat are how music organizes t
 
 ## The visual
 
-<Notation
-  musicXml={FOUR_BEATS_XML}
+<BeatCountStaff
+  measures={[{ numerator: 4, denominator: 4, counts: [1, 2, 3, 4] }]}
   caption="Four evenly spaced quarter notes in 4/4 — one per beat. The numbers beneath show the beat count."
   ariaLabel="A single measure of 4/4 time on a treble staff with four quarter notes, each labeled 1, 2, 3, or 4."
 />

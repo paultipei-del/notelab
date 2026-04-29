@@ -28,7 +28,7 @@ function numberToGlyphs(n: number): string {
 export function TimeSignature({ numerator, denominator, x, staffTop, T }: TimeSignatureProps) {
   const numY = staffTop + T.step * 2
   const denY = staffTop + T.step * 6
-  const fontSize = Math.round(T.noteheadFontSize * 1.05)
+  const fontSize = Math.round(T.noteheadFontSize * 0.96)
   return (
     <g aria-label={`Time signature ${numerator} over ${denominator}`}>
       <text

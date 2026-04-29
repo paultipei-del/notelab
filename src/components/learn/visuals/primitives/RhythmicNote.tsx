@@ -66,8 +66,8 @@ export function RhythmicNote({
       : (value === 'eighth' ? FLAG_DOWN_8 : FLAG_DOWN_16))
     : null
 
-  const dotX = x + Math.round(14 * T.scale)
-  const dotY = y - Math.round(2 * T.scale)
+  const dotX = x + Math.round(T.noteheadFontSize * 0.32)
+  const dotY = y - Math.round(3 * T.scale)
 
   return (
     <g
@@ -99,13 +99,13 @@ export function RhythmicNote({
       )}
       {flagGlyph && (
         <text
-          x={stemX}
-          y={stemY2}
-          fontSize={T.noteheadFontSize}
+          x={stemX - 0.5}
+          y={stemUp ? stemY2 : stemY2 + Math.round(10 * T.scale)}
+          fontSize={Math.round(T.noteheadFontSize * 0.9)}
           fontFamily={T.fontMusic}
           fill={fill}
           textAnchor="start"
-          dominantBaseline={stemUp ? 'hanging' : 'auto'}
+          dominantBaseline="auto"
         >
           {flagGlyph}
         </text>
