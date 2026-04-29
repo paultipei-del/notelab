@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { PitchDirectionKeyboard } from '@/components/learn/visuals/PitchDirectionKeyboard'
+import { PitchFrequencyNote } from '@/components/learn/visuals/PitchFrequencyNote'
 
 export const learnPage = {
   topic: 'sound-and-hearing',
@@ -27,9 +29,9 @@ Most of the time, higher frequency means higher pitch and lower frequency means 
 
 ## The visual
 
-<DiagramPlaceholder description="Keyboard with arrows — left labeled 'lower pitch', right labeled 'higher pitch'." />
+<PitchDirectionKeyboard caption="Pitch maps to position on the keyboard. Move left and the pitch goes lower; move right and it goes higher. The brain learns this mapping early, even before any musical training." />
 
-<DiagramPlaceholder description="Single note on a staff (A4 at 440 Hz) with its frequency labeled beneath." />
+<PitchFrequencyNote caption="A4 — the standard reference pitch. When an orchestra tunes before a concert, this is the note they tune to: 440 vibrations per second." />
 
 ## Frequency and perception
 

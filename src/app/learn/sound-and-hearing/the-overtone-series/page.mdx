@@ -1,8 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
-import { OVERTONE_SERIES_XML } from './notations'
+import { OvertoneSeries } from '@/components/learn/visuals/OvertoneSeries'
 
 export const learnPage = {
   topic: 'sound-and-hearing',
@@ -30,13 +29,17 @@ This isn't an acoustic curiosity. The overtone series is the reason certain note
 
 ## The visual
 
-<Notation
-  musicXml={OVERTONE_SERIES_XML}
+<OvertoneSeries
+  fundamental={36}
+  partialCount={16}
   caption="The first sixteen overtones above a C2 fundamental, on a grand staff. The outline of the first eight — C, C, G, C, E, G, B♭, C — is a dominant seventh chord built into the physics of a single tone. The 7th, 11th, and 14th partials (B♭, F♯, B♭) are slightly flat of their equal-temperament equivalents in pure just intonation; the notation shows conventional spelling."
-  ariaLabel="First sixteen overtones of a C2 fundamental on a grand staff. Bass staff: C2, C3, G3, C4. Treble staff: E4, G4, B-flat 4, C5, D5, E5, F-sharp 5, G5, A5, B-flat 5, B5, C6."
 />
 
-<Diagram src="/diagrams/overtone-series.svg" caption="The first eight partials above a fundamental of C2." />
+<OvertoneSeries
+  fundamental={36}
+  partialCount={8}
+  caption="The first eight partials above a fundamental of C2."
+/>
 
 ## How the series works
 

@@ -3,6 +3,7 @@ import Notation from '@/components/learn/Notation'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
 import { CONSONANT_AND_DISSONANT_DYADS_XML } from './notations'
+import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
 
 export const learnPage = {
   topic: 'sound-and-hearing',
@@ -30,11 +31,22 @@ This isn't a matter of taste. There's a physical reason some intervals sound sta
 
 ## The visual
 
-<Notation
-  musicXml={CONSONANT_AND_DISSONANT_DYADS_XML}
-  caption="Left: a perfect fifth (C and G) — consonant. Right: a minor second (C and D♭) — dissonant."
-  ariaLabel="Two dyads on a treble staff. First measure: C and G stacked (perfect fifth). Second measure: C and D-flat stacked (minor second)."
-/>
+<figure style={{ margin: '24px auto', textAlign: 'center' }}>
+  <div style={{ display: 'flex', gap: 32, justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+    <ChordExplorer
+      pitches={['C4', 'G4']}
+      size="small"
+      showKeyboard={false}
+      caption="Perfect fifth — C and G. Frequency ratio 3:2. Consonant: the overtones line up cleanly."
+    />
+    <ChordExplorer
+      pitches={['C4', 'Db4']}
+      size="small"
+      showKeyboard={false}
+      caption="Minor second — C and D♭. Frequency ratio 16:15. Dissonant: the close pitches produce noticeable beating."
+    />
+  </div>
+</figure>
 
 <Diagram src="/diagrams/consonance-spectrum.svg" caption="Intervals plotted from most consonant (left) to most dissonant (right)." />
 
