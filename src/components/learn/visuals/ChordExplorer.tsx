@@ -89,6 +89,46 @@ export function ChordExplorer({
     ? stemAnchorY - stemExtension
     : stemAnchorY + stemExtension
 
+    // Engraving rule for chord noteheads a 2nd apart:
+    // Notes one staff position apart cannot share an x-coordinate. They must
+    // straddle the stem.
+    //
+    // Convention (Gould "Behind Bars", Ross "Art of Music Engraving"):
+    //   stem-up:   normal side = LEFT of stem.  displaced side = RIGHT of stem.
+    //   stem-down: normal side = RIGHT of stem. displaced side = LEFT of stem.
+    //
+    // Walk order: ANCHOR -> TIP. For stem-up the anchor is the lowest note
+    // (largest staffPos), so walk from largest pos to smallest. For stem-down
+    // the anchor is the highest note (smallest pos), so walk from smallest to
+    // largest. The first (anchor) note is always on normal. As we walk, every
+    // note that's a 2nd from its neighbor in walk-order alternates sides.
+    //
+    // staffPos convention here: smaller pos = higher pitch on the staff.
+    // (This matches the existing `positions` array used elsewhere in this file.)
+    const noteheadWidth = Math.round(11 * T.scale)
+    const displacementOffset = stemUp ? noteheadWidth : -noteheadWidth
+    const noteXs: number[] = parsed.map(() => chordX)
+    const isDisplaced: boolean[] = parsed.map(() => false)
+
+    // Build walk order from ANCHOR side toward TIP side.
+    const indices = parsed.map((_, i) => i)
+    const walkOrder = stemUp
+      ? indices.slice().sort((a, b) => positions[b] - positions[a])  // bottom-to-top: largest pos first
+      : indices.slice().sort((a, b) => positions[a] - positions[b])  // top-to-bottom: smallest pos first
+
+    for (let w = 1; w < walkOrder.length; w++) {
+      const currentIdx = walkOrder[w]
+      const prevIdx = walkOrder[w - 1]
+      const positionDiff = Math.abs(positions[currentIdx] - positions[prevIdx])
+      // Only displace if a 2nd AND the previous note is on the normal side.
+      // If the previous one was displaced, the current goes back to normal —
+      // alternation handles clusters like C-D-E correctly.
+      if (positionDiff === 1 && !isDisplaced[prevIdx]) {
+        isDisplaced[currentIdx] = true
+        noteXs[currentIdx] = chordX + displacementOffset
+      }
+    }
+
   // Vertical extent for layout: track lowest visible pixel below staff
   const staffBottom = staffY + 8 * T.step
   const lowestNoteY = staffY + maxPos * T.step + T.noteheadHalfHeight
@@ -152,7 +192,7 @@ export function ChordExplorer({
                 key={p.midi}
                 pitch={pitches[i]}
                 staffTop={staffY}
-                x={chordX}
+                x={noteXs[i]}
                 clef={resolvedClef}
                 T={T}
                 noStem

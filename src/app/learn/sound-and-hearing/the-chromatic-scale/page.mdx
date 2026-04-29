@@ -1,7 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import { CHROMATIC_SCALE_XML } from './notations'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 
 export const learnPage = {
   topic: 'sound-and-hearing',
@@ -36,13 +34,12 @@ The chromatic scale is the background, the master set. Understanding it is under
 
 ## The visual
 
-<Notation
-  musicXml={CHROMATIC_SCALE_XML}
-  caption="One octave of the chromatic scale ascending from C to C, spelled with sharps. Twelve half steps, thirteen notes total."
-  ariaLabel="Chromatic scale ascending from C4 to C5 on a treble staff, spelled with sharps: C, C-sharp, D, D-sharp, E, F, F-sharp, G, G-sharp, A, A-sharp, B, C."
+<ScaleExplorer
+  scale="chromatic"
+  tonic={60}
+  pitches={['C4','C#4','D4','D#4','E4','F4','F#4','G4','G#4','A4','A#4','B4','C5']}
+  caption="The chromatic scale — twelve equally-spaced pitches that fill the octave. Ascending convention uses sharps: C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B, C. Each step is one half step. Click any note to hear it."
 />
-
-<DiagramPlaceholder description="A piano keyboard showing one octave, with all twelve keys labeled." />
 
 ## How the chromatic scale is built
 

@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { PitchClassClock } from '@/components/learn/visuals/PitchClassClock'
 import { FOUR_CS_STACKED_XML } from './notations'
 
 export const learnPage = {
@@ -37,7 +37,10 @@ That sense of sameness across octaves is what **pitch class** formalizes. It's h
   ariaLabel="Grand staff showing four Cs stacked vertically: C2 and C3 on the bass staff, C4 and C5 on the treble staff."
 />
 
-<DiagramPlaceholder description="A piano keyboard with all the Cs highlighted across seven octaves." />
+<PitchClassClock
+  highlightedPitchClasses={['C']}
+  caption="The twelve pitch classes form a cycle. C sits at the top; each step clockwise is one half step. After B the cycle returns to C — but one octave higher. Notes an octave apart share a pitch class, which is why we give them the same letter name."
+/>
 
 ## What makes the octave special
 

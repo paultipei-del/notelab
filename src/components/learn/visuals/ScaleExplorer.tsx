@@ -70,6 +70,14 @@ interface ScaleExplorerProps {
    */
   intervals?: number[]
   /**
+   * Explicit pitch spellings (e.g. ['C4','Db4','D4',...]). When provided,
+   * overrides the auto-derived names from MIDI. Length must match the resolved
+   * scale length; if mismatched, a console.warn is emitted and the override
+   * is ignored. Use this to spell descending chromatic with flats, or any
+   * key-context-sensitive spelling the default sharps-biased namer can't infer.
+   */
+  pitches?: string[]
+  /**
    * MIDI numbers within the scale to render in muted gray.
    * Used for showing "scale minus omitted notes" pedagogy
    * (e.g. C major pentatonic = C major with F and B dimmed).
@@ -97,6 +105,7 @@ export function ScaleExplorer({
   tonic = 60,
   scale = 'major',
   intervals,
+  pitches,
   dimmedMidis = [],
   clef,
   size = 'inline',
@@ -116,7 +125,15 @@ export function ScaleExplorer({
   const resolvedIntervals = intervals ?? SCALE_PRESETS[scale]
   const resolvedClef: Clef = clef ?? (tonic >= 60 ? 'treble' : 'bass')
   const scaleMidis = resolvedIntervals.map(i => tonic + i)
-  const scalePitches = scaleMidis.map(midiToPitch)
+  if (pitches && pitches.length !== scaleMidis.length) {
+    console.warn(
+      `ScaleExplorer: pitches length ${pitches.length} doesn't match scale length ${scaleMidis.length}; falling back to auto-derived spellings.`
+    )
+  }
+  const scalePitches =
+    pitches && pitches.length === scaleMidis.length
+      ? pitches
+      : scaleMidis.map(midiToPitch)
   const dimmedSet = new Set(dimmedMidis)
 
   // Auto-caption when none provided
@@ -131,8 +148,12 @@ export function ScaleExplorer({
   // multiple ScaleExplorers need to fit in a single row.
   const noteCount = (intervals ?? SCALE_PRESETS[scale]).length
   const compactStaffWidth = T.clefReserve + Math.round(28 * T.scale * noteCount) + Math.round(16 * T.scale)
+  // Long scales (chromatic, octatonic) crowd noteheads at the keyboard-derived width.
+  // Floor the staff at a comfortable per-note minimum so notes don't collide.
+  const minPerNoteWidth = Math.round(70 * T.scale)
+  const minStaffForNotes = T.clefReserve + minPerNoteWidth * noteCount + Math.round(16 * T.scale)
   const innerWidth = showKeyboard
-    ? Math.max(420, T.keyboardWhiteKeyWidth * 7 + 80)
+    ? Math.max(420, T.keyboardWhiteKeyWidth * 7 + 80, minStaffForNotes)
     : compactStaffWidth
   const staffX = margin
   const staffWidth = innerWidth
@@ -196,8 +217,8 @@ export function ScaleExplorer({
             <Staff clef={resolvedClef} x={staffX} y={staffY} width={staffWidth} T={T} />
             {scaleMidis.map((midi, i) => (
               <NoteHead
-                key={midi}
-                pitch={midiToPitch(midi)}
+                key={`${midi}-${i}`}
+                pitch={scalePitches[i]}
                 staffTop={staffY}
                 x={noteXs[i]}
                 clef={resolvedClef}
@@ -207,7 +228,7 @@ export function ScaleExplorer({
                 onMouseEnter={() => highlight(midi)}
                 onMouseLeave={() => highlight(null)}
                 onClick={() => handleNotePlay(midi)}
-                ariaLabel={`Scale degree ${i + 1}, ${midiToPitch(midi)}`}
+                ariaLabel={`Scale degree ${i + 1}, ${scalePitches[i]}`}
               />
             ))}
             {showDegrees && degreeY !== null && scaleMidis.map((midi, i) => {
