@@ -1,0 +1,758 @@
+[
+  {
+    "term": "Largo",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "broad, wide",
+    "meaning": "very slow and broad",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "Larghetto",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "somewhat broad",
+    "meaning": "slow, but faster than Largo",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Grave",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "grave, serious",
+    "meaning": "very slow and solemn",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical"]
+  },
+  {
+    "term": "Lento",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "slow",
+    "meaning": "slow",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic", "modern"]
+  },
+  {
+    "term": "Adagio",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "at ease",
+    "meaning": "slow and stately",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "Adagietto",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "somewhat at ease",
+    "meaning": "slightly faster than Adagio",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "Andante",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "walking",
+    "meaning": "at a walking pace",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic", "modern"]
+  },
+  {
+    "term": "Andantino",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "little walking",
+    "meaning": "slightly faster than Andante",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Moderato",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "moderate",
+    "meaning": "at a moderate speed",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic", "modern"]
+  },
+  {
+    "term": "Allegretto",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "somewhat lively",
+    "meaning": "moderately fast, lighter than Allegro",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Allegro",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "cheerful, lively",
+    "meaning": "fast and bright",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic", "modern"]
+  },
+  {
+    "term": "Vivace",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "lively",
+    "meaning": "lively and fast",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Presto",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "quick",
+    "meaning": "very fast",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "Prestissimo",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "very quick",
+    "meaning": "as fast as possible",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Sostenuto",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "sustained",
+    "meaning": "sustained, often slightly slower",
+    "abbreviation": "sost.",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Con moto",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "with motion",
+    "meaning": "with motion, moving forward",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Allegro moderato",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "moderately lively",
+    "meaning": "moderately fast",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Allegro vivace",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "lively and fast",
+    "meaning": "fast and lively",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Allegro non troppo",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "fast but not too much",
+    "meaning": "fast, but not too fast",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Allegro assai",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "very fast",
+    "meaning": "very fast",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Andante maestoso",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "walking, majestically",
+    "meaning": "walking pace, with majesty",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "Tempo giusto",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "exact tempo",
+    "meaning": "in strict, precise tempo",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "A tempo",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "in time",
+    "meaning": "return to the original tempo",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic", "modern"]
+  },
+  {
+    "term": "L'istesso tempo",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "the same tempo",
+    "meaning": "the same tempo as before",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Tempo primo",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "first tempo",
+    "meaning": "return to the original tempo",
+    "abbreviation": "Tempo I",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Più mosso",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "more motion",
+    "meaning": "faster, more movement",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "Meno mosso",
+    "language": "italian",
+    "category": "tempo",
+    "literal": "less motion",
+    "meaning": "slower, less movement",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "accelerando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "accelerating",
+    "meaning": "gradually speeding up",
+    "abbreviation": "accel.",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "ritardando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "delaying",
+    "meaning": "gradually slowing down",
+    "abbreviation": "rit.",
+    "common_era": ["classical", "romantic", "modern"]
+  },
+  {
+    "term": "ritenuto",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "held back",
+    "meaning": "immediately slower, held back",
+    "abbreviation": "riten.",
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "stringendo",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "tightening",
+    "meaning": "pressing forward, speeding up",
+    "abbreviation": "string.",
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "rallentando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "slowing",
+    "meaning": "gradually slowing down",
+    "abbreviation": "rall.",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "allargando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "broadening",
+    "meaning": "slowing and broadening, often with more intensity",
+    "abbreviation": "allarg.",
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "calando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "falling off",
+    "meaning": "gradually slowing and softening",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "smorzando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "extinguishing",
+    "meaning": "dying away in tempo and volume",
+    "abbreviation": "smorz.",
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "morendo",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "dying",
+    "meaning": "dying away, fading",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "slentando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "slowing",
+    "meaning": "gradually slowing down",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "incalzando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "pressing, chasing",
+    "meaning": "pressing forward, getting faster and more intense",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "affrettando",
+    "language": "italian",
+    "category": "tempo-modification",
+    "literal": "hurrying",
+    "meaning": "hurrying, rushing the tempo",
+    "abbreviation": "affrett.",
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "poco a poco",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "little by little",
+    "meaning": "little by little, gradually",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "subito",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "suddenly",
+    "meaning": "suddenly",
+    "abbreviation": "sub.",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "molto",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "very, much",
+    "meaning": "very, much",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "poco",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "a little",
+    "meaning": "a little, slightly",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "meno",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "less",
+    "meaning": "less",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "più",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "more",
+    "meaning": "more",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "assai",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "very",
+    "meaning": "very, extremely",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "sempre",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "always",
+    "meaning": "always, continuously",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "non troppo",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "not too much",
+    "meaning": "not too much",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "ma non",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "but not",
+    "meaning": "but not (as in 'Allegro ma non troppo')",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "quasi",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "almost, as if",
+    "meaning": "almost, as if (e.g., quasi recitativo)",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "come",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "like, as",
+    "meaning": "like, as (e.g., come prima — as before)",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "senza",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "without",
+    "meaning": "without (e.g., senza pedale — without pedal)",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "con",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "with",
+    "meaning": "with",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "simile",
+    "language": "italian",
+    "category": "modifier",
+    "literal": "similar",
+    "meaning": "continue in the same manner",
+    "abbreviation": "sim.",
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "dolce",
+    "language": "italian",
+    "category": "character",
+    "literal": "sweet",
+    "meaning": "sweetly, tenderly",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "espressivo",
+    "language": "italian",
+    "category": "character",
+    "literal": "expressive",
+    "meaning": "with expression",
+    "abbreviation": "espr.",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "cantabile",
+    "language": "italian",
+    "category": "character",
+    "literal": "singable",
+    "meaning": "in a singing style",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic"]
+  },
+  {
+    "term": "legato",
+    "language": "italian",
+    "category": "character",
+    "literal": "tied, bound",
+    "meaning": "smooth and connected",
+    "abbreviation": null,
+    "common_era": ["baroque", "classical", "romantic", "modern"]
+  },
+  {
+    "term": "staccato",
+    "language": "italian",
+    "category": "character",
+    "literal": "detached",
+    "meaning": "short and detached",
+    "abbreviation": "stacc.",
+    "common_era": ["baroque", "classical", "romantic", "modern"]
+  },
+  {
+    "term": "leggiero",
+    "language": "italian",
+    "category": "character",
+    "literal": "light",
+    "meaning": "light, airy",
+    "abbreviation": "legg.",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "marcato",
+    "language": "italian",
+    "category": "character",
+    "literal": "marked",
+    "meaning": "marked, stressed",
+    "abbreviation": "marc.",
+    "common_era": ["classical", "romantic", "modern"]
+  },
+  {
+    "term": "grazioso",
+    "language": "italian",
+    "category": "character",
+    "literal": "graceful",
+    "meaning": "gracefully",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "pesante",
+    "language": "italian",
+    "category": "character",
+    "literal": "heavy",
+    "meaning": "heavy, weighty",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "con brio",
+    "language": "italian",
+    "category": "character",
+    "literal": "with spirit",
+    "meaning": "with vigor and spirit",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "energico",
+    "language": "italian",
+    "category": "character",
+    "literal": "energetic",
+    "meaning": "energetically",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "tranquillo",
+    "language": "italian",
+    "category": "character",
+    "literal": "calm",
+    "meaning": "calmly, peacefully",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "semplice",
+    "language": "italian",
+    "category": "character",
+    "literal": "simple",
+    "meaning": "simply, plainly",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "sotto voce",
+    "language": "italian",
+    "category": "character",
+    "literal": "under the voice",
+    "meaning": "in a hushed, subdued tone",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "risoluto",
+    "language": "italian",
+    "category": "character",
+    "literal": "resolute",
+    "meaning": "boldly, with determination",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "scherzando",
+    "language": "italian",
+    "category": "character",
+    "literal": "joking",
+    "meaning": "playfully",
+    "abbreviation": "scherz.",
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "maestoso",
+    "language": "italian",
+    "category": "character",
+    "literal": "majestic",
+    "meaning": "majestically",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "mesto",
+    "language": "italian",
+    "category": "character",
+    "literal": "sad",
+    "meaning": "sadly, mournfully",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "lamentoso",
+    "language": "italian",
+    "category": "character",
+    "literal": "lamenting",
+    "meaning": "mournfully",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "misterioso",
+    "language": "italian",
+    "category": "character",
+    "literal": "mysterious",
+    "meaning": "mysteriously",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "agitato",
+    "language": "italian",
+    "category": "character",
+    "literal": "agitated",
+    "meaning": "agitated, restless",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "appassionato",
+    "language": "italian",
+    "category": "character",
+    "literal": "impassioned",
+    "meaning": "passionately",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "capriccioso",
+    "language": "italian",
+    "category": "character",
+    "literal": "capricious",
+    "meaning": "capriciously, whimsically",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "deciso",
+    "language": "italian",
+    "category": "character",
+    "literal": "decided",
+    "meaning": "decisively",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "delicato",
+    "language": "italian",
+    "category": "character",
+    "literal": "delicate",
+    "meaning": "delicately",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "giocoso",
+    "language": "italian",
+    "category": "character",
+    "literal": "playful",
+    "meaning": "playfully, merrily",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "innocente",
+    "language": "italian",
+    "category": "character",
+    "literal": "innocent",
+    "meaning": "innocently, simply",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "lusingando",
+    "language": "italian",
+    "category": "character",
+    "literal": "coaxing",
+    "meaning": "coaxingly, flatteringly",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "nobilmente",
+    "language": "italian",
+    "category": "character",
+    "literal": "nobly",
+    "meaning": "nobly, with dignity",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "religioso",
+    "language": "italian",
+    "category": "character",
+    "literal": "religious",
+    "meaning": "in a reverent, devotional manner",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  }
+]

@@ -1,0 +1,119 @@
+[
+  {
+    "term": "lent",
+    "language": "french",
+    "category": "tempo",
+    "literal": "slow",
+    "meaning": "slow",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "vif",
+    "language": "french",
+    "category": "tempo",
+    "literal": "lively",
+    "meaning": "lively, quick",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "modéré",
+    "language": "french",
+    "category": "tempo",
+    "literal": "moderate",
+    "meaning": "at a moderate tempo",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "animé",
+    "language": "french",
+    "category": "tempo",
+    "literal": "animated",
+    "meaning": "animated, lively",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "avec mouvement",
+    "language": "french",
+    "category": "tempo",
+    "literal": "with movement",
+    "meaning": "with motion, moving forward",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "en retenant",
+    "language": "french",
+    "category": "tempo-modification",
+    "literal": "holding back",
+    "meaning": "gradually slowing down",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "doux",
+    "language": "french",
+    "category": "character",
+    "literal": "sweet, soft",
+    "meaning": "softly, sweetly",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "expressif",
+    "language": "french",
+    "category": "character",
+    "literal": "expressive",
+    "meaning": "with expression",
+    "abbreviation": "expr.",
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "léger",
+    "language": "french",
+    "category": "character",
+    "literal": "light",
+    "meaning": "lightly",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "très",
+    "language": "french",
+    "category": "modifier",
+    "literal": "very",
+    "meaning": "very",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "peu",
+    "language": "french",
+    "category": "modifier",
+    "literal": "little",
+    "meaning": "a little",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "sans",
+    "language": "french",
+    "category": "modifier",
+    "literal": "without",
+    "meaning": "without",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  },
+  {
+    "term": "avec",
+    "language": "french",
+    "category": "modifier",
+    "literal": "with",
+    "meaning": "with",
+    "abbreviation": null,
+    "common_era": ["romantic", "modern"]
+  }
+]

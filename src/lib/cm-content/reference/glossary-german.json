@@ -1,0 +1,137 @@
+[
+  {
+    "term": "langsam",
+    "language": "german",
+    "category": "tempo",
+    "literal": "slow",
+    "meaning": "slow",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "schnell",
+    "language": "german",
+    "category": "tempo",
+    "literal": "fast",
+    "meaning": "fast",
+    "abbreviation": null,
+    "common_era": ["classical", "romantic"]
+  },
+  {
+    "term": "mäßig",
+    "language": "german",
+    "category": "tempo",
+    "literal": "moderate",
+    "meaning": "moderately",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "lebhaft",
+    "language": "german",
+    "category": "tempo",
+    "literal": "lively",
+    "meaning": "lively, brisk",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "bewegt",
+    "language": "german",
+    "category": "tempo",
+    "literal": "moved, animated",
+    "meaning": "with motion, animated",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "getragen",
+    "language": "german",
+    "category": "tempo",
+    "literal": "carried, sustained",
+    "meaning": "sustained, unhurried",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "ruhig",
+    "language": "german",
+    "category": "character",
+    "literal": "calm, quiet",
+    "meaning": "calmly, quietly",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "zart",
+    "language": "german",
+    "category": "character",
+    "literal": "tender",
+    "meaning": "tenderly, delicately",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "innig",
+    "language": "german",
+    "category": "character",
+    "literal": "intimate, heartfelt",
+    "meaning": "heartfelt, with inward feeling",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "feurig",
+    "language": "german",
+    "category": "character",
+    "literal": "fiery",
+    "meaning": "fiery, passionate",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "mit Ausdruck",
+    "language": "german",
+    "category": "character",
+    "literal": "with expression",
+    "meaning": "with expression",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "sehr",
+    "language": "german",
+    "category": "modifier",
+    "literal": "very",
+    "meaning": "very",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "nicht",
+    "language": "german",
+    "category": "modifier",
+    "literal": "not",
+    "meaning": "not (as in 'nicht zu schnell' — not too fast)",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "wenig",
+    "language": "german",
+    "category": "modifier",
+    "literal": "little",
+    "meaning": "little, slightly",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  },
+  {
+    "term": "etwas",
+    "language": "german",
+    "category": "modifier",
+    "literal": "somewhat",
+    "meaning": "somewhat, a little",
+    "abbreviation": null,
+    "common_era": ["romantic"]
+  }
+]
