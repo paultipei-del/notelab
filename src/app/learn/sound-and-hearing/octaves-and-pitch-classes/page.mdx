@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
+import { NoteSequence } from '@/components/learn/visuals/NoteSequence'
 import { PitchClassClock } from '@/components/learn/visuals/PitchClassClock'
-import { FOUR_CS_STACKED_XML } from './notations'
 
 export const learnPage = {
   topic: 'sound-and-hearing',
@@ -31,15 +30,16 @@ That sense of sameness across octaves is what **pitch class** formalizes. It's h
 
 ## The visual
 
-<Notation
-  musicXml={FOUR_CS_STACKED_XML}
-  caption="Four Cs on a grand staff — C2 and C3 on the bass, C4 (middle C) and C5 on the treble. Frequencies: 65.4 Hz, 130.8 Hz, 261.6 Hz, 523.2 Hz. Each one is exactly double the frequency of the C below it, and our ears hear them as the same note at four different registers."
-  ariaLabel="Grand staff showing four Cs stacked vertically: C2 and C3 on the bass staff, C4 and C5 on the treble staff."
+<NoteSequence
+  pitches={['C2', 'C3', 'C4', 'C5', 'C6']}
+  labels={['65.4 Hz', '130.8 Hz', '261.6 Hz', '523.2 Hz', '1046.5 Hz']}
+  clef="grand"
+  caption="Five Cs across the piano. Each is exactly double the frequency of the C below it. Despite their different registers, our ears recognize them as the same note — that's octave equivalence. Click any to hear it."
 />
 
 <PitchClassClock
   highlightedPitchClasses={['C']}
-  caption="The twelve pitch classes form a cycle. C sits at the top; each step clockwise is one half step. After B the cycle returns to C — but one octave higher. Notes an octave apart share a pitch class, which is why we give them the same letter name."
+  caption="The twelve pitch classes form a cycle. Starting at C (top) and moving clockwise, each step is one half step. After twelve steps you return to C — but one octave higher. Notes an octave apart share a pitch class, which is why they get the same letter name."
 />
 
 ## What makes the octave special

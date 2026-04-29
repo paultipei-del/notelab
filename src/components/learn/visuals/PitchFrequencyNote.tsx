@@ -33,10 +33,13 @@ export function PitchFrequencyNote({
   const pitch = midiToPitch(midi)
 
   const margin = Math.round(20 * T.scale + 8)
-  const innerWidth = Math.max(280, T.clefReserve + Math.round(120 * T.scale))
+  const innerWidth = Math.max(220, T.clefReserve + Math.round(150 * T.scale))
   const staffX = margin
   const staffWidth = innerWidth
-  const noteX = staffX + T.clefReserve + Math.round(40 * T.scale)
+  // Center the notehead horizontally inside the post-clef area of the staff.
+  const postClefStart = staffX + T.clefReserve
+  const postClefEnd = staffX + staffWidth
+  const noteX = (postClefStart + postClefEnd) / 2
 
   const provisional = aggregateBounds([pitch], 0, resolvedClef, T)
   const headroom = Math.max(0, -provisional.top)

@@ -105,14 +105,36 @@ export function VibratingStringDiagram({
           fill="none" stroke={stringColor} strokeWidth={2.2}
         />
 
-        {/* Labels */}
-        <text
-          x={arcCenterX} y={margin + 8}
-          fontSize={T.labelFontSize} fontFamily={T.fontLabel}
-          fill={waveColor} textAnchor="middle" fontWeight={500}
-        >
-          sound waves
-        </text>
+        {/* Labels — "sound waves" gets a page-bg pill behind it so it stays
+            legible where it crosses the coral wave arcs. */}
+        {(() => {
+          const text = 'sound waves'
+          const fs = T.labelFontSize
+          // Approximate text width — sans-serif label averages ~0.55 em per char.
+          const textWidth = Math.round(text.length * fs * 0.55)
+          const padX = 6
+          const padY = 2
+          const labelY = margin + 8
+          return (
+            <g>
+              <rect
+                x={arcCenterX - textWidth / 2 - padX}
+                y={labelY - fs * 0.85 - padY}
+                width={textWidth + padX * 2}
+                height={fs + padY * 2}
+                fill="#F2EDDF"
+                rx={3}
+              />
+              <text
+                x={arcCenterX} y={labelY}
+                fontSize={fs} fontFamily={T.fontLabel}
+                fill={waveColor} textAnchor="middle" fontWeight={500}
+              >
+                {text}
+              </text>
+            </g>
+          )
+        })()}
 
         <text
           x={stringStartX - 8} y={stringY + 4}

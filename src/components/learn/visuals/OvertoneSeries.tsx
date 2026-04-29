@@ -38,6 +38,15 @@ const PARTIAL_SPELLINGS: Array<{ offset: number; letter: string }> = [
   { offset: 48, letter: 'C' },   // 16: 4 octaves
 ]
 
+interface HighlightRange {
+  /** First partial in the range (1-indexed). */
+  start: number
+  /** Last partial in the range (1-indexed, inclusive). */
+  end: number
+  /** Optional label rendered centered above the bracket. */
+  label?: string
+}
+
 interface OvertoneSeriesProps {
   /** MIDI of the fundamental. Default 36 (C2). */
   fundamental?: number
@@ -45,6 +54,8 @@ interface OvertoneSeriesProps {
   partialCount?: number
   /** Show audio interaction (click notes to play). Default true. */
   showAudio?: boolean
+  /** Optional coral bracket spanning a range of partials, with a label above it. */
+  highlightRange?: HighlightRange
   size?: LearnSize
   caption?: string
 }
@@ -53,6 +64,7 @@ export function OvertoneSeries({
   fundamental = 36,
   partialCount = 8,
   showAudio = true,
+  highlightRange,
   size = 'inline',
   caption,
 }: OvertoneSeriesProps) {
@@ -77,12 +89,15 @@ export function OvertoneSeries({
 
   // Layout
   const margin = Math.round(20 * T.scale + 8)
+  // Reserve horizontal room for the grand-staff brace and barline that sit to
+  // the LEFT of the staff. The brace glyph at full grand-staff height is wide.
+  const braceReserve = Math.round(34 * T.scale)
   // Each partial needs generous horizontal room. At inline scale (0.6), 16 partials
   // should occupy ~600 px of staff. So 600/16 ≈ 38 px per partial at scale=0.6,
   // which means 38 / 0.6 ≈ 63 unscaled px per partial. Plus ~100 unscaled px for
   // clef and trailing margin.
   const innerWidth = Math.round((100 + 63 * clamped) * T.scale)
-  const staffX = margin
+  const staffX = margin + braceReserve
   const staffWidth = innerWidth
   const noteAreaX = staffX + T.clefReserve
   const noteAreaWidth = staffWidth - T.clefReserve - margin
@@ -106,14 +121,18 @@ export function OvertoneSeries({
   // Reserve top headroom for treble notes that go above the staff (ledger lines)
   // PLUS additional room for the partial-number labels which sit above all noteheads.
   const trebleHeadroom = Math.max(0, -trebleProvisional.top)
-  // Labels need room above the topmost notehead, not just above the staff.
-  const partialLabelSpace = T.labelFontSize + 12
+  // partialLabelSpace covers: the partial number row, plus optional highlight
+  // bracket above it (highlightRange prop), plus a label above that bracket.
+  // Generous so the diagram doesn't feel cramped at the top.
+  const partialLabelSpace = T.labelFontSize * 2 + 24
   // Extra buffer between label baseline and topmost notehead so they don't touch.
   const labelToNoteBuffer = Math.round(8 * T.scale)
 
   const trebleStaffY = margin + trebleHeadroom + partialLabelSpace + labelToNoteBuffer
   const trebleStaffHeight = T.step * 8 // 5 lines = 4 spaces × 2 step
-  const grandStaffGap = Math.round(40 * T.scale)
+  // Grand-staff gap — generous so the brace reads cleanly and ledger lines have
+  // room without colliding with the staff above/below.
+  const grandStaffGap = Math.round(72 * T.scale)
   const bassStaffY = trebleStaffY + trebleStaffHeight + grandStaffGap
 
   // Final bounds
@@ -157,6 +176,27 @@ export function OvertoneSeries({
         role="img"
         aria-label={caption ?? `The first ${clamped} partials above ${midiToPitch(fundamental)}`}
       >
+        {/* Grand-staff brace + left barline. Barline sits flush with the staff
+            line ends so there's no visible gap between them. */}
+        <line
+          x1={staffX}
+          y1={trebleStaffY}
+          x2={staffX}
+          y2={bassStaffY + 8 * T.step}
+          stroke={T.ink}
+          strokeWidth={T.graceLineStroke}
+        />
+        <text
+          x={staffX - 8}
+          y={bassStaffY + 8 * T.step}
+          fontSize={(bassStaffY + 8 * T.step) - trebleStaffY}
+          fontFamily={T.fontMusic}
+          fill={T.ink}
+          textAnchor="middle"
+          dominantBaseline="auto"
+        >
+          {T.braceGlyph}
+        </text>
         {/* Treble staff */}
         <Staff clef="treble" x={staffX} y={trebleStaffY} width={staffWidth} T={T} />
         {/* Bass staff */}
@@ -193,6 +233,42 @@ export function OvertoneSeries({
             {index + 1}
           </text>
         ))}
+
+        {highlightRange &&
+          highlightRange.start >= 1 &&
+          highlightRange.end <= clamped &&
+          highlightRange.start <= highlightRange.end &&
+          (() => {
+            const startIdx = highlightRange.start - 1
+            const endIdx = highlightRange.end - 1
+            const x1 = noteXs[startIdx]
+            const x2 = noteXs[endIdx]
+            const bracketY = labelY - T.labelFontSize - 6
+            const labelTextY = bracketY - 4
+            return (
+              <g>
+                <path
+                  d={`M ${x1} ${bracketY + 4} L ${x1} ${bracketY} L ${x2} ${bracketY} L ${x2} ${bracketY + 4}`}
+                  fill="none"
+                  stroke={T.highlightAccent}
+                  strokeWidth={1.4}
+                />
+                {highlightRange.label && (
+                  <text
+                    x={(x1 + x2) / 2}
+                    y={labelTextY}
+                    fontSize={T.labelFontSize}
+                    fontFamily={T.fontLabel}
+                    fill={T.highlightAccent}
+                    textAnchor="middle"
+                    fontWeight={500}
+                  >
+                    {highlightRange.label}
+                  </text>
+                )}
+              </g>
+            )
+          })()}
       </svg>
       {showAudio && interacted && !ready && (
         <div style={{

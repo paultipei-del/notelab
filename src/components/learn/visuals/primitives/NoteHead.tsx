@@ -13,6 +13,8 @@ interface NoteHeadProps {
   T: LearnTokens
   duration?: 'whole' | 'half' | 'quarter'
   noStem?: boolean
+  /** Suppress the accidental glyph. Used when a parent (e.g. ChordExplorer) renders accidentals in its own column. */
+  noAccidental?: boolean
   dimmed?: boolean
   highlight?: boolean
   highlightColor?: string
@@ -26,6 +28,7 @@ export function NoteHead({
   pitch, staffTop, x, clef, T,
   duration = 'quarter',
   noStem = false,
+  noAccidental = false,
   dimmed = false,
   highlight = false,
   highlightColor,
@@ -77,7 +80,7 @@ export function NoteHead({
           stroke={fill} strokeWidth={T.ledgerLineStroke}
         />
       ))}
-      {accGlyph && (
+      {accGlyph && !noAccidental && (
         <text
           x={x - T.accidentalKerning} y={noteY}
           fontSize={T.accidentalFontSize} fontFamily={T.fontMusic}

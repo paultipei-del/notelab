@@ -58,8 +58,12 @@ export function ChordExplorer({
   const staffX = margin
   const staffWidth = innerWidth
 
-  // Chord x-position: just past the clef, centered in the remaining staff area for visual weight
-  const chordX = staffX + T.clefReserve + (staffWidth - T.clefReserve - margin) * 0.35
+  // Center the chord horizontally within the post-clef area of the staff.
+  // The post-clef area runs from (staffX + T.clefReserve) to (staffX + staffWidth).
+  // Accidentals will sit to the left of the leftmost notehead — still inside that area.
+  const postClefStart = staffX + T.clefReserve
+  const postClefEnd = staffX + staffWidth
+  const chordX = (postClefStart + postClefEnd) / 2
 
   // Compute headroom from highest note's vertical position
   const positions = parsed.map(p => staffPosition(p, resolvedClef))
@@ -105,7 +109,11 @@ export function ChordExplorer({
     //
     // staffPos convention here: smaller pos = higher pitch on the staff.
     // (This matches the existing `positions` array used elsewhere in this file.)
-    const noteheadWidth = Math.round(11 * T.scale)
+    // Approximate notehead glyph width in pixels. The Bravura SMuFL black
+    // notehead is ~1.18 staff-spaces wide; with our font sizing the rendered
+    // glyph spans roughly 22 * T.scale pixels. The previous coefficient of 11
+    // produced too-tight displacement that visibly overlapped at small sizes.
+    const noteheadWidth = Math.round(22 * T.scale)
     const displacementOffset = stemUp ? noteheadWidth : -noteheadWidth
     const noteXs: number[] = parsed.map(() => chordX)
     const isDisplaced: boolean[] = parsed.map(() => false)
@@ -128,6 +136,29 @@ export function ChordExplorer({
         noteXs[currentIdx] = chordX + displacementOffset
       }
     }
+
+  // Accidentals belong in their own column to the LEFT of the leftmost notehead,
+  // not next to whichever notehead happens to be displaced. Engraving convention.
+  // We render them ourselves at the chord level and pass noAccidental to NoteHead.
+  const chordLeftX = Math.min(...noteXs)
+  // Pull accidentals further left so they don't sit too close to the leftmost
+  // notehead — the bare displacement-only offset reads as cramped.
+  const accidentalColumnX = chordLeftX - Math.round(14 * T.scale) - 4
+  const accidentals = parsed.map((p, i) => {
+    const acc = p.accidental
+    if (!acc || acc === 'n') {
+      // Naturals are usually only rendered when canceling a key signature; in
+      // a stand-alone chord with no key signature there's nothing to cancel.
+      return null
+    }
+    const glyph = acc === '#' ? T.sharpGlyph
+      : acc === 'b' ? T.flatGlyph
+      : acc === '##' ? '\uE263'
+      : acc === 'bb' ? '\uE264'
+      : null
+    if (!glyph) return null
+    return { glyph, y: staffY + positions[i] * T.step, midi: p.midi }
+  })
 
   // Vertical extent for layout: track lowest visible pixel below staff
   const staffBottom = staffY + 8 * T.step
@@ -186,7 +217,22 @@ export function ChordExplorer({
         {showStaff && (
           <>
             <Staff clef={resolvedClef} x={staffX} y={staffY} width={staffWidth} T={T} />
-            {/* Render noteheads with stems suppressed */}
+            {/* Accidentals — rendered at the chord level in their own left column */}
+            {accidentals.map((a, i) => a && (
+              <text
+                key={`acc-${i}-${a.midi}`}
+                x={accidentalColumnX}
+                y={a.y}
+                fontSize={T.accidentalFontSize}
+                fontFamily={T.fontMusic}
+                fill={highlightedMidis.includes(a.midi) ? T.highlightAccent : T.ink}
+                textAnchor="middle"
+                dominantBaseline="central"
+              >
+                {a.glyph}
+              </text>
+            ))}
+            {/* Render noteheads with stems suppressed; accidentals already drawn above */}
             {parsed.map((p, i) => (
               <NoteHead
                 key={p.midi}
@@ -196,6 +242,7 @@ export function ChordExplorer({
                 clef={resolvedClef}
                 T={T}
                 noStem
+                noAccidental
                 highlight={highlightedMidis.includes(p.midi)}
                 onMouseEnter={() => highlight(p.midi)}
                 onMouseLeave={() => highlight(null)}
