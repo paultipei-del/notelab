@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { getTopic, getSubtopic } from '@/lib/learn/topicTree'
+import { LessonNavigation } from './LessonNavigation'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -252,6 +253,9 @@ export default function LearnPageLayout({
             </ul>
           </section>
         )}
+
+        {/* Previous/next lesson navigation, derived from the linear curriculum */}
+        <LessonNavigation topic={topic} slug={subtopic} />
 
         {/* reference to subtopic slug kept for debuggability; not rendered */}
         <span data-subtopic={subtopic} hidden />
