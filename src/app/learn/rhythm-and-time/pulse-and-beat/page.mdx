@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { PulseTimeline } from '@/components/learn/visuals/PulseTimeline'
 import { FOUR_BEATS_XML } from './notations'
 
 export const learnPage = {
@@ -37,7 +37,12 @@ Before any notation, before any theory, pulse and beat are how music organizes t
   ariaLabel="A single measure of 4/4 time on a treble staff with four quarter notes, each labeled 1, 2, 3, or 4."
 />
 
-<DiagramPlaceholder description="A timeline showing a continuous regular pulse of clicks, with every fourth click emphasized to show how beats group into measures." />
+<PulseTimeline
+  tickCount={16}
+  accentEvery={4}
+  tempo={80}
+  caption="A regular pulse — 16 evenly-spaced clicks. Every fourth click is emphasized, marking the start of a new beat group. Four clicks per group means we're in a 4-beat measure. Click play to hear it; the accent is what turns a pulse into a beat."
+/>
 
 ## Pulse
 

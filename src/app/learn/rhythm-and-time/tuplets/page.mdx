@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { TupletDemo } from '@/components/learn/visuals/TupletDemo'
 import { TRIPLET_IN_QUARTER_XML, DUPLET_IN_SIX_EIGHT_XML } from './notations'
 
 export const learnPage = {
@@ -39,7 +39,10 @@ Tuplets make rhythm flexible. Instead of being locked into the time signature's 
   ariaLabel="A 4/4 measure on a treble staff. Beat 1 is a quarter note, beat 2 is an eighth-note triplet (three notes), beats 3 and 4 are quarter notes."
 />
 
-<DiagramPlaceholder description="A quintuplet — five notes in the space of four sixteenths — with the '5' above the beamed group." />
+<TupletDemo
+  count={5}
+  caption="A quintuplet: five notes in the space of four sixteenths. The bracket and the number 5 above the beamed group tell you the unusual subdivision. Click play to hear the five-against-four feel."
+/>
 
 <Notation
   musicXml={DUPLET_IN_SIX_EIGHT_XML}

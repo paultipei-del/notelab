@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { HemiolaDisplay } from '@/components/learn/visuals/HemiolaDisplay'
 import { STANDARD_THREE_FOUR_XML, HEMIOLA_THREE_FOUR_XML } from './notations'
 
 export const learnPage = {
@@ -43,7 +43,7 @@ The word *hemiola* comes from Greek — *hemiolios*, meaning "one and a half," w
   ariaLabel="Two 3/4 measures on a treble staff. Six quarter notes in total, with accents on the 1st, 3rd, and 5th notes — producing a duple feel across the triple notation."
 />
 
-<DiagramPlaceholder description="Vertical hemiola — a 6/8 measure with one voice playing two dotted-quarter beats against another voice playing three quarter notes. Two-against-three within a single measure." />
+<HemiolaDisplay caption="A vertical hemiola: one voice plays two dotted-quarter beats, another plays three quarter notes — both inside the same 6/8 measure. The two voices share the meter but feel different pulses. Use the buttons to hear each voice alone, then both together to feel the 3:2 cross-rhythm." />
 
 ## Horizontal hemiola — stretching across measures
 

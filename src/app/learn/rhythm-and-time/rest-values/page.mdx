@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { RestValueHierarchy } from '@/components/learn/visuals/RestValueHierarchy'
 import { ALTERNATING_NOTES_RESTS_XML } from './notations'
 
 export const learnPage = {
@@ -31,7 +31,7 @@ Rests aren't empty space on the page. They're active silences — moments when t
 
 ## The visual
 
-<DiagramPlaceholder description="The rest-value hierarchy as a reference chart — whole rest, half rest, quarter rest, eighth rest, sixteenth rest, thirty-second rest — each labeled." />
+<RestValueHierarchy caption="The six common rest values. Each rest is exactly half the duration of the one above it — the same doubling hierarchy as note values, just in silence. A whole rest fills a 4/4 measure; a half rest fills two beats; and so on down." />
 
 <Notation
   musicXml={ALTERNATING_NOTES_RESTS_XML}

@@ -64,7 +64,7 @@ export default function Notation({ musicXml, caption, ariaLabel, zoom = 1 }: Not
       aria-label={ariaLabel}
       style={{ margin: '24px auto', textAlign: 'center' }}
     >
-      <div id={divId} style={{ overflowX: 'auto', width: '100%', textAlign: 'center' }} />
+      <div id={divId} style={{ overflowX: 'auto', width: '100%', display: 'flex', justifyContent: 'center' }} />
       {caption && (
         <figcaption
           style={{
@@ -73,7 +73,7 @@ export default function Notation({ musicXml, caption, ariaLabel, zoom = 1 }: Not
             fontWeight: 300,
             fontStyle: 'italic',
             color: '#7A7060',
-            marginTop: '10px',
+            marginTop: '4px',
           }}
         >
           {caption}
