@@ -16,6 +16,13 @@ interface NoteSequenceProps {
    * grand staff if any pitch is below MIDI 60, otherwise treble.
    */
   clef?: Clef | 'grand'
+  /**
+   * Optional per-note clef override (only meaningful in grand mode). Lets you
+   * place the same MIDI on either staff — e.g. middle C on the treble OR on
+   * the bass staff. Length must match `pitches`; missing entries fall back
+   * to the auto MIDI≥60 routing.
+   */
+  noteClefs?: Array<Clef | undefined>
   /** Note glyph: 'whole' (no stem), 'half' (open notehead + stem), 'quarter' (filled + stem). Default 'whole'. */
   duration?: 'whole' | 'half' | 'quarter'
   size?: LearnSize
@@ -27,6 +34,7 @@ export function NoteSequence({
   pitches,
   labels,
   clef,
+  noteClefs: noteClefOverrides,
   duration = 'whole',
   size = 'inline',
   showAudio = true,
@@ -47,15 +55,23 @@ export function NoteSequence({
   const validPitches = validIndices.map(i => pitches[i])
 
   // Decide layout
-  const useGrand = clef === 'grand' || (clef === undefined && midis.some(m => m < 60))
+  const hasBassOverride = noteClefOverrides?.some(c => c === 'bass') ?? false
+  const useGrand = clef === 'grand'
+    || (clef === undefined && (midis.some(m => m < 60) || hasBassOverride))
   const fallbackClef: Clef = clef && clef !== 'grand'
     ? clef
     : (useGrand ? 'treble' : 'treble')
 
-  // Per-note clef routing
-  const noteClefs: Clef[] = midis.map(m => {
+  // Per-note clef routing. In grand mode, an explicit override per pitch wins
+  // over the MIDI≥60 auto-routing — lets the same pitch land on either staff.
+  const noteClefs: Clef[] = midis.map((m, k) => {
+    const origIdx = validIndices[k]
     if (clef && clef !== 'grand') return clef
-    if (useGrand) return m >= 60 ? 'treble' : 'bass'
+    if (useGrand) {
+      const override = noteClefOverrides?.[origIdx]
+      if (override === 'treble' || override === 'bass') return override
+      return m >= 60 ? 'treble' : 'bass'
+    }
     return fallbackClef
   })
 
@@ -63,7 +79,13 @@ export function NoteSequence({
   const margin = Math.round(20 * T.scale + 8)
   // Reserve horizontal room left of the staff for the grand-staff brace and barline.
   const braceReserve = useGrand ? Math.round(34 * T.scale) : 0
-  const innerWidth = Math.max(380, Math.round((100 + 80 * pitches.length) * T.scale))
+  // Minimum width scales with note count so very short sequences (e.g. just two
+  // notes for an enharmonic comparison) don't render absurdly wide.
+  const minInnerWidth = pitches.length <= 2 ? 200 : pitches.length <= 4 ? 300 : 380
+  // Per-note spacing: generous for short sequences, tighter for long ones so a
+  // 29-note alphabet doesn't get squeezed visually small inside the article width.
+  const perNote = pitches.length <= 8 ? 80 : pitches.length <= 16 ? 64 : 52
+  const innerWidth = Math.max(minInnerWidth, Math.round((100 + perNote * pitches.length) * T.scale))
   const staffX = margin + braceReserve
   const staffWidth = innerWidth
   const noteAreaX = staffX + T.clefReserve
@@ -102,12 +124,16 @@ export function NoteSequence({
     bassStaffY + trebleStaffHeight,
     trebleBounds.bottom,
   )
+  // Labels render at a larger, bolder size than the smallLabelFontSize default
+  // so they're readable as identifiers (note names, frequencies) rather than
+  // looking like footnotes.
+  const labelFontSize = Math.round(T.labelFontSize * 1.25)
   const labelRowSpace = labels && labels.length > 0
-    ? T.smallLabelFontSize + Math.round(8 * T.scale)
+    ? labelFontSize + Math.round(12 * T.scale)
     : 0
   const totalH = lowestY + labelRowSpace + margin
   const totalW = staffX + staffWidth + margin
-  const labelY = lowestY + Math.round(8 * T.scale) + T.smallLabelFontSize * 0.4
+  const labelY = lowestY + Math.round(12 * T.scale) + labelFontSize * 0.5
 
   const handleNotePlay = async (idx: number) => {
     setInteracted(true)
@@ -180,9 +206,10 @@ export function NoteSequence({
               key={`label-${origIdx}`}
               x={noteXs[origIdx]}
               y={labelY}
-              fontSize={T.smallLabelFontSize}
+              fontSize={labelFontSize}
               fontFamily={T.fontLabel}
-              fill={T.inkSubtle}
+              fill={T.ink}
+              fontWeight={600}
               textAnchor="middle"
             >
               {label}

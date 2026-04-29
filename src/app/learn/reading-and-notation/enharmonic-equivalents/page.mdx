@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { ENHARMONIC_PAIRS_XML, C_SHARP_VS_D_FLAT_IN_E_MAJOR_XML } from './notations'
+import { EnharmonicPairs } from '@/components/learn/visuals/EnharmonicPairs'
+import { NoteSequence } from '@/components/learn/visuals/NoteSequence'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -28,16 +28,12 @@ Why two names for the same pitch? Because music isn't really about individual no
 
 ## The visual
 
-<Notation
-  musicXml={ENHARMONIC_PAIRS_XML}
-  caption="The five common enharmonic pairs: C♯ / D♭, D♯ / E♭, F♯ / G♭, G♯ / A♭, A♯ / B♭. Each pair sounds identical but sits on different staff positions — the sharp spelling is always one letter below the flat spelling."
-  ariaLabel="Treble staff showing ten quarter notes across three measures — five pairs of enharmonic equivalents: C-sharp with D-flat, D-sharp with E-flat, F-sharp with G-flat, G-sharp with A-flat, A-sharp with B-flat."
-/>
+<EnharmonicPairs caption="The five common enharmonic pairs. Each pair sounds identical, but sits on a different staff position — the sharp spelling is always one letter below the flat spelling. Click any note to hear it." />
 
-<Notation
-  musicXml={C_SHARP_VS_D_FLAT_IN_E_MAJOR_XML}
-  caption="The same pitch in E major, spelled two ways. Left: C♯ — no accidental drawn, the sharp is covered by the key signature. Right: D♭ — explicit flat accidental, required because D is already sharp in this key. Same sound; one reads cleanly, the other fights the key."
-  ariaLabel="Two whole notes in E major. The first is C-sharp, which inherits its sharp from the key signature. The second is D-flat, which requires an explicit flat accidental to cancel the key signature's D-sharp and lower D by a half step."
+<NoteSequence
+  pitches={['C#4', 'Db4']}
+  clef="treble"
+  caption="The same pitch, spelled two ways. In E major (a key with four sharps), C♯ is the natural choice — it follows the key signature. Spelling that pitch as D♭ would force an explicit flat in a sharp-flavored key, fighting the music's logic. Spelling reflects context, not just sound."
 />
 
 ## The five common pairs

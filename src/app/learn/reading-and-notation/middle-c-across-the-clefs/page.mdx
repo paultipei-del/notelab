@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { FOUR_CLEFS_STACKED_XML } from './notations'
+import { MultiClefDisplay } from '@/components/learn/visuals/MultiClefDisplay'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -30,10 +29,10 @@ This is the single most useful thing to internalize about clefs: *middle C is a 
 
 ## The visual
 
-<Notation
-  musicXml={FOUR_CLEFS_STACKED_XML}
-  caption="Four staves stacked vertically — treble, alto, tenor, and bass — each showing middle C (C4) as a whole note. Same pitch; four different positions on the page."
-  ariaLabel="Four staves stacked top to bottom with different clefs and a whole-note middle C on each. Treble clef: middle C on the first ledger line below the staff. Alto clef: middle C on the middle line. Tenor clef: middle C on the fourth line. Bass clef: middle C on the first ledger line above the staff."
+<MultiClefDisplay
+  clefs={['treble', 'alto', 'tenor', 'bass']}
+  pitch="C4"
+  caption="Middle C is the same pitch in every clef — but it sits at a different position on the staff depending on which clef you're reading. Treble: one ledger line below the staff. Alto: the middle line. Tenor: line four. Bass: one ledger line above the staff. Click any to hear it."
 />
 
 ## The four positions of middle C

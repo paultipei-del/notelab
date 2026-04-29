@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { KeyboardFigure } from '@/components/learn/visuals/KeyboardFigure'
 import { FIVE_CS_GRAND_STAFF_XML } from './notations'
 
 export const learnPage = {
@@ -35,7 +35,14 @@ Octave designations fix this. By adding a number after the letter name, we speci
   ariaLabel="Grand staff showing five whole-note Cs across five measures. Bass staff: C2 in measure 1, C3 in measure 2. Treble staff: C4 (middle C) in measure 3, C5 in measure 4, C6 in measure 5."
 />
 
-<DiagramPlaceholder description="A full 88-key piano keyboard with each C labeled — C1 through C8 — and middle C (C4) highlighted." />
+<KeyboardFigure
+  startMidi={21}
+  endMidi={108}
+  highlightedMidis={[60]}
+  showLabels="all-c-with-octave"
+  whiteKeyWidthOverride={14}
+  caption="The full 88-key piano. Each C is labeled with its octave number — C1 through C8. Middle C is C4, almost exactly in the middle of the keyboard. This naming system is called scientific pitch notation."
+/>
 
 ## How scientific pitch notation works
 

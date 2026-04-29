@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import { C_MAJOR_SCALE_ASCENDING_XML } from './notations'
+import { KeyboardFigure } from '@/components/learn/visuals/KeyboardFigure'
+import { NoteSequence } from '@/components/learn/visuals/NoteSequence'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -32,13 +31,13 @@ The musical alphabet is short, cyclical, and universal. Learn it cold in both di
 
 ## The visual
 
-<Notation
-  musicXml={C_MAJOR_SCALE_ASCENDING_XML}
-  caption="A full octave ascending from middle C to the C above it on a treble staff: C, D, E, F, G, A, B, C. The alphabet walks up the staff, alternating line and space."
-  ariaLabel="Treble staff showing eight quarter notes ascending from C4 to C5 — a C major scale. Notes: C, D, E, F, G, A, B, C."
+<KeyboardFigure
+  startMidi={48}
+  endMidi={72}
+  highlightedMidis={[48, 60, 72]}
+  showLabels="all"
+  caption="Two octaves of the keyboard with every white key labeled. The seven-letter alphabet — C, D, E, F, G, A, B — repeats every octave. Each highlighted C marks where the cycle starts again. Click any key to hear it."
 />
-
-<DiagramPlaceholder description="A piano keyboard showing two octaves with every C highlighted and labeled — illustrating the cyclic nature of the seven-letter alphabet across octaves." />
 
 ## The seven letters
 
@@ -52,12 +51,19 @@ Moving up one letter in the alphabet (from C to D, for example) moves up one "st
 
 ## The alphabet on the staff
 
-On a treble staff, the lines and spaces correspond to specific letters:
+On the staff, every line and every space corresponds to one of the seven letters. Treble and bass each walk through the alphabet from bottom to top — and on a grand staff, the two together form one continuous A–G cycle that spans more than four octaves.
 
-- **Lines** (bottom to top): E, G, B, D, F
-- **Spaces** (bottom to top): F, A, C, E
+- **Treble lines** (bottom to top): E, G, B, D, F
+- **Treble spaces** (bottom to top): F, A, C, E
+- **Bass lines** (bottom to top): G, B, D, F, A
+- **Bass spaces** (bottom to top): A, C, E, G
 
-Reading up the staff, alternating line and space: E (line), F (space), G (line), A (space), B (line), C (space), D (line), E (space), F (line) — a continuous alphabetical walk from E to F.
+<NoteSequence
+  pitches={['C2','D2','E2','F2','G2','A2','B2','C3','D3','E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5','B5','C6']}
+  labels={['C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C','D','E','F','G','A','B','C']}
+  clef="grand"
+  caption="The musical alphabet across the grand staff — every white key from C2 in the bass up to C6 in the treble. Same seven letters, four octaves of repetition. Click any note to hear it."
+/>
 
 This is what every staff line and space is: a step in the musical alphabet. Once you understand that, reading pitch stops being memorization and becomes pattern recognition — you see a note one line above another and know it's two letters higher.
 

@@ -66,16 +66,38 @@ async function ensureSampler(): Promise<void> {
 }
 
 function normalisePitch(p: string): string {
-  const m = p.match(/^([A-G])(b|#|)(\d+)$/)
+  const m = p.match(/^([A-G])(##|bb|#|b|n)?(\d+)$/)
   if (!m) return p
-  const [, letter, accidental, octave] = m
-  if (accidental !== 'b') return p
-  const flatMap: Record<string, [string, number]> = {
-    C: ['B', -1], D: ['C#', 0], E: ['D#', 0], F: ['E', 0],
-    G: ['F#', 0], A: ['G#', 0], B: ['A#', 0],
+  const [, letter, accidental, octaveStr] = m
+  const octave = parseInt(octaveStr, 10)
+  // Plain natural ('n') and no accidental are equivalent for playback.
+  if (!accidental || accidental === 'n') return `${letter}${octave}`
+  if (accidental === '#') return p
+  if (accidental === 'b') {
+    const flatMap: Record<string, [string, number]> = {
+      C: ['B', -1], D: ['C#', 0], E: ['D#', 0], F: ['E', 0],
+      G: ['F#', 0], A: ['G#', 0], B: ['A#', 0],
+    }
+    const [nl, od] = flatMap[letter] ?? [letter, 0]
+    return `${nl}${octave + od}`
   }
-  const [newLetter, octaveDelta] = flatMap[letter] ?? [letter, 0]
-  return `${newLetter}${parseInt(octave, 10) + octaveDelta}`
+  if (accidental === '##') {
+    const dblSharpMap: Record<string, [string, number]> = {
+      C: ['D', 0], D: ['E', 0], E: ['F#', 0], F: ['G', 0],
+      G: ['A', 0], A: ['B', 0], B: ['C#', 1],
+    }
+    const [nl, od] = dblSharpMap[letter] ?? [letter, 0]
+    return `${nl}${octave + od}`
+  }
+  if (accidental === 'bb') {
+    const dblFlatMap: Record<string, [string, number]> = {
+      C: ['A#', -1], D: ['C', 0], E: ['D', 0], F: ['D#', 0],
+      G: ['F', 0], A: ['G', 0], B: ['A', 0],
+    }
+    const [nl, od] = dblFlatMap[letter] ?? [letter, 0]
+    return `${nl}${octave + od}`
+  }
+  return p
 }
 
 async function unlockContext(): Promise<void> {

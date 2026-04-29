@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import { FOUR_CLEFS_MIDDLE_C_XML } from './notations'
+import { ClefShowcase } from '@/components/learn/visuals/ClefShowcase'
+import { MultiClefDisplay } from '@/components/learn/visuals/MultiClefDisplay'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -33,15 +32,15 @@ Clefs solve this by letting a staff be re-anchored to whatever pitch range suits
 
 ## The visual
 
-<Notation
-  musicXml={FOUR_CLEFS_MIDDLE_C_XML}
-  caption="Four measures showing the four clefs side by side — treble, bass, alto, tenor — each with a whole-note middle C. Same pitch, four different staff positions."
-  ariaLabel="Four consecutive measures, each with a different clef: treble, bass, alto, tenor. Each measure contains a whole-note middle C, which appears at a different staff position on each clef."
+<MultiClefDisplay
+  clefs={['treble', 'alto', 'tenor', 'bass']}
+  showNote={false}
+  caption="The four clefs side by side. Treble and bass anchor the most common ranges (high and low). Alto and tenor are C-clefs — the same symbol, just centered on different lines. Notice how each one tells the staff a different story about pitch."
 />
 
-<DiagramPlaceholder description="The treble clef by itself, large, showing how the curl wraps around the G line (second line from the bottom)." />
+<ClefShowcase clef="treble" caption="The treble clef. The curl wraps around the second line from the bottom — that line is G4. From there, every other line and space gets its name." />
 
-<DiagramPlaceholder description="The bass clef by itself, large, showing how the two dots straddle the F line (fourth line from the bottom)." />
+<ClefShowcase clef="bass" caption="The bass clef. The two dots straddle the fourth line from the bottom — that line is F3. From there, every other line and space gets its name in the bass register." />
 
 ## The treble clef
 

@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { FIVE_ACCIDENTALS_XML, NATURAL_CANCELS_SHARP_XML } from './notations'
+import { AccidentalsShowcase } from '@/components/learn/visuals/AccidentalsShowcase'
+import { NoteSequence } from '@/components/learn/visuals/NoteSequence'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -30,16 +30,12 @@ Accidentals are small symbols, but they carry a lot of weight. They're the diffe
 
 ## The visual
 
-<Notation
-  musicXml={FIVE_ACCIDENTALS_XML}
-  caption="The five accidental symbols applied to A: sharp, flat, natural, double sharp, double flat."
-  ariaLabel="Treble staff with five whole notes across five measures, each an A with a different accidental: A sharp, A flat, A natural, A double sharp, A double flat."
-/>
+<AccidentalsShowcase letter="A" octave={4} caption="The five accidentals applied to A: sharp, flat, natural, double sharp, double flat. Each modifies the pitch by a half step or whole step. Click any note to hear it." />
 
-<Notation
-  musicXml={NATURAL_CANCELS_SHARP_XML}
-  caption="F♯ — F♮ — F — G. Once the natural cancels the sharp, the third F stays natural by persistence (no new accidental needed within the same measure)."
-  ariaLabel="Treble staff with four quarter notes in a single measure: F sharp, F natural, F (implied natural), G."
+<NoteSequence
+  pitches={['F#4', 'Fn4', 'F4', 'G4']}
+  clef="treble"
+  caption="Accidentals persist within a measure. F♯ — then F♮ cancels the sharp — the third F stays natural by persistence — then G. Within one measure, an accidental affects every later occurrence of the same line/space until the next bar."
 />
 
 ## The five accidentals

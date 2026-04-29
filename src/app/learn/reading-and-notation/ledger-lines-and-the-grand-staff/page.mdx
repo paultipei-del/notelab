@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { LEDGER_LINE_PROGRESSION_XML, GRAND_STAFF_MIDDLE_C_XML } from './notations'
+import { NoteSequence } from '@/components/learn/visuals/NoteSequence'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -28,16 +27,17 @@ Rather than invent a new staff every time, music uses two tools to extend the re
 
 ## The visual
 
-<Notation
-  musicXml={LEDGER_LINE_PROGRESSION_XML}
-  caption="Four notes on a treble staff at progressively higher positions: middle C (one ledger line below), A5 (one ledger line above), C6 (two ledger lines above), E6 (three ledger lines above)."
-  ariaLabel="Treble staff showing four whole notes in ascending order: middle C below the staff, A5 above the staff on one ledger line, C6 on the second ledger line above, and E6 on the third ledger line above."
+<NoteSequence
+  pitches={['C4', 'A5', 'C6', 'E6']}
+  clef="treble"
+  caption="Four notes ascending past the top of the treble staff. Middle C (C4) sits one ledger line below; A5 sits one ledger line above; C6 needs two ledger lines; E6 needs three. Click any to hear it."
 />
 
-<Notation
-  musicXml={GRAND_STAFF_MIDDLE_C_XML}
-  caption="The grand staff — treble staff on top, bass staff on bottom, joined by a brace. Middle C sits exactly between the two, one ledger line below the treble staff and (equivalently) one ledger line above the bass staff."
-  ariaLabel="A grand staff: treble and bass staves joined by a brace. Middle C is shown as a whole note on the treble staff, positioned one ledger line below it — the spot where it visually bridges the two staves."
+<NoteSequence
+  pitches={['C4', 'C4']}
+  noteClefs={['treble', 'bass']}
+  clef="grand"
+  caption="The grand staff — treble on top, bass on bottom, joined by a brace. Middle C is the same pitch on both staves: written one ledger line below the treble (left), and one ledger line above the bass (right). Click either to hear it."
 />
 
 ## Ledger lines

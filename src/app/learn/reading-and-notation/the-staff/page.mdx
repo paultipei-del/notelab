@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { AnnotatedStaff } from '@/components/learn/visuals/AnnotatedStaff'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -29,9 +29,9 @@ Every note you'll ever read sits somewhere on, above, or below this grid. Learni
 
 ## The visual
 
-<DiagramPlaceholder description="An empty five-line staff — no clef, no notes, just the grid." />
+<AnnotatedStaff variant="empty" caption="The staff: five horizontal lines and four spaces. Without a clef, it's a pure pitch grid — no specific notes assigned yet. The clef comes next." />
 
-<DiagramPlaceholder description="The same staff with labels pointing to each of the five lines (line 1 through line 5 from bottom to top) and each of the four spaces (space 1 through space 4 from bottom to top)." />
+<AnnotatedStaff variant="labeled" caption="Lines and spaces are numbered from the bottom up. Line 1 is at the bottom; line 5 is at the top. Spaces fall between the lines, also numbered bottom to top." />
 
 ## How the staff works
 

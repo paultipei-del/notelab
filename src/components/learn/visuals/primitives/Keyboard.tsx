@@ -14,7 +14,19 @@ interface KeyboardProps {
   onKeyEnter?: (midi: number, pitch: string) => void
   onKeyLeave?: (midi: number, pitch: string) => void
   onKeyClick?: (midi: number, pitch: string) => void
-  showLabels?: 'none' | 'c-only' | 'all'
+  /**
+   * Label rendering:
+   *  - 'none'                — no labels
+   *  - 'c-only'              — single 'C' on each C key (default)
+   *  - 'all'                 — letter on each white key (C, D, E, ...)
+   *  - 'all-c-with-octave'   — octave-tagged label on each C ('C1', 'C2', ...)
+   */
+  showLabels?: 'none' | 'c-only' | 'all' | 'all-c-with-octave'
+  /**
+   * Override the per-white-key width. Used for wide ranges (e.g. full 88-key)
+   * where the default would produce an unwieldy SVG. Falls back to T.keyboardWhiteKeyWidth.
+   */
+  whiteKeyWidthOverride?: number
 }
 
 const BLACK_KEY_AFTER = new Set([0, 1, 3, 4, 5])
@@ -30,6 +42,7 @@ export function Keyboard({
   highlightedMidis = [], dimmedMidis = [], highlightColor,
   onKeyEnter, onKeyLeave, onKeyClick,
   showLabels = 'c-only',
+  whiteKeyWidthOverride,
 }: KeyboardProps) {
   const highlights = new Set(highlightedMidis)
   const dimmed = new Set(dimmedMidis)
@@ -38,9 +51,12 @@ export function Keyboard({
     if (isWhiteKey(m)) whiteKeys.push(m)
   }
 
-  const ww = T.keyboardWhiteKeyWidth
+  const ww = whiteKeyWidthOverride ?? T.keyboardWhiteKeyWidth
   const wh = T.keyboardWhiteKeyHeight
-  const bw = T.keyboardBlackKeyWidth
+  // Black-key width and height are scaled proportionally to white-key width
+  // so the keyboard remains visually balanced even when ww is overridden small.
+  const widthRatio = ww / T.keyboardWhiteKeyWidth
+  const bw = whiteKeyWidthOverride ? Math.max(4, T.keyboardBlackKeyWidth * widthRatio) : T.keyboardBlackKeyWidth
   const bh = T.keyboardBlackKeyHeight
 
   return (
@@ -49,8 +65,14 @@ export function Keyboard({
         const pitch = midiToPitch(midi)
         const letter = pitch.replace(/[#\d]/g, '')
         const isHighlighted = highlights.has(midi)
-        const showLabel = showLabels === 'all'
-          || (showLabels === 'c-only' && letter === 'C')
+        const isC = letter === 'C'
+        const showLabel =
+          showLabels === 'all'
+          || (showLabels === 'c-only' && isC)
+          || (showLabels === 'all-c-with-octave' && isC)
+        const labelText = showLabels === 'all-c-with-octave' && isC
+          ? `C${Math.floor(midi / 12) - 1}`
+          : letter
         return (
           <g
             key={midi}
@@ -73,13 +95,13 @@ export function Keyboard({
             {showLabel && (
               <text
                 x={x + i * ww + ww / 2}
-                y={y + wh - Math.max(8, ww * 0.18)}
-                fontSize={T.smallLabelFontSize}
+                y={y + wh - Math.max(6, ww * 0.18)}
+                fontSize={Math.max(8, Math.min(T.smallLabelFontSize, ww * 0.62))}
                 fontFamily={T.fontLabel}
                 fill={T.inkMuted}
                 textAnchor="middle"
               >
-                {letter}
+                {labelText}
               </text>
             )}
           </g>
