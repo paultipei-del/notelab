@@ -33,7 +33,7 @@ export default function CMPrepHubPage() {
   const done = CM_PREP_LESSONS.filter(l => store[l.slug]?.completed).length
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
        <div style={{ maxWidth: '760px', margin: '0 auto' }}>
 

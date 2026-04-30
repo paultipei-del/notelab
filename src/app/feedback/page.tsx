@@ -12,7 +12,7 @@ export default function FeedbackPage() {
   const router = useRouter()
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 80px' }}>
 
         <button onClick={() => router.back()} style={{

@@ -68,7 +68,7 @@ export default function AdminPage() {
   if (!ADMIN_EMAILS.includes(user.email ?? '')) return <div style={{padding:'40px',fontFamily:'sans-serif'}}>Access denied: {user.email}</div>
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '48px 24px' }}>
         <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>

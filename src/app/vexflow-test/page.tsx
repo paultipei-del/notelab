@@ -8,7 +8,7 @@ const SERIF = 'var(--font-cormorant), serif'
 export default function VexFlowTestPage() {
   return (
     <div style={{
-      minHeight: '100vh', background: '#F2EDDF', padding: '40px 24px',
+      minHeight: '100vh', background: 'transparent', padding: '40px 24px',
     }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <h1 style={{ fontFamily: SERIF, fontSize: 32, fontWeight: 300, marginBottom: 8 }}>

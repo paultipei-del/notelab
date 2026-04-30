@@ -46,7 +46,7 @@ export default function ConceptPage({ params }: Props) {
 
   if (!program) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, color: '#7A7060' }}>Program not found.</p>
       </div>
     )

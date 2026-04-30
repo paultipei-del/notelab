@@ -31,7 +31,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', overflowX: 'hidden' }}>
       {/* Top bar */}
       <nav
         style={{

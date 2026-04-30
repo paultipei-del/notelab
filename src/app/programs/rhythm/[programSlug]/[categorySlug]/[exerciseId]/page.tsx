@@ -57,7 +57,7 @@ export default function RhythmExercisePage({ params }: Props) {
 
   if (!program) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, color: '#7A7060' }}>Program not found.</p>
       </div>
     )
@@ -65,7 +65,7 @@ export default function RhythmExercisePage({ params }: Props) {
 
   if (loaded && !exercise) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, color: '#7A7060' }}>Exercise not found.</p>
       </div>
     )
@@ -95,7 +95,7 @@ export default function RhythmExercisePage({ params }: Props) {
     : null
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
         <Link href={returnTo} style={{ textDecoration: 'none' }}>

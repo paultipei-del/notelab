@@ -315,7 +315,7 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
 
   if (!mod) return null
   if (!queue.length) return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ fontFamily: F, color: '#7A7060' }}>Loading…</p>
     </div>
   )
@@ -378,7 +378,7 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
     }
 
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>
             {retryMode ? 'Retry Complete' : 'Session Complete'}

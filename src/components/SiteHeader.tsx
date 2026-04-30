@@ -139,13 +139,15 @@ export default function SiteHeader() {
               top: '5px',
               bottom: '5px',
               borderRadius: HDR_BTN_R,
-              background: 'linear-gradient(180deg, #ffffff 0%, #faf7f2 42%, #ebe4d9 100%)',
-              border: '1px solid rgba(255,255,255,0.85)',
+              // Warmed-up pill so it harmonizes with the new page vignette
+              // instead of popping like a spotlight against the cream.
+              background: 'linear-gradient(180deg, rgb(248,243,230) 0%, rgb(243,237,222) 50%, rgb(232,224,204) 100%)',
+              border: '1px solid rgb(217,210,189)',
               boxShadow: [
-                'inset 0 1px 0 rgba(255,255,255,0.95)',
-                'inset 0 -1px 0 rgba(42,35,24,0.07)',
-                '0 2px 4px rgba(42,35,24,0.08)',
-                '0 4px 10px rgba(42,35,24,0.1)',
+                'inset 0 1px 0 rgba(255,253,247,0.7)',
+                'inset 0 -1px 0 rgba(42,35,24,0.06)',
+                '0 1px 2px rgba(42,35,24,0.04)',
+                '0 3px 8px rgba(42,35,24,0.07)',
               ].join(', '),
               transition: 'left 300ms ease-out, width 300ms ease-out',
               pointerEvents: 'none',

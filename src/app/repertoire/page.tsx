@@ -104,7 +104,7 @@ export default function RepertoirePage() {
 
   if (!isPro) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent' }}>
                 <div style={{ maxWidth: '480px', margin: '80px auto', padding: '0 24px', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Pro Feature</p>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '12px' }}>Repertoire Browser</h1>
@@ -121,7 +121,7 @@ export default function RepertoirePage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
 
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px 80px' }}>
 

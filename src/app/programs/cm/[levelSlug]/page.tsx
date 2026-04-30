@@ -51,7 +51,7 @@ export default function CMLevelPage({ params }: Props) {
   const startHref = level.slug === 'level-1' ? '/programs/cm/l1' : `/study/${level.deckId}`
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
         {/* Breadcrumb */}
         <div style={{ marginBottom: '24px' }}>

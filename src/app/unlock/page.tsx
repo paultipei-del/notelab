@@ -26,7 +26,7 @@ export default function Unlock() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' as const, padding: '48px 32px', maxWidth: '360px', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '48px' }}>
           <img src="/logo-dark.png" alt="NoteLab" style={{ height: '28px', width: 'auto', display: 'block' }} />

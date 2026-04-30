@@ -153,7 +153,7 @@ export default function PitchTest() {
   const SERIF = 'var(--font-cormorant), serif'
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 24px' }}>
         <button onClick={() => { stopMic(); router.back() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         {/* Current note */}

@@ -14,7 +14,7 @@ export default function GrandPage() {
   const isPro = hasSubscription()
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '680px', margin: '0 auto', padding: '24px 32px 80px' }}>
         <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '32px', display: 'block' }}>← Back</button>
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '24px' }}>

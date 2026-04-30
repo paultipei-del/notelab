@@ -73,7 +73,7 @@ export default function ModuleOverviewPage({ params }: Props) {
 
   if (!mod) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, color: '#7A7060' }}>Module not found.</p>
       </div>
     )
@@ -81,7 +81,7 @@ export default function ModuleOverviewPage({ params }: Props) {
 
   if (!isNRModuleUnlocked(moduleId, store)) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '420px', width: '90%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '16px' }}>Locked</p>
           <h2 style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#2A2318', marginBottom: '12px' }}>{mod.title}</h2>
@@ -129,7 +129,7 @@ export default function ModuleOverviewPage({ params }: Props) {
   })
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
         {/* Breadcrumb */}

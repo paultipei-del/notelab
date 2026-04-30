@@ -307,7 +307,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, fontWeight: 300, color: '#7A7060' }}>Loading…</p>
       </div>
     )
@@ -315,7 +315,7 @@ export default function Home() {
   if (!user) return null
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', position: 'relative' }}>
       <GlyphBackdrop density={3} seed={101} />
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px', position: 'relative' }}>
         {/* Greeting */}

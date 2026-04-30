@@ -9,7 +9,7 @@ export default function LearnLandingPage() {
   const topics = visibleTopics()
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 64px' }}>
         <h1
           style={{

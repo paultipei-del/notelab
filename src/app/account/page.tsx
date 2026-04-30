@@ -721,7 +721,7 @@ export default function AccountPage() {
 
   if (loading || !user) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, fontWeight: 300, color: '#7A7060' }}>Loading…</p>
       </div>
     )
@@ -730,7 +730,7 @@ export default function AccountPage() {
   const currentLabel = SECTIONS.find(s => s.id === active)?.label ?? 'Account'
 
   return (
-    <div className="nl-account-page" style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div className="nl-account-page" style={{ minHeight: '100vh', background: 'transparent' }}>
       {/* Mobile: sticky title bar (section switching via bottom tabs) */}
       <header className="nl-account-page__mobile-header">
         <h1 className="nl-account-page__mobile-title">{currentLabel}</h1>

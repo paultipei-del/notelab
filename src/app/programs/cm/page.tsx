@@ -271,7 +271,7 @@ export default function CMProgramPage() {
   }, { elementary: [], intermediate: [], advanced: [] })
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
         {/* Breadcrumb */}
         <div style={{ marginBottom: '32px' }}>

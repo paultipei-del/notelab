@@ -263,7 +263,7 @@ export default function PitchDiagnostic() {
   const latestRun = runs[0]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #DDD8CA', background: '#FDFAF3' }}>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#2A2318' }}>Pitch Detection Calibration</h1>
         <div style={{ display: 'flex', gap: '10px' }}>

@@ -55,7 +55,7 @@ export default function ProgramsPage() {
   const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px' }}>
 
         <div style={{ marginBottom: '40px' }}>

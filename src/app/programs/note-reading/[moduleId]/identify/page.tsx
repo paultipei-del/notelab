@@ -339,7 +339,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   // sessions don't count toward mastery, and the chooser says so upfront.
   if (mode === null) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: 'clamp(32px,5vh,48px) clamp(24px,4vw,40px)', maxWidth: '480px', width: '100%' }}>
           <button
             onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
@@ -425,7 +425,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   }
 
   if (!queue.length) return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ fontFamily: F, color: '#7A7060' }}>Loading…</p>
     </div>
   )
@@ -562,7 +562,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
     }
 
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>
             {retryMode ? 'Retry Complete' : 'Session Complete'}

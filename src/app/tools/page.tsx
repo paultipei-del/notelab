@@ -12,7 +12,7 @@ export default function ToolsPage() {
   }, [loading, user])
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 64px' }}>
         <ToolsHub headingVariant="page" />
       </div>

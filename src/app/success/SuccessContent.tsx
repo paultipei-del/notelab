@@ -14,7 +14,7 @@ export default function SuccessContent() {
   }, [])
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '64px 56px', maxWidth: '480px', width: '90%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.10)' }}>
         <div style={{ fontSize: '48px', marginBottom: '24px' }}>🎹</div>
         <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px', color: '#2A2318' }}>

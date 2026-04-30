@@ -9,7 +9,7 @@ const ACCENT = '#BA7517'
 
 export default function GrandStaffExplorePage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
         {/* Breadcrumb */}

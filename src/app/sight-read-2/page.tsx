@@ -8,7 +8,7 @@ const SERIF = 'var(--font-cormorant), serif'
 export default function SightRead2() {
   const router = useRouter()
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 24px', display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
         <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '16px', display: 'block', alignSelf: 'flex-start' }}>← Back</button>
         {[

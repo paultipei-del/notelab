@@ -13,7 +13,7 @@ function CheckoutInner() {
   const price = params.get('price')
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
       <div
         style={{
           maxWidth: '520px',

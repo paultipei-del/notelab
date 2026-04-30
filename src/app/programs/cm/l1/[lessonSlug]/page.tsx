@@ -44,7 +44,7 @@ export default function CMLevel1LessonPage({ params }: Props) {
 
   if (!lesson) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, color: '#7A7060' }}>Lesson not found.</p>
       </div>
     )
@@ -67,7 +67,7 @@ export default function CMLevel1LessonPage({ params }: Props) {
   const isLetterNamesLesson = lessonSlug === 'letter-names-of-notes'
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
         <div style={{ maxWidth: '760px', margin: '0 auto' }}>
           <Breadcrumb

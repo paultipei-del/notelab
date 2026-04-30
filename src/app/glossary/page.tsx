@@ -52,7 +52,7 @@ export default function Glossary() {
   }, [results])
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       {/* Search + filters */}
       <div style={{ background: '#FDFAF3', borderBottom: '1px solid #DDD8CA', padding: '12px 32px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const, alignItems: 'center', position: 'sticky' as const, top: '60px', zIndex: 9 }}>
         <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, flexShrink: 0 }}>← Back</button>

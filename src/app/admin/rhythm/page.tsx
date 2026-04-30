@@ -311,7 +311,7 @@ export default function AdminRhythm() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', padding: '40px 32px' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', padding: '40px 32px' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '4px' }}>
           Rhythm Library Admin

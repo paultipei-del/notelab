@@ -285,7 +285,7 @@ export default function PricingPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', position: 'relative' }}>
       <GlyphBackdrop density={9} seed={51} />
       <div style={{ maxWidth: '1040px', margin: '0 auto', padding: '48px 32px 96px', position: 'relative' }}>
         {/* Hero */}

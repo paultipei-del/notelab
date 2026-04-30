@@ -403,7 +403,7 @@ export default function GeneratePage() {
   const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '16px' }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', padding: '40px 32px' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', padding: '40px 32px' }}>
       <div style={{ maxWidth: '860px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
           <div>

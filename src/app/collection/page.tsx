@@ -91,7 +91,7 @@ function CollectionContent() {
   const allUnlocked = decks.every(d => canAccessDeck(d.id))
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       {/* Hero */}
       <div style={{ padding: '24px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
         {tag !== 'ear' && <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>}
@@ -223,7 +223,7 @@ function CollectionContent() {
 export default function CollectionPage() {
   return (
     <Suspense fallback={
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#7A7060' }}>Loading…</p>
       </div>
     }>

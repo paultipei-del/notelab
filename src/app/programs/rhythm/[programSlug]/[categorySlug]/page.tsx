@@ -62,7 +62,7 @@ export default function RhythmCategoryPage({ params }: Props) {
 
   if (!program) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, color: '#7A7060' }}>Program not found.</p>
       </div>
     )
@@ -70,7 +70,7 @@ export default function RhythmCategoryPage({ params }: Props) {
 
   if (loaded && !category) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <p style={{ fontFamily: F, color: '#7A7060' }}>Category not found.</p>
       </div>
     )
@@ -95,7 +95,7 @@ export default function RhythmCategoryPage({ params }: Props) {
     : `${DIFFICULTY_LABEL[minDiff]} – ${DIFFICULTY_LABEL[maxDiff]}`
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '720px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
         <Link href={`/programs/rhythm#${programSlug}`} style={{ textDecoration: 'none' }}>

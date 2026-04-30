@@ -105,7 +105,7 @@ export default function RhythmTest() {
   const expected = pattern.taps.filter(t => t === 1).length
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
       <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '8px' }}>Rhythm Trainer</h1>
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', marginBottom: '48px' }}>{pattern.label} · {pattern.bpm} BPM · tap Space</p>
 
