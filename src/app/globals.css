@@ -4,10 +4,15 @@
 
 /* ── Page vignette ─────────────────────────────────────────────────────
    Soft warm cream with deeper shoulders at the top and bottom edges.
-   Pinned to the viewport (background-attachment: fixed) so the warm
-   zones stay where the eye expects them no matter how long the page
-   is or where the user has scrolled. Header + footer are transparent
-   over this gradient so the whole page reads as one continuous paper. */
+   Header + footer are transparent over this gradient so the whole page
+   reads as one continuous paper.
+
+   We do NOT use `background-attachment: fixed` — iOS Safari has
+   long-standing rendering bugs with it (gradient stretched at device
+   resolution then upscaled to document height = blurry / abnormal).
+   The trade-off: on very long scrolled pages, the bottom shoulder
+   sits at the document bottom rather than the viewport bottom. That
+   reads as a natural "settling" cue rather than a quirk. */
 html {
   background:
     linear-gradient(
@@ -17,7 +22,6 @@ html {
       #F2EDDF calc(100% - 220px),
       #ECE4CC 100%
     );
-  background-attachment: fixed;
   background-repeat: no-repeat;
   min-height: 100vh;
 }
