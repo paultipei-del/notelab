@@ -1,7 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { KeyboardFigure } from '@/components/learn/visuals/KeyboardFigure'
-import { FIVE_CS_GRAND_STAFF_XML } from './notations'
+import { OctaveCsFigure } from '@/components/learn/visuals/OctaveCsFigure'
 
 export const learnPage = {
   topic: 'reading-and-notation',
@@ -29,19 +27,10 @@ Octave designations fix this. By adding a number after the letter name, we speci
 
 ## The visual
 
-<Notation
-  musicXml={FIVE_CS_GRAND_STAFF_XML}
-  caption="Five Cs across a grand staff, one per measure: C2 and C3 on the bass staff, then C4 (middle C), C5, and C6 on the treble staff. Each C is exactly an octave higher than the one before it."
-  ariaLabel="Grand staff showing five whole-note Cs across five measures. Bass staff: C2 in measure 1, C3 in measure 2. Treble staff: C4 (middle C) in measure 3, C5 in measure 4, C6 in measure 5."
-/>
-
-<KeyboardFigure
-  startMidi={21}
-  endMidi={108}
-  highlightedMidis={[60]}
-  showLabels="all-c-with-octave"
-  whiteKeyWidthOverride={14}
-  caption="The full 88-key piano. Each C is labeled with its octave number, C1 through C8. Middle C is C4, almost exactly in the middle of the keyboard. This naming system is called scientific pitch notation."
+<OctaveCsFigure
+  pitches={['C2', 'C3', 'C4', 'C5', 'C6']}
+  labels={['C2', 'C3', 'C4', 'C5', 'C6']}
+  caption="Five Cs across the grand staff, paired with the full 88-key piano below. Click any notehead or any key, both light up so you can see how the staff position maps to the physical keyboard. Middle C (C4) sits almost exactly in the middle of the keyboard."
 />
 
 ## How scientific pitch notation works

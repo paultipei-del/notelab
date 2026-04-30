@@ -176,7 +176,7 @@ function ensureMetronome(): void {
 export interface SamplerControls {
   ready: boolean
   play: (pitch: string, duration?: string) => Promise<void>
-  playSequence: (pitches: string[], stagger?: number, duration?: string) => Promise<void>
+  playSequence: (pitches: string[], stagger?: number, duration?: string | number) => Promise<void>
   playChord: (pitches: string[], duration?: string) => Promise<void>
   /** Brief click sound for metronome. `accent: true` for the downbeat. */
   tick: (accent?: boolean) => Promise<void>
@@ -227,7 +227,7 @@ export function useSampler(): SamplerControls {
   const playSequence = async (
     pitches: string[],
     stagger: number = 380,
-    duration: string = '4n',
+    duration: string | number = '4n',
   ): Promise<void> => {
     try {
       unlockSync()

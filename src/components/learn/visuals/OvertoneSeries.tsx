@@ -69,8 +69,9 @@ export function OvertoneSeries({
   caption,
 }: OvertoneSeriesProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playSequence } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
+  const [playing, setPlaying] = React.useState(false)
   const { highlightedMidis, highlight, flash } = useNoteHighlight()
 
   // Compute partial MIDIs and conventional pitch spellings.
@@ -150,6 +151,21 @@ export function OvertoneSeries({
     setInteracted(true)
     flash(midi)
     await play(midiToPitch(midi))
+  }
+
+  const handlePlayAll = async () => {
+    setInteracted(true)
+    setPlaying(true)
+    const stagger = 380 // ms between successive partials
+    // Each note rings for the full remaining duration of the sequence —
+    // sustain-pedal effect, so the partials accumulate into a chord
+    // instead of sounding as detached pings.
+    const totalSec = (partialMidis.length * stagger) / 1000 + 1.2
+    partialMidis.forEach((midi, i) => {
+      setTimeout(() => flash(midi, stagger + 200), i * stagger)
+    })
+    await playSequence(partialPitches, stagger, totalSec)
+    setTimeout(() => setPlaying(false), totalSec * 1000)
   }
 
   // Render each partial: choose clef based on midi, place at noteXs[i]
@@ -270,6 +286,30 @@ export function OvertoneSeries({
             )
           })()}
       </svg>
+      {showAudio && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+          <button
+            type="button"
+            onClick={handlePlayAll}
+            disabled={playing || (interacted && !ready)}
+            style={{
+              fontFamily: T.fontLabel,
+              fontSize: 13,
+              padding: '8px 18px',
+              background: 'transparent',
+              border: `0.5px solid ${T.ink}`,
+              borderRadius: 8,
+              cursor: playing ? 'wait' : interacted && !ready ? 'wait' : 'pointer',
+              color: T.ink,
+              opacity: playing ? 0.6 : interacted && !ready ? 0.5 : 1,
+              minWidth: 160,
+              textAlign: 'center',
+            }}
+          >
+            {playing ? 'Playing…' : 'Play all partials'}
+          </button>
+        </div>
+      )}
       {showAudio && interacted && !ready && (
         <div style={{
           fontFamily: T.fontLabel,
@@ -277,7 +317,7 @@ export function OvertoneSeries({
           color: T.inkSubtle,
           fontStyle: 'italic',
           textAlign: 'center',
-          marginTop: 8,
+          marginTop: 6,
         }}>
           Loading piano samples…
         </div>

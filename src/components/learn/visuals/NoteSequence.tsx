@@ -124,10 +124,9 @@ export function NoteSequence({
     bassStaffY + trebleStaffHeight,
     trebleBounds.bottom,
   )
-  // Labels render at a larger, bolder size than the smallLabelFontSize default
-  // so they're readable as identifiers (note names, frequencies) rather than
-  // looking like footnotes.
-  const labelFontSize = Math.round(T.labelFontSize * 1.25)
+  // Labels: smaller than before so longer Hz strings (e.g. "1046.5 Hz") have
+  // breathing room between adjacent notes without overlapping.
+  const labelFontSize = Math.round(T.labelFontSize * 1.0)
   const labelRowSpace = labels && labels.length > 0
     ? labelFontSize + Math.round(12 * T.scale)
     : 0
