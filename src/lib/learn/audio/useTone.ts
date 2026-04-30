@@ -1,45 +1,56 @@
 /**
  * useTone — React hook for a continuous sine-wave generator.
  *
- * Backed by raw Web Audio (AudioContext + OscillatorNode + GainNode),
- * not Tone.js. Tone.js's dynamic-import path was unreliable in Safari:
- * the AudioContext didn't exist yet when the user clicked Play, so the
- * gesture-based unlock had nothing to resume.
+ * Backed by raw Web Audio. Safari pattern in use:
+ *   - The AudioContext is created LAZILY inside the click handler, not
+ *     on hook mount. iOS Safari (and some desktop Safari versions) will
+ *     refuse to resume a context that was first created outside a user
+ *     gesture, even if resume() is later called inside one.
+ *   - We `await ctx.resume()` synchronously after creation. The await
+ *     is fine inside the click handler — Safari only requires the
+ *     resume to start inside the gesture, not finish.
+ *   - A fresh OscillatorNode is created per play because
+ *     OscillatorNode.start() can only be called once per node.
  *
- * Safari pattern in use here:
- *   - The AudioContext is created from outside any user gesture, on
- *     hook mount. Browsers create it in `suspended` state in this case.
- *   - On every Play click we (a) `await ctx.resume()` so the context is
- *     definitely running before we schedule audio, and (b) create a
- *     fresh OscillatorNode for the play (OscillatorNodes are
- *     single-shot — start() can only be called once per node).
- *   - The await on `resume()` is fine inside the click handler: Safari
- *     only requires that resume *start* inside the gesture, not finish.
+ * Diagnostic logs are kept in for now (TONE_DEBUG=true) so users
+ * reporting silent playback can capture the actual state in Safari's
+ * Web Inspector. Remove once confirmed working in production.
  */
 
 import { useEffect, useRef, useState } from 'react'
 import { createAudioContext } from '@/lib/audio/audioContext'
 
+const TONE_DEBUG = true
+function dbg(...args: unknown[]): void {
+  if (TONE_DEBUG && typeof console !== 'undefined') {
+    console.log('[useTone]', ...args)
+  }
+}
+
 let sharedCtx: AudioContext | null = null
 let sharedGain: GainNode | null = null
 let currentOsc: OscillatorNode | null = null
 
-function ensureGraph(): void {
-  if (sharedCtx) return
+function ensureGraph(): boolean {
+  if (sharedCtx && sharedGain) return true
   const ctx = createAudioContext()
-  if (!ctx) return
+  if (!ctx) {
+    dbg('createAudioContext returned null')
+    return false
+  }
   sharedCtx = ctx
-
   const gain = ctx.createGain()
   gain.gain.value = 0
   gain.connect(ctx.destination)
   sharedGain = gain
+  dbg('graph created, state =', ctx.state, 'sampleRate =', ctx.sampleRate)
+  return true
 }
 
-function killCurrentOsc(now: number): void {
+function killCurrentOsc(stopAt: number): void {
   if (!currentOsc) return
   try {
-    currentOsc.stop(now + 0.05)
+    currentOsc.stop(stopAt)
     currentOsc.disconnect()
   } catch {
     /* already-stopped / not-started: ignore */
@@ -60,39 +71,42 @@ export function useTone(): ToneControls {
   const isPlayingRef = useRef(false)
 
   useEffect(() => {
-    ensureGraph()
     return () => {
-      if (isPlayingRef.current && sharedCtx) {
+      if (isPlayingRef.current && sharedCtx && sharedGain) {
         const t = sharedCtx.currentTime
-        if (sharedGain) {
-          try {
-            sharedGain.gain.cancelScheduledValues(t)
-            sharedGain.gain.linearRampToValueAtTime(0, t + 0.02)
-          } catch {}
-        }
-        killCurrentOsc(t)
+        try {
+          sharedGain.gain.cancelScheduledValues(t)
+          sharedGain.gain.linearRampToValueAtTime(0, t + 0.02)
+        } catch {}
+        killCurrentOsc(t + 0.05)
         isPlayingRef.current = false
       }
     }
   }, [])
 
   const start = async (frequency: number = 440, gain: number = 0.3): Promise<void> => {
+    dbg('start invoked', { frequency, gain })
     try {
-      ensureGraph()
+      // Create the AudioContext on first click (inside the user gesture)
+      // so Safari treats it as gesture-originated.
+      if (!ensureGraph()) {
+        dbg('ensureGraph failed')
+        return
+      }
       if (!sharedCtx || !sharedGain) return
 
-      // Resume the context if it's suspended. Awaiting is fine here —
-      // Safari only requires the resume to *start* inside the gesture,
-      // and `await` chains within the same handler invocation.
+      dbg('before resume, state =', sharedCtx.state)
       if (sharedCtx.state === 'suspended') {
         await sharedCtx.resume()
+        dbg('after resume, state =', sharedCtx.state)
+      }
+
+      if (sharedCtx.state !== 'running') {
+        dbg('context still not running after resume; aborting')
+        return
       }
 
       const t = sharedCtx.currentTime
-
-      // Stop any oscillator currently playing — we always create a
-      // fresh node since OscillatorNode.start() can only be called once
-      // per node lifetime in Web Audio.
       killCurrentOsc(t)
 
       const osc = sharedCtx.createOscillator()
@@ -109,8 +123,9 @@ export function useTone(): ToneControls {
 
       isPlayingRef.current = true
       setIsPlaying(true)
-    } catch {
-      /* swallow — audio is best-effort */
+      dbg('osc started at', t)
+    } catch (err) {
+      dbg('caught error', err)
     }
   }
 
@@ -120,7 +135,7 @@ export function useTone(): ToneControls {
         const t = sharedCtx.currentTime
         sharedGain.gain.cancelScheduledValues(t)
         sharedGain.gain.linearRampToValueAtTime(0, t + 0.02)
-        killCurrentOsc(t + 0.02)
+        killCurrentOsc(t + 0.05)
       }
       isPlayingRef.current = false
       setIsPlaying(false)
