@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import { SEVEN_INTERVALS_FROM_C_XML } from './notations'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
+import { IntervalCountDemo } from '@/components/learn/visuals/IntervalCountDemo'
 
 export const learnPage = {
   topic: 'intervals',
@@ -37,13 +36,24 @@ This makes finding an interval's number fast and reliable: count the letters, in
 
 ## The visual
 
-<Notation
-  musicXml={SEVEN_INTERVALS_FROM_C_XML}
-  caption="Seven intervals from C, each shown as a harmonic dyad: 2nd (C-D), 3rd (C-E), 4th (C-F), 5th (C-G), 6th (C-A), 7th (C-B), and octave (C-C5). Count letter names inclusively to find any number."
-  ariaLabel="Seven measures on a treble staff, each a harmonic interval from C to D, E, F, G, A, B, and C5 respectively, labeled as 2nd, 3rd, 4th, 5th, 6th, 7th, and octave."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'D4'], label: '2nd' },
+    { pitches: ['C4', 'E4'], label: '3rd' },
+    { pitches: ['C4', 'F4'], label: '4th' },
+    { pitches: ['C4', 'G4'], label: '5th' },
+    { pitches: ['C4', 'A4'], label: '6th' },
+    { pitches: ['C4', 'B4'], label: '7th' },
+    { pitches: ['C4', 'C5'], label: 'octave' },
+  ]}
+  caption="Seven intervals from C, each a harmonic dyad. Count letter names inclusively to find the number. Click any dyad to hear it."
 />
 
-<DiagramPlaceholder description="Staff with letter-name labels showing how to count letter positions from the lower note to the upper note of an interval." />
+<IntervalCountDemo
+  lowerPitch="C4"
+  upperPitch="G4"
+  caption="Counting letter names inclusively, C, D, E, F, G, five letters. C to G is a 5th. The lower note counts as 1, you count up to and including the upper note."
+/>
 
 ## The basic interval numbers
 

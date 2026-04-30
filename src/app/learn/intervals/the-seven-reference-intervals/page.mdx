@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { REFERENCE_INTERVALS_XML } from './notations'
+import { TonicSpanScale } from '@/components/learn/visuals/TonicSpanScale'
 
 export const learnPage = {
   topic: 'intervals',
@@ -38,10 +37,12 @@ Every other interval quality (minor, augmented, diminished) is derived by alteri
 
 ## The visual
 
-<Notation
-  musicXml={REFERENCE_INTERVALS_XML}
-  caption="The C major scale with each note labeled as its interval from the tonic C: unison, M2, M3, P4, P5, M6, M7, octave. These are the seven reference intervals."
-  ariaLabel="A C major scale ascending on a treble staff, from C4 to C5, with each note labeled as its interval from C: 1, M2, M3, P4, P5, M6, M7, 8ve."
+<TonicSpanScale
+  tonic="C4"
+  scale="major"
+  arcLabelDx={[25, 44, 68, 92, 119, 142, 163]}
+  arcLabelDy={[-18, -20, -18, -7, 14, 43, 76]}
+  caption="The C major scale with each interval from the tonic shown as a coral arc. The arcs fan out, getting larger as the interval grows: M2 to the second note, M3 to the third, all the way up to the octave. Click any label to hear the interval."
 />
 
 ## Deriving the reference intervals from the major scale

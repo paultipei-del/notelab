@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { THIRD_VS_TENTH_XML, THREE_COMPOUND_INTERVALS_XML } from './notations'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
 
 export const learnPage = {
   topic: 'intervals',
@@ -32,16 +31,23 @@ Compound intervals matter in real music. Chord voicings spread across multiple o
 
 ## The visual
 
-<Notation
-  musicXml={THIRD_VS_TENTH_XML}
-  caption="A simple major 3rd (C-E) next to its compound form, a major 10th (C-E an octave higher). Same harmonic function; wider registral space."
-  ariaLabel="Two measures on a treble staff. First: C4 and E4 stacked (major third). Second: C4 and E5 stacked (major tenth)."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'E4'], label: 'major 3rd', sublabel: 'C–E' },
+    { pitches: ['C3', 'E4'], label: 'major 10th', sublabel: 'C–E (octave wider)' },
+  ]}
+  clef="grand"
+  caption="A simple major 3rd next to its compound form. Same harmonic function, wider registral space. The compound version reads with more air between the voices."
 />
 
-<Notation
-  musicXml={THREE_COMPOUND_INTERVALS_XML}
-  caption="Three compound intervals from C: m10 (minor 3rd + octave), P12 (perfect 5th + octave), M13 (major 6th + octave). Quality matches the simple form they reduce to."
-  ariaLabel="Three measures on a treble staff showing compound intervals from C: C-E flat 5 (minor 10th), C-G5 (perfect 12th), C-A5 (major 13th)."
+<IntervalSet
+  intervals={[
+    { pitches: ['C3', 'Eb4'], label: 'm10', sublabel: 'm3 + octave' },
+    { pitches: ['C3', 'G4'], label: 'P12', sublabel: 'P5 + octave' },
+    { pitches: ['C3', 'A4'], label: 'M13', sublabel: 'M6 + octave' },
+  ]}
+  clef="grand"
+  caption="Three compound intervals from C. Each keeps the quality of its simple form, the octave just stretches the interval across more registral space."
 />
 
 ## Naming compound intervals

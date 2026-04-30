@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { MELODIC_FIFTH_XML, HARMONIC_FIFTH_XML } from './notations'
+import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
 
 export const learnPage = {
   topic: 'intervals',
@@ -30,16 +29,12 @@ Understanding both kinds is essential because music uses both constantly, often 
 
 ## The visual
 
-<Notation
-  musicXml={MELODIC_FIFTH_XML}
-  caption="Melodic perfect fifth, C played first, then G. The ear experiences motion from one pitch to another."
-  ariaLabel="A treble staff with two half notes played in succession: C4 then G4, a melodic perfect fifth."
-/>
-
-<Notation
-  musicXml={HARMONIC_FIFTH_XML}
-  caption="Harmonic perfect fifth, C and G played simultaneously. Same interval, but experienced as a single stacked sound."
-  ariaLabel="A treble staff with C4 and G4 stacked as whole notes and sounded together, a harmonic perfect fifth."
+<ChordExplorer
+  pitches={['C4', 'G4']}
+  size="small"
+  showKeyboard={false}
+  showMelodicControls={true}
+  caption="The same perfect fifth, three ways. Ascending plays C then G, Descending plays G then C, Harmonic plays both together. The interval (number, quality, distance) is identical in all three; only the presentation changes."
 />
 
 ## Melodic intervals

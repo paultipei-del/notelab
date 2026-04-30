@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { SINGLE_PERFECT_FIFTH_XML, FOUR_INTERVALS_XML } from './notations'
+import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
 
 export const learnPage = {
   topic: 'intervals',
@@ -32,16 +32,21 @@ Intervals are the alphabet of musical relationships.
 
 ## The visual
 
-<Notation
-  musicXml={SINGLE_PERFECT_FIFTH_XML}
-  caption="C and G played together, a perfect fifth. The interval is the distance between the two pitches."
-  ariaLabel="A treble staff showing C and G stacked as a harmonic interval, a perfect fifth."
+<ChordExplorer
+  pitches={['C4', 'G4']}
+  size="small"
+  showKeyboard={false}
+  caption="A perfect fifth, C and G played together. The interval is the distance between the two pitches."
 />
 
-<Notation
-  musicXml={FOUR_INTERVALS_XML}
-  caption="Four intervals from C, side by side, a 2nd (C-D), a 3rd (C-E), a 5th (C-G), and an octave (C-C5). Each is a different distance between two pitches."
-  ariaLabel="Four measures on a treble staff, each showing a harmonic interval from C: C-D (second), C-E (third), C-G (fifth), C-C5 (octave)."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'D4'], label: '2nd' },
+    { pitches: ['C4', 'E4'], label: '3rd' },
+    { pitches: ['C4', 'G4'], label: '5th' },
+    { pitches: ['C4', 'C5'], label: 'octave' },
+  ]}
+  caption="Four intervals from C, a 2nd, 3rd, 5th, and octave. Each is a different distance between two pitches. Click any dyad to hear it, or press Play all to hear them in sequence."
 />
 
 ## Two kinds of distance

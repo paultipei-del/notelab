@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { CONSONANCE_DISSONANCE_SPECTRUM_XML } from './notations'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
 
 export const learnPage = {
   topic: 'intervals',
@@ -28,10 +27,16 @@ Now that you have the full vocabulary of intervals (number, quality, and the sev
 
 ## The visual
 
-<Notation
-  musicXml={CONSONANCE_DISSONANCE_SPECTRUM_XML}
-  caption="Six dyads from C, arranged from maximally consonant to strongly dissonant: P8 (perfect octave), P5 (perfect fifth), M3 (major third), m3 (minor third), M2 (major second), TT (tritone). The further right, the more tension the ear registers."
-  ariaLabel="Six measures on a treble staff showing harmonic intervals from C: perfect octave, perfect fifth, major third, minor third, major second, tritone."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'C5'], label: 'P8', sublabel: 'octave' },
+    { pitches: ['C4', 'G4'], label: 'P5', sublabel: 'fifth' },
+    { pitches: ['C4', 'E4'], label: 'M3', sublabel: 'major third' },
+    { pitches: ['C4', 'Eb4'], label: 'm3', sublabel: 'minor third' },
+    { pitches: ['C4', 'D4'], label: 'M2', sublabel: 'major second' },
+    { pitches: ['C4', 'F#4'], label: 'TT', sublabel: 'tritone' },
+  ]}
+  caption="Six dyads from C, ordered from maximally consonant on the left to strongly dissonant on the right. Click each to hear how the tension grows."
 />
 
 ## The consonance-dissonance spectrum

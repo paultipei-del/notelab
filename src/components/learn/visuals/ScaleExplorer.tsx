@@ -78,6 +78,14 @@ interface ScaleExplorerProps {
    */
   pitches?: string[]
   /**
+   * Custom labels rendered above each scale degree, e.g. interval names from
+   * the tonic (`['unison','M2','M3',...]`). When provided, replaces the
+   * default scale-degree row (1, 2, 3...) — they would crowd otherwise.
+   * Length must match the resolved scale length; mismatches are ignored
+   * (with a console.warn) and the default degree row is used.
+   */
+  intervalLabels?: string[]
+  /**
    * MIDI numbers within the scale to render in muted gray.
    * Used for showing "scale minus omitted notes" pedagogy
    * (e.g. C major pentatonic = C major with F and B dimmed).
@@ -106,6 +114,7 @@ export function ScaleExplorer({
   scale = 'major',
   intervals,
   pitches,
+  intervalLabels,
   dimmedMidis = [],
   clef,
   size = 'inline',
@@ -135,6 +144,18 @@ export function ScaleExplorer({
       ? pitches
       : scaleMidis.map(midiToPitch)
   const dimmedSet = new Set(dimmedMidis)
+
+  // Resolve intervalLabels: must match scale length or we ignore (warn) and
+  // fall through to the default degree row.
+  const resolvedIntervalLabels = intervalLabels && intervalLabels.length === scaleMidis.length
+    ? intervalLabels
+    : null
+  if (intervalLabels && intervalLabels.length !== scaleMidis.length) {
+    console.warn(
+      `ScaleExplorer: intervalLabels length ${intervalLabels.length} doesn't match scale length ${scaleMidis.length}; falling back to default degree labels.`
+    )
+  }
+  const useIntervalLabels = resolvedIntervalLabels !== null
 
   // Auto-caption when none provided
   const tonicName = PITCH_CLASS_NAMES[((tonic % 12) + 12) % 12]
@@ -170,7 +191,10 @@ export function ScaleExplorer({
 
   let cursorY = bounds.bottom + T.annotationBuffer
   let degreeY: number | null = null
-  if (showDegrees && showStaff) {
+  // The label row is shown when either showDegrees is on (default) OR
+  // intervalLabels is provided. intervalLabels takes precedence over the
+  // default 1̂ 2̂ 3̂ caret row (combining both would crowd the staff).
+  if ((showDegrees || useIntervalLabels) && showStaff) {
     degreeY = cursorY + T.labelFontSize
     cursorY = degreeY + T.annotationBuffer
   }
@@ -231,7 +255,22 @@ export function ScaleExplorer({
                 ariaLabel={`Scale degree ${i + 1}, ${scalePitches[i]}`}
               />
             ))}
-            {showDegrees && degreeY !== null && scaleMidis.map((midi, i) => {
+            {/* Custom interval labels take precedence over default degree row. */}
+            {useIntervalLabels && degreeY !== null && resolvedIntervalLabels && scaleMidis.map((midi, i) => (
+              <text
+                key={`int-${midi}-${i}`}
+                x={noteXs[i]}
+                y={degreeY!}
+                fontSize={T.labelFontSize}
+                fontFamily={T.fontLabel}
+                fill={dimmedSet.has(midi) ? T.inkSubtle : (highlightedMidis.includes(midi) ? T.highlightAccent : T.ink)}
+                fontWeight={500}
+                textAnchor="middle"
+              >
+                {resolvedIntervalLabels[i]}
+              </text>
+            ))}
+            {!useIntervalLabels && showDegrees && degreeY !== null && scaleMidis.map((midi, i) => {
               const degree = (i + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
               // Only render degree labels for scales with <= 8 notes (skip chromatic)
               if (i + 1 > 8) return null

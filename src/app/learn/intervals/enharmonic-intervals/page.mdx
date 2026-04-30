@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import { AUG4_VS_DIM5_XML } from './notations'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
+import { TritoneContextDemo } from '@/components/learn/visuals/TritoneContextDemo'
 
 export const learnPage = {
   topic: 'intervals',
@@ -31,13 +30,15 @@ Why do both spellings exist? Because music theory is about context, not just pit
 
 ## The visual
 
-<Notation
-  musicXml={AUG4_VS_DIM5_XML}
-  caption="C to F♯ on the left, an augmented 4th. C to G♭ on the right, a diminished 5th. Same sound (six half steps, the tritone), two different spellings."
-  ariaLabel="Two measures on a treble staff. First: C4 and F-sharp 4 stacked (augmented fourth). Second: C4 and G-flat 4 stacked (diminished fifth). Same pitch; different spelling."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'F#4'], label: 'augmented 4th', sublabel: 'C–F♯' },
+    { pitches: ['C4', 'Gb4'], label: 'diminished 5th', sublabel: 'C–G♭' },
+  ]}
+  caption="Same sound, six half steps, the tritone, two different spellings. Both are 'right', the choice depends on context."
 />
 
-<DiagramPlaceholder description="The same tritone in two harmonic contexts, F♯ as the leading tone in E major (wanting to resolve upward), G♭ as a chromatic neighbor in D♭ major (wanting to resolve downward). Shows how spelling reflects function." />
+<TritoneContextDemo caption="The same physical pitch behaves differently depending on how it's spelled. F♯ acts as a leading tone, it wants to resolve upward to G. G♭ acts as a chromatic neighbor, it wants to resolve downward to F. Same sound, different musical function." />
 
 ## Common enharmonic interval pairs
 

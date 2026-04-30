@@ -27,6 +27,14 @@ interface NoteSequenceProps {
   duration?: 'whole' | 'half' | 'quarter'
   size?: LearnSize
   showAudio?: boolean
+  /**
+   * Audio control mode. 'simple' shows a single click-the-notes affordance
+   * (default — user clicks individual noteheads). 'ascending-descending'
+   * adds two buttons below the staff: Ascending ↑ plays pitches in input
+   * order; Descending ↓ plays them in reverse. Use this when the lesson
+   * explicitly contrasts directions (melodic intervals).
+   */
+  audioControls?: 'simple' | 'ascending-descending'
   caption?: string
 }
 
@@ -38,10 +46,11 @@ export function NoteSequence({
   duration = 'whole',
   size = 'inline',
   showAudio = true,
+  audioControls = 'simple',
   caption,
 }: NoteSequenceProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playSequence } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
   const { highlightedMidis, highlight, flash } = useNoteHighlight()
 
@@ -216,6 +225,65 @@ export function NoteSequence({
           )
         })}
       </svg>
+      {showAudio && audioControls === 'ascending-descending' && (
+        <div style={{
+          display: 'flex', gap: 12, justifyContent: 'center',
+          alignItems: 'center', marginTop: 14, flexWrap: 'wrap',
+        }}>
+          <button
+            type="button"
+            onClick={async () => {
+              setInteracted(true)
+              validIndices.forEach((origIdx, k) => {
+                setTimeout(() => flash(midis[k], 600), k * 380)
+              })
+              await playSequence(validPitches, 380, '4n')
+            }}
+            disabled={interacted && !ready}
+            style={{
+              fontFamily: T.fontLabel,
+              fontSize: 13,
+              padding: '8px 18px',
+              background: 'transparent',
+              border: `0.5px solid ${T.ink}`,
+              borderRadius: 8,
+              cursor: interacted && !ready ? 'wait' : 'pointer',
+              color: T.ink,
+              opacity: interacted && !ready ? 0.5 : 1,
+              minWidth: 140,
+            }}
+          >
+            Ascending ↑
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              setInteracted(true)
+              const reversedMidis = [...midis].reverse()
+              const reversedPitches = [...validPitches].reverse()
+              reversedMidis.forEach((m, k) => {
+                setTimeout(() => flash(m, 600), k * 380)
+              })
+              await playSequence(reversedPitches, 380, '4n')
+            }}
+            disabled={interacted && !ready}
+            style={{
+              fontFamily: T.fontLabel,
+              fontSize: 13,
+              padding: '8px 18px',
+              background: 'transparent',
+              border: `0.5px solid ${T.ink}`,
+              borderRadius: 8,
+              cursor: interacted && !ready ? 'wait' : 'pointer',
+              color: T.ink,
+              opacity: interacted && !ready ? 0.5 : 1,
+              minWidth: 140,
+            }}
+          >
+            Descending ↓
+          </button>
+        </div>
+      )}
       {showAudio && interacted && !ready && (
         <div style={{
           fontFamily: T.fontLabel,

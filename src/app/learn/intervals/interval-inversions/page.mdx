@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import { FIFTH_AND_INVERSION_XML, THIRD_AND_INVERSION_XML } from './notations'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
 
 export const learnPage = {
   topic: 'intervals',
@@ -30,16 +29,20 @@ This is called **inversion**, and it follows a reliable pattern. Every interval 
 
 ## The visual
 
-<Notation
-  musicXml={FIFTH_AND_INVERSION_XML}
-  caption="C up to G is a perfect 5th. Move the C up an octave (so G is now lower) and you get a perfect 4th. Perfect stays perfect under inversion."
-  ariaLabel="Two measures on a treble staff. First: C4 and G4 stacked (perfect fifth). Second: G4 and C5 stacked (perfect fourth)."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'G4'], label: 'C up to G, perfect 5th' },
+    { pitches: ['G4', 'C5'], label: 'G up to C, perfect 4th' },
+  ]}
+  caption="Move the lower note up an octave and the 5th becomes a 4th. Perfect stays perfect under inversion."
 />
 
-<Notation
-  musicXml={THIRD_AND_INVERSION_XML}
-  caption="C up to E is a major 3rd. Invert it and you get E up to C, a minor 6th. Major flips to minor; the numbers sum to 9."
-  ariaLabel="Two measures on a treble staff. First: C4 and E4 stacked (major third). Second: E4 and C5 stacked (minor sixth)."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'E4'], label: 'C up to E, major 3rd' },
+    { pitches: ['E4', 'C5'], label: 'E up to C, minor 6th' },
+  ]}
+  caption="A major 3rd inverts to a minor 6th. Major flips to minor, and the numbers (3 + 6) sum to 9."
 />
 
 ## The number rule

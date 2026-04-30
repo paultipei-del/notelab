@@ -1,8 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
-import { HALF_AND_WHOLE_STEP_XML } from './notations'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
+import { HalfStepsKeyboard } from '@/components/learn/visuals/HalfStepsKeyboard'
 
 export const learnPage = {
   topic: 'intervals',
@@ -32,13 +30,19 @@ These two small intervals are the atoms of melodic motion. Scales, chords, and h
 
 ## The visual
 
-<Notation
-  musicXml={HALF_AND_WHOLE_STEP_XML}
-  caption="C to C♯, a half step. C to D, a whole step. Two half steps make a whole step."
-  ariaLabel="Two measures on a treble staff. First measure: C4 to C-sharp 4, labeled 'half step'. Second measure: C4 to D4, labeled 'whole step'."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'Db4'], label: 'half step' },
+    { pitches: ['C4', 'D4'], label: 'whole step' },
+  ]}
+  caption="Two adjacent intervals, a half step (C to D♭) and a whole step (C to D). Two half steps make a whole step. (Spelled D♭ rather than C♯ so the noteheads sit on adjacent staff positions, the engraving convention for a 2nd.)"
 />
 
-<Diagram src="/diagrams/whole-and-half-steps.svg" caption="Whole and half steps on the keyboard. E–F and B–C are the two naturally-occurring half steps between white keys." />
+<HalfStepsKeyboard
+  startMidi={60}
+  endMidi={72}
+  caption="Toggle Half steps or Whole steps, then click any key. The clicked key plus its step-partner light up and play in sequence — a half step is the next key (any color), a whole step skips one key in between."
+/>
 
 ## Half steps on a piano
 

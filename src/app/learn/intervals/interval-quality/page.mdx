@@ -1,8 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
-import { FOUR_THIRDS_XML } from './notations'
+import { IntervalSet } from '@/components/learn/visuals/IntervalSet'
 
 export const learnPage = {
   topic: 'intervals',
@@ -40,10 +38,14 @@ Quality plus number identifies every interval uniquely. A "perfect fifth" is dif
 
 ## The visual
 
-<Notation
-  musicXml={FOUR_THIRDS_XML}
-  caption="Four thirds from C, all 'thirds' by number (C-E letter span), but four different qualities: major (4 half steps), minor (3), diminished (2), augmented (5)."
-  ariaLabel="Four measures on a treble staff showing harmonic thirds from C: C-E (major third), C-E flat (minor third), C-E double flat (diminished third), C-E sharp (augmented third)."
+<IntervalSet
+  intervals={[
+    { pitches: ['C4', 'E4'], label: 'major 3rd', sublabel: '4 half steps' },
+    { pitches: ['C4', 'Eb4'], label: 'minor 3rd', sublabel: '3 half steps' },
+    { pitches: ['C4', 'Ebb4'], label: 'diminished 3rd', sublabel: '2 half steps' },
+    { pitches: ['C4', 'E#4'], label: 'augmented 3rd', sublabel: '5 half steps' },
+  ]}
+  caption="Four thirds from C, all 'thirds' by number (each spans the C–E letter range). Quality changes the size: major has four half steps, minor three, diminished two, augmented five."
 />
 
 <Diagram src="/diagrams/interval-quality-chart.svg" caption="Which qualities apply to which intervals. Perfect intervals sit at the center for unisons, 4ths, 5ths, and octaves; major/minor pairs handle 2nds, 3rds, 6ths, 7ths." />
