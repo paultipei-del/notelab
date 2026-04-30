@@ -179,7 +179,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
     if (mic.current.analyser) return true
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-      const ctx = new AudioContext()
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       if (ctx.state === 'suspended') await ctx.resume()
       const src = ctx.createMediaStreamSource(stream)
       const analyser = ctx.createAnalyser()
@@ -295,7 +295,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
     const measure = queue[measureIdx]
     const bMs = beatMs(measure.tempoBpm)
     if (!clickCtxRef.current || clickCtxRef.current.state === 'closed') {
-      clickCtxRef.current = new AudioContext()
+      clickCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
     }
     if (clickCtxRef.current.state === 'suspended') void clickCtxRef.current.resume()
 

@@ -92,7 +92,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
   const startDetecting = useCallback(async (stream: MediaStream) => {
     // Reuse AudioContext, analyser and detector across cards
     if (!sharedCtx || sharedCtx.state === 'closed') {
-      sharedCtx = new AudioContext()
+      sharedCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       allContexts.push(sharedCtx)
       sharedAnalyser = null
       sharedDetector = null

@@ -149,7 +149,7 @@ export default function IntervallicPlaySession({ moduleId }: { moduleId: string 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         if (cancelled) { stream.getTracks().forEach(t => t.stop()); return }
-        const ctx = new AudioContext()
+        const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
         if (ctx.state === 'suspended') await ctx.resume()
         const src = ctx.createMediaStreamSource(stream)
         const analyser = ctx.createAnalyser()

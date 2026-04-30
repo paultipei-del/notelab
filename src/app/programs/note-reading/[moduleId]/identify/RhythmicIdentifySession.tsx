@@ -196,7 +196,7 @@ export default function RhythmicIdentifySession({ moduleId }: { moduleId: string
     // Ensure AudioContext is alive. Lazy-create on first start to avoid
     // autoplay blocks; resume if the tab was backgrounded.
     if (!ctxRef.current || ctxRef.current.state === 'closed') {
-      ctxRef.current = new AudioContext()
+      ctxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
     }
     if (ctxRef.current.state === 'suspended') void ctxRef.current.resume()
 

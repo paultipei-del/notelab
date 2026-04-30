@@ -114,7 +114,7 @@ function CustomNoteIDInner() {
 
   function playWrongSound() {
     try {
-      const ctx = new AudioContext()
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.connect(gain)

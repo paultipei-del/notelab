@@ -71,7 +71,7 @@ export default function PitchTest() {
       stopMic()
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       allStreams.push(stream)
-      const ctx = new AudioContext()
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
       const source = ctx.createMediaStreamSource(stream)
       const analyser = ctx.createAnalyser()
       source.connect(analyser)

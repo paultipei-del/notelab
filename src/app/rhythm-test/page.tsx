@@ -27,7 +27,7 @@ export default function RhythmTest() {
   const slotDuration = 60 / pattern.bpm / pattern.subdivisions
 
   const getCtx = () => {
-    if (!ctxRef.current) ctxRef.current = new AudioContext()
+    if (!ctxRef.current) ctxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
     return ctxRef.current
   }
 

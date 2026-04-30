@@ -104,7 +104,7 @@ export default function PitchDiagnostic() {
     if (!micStream || !micStream.active) {
       micStream = await navigator.mediaDevices.getUserMedia({ audio: true })
     }
-    if (!micCtx || micCtx.state === 'closed') micCtx = new AudioContext()
+    if (!micCtx || micCtx.state === 'closed') micCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
     if (micCtx.state === 'suspended') await micCtx.resume()
     if (!analyserRef.current) {
       const source = micCtx.createMediaStreamSource(micStream)

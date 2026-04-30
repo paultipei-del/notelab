@@ -106,7 +106,7 @@ export default function TestPage() {
           sadStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
           sadCtx = null; sadAnalyser = null; sadDetector = null
         }
-        if (!sadCtx || sadCtx.state === 'closed') sadCtx = new AudioContext()
+        if (!sadCtx || sadCtx.state === 'closed') sadCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
         if (sadCtx.state === 'suspended') await sadCtx.resume()
         if (!sadAnalyser) {
           const src = sadCtx.createMediaStreamSource(sadStream!)
