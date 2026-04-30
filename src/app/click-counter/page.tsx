@@ -226,7 +226,7 @@ export default function ClickCounterPage() {
   const ringProgress = repsGoal > 0 ? Math.min(1, count / repsGoal) : 0
 
   return (
-    <div style={{ background: '#F2EDDF', minHeight: 'calc(var(--nl-viewport-h) - var(--nl-site-header-h))', paddingBottom: '1rem' }}>
+    <div style={{ background: 'transparent', minHeight: 'calc(var(--nl-viewport-h) - var(--nl-site-header-h))', paddingBottom: '1rem' }}>
       {showOverlay && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(242,237,223,0.97)', zIndex: 99999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem', gap: '1.2rem' }}>
           <p style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '2.4rem', letterSpacing: '0.04em', color: '#2A2318', lineHeight: 1.1 }}>Session complete.</p>

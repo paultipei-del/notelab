@@ -42,7 +42,7 @@ export default function RhythmLessonShell({
   topicName, programSlug, programTitle, topicHref, steps, children,
 }: Props) {
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 24px 80px' }}>
 
         <Link href={topicHref} style={{ textDecoration: 'none' }}>

@@ -62,7 +62,7 @@ export default function LearnPageLayout({
   const topicTitle = topicNode?.title ?? topic
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F2EDDF' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }}>
       <article style={{ maxWidth: '720px', margin: '0 auto', padding: '48px 32px 96px' }}>
         {/* Breadcrumb */}
         <nav

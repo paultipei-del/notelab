@@ -44,7 +44,7 @@ export default function OrderOfPracticePage() {
   return (
     <div
       style={{
-        background: '#F2EDDF',
+        background: 'transparent',
         minHeight: 'calc(var(--nl-viewport-h) - var(--nl-site-header-h))',
         padding: '24px',
       }}
