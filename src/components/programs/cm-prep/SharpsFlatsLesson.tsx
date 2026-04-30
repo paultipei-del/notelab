@@ -245,7 +245,7 @@ function SharpsIntro({ onNext }: { onNext: () => void }) {
         On the piano, play the key to the <strong>right</strong> of the white key — that is always a black key.
       </p>
       <PianoKeyboard mode="sharps" />
-      <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10,
+      <div style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10,
         padding: '12px 16px', marginBottom: 20 }}>
         <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
           On the staff, a sharp is written to the <strong>left</strong> of the note head,
@@ -268,7 +268,7 @@ function FlatsIntro({ onNext }: { onNext: () => void }) {
         On the piano, play the key to the <strong>left</strong> of the white key — also a black key.
       </p>
       <PianoKeyboard mode="flats" />
-      <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10,
+      <div style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10,
         padding: '12px 16px', marginBottom: 20 }}>
         <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
           Like a sharp, a flat is written to the <strong>left</strong> of the note head,
@@ -292,7 +292,7 @@ function NaturalsIntro({ onNext }: { onNext: () => void }) {
         On the piano, naturals are always <strong>white keys</strong>.
       </p>
       <PianoKeyboard mode="naturals" />
-      <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10,
+      <div style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10,
         padding: '12px 16px', marginBottom: 20 }}>
         <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
           The natural sign is written to the <strong>left</strong> of the note head,
@@ -387,7 +387,7 @@ function DrawAccidentalEx({
         Tap to the <strong>left</strong> of the note, on the <strong>same line or space</strong>, then press Place to confirm the {accWord(acc)} ({accSymbol(acc)}).
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -498,7 +498,7 @@ function NameAccidentalEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — name this note
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -516,7 +516,7 @@ function NameAccidentalEx({
         {choices.map(choice => {
           const isChosen  = feedback?.chosen === choice
           const isCorrect = feedback ? isCorrectAnswer(choice, item) : false
-          let bg = 'white', border = '#DDD8CA', color = '#2A2318'
+          let bg = 'white', border = '#D9CFAE', color = '#2A2318'
           if (feedback) {
             if (isCorrect)                { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
             else if (isChosen)            { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
@@ -593,7 +593,7 @@ function GrandNameEx({
         Grand staff — name this note
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${gsH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -610,7 +610,7 @@ function GrandNameEx({
         {choices.map(choice => {
           const isChosen  = feedback?.chosen === choice
           const isCor     = feedback ? isCorrectAnswer(choice, item) : false
-          let bg = 'white', border = '#DDD8CA', color = '#2A2318'
+          let bg = 'white', border = '#D9CFAE', color = '#2A2318'
           if (feedback) {
             if (isCor)       { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
             else if (isChosen) { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
@@ -733,7 +733,7 @@ function WriteAccidentalEx({
         </p>
       </div>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -765,7 +765,7 @@ function WriteAccidentalEx({
           {(['#', 'b', 'n'] as AccType[]).map(a => {
             const isPicked  = pickedAcc === a
             const isCorrectAcc = a === item.acc
-            let bg = 'white', border = '#DDD8CA', color = '#2A2318'
+            let bg = 'white', border = '#D9CFAE', color = '#2A2318'
             if (submitted) {
               if (isCorrectAcc)        { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
               else if (isPicked)       { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }

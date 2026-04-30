@@ -44,8 +44,8 @@ export default function AuthModal({ onClose, onSuccess }: AuthModalProps) {
 
   const inputStyle = {
     width: '100%',
-    background: '#FDFAF3',
-    border: '1px solid #DDD8CA',
+    background: '#ECE3CC',
+    border: '1px solid #D9CFAE',
     borderRadius: '8px',
     padding: '12px 14px',
     fontFamily: 'var(--font-jost), sans-serif',

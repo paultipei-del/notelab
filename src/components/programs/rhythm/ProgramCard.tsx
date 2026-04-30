@@ -32,8 +32,8 @@ export default function ProgramCard({ program, totalExercises, doneExercises, to
       <div
         className="nl-tile-hover"
         style={{
-          background: '#FDFAF3',
-          border: '1px solid #DDD8CA',
+          background: '#ECE3CC',
+          border: '1px solid #D9CFAE',
           borderRadius: '16px',
           display: 'grid',
           gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 320px)',

@@ -157,7 +157,7 @@ export default function PitchTest() {
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '24px 24px' }}>
         <button onClick={() => { stopMic(); router.back() }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
         {/* Current note */}
-        <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '32px', marginBottom: '16px', textAlign: 'center' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '32px', marginBottom: '16px', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Play this note</p>
           <h2 style={{ fontFamily: SERIF, fontSize: '48px', fontWeight: 300, color: '#2A2318', marginBottom: '16px' }}>{currentNote}</h2>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
@@ -169,7 +169,7 @@ export default function PitchTest() {
               <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: detected === currentNote ? '#4CAF50' : '#E53935' }}>{detected}</p>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060' }}>{detectedFreq > 0 ? detectedFreq + ' Hz' : ''}</p>
             </div>
-            <div style={{ width: '1px', height: '60px', background: '#DDD8CA' }} />
+            <div style={{ width: '1px', height: '60px', background: '#D9CFAE' }} />
             <div style={{ textAlign: 'center' as const }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', marginBottom: '4px' }}>SAD</p>
               <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: detectedSAD === currentNote ? '#4CAF50' : '#E53935' }}>{detectedSAD}</p>
@@ -181,7 +181,7 @@ export default function PitchTest() {
         {/* Controls */}
         <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
           <button onClick={prev} disabled={idx === 0}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.4 : 1 }}>
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #D9CFAE', background: '#ECE3CC', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.4 : 1 }}>
             ← Prev
           </button>
           <button onClick={logAndNext}
@@ -192,13 +192,13 @@ export default function PitchTest() {
 
         {/* Log */}
         {log.length > 0 && (
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Log</p>
               <button onClick={() => {
                 const text = log.map(e => `${e.note} | ACX: ${e.detected} ${e.freq}Hz | SAD: ${e.detectedSAD} ${e.freqSAD}Hz`).join('\n')
                 navigator.clipboard.writeText(text)
-              }} style={{ background: 'none', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '3px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', cursor: 'pointer' }}>
+              }} style={{ background: 'none', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '3px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', cursor: 'pointer' }}>
                 Copy
               </button>
             </div>
@@ -208,7 +208,7 @@ export default function PitchTest() {
                   <span style={{ width: '40px', fontWeight: 400 }}>{entry.note}</span>
                   <span style={{ width: '70px', color: entry.note === entry.detected ? '#4CAF50' : '#E53935' }}>ACX: {entry.detected}</span>
                   <span style={{ width: '70px', color: '#7A7060' }}>{entry.freq}Hz</span>
-                  <span style={{ width: '2px', background: '#DDD8CA' }} />
+                  <span style={{ width: '2px', background: '#D9CFAE' }} />
                   <span style={{ width: '70px', color: entry.note === entry.detectedSAD ? '#4CAF50' : '#E53935' }}>SAD: {entry.detectedSAD}</span>
                   <span style={{ color: '#7A7060' }}>{entry.freqSAD}Hz</span>
                 </div>

@@ -264,10 +264,10 @@ export default function PitchDiagnostic() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #DDD8CA', background: '#FDFAF3' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #D9CFAE', background: '#ECE3CC' }}>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#2A2318' }}>Pitch Detection Calibration</h1>
         <div style={{ display: 'flex', gap: '10px' }}>
-          {isRunning && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', cursor: 'pointer' }}>Abort</button>}
+          {isRunning && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #D9CFAE', background: '#ECE3CC', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', cursor: 'pointer' }}>Abort</button>}
           {!isRunning && <button onClick={startRun} style={{ padding: '8px 20px', borderRadius: '10px', border: 'none', background: '#1A1A18', color: 'white', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}>▶ Start Test</button>}
         </div>
       </div>
@@ -278,7 +278,7 @@ export default function PitchDiagnostic() {
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
 
           {/* Instructions */}
-          <div style={{ background: isRunning ? '#FAEEDA' : 'white', borderRadius: '16px', border: '1px solid ' + (isRunning ? '#B5402A' : '#DDD8CA'), padding: '20px' }}>
+          <div style={{ background: isRunning ? '#FAEEDA' : 'white', borderRadius: '16px', border: '1px solid ' + (isRunning ? '#B5402A' : '#D9CFAE'), padding: '20px' }}>
             {phase === 'idle' && (
               <>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>Instructions</p>
@@ -312,18 +312,18 @@ export default function PitchDiagnostic() {
 
           {/* Progress bar */}
           {isRunning && (
-            <div style={{ background: '#FDFAF3', borderRadius: '8px', border: '1px solid #DDD8CA', padding: '4px' }}>
+            <div style={{ background: '#ECE3CC', borderRadius: '8px', border: '1px solid #D9CFAE', padding: '4px' }}>
               <div style={{ height: '6px', borderRadius: '4px', background: '#B5402A', width: `${(noteIdx / seq.length) * 100}%`, transition: 'width 0.3s' }} />
             </div>
           )}
 
           {/* Sequence selector */}
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Sequence</p>
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
               {Object.keys(SEQUENCES).map(seq => (
                 <button key={seq} onClick={() => setSelectedSeq(seq)} disabled={isRunning}
-                  style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === seq ? '#1A1A18' : '#DDD8CA'), background: selectedSeq === seq ? '#1A1A18' : 'white', color: selectedSeq === seq ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: isRunning ? 'default' : 'pointer', textAlign: 'left' as const }}>
+                  style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === seq ? '#1A1A18' : '#D9CFAE'), background: selectedSeq === seq ? '#1A1A18' : 'white', color: selectedSeq === seq ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: isRunning ? 'default' : 'pointer', textAlign: 'left' as const }}>
                   {seq} <span style={{ opacity: 0.6 }}>({SEQUENCES[seq].join(' → ').slice(0, 20)}…)</span>
                 </button>
               ))}
@@ -331,7 +331,7 @@ export default function PitchDiagnostic() {
           </div>
 
           {/* Parameters */}
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>Parameters</p>
             {([
               ['Dead Window (ms)', deadWindow, 0, 1000, 50, setDeadWindow],
@@ -358,7 +358,7 @@ export default function PitchDiagnostic() {
 
           {/* Live note results */}
           {(isRunning || isDone) && currentResults.length > 0 && (
-            <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+            <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Results</p>
               <div style={{ overflowX: 'auto' as const }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
@@ -399,7 +399,7 @@ export default function PitchDiagnostic() {
 
           {/* Run history */}
           {runs.length > 0 && (
-            <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+            <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Run History</p>
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -418,11 +418,11 @@ export default function PitchDiagnostic() {
                     navigator.clipboard.writeText(lines.join(NL))
                     setCopied(true)
                     setTimeout(() => setCopied(false), 2000)
-                  }} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: copied ? '#4CAF50' : '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>
+                  }} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: copied ? '#4CAF50' : '#7A7060', background: 'none', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>
                     {copied ? '✓ Copied' : 'Copy All'}
                   </button>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>Clear</button>
+                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', background: 'none', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '2px 8px', cursor: 'pointer' }}>Clear</button>
                 </div>
                 </div>
               </div>

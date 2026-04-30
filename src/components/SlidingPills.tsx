@@ -67,7 +67,7 @@ export default function SlidingPills<T extends string>({ options, value, onChang
             borderRadius: '9999px',
             padding: '6px 16px',
             fontFamily: F, fontSize, fontWeight: 300,
-            color: value === opt.value ? '#FDFAF3' : '#7A7060',
+            color: value === opt.value ? '#ECE3CC' : '#7A7060',
             letterSpacing: '0.01em',
             whiteSpace: 'nowrap' as const,
             cursor: 'pointer',

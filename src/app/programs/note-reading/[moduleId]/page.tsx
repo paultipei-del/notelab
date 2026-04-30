@@ -82,7 +82,7 @@ export default function ModuleOverviewPage({ params }: Props) {
   if (!isNRModuleUnlocked(moduleId, store)) {
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '420px', width: '90%', textAlign: 'center' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '48px 40px', maxWidth: '420px', width: '90%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '16px' }}>Locked</p>
           <h2 style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#2A2318', marginBottom: '12px' }}>{mod.title}</h2>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', color: '#7A7060', lineHeight: 1.6, marginBottom: '28px' }}>
@@ -121,7 +121,7 @@ export default function ModuleOverviewPage({ params }: Props) {
     flexShrink: 0 as const,
     background: primary ? '#1A1A18' : 'transparent',
     color: primary ? 'white' : '#7A7060',
-    border: primary ? 'none' : '1px solid #DDD8CA',
+    border: primary ? 'none' : '1px solid #D9CFAE',
     borderRadius: '10px', padding: '10px 20px',
     fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400 as const,
     cursor: isLoading ? 'default' as const : 'pointer' as const,
@@ -192,7 +192,7 @@ export default function ModuleOverviewPage({ params }: Props) {
             }
             if (mod.variant === 'rhythmic') {
               return (
-                <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 22px' }}>
+                <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '14px', padding: '20px 22px' }}>
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
                     <RhythmicMeasureStaff
                       notes={RHYTHMIC_PREVIEW_MEASURE}
@@ -281,7 +281,7 @@ export default function ModuleOverviewPage({ params }: Props) {
                 {Array.from({ length: drillCount }).map((_, i) => (
                   <span key={i} style={{
                     width: '18px', height: '4px', borderRadius: '2px',
-                    background: i < masteredCount ? '#3B6D11' : '#DDD8CA',
+                    background: i < masteredCount ? '#3B6D11' : '#D9CFAE',
                   }} />
                 ))}
               </div>
@@ -293,7 +293,7 @@ export default function ModuleOverviewPage({ params }: Props) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
 
           {hasIdentify && (
-            <div style={{ background: 'white', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 24px' }}>
+            <div style={{ background: 'white', border: '1px solid #D9CFAE', borderRadius: '14px', padding: '20px 24px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -333,8 +333,8 @@ export default function ModuleOverviewPage({ params }: Props) {
 
           {hasLocate && (
             <div style={{
-              background: locateUnlocked ? 'white' : '#FDFAF3',
-              border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 24px',
+              background: locateUnlocked ? 'white' : '#ECE3CC',
+              border: '1px solid #D9CFAE', borderRadius: '14px', padding: '20px 24px',
               opacity: locateUnlocked ? 1 : 0.6,
             }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
@@ -385,8 +385,8 @@ export default function ModuleOverviewPage({ params }: Props) {
 
           {hasPlay && (
             <div style={{
-              background: playUnlocked ? 'white' : '#FDFAF3',
-              border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 24px',
+              background: playUnlocked ? 'white' : '#ECE3CC',
+              border: '1px solid #D9CFAE', borderRadius: '14px', padding: '20px 24px',
               opacity: playUnlocked ? 1 : 0.6,
             }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
@@ -443,7 +443,7 @@ export default function ModuleOverviewPage({ params }: Props) {
             module that's still locked, and this module isn't yet complete.
             Keeps the three-drill gating visible without being pushy. */}
         {!mp.completed && nextModule && (
-          <div style={{ marginTop: '-12px', marginBottom: '28px', padding: '10px 14px', background: '#FDFAF3', border: '1px dashed #DDD8CA', borderRadius: '10px' }}>
+          <div style={{ marginTop: '-12px', marginBottom: '28px', padding: '10px 14px', background: '#ECE3CC', border: '1px dashed #D9CFAE', borderRadius: '10px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0, lineHeight: 1.55 }}>
               Complete all {(hasIdentify ? 1 : 0) + (hasLocate ? 1 : 0) + (hasPlay ? 1 : 0)} drills to unlock <strong style={{ fontFamily: SERIF, fontWeight: 400, color: '#2A2318' }}>{nextModule.title}</strong>.
             </p>
@@ -460,7 +460,7 @@ export default function ModuleOverviewPage({ params }: Props) {
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>
               Your note map
             </p>
-            <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px' }}>
+            <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '14px', padding: '20px' }}>
               <NoteHeatMap
                 notePool={[...new Set(mod.notes)]}
                 noteStats={noteStats}

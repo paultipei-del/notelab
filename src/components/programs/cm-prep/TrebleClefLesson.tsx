@@ -201,7 +201,7 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
         just below line 1 and one space just above line 5. Every space note spells part of <strong style={{ color: SPACE_C }}>D F A C E G</strong>.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${W} ${H}`} width="100%"
           style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
 
@@ -278,7 +278,7 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
         Add middle C below on its own ledger line, and A5 above on another — seven line notes in all.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '12px 0 16px', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '12px 0 16px', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${W} ${H}`} width="100%"
           style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
 
@@ -407,7 +407,7 @@ function NameNoteEx({
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase' as const, color, marginBottom: 12 }}>{label}</p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 20 }}>
         <SingleNoteStaff pos={item.pos} color={DARK} />
       </div>
@@ -420,7 +420,7 @@ function NameNoteEx({
         {NOTE_LETTERS.map(letter => {
           const isSelected = selected === letter
           const isAnswer   = letter === item.letter
-          let bg = 'white', border = '#DDD8CA', textColor = DARK
+          let bg = 'white', border = '#D9CFAE', textColor = DARK
           if (confirmed) {
             if (isAnswer)                    { bg = '#EAF3DE'; border = '#C0DD97'; textColor = CORRECT }
             else if (isSelected && !isAnswer){ bg = '#FDF3ED'; border = '#F0C4A8'; textColor = WRONG }
@@ -551,7 +551,7 @@ function PlaceNoteEx({
         </p>
       </div>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg ref={svgRef}
           viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
@@ -713,7 +713,7 @@ function WordRound({
     return () => window.removeEventListener('keydown', handleKey)
   }, [idx, submitted, typed, item.word.length])
 
-  const borderColor = submitted === null ? '#DDD8CA'
+  const borderColor = submitted === null ? '#D9CFAE'
     : isCorrect ? '#C0DD97' : '#F0C4A8'
   const inputColor  = submitted === null ? DARK
     : isCorrect ? CORRECT : WRONG
@@ -729,7 +729,7 @@ function WordRound({
         What word do these notes spell?
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 20 }}>
         <WordStaff notes={item.notes} />
       </div>
@@ -769,7 +769,7 @@ function WordRound({
             }}
             disabled={submitted !== null || typed.length >= item.word.length}
             style={{
-              padding: '10px 0', borderRadius: 8, border: '1.5px solid #DDD8CA',
+              padding: '10px 0', borderRadius: 8, border: '1.5px solid #D9CFAE',
               background: 'white', fontFamily: SERIF, fontSize: 18, fontWeight: 400,
               color: submitted !== null || typed.length >= item.word.length ? '#B0ACA4' : DARK,
               cursor: submitted !== null || typed.length >= item.word.length ? 'default' : 'pointer',
@@ -782,7 +782,7 @@ function WordRound({
           disabled={submitted !== null || typed.length === 0}
           aria-label="Backspace"
           style={{
-            padding: '10px 0', borderRadius: 8, border: '1.5px solid #DDD8CA',
+            padding: '10px 0', borderRadius: 8, border: '1.5px solid #D9CFAE',
             background: 'white', fontFamily: F, fontSize: 15,
             color: submitted !== null || typed.length === 0 ? '#B0ACA4' : DARK,
             cursor: submitted !== null || typed.length === 0 ? 'default' : 'pointer',

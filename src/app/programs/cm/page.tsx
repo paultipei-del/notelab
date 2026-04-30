@@ -20,7 +20,7 @@ const ACCENT = '#B5402A'
 // Each tier gets its own subtle background shade and glyph decoration.
 // All colours live inside the existing cream/charcoal palette.
 const TIER_STYLE: Record<CMTier, { bg: string; glyph: string; glyphSize: string }> = {
-  elementary: { bg: '#FDFAF3', glyph: '𝄞', glyphSize: '72px' },
+  elementary: { bg: '#ECE3CC', glyph: '𝄞', glyphSize: '72px' },
   intermediate: { bg: '#F8F1E2', glyph: '𝄞 𝄢', glyphSize: '56px' },
   advanced: { bg: '#EFE6D2', glyph: '♩♬♩', glyphSize: '56px' },
 }
@@ -195,7 +195,7 @@ function BundleCard({ bundle }: { bundle: (typeof CM_BUNDLES)[number] }) {
     <div
       className="nl-tile-hover"
       style={{
-        background: '#FDFAF3',
+        background: '#ECE3CC',
         border: `2px solid ${ACCENT}`,
         borderRadius: '16px',
         padding: '24px',
@@ -355,8 +355,8 @@ export default function CMProgramPage() {
             style={{
               marginTop: '48px',
               padding: '20px 24px',
-              background: '#FDFAF3',
-              border: '1px solid #DDD8CA',
+              background: '#ECE3CC',
+              border: '1px solid #D9CFAE',
               borderRadius: '14px',
               display: 'flex',
               alignItems: 'center',

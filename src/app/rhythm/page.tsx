@@ -458,8 +458,8 @@ function LibraryPanel({
       gap: '12px',
       padding: '12px 16px',
       borderRadius: isOpen ? '12px 12px 0 0' : '12px',
-      border: '1px solid' + (isOpen ? '#1A1A18' : '#DDD8CA'),
-      borderBottom: isOpen ? 'none' : '1px solid #DDD8CA',
+      border: '1px solid' + (isOpen ? '#1A1A18' : '#D9CFAE'),
+      borderBottom: isOpen ? 'none' : '1px solid #D9CFAE',
       background: isOpen ? '#1A1A18' : 'white',
       cursor: 'pointer',
       textAlign: 'left' as const,
@@ -484,14 +484,14 @@ function LibraryPanel({
           width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
           padding: '11px 16px',
           borderBottom: isLastRow ? 'none' : '1px solid #EDE8DF',
-          background: isCurrent ? '#F2EDDF' : isUnlocked ? 'white' : '#FDFAF3',
+          background: isCurrent ? '#F2EDDF' : isUnlocked ? 'white' : '#ECE3CC',
           cursor: isUnlocked ? 'pointer' : 'default',
           textAlign: 'left' as const, transition: 'background 0.1s', border: 'none',
           borderBottomWidth: isLastRow ? 0 : 1, borderBottomStyle: 'solid' as const, borderBottomColor: '#EDE8DF',
         }}
         onMouseEnter={e => { if (isUnlocked && !isCurrent) e.currentTarget.style.background = '#F2EDDF' }}
-        onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#F2EDDF' : isUnlocked ? 'white' : '#FDFAF3' }}>
-        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#DDD8CA', width: '24px', flexShrink: 0 }}>{gIdx}</span>
+        onMouseLeave={e => { e.currentTarget.style.background = isCurrent ? '#F2EDDF' : isUnlocked ? 'white' : '#ECE3CC' }}>
+        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#D9CFAE', width: '24px', flexShrink: 0 }}>{gIdx}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: isUnlocked ? '#1A1A18' : '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{ex.title}</p>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', margin: 0 }}>{ex.beats}/{ex.beat_type} · {DIFFICULTY_LABEL[ex.difficulty]}</p>
@@ -518,15 +518,15 @@ function LibraryPanel({
   const uploadDropzone = (
     <div style={{ marginTop: '16px' }}>
       <button onClick={() => setShowUpload(v => !v)}
-        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderRadius: showUpload ? '12px 12px 0 0' : '12px', border: '1px solid #DDD8CA', borderBottom: showUpload ? 'none' : '1px solid #DDD8CA', background: '#FDFAF3', cursor: 'pointer', textAlign: 'left' as const }}>
+        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderRadius: showUpload ? '12px 12px 0 0' : '12px', border: '1px solid #D9CFAE', borderBottom: showUpload ? 'none' : '1px solid #D9CFAE', background: '#ECE3CC', cursor: 'pointer', textAlign: 'left' as const }}>
         <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>Load custom .mxl</span>
-        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA' }}>{showUpload ? '▲' : '▼'}</span>
+        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE' }}>{showUpload ? '▲' : '▼'}</span>
       </button>
       {showUpload && (
         <div onDrop={onDrop} onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
-          style={{ border: `1px solid ${dragOver ? '#B5402A' : '#DDD8CA'}`, borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px 24px', textAlign: 'center' as const, background: dragOver ? '#F2EDDF' : 'white', transition: 'all 0.2s' }}>
+          style={{ border: `1px solid ${dragOver ? '#B5402A' : '#D9CFAE'}`, borderTop: 'none', borderRadius: '0 0 12px 12px', padding: '32px 24px', textAlign: 'center' as const, background: dragOver ? '#F2EDDF' : 'white', transition: 'all 0.2s' }}>
           <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#7A7060', marginBottom: '4px' }}>Drop .mxl here</p>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA' }}>Export from MuseScore</p>
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE' }}>Export from MuseScore</p>
         </div>
       )}
     </div>
@@ -549,9 +549,9 @@ function LibraryPanel({
         {loading && <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>Loading…</p>}
 
         {!loading && tree.length > 0 && (
-          <div style={{ display: 'flex', gap: '0', background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', overflow: 'hidden', minHeight: '400px' }}>
+          <div style={{ display: 'flex', gap: '0', background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', overflow: 'hidden', minHeight: '400px' }}>
             {/* Left nav */}
-            <div style={{ width: '200px', flexShrink: 0, borderRight: '1px solid #EDE8DF', background: '#FDFAF3', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ width: '200px', flexShrink: 0, borderRight: '1px solid #EDE8DF', background: '#ECE3CC', display: 'flex', flexDirection: 'column' }}>
               {tree.map(program => {
                 const locked = !canAccessProgram(program.slug)
                 return (
@@ -626,7 +626,7 @@ function LibraryPanel({
                 const isLastLevel = levelIdx === activeCat.levels.length - 1
                 return (
                   <div key={levelNode.level}>
-                    <div style={{ padding: '8px 16px 6px', background: '#FDFAF3', borderBottom: '1px solid #EDE8DF', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ padding: '8px 16px 6px', background: '#ECE3CC', borderBottom: '1px solid #EDE8DF', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Level {levelNode.level}</span>
                       <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0AEA8' }}>{levelNode.exercises.filter(e => progress[e.id]?.completed).length}/{levelNode.exercises.length}</span>
                     </div>
@@ -690,8 +690,8 @@ function LibraryPanel({
                   padding: '12px 16px',
                   marginBottom: '6px',
                   borderRadius: programOpen ? '12px 12px 0 0' : '12px',
-                  border: '1px solid' + (programOpen ? '#1A1A18' : '#DDD8CA'),
-                  borderBottom: programOpen ? 'none' : '1px solid #DDD8CA',
+                  border: '1px solid' + (programOpen ? '#1A1A18' : '#D9CFAE'),
+                  borderBottom: programOpen ? 'none' : '1px solid #D9CFAE',
                   background: programOpen ? '#1A1A18' : 'white',
                   cursor: 'pointer',
                   textAlign: 'left' as const,
@@ -711,7 +711,7 @@ function LibraryPanel({
             )}
 
             {programOpen && !canAccessProgram(program.slug) && (
-              <div style={{ marginBottom: '12px', marginLeft: multiProgram ? '8px' : 0, padding: '16px', border: '1px solid #DDD8CA', borderRadius: '12px', background: 'white' }}>
+              <div style={{ marginBottom: '12px', marginLeft: multiProgram ? '8px' : 0, padding: '16px', border: '1px solid #D9CFAE', borderRadius: '12px', background: 'white' }}>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', margin: '0 0 12px', lineHeight: 1.45 }}>
                   Purchase <strong style={{ fontWeight: 500, color: '#2A2318' }}>{rhythmProgramTitle(program.slug)}</strong> to access these exercises.
                 </p>
@@ -762,7 +762,7 @@ function LibraryPanel({
                             <div
                               style={{
                                 padding: '8px 16px 6px',
-                                background: '#FDFAF3',
+                                background: '#ECE3CC',
                                 borderBottom: '1px solid #EDE8DF',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -1341,7 +1341,7 @@ export default function RhythmPage() {
         return
       }
       // Paint trail — green if pressing near a note, red if pressing on rest, gray if not pressing
-      let trailColor = '#DDD8CA'
+      let trailColor = '#D9CFAE'
       if (isPressedRef.current && exercise) {
         // First check: is beatFloat near ANY note onset? (takes priority over rest)
         let posT = 0
@@ -2037,9 +2037,9 @@ export default function RhythmPage() {
 
     const tapBtnStyle: React.CSSProperties = {
       width: '100%', height: '80px', borderRadius: '16px',
-      border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #ED6765' : '2px solid #DDD8CA',
+      border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #ED6765' : '2px solid #D9CFAE',
       background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#ED6765' : (playing && tapReady) ? '#1A1A18' : '#F2EDDF',
-      color: liveFeedback ? 'white' : (playing && tapReady) ? 'white' : '#DDD8CA',
+      color: liveFeedback ? 'white' : (playing && tapReady) ? 'white' : '#D9CFAE',
       fontFamily: F, fontSize: '18px', fontWeight: 300,
       cursor: 'pointer', transition: 'background 0.1s, border 0.1s',
       userSelect: 'none', WebkitUserSelect: 'none',
@@ -2066,13 +2066,13 @@ export default function RhythmPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {returnTo && (
             <button onClick={() => router.push(returnTo)}
-              style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
+              style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', background: 'none', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
               ← Program
             </button>
           )}
           {exercise && !returnTo && (
             <button onClick={() => { setExercise(null); setCurrentMeta(null); stop(); resetNotationScroll() }}
-              style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
+              style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', background: 'none', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '6px 12px', cursor: 'pointer', flexShrink: 0 }}>
               ← Library
             </button>
           )}
@@ -2088,9 +2088,9 @@ export default function RhythmPage() {
           {exercise && currentMeta && (
             <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
               <button onClick={() => prevEx && loadExercise(prevEx)} disabled={!prevEx}
-                style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (prevEx ? '#1A1A18' : '#DDD8CA'), background: prevEx ? '#1A1A18' : '#F2EDDF', color: prevEx ? 'white' : '#DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: prevEx ? 'pointer' : 'default' }}>←</button>
+                style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (prevEx ? '#1A1A18' : '#D9CFAE'), background: prevEx ? '#1A1A18' : '#F2EDDF', color: prevEx ? 'white' : '#D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: prevEx ? 'pointer' : 'default' }}>←</button>
               <button onClick={() => nextEx && loadExercise(nextEx)} disabled={!nextEx}
-                style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#DDD8CA'), background: nextEx ? '#1A1A18' : '#F2EDDF', color: nextEx ? 'white' : '#DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: nextEx ? 'pointer' : 'default' }}>→</button>
+                style={{ padding: '6px 10px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#D9CFAE'), background: nextEx ? '#1A1A18' : '#F2EDDF', color: nextEx ? 'white' : '#D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: nextEx ? 'pointer' : 'default' }}>→</button>
             </div>
           )}
           {/* Mixer control lives in the bottom tap dock on mobile. */}
@@ -2101,10 +2101,10 @@ export default function RhythmPage() {
           <div style={{ position: 'fixed', inset: 0, zIndex: 200 }}
             onClick={e => e.target === e.currentTarget && setShowMixer(false)}>
             <div style={{ position: 'absolute' as const, inset: 0, background: 'rgba(26,26,24,0.35)' }} />
-            <div style={{ position: 'absolute' as const, left: 0, right: 0, bottom: 0, background: 'rgba(245,242,236,0.98)', borderTop: '1px solid #DDD8CA', borderTopLeftRadius: '18px', borderTopRightRadius: '18px', padding: '14px 14px 18px', boxShadow: '0 -14px 34px rgba(26,26,24,0.18)' }}>
+            <div style={{ position: 'absolute' as const, left: 0, right: 0, bottom: 0, background: 'rgba(245,242,236,0.98)', borderTop: '1px solid #D9CFAE', borderTopLeftRadius: '18px', borderTopRightRadius: '18px', padding: '14px 14px 18px', boxShadow: '0 -14px 34px rgba(26,26,24,0.18)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>Mixer</p>
-                <button onClick={() => setShowMixer(false)} style={{ border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', borderRadius: '20px', padding: '6px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Done</button>
+                <button onClick={() => setShowMixer(false)} style={{ border: '1px solid #D9CFAE', background: '#ECE3CC', color: '#7A7060', borderRadius: '20px', padding: '6px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Done</button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div>
@@ -2136,7 +2136,7 @@ export default function RhythmPage() {
             <div
               ref={containerRef}
               style={{
-                background: '#FDFAF3',
+                background: '#ECE3CC',
                 borderRadius: '16px',
                 border: RHYTHM_CARD_BORDER,
                 boxShadow: RHYTHM_CARD_SHADOW,
@@ -2230,7 +2230,7 @@ export default function RhythmPage() {
 {/* Beat markers */}
                       {exercise.measures.map((m, mi) =>
                         Array.from({ length: Math.round(qBeatsPerMeasure) }, (_, bi) => (
-                          <line key={'bm'+mi+'-'+bi} x1={56 + 10 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y1={STAFF_Y + 20} x2={56 + 10 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y2={STAFF_Y + 23} stroke="#DDD8CA" strokeWidth={1} />
+                          <line key={'bm'+mi+'-'+bi} x1={56 + 10 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y1={STAFF_Y + 20} x2={56 + 10 + (mi * qBeatsPerMeasure + bi) * NOTE_W_PORTRAIT} y2={STAFF_Y + 23} stroke="#D9CFAE" strokeWidth={1} />
                         ))
                       )}
                       {/* Trail — smooth pills */}
@@ -2309,31 +2309,31 @@ export default function RhythmPage() {
           {exercise && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
               <button onClick={() => setBpm(b => Math.max(40, b - 4))} disabled={playing}
-                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>−</button>
+                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D9CFAE', background: '#ECE3CC', color: '#7A7060', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>−</button>
               <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', minWidth: '54px', textAlign: 'center' as const }}>{bpm} BPM</span>
               <button onClick={() => setBpm(b => Math.min(200, b + 4))} disabled={playing}
-                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
+                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #D9CFAE', background: '#ECE3CC', color: '#7A7060', fontFamily: F, fontSize: '18px', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: playing ? 0.4 : 1, flexShrink: 0 }}>+</button>
               <div style={{ flex: 1 }} />
               <button onClick={() => setShowCalibration(true)} disabled={playing}
                 title="Calibrate audio timing for your headphones / device"
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'white', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: playing ? 'default' : 'pointer', opacity: playing ? 0.4 : 1 }}>
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #D9CFAE', background: 'white', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: playing ? 'default' : 'pointer', opacity: playing ? 0.4 : 1 }}>
                 Calibrate
               </button>
               <button onClick={() => setShowVisualCal(true)} disabled={playing}
                 title="Tune the countdown so the digit matches the click sound"
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'white', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: playing ? 'default' : 'pointer', opacity: playing ? 0.4 : 1 }}>
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #D9CFAE', background: 'white', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: playing ? 'default' : 'pointer', opacity: playing ? 0.4 : 1 }}>
                 Visual sync
               </button>
               <button onClick={() => setShowMixer(v => !v)}
-                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
+                style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (showMixer ? '#1A1A18' : '#D9CFAE'), background: showMixer ? '#1A1A18' : 'white', color: showMixer ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                 Mixer
               </button>
               <button onClick={previewing ? stop : startPreview} disabled={playing}
-                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + (previewing ? '#B5402A' : '#DDD8CA'), background: previewing ? '#B5402A' : 'white', color: previewing ? 'white' : '#7A7060', fontSize: 'var(--nl-text-compact)', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: playing ? 0.4 : 1 }}>
+                style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid ' + (previewing ? '#B5402A' : '#D9CFAE'), background: previewing ? '#B5402A' : 'white', color: previewing ? 'white' : '#7A7060', fontSize: 'var(--nl-text-compact)', cursor: playing ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: playing ? 0.4 : 1 }}>
                 {previewing ? '■' : '▶'}
               </button>
               <button onClick={playing ? stop : start}
-                style={{ background: playing ? 'none' : '#1A1A18', color: playing ? '#7A7060' : 'white', border: playing ? '1px solid #DDD8CA' : 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+                style={{ background: playing ? 'none' : '#1A1A18', color: playing ? '#7A7060' : 'white', border: playing ? '1px solid #D9CFAE' : 'none', borderRadius: '10px', padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
                 {playing ? 'Stop' : score ? 'Try Again' : 'Start'}
               </button>
             </div>
@@ -2438,7 +2438,7 @@ export default function RhythmPage() {
                   {DIFFICULTY_LABEL[currentMeta.difficulty]}
                 </span>
                 {currentExIdx >= 0 && (
-                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', border: '1px solid #DDD8CA', background: 'rgba(255,255,255,0.7)', color: '#7A7060' }}>
+                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, padding: '2px 8px', borderRadius: '20px', border: '1px solid #D9CFAE', background: 'rgba(255,255,255,0.7)', color: '#7A7060' }}>
                     #{currentExIdx + 1}
                   </span>
                 )}
@@ -2456,11 +2456,11 @@ export default function RhythmPage() {
           {exercise && currentMeta && (
             <div style={{ display: 'flex', gap: '6px', flexShrink: 0, paddingTop: '2px' }}>
               <button onClick={() => prevEx && loadExercise(prevEx)} disabled={!prevEx}
-                style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid #DDD8CA', background: prevEx ? 'white' : '#F2EDDF', color: prevEx ? '#1A1A18' : '#DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: prevEx ? 'pointer' : 'default' }}>
+                style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid #D9CFAE', background: prevEx ? 'white' : '#F2EDDF', color: prevEx ? '#1A1A18' : '#D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: prevEx ? 'pointer' : 'default' }}>
                 ← Prev
               </button>
               <button onClick={() => nextEx && loadExercise(nextEx)} disabled={!nextEx}
-                style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#DDD8CA'), background: nextEx ? '#1A1A18' : '#F2EDDF', color: nextEx ? 'white' : '#DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: nextEx ? 'pointer' : 'default' }}>
+                style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid ' + (nextEx ? '#1A1A18' : '#D9CFAE'), background: nextEx ? '#1A1A18' : '#F2EDDF', color: nextEx ? 'white' : '#D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: nextEx ? 'pointer' : 'default' }}>
                 Next →
               </button>
             </div>
@@ -2503,7 +2503,7 @@ export default function RhythmPage() {
                 <div style={{ position: 'absolute' as const, left: '24px', bottom: 'calc(108px + env(safe-area-inset-bottom, 0px))', width: '320px', maxWidth: 'calc(100vw - 48px)', background: 'rgba(255,255,255,0.92)', border: '1px solid rgba(211,209,199,0.9)', borderRadius: '16px', padding: '14px', boxShadow: '0 18px 44px rgba(26,26,24,0.16)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' as any }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>Mixer</p>
-                    <button onClick={() => setShowMixer(false)} style={{ border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', borderRadius: '20px', padding: '6px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Done</button>
+                    <button onClick={() => setShowMixer(false)} style={{ border: '1px solid #D9CFAE', background: '#ECE3CC', color: '#7A7060', borderRadius: '20px', padding: '6px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>Done</button>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <div>
@@ -2665,7 +2665,7 @@ export default function RhythmPage() {
               ref={landscapeContainerRef}
               className="nl-hide-scrollbar"
               style={{
-                background: '#FDFAF3',
+                background: '#ECE3CC',
                 borderRadius: '16px',
                 border: RHYTHM_CARD_BORDER,
                 boxShadow: RHYTHM_CARD_SHADOW,
@@ -2750,7 +2750,7 @@ export default function RhythmPage() {
                           {renderMeasure(measure.notes, mx, noteW, tapRes, bpm, beatUnit)}
 {/* Beat markers */}
                           {Array.from({ length: Math.round(bpm) }, (_, bi) => (
-                            <line key={'bm'+bi} x1={mx - 8 + bi * noteW} y1={STAFF_Y + 20} x2={mx - 8 + bi * noteW} y2={STAFF_Y + 23} stroke="#DDD8CA" strokeWidth={1} />
+                            <line key={'bm'+bi} x1={mx - 8 + bi * noteW} y1={STAFF_Y + 20} x2={mx - 8 + bi * noteW} y2={STAFF_Y + 23} stroke="#D9CFAE" strokeWidth={1} />
                           ))}
                           {/* Trail — smooth pills */}
                           {(() => {
@@ -2886,7 +2886,7 @@ export default function RhythmPage() {
                           {/* Measure number */}
                           <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', width: '18px', flexShrink: 0, display: 'flex', alignItems: 'center' }}>{mIdx + 1}</span>
                           {/* Grid row */}
-                          <div style={{ flex: 1, position: 'relative' as const, display: 'flex', gap: '1px', padding: '1px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #DDD8CA', background: '#DDD8CA' }}>
+                          <div style={{ flex: 1, position: 'relative' as const, display: 'flex', gap: '1px', padding: '1px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #D9CFAE', background: '#D9CFAE' }}>
                             {/* Active measure tint */}
                             {playheadInMeasure && (
                               <div style={{ position: 'absolute' as const, inset: 0, background: 'rgba(186, 117, 23, 0.04)', zIndex: 1, pointerEvents: 'none' as const }} />
@@ -2921,7 +2921,7 @@ export default function RhythmPage() {
                                 <div key={nIdx} style={{ flex: note.durationBeats, position: 'relative' as const, background: bg, transition: 'background 0.1s', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
                                   {/* Subdivision markers */}
                                   {subdivisions > 1 && Array.from({ length: subdivisions - 1 }, (_, si) => (
-                                    <div key={si} style={{ position: 'absolute' as const, left: `${((si + 1) / subdivisions) * 100}%`, top: '25%', bottom: '25%', width: '1px', background: note.rest ? '#DDD8CA' : 'rgba(255,255,255,0.25)' }} />
+                                    <div key={si} style={{ position: 'absolute' as const, left: `${((si + 1) / subdivisions) * 100}%`, top: '25%', bottom: '25%', width: '1px', background: note.rest ? '#D9CFAE' : 'rgba(255,255,255,0.25)' }} />
                                   ))}
                                 </div>
                               )
@@ -2931,7 +2931,7 @@ export default function RhythmPage() {
                               <div style={{ position: 'absolute' as const, left: `${playheadPct * 100}%`, top: 0, bottom: 0, width: '2px', background: '#B5402A', opacity: 0.85, zIndex: 10, transform: 'translateX(-1px)', pointerEvents: 'none' as const }} />
                             )}
                             {/* Baseline anchor for trail */}
-                            <div style={{ position: 'absolute' as const, left: 0, right: 0, top: '85%', height: '1px', background: '#DDD8CA', opacity: 0.4, zIndex: 6, pointerEvents: 'none' as const }} />
+                            <div style={{ position: 'absolute' as const, left: 0, right: 0, top: '85%', height: '1px', background: '#D9CFAE', opacity: 0.4, zIndex: 6, pointerEvents: 'none' as const }} />
                             {/* Trail in grid — smooth pills */}
                             {(() => {
                               const trailInMeasure = trail.filter(t => t.beat >= measureStartBeat && t.beat < measureEndBeat)
@@ -3011,7 +3011,7 @@ export default function RhythmPage() {
                     style={{
                       padding: '8px 14px',
                       borderRadius: '20px',
-                      border: '1px solid #DDD8CA',
+                      border: '1px solid #D9CFAE',
                       background: 'white',
                       color: '#7A7060',
                       fontFamily: F,
@@ -3032,7 +3032,7 @@ export default function RhythmPage() {
                     style={{
                       padding: '8px 14px',
                       borderRadius: '20px',
-                      border: '1px solid #DDD8CA',
+                      border: '1px solid #D9CFAE',
                       background: 'white',
                       color: '#7A7060',
                       fontFamily: F,
@@ -3051,7 +3051,7 @@ export default function RhythmPage() {
                     style={{
                       padding: '8px 14px',
                       borderRadius: '20px',
-                      border: '1px solid ' + (showMixer ? '#1A1A18' : '#DDD8CA'),
+                      border: '1px solid ' + (showMixer ? '#1A1A18' : '#D9CFAE'),
                       background: showMixer ? '#1A1A18' : 'white',
                       color: showMixer ? 'white' : '#7A7060',
                       fontFamily: F,
@@ -3075,7 +3075,7 @@ export default function RhythmPage() {
                       width: '36px',
                       height: '36px',
                       borderRadius: '50%',
-                      border: '1px solid ' + (previewing ? '#B5402A' : '#DDD8CA'),
+                      border: '1px solid ' + (previewing ? '#B5402A' : '#D9CFAE'),
                       background: previewing ? '#B5402A' : 'white',
                       color: previewing ? 'white' : '#7A7060',
                       fontSize: 'var(--nl-text-ui)',
@@ -3098,7 +3098,7 @@ export default function RhythmPage() {
                   ) : (
                     <button onClick={stop}
                       onKeyDown={e => e.code === 'Space' && e.preventDefault()}
-                      style={{ background: 'none', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer', backgroundColor: 'rgba(255,255,255,0.7)' }}>
+                      style={{ background: 'none', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer', backgroundColor: 'rgba(255,255,255,0.7)' }}>
                       Stop
                     </button>
                   )}
@@ -3113,9 +3113,9 @@ export default function RhythmPage() {
                 disabled={false}
                 style={{
                   width: '100%', height: '72px', borderRadius: '16px',
-                  border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #ED6765' : '2px solid #DDD8CA',
+                  border: liveFeedback === 'hit' ? '2px solid #65C366' : liveFeedback === 'miss' ? '2px solid #ED6765' : '2px solid #D9CFAE',
                   background: liveFeedback === 'hit' ? '#65C366' : liveFeedback === 'miss' ? '#ED6765' : (playing && (countdown === null || tapReady)) ? '#1A1A18' : '#F2EDDF',
-                  color: liveFeedback ? 'white' : (playing && (countdown === null || tapReady)) ? 'white' : '#DDD8CA',
+                  color: liveFeedback ? 'white' : (playing && (countdown === null || tapReady)) ? 'white' : '#D9CFAE',
                   fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
                   cursor: (playing && (countdown === null || tapReady)) ? 'pointer' : 'default',
                   transition: 'background 0.1s, border 0.1s',

@@ -175,15 +175,15 @@ function CollectionContent() {
           return (
             <div key={deck.id} style={{ position: 'relative' }}>
               {locked ? (
-                <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px', opacity: 0.75 }}>
+                <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px', padding: '24px', opacity: 0.75 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#DDD8CA' }}>🔒</span>
-                    <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', letterSpacing: '0.05em' }}>Locked</span>
+                    <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#D9CFAE' }}>🔒</span>
+                    <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#D9CFAE', letterSpacing: '0.05em' }}>Locked</span>
                   </div>
                   <h3 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 500, fontSize: '24px', color: '#9A9081', marginBottom: '8px', letterSpacing: '0.01em' }}>
                     {tag === 'ear' ? deck.title.replace('Ear Training — ', '') : tag === 'symbols' ? deck.title : deck.title}
                   </h3>
-                  <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', lineHeight: 1.6 }}>
+                  <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#D9CFAE', lineHeight: 1.6 }}>
                     {deck.cards.length} cards
                   </p>
                 </div>

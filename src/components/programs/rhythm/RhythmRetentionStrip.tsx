@@ -30,7 +30,7 @@ function masteryFor(done: number, total: number): MasteryState {
 }
 
 const COLOR: Record<MasteryState, string> = {
-  unseen: '#DDD8CA',
+  unseen: '#D9CFAE',
   started: '#B5402A',
   progressing: '#E8A84A',
   mastered: '#3B6D11',

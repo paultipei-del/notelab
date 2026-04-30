@@ -48,9 +48,9 @@ export default function HeroStaffAnimation() {
   return (
     <div
       style={{
-        background: '#FDFAF3',
+        background: '#ECE3CC',
         borderRadius: '24px',
-        border: '1px solid #DDD8CA',
+        border: '1px solid #D9CFAE',
         padding: '48px 56px',
         boxShadow: '0 8px 48px rgba(26,26,24,0.08)',
         position: 'relative',
@@ -62,7 +62,7 @@ export default function HeroStaffAnimation() {
         <svg width="100%" height="120" viewBox="0 0 240 120" aria-label="Animated staff showing successive notes" role="img">
           {/* Staff lines */}
           {[20, 36, 52, 68, 84].map((y, i) => (
-            <line key={i} x1="0" y1={y} x2="240" y2={y} stroke="#DDD8CA" strokeWidth="1" />
+            <line key={i} x1="0" y1={y} x2="240" y2={y} stroke="#D9CFAE" strokeWidth="1" />
           ))}
           {/* Treble clef. Bravura's alphabetic baseline anchors the G-curl,
               so y is placed on the G4 line (top + 3*sw = 68 here). Matches

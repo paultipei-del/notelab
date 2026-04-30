@@ -103,8 +103,8 @@ function PlanCardView({ plan, delayMs = 0 }: { plan: PlanCard; delayMs?: number 
       delayMs={delayMs}
       className="nl-tile-hover"
       style={{
-        background: isHi ? '#FDFAF3' : '#F2EDDF',
-        border: `${isHi ? 2 : 1}px solid ${isHi ? ACCENT : '#DDD8CA'}`,
+        background: isHi ? '#ECE3CC' : '#F2EDDF',
+        border: `${isHi ? 2 : 1}px solid ${isHi ? ACCENT : '#D9CFAE'}`,
         borderRadius: '20px',
         padding: '36px 32px',
         boxShadow: isHi ? '0 8px 32px rgba(186,117,23,0.12)' : 'none',
@@ -212,7 +212,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   return (
     <div
       style={{
-        borderBottom: '1px solid #DDD8CA',
+        borderBottom: '1px solid #D9CFAE',
         padding: '16px 0',
       }}
     >
@@ -359,8 +359,8 @@ export default function PricingPage() {
             maxWidth: '720px',
             margin: '0 auto',
             padding: '32px 28px',
-            background: '#FDFAF3',
-            border: '1px solid #DDD8CA',
+            background: '#ECE3CC',
+            border: '1px solid #D9CFAE',
             borderRadius: '16px',
           }}
         >
@@ -406,7 +406,7 @@ export default function PricingPage() {
                   flex: '1 1 240px',
                   padding: '11px 14px',
                   borderRadius: '10px',
-                  border: '1px solid #DDD8CA',
+                  border: '1px solid #D9CFAE',
                   background: '#F2EDDF',
                   fontFamily: F,
                   fontSize: '14px',

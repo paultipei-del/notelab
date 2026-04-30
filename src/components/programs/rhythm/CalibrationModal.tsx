@@ -394,7 +394,7 @@ export default function CalibrationModal({ open, onClose, onCalibrated }: Props)
       onClick={e => { if (e.target === e.currentTarget && phase !== 'measuring' && phase !== 'verifying') onClose() }}
     >
       <div style={{
-        background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px',
+        background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px',
         padding: '28px 32px', maxWidth: '480px', width: '100%',
         boxShadow: '0 20px 60px rgba(26,26,24,0.35)',
       }}>
@@ -524,6 +524,6 @@ const btnPrimary: React.CSSProperties = {
   padding: '10px 22px', fontFamily: F, fontSize: '14px', fontWeight: 500, cursor: 'pointer',
 }
 const btnSecondary: React.CSSProperties = {
-  background: 'transparent', color: '#4A4540', border: '1px solid #DDD8CA', borderRadius: '10px',
+  background: 'transparent', color: '#4A4540', border: '1px solid #D9CFAE', borderRadius: '10px',
   padding: '10px 18px', fontFamily: F, fontSize: '14px', fontWeight: 400, cursor: 'pointer',
 }

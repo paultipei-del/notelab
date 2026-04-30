@@ -109,14 +109,14 @@ export default function RhythmTest() {
       <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '8px' }}>Rhythm Trainer</h1>
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', marginBottom: '48px' }}>{pattern.label} · {pattern.bpm} BPM · tap Space</p>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '48px', padding: '24px', background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '48px', padding: '24px', background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE' }}>
         {pattern.taps.map((expected, i) => {
           const isDownbeat = i % pattern.subdivisions === 0
           const isCurrent = i === currentSlot
           const score = scores[i]
           const wasTapped = taps.includes(i)
           let bg = expected === 1 ? '#1A1A18' : 'white'
-          let border = '2px solid #DDD8CA'
+          let border = '2px solid #D9CFAE'
           if (score === 'hit') { bg = '#7EC86E'; border = '2px solid #7EC86E' }
           else if (score === 'miss') { bg = '#F09595'; border = '2px solid #F09595' }
           else if (score === 'extra') { bg = '#FCEBEB'; border = '2px solid #F09595' }
@@ -138,7 +138,7 @@ export default function RhythmTest() {
           {scores.length > 0 ? 'Try Again' : 'Start'}
         </button>
       ) : (
-        <button onClick={stop} style={{ background: 'none', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, cursor: 'pointer' }}>
+        <button onClick={stop} style={{ background: 'none', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '12px', padding: '14px 40px', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, cursor: 'pointer' }}>
           Stop
         </button>
       )}

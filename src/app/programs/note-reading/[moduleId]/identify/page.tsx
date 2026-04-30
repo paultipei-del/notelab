@@ -340,7 +340,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   if (mode === null) {
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: 'clamp(32px,5vh,48px) clamp(24px,4vw,40px)', maxWidth: '480px', width: '100%' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: 'clamp(32px,5vh,48px) clamp(24px,4vw,40px)', maxWidth: '480px', width: '100%' }}>
           <button
             onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', padding: 0, marginBottom: '12px' }}
@@ -377,7 +377,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
               onClick={() => setMode('standard')}
               style={{
                 textAlign: 'left', padding: '14px 18px', borderRadius: '12px',
-                border: '1px solid #DDD8CA', background: '#1A1A18', color: 'white',
+                border: '1px solid #D9CFAE', background: '#1A1A18', color: 'white',
                 cursor: 'pointer', fontFamily: F,
               }}
             >
@@ -392,7 +392,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
               onClick={() => setMode('quick')}
               style={{
                 textAlign: 'left', padding: '14px 18px', borderRadius: '12px',
-                border: '1px solid #DDD8CA', background: 'white', color: '#2A2318',
+                border: '1px solid #D9CFAE', background: 'white', color: '#2A2318',
                 cursor: 'pointer', fontFamily: F,
               }}
             >
@@ -407,7 +407,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
               onClick={() => setMode('practice')}
               style={{
                 textAlign: 'left', padding: '14px 18px', borderRadius: '12px',
-                border: '1px solid #DDD8CA', background: 'white', color: '#2A2318',
+                border: '1px solid #D9CFAE', background: 'white', color: '#2A2318',
                 cursor: 'pointer', fontFamily: F,
               }}
             >
@@ -438,7 +438,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
   function buttonStyle(answer: string, isAccidental: boolean): React.CSSProperties {
     const base: React.CSSProperties = {
       borderRadius: isAccidental ? '10px' : '12px',
-      border: '1px solid #DDD8CA',
+      border: '1px solid #D9CFAE',
       background: 'white',
       color: '#2A2318',
       fontFamily: isAccidental ? F : SERIF,
@@ -563,7 +563,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
 
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>
             {retryMode ? 'Retry Complete' : 'Session Complete'}
           </p>
@@ -676,7 +676,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
               style={{
                 background: ((!retryMode && savedMp.completed && nextModule) || showContinueToPlay || missedPitches.length > 0) ? 'transparent' : '#1A1A18',
                 color: ((!retryMode && savedMp.completed && nextModule) || showContinueToPlay || missedPitches.length > 0) ? '#7A7060' : 'white',
-                border: ((!retryMode && savedMp.completed && nextModule) || showContinueToPlay || missedPitches.length > 0) ? '1px solid #DDD8CA' : 'none',
+                border: ((!retryMode && savedMp.completed && nextModule) || showContinueToPlay || missedPitches.length > 0) ? '1px solid #D9CFAE' : 'none',
                 borderRadius: '10px', padding: '13px',
                 fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer',
               }}
@@ -688,7 +688,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
                 ? router.push('/programs/note-reading')
                 : router.push(`/programs/note-reading/${moduleId}`)
               }
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
             >
               {savedMp.completed && !retryMode ? '← Back to program' : '← Back to module'}
             </button>
@@ -730,7 +730,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
           </span>
           <button
             onClick={handleEndSession}
-            style={{ background: 'none', border: '1px solid #DDD8CA', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', padding: '4px 10px', borderRadius: '8px', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}
+            style={{ background: 'none', border: '1px solid #D9CFAE', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', padding: '4px 10px', borderRadius: '8px', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}
           >
             End
           </button>
@@ -745,7 +745,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
       {/* Card */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,20px) 16px', overflow: 'hidden' }}>
         <div style={{
-          background: 'white', border: '1px solid #DDD8CA', borderRadius: '20px',
+          background: 'white', border: '1px solid #D9CFAE', borderRadius: '20px',
           padding: 'clamp(12px,2vh,28px) clamp(12px,3vw,28px)',
           maxWidth: '600px', width: '100%', textAlign: 'center',
           boxShadow: '0 2px 20px rgba(26,26,24,0.06)',
@@ -810,7 +810,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
                     style={{
                       ...buttonStyle(acc, true),
                       padding: '10px 14px',
-                      background: (buttonStyle(acc, true).background as string) === 'white' ? '#FDFAF3' : (buttonStyle(acc, true).background as string),
+                      background: (buttonStyle(acc, true).background as string) === 'white' ? '#ECE3CC' : (buttonStyle(acc, true).background as string),
                       fontSize: 'var(--nl-text-meta)',
                     }}>
                     {acc}
@@ -846,7 +846,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '28px 28px 24px', maxWidth: '380px', width: '100%' }}
+            style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px', padding: '28px 28px 24px', maxWidth: '380px', width: '100%' }}
           >
             <h3 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#2A2318', margin: '0 0 8px' }}>End this session?</h3>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 20px', lineHeight: 1.55 }}>
@@ -857,7 +857,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
               <button
                 onClick={() => setShowEndConfirm(false)}
-                style={{ background: 'transparent', color: '#2A2318', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '10px 16px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+                style={{ background: 'transparent', color: '#2A2318', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '10px 16px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
               >
                 Keep going
               </button>

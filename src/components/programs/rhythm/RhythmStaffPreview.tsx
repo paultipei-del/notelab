@@ -102,8 +102,8 @@ export default function RhythmStaffPreview({ exerciseId, maxHeight = 220 }: Prop
     <div
       ref={containerRef}
       style={{
-        background: '#FDFAF3',
-        border: '1px solid #DDD8CA',
+        background: '#ECE3CC',
+        border: '1px solid #D9CFAE',
         borderRadius: '14px',
         padding: '16px 18px',
         position: 'relative',

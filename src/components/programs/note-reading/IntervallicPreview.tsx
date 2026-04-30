@@ -54,8 +54,8 @@ export default function IntervallicPreview({ caption, compact = false }: Props) 
 
   return (
     <div style={{
-      background: '#FDFAF3',
-      border: '1px solid #DDD8CA',
+      background: '#ECE3CC',
+      border: '1px solid #D9CFAE',
       borderRadius: '14px',
       padding: compact ? '16px 18px' : '24px 22px',
     }}>

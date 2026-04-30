@@ -395,8 +395,8 @@ export default function StaffPreview({
 function PreviewFrame({ caption, compact, children, legend }: { caption?: string; compact?: boolean; children: React.ReactNode; legend?: React.ReactNode }) {
   return (
     <div style={{
-      background: '#FDFAF3',
-      border: '1px solid #DDD8CA',
+      background: '#ECE3CC',
+      border: '1px solid #D9CFAE',
       borderRadius: '14px',
       padding: compact ? '16px 18px' : '24px 22px',
       overflow: 'hidden',
@@ -481,7 +481,7 @@ function MasteryLegend() {
         <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span style={{
             width: '10px', height: '10px', borderRadius: '50%',
-            background: color, border: '1px solid #FDFAF3', flexShrink: 0,
+            background: color, border: '1px solid #ECE3CC', flexShrink: 0,
           }} />
           <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', textTransform: 'capitalize' as const }}>
             {level}

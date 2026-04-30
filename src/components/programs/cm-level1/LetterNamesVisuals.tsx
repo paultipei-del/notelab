@@ -91,7 +91,7 @@ export function TrebleLetterNamesMeasures() {
   const rightEnd = sR - 24
 
   return (
-    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
+    <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
         <StaffLines x1={sL} x2={sR} top={top} step={step} />
         <line x1={sL} y1={top} x2={sL} y2={staffBottom} stroke={DARK} strokeWidth={1.5} />
@@ -230,7 +230,7 @@ export function BassLetterNamesMeasures() {
   const rightEnd = sR - 24
 
   return (
-    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
+    <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
         <StaffLines x1={sL} x2={sR} top={top} step={step} />
         <line x1={sL} y1={top} x2={sL} y2={staffBottom} stroke={DARK} strokeWidth={1.5} />
@@ -375,7 +375,7 @@ export function LedgerLineSampler() {
   const LEDGER_HW = 16
 
   return (
-    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
+    <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '14px 12px' }}>
       <svg viewBox={`0 ${viewMinY} ${W} ${H}`} width="100%" style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
         {/* staff lines */}
         {[1, 2, 3, 4, 5].map(n => (

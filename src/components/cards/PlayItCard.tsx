@@ -218,7 +218,7 @@ export default function PlayItCard({ card, onCorrect, onWrong }: PlayItCardProps
     : 'white'
   const borderColor = status === 'correct' ? '#C0DD97'
     : status === 'wrong' ? '#F09595'
-    : '#DDD8CA'
+    : '#D9CFAE'
 
   return (
     <div style={{ width: '100%', maxWidth: '560px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>

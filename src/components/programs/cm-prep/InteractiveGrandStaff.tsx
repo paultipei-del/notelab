@@ -246,7 +246,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
                   width: 8, height: 8, borderRadius: '50%', display: 'inline-block',
                   background: i < results.length
                     ? (results[i] ? CORRECT : WRONG)
-                    : i === quizIdx ? ACCENT : '#DDD8CA',
+                    : i === quizIdx ? ACCENT : '#D9CFAE',
                 }} />
               ))}
             </div>
@@ -496,7 +496,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
       {mode === 'explore' && (
         <div style={{
           background: (activeEl || activeLineEl) ? 'white' : LIGHT_BG,
-          border: `1px solid ${(activeEl || activeLineEl) ? '#DDD8CA' : '#EDE8DF'}`,
+          border: `1px solid ${(activeEl || activeLineEl) ? '#D9CFAE' : '#EDE8DF'}`,
           borderRadius: '14px', padding: '20px 24px',
           minHeight: 80, transition: 'background 0.15s',
         }}>
@@ -548,7 +548,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
       {/* Quiz done */}
       {quizDone && (
         <div style={{
-          background: 'white', border: '1px solid #DDD8CA', borderRadius: '16px',
+          background: 'white', border: '1px solid #D9CFAE', borderRadius: '16px',
           padding: '28px', textAlign: 'center',
         }}>
           <div style={{

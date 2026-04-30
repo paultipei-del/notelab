@@ -99,7 +99,7 @@ export default function NoteIDPage() {
 
   const pill = (active: boolean): React.CSSProperties => ({
     padding: '7px 16px', borderRadius: '20px',
-    border: '1px solid ' + (active ? '#2A2318' : '#DDD8CA'),
+    border: '1px solid ' + (active ? '#2A2318' : '#D9CFAE'),
     background: active ? '#2A2318' : 'white',
     color: active ? 'white' : '#7A7060',
     fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400,
@@ -108,7 +108,7 @@ export default function NoteIDPage() {
 
   const stepBtn: React.CSSProperties = {
     width: '30px', height: '30px', borderRadius: '8px',
-    border: '1px solid #DDD8CA', background: '#FDFAF3',
+    border: '1px solid #D9CFAE', background: '#ECE3CC',
     cursor: 'pointer', fontSize: 'var(--nl-text-base)', color: '#2A2318',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
   }
@@ -129,7 +129,7 @@ export default function NoteIDPage() {
         </p>
 
         {/* ── Shared settings bar ── */}
-        <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px 24px', marginBottom: '24px' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px 24px', marginBottom: '24px' }}>
           <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' as const, alignItems: 'flex-start' }}>
 
             {/* Clef */}
@@ -165,12 +165,12 @@ export default function NoteIDPage() {
             {levels.map(l => (
               <button key={l.id} onClick={() => startGuided(l.id)}
                 style={{
-                  background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '12px',
+                  background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '12px',
                   padding: '14px 16px', cursor: 'pointer',
                   textAlign: 'left' as const, transition: 'all 0.15s',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#2A2318' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#D9CFAE' }}
               >
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#2A2318', margin: '0 0 3px' }}>{l.label}</p>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', margin: 0 }}>{l.desc}</p>
@@ -186,8 +186,8 @@ export default function NoteIDPage() {
             style={{
               width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               padding: '16px 20px', borderRadius: showCustom ? '16px 16px 0 0' : '16px',
-              border: '1px solid #DDD8CA', borderBottom: showCustom ? 'none' : '1px solid #DDD8CA',
-              background: '#FDFAF3', cursor: 'pointer', textAlign: 'left' as const,
+              border: '1px solid #D9CFAE', borderBottom: showCustom ? 'none' : '1px solid #D9CFAE',
+              background: '#ECE3CC', cursor: 'pointer', textAlign: 'left' as const,
             }}
           >
             <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 300, color: '#2A2318' }}>Custom Session</span>
@@ -195,7 +195,7 @@ export default function NoteIDPage() {
           </button>
 
           {showCustom && (
-            <div style={{ border: '1px solid #DDD8CA', borderTop: 'none', borderRadius: '0 0 16px 16px', background: '#FDFAF3', padding: '24px 24px 28px' }}>
+            <div style={{ border: '1px solid #D9CFAE', borderTop: 'none', borderRadius: '0 0 16px 16px', background: '#ECE3CC', padding: '24px 24px 28px' }}>
 
               {/* Note types */}
               <div style={{ marginBottom: '24px' }}>

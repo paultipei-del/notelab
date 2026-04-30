@@ -74,8 +74,8 @@ export function PaywallCard({
       role="region"
       aria-label="Feature locked"
       style={{
-        background: '#FDFAF3',
-        border: '1px solid #DDD8CA',
+        background: '#ECE3CC',
+        border: '1px solid #D9CFAE',
         borderRadius: '16px',
         padding: '40px 32px',
         textAlign: 'center',

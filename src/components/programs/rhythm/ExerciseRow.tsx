@@ -24,11 +24,11 @@ export default function ExerciseRow({ exercise, progress, globalIndex, href, isU
       <div style={{
         display: 'flex', alignItems: 'center', gap: '12px',
         padding: '12px 16px',
-        background: '#FDFAF3',
+        background: '#ECE3CC',
         opacity: 0.5,
         cursor: 'default',
       }}>
-        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#DDD8CA', width: '28px', flexShrink: 0, textAlign: 'center' as const }}>{globalIndex}</span>
+        <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#D9CFAE', width: '28px', flexShrink: 0, textAlign: 'center' as const }}>{globalIndex}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 300, color: '#B0AEA8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{exercise.title}</p>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0AEA8', margin: 0 }}>
@@ -62,7 +62,7 @@ export default function ExerciseRow({ exercise, progress, globalIndex, href, isU
         </div>
         {completed && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#3B6D11', fontWeight: 500, flexShrink: 0 }}>✓</span>}
         {!completed && bestPct > 0 && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B5402A', flexShrink: 0 }}>{bestPct}%</span>}
-        {!completed && bestPct === 0 && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', flexShrink: 0 }}>→</span>}
+        {!completed && bestPct === 0 && <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', flexShrink: 0 }}>→</span>}
       </div>
     </Link>
   )

@@ -123,7 +123,7 @@ export default function NoteReadingPage() {
             learner has started seeing review questions in later sessions.
             Accuracy reflects how well past-module notes are holding up. */}
         {anyModuleCompleted && retention && retention.totalAnswered > 0 && (
-          <div style={{ marginBottom: '32px', padding: '16px 20px', background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <div style={{ marginBottom: '32px', padding: '16px 20px', background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '18px' }}>
             <RetentionRing pct={Math.round((retention.recent30Accuracy || retention.accuracy) * 100)} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 4px' }}>

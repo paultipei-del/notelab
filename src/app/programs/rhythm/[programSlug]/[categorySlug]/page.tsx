@@ -132,7 +132,7 @@ export default function RhythmCategoryPage({ params }: Props) {
         {!loaded && (
           <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>
             {[1, 2, 3].map(i => (
-              <div key={i} style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: '14px', height: '140px', opacity: 0.5 }} />
+              <div key={i} style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: '14px', height: '140px', opacity: 0.5 }} />
             ))}
           </div>
         )}
@@ -215,14 +215,14 @@ function LessonDashboard({ programSlug, categorySlug, done, doneTotal }: Dashboa
         {cards.map((card, i) => (
           <Link key={card.kind} href={card.href} style={{ textDecoration: 'none', display: 'block', borderRadius: '14px' }}>
             <div style={{
-              background: 'white', border: '1px solid #DDD8CA', borderRadius: '14px',
+              background: 'white', border: '1px solid #D9CFAE', borderRadius: '14px',
               padding: '18px 20px', height: '100%',
               display: 'flex', flexDirection: 'column' as const, justifyContent: 'space-between',
               minHeight: '120px',
               transition: 'border-color 0.15s, transform 0.15s',
             }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#D9CFAE' }}
             >
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>

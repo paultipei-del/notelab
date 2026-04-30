@@ -83,7 +83,7 @@ export default function ListenPage({ params }: Props) {
         {exerciseId && (
           <a
             href={`/rhythm?exercise=${exerciseId}&returnTo=${encodeURIComponent(`${topicHref}/listen`)}&mode=lesson`}
-            style={{ textDecoration: 'none', fontFamily: F, fontSize: '13px', color: '#7A7060', borderBottom: '1px solid #DDD8CA' }}
+            style={{ textDecoration: 'none', fontFamily: F, fontSize: '13px', color: '#7A7060', borderBottom: '1px solid #D9CFAE' }}
           >
             Open in trainer →
           </a>

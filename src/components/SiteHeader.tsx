@@ -139,16 +139,12 @@ export default function SiteHeader() {
               top: '5px',
               bottom: '5px',
               borderRadius: HDR_BTN_R,
-              // Warmed-up pill so it harmonizes with the new page vignette
-              // instead of popping like a spotlight against the cream.
-              background: 'linear-gradient(180deg, rgb(248,243,230) 0%, rgb(243,237,222) 50%, rgb(232,224,204) 100%)',
-              border: '1px solid rgb(217,210,189)',
-              boxShadow: [
-                'inset 0 1px 0 rgba(255,253,247,0.7)',
-                'inset 0 -1px 0 rgba(42,35,24,0.06)',
-                '0 1px 2px rgba(42,35,24,0.04)',
-                '0 3px 8px rgba(42,35,24,0.07)',
-              ].join(', '),
+              // Stamped-paper pill: solid darker cream, slightly pressed
+              // into the page rather than lifted. Hover/active darkens
+              // toward the ink, never lighter toward white.
+              background: '#E8DEC4',
+              border: '1px solid #CFC4A4',
+              boxShadow: 'inset 0 1px 0 rgba(42,35,24,0.04)',
               transition: 'left 300ms ease-out, width 300ms ease-out',
               pointerEvents: 'none',
               zIndex: 0,
@@ -228,7 +224,7 @@ export default function SiteHeader() {
                 {showUserMenu && (
                   <div style={{
                     position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                    background: '#FDFAF3', border: '1px solid #DDD8CA',
+                    background: '#ECE3CC', border: '1px solid #D9CFAE',
                     borderRadius: '12px', padding: '8px',
                     boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                     minWidth: '200px', zIndex: 100,
@@ -271,7 +267,7 @@ export default function SiteHeader() {
                 onClick={() => setShowAuth(true)}
                 className="site-header__sign-in"
                 style={{
-                  border: '1px solid #DDD8CA', borderRadius: HDR_BTN_R,
+                  border: '1px solid #D9CFAE', borderRadius: HDR_BTN_R,
                   padding: '8px 20px', fontFamily: F, fontSize: 'var(--nl-text-body)',
                   fontWeight: 400, color: '#2A2318', background: 'none', cursor: 'pointer',
                   flexShrink: 0,
@@ -299,7 +295,7 @@ export default function SiteHeader() {
             {showMobileMenu && (
               <div style={{
                 position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                background: '#FDFAF3', border: '1px solid #DDD8CA',
+                background: '#ECE3CC', border: '1px solid #D9CFAE',
                 borderRadius: '14px', padding: '8px',
                 boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                 minWidth: '220px', zIndex: 100,

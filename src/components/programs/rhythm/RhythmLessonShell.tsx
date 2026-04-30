@@ -82,8 +82,8 @@ export default function RhythmLessonShell({
                         padding: '8px 10px',
                         borderRadius: '8px',
                         textDecoration: 'none',
-                        background: step.active ? '#FDFAF3' : 'transparent',
-                        border: step.active ? '1px solid #DDD8CA' : '1px solid transparent',
+                        background: step.active ? '#ECE3CC' : 'transparent',
+                        border: step.active ? '1px solid #D9CFAE' : '1px solid transparent',
                       }}
                     >
                       <Dot done={!!step.done} active={!!step.active} />
@@ -103,7 +103,7 @@ export default function RhythmLessonShell({
                         top: '32px',
                         bottom: '-6px',
                         width: '1px',
-                        background: '#DDD8CA',
+                        background: '#D9CFAE',
                       }} />
                     )}
                   </li>
@@ -124,7 +124,7 @@ export default function RhythmLessonShell({
 }
 
 function Dot({ done, active }: { done: boolean; active: boolean }) {
-  const bg = done ? '#3B6D11' : active ? '#1A1A18' : '#FDFAF3'
+  const bg = done ? '#3B6D11' : active ? '#1A1A18' : '#ECE3CC'
   const border = done || active ? bg : '#C8C4BA'
   return (
     <span aria-hidden="true" style={{

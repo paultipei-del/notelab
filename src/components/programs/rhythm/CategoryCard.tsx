@@ -35,14 +35,14 @@ export default function CategoryCard({
       <div
         style={{
           background: completed ? '#F7F4ED' : 'white',
-          border: `1px solid ${completed ? '#C8C4BA' : '#DDD8CA'}`,
+          border: `1px solid ${completed ? '#C8C4BA' : '#D9CFAE'}`,
           borderRadius: '14px',
           padding: '20px 24px',
           cursor: 'pointer',
           transition: 'border-color 0.15s',
         }}
         onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = completed ? '#C8C4BA' : '#DDD8CA' }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = completed ? '#C8C4BA' : '#D9CFAE' }}
       >
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', marginBottom: '12px' }}>
           <div>
@@ -56,7 +56,7 @@ export default function CategoryCard({
               {levelCount} {levelCount === 1 ? 'level' : 'levels'} · {exerciseCount} exercises
             </p>
           </div>
-          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', flexShrink: 0, marginTop: '4px' }}>→</span>
+          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', flexShrink: 0, marginTop: '4px' }}>→</span>
         </div>
         <CategoryProgressBar done={done} total={exerciseCount} accentColor={accentColor} />
       </div>

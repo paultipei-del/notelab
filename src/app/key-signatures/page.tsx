@@ -170,7 +170,7 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
       </defs>
 
       {/* Center disc under wedges (fills the hub) */}
-      <circle cx={cx} cy={cy} r={minorR - 2} fill="white" stroke="#DDD8CA" strokeWidth="1" />
+      <circle cx={cx} cy={cy} r={minorR - 2} fill="white" stroke="#D9CFAE" strokeWidth="1" />
 
       {keys12.map((k, i) => {
         const pairSelected = selected === k.major || (k.alt ? selected === k.alt : false)
@@ -254,7 +254,7 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
                   y1={oty}
                   x2={otx + 8}
                   y2={oty}
-                  stroke={majorSelected || altSelected ? 'rgba(255,255,255,0.4)' : '#DDD8CA'}
+                  stroke={majorSelected || altSelected ? 'rgba(255,255,255,0.4)' : '#D9CFAE'}
                   strokeWidth="0.5"
                 />
                 <text
@@ -421,12 +421,12 @@ function KeyPiano({ keyInfo, showScale, highlightOneOctave, isRelativeMinor, rel
               position: 'absolute', left: i * KW, top: 0,
               width: KW - 1, height: KH,
               background: inKey ? '#FAEEDA' : 'white',
-              border: '1px solid #DDD8CA',
+              border: '1px solid #D9CFAE',
               borderRadius: '0 0 6px 6px',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
               paddingBottom: '4px',
             }}>
-              {k.note === 'C' && <span style={{ fontSize: '8px', color: '#DDD8CA', fontFamily: F }}>C{k.oct}</span>}
+              {k.note === 'C' && <span style={{ fontSize: '8px', color: '#D9CFAE', fontFamily: F }}>C{k.oct}</span>}
               {isAcc && <span style={{ fontSize: '8px', color: '#B5402A', fontFamily: F }}>
                 {keyInfo.sharpNames.find(s => s[0] === k.note) ?? keyInfo.flatNames.find(f => f[0] === k.note)}
               </span>}

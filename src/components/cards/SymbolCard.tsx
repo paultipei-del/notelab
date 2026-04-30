@@ -43,9 +43,9 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
   const faceStyle: React.CSSProperties = {
     position: 'absolute',
     inset: 0,
-    background: '#FDFAF3',
+    background: '#ECE3CC',
     borderRadius: '16px',
-    border: '1px solid #DDD8CA',
+    border: '1px solid #D9CFAE',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -124,7 +124,7 @@ export default function SymbolCard({ card, revealed, onReveal }: SymbolCardProps
               fontSize: 'var(--nl-text-compact)',
               fontWeight: 400,
               letterSpacing: '0.08em',
-              color: '#DDD8CA',
+              color: '#D9CFAE',
               textTransform: 'uppercase',
             }}>
               tap to reveal

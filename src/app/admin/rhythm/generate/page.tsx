@@ -234,7 +234,7 @@ function MiniPreview({ exercise }: { exercise: RhythmExercise | null }) {
     (_, i) => exercise.measures.slice(i * measuresPerRow, (i + 1) * measuresPerRow))
 
   return (
-    <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+    <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
       {rows.map((rowMeasures, rowIdx) => {
         const { measureW, noteW } = buildLayout(exercise, SVG_W, rowMeasures)
         const isLastRow = rowIdx === rows.length - 1
@@ -396,10 +396,10 @@ export default function GeneratePage() {
     return true
   })
 
-  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', background: '#F2EDDF', outline: 'none', width: '100%', boxSizing: 'border-box' }
-  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#DDD8CA'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#7A7060' })
+  const inp: React.CSSProperties = { padding: '8px 12px', borderRadius: '8px', border: '1px solid #D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#2A2318', background: '#F2EDDF', outline: 'none', width: '100%', boxSizing: 'border-box' }
+  const tog = (active: boolean): React.CSSProperties => ({ padding: '6px 14px', borderRadius: '20px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', border: `1px solid ${active ? '#1A1A18' : '#D9CFAE'}`, background: active ? '#1A1A18' : 'white', color: active ? 'white' : '#7A7060' })
   const lbl: React.CSSProperties = { fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', display: 'block', marginBottom: '6px' }
-  const card: React.CSSProperties = { background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }
+  const card: React.CSSProperties = { background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }
   const sectionLabel: React.CSSProperties = { fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '16px' }
 
   return (
@@ -410,7 +410,7 @@ export default function GeneratePage() {
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '4px' }}>Rhythm Generator</h1>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>Configure and generate rhythm exercises for the library</p>
           </div>
-          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', textDecoration: 'none', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
+          <a href="/admin/rhythm" style={{ marginLeft: 'auto', fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', textDecoration: 'none', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '6px 14px' }}>← Library</a>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
@@ -603,13 +603,13 @@ export default function GeneratePage() {
           </button>
           {preview && (
             <button onClick={() => setShowDiag(d => !d)}
-              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+              style={{ background: showDiag ? '#333' : 'transparent', color: showDiag ? 'white' : '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '12px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               {showDiag ? 'Hide Diag' : 'Diagnose'}
             </button>
           )}
           {preview && (
             <button onClick={save} disabled={saving || !title.trim()}
-              style={{ background: saving || !title.trim() ? '#DDD8CA' : '#B5402A', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: saving || !title.trim() ? 'default' : 'pointer' }}>
+              style={{ background: saving || !title.trim() ? '#D9CFAE' : '#B5402A', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 32px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: saving || !title.trim() ? 'default' : 'pointer' }}>
               {saving ? 'Saving…' : 'Save to Library'}
             </button>
           )}

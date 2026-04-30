@@ -87,8 +87,8 @@ export default function CMLevelPage({ params }: Props) {
           {/* Commerce / Start panel */}
           <div
             style={{
-              background: '#FDFAF3',
-              border: '1px solid #DDD8CA',
+              background: '#ECE3CC',
+              border: '1px solid #D9CFAE',
               borderRadius: '16px',
               padding: '24px',
             }}
@@ -174,8 +174,8 @@ export default function CMLevelPage({ params }: Props) {
             alignItems: 'center',
             gap: '18px',
             padding: '14px 20px',
-            background: '#FDFAF3',
-            border: '1px solid #DDD8CA',
+            background: '#ECE3CC',
+            border: '1px solid #D9CFAE',
             borderRadius: '12px',
             marginBottom: '48px',
             flexWrap: 'wrap',
@@ -184,11 +184,11 @@ export default function CMLevelPage({ params }: Props) {
           <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#2A2318' }}>
             <strong style={{ fontWeight: 500 }}>{cardCount}</strong> cards
           </span>
-          <span style={{ color: '#DDD8CA' }}>·</span>
+          <span style={{ color: '#D9CFAE' }}>·</span>
           <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#2A2318' }}>
             Estimated <strong style={{ fontWeight: 500 }}>{estimatedHours} {estimatedHours === 1 ? 'hour' : 'hours'}</strong> to complete
           </span>
-          <span style={{ color: '#DDD8CA' }}>·</span>
+          <span style={{ color: '#D9CFAE' }}>·</span>
           <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, fontStyle: 'italic', color: '#7A7060' }}>
             Study at your own pace — spaced repetition remembers where you left off.
           </span>
@@ -211,8 +211,8 @@ export default function CMLevelPage({ params }: Props) {
                 key={topic.name}
                 className="nl-tile-hover"
                 style={{
-                  background: '#FDFAF3',
-                  border: '1px solid #DDD8CA',
+                  background: '#ECE3CC',
+                  border: '1px solid #D9CFAE',
                   borderRadius: '14px',
                   padding: '20px',
                 }}
@@ -238,8 +238,8 @@ export default function CMLevelPage({ params }: Props) {
               style={{
                 maxWidth: '560px',
                 margin: '0 auto',
-                background: '#FDFAF3',
-                border: '1px solid #DDD8CA',
+                background: '#ECE3CC',
+                border: '1px solid #D9CFAE',
                 borderRadius: '16px',
                 padding: '40px 36px',
                 textAlign: 'center',
@@ -261,8 +261,8 @@ export default function CMLevelPage({ params }: Props) {
           style={{
             marginTop: '64px',
             padding: '28px',
-            background: canStudy ? '#1A1A18' : '#FDFAF3',
-            border: canStudy ? 'none' : '1px solid #DDD8CA',
+            background: canStudy ? '#1A1A18' : '#ECE3CC',
+            border: canStudy ? 'none' : '1px solid #D9CFAE',
             borderRadius: '16px',
             textAlign: 'center',
           }}

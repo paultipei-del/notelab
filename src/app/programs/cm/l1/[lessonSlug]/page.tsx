@@ -90,7 +90,7 @@ export default function CMLevel1LessonPage({ params }: Props) {
 
           {!practicing && (
             <>
-              <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '20px 24px', marginBottom: '16px' }}>
+              <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '20px 24px', marginBottom: '16px' }}>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', lineHeight: 1.75, marginBottom: 0 }}>
                   {lesson.description}
                 </p>
@@ -104,7 +104,7 @@ export default function CMLevel1LessonPage({ params }: Props) {
           )}
 
           {sessionDone && (
-            <div style={{ background: nowCompleted ? '#EAF3DE' : '#FDFAF3', border: `1px solid ${nowCompleted ? '#C0DD97' : '#DDD8CA'}`, borderRadius: '14px', padding: '20px 24px', marginBottom: '24px' }}>
+            <div style={{ background: nowCompleted ? '#EAF3DE' : '#ECE3CC', border: `1px solid ${nowCompleted ? '#C0DD97' : '#D9CFAE'}`, borderRadius: '14px', padding: '20px 24px', marginBottom: '24px' }}>
               <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: nowCompleted ? '#2A5C0A' : '#2A2318', marginBottom: '6px' }}>
                 {nowCompleted ? 'Lesson complete' : 'Session finished'}
               </p>
@@ -164,7 +164,7 @@ export default function CMLevel1LessonPage({ params }: Props) {
           )}
 
           {!unlocked && (
-            <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '24px' }}>
+            <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '24px' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', margin: 0 }}>
                 🔒 Complete the previous lesson to unlock this one.
               </p>

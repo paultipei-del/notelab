@@ -128,8 +128,8 @@ export default function CMPrepLessonPage({ params }: Props) {
         {/* Previous session summary */}
         {!practicing && (completed || (progress?.sessions.length ?? 0) > 0) && !sessionDone && (
           <div style={{
-            background: completed ? '#F0F7E8' : '#FDFAF3',
-            border: `1px solid ${completed ? '#C0DD97' : '#DDD8CA'}`,
+            background: completed ? '#F0F7E8' : '#ECE3CC',
+            border: `1px solid ${completed ? '#C0DD97' : '#D9CFAE'}`,
             borderRadius: '14px', padding: '16px 20px', marginBottom: '24px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -149,8 +149,8 @@ export default function CMPrepLessonPage({ params }: Props) {
         {/* Session result */}
         {sessionDone && (
           <div style={{
-            background: nowCompleted ? '#EAF3DE' : '#FDFAF3',
-            border: `1px solid ${nowCompleted ? '#C0DD97' : '#DDD8CA'}`,
+            background: nowCompleted ? '#EAF3DE' : '#ECE3CC',
+            border: `1px solid ${nowCompleted ? '#C0DD97' : '#D9CFAE'}`,
             borderRadius: '14px', padding: '20px 24px', marginBottom: '24px',
           }}>
             <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: nowCompleted ? '#2A5C0A' : '#2A2318', marginBottom: '6px' }}>
@@ -189,7 +189,7 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {/* Concept section */}
         {!practicing && (
-          <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '20px 24px', marginBottom: '16px' }}>
+          <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '20px 24px', marginBottom: '16px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', lineHeight: 1.75, marginBottom: 0 }}>
               {lesson.description}
             </p>
@@ -207,7 +207,7 @@ export default function CMPrepLessonPage({ params }: Props) {
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
               <div style={{
-                background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 10,
+                background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 10,
                 padding: '10px 12px',
               }}>
                 <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
@@ -499,7 +499,7 @@ export default function CMPrepLessonPage({ params }: Props) {
         )}
 
         {!unlocked && (
-          <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '24px' }}>
+          <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '24px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', margin: 0 }}>
               🔒 Complete the previous lesson to unlock this one.
             </p>

@@ -50,9 +50,9 @@ export default function ModuleRow(props: ModuleRowProps) {
   const bg =
     state === 'completed' ? '#F7F4ED' :
     state === 'unlocked' ? 'white' :
-    '#FDFAF3'
+    '#ECE3CC'
   const borderColor =
-    state === 'completed' ? '#C8C4BA' : '#DDD8CA'
+    state === 'completed' ? '#C8C4BA' : '#D9CFAE'
   const opacity =
     state === 'coming-soon' ? 0.55 :
     state === 'locked' ? 0.5 :
@@ -100,7 +100,7 @@ export default function ModuleRow(props: ModuleRowProps) {
           </p>
           {titleIcon}
           {state === 'coming-soon' && (
-            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#DDD8CA', letterSpacing: '0.06em' }}>
+            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#D9CFAE', letterSpacing: '0.06em' }}>
               Coming Soon
             </span>
           )}
@@ -146,7 +146,7 @@ export default function ModuleRow(props: ModuleRowProps) {
       {tailGlyph && (
         <span aria-hidden="true" style={{
           fontFamily: F, fontSize: 'var(--nl-text-compact)',
-          color: '#DDD8CA', flexShrink: 0,
+          color: '#D9CFAE', flexShrink: 0,
         }}>
           {tailGlyph}
         </span>

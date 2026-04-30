@@ -333,7 +333,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
                     display: 'flex', alignItems: 'center', gap: 4,
                     padding: '4px 10px',
                     background: isActive ? accentColor : 'transparent',
-                    border: `1px solid ${isActive ? accentColor : '#DDD8CA'}`,
+                    border: `1px solid ${isActive ? accentColor : '#D9CFAE'}`,
                     borderRadius: 6,
                     fontFamily: 'var(--font-jost), sans-serif',
                     fontSize: 13, fontWeight: isActive ? 600 : 400,

@@ -142,7 +142,7 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
           const isSelected = selected === opt
           const isAnswer = opt === q.answer
           let bg = 'white'
-          let border = '#DDD8CA'
+          let border = '#D9CFAE'
           let color = '#2A2318'
 
           if (confirmed) {

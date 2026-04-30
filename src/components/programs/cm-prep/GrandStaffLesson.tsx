@@ -106,7 +106,7 @@ function SectionTitle({ children }: { children: string }) {
 }
 function ConceptBox({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 20px', marginBottom: 20, fontFamily: F, fontSize: 14, color: '#4A4540', lineHeight: 1.8 }}>
+    <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 20px', marginBottom: 20, fontFamily: F, fontSize: 14, color: '#4A4540', lineHeight: 1.8 }}>
       {children}
     </div>
   )
@@ -129,7 +129,7 @@ function ProgressDots({ total, idx, results }: { total: number; idx: number; res
         <span key={i} style={{
           width: 8, height: 8, borderRadius: '50%', display: 'inline-block',
           background: i < results.length ? (results[i] ? CORRECT : WRONG)
-            : i === idx ? ACCENT : '#DDD8CA'
+            : i === idx ? ACCENT : '#D9CFAE'
         }} />
       ))}
     </div>
@@ -585,7 +585,7 @@ function TrebleClefCalibrator({ onClose }: { onClose: () => void }) {
           viewBox={`${vbX} ${vbY} ${vbW} ${vbH}`}
           width={dispW}
           height={Math.round(dispW * vbH / vbW)}
-          style={{ display: 'block', background: '#FDFAF3', touchAction: 'none', cursor: 'crosshair' }}
+          style={{ display: 'block', background: '#ECE3CC', touchAction: 'none', cursor: 'crosshair' }}
           onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
         >
           {[1,2,3,4,5].map(n => (
@@ -680,7 +680,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <button onClick={() => setCalibrating(c => !c)} style={{
           fontFamily: F, fontSize: 11, color: calibrating ? ACCENT : '#B0ACA4',
-          background: 'none', border: `1px solid ${calibrating ? ACCENT : '#DDD8CA'}`,
+          background: 'none', border: `1px solid ${calibrating ? ACCENT : '#D9CFAE'}`,
           borderRadius: 6, padding: '3px 10px', cursor: 'pointer',
         }}>
           {calibrating ? '✕ close calibrator' : 'calibrate'}
@@ -690,7 +690,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
         {Array.from({ length: ROUNDS }, (_, i) => (
           <span key={i} style={{
             width: 8, height: 8, borderRadius: '50%', display: 'inline-block',
-            background: i < round ? CORRECT : i === round ? ACCENT : '#DDD8CA',
+            background: i < round ? CORRECT : i === round ? ACCENT : '#D9CFAE',
           }} />
         ))}
       </div>
@@ -705,7 +705,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       </p>
 
       {/* Staff */}
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           <defs>
@@ -1078,7 +1078,7 @@ function BassClefCalibrator({ onClose }: { onClose: () => void }) {
         viewBox={`${vbX} ${vbY} ${vbW} ${vbH}`}
         width={dispW}
         height={Math.round(dispW * vbH / vbW)}
-        style={{ display: 'block', border: '1px solid #EDE8DF', borderRadius: 10, background: '#FDFAF3', touchAction: 'none', cursor: 'crosshair' }}
+        style={{ display: 'block', border: '1px solid #EDE8DF', borderRadius: 10, background: '#ECE3CC', touchAction: 'none', cursor: 'crosshair' }}
         onPointerDown={onDown}
         onPointerMove={onMove}
         onPointerUp={onUp}
@@ -1193,7 +1193,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <button onClick={() => setCalibrating(c => !c)} style={{
           fontFamily: F, fontSize: 11, color: calibrating ? ACCENT : '#B0ACA4',
-          background: 'none', border: `1px solid ${calibrating ? ACCENT : '#DDD8CA'}`,
+          background: 'none', border: `1px solid ${calibrating ? ACCENT : '#D9CFAE'}`,
           borderRadius: 6, padding: '3px 10px', cursor: 'pointer',
         }}>
           {calibrating ? '✕ close calibrator' : 'calibrate'}
@@ -1203,7 +1203,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
         {Array.from({ length: ROUNDS }, (_, i) => (
           <span key={i} style={{
             width: 8, height: 8, borderRadius: '50%', display: 'inline-block',
-            background: i < round ? CORRECT : i === round ? ACCENT : '#DDD8CA'
+            background: i < round ? CORRECT : i === round ? ACCENT : '#D9CFAE'
           }} />
         ))}
       </div>
@@ -1215,7 +1215,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
           : 'Drag each piece onto the staff.'}
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           {/* clef shifted 2px right vs global BX; clipPath rects follow */}
@@ -1407,7 +1407,7 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       </p>
 
       {/* Staff: after answer, MissingStaff shows the missing part filled in green/red */}
-      <div style={{ background: '#FDFAF3', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
         <MissingStaff missing={q.id} revealColor={chosen !== null ? (isCorrect ? CORRECT : WRONG) : undefined} />
       </div>
 
@@ -1558,14 +1558,14 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
       <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
         {[0,1,2,3].map(i => (
           <span key={i} style={{ width: 8, height: 8, borderRadius: '50%', display: 'inline-block',
-            background: i < round ? CORRECT : i === round ? ACCENT : '#DDD8CA' }} />
+            background: i < round ? CORRECT : i === round ? ACCENT : '#D9CFAE' }} />
         ))}
       </div>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16 }}>
         Round {round + 1} of 4 — drag each part onto the staff.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${220} ${180}`} width="100%"
           style={{ maxWidth: 260, display: 'block', margin: '0 auto' }}>
           {/* Grand staff preview */}

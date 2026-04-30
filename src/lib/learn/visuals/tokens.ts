@@ -145,7 +145,7 @@ export function tokensFor(size: LearnSize): LearnTokens {
     inkMuted: '#5F5E5A',
     inkSubtle: '#7A7060',
     bgPaper: '#fafafa',
-    bgCream: '#FDFAF3',
+    bgCream: '#ECE3CC',
     border: '#EDE8DF',
 
     captionFontSize: size === 'small' ? 12 : size === 'hero' ? 15 : 13,

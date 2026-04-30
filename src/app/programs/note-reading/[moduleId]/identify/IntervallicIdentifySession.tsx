@@ -242,7 +242,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
 
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>
             {retryMode ? 'Retry Complete' : 'Session Complete'}
           </p>
@@ -312,7 +312,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
               style={{
                 background: missedQuestionsRef.current.length > 0 ? 'transparent' : '#1A1A18',
                 color: missedQuestionsRef.current.length > 0 ? '#7A7060' : 'white',
-                border: missedQuestionsRef.current.length > 0 ? '1px solid #DDD8CA' : 'none',
+                border: missedQuestionsRef.current.length > 0 ? '1px solid #D9CFAE' : 'none',
                 borderRadius: '10px', padding: '13px',
                 fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer',
               }}
@@ -324,7 +324,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
                 ? router.push('/programs/note-reading')
                 : router.push(`/programs/note-reading/${moduleId}`)
               }
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
             >
               {moduleFinished ? '← Back to program' : '← Back to module'}
             </button>
@@ -342,7 +342,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
       flex: 1,
       padding: '12px 0',
       borderRadius: '10px',
-      border: '1px solid #DDD8CA',
+      border: '1px solid #D9CFAE',
       background: 'white',
       color: '#2A2318',
       fontFamily: SERIF,
@@ -375,8 +375,8 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
       flex: 1,
       padding: '10px 0',
       borderRadius: '10px',
-      border: '1px solid #DDD8CA',
-      background: '#FDFAF3',
+      border: '1px solid #D9CFAE',
+      background: '#ECE3CC',
       color: '#2A2318',
       fontFamily: F,
       fontSize: '14px',
@@ -421,7 +421,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
           </span>
           <button
             onClick={handleEndSession}
-            style={{ background: 'none', border: '1px solid #DDD8CA', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', padding: '4px 10px', borderRadius: '8px', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}
+            style={{ background: 'none', border: '1px solid #D9CFAE', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', padding: '4px 10px', borderRadius: '8px', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}
           >
             End
           </button>
@@ -436,7 +436,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
       {/* Card */}
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(10px,2vh,24px) 16px' }}>
         <div style={{
-          background: 'white', border: '1px solid #DDD8CA', borderRadius: '20px',
+          background: 'white', border: '1px solid #D9CFAE', borderRadius: '20px',
           padding: 'clamp(14px,2.5vh,28px) clamp(14px,3vw,32px)',
           maxWidth: '640px', width: '100%', textAlign: 'center',
           boxShadow: '0 2px 20px rgba(26,26,24,0.06)',
@@ -516,7 +516,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '28px 28px 24px', maxWidth: '380px', width: '100%' }}
+            style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px', padding: '28px 28px 24px', maxWidth: '380px', width: '100%' }}
           >
             <h3 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#2A2318', margin: '0 0 8px' }}>End this session?</h3>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 20px', lineHeight: 1.55 }}>
@@ -525,7 +525,7 @@ export default function IntervallicIdentifySession({ moduleId }: { moduleId: str
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
               <button
                 onClick={() => setShowEndConfirm(false)}
-                style={{ background: 'transparent', color: '#2A2318', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '10px 16px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+                style={{ background: 'transparent', color: '#2A2318', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '10px 16px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
               >
                 Keep going
               </button>

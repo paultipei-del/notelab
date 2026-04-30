@@ -288,7 +288,7 @@ function NameExerciseGrand({
         Grand staff — name this note
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
           style={{ maxWidth: gsW, display: 'block', margin: '0 auto' }}>
@@ -391,7 +391,7 @@ function PlaceExercise({
           <strong>{octaveLabel(item)}</strong> — tap the staff, then press Place to confirm
         </p>
       </div>
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -545,7 +545,7 @@ function PlaceExerciseGrand({
           {itemIsMiddleC && <span style={{ color: '#B0ACA4' }}> (either staff accepted)</span>}
         </p>
       </div>
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
           style={{ maxWidth: gsW, display: 'block', margin: '0 auto',
@@ -601,7 +601,7 @@ function NameButtons({
         {NOTE_NAMES.map(name => {
           const isChosen = feedback?.chosen === name
           const isAnswer = name === answer
-          let bg = 'white', border = '#DDD8CA', color = '#2A2318'
+          let bg = 'white', border = '#D9CFAE', color = '#2A2318'
           if (feedback) {
             if (isAnswer)      { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
             else if (isChosen) { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
@@ -728,7 +728,7 @@ function ResultsCard({
       <button onClick={onRestart} style={{
         background: passed ? 'transparent' : '#1A1A18',
         color: passed ? '#7A7060' : 'white',
-        border: passed ? '1px solid #DDD8CA' : 'none',
+        border: passed ? '1px solid #D9CFAE' : 'none',
         borderRadius: '10px',
         padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
       }}>

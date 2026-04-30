@@ -234,7 +234,7 @@ function StepsIntro({ onNext }: { onNext: () => void }) {
       </p>
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-        <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10, padding: '12px 16px' }}>
+        <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10, padding: '12px 16px' }}>
           <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT, margin: '0 0 6px' }}>
             H — Half Step
           </p>
@@ -242,7 +242,7 @@ function StepsIntro({ onNext }: { onNext: () => void }) {
             Adjacent keys — no key between. Examples: C to C♯, or E to F.
           </p>
         </div>
-        <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 10, padding: '12px 16px' }}>
+        <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10, padding: '12px 16px' }}>
           <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT2, margin: '0 0 6px' }}>
             W — Whole Step
           </p>
@@ -657,7 +657,7 @@ function LetterPairEx({
           <strong>whole step (W)</strong> apart.
         </p>
 
-        <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
           padding: '20px', marginBottom: 16, textAlign: 'center' }}>
           <div style={{ fontFamily: SERIF, fontSize: 42, color: DARK, lineHeight: 1.2, marginBottom: 16 }}>
             <span>{ex.from}</span>
@@ -705,7 +705,7 @@ function LetterPairEx({
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
       <ProgressBar done={idx} total={scoredItems.length} color={ACCENT} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '20px', marginBottom: 16, textAlign: 'center' }}>
         <div style={{ fontFamily: SERIF, fontSize: 42, color: DARK, lineHeight: 1.2 }}>
           <span>{item.from}</span>
@@ -821,7 +821,7 @@ function StaffPairEx({
           Now identify half and whole steps on the staff. The letter names will help you.
         </p>
 
-        <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
           padding: '8px 0', marginBottom: 12 }}>
           <StaffPairSVG item={ex} />
         </div>
@@ -865,7 +865,7 @@ function StaffPairEx({
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
       <ProgressBar done={idx} total={scoredItems.length} color={ACCENT} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <StaffPairSVG item={item} />
       </div>

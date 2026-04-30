@@ -43,7 +43,7 @@ export default function Unlock() {
           type="password"
           placeholder="Access code"
           autoFocus
-          style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid ' + (error ? '#F09595' : '#DDD8CA'), background: '#FDFAF3', fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const, marginBottom: '12px', textAlign: 'center' as const }}
+          style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid ' + (error ? '#F09595' : '#D9CFAE'), background: '#ECE3CC', fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const, marginBottom: '12px', textAlign: 'center' as const }}
         />
         {error && <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#E53935', marginBottom: '12px' }}>Incorrect code — try again</p>}
         <button onClick={handleSubmit}

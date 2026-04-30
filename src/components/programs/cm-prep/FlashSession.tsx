@@ -100,9 +100,9 @@ export default function FlashSession({ cards, passingScore, accentColor = '#B540
   // hover states; the rest matches the padding/border/radius used there.
   const faceStyle: React.CSSProperties = {
     position: 'absolute', inset: 0,
-    background: '#FDFAF3',
+    background: '#ECE3CC',
     borderRadius: '16px',
-    border: '1px solid #DDD8CA',
+    border: '1px solid #D9CFAE',
     display: 'flex', flexDirection: 'column',
     alignItems: 'center', justifyContent: 'center',
     padding: '48px 40px',
@@ -153,7 +153,7 @@ export default function FlashSession({ cards, passingScore, accentColor = '#B540
             {!flipped && (
               <span style={{ position: 'absolute', bottom: '20px', fontFamily: F,
                 fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em',
-                color: '#DDD8CA', textTransform: 'uppercase', display: 'flex',
+                color: '#D9CFAE', textTransform: 'uppercase', display: 'flex',
                 alignItems: 'center', gap: '8px' }}>
                 tap or press <kbd style={kbdStyle}>Space</kbd> to reveal
               </span>
@@ -219,6 +219,6 @@ export default function FlashSession({ cards, passingScore, accentColor = '#B540
 const kbdStyle: React.CSSProperties = {
   fontFamily: F, fontSize: 11, fontWeight: 600,
   background: '#EDE8DF', color: '#7A7060',
-  border: '1px solid #DDD8CA', borderRadius: 4,
+  border: '1px solid #D9CFAE', borderRadius: 4,
   padding: '1px 6px', lineHeight: 1.4,
 }

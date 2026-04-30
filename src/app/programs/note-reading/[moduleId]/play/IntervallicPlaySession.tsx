@@ -277,7 +277,7 @@ export default function IntervallicPlaySession({ moduleId }: { moduleId: string 
     ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length / 1000).toFixed(1)
     : '—'
   const bgColor = noteStatus === 'correct' ? '#EAF3DE' : noteStatus === 'wrong' ? '#FFF0F0' : 'white'
-  const borderColor = noteStatus === 'correct' ? '#C0DD97' : noteStatus === 'wrong' ? '#F09595' : '#DDD8CA'
+  const borderColor = noteStatus === 'correct' ? '#C0DD97' : noteStatus === 'wrong' ? '#F09595' : '#D9CFAE'
 
   // ── Summary ────────────────────────────────────────────────────────────────
   if (done && savedMp) {
@@ -315,7 +315,7 @@ export default function IntervallicPlaySession({ moduleId }: { moduleId: string 
 
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '440px', width: '100%', textAlign: 'center' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '48px 40px', maxWidth: '440px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>
             Session Complete
           </p>
@@ -383,7 +383,7 @@ export default function IntervallicPlaySession({ moduleId }: { moduleId: string 
               style={{
                 background: savedMp.completed && nextModule ? 'transparent' : '#1A1A18',
                 color: savedMp.completed && nextModule ? '#7A7060' : 'white',
-                border: savedMp.completed && nextModule ? '1px solid #DDD8CA' : 'none',
+                border: savedMp.completed && nextModule ? '1px solid #D9CFAE' : 'none',
                 borderRadius: '10px', padding: '13px',
                 fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer',
               }}
@@ -396,7 +396,7 @@ export default function IntervallicPlaySession({ moduleId }: { moduleId: string 
                 if (savedMp.completed) router.push('/programs/note-reading')
                 else router.push(`/programs/note-reading/${moduleId}`)
               }}
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
             >
               {savedMp.completed ? '← Back to program' : '← Back to module'}
             </button>
@@ -437,8 +437,8 @@ export default function IntervallicPlaySession({ moduleId }: { moduleId: string 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,20px) 16px' }}>
         {micError ? (
           <div style={{
-            maxWidth: '440px', width: '100%', background: '#FDFAF3',
-            border: '1px solid #DDD8CA', borderRadius: '16px', padding: '28px 32px',
+            maxWidth: '440px', width: '100%', background: '#ECE3CC',
+            border: '1px solid #D9CFAE', borderRadius: '16px', padding: '28px 32px',
             textAlign: 'center', boxShadow: '0 2px 20px rgba(26,26,24,0.06)',
           }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 8px' }}>
@@ -459,7 +459,7 @@ export default function IntervallicPlaySession({ moduleId }: { moduleId: string 
               </button>
               <button
                 onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '11px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '11px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
               >
                 ← Back to module
               </button>

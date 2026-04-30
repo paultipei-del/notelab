@@ -409,10 +409,10 @@ export default function EngineDiagnostic() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #DDD8CA', background: '#FDFAF3' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #D9CFAE', background: '#ECE3CC' }}>
         <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '20px', color: '#2A2318' }}>Engine Diagnostic</h1>
         <div style={{ display: 'flex', gap: '10px' }}>
-          {running && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', cursor: 'pointer' }}>Abort</button>}
+          {running && <button onClick={abort} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #D9CFAE', background: '#ECE3CC', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', cursor: 'pointer' }}>Abort</button>}
           {!running && <button onClick={startRun} style={{ padding: '8px 20px', borderRadius: '10px', border: 'none', background: '#1A1A18', color: 'white', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}>▶ Start</button>}
         </div>
       </div>
@@ -423,7 +423,7 @@ export default function EngineDiagnostic() {
         <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
 
           {/* Live status */}
-          <div style={{ background: liveStatus === 'correct' ? '#EAF3DE' : liveStatus === 'wrong' ? '#FDECEA' : 'white', borderRadius: '16px', border: '1px solid ' + (liveStatus === 'correct' ? '#7EC86E' : liveStatus === 'wrong' ? '#F09595' : '#DDD8CA'), padding: '20px', textAlign: 'center' as const, transition: 'all 0.15s' }}>
+          <div style={{ background: liveStatus === 'correct' ? '#EAF3DE' : liveStatus === 'wrong' ? '#FDECEA' : 'white', borderRadius: '16px', border: '1px solid ' + (liveStatus === 'correct' ? '#7EC86E' : liveStatus === 'wrong' ? '#F09595' : '#D9CFAE'), padding: '20px', textAlign: 'center' as const, transition: 'all 0.15s' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '4px' }}>
               {currentPhase === 'dead' ? '⏳ Dead Window' : currentPhase === 'accepting' ? '🎵 Listening' : 'Ready'}
             </p>
@@ -433,18 +433,18 @@ export default function EngineDiagnostic() {
 
           {/* Progress */}
           {running && (
-            <div style={{ background: '#FDFAF3', borderRadius: '8px', border: '1px solid #DDD8CA', padding: '4px' }}>
+            <div style={{ background: '#ECE3CC', borderRadius: '8px', border: '1px solid #D9CFAE', padding: '4px' }}>
               <div style={{ height: '6px', borderRadius: '4px', background: '#B5402A', width: `${progress * 100}%`, transition: 'width 0.3s' }} />
             </div>
           )}
 
           {/* Sequence */}
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Sequence</p>
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
               {Object.keys(SEQUENCES).map(s => (
                 <button key={s} onClick={() => setSelectedSeq(s)} disabled={running}
-                  style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === s ? '#1A1A18' : '#DDD8CA'), background: selectedSeq === s ? '#1A1A18' : 'white', color: selectedSeq === s ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: running ? 'default' : 'pointer', textAlign: 'left' as const }}>
+                  style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid ' + (selectedSeq === s ? '#1A1A18' : '#D9CFAE'), background: selectedSeq === s ? '#1A1A18' : 'white', color: selectedSeq === s ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: running ? 'default' : 'pointer', textAlign: 'left' as const }}>
                   {s} <span style={{ opacity: 0.5 }}>({SEQUENCES[s].length})</span>
                 </button>
               ))}
@@ -452,7 +452,7 @@ export default function EngineDiagnostic() {
           </div>
 
           {/* Params */}
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '16px' }}>Parameters</p>
             {([
               ['Window Size', windowSize, 4, 20, 1, setWindowSize],
@@ -478,7 +478,7 @@ export default function EngineDiagnostic() {
 
           {/* Live card results */}
           {currentCards.length > 0 && (
-            <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+            <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '12px' }}>Card Results</p>
               <div style={{ overflowX: 'auto' as const }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' as const, fontSize: 'var(--nl-text-compact)', fontFamily: F }}>
@@ -518,14 +518,14 @@ export default function EngineDiagnostic() {
 
           {/* Run history */}
           {runs.length > 0 && (
-            <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px' }}>
+            <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>Run History</p>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={copyAll} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: copied ? '#4CAF50' : '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>
+                  <button onClick={copyAll} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: copied ? '#4CAF50' : '#7A7060', background: 'none', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>
                     {copied ? '✓ Copied' : 'Copy All'}
                   </button>
-                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', background: 'none', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>Clear</button>
+                  <button onClick={() => setRuns([])} style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', background: 'none', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '3px 10px', cursor: 'pointer' }}>Clear</button>
                 </div>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse' as const, fontFamily: F, fontSize: 'var(--nl-text-compact)' }}>

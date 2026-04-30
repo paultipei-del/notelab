@@ -246,7 +246,7 @@ function NameIntervalEx({
           <strong>{letterAt(item.clef, Math.max(item.pos1, item.pos2))}</strong> to verify.
         </p>
 
-        <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+        <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
           padding: '8px 0', marginBottom: 16 }}>
           <IntervalStaffCard item={item} />
         </div>
@@ -279,7 +279,7 @@ function NameIntervalEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — name this interval
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <IntervalStaffCard item={item} />
       </div>
@@ -288,7 +288,7 @@ function NameIntervalEx({
         {[2, 3, 4, 5].map(n => {
           const isChosen = chosen === n
           const isAnswer = n === answer
-          let bg = 'white', border = '#DDD8CA', color = DARK
+          let bg = 'white', border = '#D9CFAE', color = DARK
           if (feedback !== null) {
             if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
             else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
@@ -433,7 +433,7 @@ function BuildIntervalEx({
         {item.direction === 'up' ? 'above' : 'below'}
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg
           ref={r => { svgRef.current = r }}
@@ -679,7 +679,7 @@ function ReadBuildEx({
         </strong>
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg
           ref={r => { svgRef.current = r }}
@@ -750,7 +750,7 @@ function ReadBuildEx({
           {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map(letter => {
             const isChosen = pickerChosen === letter
             const isAnswer = pickerAnswer === letter
-            let bg = 'white', border = '#DDD8CA', color = DARK
+            let bg = 'white', border = '#D9CFAE', color = DARK
             if (pickerFeedback !== null) {
               if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
               else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
@@ -1070,7 +1070,7 @@ function PhraseIntervalEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — what interval connects the notes?
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <PhraseStaff item={item} />
       </div>
@@ -1079,7 +1079,7 @@ function PhraseIntervalEx({
         {[2, 3, 4, 5].map(n => {
           const isChosen = chosen === n
           const isAnswer = n === item.answer
-          let bg = 'white', border = '#DDD8CA', color = DARK
+          let bg = 'white', border = '#D9CFAE', color = DARK
           if (feedback !== null) {
             if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
             else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }

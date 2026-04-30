@@ -124,7 +124,7 @@ export default function LearnPageLayout({
 
         {/* Where this connects */}
         {related.length > 0 && (
-          <section style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid #DDD8CA' }}>
+          <section style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid #D9CFAE' }}>
             <h2
               style={{
                 fontFamily: F,
@@ -187,7 +187,7 @@ export default function LearnPageLayout({
 
         {/* Practice */}
         {practice.length > 0 && (
-          <section style={{ marginTop: '40px', paddingTop: '32px', borderTop: '1px solid #DDD8CA' }}>
+          <section style={{ marginTop: '40px', paddingTop: '32px', borderTop: '1px solid #D9CFAE' }}>
             <h2
               style={{
                 fontFamily: F,
@@ -209,9 +209,9 @@ export default function LearnPageLayout({
                     style={{
                       display: 'block',
                       padding: '14px 18px',
-                      border: '1px solid #DDD8CA',
+                      border: '1px solid #D9CFAE',
                       borderRadius: '12px',
-                      background: '#FDFAF3',
+                      background: '#ECE3CC',
                       textDecoration: 'none',
                     }}
                   >

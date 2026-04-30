@@ -125,7 +125,7 @@ function ExerciseRow({
   const smallInp: React.CSSProperties = { ...inp, padding: '7px 10px', fontSize: 'var(--nl-text-meta)' }
 
   return (
-    <div style={{ background: '#FDFAF3', borderRadius: '10px', border: open ? '1px solid #1A1A18' : '1px solid #DDD8CA', overflow: 'hidden', transition: 'border 0.15s' }}>
+    <div style={{ background: '#ECE3CC', borderRadius: '10px', border: open ? '1px solid #1A1A18' : '1px solid #D9CFAE', overflow: 'hidden', transition: 'border 0.15s' }}>
       {/* Row header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 14px', cursor: 'pointer' }}
         onClick={() => setOpen(o => !o)}>
@@ -199,11 +199,11 @@ function ExerciseRow({
             </button>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button type="button" onClick={() => { setOpen(false); setErr(null) }}
-                style={{ background: 'none', border: '1px solid #DDD8CA', borderRadius: '8px', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', padding: '6px 14px', cursor: 'pointer' }}>
+                style={{ background: 'none', border: '1px solid #D9CFAE', borderRadius: '8px', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', padding: '6px 14px', cursor: 'pointer' }}>
                 Cancel
               </button>
               <button type="button" onClick={handleSave} disabled={saving}
-                style={{ background: saving ? '#DDD8CA' : '#1A1A18', border: 'none', borderRadius: '8px', color: 'white', fontFamily: F, fontSize: 'var(--nl-text-compact)', padding: '6px 18px', cursor: saving ? 'default' : 'pointer' }}>
+                style={{ background: saving ? '#D9CFAE' : '#1A1A18', border: 'none', borderRadius: '8px', color: 'white', fontFamily: F, fontSize: 'var(--nl-text-compact)', padding: '6px 18px', cursor: saving ? 'default' : 'pointer' }}>
                 {saving ? 'Saving…' : 'Save'}
               </button>
             </div>
@@ -306,7 +306,7 @@ export default function AdminRhythm() {
 
   const inp: React.CSSProperties = {
     width: '100%', padding: '10px 14px', borderRadius: '10px',
-    border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-ui)',
+    border: '1px solid #D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-ui)',
     color: '#2A2318', background: '#F2EDDF', outline: 'none', boxSizing: 'border-box'
   }
 
@@ -321,7 +321,7 @@ export default function AdminRhythm() {
         </p>
 
         {/* Upload */}
-        <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '28px', marginBottom: '40px' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '28px', marginBottom: '40px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '20px' }}>
             Upload Exercise
           </p>
@@ -390,7 +390,7 @@ export default function AdminRhythm() {
           )}
 
           <button onClick={handleUpload} disabled={uploading || !file || !title.trim()}
-            style={{ background: uploading || !file || !title.trim() ? '#DDD8CA' : '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: uploading || !file || !title.trim() ? 'default' : 'pointer' }}>
+            style={{ background: uploading || !file || !title.trim() ? '#D9CFAE' : '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: uploading || !file || !title.trim() ? 'default' : 'pointer' }}>
             {uploading ? 'Uploading…' : 'Upload Exercise'}
           </button>
         </div>

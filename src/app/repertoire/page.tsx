@@ -136,7 +136,7 @@ export default function RepertoirePage() {
         <div style={{ display: 'flex', gap: '8px', marginBottom: '28px' }}>
           {(['cm', 'magrath'] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              style={{ padding: '8px 20px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#DDD8CA'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+              style={{ padding: '8px 20px', borderRadius: '20px', border: '1px solid ' + (activeTab === tab ? '#1A1A18' : '#D9CFAE'), background: activeTab === tab ? '#1A1A18' : 'white', color: activeTab === tab ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               {tab === 'cm' ? 'CM Syllabus' : 'Magrath Guide'}
             </button>
           ))}
@@ -151,7 +151,7 @@ export default function RepertoirePage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by composer or title across all levels…"
-            style={{ width: '100%', padding: '12px 44px 12px 16px', borderRadius: '12px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
+            style={{ width: '100%', padding: '12px 44px 12px 16px', borderRadius: '12px', border: '1px solid #D9CFAE', background: '#ECE3CC', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }}
           />
           {search && (
             <button onClick={() => setSearch('')}
@@ -164,11 +164,11 @@ export default function RepertoirePage() {
           <div>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginBottom: '16px' }}>{searchResults.length} result{searchResults.length !== 1 ? 's' : ''} for "{search}"</p>
             {searchResults.length === 0 ? (
-              <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '40px', textAlign: 'center' }}>
+              <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '40px', textAlign: 'center' }}>
                 <p style={{ fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060' }}>No results found.</p>
               </div>
             ) : (
-              <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', overflowX: 'auto' as const }}>
+              <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', overflowX: 'auto' as const }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
@@ -201,7 +201,7 @@ export default function RepertoirePage() {
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '24px' }}>
               {LEVELS.map(l => (
                 <button key={l.id} onClick={() => setSelectedLevel(l.id)}
-                  style={{ padding: '7px 16px', borderRadius: '20px', border: '1px solid ' + (selectedLevel === l.id ? '#1A1A18' : '#DDD8CA'), background: selectedLevel === l.id ? '#1A1A18' : 'white', color: selectedLevel === l.id ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', transition: 'all 0.15s' }}>
+                  style={{ padding: '7px 16px', borderRadius: '20px', border: '1px solid ' + (selectedLevel === l.id ? '#1A1A18' : '#D9CFAE'), background: selectedLevel === l.id ? '#1A1A18' : 'white', color: selectedLevel === l.id ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', transition: 'all 0.15s' }}>
                   {l.label}
                 </button>
               ))}
@@ -210,7 +210,7 @@ export default function RepertoirePage() {
             {currentLevel && (
               <>
                 {/* Requirements */}
-                <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '20px 24px', marginBottom: '20px', display: 'flex', gap: '32px', flexWrap: 'wrap' as const, alignItems: 'flex-start' }}>
+                <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '20px 24px', marginBottom: '20px', display: 'flex', gap: '32px', flexWrap: 'wrap' as const, alignItems: 'flex-start' }}>
                   <div>
                     <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '4px' }}>Pieces Required</p>
                     <p style={{ fontFamily: SERIF, fontSize: '28px', fontWeight: 300, color: '#2A2318' }}>{currentLevel.requirements.pieces}</p>
@@ -231,7 +231,7 @@ export default function RepertoirePage() {
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '16px' }}>
                   {currentLevel.categories.map(c => (
                     <button key={c.id} onClick={() => setSelectedCategory(c.id)}
-                      style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (selectedCategory === c.id ? '#B5402A' : '#DDD8CA'), background: selectedCategory === c.id ? '#B5402A' : 'white', color: selectedCategory === c.id ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', transition: 'all 0.15s' }}>
+                      style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid ' + (selectedCategory === c.id ? '#B5402A' : '#D9CFAE'), background: selectedCategory === c.id ? '#B5402A' : 'white', color: selectedCategory === c.id ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer', transition: 'all 0.15s' }}>
                       {c.label} <span style={{ opacity: 0.7 }}>({c.repertoire.length})</span>
                     </button>
                   ))}
@@ -239,7 +239,7 @@ export default function RepertoirePage() {
 
                 {/* Repertoire table */}
                 {currentCategory && (
-                  <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', overflowX: 'auto' as const }}>
+                  <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', overflowX: 'auto' as const }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' as const, minWidth: '500px' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid #EDE8DF' }}>

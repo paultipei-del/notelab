@@ -63,14 +63,14 @@ export default function RhythmTopLevelOverview({ entries }: Props) {
             >
               <div
                 style={{
-                  background: '#FDFAF3',
-                  border: '1px solid #DDD8CA',
+                  background: '#ECE3CC',
+                  border: '1px solid #D9CFAE',
                   borderRadius: '10px',
                   padding: '12px 14px',
                   transition: 'border-color 0.15s',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#DDD8CA' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#D9CFAE' }}
               >
                 <p style={{ fontFamily: SERIF, fontSize: '15px', fontWeight: 400, color: '#2A2318', margin: '0 0 8px 0', lineHeight: 1.2 }}>
                   {entry.title}

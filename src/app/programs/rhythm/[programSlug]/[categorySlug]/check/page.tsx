@@ -88,7 +88,7 @@ export default function CheckPage({ params }: Props) {
 
       {loaded && checkExercise && (
         <div style={{
-          background: 'white', border: '1px solid #DDD8CA', borderRadius: '14px',
+          background: 'white', border: '1px solid #D9CFAE', borderRadius: '14px',
           padding: '20px 24px', maxWidth: '600px', marginBottom: '24px',
         }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 6px 0' }}>
@@ -166,7 +166,7 @@ export default function CheckPage({ params }: Props) {
 
       {!passed && (
         <div style={{
-          background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
+          background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '14px',
           padding: '16px 20px', maxWidth: '600px',
         }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 8px 0' }}>

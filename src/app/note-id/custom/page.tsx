@@ -341,14 +341,14 @@ function CustomNoteIDInner() {
   const currentNote = group[activeIdx]?.note ?? ''
   const activeStatus = group[activeIdx]?.status
   const bgColor = flash === 'wrong' ? '#FFF0F0' : flash === 'correct' ? '#F0FBF4' : 'white'
-  const borderColor = flash === 'wrong' ? '#F09595' : flash === 'correct' ? '#4CAF50' : '#DDD8CA'
+  const borderColor = flash === 'wrong' ? '#F09595' : flash === 'correct' ? '#4CAF50' : '#D9CFAE'
   const progressPct = stopMode === 'exercises' ? (rounds / stopValue) * 100 : (elapsed / (stopValue * 60)) * 100
 
   if (done) {
     const finalTime = ((Date.now() - startTime) / 1000).toFixed(2)
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Session Complete</p>
           <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#2A2318', marginBottom: '32px' }}>Custom Session</h2>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '36px' }}>
@@ -369,7 +369,7 @@ function CustomNoteIDInner() {
               Again
             </button>
             <button onClick={() => router.push('/note-id')}
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               Back
             </button>
           </div>
@@ -431,7 +431,7 @@ function CustomNoteIDInner() {
                   <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                     {[null,'C#','D#',null,'F#','G#','A#'].map((s, i) => s ? (
                       <button key={s} onClick={() => handleAnswer(s)}
-                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #DDD8CA', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
+                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D9CFAE', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
                         {s}
                       </button>
                     ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
@@ -440,7 +440,7 @@ function CustomNoteIDInner() {
                 <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', width: '100%' }}>
                   {NOTE_LETTERS.map(letter => (
                     <button key={letter} onClick={() => handleAnswer(letter)}
-                      style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#2A2318', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
+                      style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #D9CFAE', background: '#ECE3CC', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#2A2318', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
                       {letter}
                     </button>
                   ))}
@@ -449,7 +449,7 @@ function CustomNoteIDInner() {
                   <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
                     {['Db','Eb',null,'Gb','Ab','Bb',null].map((note, i) => note ? (
                       <button key={note} onClick={() => handleAnswer(note)}
-                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #DDD8CA', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
+                        style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D9CFAE', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
                         {note}
                       </button>
                     ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
@@ -472,7 +472,7 @@ function CustomNoteIDInner() {
                   }}>
                   {WHITE_KEY_NOTES.map((note, i) => (
                     <button key={note} onClick={() => handleAnswer(note)}
-                      style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
+                      style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
                   ))}
                   {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
                     <button key={note} onClick={() => handleAnswer(note)}

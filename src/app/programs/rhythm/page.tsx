@@ -93,7 +93,7 @@ export default function RhythmProgramsPage() {
         {!loaded && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '20px 24px', height: '108px', opacity: 0.5 }} />
+              <div key={i} style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: '14px', padding: '20px 24px', height: '108px', opacity: 0.5 }} />
             ))}
           </div>
         )}

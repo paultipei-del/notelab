@@ -355,7 +355,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         Look at the key signature at the start of the grand staff. Which major key is it?
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <GrandStaff width={320} keyName={item} />
       </div>
@@ -372,7 +372,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
           const color = locked && (isAnswer || isPicked) ? 'white' : DARK
           const border = locked && isAnswer ? CORRECT
                        : locked && isPicked && !feedback!.ok ? WRONG
-                       : '#DDD8CA'
+                       : '#D9CFAE'
           return (
             <button key={opt} onClick={() => pick(opt)}
               disabled={locked}
@@ -453,7 +453,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
                 : isSel ? 'white' : DARK
     const border = locked && isAnswer ? CORRECT
                  : locked && isSel && !feedback!.ok ? WRONG
-                 : isSel ? DARK : '#DDD8CA'
+                 : isSel ? DARK : '#D9CFAE'
     return (
       <button key={opt} onClick={() => !locked && setter(opt)}
         disabled={locked}
@@ -480,7 +480,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
         Pick the accidental that is used in the key signature, then pick the name of the major key.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <GrandStaff width={320} keyName={item} />
       </div>
@@ -591,7 +591,7 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         aria-label={acc}
         style={{
           width: 48, height: 48, borderRadius: 10,
-          border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
+          border: `1.5px solid ${active ? DARK : '#D9CFAE'}`,
           background: active ? DARK : 'white',
           color: active ? 'white' : DARK,
           fontFamily: 'var(--font-cormorant), serif',
@@ -619,7 +619,7 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         <strong style={{ color: ACCENT }}>{KEY_SIGS[item].label}</strong>
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <GrandStaff
           width={320}
@@ -639,12 +639,12 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         marginBottom: 12, flexWrap: 'wrap' }}>
         {accBtn('flat', '\u266D')}
         {accBtn('sharp', '\u266F')}
-        <div style={{ width: 1, height: 28, background: '#DDD8CA', margin: '0 4px' }} />
+        <div style={{ width: 1, height: 28, background: '#D9CFAE', margin: '0 4px' }} />
         <button onClick={onReset}
           disabled={feedback !== null}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #DDD8CA', background: 'white',
+            border: '1.5px solid #D9CFAE', background: 'white',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
@@ -730,7 +730,7 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
         Look at the key signature at the start of this example. Which major key is the piece in?
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <ScoreFromXml key={piece.xmlSrc} src={piece.xmlSrc} />
       </div>
@@ -746,7 +746,7 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
           const color = locked && (isAnswer || isPicked) ? 'white' : DARK
           const border = locked && isAnswer ? CORRECT
                        : locked && isPicked && !feedback!.ok ? WRONG
-                       : '#DDD8CA'
+                       : '#D9CFAE'
           return (
             <button key={opt} onClick={() => pick(opt)}
               disabled={locked}

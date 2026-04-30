@@ -123,7 +123,7 @@ function MatchEx({ onDone }: { onDone: (correct: number, total: number) => void 
       <ExerciseLabel>Exercise 1 — Match the sign with its definition</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 14,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
         padding: '18px 20px 12px', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
           minHeight: 120, marginBottom: 4 }}>
@@ -184,7 +184,7 @@ function IdentifyEx({ onDone }: { onDone: (correct: number, total: number) => vo
       <ExerciseLabel>Exercise 2 — Identify the sign</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 14,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
         padding: '22px 20px', marginBottom: 14, minHeight: 140,
         display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <NotationSymbol cardId={item.id} />
@@ -307,8 +307,8 @@ function MemoryCard({ slot, visible, matched, onClick }: {
   return (
     <button onClick={onClick} disabled={matched}
       style={{
-        background: matched ? 'rgba(42,107,30,0.08)' : visible ? 'white' : '#FDFAF3',
-        border: `1.5px solid ${matched ? 'rgba(42,107,30,0.4)' : '#DDD8CA'}`,
+        background: matched ? 'rgba(42,107,30,0.08)' : visible ? 'white' : '#ECE3CC',
+        border: `1.5px solid ${matched ? 'rgba(42,107,30,0.4)' : '#D9CFAE'}`,
         borderRadius: 12,
         padding: 8,
         minHeight: 100,
@@ -367,7 +367,7 @@ function CategoryEx({ onDone }: { onDone: (correct: number, total: number) => vo
       <ExerciseLabel>Exercise 4 — Which category?</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 14,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
         padding: '18px 20px 12px', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
           minHeight: 120, marginBottom: 4 }}>
@@ -404,7 +404,7 @@ function MCButton({ label, isPicked, isAnswer, locked, onClick }: {
   const color = locked && (isAnswer || isPicked) ? 'white' : DARK
   const border = locked && isAnswer ? CORRECT
                : locked && isPicked && !isAnswer ? WRONG
-               : '#DDD8CA'
+               : '#D9CFAE'
   return (
     <button onClick={onClick} disabled={locked}
       style={{

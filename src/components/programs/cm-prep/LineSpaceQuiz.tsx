@@ -103,10 +103,10 @@ export default function LineSpaceQuiz({
     return 'white'
   }
   function choiceBorder(choice: 'line' | 'space') {
-    if (!confirmed) return selected === choice ? '#1A1A18' : '#DDD8CA'
+    if (!confirmed) return selected === choice ? '#1A1A18' : '#D9CFAE'
     if (choice === correctChoice) return '#C0DD97'
     if (selected === choice && choice !== correctChoice) return '#F0C4A8'
-    return '#DDD8CA'
+    return '#D9CFAE'
   }
   function choiceColor(choice: 'line' | 'space') {
     if (!confirmed) return '#2A2318'

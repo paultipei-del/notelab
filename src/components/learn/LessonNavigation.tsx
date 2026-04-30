@@ -32,9 +32,9 @@ function NavCard({ href, direction, title, showChapter }: CardProps) {
       style={{
         display: 'block',
         padding: '20px 22px',
-        border: '1px solid #DDD8CA',
+        border: '1px solid #D9CFAE',
         borderRadius: 12,
-        background: '#FDFAF3',
+        background: '#ECE3CC',
         textDecoration: 'none',
         color: 'inherit',
         textAlign: isPrev ? 'left' : 'right',
@@ -105,7 +105,7 @@ export function LessonNavigation({ topic, slug }: LessonNavigationProps) {
         style={{
           marginTop: 40,
           paddingTop: 32,
-          borderTop: '1px solid #DDD8CA',
+          borderTop: '1px solid #D9CFAE',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: 16,

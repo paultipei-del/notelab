@@ -25,9 +25,9 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
   const faceStyle: React.CSSProperties = {
     position: 'absolute',
     inset: 0,
-    background: '#FDFAF3',
+    background: '#ECE3CC',
     borderRadius: '16px',
-    border: '1px solid #DDD8CA',
+    border: '1px solid #D9CFAE',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -103,7 +103,7 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
           <span style={labelStyle}>Question</span>
           {frontContent}
           {!revealed && (
-            <span style={{ position: 'absolute', bottom: '20px', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', color: '#DDD8CA', textTransform: 'uppercase' }}>
+            <span style={{ position: 'absolute', bottom: '20px', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', color: '#D9CFAE', textTransform: 'uppercase' }}>
               tap to reveal
             </span>
           )}

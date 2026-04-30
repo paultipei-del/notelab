@@ -111,8 +111,8 @@ export default function ChallengeCard({
         width: '100%',
         maxWidth: '860px',
         margin: '0 auto',
-        background: '#FDFAF3',
-        border: '1px solid #DDD8CA',
+        background: '#ECE3CC',
+        border: '1px solid #D9CFAE',
         borderRadius: '16px',
         padding: 'clamp(28px, 4vw, 48px)',
         boxShadow:

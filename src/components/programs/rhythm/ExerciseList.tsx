@@ -39,7 +39,7 @@ export default function ExerciseList({ programSlug, categorySlug, levels, progre
       {levels.map(levelNode => {
         const levelLabel = `Level ${levelNode.level}`
         return (
-          <div key={levelNode.level} style={{ background: 'white', border: '1px solid #DDD8CA', borderRadius: '14px', overflow: 'hidden' }}>
+          <div key={levelNode.level} style={{ background: 'white', border: '1px solid #D9CFAE', borderRadius: '14px', overflow: 'hidden' }}>
             <div style={{ padding: '12px 16px 10px', borderBottom: '1px solid #EDE8DF' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060', margin: 0 }}>
                 {levelLabel}

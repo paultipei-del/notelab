@@ -30,7 +30,7 @@ export default function FeedbackPage() {
 
         {/* Tally form embed — swap TALLY_URL with your form link */}
         <div style={{
-          background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA',
+          background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE',
           overflow: 'hidden', minHeight: '480px',
         }}>
           <iframe

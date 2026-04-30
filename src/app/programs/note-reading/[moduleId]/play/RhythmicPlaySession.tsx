@@ -479,7 +479,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
 
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '48px 40px', maxWidth: '460px', width: '100%', textAlign: 'center' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '6px' }}>
             {retryMode ? 'Retry Complete' : 'Session Complete'}
           </p>
@@ -549,7 +549,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
               style={{
                 background: missedMeasuresRef.current.length > 0 ? 'transparent' : '#1A1A18',
                 color: missedMeasuresRef.current.length > 0 ? '#7A7060' : 'white',
-                border: missedMeasuresRef.current.length > 0 ? '1px solid #DDD8CA' : 'none',
+                border: missedMeasuresRef.current.length > 0 ? '1px solid #D9CFAE' : 'none',
                 borderRadius: '10px', padding: '13px',
                 fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer',
               }}
@@ -564,7 +564,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
                 if (moduleFinished) router.push('/programs/note-reading')
                 else router.push(`/programs/note-reading/${moduleId}`)
               }}
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
+              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '13px', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}
             >
               {moduleFinished ? '← Back to program' : '← Back to module'}
             </button>
@@ -578,7 +578,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
   const currentMeasure = queue[qIdx]
   const cardBorder = measureFlash === 'correct' ? CORRECT_BORDER
     : measureFlash === 'wrong' ? WRONG_BORDER
-    : '#DDD8CA'
+    : '#D9CFAE'
   const cardBg = measureFlash === 'correct' ? CORRECT_BG
     : measureFlash === 'wrong' ? WRONG_BG
     : 'white'
@@ -601,7 +601,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
           </span>
           <button
             onClick={handleEndSession}
-            style={{ background: 'none', border: '1px solid #DDD8CA', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', padding: '4px 10px', borderRadius: '8px', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}
+            style={{ background: 'none', border: '1px solid #D9CFAE', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#7A7060', padding: '4px 10px', borderRadius: '8px', letterSpacing: '0.06em', textTransform: 'uppercase' as const }}
           >
             End
           </button>
@@ -615,8 +615,8 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(12px,2vh,24px) 16px' }}>
         {micError ? (
           <div style={{
-            maxWidth: '440px', width: '100%', background: '#FDFAF3',
-            border: '1px solid #DDD8CA', borderRadius: '16px', padding: '28px 32px',
+            maxWidth: '440px', width: '100%', background: '#ECE3CC',
+            border: '1px solid #D9CFAE', borderRadius: '16px', padding: '28px 32px',
             textAlign: 'center', boxShadow: '0 2px 20px rgba(26,26,24,0.06)',
           }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', margin: '0 0 8px' }}>
@@ -637,7 +637,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
               </button>
               <button
                 onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '11px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '11px 20px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
               >
                 ← Back to module
               </button>
@@ -714,7 +714,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '28px 28px 24px', maxWidth: '380px', width: '100%' }}
+            style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px', padding: '28px 28px 24px', maxWidth: '380px', width: '100%' }}
           >
             <h3 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '22px', color: '#2A2318', margin: '0 0 8px' }}>End this session?</h3>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: '0 0 20px', lineHeight: 1.55 }}>
@@ -723,7 +723,7 @@ export default function RhythmicPlaySession({ moduleId }: { moduleId: string }) 
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
               <button
                 onClick={() => setShowEndConfirm(false)}
-                style={{ background: 'transparent', color: '#2A2318', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '10px 16px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+                style={{ background: 'transparent', color: '#2A2318', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '10px 16px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
               >
                 Keep going
               </button>

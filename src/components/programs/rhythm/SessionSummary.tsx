@@ -32,8 +32,8 @@ export default function SessionSummary({
 
   return (
     <div style={{
-      background: completed ? '#EAF3DE' : '#FDFAF3',
-      border: `1px solid ${completed ? '#C0DD97' : '#DDD8CA'}`,
+      background: completed ? '#EAF3DE' : '#ECE3CC',
+      border: `1px solid ${completed ? '#C0DD97' : '#D9CFAE'}`,
       borderRadius: '14px',
       padding: '20px 24px',
       marginBottom: '20px',

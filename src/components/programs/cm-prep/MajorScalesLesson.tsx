@@ -211,7 +211,7 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
         <strong style={{ color: HALF_C }}>H</strong>. Mark every gap between the eight notes.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0 14px', marginBottom: 14, overflowX: 'auto' }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -276,7 +276,7 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
           disabled={feedback !== null}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #DDD8CA', background: 'white',
+            border: '1.5px solid #D9CFAE', background: 'white',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
@@ -427,7 +427,7 @@ function WriteScaleEx({ onDone }: { onDone: (correct: number, total: number) => 
         aria-label={acc}
         style={{
           width: 48, height: 48, borderRadius: 10,
-          border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
+          border: `1.5px solid ${active ? DARK : '#D9CFAE'}`,
           background: active ? DARK : 'white',
           color: active ? 'white' : DARK,
           fontFamily: 'var(--font-cormorant), serif',
@@ -457,7 +457,7 @@ function WriteScaleEx({ onDone }: { onDone: (correct: number, total: number) => 
         <strong style={{ color: ACCENT }}>{item.key} major scale</strong>
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 14, overflowX: 'auto' }}>
         <svg
           ref={r => { svgRef.current = r }}
@@ -501,12 +501,12 @@ function WriteScaleEx({ onDone }: { onDone: (correct: number, total: number) => 
         {accBtn('flat', '\u266D')}
         {accBtn('natural', '\u266E')}
         {accBtn('sharp', '\u266F')}
-        <div style={{ width: 1, height: 28, background: '#DDD8CA', margin: '0 4px' }} />
+        <div style={{ width: 1, height: 28, background: '#D9CFAE', margin: '0 4px' }} />
         <button onClick={onReset}
           disabled={feedback !== null}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #DDD8CA', background: 'white',
+            border: '1.5px solid #D9CFAE', background: 'white',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>

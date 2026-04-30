@@ -54,7 +54,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
 
     return (
       <div className="nl-study-viewport nl-study-scroll" style={{ alignItems: 'center', padding: '32px 24px' }}>
-        <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '40px 32px', maxWidth: '560px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)', marginBottom: '24px' }}>
+        <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', maxWidth: '560px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)', marginBottom: '24px' }}>
 
           {/* Grade */}
           <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '80px', height: '80px', borderRadius: '50%', background: gradeBg, marginBottom: '24px' }}>
@@ -91,7 +91,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
             </button>
             {missed.length > 0 && (
               <button onClick={() => setShowMissed(v => !v)}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '12px 20px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
+                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '12px 20px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
                 {showMissed ? 'Hide' : 'Review'} Missed ({missed.length})
               </button>
             )}
@@ -106,7 +106,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {missed.map((result, i) => (
-                <div key={i} style={{ background: '#FDFAF3', border: '1px solid #F09595', borderRadius: '12px', padding: '16px 20px' }}>
+                <div key={i} style={{ background: '#ECE3CC', border: '1px solid #F09595', borderRadius: '12px', padding: '16px 20px' }}>
                   <p style={{ fontFamily: result.card.type === 'symbol' ? 'Bravura, serif' : 'var(--font-cormorant), serif', fontSize: result.card.type === 'symbol' ? '32px' : '16px', fontWeight: 400, color: '#2A2318', marginBottom: '6px', lineHeight: 1.4 }}>
                     {result.card.type === 'symbol' ? result.card.front : result.card.front}
                     {result.card.symbolName && (
@@ -144,7 +144,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>
           ← Exit Quiz
         </button>
-        <div style={{ flex: 1, maxWidth: '400px', height: '4px', background: '#DDD8CA', borderRadius: '2px', overflow: 'hidden' }}>
+        <div style={{ flex: 1, maxWidth: '400px', height: '4px', background: '#D9CFAE', borderRadius: '2px', overflow: 'hidden' }}>
           <div style={{ height: '100%', width: `${progressPct}%`, background: '#B5402A', borderRadius: '2px', transition: 'width 0.3s ease' }} />
         </div>
         <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', whiteSpace: 'nowrap' }}>
@@ -167,7 +167,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
           {currentCard.type === 'audio' ? (
             <AudioCard card={currentCard} revealed={false} onReveal={() => {}} hideReveal />
           ) : currentCard.type === 'symbol' ? (
-            <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }}>
+            <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }}>
               <div style={{ fontFamily: 'Bravura, serif', fontSize: '96px', lineHeight: 1.4, color: '#2A2318' }}>
                 {currentCard.front}
               </div>
@@ -176,7 +176,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
               )}
             </div>
           ) : (
-            <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }}>
+            <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }}>
               <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(20px, 4vw, 32px)', color: '#2A2318', lineHeight: 1.4 }}>
                 {currentCard.front}
               </p>
@@ -188,12 +188,12 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
         <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {options.map((opt, i) => {
             let bg = 'white'
-            let border = '#DDD8CA'
+            let border = '#D9CFAE'
             let color = '#1A1A18'
             if (chosen) {
               if (opt === correctAnswer) { bg = '#EAF3DE'; border = '#C0DD97'; color = '#3B6D11' }
               else if (opt === chosen) { bg = '#FCEBEB'; border = '#F09595'; color = '#A32D2D' }
-              else { color = '#DDD8CA'; border = '#EDE8DF' }
+              else { color = '#D9CFAE'; border = '#EDE8DF' }
             }
             return (
               <button

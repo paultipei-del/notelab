@@ -151,7 +151,7 @@ export default function RhythmExercisePage({ params }: Props) {
             )}
 
             {/* Practice card */}
-            <div style={{ background: 'white', border: '1px solid #DDD8CA', borderRadius: '14px', padding: '24px', marginBottom: '16px' }}>
+            <div style={{ background: 'white', border: '1px solid #D9CFAE', borderRadius: '14px', padding: '24px', marginBottom: '16px' }}>
               <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318', marginBottom: '8px' }}>
                 Practice this exercise
               </p>

@@ -40,7 +40,7 @@ function MetaPanel({ meta }: { meta: SectionMeta }) {
   return (
     <div style={{
       background: '#F7F4ED',
-      border: '1px solid #DDD8CA',
+      border: '1px solid #D9CFAE',
       borderRadius: 8,
       padding: '12px 16px',
       marginBottom: 12,
@@ -154,7 +154,7 @@ function Section({ id, title, meta, children }: {
       <MetaPanel meta={meta} />
       <div style={{
         background: 'white',
-        border: '0.5px solid #DDD8CA',
+        border: '0.5px solid #D9CFAE',
         borderRadius: 14,
         padding: 24,
       }}>
@@ -178,7 +178,7 @@ export default function NotationReferenceHarness() {
   return (
     <main style={{
       minHeight: '100vh',
-      background: '#FDFAF3',
+      background: '#ECE3CC',
       padding: '40px 16px 80px',
       fontFamily: F,
       color: '#2A2318',
@@ -208,7 +208,7 @@ export default function NotationReferenceHarness() {
           </h1>
           <p style={{ fontSize: 14, color: '#7A7060', lineHeight: 1.6, margin: 0 }}>
             Each section mounts a production component and exposes its rendered SVG outerHTML
-            via the disclosure below. Background is the cream <code>#FDFAF3</code> used across
+            via the disclosure below. Background is the cream <code>#ECE3CC</code> used across
             <code> /programs</code> surfaces. Open this route at desktop width (~1200px viewport).
           </p>
         </header>
@@ -335,7 +335,7 @@ export default function NotationReferenceHarness() {
         <footer style={{
           marginTop: 40,
           paddingTop: 20,
-          borderTop: '1px solid #DDD8CA',
+          borderTop: '1px solid #D9CFAE',
           fontFamily: F,
           fontSize: 12,
           color: '#7A7060',

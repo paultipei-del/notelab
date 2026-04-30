@@ -17,7 +17,7 @@ export default function SightRead2() {
           { href: '/sight-read-2/grand', label: 'Grand Staff', desc: 'Full range' },
         ].map(({ href, label, desc }) => (
           <Link key={href} href={href} style={{ textDecoration: 'none' }}>
-            <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px 28px', cursor: 'pointer' }}>
+            <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px', padding: '24px 28px', cursor: 'pointer' }}>
               <h2 style={{ fontFamily: SERIF, fontSize: '24px', fontWeight: 300, color: '#2A2318', marginBottom: '4px' }}>{label}</h2>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>{desc}</p>
             </div>

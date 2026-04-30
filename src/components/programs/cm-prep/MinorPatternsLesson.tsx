@@ -262,7 +262,7 @@ function MatchPatternEx({
         {KEYS.map(k => {
           const isChosen = chosen === k
           const isAnswer = k === answer
-          let bg = 'white', border = '#DDD8CA', color = DARK
+          let bg = 'white', border = '#D9CFAE', color = DARK
           if (feedback !== null) {
             if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
             else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
@@ -346,7 +346,7 @@ function MatchTriadEx({
         {KEYS.map(k => {
           const isChosen = chosen === k
           const isAnswer = k === answer
-          let bg = 'white', border = '#DDD8CA', color = DARK
+          let bg = 'white', border = '#D9CFAE', color = DARK
           if (feedback !== null) {
             if (isAnswer)              { bg = '#EAF3DE'; border = '#C0DD97'; color = CORRECT }
             else if (isChosen)         { bg = '#FDF3ED'; border = '#F0C4A8'; color = WRONG }
@@ -514,7 +514,7 @@ function PlaceTriadEx({
         aria-label={acc}
         style={{
           width: 48, height: 48, borderRadius: 10,
-          border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
+          border: `1.5px solid ${active ? DARK : '#D9CFAE'}`,
           background: active ? DARK : 'white',
           color: active ? 'white' : DARK,
           fontFamily: 'var(--font-cormorant), serif',
@@ -542,7 +542,7 @@ function PlaceTriadEx({
         <strong style={{ color: ACCENT }}>{item.rootKey} minor triad</strong>
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg
           ref={r => { svgRef.current = r }}
@@ -581,12 +581,12 @@ function PlaceTriadEx({
         {accBtn('flat', '\u266D')}
         {accBtn('natural', '\u266E')}
         {accBtn('sharp', '\u266F')}
-        <div style={{ width: 1, height: 28, background: '#DDD8CA', margin: '0 4px' }} />
+        <div style={{ width: 1, height: 28, background: '#D9CFAE', margin: '0 4px' }} />
         <button onClick={onReset}
           disabled={submitted}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #DDD8CA', background: 'white',
+            border: '1.5px solid #D9CFAE', background: 'white',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: submitted ? 'default' : 'pointer',
           }}>
@@ -771,7 +771,7 @@ function ConvertEx({
         aria-label={acc}
         style={{
           width: 48, height: 48, borderRadius: 10,
-          border: `1.5px solid ${active ? DARK : '#DDD8CA'}`,
+          border: `1.5px solid ${active ? DARK : '#D9CFAE'}`,
           background: active ? DARK : 'white',
           color: active ? 'white' : DARK,
           fontFamily: 'var(--font-cormorant), serif',
@@ -799,7 +799,7 @@ function ConvertEx({
         tap the note you want it on. Tap again to clear.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{
@@ -842,12 +842,12 @@ function ConvertEx({
         {accBtn('flat', '\u266D')}
         {accBtn('natural', '\u266E')}
         {accBtn('sharp', '\u266F')}
-        <div style={{ width: 1, height: 28, background: '#DDD8CA', margin: '0 4px' }} />
+        <div style={{ width: 1, height: 28, background: '#D9CFAE', margin: '0 4px' }} />
         <button onClick={onReset}
           disabled={feedback !== null}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #DDD8CA', background: 'white',
+            border: '1.5px solid #D9CFAE', background: 'white',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>

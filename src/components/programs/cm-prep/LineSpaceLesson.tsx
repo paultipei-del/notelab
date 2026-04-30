@@ -172,7 +172,7 @@ function ProgressDots({ total, current, results }: { total: number; current: num
           width: 8, height: 8, borderRadius: '50%', display: 'inline-block',
           background: i < results.length
             ? (results[i] ? CORRECT : WRONG)
-            : i === current ? ACCENT : '#DDD8CA',
+            : i === current ? ACCENT : '#D9CFAE',
         }} />
       ))}
     </div>
@@ -415,7 +415,7 @@ function GrandStaffEx({
         Focus on the note head, not the stem.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '12px 0', marginBottom: 16, overflowX: 'auto' }}>
         <svg ref={svgRef} viewBox={`0 0 ${EX_W} ${gSvgH}`} width="100%"
           style={{ maxWidth: EX_W, display: 'block', margin: '0 auto', cursor: 'pointer' }}
@@ -576,7 +576,7 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
         Is this a <strong>Line</strong> note or a <strong>Space</strong> note?
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '16px', marginBottom: 20 }}>
         <CardStaff note={card} revealed={chosen !== null} />
       </div>
@@ -587,8 +587,8 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
           const picked = chosen === opt
           const bg     = chosen === null ? 'white'
             : picked ? (isCorrect ? 'rgba(42,107,30,0.12)' : 'rgba(181,64,42,0.12)') : 'white'
-          const border = chosen === null ? '#DDD8CA'
-            : picked ? (isCorrect ? CORRECT : WRONG) : '#DDD8CA'
+          const border = chosen === null ? '#D9CFAE'
+            : picked ? (isCorrect ? CORRECT : WRONG) : '#D9CFAE'
           const textCol = chosen === null ? DARK
             : picked ? (isCorrect ? CORRECT : WRONG) : '#B0ACA4'
           return (
@@ -684,7 +684,7 @@ function DrawNotes({
           : `Click anywhere on the staff to place a note. ${total - placed.length} remaining.`}
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '16px 0', marginBottom: 16 }}>
         <svg ref={svgRef}
           viewBox={`0 0 ${svgW + 6} ${svgH}`} width="100%"
@@ -763,7 +763,7 @@ function NoteShapesIntro({ onNext }: { onNext: () => void }) {
         A <strong>quarter note</strong> fills the oval in, same stem, darker head.
         You will learn what each of these means soon.
       </p>
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '24px 16px', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '24px 16px', marginBottom: 20 }}>
         <NoteShapesVisual />
       </div>
       <PrimaryBtn label="Next →" onClick={onNext} />
@@ -779,7 +779,7 @@ function LineNoteIntro({ onNext }: { onNext: () => void }) {
         A <strong style={{ color: LINE_C }}>line note</strong> has a staff line running directly through its head.
         Any note value can sit on a line — look at the head position, not the stem.
       </p>
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <LineNoteStaff />
       </div>
       <PrimaryBtn label="Next →" onClick={onNext} />
@@ -795,7 +795,7 @@ function SpaceNoteIntro({ onNext }: { onNext: () => void }) {
         A <strong style={{ color: SPACE_C }}>space note</strong> has its head between two staff lines —
         no line passes through it. Space notes can also appear above the top line or below the bottom line.
       </p>
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <SpaceNoteStaff />
       </div>
       <PrimaryBtn label="Start exercises →" onClick={onNext} />

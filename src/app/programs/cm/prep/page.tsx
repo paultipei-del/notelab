@@ -79,7 +79,7 @@ export default function CMPrepHubPage() {
             if (!unlocked) {
               return (
                 <div key={lesson.slug} style={{
-                  background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: '14px',
+                  background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px',
                   padding: '16px 20px', opacity: 0.5, display: 'flex', alignItems: 'center', gap: '14px',
                 }}>
                   <div style={{
@@ -94,7 +94,7 @@ export default function CMPrepHubPage() {
                     <p style={{ fontFamily: SERIF, fontSize: '20px', fontWeight: 400, color: '#B0ACA4', margin: '0 0 3px' }}>{lesson.title}</p>
                     <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#C8C4BA', margin: 0 }}>{lesson.subtitle}</p>
                   </div>
-                  <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA' }}>🔒</span>
+                  <span style={{ fontSize: 'var(--nl-text-compact)', color: '#D9CFAE' }}>🔒</span>
                 </div>
               )
             }
@@ -104,13 +104,13 @@ export default function CMPrepHubPage() {
                 <div
                   style={{
                     background: completed ? '#FDFBF5' : 'white',
-                    border: `1px solid ${completed ? '#DDD8CA' : '#E8E4DC'}`,
+                    border: `1px solid ${completed ? '#D9CFAE' : '#E8E4DC'}`,
                     borderRadius: '14px', padding: '16px 20px',
                     display: 'flex', alignItems: 'center', gap: '14px',
                     cursor: 'pointer', transition: 'border-color 0.15s',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = completed ? '#DDD8CA' : '#E8E4DC' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = completed ? '#D9CFAE' : '#E8E4DC' }}
                 >
                   <div style={{
                     width: '28px', height: '28px', borderRadius: '50%',
@@ -144,7 +144,7 @@ export default function CMPrepHubPage() {
                     </span>
                   )}
 
-                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', flexShrink: 0 }}>→</span>
+                  <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', flexShrink: 0 }}>→</span>
                 </div>
               </Link>
             )

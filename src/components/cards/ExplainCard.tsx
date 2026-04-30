@@ -64,9 +64,9 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
         className="nl-study-card-hover"
         style={{
           position: 'relative',
-          background: '#FDFAF3',
+          background: '#ECE3CC',
           borderRadius: '20px',
-          border: '1px solid #DDD8CA',
+          border: '1px solid #D9CFAE',
           padding: '56px 32px 32px',
           textAlign: 'center',
           minHeight: 'clamp(220px, 28dvh, 300px)',
@@ -137,8 +137,8 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
               rows={3}
               style={{
                 width: '100%',
-                background: '#FDFAF3',
-                border: '1px solid #DDD8CA',
+                background: '#ECE3CC',
+                border: '1px solid #D9CFAE',
                 borderRadius: '14px',
                 padding: '16px 18px',
                 fontFamily: 'var(--font-jost), sans-serif',
@@ -153,7 +153,7 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
               autoFocus
             />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', letterSpacing: '0.03em' }}>
+              <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#D9CFAE', letterSpacing: '0.03em' }}>
                 ⌘ + Enter to submit
               </span>
               <button

@@ -156,8 +156,8 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
       <div
         className="nl-study-card-hover"
         style={{
-          background: '#FDFAF3',
-          border: '1px solid #DDD8CA',
+          background: '#ECE3CC',
+          border: '1px solid #D9CFAE',
           borderRadius: '20px',
           padding: '36px 32px',
           textAlign: 'center',
@@ -216,7 +216,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
             onClick={onReveal}
             style={{
               background: 'transparent',
-              border: '1px solid #DDD8CA',
+              border: '1px solid #D9CFAE',
               borderRadius: '50px',
               padding: '9px 24px',
               fontFamily: 'var(--font-jost), sans-serif',
@@ -230,7 +230,7 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
           </button>
         </div>
       ) : (
-        <p style={{ textAlign: 'center', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA', letterSpacing: '0.03em' }}>
+        <p style={{ textAlign: 'center', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#D9CFAE', letterSpacing: '0.03em' }}>
           Press play to hear the example
         </p>
       )}

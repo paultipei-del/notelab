@@ -40,9 +40,9 @@ export default function LearnLandingPage() {
         {/* Start here callout */}
         <div
           style={{
-            border: '1px solid #DDD8CA',
+            border: '1px solid #D9CFAE',
             borderRadius: '12px',
-            background: '#FDFAF3',
+            background: '#ECE3CC',
             padding: '16px 20px',
             marginBottom: '48px',
             maxWidth: '640px',

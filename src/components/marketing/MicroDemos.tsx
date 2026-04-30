@@ -93,7 +93,7 @@ export function MicroPianoDetect() {
       <svg viewBox="0 0 240 80" width="100%" height="80" role="img">
         {/* Staff (sw=12, top line at y=12). */}
         {[12, 24, 36, 48, 60].map((y, i) => (
-          <line key={i} x1="0" y1={y} x2="240" y2={y} stroke="#DDD8CA" strokeWidth="1" />
+          <line key={i} x1="0" y1={y} x2="240" y2={y} stroke="#D9CFAE" strokeWidth="1" />
         ))}
         {/* Treble clef baseline on the G4 line (= top + 3*sw = 48). Codebase
             canonical from StaffCard / TwoNoteGrandStaff: fontSize/sw ≈ 4.17;
@@ -158,7 +158,7 @@ export function MicroProgress() {
               width: '12px',
               height: '12px',
               borderRadius: '50%',
-              background: '#DDD8CA',
+              background: '#D9CFAE',
               animation: 'nl-micro-level 6s ease-in-out infinite',
               animationDelay: `${i * 0.45}s`,
             }}

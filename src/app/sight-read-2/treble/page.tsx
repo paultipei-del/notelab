@@ -20,7 +20,7 @@ export default function TreblePage() {
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '24px' }}>
           10 progressive levels — start with anchor notes and build up to the full chromatic range.
         </p>
-        <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', overflow: 'hidden' }}>
+        <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px', overflow: 'hidden' }}>
           {TREBLE_LEVELS.map((deck, i) => {
             const locked = !isPro
             return (
@@ -31,8 +31,8 @@ export default function TreblePage() {
                   <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>{deck.description}</p>
                 </div>
                 {locked
-                  ? <span style={{ fontSize: 'var(--nl-text-ui)', color: '#DDD8CA' }}>🔒</span>
-                  : <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#DDD8CA' }}>→</span>
+                  ? <span style={{ fontSize: 'var(--nl-text-ui)', color: '#D9CFAE' }}>🔒</span>
+                  : <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#D9CFAE' }}>→</span>
                 }
               </button>
             )

@@ -111,7 +111,7 @@ export default function ConceptPage({ params }: Props) {
           {concept.remember && (
             <div style={{
               marginTop: '28px', maxWidth: '600px',
-              background: 'white', border: '1px solid #DDD8CA', borderRadius: '12px',
+              background: 'white', border: '1px solid #D9CFAE', borderRadius: '12px',
               padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: '12px',
             }}>
               <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#3B6D11', flexShrink: 0, marginTop: '2px' }}>

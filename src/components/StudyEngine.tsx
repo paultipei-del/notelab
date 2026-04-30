@@ -147,15 +147,15 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
     if (showIntro) {
     return (
       <div className="nl-study-viewport nl-study-scroll" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '56px 48px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '56px 48px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)' }}>
           <div style={{ fontSize: '48px', marginBottom: '24px' }}>𝄞</div>
           <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>{deck.title}</h2>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-ui)', color: '#7A7060', lineHeight: 1.8, marginBottom: '8px' }}>A note will appear on the staff.</p>
           <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-ui)', color: '#7A7060', lineHeight: 1.8, marginBottom: '36px' }}>Play it on your piano — the mic will detect the correct note and move to the next one automatically.</p>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
+          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
           <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); resetTimer(); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
           <div style={{ marginTop: '20px' }}>
-            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#DDD8CA' }}>← Back</button>
+            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#D9CFAE' }}>← Back</button>
           </div>
         </div>
       </div>
@@ -166,7 +166,7 @@ return (
     <>
       {isComplete && viewMode === 'study' && (
         <div className="nl-study-viewport nl-study-scroll" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '64px 56px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.10)' }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '64px 56px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.10)' }}>
             {isSightReadDeck && isNewBest && typeof window !== 'undefined' && (() => { localStorage.setItem(bestTimeKey, currentTime.toString()); return null })()}
         <div style={{ fontSize: '48px', marginBottom: '24px' }}>♩</div>
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px' }}>Session Complete</h2>
@@ -184,8 +184,8 @@ return (
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => { resetSession(); resetTimer(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Study Again</button>
-              {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Reset Best</button>}
-              {!isSightReadDeck && <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Browse Cards</button>}
+              {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Reset Best</button>}
+              {!isSightReadDeck && <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Browse Cards</button>}
               <button onClick={goBack} className="nl-study-back-btn" style={{ padding: '12px 22px', fontSize: 'var(--nl-text-meta)' }}>← Back</button>
             </div>
           </div>
@@ -197,7 +197,7 @@ return (
           {/* Header and mode switcher match the study-mode topbar's
               centered-column geometry so the page width stays the same
               when toggling between Study and Browse. */}
-          <div style={{ borderBottom: '1px solid #DDD8CA', flexShrink: 0 }}>
+          <div style={{ borderBottom: '1px solid #D9CFAE', flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               gap: '12px', padding: '12px 24px', maxWidth: '760px', margin: '0 auto' }}>
               {/* Browse is a sub-view of the deck — "Back" returns to study
@@ -215,9 +215,9 @@ return (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {(deck.browseCards ?? deck.cards).map((card, i) => (
                 <div key={card.id} onClick={() => card.type !== 'audio' && setBrowseExpanded(browseExpanded === card.id ? null : card.id)}
-                  style={{ background: '#FDFAF3', border: `1px solid ${browseExpanded === card.id ? '#B5402A' : '#DDD8CA'}`, borderRadius: '12px', padding: '16px 20px', cursor: card.type !== 'audio' ? 'pointer' : 'default', transition: 'all 0.15s' }}>
+                  style={{ background: '#ECE3CC', border: `1px solid ${browseExpanded === card.id ? '#B5402A' : '#D9CFAE'}`, borderRadius: '12px', padding: '16px 20px', cursor: card.type !== 'audio' ? 'pointer' : 'default', transition: 'all 0.15s' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                    <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', fontWeight: 400, minWidth: '24px', paddingTop: '2px' }}>{i + 1}</span>
+                    <span style={{ fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', fontWeight: 400, minWidth: '24px', paddingTop: '2px' }}>{i + 1}</span>
                     <div style={{ flex: 1 }}>
                       {card.type === 'audio' ? <AudioBrowseRow card={card} />
                         : card.type === 'symbol' ? (
@@ -226,7 +226,7 @@ return (
                           <><p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, fontSize: '18px', color: '#2A2318', marginBottom: browseExpanded === card.id ? '10px' : '0' }}>{card.front}</p>{browseExpanded === card.id && <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', lineHeight: 1.6, borderTop: '1px solid #EDE8DF', paddingTop: '10px' }}>{card.back}</p>}</>
                         )}
                     </div>
-                    {card.type !== 'audio' && <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', paddingTop: '2px' }}>{browseExpanded === card.id ? '▲' : '▼'}</span>}
+                    {card.type !== 'audio' && <span style={{ fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', paddingTop: '2px' }}>{browseExpanded === card.id ? '▲' : '▼'}</span>}
                   </div>
                 </div>
               ))}

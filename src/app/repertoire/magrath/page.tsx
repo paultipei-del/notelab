@@ -99,14 +99,14 @@ export default function MagrathBrowser() {
       <div style={{ position: 'relative' as const, marginBottom: '24px' }}>
         <input value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Search composer or title across all periods…"
-          style={{ width: '100%', padding: '12px 44px 12px 16px', borderRadius: '12px', border: '1px solid #DDD8CA', background: '#FDFAF3', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }} />
+          style={{ width: '100%', padding: '12px 44px 12px 16px', borderRadius: '12px', border: '1px solid #D9CFAE', background: '#ECE3CC', fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318', outline: 'none', boxSizing: 'border-box' as const }} />
         {search && <button onClick={() => setSearch('')} style={{ position: 'absolute' as const, right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#7A7060', fontSize: '18px' }}>×</button>}
       </div>
 
       {search.trim() ? (
         <div>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginBottom: '16px' }}>{searchResults.length} result{searchResults.length !== 1 ? 's' : ''}</p>
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', overflowX: 'auto' as const }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', overflowX: 'auto' as const }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' as const }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #EDE8DF' }}>
@@ -154,14 +154,14 @@ export default function MagrathBrowser() {
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '20px' }}>
             {data?.periods.map(p => (
               <button key={p.id} onClick={() => { setSelectedPeriod(p.id); setExpandedIdx(null) }}
-                style={{ padding: '7px 16px', borderRadius: '20px', border: '1px solid ' + (selectedPeriod === p.id ? '#1A1A18' : '#DDD8CA'), background: selectedPeriod === p.id ? '#1A1A18' : 'white', color: selectedPeriod === p.id ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
+                style={{ padding: '7px 16px', borderRadius: '20px', border: '1px solid ' + (selectedPeriod === p.id ? '#1A1A18' : '#D9CFAE'), background: selectedPeriod === p.id ? '#1A1A18' : 'white', color: selectedPeriod === p.id ? 'white' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
                 {p.label} <span style={{ opacity: 0.6 }}>({p.entries.length})</span>
               </button>
             ))}
           </div>
 
           {/* Level filter */}
-          <div style={{ background: '#FDFAF3', borderRadius: '12px', border: '1px solid #DDD8CA', padding: '14px 20px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '12px', border: '1px solid #D9CFAE', padding: '14px 20px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Level</p>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const }}>
               {[1,2,3,4,5,6,7,8,9,10].map(n => {
@@ -175,20 +175,20 @@ export default function MagrathBrowser() {
                     else if (n === levelMin) setLevelMin(Math.min(n + 1, levelMax))
                     else setLevelMax(Math.max(n - 1, levelMin))
                     setExpandedIdx(null)
-                  }} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid ' + (active ? '#B5402A' : '#DDD8CA'), background: active ? '#FAEEDA' : 'white', color: active ? '#B5402A' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: active ? 400 : 300, cursor: 'pointer' }}>
+                  }} style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid ' + (active ? '#B5402A' : '#D9CFAE'), background: active ? '#FAEEDA' : 'white', color: active ? '#B5402A' : '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: active ? 400 : 300, cursor: 'pointer' }}>
                     {n}
                   </button>
                 )
               })}
               {(levelMin > 1 || levelMax < 10) && (
-                <button onClick={() => { setLevelMin(1); setLevelMax(10) }} style={{ padding: '0 10px', height: '32px', borderRadius: '8px', border: '1px solid #DDD8CA', background: '#FDFAF3', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: 'pointer' }}>All</button>
+                <button onClick={() => { setLevelMin(1); setLevelMax(10) }} style={{ padding: '0 10px', height: '32px', borderRadius: '8px', border: '1px solid #D9CFAE', background: '#ECE3CC', color: '#7A7060', fontFamily: F, fontSize: 'var(--nl-text-compact)', cursor: 'pointer' }}>All</button>
               )}
             </div>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginLeft: 'auto' }}>{filteredEntries.length} entries</p>
           </div>
 
           {/* Table */}
-          <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', overflowX: 'auto' as const }}>
+          <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', overflowX: 'auto' as const }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' as const, minWidth: '600px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #EDE8DF' }}>

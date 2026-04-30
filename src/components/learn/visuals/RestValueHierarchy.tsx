@@ -65,7 +65,7 @@ export function RestValueHierarchy({ size = 'inline', caption }: RestValueHierar
                   y1={rowTop}
                   x2={margin + width}
                   y2={rowTop}
-                  stroke={'#DDD8CA'}
+                  stroke={'#D9CFAE'}
                   strokeWidth={1}
                 />
               )}

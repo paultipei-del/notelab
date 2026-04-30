@@ -38,7 +38,7 @@ function PianoOctave({
   const noteColor = (n: string) => {
     if (states[n] === 'a') return HIGHLIGHT_A
     if (states[n] === 'b') return HIGHLIGHT_B
-    if (states[n] === 'dim') return '#DDD8CA'
+    if (states[n] === 'dim') return '#D9CFAE'
     return null
   }
 
@@ -105,7 +105,7 @@ export function AccidentalsDiagram() {
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '7px 16px',
                 background: isActive ? DARK : 'transparent',
-                border: `1px solid ${isActive ? DARK : '#DDD8CA'}`,
+                border: `1px solid ${isActive ? DARK : '#D9CFAE'}`,
                 borderRadius: 10,
                 fontFamily: F, fontSize: 13, fontWeight: isActive ? 600 : 400,
                 color: isActive ? 'white' : '#7A7060',
@@ -158,7 +158,7 @@ export function StepsDiagram() {
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '7px 16px',
                 background: isActive ? DARK : 'transparent',
-                border: `1px solid ${isActive ? DARK : '#DDD8CA'}`,
+                border: `1px solid ${isActive ? DARK : '#D9CFAE'}`,
                 borderRadius: 10,
                 fontFamily: F, fontSize: 13, fontWeight: isActive ? 600 : 400,
                 color: isActive ? 'white' : '#7A7060',
@@ -199,19 +199,19 @@ export function IntervalsDiagram() {
         When counting intervals on the staff, count the line or space on which each note sits,
         and all the lines or spaces between the two notes.
       </p>
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '10px 0', marginBottom: 14 }}>
         <IntervalsAscendingStaff />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 8,
+        <div style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 8,
           padding: '10px 14px' }}>
           <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: 0, lineHeight: 1.7 }}>
             Intervals with <strong style={{ color: DARK }}>even</strong> numbers (2nd, 4th) are made of{' '}
             <strong>one line note and one space note</strong>.
           </p>
         </div>
-        <div style={{ background: '#F7F4ED', border: '1px solid #DDD8CA', borderRadius: 8,
+        <div style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 8,
           padding: '10px 14px' }}>
           <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: 0, lineHeight: 1.7 }}>
             Intervals with <strong style={{ color: DARK }}>odd</strong> numbers (3rd, 5th) are made of{' '}
@@ -294,7 +294,7 @@ function IntervalsKeyboardVisual() {
               style={{
                 padding: '6px 14px', borderRadius: 8,
                 background: isActive ? SIZE_COLOR[s] : 'transparent',
-                border: `1px solid ${isActive ? SIZE_COLOR[s] : '#DDD8CA'}`,
+                border: `1px solid ${isActive ? SIZE_COLOR[s] : '#D9CFAE'}`,
                 fontFamily: F, fontSize: 13, fontWeight: isActive ? 700 : 500,
                 color: isActive ? 'white' : '#7A7060',
                 cursor: 'pointer', transition: 'all 0.15s',
@@ -319,7 +319,7 @@ function IntervalsKeyboardVisual() {
                 style={{
                   padding: '6px 10px', borderRadius: 8,
                   background: isActive ? '#1A1A18' : 'transparent',
-                  border: `1px solid ${isActive ? '#1A1A18' : '#DDD8CA'}`,
+                  border: `1px solid ${isActive ? '#1A1A18' : '#D9CFAE'}`,
                   fontFamily: F, fontSize: 13, fontWeight: isActive ? 700 : 500,
                   color: isActive ? 'white' : '#7A7060',
                   cursor: 'pointer', transition: 'all 0.15s',

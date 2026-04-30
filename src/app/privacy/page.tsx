@@ -25,7 +25,7 @@ export default function PrivacyPage() {
           Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
         </p>
 
-        <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '32px' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '32px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', lineHeight: 1.8, margin: 0 }}>
             Privacy policy coming soon. NoteLab collects only the information needed to provide the service — account email and usage data. We do not sell personal data. For questions, contact us via the{' '}
             <a href="/feedback" style={{ color: '#2A2318', textDecoration: 'underline' }}>feedback form</a>.

@@ -22,7 +22,7 @@ export default function Diagram({
       style={{
         margin: '24px 0',
         padding: '20px',
-        border: '1px solid #DDD8CA',
+        border: '1px solid #D9CFAE',
         borderRadius: '10px',
         background: 'rgba(253, 250, 243, 0.55)',
         textAlign: 'center',

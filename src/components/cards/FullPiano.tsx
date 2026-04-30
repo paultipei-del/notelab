@@ -76,7 +76,7 @@ export default function FullPiano({ onNote, activeNote }: FullPianoProps) {
                 width: KEY_W - 1,
                 height: KEY_H,
                 background: (key.note === 'C' && key.octave === 4) ? '#FEF3E2' : 'white',
-                border: '1px solid ' + ((key.note === 'C' && key.octave === 4) ? '#B5402A' : '#DDD8CA'),
+                border: '1px solid ' + ((key.note === 'C' && key.octave === 4) ? '#B5402A' : '#D9CFAE'),
                 borderRadius: '0 0 6px 6px',
                 cursor: 'pointer',
                 zIndex: 1,
@@ -88,7 +88,7 @@ export default function FullPiano({ onNote, activeNote }: FullPianoProps) {
               }}
             >
               {isC && (
-                <span style={{ fontSize: '8px', color: key.octave === 4 ? '#B5402A' : '#DDD8CA', fontFamily: 'var(--font-jost), sans-serif', userSelect: 'none', fontWeight: key.octave === 4 ? 400 : 300 }}>
+                <span style={{ fontSize: '8px', color: key.octave === 4 ? '#B5402A' : '#D9CFAE', fontFamily: 'var(--font-jost), sans-serif', userSelect: 'none', fontWeight: key.octave === 4 ? 400 : 300 }}>
                   C{key.octave}
                 </span>
               )}

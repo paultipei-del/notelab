@@ -103,7 +103,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
             className={`nl-cat-tile-inner${tile.flip ? ' nl-cat-flip' : ''}`}
             style={{
               background: tile.cardBg,
-              border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #DDD8CA',
+              border: tile.cardBg === '#1A1A18' ? '1px solid #2E2E2C' : '1px solid #D9CFAE',
               boxShadow: tile.cardBg === '#1A1A18'
                 ? '0 4px 20px rgba(0,0,0,0.35), 0 16px 44px rgba(0,0,0,0.22)'
                 : '0 1px 0 rgba(255,255,255,0.65) inset, 0 2px 8px rgba(26,26,24,0.05), 0 12px 32px rgba(26,26,24,0.08)',
@@ -123,7 +123,7 @@ export default function HomeCategoryHub({ earTopicCount, cmLevelCount }: HomeCat
               el.style.boxShadow = tile.cardBg === '#1A1A18'
                 ? '0 4px 20px rgba(0,0,0,0.35), 0 16px 44px rgba(0,0,0,0.22)'
                 : '0 1px 0 rgba(255,255,255,0.65) inset, 0 2px 8px rgba(26,26,24,0.05), 0 12px 32px rgba(26,26,24,0.08)'
-              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#DDD8CA'
+              if (tile.cardBg !== '#1A1A18') el.style.borderColor = '#D9CFAE'
             }}
           >
             {/* Text side */}

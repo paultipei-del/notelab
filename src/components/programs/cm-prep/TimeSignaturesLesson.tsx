@@ -157,7 +157,7 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
         <strong style={{ color: DARK }}>this {item.kind === 'rest' ? 'rest' : 'note'}</strong> get?
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '18px 0', marginBottom: 14 }}>
         <NoteOrRestGlyph item={item} />
       </div>
@@ -173,7 +173,7 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
           const color = locked && (isAnswer || isPicked) ? 'white' : DARK
           const border = locked && isAnswer ? CORRECT
                        : locked && isPicked && !feedback!.ok ? WRONG
-                       : '#DDD8CA'
+                       : '#D9CFAE'
           return (
             <button key={opt} onClick={() => pick(opt)}
               disabled={locked}
@@ -330,7 +330,7 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '18px 22px', marginBottom: 14 }}>
         {item.visual && (
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
@@ -356,7 +356,7 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
           const color = locked && (isAnswer || isPicked) ? 'white' : DARK
           const border = locked && isAnswer ? CORRECT
                        : locked && isPicked && !feedback!.ok ? WRONG
-                       : '#DDD8CA'
+                       : '#D9CFAE'
           return (
             <button key={opt} onClick={() => pick(opt)}
               disabled={locked}
@@ -710,7 +710,7 @@ export function WriteCountsEx({
         resetting each measure.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '10px 0 18px', marginBottom: 14, overflowX: 'auto',
         // Extend past the practice card's 28px padding so rhythms with eighths
         // have room without squishing.
@@ -895,7 +895,7 @@ export function WriteCountsEx({
             style={{
               minWidth: p.wide ? 56 : 44,
               height: 44, borderRadius: 8,
-              border: `1.5px solid #DDD8CA`,
+              border: `1.5px solid #D9CFAE`,
               background: 'white', color: DARK,
               fontFamily: F, fontSize: 18, fontWeight: 700,
               padding: '0 10px',
@@ -912,7 +912,7 @@ export function WriteCountsEx({
           disabled={feedback !== null}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #DDD8CA', background: 'white',
+            border: '1.5px solid #D9CFAE', background: 'white',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>
@@ -1221,7 +1221,7 @@ function WriteCountsMxlEx({ onDone }: { onDone: (correct: number, total: number)
         resetting each measure. Rests don’t need a count.
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '12px 0', marginBottom: 16 }}>
         <OsmdRhythmCounts
           key={piece.src}

@@ -167,7 +167,7 @@ export default function RhythmAudioDemo({ exerciseId, bpm }: Props) {
 
   return (
     <div style={{
-      background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '14px',
+      background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '14px',
       padding: '20px 22px', maxWidth: '600px',
       display: 'flex', alignItems: 'center', gap: '16px',
     }}>

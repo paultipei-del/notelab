@@ -65,7 +65,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Card({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '16px', padding: '24px 28px', ...style }}>
+    <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '16px', padding: '24px 28px', ...style }}>
       {children}
     </div>
   )
@@ -107,7 +107,7 @@ function Btn({ children, onClick, variant = 'outline', disabled, danger, compact
       disabled={disabled}
       style={{
         fontFamily: F, fontSize: fs, fontWeight: 400, cursor: disabled ? 'default' : 'pointer',
-        border: '1px solid ' + (danger ? '#ED6765' : '#DDD8CA'),
+        border: '1px solid ' + (danger ? '#ED6765' : '#D9CFAE'),
         borderRadius: rad, padding: pad,
         background: variant === 'fill' ? (danger ? '#ED6765' : '#1A1A18') : 'white',
         color: variant === 'fill' ? 'white' : (danger ? '#ED6765' : '#1A1A18'),
@@ -177,7 +177,7 @@ function ProfileSection({ user }: { user: any }) {
                   onKeyDown={e => e.key === 'Enter' && saveName()}
                   placeholder="Your name"
                   style={{
-                    flex: 1, minWidth: '200px', background: '#F2EDDF', border: '1px solid #DDD8CA',
+                    flex: 1, minWidth: '200px', background: '#F2EDDF', border: '1px solid #D9CFAE',
                     borderRadius: '8px', padding: '8px 12px',
                     fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318',
                     outline: 'none',
@@ -746,7 +746,7 @@ export default function AccountPage() {
               <button key={s.id} type="button" onClick={() => setActive(s.id)} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',
                 background: active === s.id ? 'white' : 'transparent',
-                border: active === s.id ? '1px solid #DDD8CA' : '1px solid transparent',
+                border: active === s.id ? '1px solid #D9CFAE' : '1px solid transparent',
                 borderRadius: '10px', padding: '10px 14px',
                 fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400,
                 color: active === s.id ? '#1A1A18' : '#7A7060',
@@ -760,7 +760,7 @@ export default function AccountPage() {
               </button>
             ))}
           </nav>
-          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #DDD8CA' }}>
+          <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #D9CFAE' }}>
             <Link href="/" style={{ textDecoration: 'none' }}>
               <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>← Back to app</span>
             </Link>

@@ -127,7 +127,7 @@ function MCButton({ label, isPicked, isAnswer, locked, onClick }: {
 }) {
   const bg     = locked && isAnswer ? CORRECT : locked && isPicked && !isAnswer ? WRONG : 'white'
   const color  = locked && (isAnswer || isPicked) ? 'white' : DARK
-  const border = locked && isAnswer ? CORRECT : locked && isPicked && !isAnswer ? WRONG : '#DDD8CA'
+  const border = locked && isAnswer ? CORRECT : locked && isPicked && !isAnswer ? WRONG : '#D9CFAE'
   return (
     <button onClick={onClick} disabled={locked}
       style={{
@@ -199,7 +199,7 @@ function Q1_NoteNames({ onDone }: { onDone: (correct: number, total: number) => 
       <SectionLabel>Question 1 — Name the note</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
           style={{ maxWidth: gsW, display: 'block', margin: '0 auto' }}>
@@ -313,7 +313,7 @@ function Q10_KeySigNames({ onDone }: { onDone: (correct: number, total: number) 
       <SectionLabel>Question 10 — Check the correct name for each key signature</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <KeySigGrandStaff kind={item.kind} />
       </div>
@@ -404,7 +404,7 @@ function Q11_NoteRestNames({ onDone }: { onDone: (correct: number, total: number
       <SectionLabel>Question 11 — Name each note or rest</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '18px 20px', marginBottom: 16, minHeight: 140,
         display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <NoteRestCard glyph={item.glyph} />
@@ -475,7 +475,7 @@ function Q13_Terms({ onDone }: { onDone: (correct: number, total: number) => voi
       <SectionLabel>Question 13 — What does each term or symbol mean?</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '24px 20px', marginBottom: 16,
         display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 80 }}>
         <span style={{ fontFamily: SERIF, fontSize: 26, fontWeight: 500,
@@ -538,7 +538,7 @@ function Q14_BoxedParts({ onDone }: { onDone: (correct: number, total: number) =
       <SectionLabel>Question 14 — Name each boxed part of the grand staff</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
         padding: '12px 20px 4px', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
           style={{ maxWidth: gsW, display: 'block', margin: '0 auto' }}>

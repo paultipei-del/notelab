@@ -47,7 +47,7 @@ function NameButtons({
           const isChosen = feedback?.chosen === name
           const isAnswer = name === answer
           let bg = 'white',
-            border = '#DDD8CA',
+            border = '#D9CFAE',
             color = '#2A2318'
           if (feedback) {
             if (isAnswer) {
@@ -156,7 +156,7 @@ function NameNoteExercise({
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — identify this note
       </p>
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 24 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 24 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%" style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           <StaffBase />
           <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
@@ -337,7 +337,7 @@ function PlaceNoteExercise({
         </p>
       </div>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 12 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 12 }}>
         <svg
           ref={svgRef}
           viewBox={`0 0 ${svgW} ${svgH}`}
@@ -590,7 +590,7 @@ function LedgerNameExercise({
         Grand staff — ledger notes
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 20 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 20 }}>
         <svg viewBox={`0 ${viewMinY} ${gsW} ${viewH}`} width="100%" style={{ maxWidth: gsW, display: 'block', margin: '0 auto' }}>
           <GrandStaffBase />
           {renderLedgerLinesFor({ clef: item.clef, pos: item.pos, cx, color: DARK })}
@@ -724,7 +724,7 @@ function WordSpellExercise({
   }, [idx, submitted, typed, item.word.length])
 
   const isCorrect = submitted?.ok ?? null
-  const borderColor = submitted === null ? '#DDD8CA' : isCorrect ? '#C0DD97' : '#F0C4A8'
+  const borderColor = submitted === null ? '#D9CFAE' : isCorrect ? '#C0DD97' : '#F0C4A8'
   const inputColor = submitted === null ? DARK : isCorrect ? CORRECT_C : WRONG_C
 
   return (
@@ -737,7 +737,7 @@ function WordSpellExercise({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — what word do these notes spell?
       </p>
 
-      <div style={{ background: '#FDFAF3', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 16 }}>
+      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '8px 0', marginBottom: 16 }}>
         <WordStaff clef={item.clef} notes={item.notes} />
       </div>
 
@@ -795,7 +795,7 @@ function WordSpellExercise({
               style={{
                 padding: '10px 0',
                 borderRadius: 8,
-                border: '1.5px solid #DDD8CA',
+                border: '1.5px solid #D9CFAE',
                 background: 'white',
                 fontFamily: SERIF,
                 fontSize: 18,
@@ -817,7 +817,7 @@ function WordSpellExercise({
           style={{
             padding: '10px 0',
             borderRadius: 8,
-            border: '1.5px solid #DDD8CA',
+            border: '1.5px solid #D9CFAE',
             background: 'white',
             fontFamily: F,
             fontSize: 15,

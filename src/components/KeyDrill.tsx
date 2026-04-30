@@ -343,7 +343,7 @@ function OrderSequenceDrill({ mode }: { mode: 'sharps' | 'flats' }) {
   }
 
   const allCorrect = checked && results.every(Boolean)
-  const borderOk = checked ? (allCorrect ? '#7EC86E' : '#F09595') : '#DDD8CA'
+  const borderOk = checked ? (allCorrect ? '#7EC86E' : '#F09595') : '#D9CFAE'
 
   return (
     <div className="nl-key-drill-card" style={{ borderColor: borderOk, transition: 'border-color 0.2s' }}>

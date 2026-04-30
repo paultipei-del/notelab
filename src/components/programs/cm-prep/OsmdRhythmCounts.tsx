@@ -322,7 +322,7 @@ export default function OsmdRhythmCounts({
                 style={{
                   minWidth: p.wide ? 64 : 40,
                   height: 40, borderRadius: 8,
-                  border: '1.5px solid #DDD8CA',
+                  border: '1.5px solid #D9CFAE',
                   background: 'white', color: DARK,
                   fontFamily: F, fontSize: 16, fontWeight: 700,
                   padding: '0 10px',

@@ -366,7 +366,7 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
   }
 
   const bgColor = status === 'correct' ? '#EAF3DE' : status === 'wrong' ? '#FCEBEB' : 'white'
-  const borderColor = status === 'correct' ? '#7EC86E' : status === 'wrong' ? '#F09595' : '#DDD8CA'
+  const borderColor = status === 'correct' ? '#7EC86E' : status === 'wrong' ? '#F09595' : '#D9CFAE'
   const F = 'var(--font-jost), sans-serif'
 
   return (

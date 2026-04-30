@@ -46,7 +46,7 @@ const s = {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '24px 32px 20px',
-    borderBottom: '1px solid #DDD8CA',
+    borderBottom: '1px solid #D9CFAE',
     background: '#F2EDDF',
   },
   drawerBody: {
@@ -56,8 +56,8 @@ const s = {
   },
   input: {
     width: '100%',
-    background: '#FDFAF3',
-    border: '1px solid #DDD8CA',
+    background: '#ECE3CC',
+    border: '1px solid #D9CFAE',
     borderRadius: '8px',
     padding: '10px 14px',
     fontFamily: 'var(--font-jost), sans-serif',
@@ -87,7 +87,7 @@ const s = {
     border: variant === 'primary' ? 'none' : '1px solid',
     background: variant === 'primary' ? '#1A1A18' : variant === 'danger' ? '#FCEBEB' : 'transparent',
     color: variant === 'primary' ? 'white' : variant === 'danger' ? '#A32D2D' : '#2C2C2A',
-    borderColor: variant === 'danger' ? '#F09595' : '#DDD8CA',
+    borderColor: variant === 'danger' ? '#F09595' : '#D9CFAE',
   }),
 }
 
@@ -260,7 +260,7 @@ async function handleBulkAdd() {
                 style={{
                   padding: '6px 16px',
                   borderRadius: '20px',
-                  border: `1px solid ${entryMode === mode ? '#1A1A18' : '#DDD8CA'}`,
+                  border: `1px solid ${entryMode === mode ? '#1A1A18' : '#D9CFAE'}`,
                   background: entryMode === mode ? '#1A1A18' : 'transparent',
                   color: entryMode === mode ? 'white' : '#7A7060',
                   fontFamily: 'var(--font-jost), sans-serif',
@@ -342,9 +342,9 @@ async function handleBulkAdd() {
                   <label style={s.label}>Recently Added</label>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {[...localDeck.cards].reverse().slice(0, 5).map(card => (
-                      <div key={card.id} style={{ display: 'flex', gap: '12px', padding: '10px 14px', background: '#FDFAF3', borderRadius: '8px', border: '1px solid #DDD8CA', fontSize: 'var(--nl-text-meta)', fontWeight: 400 }}>
+                      <div key={card.id} style={{ display: 'flex', gap: '12px', padding: '10px 14px', background: '#ECE3CC', borderRadius: '8px', border: '1px solid #D9CFAE', fontSize: 'var(--nl-text-meta)', fontWeight: 400 }}>
                         <span style={{ flex: 1, color: '#2A2318' }}>{card.front}</span>
-                        <span style={{ color: '#DDD8CA' }}>→</span>
+                        <span style={{ color: '#D9CFAE' }}>→</span>
                         <span style={{ flex: 2, color: '#7A7060' }}>{card.back}</span>
                       </div>
                     ))}
@@ -396,23 +396,23 @@ function CardRow({ card, index, isEditing, onEdit, onSave, onCancel, onDelete }:
 
   if (isEditing) {
     return (
-      <div style={{ background: '#FDFAF3', border: '1.5px solid #B5402A', borderRadius: '10px', padding: '14px 16px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', fontWeight: 400, minWidth: '20px', paddingTop: '10px' }}>{index + 1}</span>
+      <div style={{ background: '#ECE3CC', border: '1.5px solid #B5402A', borderRadius: '10px', padding: '14px 16px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+        <span style={{ fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', fontWeight: 400, minWidth: '20px', paddingTop: '10px' }}>{index + 1}</span>
         <input
-          style={{ flex: 1, background: '#F2EDDF', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)', fontWeight: 400, outline: 'none' }}
+          style={{ flex: 1, background: '#F2EDDF', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)', fontWeight: 400, outline: 'none' }}
           value={front}
           onChange={e => setFront(e.target.value)}
           autoFocus
         />
         <input
-          style={{ flex: 2, background: '#F2EDDF', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)', fontWeight: 400, outline: 'none' }}
+          style={{ flex: 2, background: '#F2EDDF', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '8px 12px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-ui)', fontWeight: 400, outline: 'none' }}
           value={back}
           onChange={e => setBack(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && onSave(front, back)}
         />
         <div style={{ display: 'flex', gap: '6px' }}>
           <button onClick={() => onSave(front, back)} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: 'var(--nl-text-compact)', cursor: 'pointer' }}>Save</button>
-          <button onClick={onCancel} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '6px', padding: '8px 14px', fontSize: 'var(--nl-text-compact)', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onCancel} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '8px 14px', fontSize: 'var(--nl-text-compact)', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     )
@@ -420,18 +420,18 @@ function CardRow({ card, index, isEditing, onEdit, onSave, onCancel, onDelete }:
 
   return (
     <div
-      style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '10px', padding: '12px 16px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}
+      style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '12px 16px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = '#7A7060')}
-      onMouseLeave={e => (e.currentTarget.style.borderColor = '#DDD8CA')}
+      onMouseLeave={e => (e.currentTarget.style.borderColor = '#D9CFAE')}
       onClick={onEdit}
     >
-      <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', fontWeight: 400, minWidth: '20px' }}>{index + 1}</span>
+      <span style={{ fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', fontWeight: 400, minWidth: '20px' }}>{index + 1}</span>
       <span style={{ flex: 1, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318' }}>{card.front}</span>
-      <span style={{ color: '#DDD8CA', fontSize: 'var(--nl-text-compact)' }}>→</span>
+      <span style={{ color: '#D9CFAE', fontSize: 'var(--nl-text-compact)' }}>→</span>
       <span style={{ flex: 2, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>{card.back}</span>
       <button
         onClick={e => { e.stopPropagation(); onDelete() }}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#DDD8CA', fontSize: 'var(--nl-text-base)', padding: '0 4px', lineHeight: 1 }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D9CFAE', fontSize: 'var(--nl-text-base)', padding: '0 4px', lineHeight: 1 }}
       >
         ×
       </button>

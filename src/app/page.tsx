@@ -484,8 +484,8 @@ export default function Home() {
             style={{
               marginTop: '56px',
               padding: '24px 28px',
-              background: '#FDFAF3',
-              border: '1px solid #DDD8CA',
+              background: '#ECE3CC',
+              border: '1px solid #D9CFAE',
               borderRadius: '14px',
               display: 'flex',
               alignItems: 'center',

@@ -76,8 +76,8 @@ export default function AdminPage() {
             <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#2A2318' }}>User Management</h1>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <a href="/admin/rhythm" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Library →</a>
-            <a href="/admin/rhythm/generate" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', border: '1px solid #DDD8CA', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Generator →</a>
+            <a href="/admin/rhythm" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Library →</a>
+            <a href="/admin/rhythm/generate" style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '8px 16px', textDecoration: 'none' }}>Rhythm Generator →</a>
           </div>
         </div>
 
@@ -87,21 +87,21 @@ export default function AdminPage() {
             { label: 'Last 7 Days', value: users.filter(u => new Date(u.created_at) > new Date(Date.now() - 7*24*60*60*1000)).length },
             { label: 'Confirmed', value: users.filter(u => u.email_confirmed_at).length },
           ].map(({ label, value }) => (
-            <div key={label} style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '24px' }}>
+            <div key={label} style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '24px' }}>
               <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', letterSpacing: '0.1em', textTransform: 'uppercase' as const, marginBottom: '8px' }}>{label}</p>
               <p style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#2A2318', lineHeight: 1 }}>{value}</p>
             </div>
           ))}
         </div>
 
-        <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '28px', marginBottom: '24px' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '28px', marginBottom: '24px' }}>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '20px' }}>Create Account</p>
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' as const, marginBottom: '16px' }}>
             <input value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="Email address"
-              style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-meta)', outline: 'none' }} />
+              style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-meta)', outline: 'none' }} />
             {!sendInvite && (
               <input value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Password (optional)" type="password"
-                style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-meta)', outline: 'none' }} />
+                style={{ flex: 2, minWidth: '200px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-meta)', outline: 'none' }} />
             )}
             <button onClick={createUser} disabled={creating || !newEmail}
               style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#1A1A18', color: 'white', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: creating || !newEmail ? 'not-allowed' : 'pointer', opacity: creating || !newEmail ? 0.5 : 1 }}>
@@ -119,11 +119,11 @@ export default function AdminPage() {
           {message && <p style={{ marginTop: '12px', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: message.type === 'success' ? '#4CAF50' : '#E53935' }}>{message.text}</p>}
         </div>
 
-        <div style={{ background: '#FDFAF3', borderRadius: '16px', border: '1px solid #DDD8CA', padding: '28px' }}>
+        <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '28px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060' }}>All Users ({users.length})</p>
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…"
-              style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #DDD8CA', fontFamily: F, fontSize: 'var(--nl-text-compact)', outline: 'none', width: '180px' }} />
+              style={{ padding: '7px 12px', borderRadius: '8px', border: '1px solid #D9CFAE', fontFamily: F, fontSize: 'var(--nl-text-compact)', outline: 'none', width: '180px' }} />
           </div>
           {usersLoading ? (
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>Loading…</p>

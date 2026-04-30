@@ -39,11 +39,11 @@ export default function GrandPage() {
                     <p className="nl-sight-read-clef-page__rowDesc">{deck.description}</p>
                   </div>
                   {locked ? (
-                    <span style={{ fontSize: 'var(--nl-text-ui)', color: '#DDD8CA', flexShrink: 0 }} aria-hidden>
+                    <span style={{ fontSize: 'var(--nl-text-ui)', color: '#D9CFAE', flexShrink: 0 }} aria-hidden>
                       🔒
                     </span>
                   ) : (
-                    <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#DDD8CA', flexShrink: 0 }} aria-hidden>
+                    <span style={{ fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#D9CFAE', flexShrink: 0 }} aria-hidden>
                       →
                     </span>
                   )}

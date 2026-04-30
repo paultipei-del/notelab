@@ -57,10 +57,10 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
       cursor: chosen ? 'default' : 'pointer',
       transition: 'all 0.15s',
     }
-    if (!chosen) return { ...base, background: '#FDFAF3', borderColor: '#DDD8CA', color: '#2A2318' }
+    if (!chosen) return { ...base, background: '#ECE3CC', borderColor: '#D9CFAE', color: '#2A2318' }
     if (option === correct) return { ...base, background: '#EAF3DE', borderColor: '#97C459', color: '#3B6D11' }
     if (option === chosen) return { ...base, background: '#FCEBEB', borderColor: '#F09595', color: '#A32D2D' }
-    return { ...base, background: '#FDFAF3', borderColor: '#DDD8CA', color: '#DDD8CA' }
+    return { ...base, background: '#ECE3CC', borderColor: '#D9CFAE', color: '#D9CFAE' }
   }
 
   // Question display
@@ -110,9 +110,9 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
         className="nl-study-card-hover"
         style={{
           position: 'relative',
-          background: '#FDFAF3',
+          background: '#ECE3CC',
           borderRadius: '20px',
-          border: '1px solid #DDD8CA',
+          border: '1px solid #D9CFAE',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

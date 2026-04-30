@@ -115,7 +115,7 @@ export default function CMLevel1HubPage() {
                   <div
                     key={lesson.slug}
                     style={{
-                      background: '#FDFAF3',
+                      background: '#ECE3CC',
                       border: '1px solid #EDE8DF',
                       borderRadius: '14px',
                       padding: '16px 20px',
@@ -149,7 +149,7 @@ export default function CMLevel1HubPage() {
                         {lesson.subtitle}
                       </p>
                     </div>
-                    <span style={{ fontSize: 'var(--nl-text-compact)', color: '#DDD8CA' }}>🔒</span>
+                    <span style={{ fontSize: 'var(--nl-text-compact)', color: '#D9CFAE' }}>🔒</span>
                   </div>
                 )
               }
@@ -159,7 +159,7 @@ export default function CMLevel1HubPage() {
                   <div
                     style={{
                       background: completed ? '#FDFBF5' : 'white',
-                      border: `1px solid ${completed ? '#DDD8CA' : '#E8E4DC'}`,
+                      border: `1px solid ${completed ? '#D9CFAE' : '#E8E4DC'}`,
                       borderRadius: '14px',
                       padding: '16px 20px',
                       display: 'flex',
@@ -172,7 +172,7 @@ export default function CMLevel1HubPage() {
                       e.currentTarget.style.borderColor = '#1A1A18'
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = completed ? '#DDD8CA' : '#E8E4DC'
+                      e.currentTarget.style.borderColor = completed ? '#D9CFAE' : '#E8E4DC'
                     }}
                   >
                     <div
@@ -214,7 +214,7 @@ export default function CMLevel1HubPage() {
                       </span>
                     )}
 
-                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#DDD8CA', flexShrink: 0 }}>→</span>
+                    <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', flexShrink: 0 }}>→</span>
                   </div>
                 </Link>
               )

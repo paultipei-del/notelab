@@ -236,9 +236,9 @@ export default function LandingPage() {
             delayMs={0}
             className="nl-tile-hover"
             style={{
-              background: '#FDFAF3',
+              background: '#ECE3CC',
               borderRadius: '20px',
-              border: '1px solid #DDD8CA',
+              border: '1px solid #D9CFAE',
               padding: '36px',
               gridColumn: 'span 2',
             }}
@@ -256,7 +256,7 @@ export default function LandingPage() {
           </ScrollReveal>
 
           {/* Card 2: Programs — level progression demo */}
-          <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px', display: 'flex', flexDirection: 'column' }}>
+          <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Programs</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               Curriculum-aligned, level by level.
@@ -270,7 +270,7 @@ export default function LandingPage() {
           </ScrollReveal>
 
           {/* Card 3: Flashcards — flip demo */}
-          <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px', display: 'flex', flexDirection: 'column' }}>
+          <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Flashcards</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               400+ cards across three tiers.
@@ -284,7 +284,7 @@ export default function LandingPage() {
           </ScrollReveal>
 
           {/* Card 4: Ear Training */}
-          <ScrollReveal delayMs={240} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px' }}>
+          <ScrollReveal delayMs={240} className="nl-tile-hover" style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '32px' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Ear training</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               Real piano audio.
@@ -295,7 +295,7 @@ export default function LandingPage() {
           </ScrollReveal>
 
           {/* Card 5: Piano detection — live staff demo */}
-          <ScrollReveal delayMs={320} className="nl-tile-hover" style={{ background: '#FDFAF3', borderRadius: '20px', border: '1px solid #DDD8CA', padding: '32px', display: 'flex', flexDirection: 'column' }}>
+          <ScrollReveal delayMs={320} className="nl-tile-hover" style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '32px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: ACCENT, margin: '0 0 10px 0' }}>Piano detection</p>
             <h3 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: '22px', color: '#2A2318', margin: '0 0 12px 0' }}>
               It hears what you play.
@@ -313,7 +313,7 @@ export default function LandingPage() {
       {/* Who it's for */}
       <section
         style={{
-          background: '#FDFAF3',
+          background: '#ECE3CC',
           borderTop: '1px solid #EDE8DF',
           borderBottom: '1px solid #EDE8DF',
           padding: 'clamp(48px,6vw,80px) clamp(24px,4vw,48px)',
@@ -334,19 +334,19 @@ export default function LandingPage() {
             Built for serious learners.
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-            <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
+            <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #D9CFAE', borderRadius: '16px', background: '#ECE3CC' }}>
               <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Certificate of Merit students</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
                 Every level, every topic on the syllabus. Theory, terms, rhythm, aural skills — aligned to MTAC’s Level 1 through 10 requirements.
               </p>
             </ScrollReveal>
-            <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
+            <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #D9CFAE', borderRadius: '16px', background: '#ECE3CC' }}>
               <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>College music students</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
                 Fundamentals through first-year theory. A reference you can actually use mid-homework.
               </p>
             </ScrollReveal>
-            <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #DDD8CA', borderRadius: '16px', background: '#F2EDDF' }}>
+            <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #D9CFAE', borderRadius: '16px', background: '#ECE3CC' }}>
               <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Serious adult learners</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
                 If you play an instrument and wish you understood the theory, this was built for you.
@@ -378,7 +378,7 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
             {/* Free */}
-            <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '32px' }}>
+            <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '32px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7A7060', margin: '0 0 12px 0' }}>Free</p>
               <div style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#2A2318', lineHeight: 1, marginBottom: '20px' }}>$0</div>
               {[
@@ -419,7 +419,7 @@ export default function LandingPage() {
               delayMs={80}
               className="nl-tile-hover"
               style={{
-                background: '#FDFAF3',
+                background: '#ECE3CC',
                 border: `2px solid ${ACCENT}`,
                 borderRadius: '20px',
                 padding: '32px',
@@ -468,7 +468,7 @@ export default function LandingPage() {
             </ScrollReveal>
 
             {/* Programs */}
-            <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ background: '#FDFAF3', border: '1px solid #DDD8CA', borderRadius: '20px', padding: '32px' }}>
+            <ScrollReveal delayMs={160} className="nl-tile-hover" style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '32px' }}>
               <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#7A7060', margin: '0 0 12px 0' }}>Programs à la carte</p>
               <div style={{ fontFamily: SERIF, fontSize: '40px', fontWeight: 300, color: '#2A2318', lineHeight: 1, marginBottom: '20px' }}>$29+</div>
               {[
