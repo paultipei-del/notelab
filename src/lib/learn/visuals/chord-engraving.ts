@@ -102,8 +102,8 @@ export function engraveChord(
     if (!acc || acc === 'n') return null
     const glyph = acc === '#' ? T.sharpGlyph
       : acc === 'b' ? T.flatGlyph
-      : acc === '##' ? ''
-      : acc === 'bb' ? ''
+      : acc === '##' ? T.doubleSharpGlyph
+      : acc === 'bb' ? T.doubleFlatGlyph
       : null
     if (!glyph) return null
     return { glyph, y: staffY + positions[i] * T.step, midi: p.midi }

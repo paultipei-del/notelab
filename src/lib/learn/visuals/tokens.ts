@@ -45,6 +45,8 @@ export interface LearnTokens {
   sharpGlyph: string
   flatGlyph: string
   naturalGlyph: string
+  doubleSharpGlyph: string
+  doubleFlatGlyph: string
 
   braceGlyph: string
   graceLineStroke: number
@@ -121,6 +123,8 @@ export function tokensFor(size: LearnSize): LearnTokens {
     sharpGlyph: '\uE262',
     flatGlyph: '\uE260',
     naturalGlyph: '\uE261',
+    doubleSharpGlyph: '\uE263',
+    doubleFlatGlyph: '\uE264',
 
     braceGlyph: '\uE000',
     graceLineStroke: Math.max(1.4, +(2.0 * scale).toFixed(2)),
