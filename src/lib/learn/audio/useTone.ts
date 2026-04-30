@@ -28,34 +28,33 @@ function dbg(...args: unknown[]): void {
 }
 
 let sharedCtx: AudioContext | null = null
-let sharedGain: GainNode | null = null
 let currentOsc: OscillatorNode | null = null
+let currentGain: GainNode | null = null
 
-function ensureGraph(): boolean {
-  if (sharedCtx && sharedGain) return true
+function ensureCtx(): boolean {
+  if (sharedCtx) return true
   const ctx = createAudioContext()
   if (!ctx) {
     dbg('createAudioContext returned null')
     return false
   }
   sharedCtx = ctx
-  const gain = ctx.createGain()
-  gain.gain.value = 0
-  gain.connect(ctx.destination)
-  sharedGain = gain
-  dbg('graph created, state =', ctx.state, 'sampleRate =', ctx.sampleRate)
+  dbg('ctx created, state =', ctx.state, 'sampleRate =', ctx.sampleRate)
   return true
 }
 
-function killCurrentOsc(stopAt: number): void {
-  if (!currentOsc) return
-  try {
-    currentOsc.stop(stopAt)
-    currentOsc.disconnect()
-  } catch {
-    /* already-stopped / not-started: ignore */
+function killCurrent(stopAt: number): void {
+  if (currentOsc) {
+    try {
+      currentOsc.stop(stopAt)
+      currentOsc.disconnect()
+    } catch {}
+    currentOsc = null
   }
-  currentOsc = null
+  if (currentGain) {
+    try { currentGain.disconnect() } catch {}
+    currentGain = null
+  }
 }
 
 export interface ToneControls {
@@ -72,13 +71,8 @@ export function useTone(): ToneControls {
 
   useEffect(() => {
     return () => {
-      if (isPlayingRef.current && sharedCtx && sharedGain) {
-        const t = sharedCtx.currentTime
-        try {
-          sharedGain.gain.cancelScheduledValues(t)
-          sharedGain.gain.linearRampToValueAtTime(0, t + 0.02)
-        } catch {}
-        killCurrentOsc(t + 0.05)
+      if (isPlayingRef.current && sharedCtx) {
+        killCurrent(sharedCtx.currentTime + 0.02)
         isPlayingRef.current = false
       }
     }
@@ -87,13 +81,11 @@ export function useTone(): ToneControls {
   const start = async (frequency: number = 440, gain: number = 0.3): Promise<void> => {
     dbg('start invoked', { frequency, gain })
     try {
-      // Create the AudioContext on first click (inside the user gesture)
-      // so Safari treats it as gesture-originated.
-      if (!ensureGraph()) {
-        dbg('ensureGraph failed')
+      if (!ensureCtx()) {
+        dbg('ensureCtx failed')
         return
       }
-      if (!sharedCtx || !sharedGain) return
+      if (!sharedCtx) return
 
       dbg('before resume, state =', sharedCtx.state)
       if (sharedCtx.state === 'suspended') {
@@ -106,31 +98,36 @@ export function useTone(): ToneControls {
         return
       }
 
-      // Safari quirk: ctx.currentTime can stay at 0 for several frames
-      // after resume() resolves. Scheduling at t=0 during that window
-      // puts events "in the past" once the clock starts and they
-      // silently don't fire. Wait for the clock to actually advance.
       await waitForCtxClock(sharedCtx)
       dbg('clock advanced, currentTime =', sharedCtx.currentTime)
 
-      const t = sharedCtx.currentTime
-      killCurrentOsc(t)
+      // Stop and tear down anything previous so we don't stack oscillators.
+      killCurrent(sharedCtx.currentTime)
+
+      // Build a fresh, minimal graph: osc -> gain -> destination.
+      // Direct .value assignment (no automation) avoids any Safari
+      // quirks with cancelScheduledValues / linearRampToValueAtTime
+      // running before currentTime fully stabilises.
+      const g = sharedCtx.createGain()
+      g.gain.value = gain
+      g.connect(sharedCtx.destination)
 
       const osc = sharedCtx.createOscillator()
       osc.type = 'sine'
       osc.frequency.value = frequency
-      osc.connect(sharedGain)
+      osc.connect(g)
 
-      sharedGain.gain.cancelScheduledValues(t)
-      sharedGain.gain.setValueAtTime(0, t)
-      sharedGain.gain.linearRampToValueAtTime(gain, t + 0.01)
-
-      osc.start(t)
+      osc.start()
       currentOsc = osc
+      currentGain = g
 
       isPlayingRef.current = true
       setIsPlaying(true)
-      dbg('osc started at', t)
+      dbg(
+        'osc started; gain.value =', g.gain.value,
+        'destination channels =', sharedCtx.destination.channelCount,
+        'currentTime =', sharedCtx.currentTime,
+      )
     } catch (err) {
       dbg('caught error', err)
     }
@@ -138,11 +135,8 @@ export function useTone(): ToneControls {
 
   const stop = async (): Promise<void> => {
     try {
-      if (sharedCtx && sharedGain) {
-        const t = sharedCtx.currentTime
-        sharedGain.gain.cancelScheduledValues(t)
-        sharedGain.gain.linearRampToValueAtTime(0, t + 0.02)
-        killCurrentOsc(t + 0.05)
+      if (sharedCtx) {
+        killCurrent(sharedCtx.currentTime + 0.02)
       }
       isPlayingRef.current = false
       setIsPlaying(false)
@@ -150,20 +144,16 @@ export function useTone(): ToneControls {
   }
 
   const setFrequency = (hz: number): void => {
-    if (!sharedCtx || !currentOsc) return
+    if (!currentOsc) return
     try {
-      const t = sharedCtx.currentTime
-      currentOsc.frequency.cancelScheduledValues(t)
-      currentOsc.frequency.linearRampToValueAtTime(hz, t + 0.02)
+      currentOsc.frequency.value = hz
     } catch {}
   }
 
   const setGain = (gain: number): void => {
-    if (!sharedCtx || !sharedGain) return
+    if (!currentGain) return
     try {
-      const t = sharedCtx.currentTime
-      sharedGain.gain.cancelScheduledValues(t)
-      sharedGain.gain.linearRampToValueAtTime(gain, t + 0.02)
+      currentGain.gain.value = gain
     } catch {}
   }
 
