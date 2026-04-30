@@ -13,23 +13,31 @@
    The trade-off: on very long scrolled pages, the bottom shoulder
    sits at the document bottom rather than the viewport bottom. That
    reads as a natural "settling" cue rather than a quirk. */
+/* Mobile / default: uniform warm cream. The vignette is a desktop
+   atmospheric effect; on phone-sized viewports the warm shoulders
+   take up most of the screen and produce visible bands between header,
+   body, and footer. A single cream reads as one continuous paper. */
 html {
-  /* Subtle warm shoulders. Top color tightened toward the body cream
-     because on small viewports (iPhone) the shoulder zone occupies a
-     larger share of the page, and a heavy top tone read as a
-     distinctly "darker" header band. The bottom shoulder stays
-     slightly more pronounced — the eye accepts depth at the bottom
-     of a page more readily than at the top. */
-  background:
-    linear-gradient(
-      to bottom,
-      #EEE6CD 0px,
-      #F2EDDF 200px,
-      #F2EDDF calc(100% - 220px),
-      #ECE4CC 100%
-    );
-  background-repeat: no-repeat;
+  background: #EFE8D2;
   min-height: 100vh;
+}
+
+/* Desktop (matches the desktop-nav breakpoint): vignette with warm
+   shoulders pinned to the document. Bottom shoulder sits at the
+   document end — see iOS-Safari note about background-attachment:
+   fixed. */
+@media (min-width: 769px) {
+  html {
+    background:
+      linear-gradient(
+        to bottom,
+        #EEE6CD 0px,
+        #F2EDDF 200px,
+        #F2EDDF calc(100% - 220px),
+        #ECE4CC 100%
+      );
+    background-repeat: no-repeat;
+  }
 }
 body {
   background: transparent;
