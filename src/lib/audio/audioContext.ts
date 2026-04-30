@@ -51,6 +51,29 @@ export function unlockSync(ctx: AudioContext | null | undefined): void {
 }
 
 /**
+ * Safari's `ctx.currentTime` can stay at 0 for several render frames
+ * after `resume()` resolves. Scheduling audio at "now" during that
+ * window means events end up in the past once the clock starts ticking
+ * and don't fire. Poll on rAF until the clock starts (or 500ms timeout).
+ */
+export async function waitForCtxClock(ctx: AudioContext): Promise<void> {
+  const deadline =
+    (typeof performance !== 'undefined' ? performance.now() : Date.now()) + 500
+  while (
+    ctx.currentTime === 0 &&
+    (typeof performance !== 'undefined' ? performance.now() : Date.now()) < deadline
+  ) {
+    await new Promise<void>(resolve => {
+      if (typeof requestAnimationFrame !== 'undefined') {
+        requestAnimationFrame(() => resolve())
+      } else {
+        setTimeout(resolve, 16)
+      }
+    })
+  }
+}
+
+/**
  * Install a one-shot document-level unlocker for an AudioContext. The
  * first pointer/touch/keyboard interaction anywhere on the page calls
  * `resume()` synchronously. After it fires once, the listeners detach.

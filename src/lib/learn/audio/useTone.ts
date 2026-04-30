@@ -18,7 +18,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { createAudioContext } from '@/lib/audio/audioContext'
+import { createAudioContext, waitForCtxClock } from '@/lib/audio/audioContext'
 
 const TONE_DEBUG = true
 function dbg(...args: unknown[]): void {
@@ -105,6 +105,13 @@ export function useTone(): ToneControls {
         dbg('context still not running after resume; aborting')
         return
       }
+
+      // Safari quirk: ctx.currentTime can stay at 0 for several frames
+      // after resume() resolves. Scheduling at t=0 during that window
+      // puts events "in the past" once the clock starts and they
+      // silently don't fire. Wait for the clock to actually advance.
+      await waitForCtxClock(sharedCtx)
+      dbg('clock advanced, currentTime =', sharedCtx.currentTime)
 
       const t = sharedCtx.currentTime
       killCurrentOsc(t)
