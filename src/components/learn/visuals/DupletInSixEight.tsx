@@ -38,10 +38,10 @@ export function DupletInSixEight({
   ariaLabel,
 }: DupletInSixEightProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playAt, ensureReady } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const { isPlaying, toggle } = useLoopingPlayback()
+  const { isPlaying, start, stop } = useLoopingPlayback()
 
   const parsed = parsePitch(pitch)
   if (!parsed) return null
@@ -104,8 +104,13 @@ export function DupletInSixEight({
     void play(pitch)
   }
 
-  const handlePlayAll = () => {
+  const handlePlayAll = async () => {
+    if (isPlaying) {
+      stop()
+      return
+    }
     setInteracted(true)
+    await ensureReady()
     const eighthSec = 60 / tempo
     const dottedQuarterSec = eighthSec * 3
     const dupletNoteSec = (eighthSec * 3) / 2
@@ -124,13 +129,11 @@ export function DupletInSixEight({
       stepEvents.push({ idx: duplet[1], offset: base + dottedQuarterSec + dupletNoteSec, durMs: dupletNoteSec * 1000 })
     }
 
-    toggle(
+    void start(
       stepEvents.map(e => ({
         offset: e.offset,
-        fire: () => {
-          flashAt(e.idx, e.durMs)
-          void play(pitch)
-        },
+        audio: (time) => playAt(pitch, e.durMs / 1000 * 0.95, time),
+        visual: () => flashAt(e.idx, e.durMs),
       })),
       {
         iterationMs: numMeasures * measureSec * 1000,

@@ -38,10 +38,10 @@ export function TripletInMeasure({
   ariaLabel,
 }: TripletInMeasureProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playAt, ensureReady } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const { isPlaying, toggle } = useLoopingPlayback()
+  const { isPlaying, start, stop } = useLoopingPlayback()
 
   const parsed = parsePitch(pitch)
   if (!parsed) return null
@@ -91,8 +91,13 @@ export function TripletInMeasure({
     void play(pitch)
   }
 
-  const handlePlayAll = () => {
+  const handlePlayAll = async () => {
+    if (isPlaying) {
+      stop()
+      return
+    }
     setInteracted(true)
+    await ensureReady()
     const beatSec = 60 / tempo
     const tripletStep = beatSec / 3
     const stepEvents: { idx: number; offset: number; durMs: number }[] = [
@@ -103,13 +108,11 @@ export function TripletInMeasure({
       { idx: IDX_BEAT_3,     offset: beatSec * 2,               durMs: beatSec * 1000 },
       { idx: IDX_BEAT_4,     offset: beatSec * 3,               durMs: beatSec * 1000 },
     ]
-    toggle(
+    void start(
       stepEvents.map(e => ({
         offset: e.offset,
-        fire: () => {
-          flashAt(e.idx, e.durMs)
-          void play(pitch)
-        },
+        audio: (time) => playAt(pitch, e.durMs / 1000 * 0.95, time),
+        visual: () => flashAt(e.idx, e.durMs),
       })),
       {
         iterationMs: 4 * beatSec * 1000,

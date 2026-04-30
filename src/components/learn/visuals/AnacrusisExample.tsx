@@ -40,10 +40,10 @@ export function AnacrusisExample({
   caption,
 }: AnacrusisExampleProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playAt, ensureReady } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const { isPlaying, toggle } = useLoopingPlayback()
+  const { isPlaying, start, stop } = useLoopingPlayback()
 
   const flashAt = (idx: number, durMs: number) => {
     setActiveIndex(idx)
@@ -128,20 +128,23 @@ export function AnacrusisExample({
     return 3 // dotted-half (kept for type completeness)
   }
 
-  const playAll = () => {
+  const playAll = async () => {
+    if (isPlaying) {
+      stop()
+      return
+    }
     setInteracted(true)
+    await ensureReady()
     const beatSec = 60 / tempo
     // Phrase length: last note starts at beat 4 and lasts 2 beats (half),
     // so the iteration spans 6 beats — plus a half-beat breath before the
     // pickup repeats.
     const totalBeats = 6 + 0.5
-    toggle(
+    void start(
       HAPPY_BIRTHDAY.map((n, i) => ({
         offset: n.beatOffset * beatSec,
-        fire: () => {
-          flashAt(i, valueDurBeats(n.value) * beatSec * 1000)
-          void play(n.pitch)
-        },
+        audio: (time) => playAt(n.pitch, valueDurBeats(n.value) * beatSec * 0.95, time),
+        visual: () => flashAt(i, valueDurBeats(n.value) * beatSec * 1000),
       })),
       {
         iterationMs: totalBeats * beatSec * 1000,

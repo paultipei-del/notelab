@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'middle-c-across-the-clefs',
   title: 'Middle C Across the Clefs',
   oneSentence:
-    'Middle C (C4) sits in a different position on every clef — one ledger line below the treble staff, one ledger line above the bass staff, the middle line of alto clef, and the fourth line of tenor clef — but it\'s always the same pitch, the C closest to the center of the piano keyboard.',
+    'Middle C (C4) sits in a different position on every clef, one ledger line below the treble staff, one ledger line above the bass staff, the middle line of alto clef, and the fourth line of tenor clef, but it\'s always the same pitch, the C closest to the center of the piano keyboard.',
   practice: [
     { kind: 'flashcard', label: 'Middle C Across Clefs Flashcards', detail: '4 cards', href: '/study/middle-c-across-clefs' },
   ],
@@ -17,13 +17,13 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Middle C is a single pitch — the C closest to the center of a piano keyboard, vibrating at about 261.63 Hz. But on the page, it looks completely different depending on which clef you're reading. The same note sits below one staff, above another, on the middle line of a third, and near the top of a fourth.
+Middle C is a single pitch, the C closest to the center of a piano keyboard, vibrating at about 261.63 Hz. But on the page, it looks completely different depending on which clef you're reading. The same note sits below one staff, above another, on the middle line of a third, and near the top of a fourth.
 
 This is the single most useful thing to internalize about clefs: *middle C is a fixed physical pitch, and every clef just positions it differently on the staff.* Once middle C is locked in for each clef, every other note follows.
 
@@ -32,7 +32,7 @@ This is the single most useful thing to internalize about clefs: *middle C is a 
 <MultiClefDisplay
   clefs={['treble', 'alto', 'tenor', 'bass']}
   pitch="C4"
-  caption="Middle C is the same pitch in every clef — but it sits at a different position on the staff depending on which clef you're reading. Treble: one ledger line below the staff. Alto: the middle line. Tenor: line four. Bass: one ledger line above the staff. Click any to hear it."
+  caption="Middle C is the same pitch in every clef, but it sits at a different position on the staff depending on which clef you're reading. Treble: one ledger line below the staff. Alto: the middle line. Tenor: line four. Bass: one ledger line above the staff. Click any to hear it."
 />
 
 ## The four positions of middle C
@@ -41,15 +41,15 @@ This is the single most useful thing to internalize about clefs: *middle C is a 
 
 **Bass clef:** Middle C sits **one ledger line above** the staff. It's the first ledger line up from the top line (A3).
 
-**Alto clef:** Middle C sits on the **middle line** of the staff — line 3. This is the clef's anchor note; the alto clef's symbol points directly to it.
+**Alto clef:** Middle C sits on the **middle line** of the staff, line 3. This is the clef's anchor note; the alto clef's symbol points directly to it.
 
-**Tenor clef:** Middle C sits on the **fourth line** from the bottom (second from the top). This is also the anchor note of the tenor clef — the C clef symbol points to it here too.
+**Tenor clef:** Middle C sits on the **fourth line** from the bottom (second from the top). This is also the anchor note of the tenor clef, the C clef symbol points to it here too.
 
 Notice the pattern: in treble clef, middle C sits low on the page (below the staff). In bass clef, it sits high (above the staff). In alto clef, it's dead center. In tenor clef, it sits near the top. The four clefs span middle C from low position to high position, giving every instrument the ability to place its working range comfortably within the staff.
 
 ## Why middle C is the reference note
 
-Middle C sits at the approximate center of human hearing and the approximate center of most instrument ranges. It's the natural bridge between the bass and treble clefs on a piano — equally one ledger line away from each. It's also the reference pitch for the C clefs (alto and tenor), which use middle C as their anchor.
+Middle C sits at the approximate center of human hearing and the approximate center of most instrument ranges. It's the natural bridge between the bass and treble clefs on a piano, equally one ledger line away from each. It's also the reference pitch for the C clefs (alto and tenor), which use middle C as their anchor.
 
 Because it occupies the middle of so many different contexts, middle C is the most useful single pitch to know on sight. If you can find middle C in any clef instantly, you can find every other pitch by counting from it.
 
@@ -65,7 +65,7 @@ Most musicians start with treble clef, internalize it thoroughly, then learn bas
 
 ## Middle C in practice
 
-Middle C appears constantly in piano music as the boundary between the hands. A right-hand passage descending into bass territory usually passes through middle C as it crosses below the treble staff. A left-hand passage rising into treble territory crosses through middle C as it moves above the bass staff. Knowing middle C on sight is essential for any pianist — it's the border marker.
+Middle C appears constantly in piano music as the boundary between the hands. A right-hand passage descending into bass territory usually passes through middle C as it crosses below the treble staff. A left-hand passage rising into treble territory crosses through middle C as it moves above the bass staff. Knowing middle C on sight is essential for any pianist, it's the border marker.
 
 In vocal music, middle C is also a frequent landmark. It's the bottom of a standard soprano range and roughly the top of a standard bass range. Tenors and altos sing comfortably around it.
 
@@ -75,15 +75,15 @@ In orchestral music, middle C shows up everywhere: as a ledger-line note in viol
 
 **Is middle C the same as "C4" in scientific pitch notation?**
 
-Yes. Scientific pitch notation labels pitches by their note name and octave number, and middle C is C4 — the C at the beginning of the fourth octave. The octave numbering and the concept of "middle C" refer to the same pitch. (Covered more fully in the next page.)
+Yes. Scientific pitch notation labels pitches by their note name and octave number, and middle C is C4, the C at the beginning of the fourth octave. The octave numbering and the concept of "middle C" refer to the same pitch. (Covered more fully in the next page.)
 
 **Is there only one middle C?**
 
-Yes. It's a specific pitch — approximately 261.63 Hz — and there's only one of it. Every other C (higher or lower) is a different pitch, named with a different octave number (C3, C5, etc.) in scientific pitch notation.
+Yes. It's a specific pitch, approximately 261.63 Hz, and there's only one of it. Every other C (higher or lower) is a different pitch, named with a different octave number (C3, C5, etc.) in scientific pitch notation.
 
 **Why does middle C look so different on different clefs but sound identical?**
 
-Because the staff position doesn't directly represent pitch — it represents pitch relative to the clef's anchor. The staff is a flexible grid, and the clef tells you where that grid starts. Middle C at one ledger line below the treble staff, one ledger line above the bass staff, on the middle line of alto clef, and on line 4 of tenor clef are all the same physical pitch, just oriented differently for the reader's convenience.
+Because the staff position doesn't directly represent pitch, it represents pitch relative to the clef's anchor. The staff is a flexible grid, and the clef tells you where that grid starts. Middle C at one ledger line below the treble staff, one ledger line above the bass staff, on the middle line of alto clef, and on line 4 of tenor clef are all the same physical pitch, just oriented differently for the reader's convenience.
 
 **What's the best way to memorize middle C in all four clefs?**
 

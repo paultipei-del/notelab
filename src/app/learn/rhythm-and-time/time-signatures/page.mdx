@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'time-signatures',
   title: 'Time Signatures',
   oneSentence:
-    'A time signature is the pair of numbers at the start of a piece that tells you how beats are organized — the top number says how many beats are in each measure, and the bottom number says which note value gets one beat.',
+    'A time signature is the pair of numbers at the start of a piece that tells you how beats are organized, the top number says how many beats are in each measure, and the bottom number says which note value gets one beat.',
   practice: [
     { kind: 'flashcard', label: 'Clefs & Time Signatures Flashcards', detail: '7 cards', href: '/study/symbols-clefs' },
   ],
@@ -18,13 +18,13 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Every piece of music organizes time in some way — a march in groups of two, a waltz in groups of three, a rock song in groups of four. The time signature at the beginning of the piece announces that organization before you play a note. Two numbers stacked vertically at the start of the staff, just after the clef and key signature, carry all the information you need.
+Every piece of music organizes time in some way, a march in groups of two, a waltz in groups of three, a rock song in groups of four. The time signature at the beginning of the piece announces that organization before you play a note. Two numbers stacked vertically at the start of the staff, just after the clef and key signature, carry all the information you need.
 
 The top number tells you how many beats are in each measure. The bottom number tells you what kind of note counts as one beat. Together, they define the rhythmic grid the entire piece sits inside.
 
@@ -46,7 +46,7 @@ The top number tells you how many beats are in each measure. The bottom number t
 
 ## Reading a time signature
 
-A time signature has two numbers stacked vertically. They look like a fraction but aren't one — there's no line between them and they're not a ratio.
+A time signature has two numbers stacked vertically. They look like a fraction but aren't one, there's no line between them and they're not a ratio.
 
 - **Top number:** how many beats are in each measure.
 - **Bottom number:** what note value equals one beat.
@@ -61,39 +61,39 @@ So **4/4** means "four beats per measure, with the quarter note getting one beat
 
 ## The most common time signatures
 
-**4/4** — the most common time signature in Western music. Four quarter-note beats per measure. Used in nearly all pop, rock, jazz, march music, and much classical music. Also called **common time** and sometimes written as a stylized **C**.
+**4/4**, the most common time signature in Western music. Four quarter-note beats per measure. Used in nearly all pop, rock, jazz, march music, and much classical music. Also called **common time** and sometimes written as a stylized **C**.
 
-**3/4** — three quarter-note beats per measure. The signature of the waltz, of many slow movements, and of countless folk songs. The characteristic "ONE-two-three, ONE-two-three" feel comes from 3/4.
+**3/4**, three quarter-note beats per measure. The signature of the waltz, of many slow movements, and of countless folk songs. The characteristic "ONE-two-three, ONE-two-three" feel comes from 3/4.
 
-**2/4** — two quarter-note beats per measure. Common in marches, polkas, and some folk music. Short, punchy, forward-driving.
+**2/4**, two quarter-note beats per measure. Common in marches, polkas, and some folk music. Short, punchy, forward-driving.
 
-**6/8** — six eighth-note beats per measure, usually felt in two groups of three. Common in jigs, lullabies, and compound-meter classical movements. The feel is distinctly different from 3/4, even though both contain three-beat groups.
+**6/8**, six eighth-note beats per measure, usually felt in two groups of three. Common in jigs, lullabies, and compound-meter classical movements. The feel is distinctly different from 3/4, even though both contain three-beat groups.
 
-**2/2** (**cut time**) — two half-note beats per measure. Often written as a **C** with a vertical line through it. Functionally similar to 4/4 but felt "in two" — each measure has two strong beats rather than four. Common in fast marches and Renaissance dance music.
+**2/2** (**cut time**), two half-note beats per measure. Often written as a **C** with a vertical line through it. Functionally similar to 4/4 but felt "in two", each measure has two strong beats rather than four. Common in fast marches and Renaissance dance music.
 
-**12/8** — twelve eighth-note beats per measure, felt in four groups of three. Common in blues, slow shuffles, and some Baroque music.
+**12/8**, twelve eighth-note beats per measure, felt in four groups of three. Common in blues, slow shuffles, and some Baroque music.
 
-**9/8** — nine eighth-note beats per measure, felt in three groups of three. Used for compound-triple-meter pieces, often lyrical or dance-related.
+**9/8**, nine eighth-note beats per measure, felt in three groups of three. Used for compound-triple-meter pieces, often lyrical or dance-related.
 
 ## How time signatures shape feel
 
-The time signature isn't a neutral label — it carries real musical character. A piece in 3/4 has a lilt. A piece in 4/4 has a grounded, even feel. A piece in 6/8 has a rolling, compound swing. A piece in 2/4 feels crisp and martial. These aren't arbitrary associations; they reflect how many strong and weak beats exist in each measure and how they relate to each other.
+The time signature isn't a neutral label, it carries real musical character. A piece in 3/4 has a lilt. A piece in 4/4 has a grounded, even feel. A piece in 6/8 has a rolling, compound swing. A piece in 2/4 feels crisp and martial. These aren't arbitrary associations; they reflect how many strong and weak beats exist in each measure and how they relate to each other.
 
-Most measures have one **downbeat** — the strongest beat, always beat 1 — followed by weaker beats. The pattern of strong and weak beats is what gives each time signature its distinctive feel. In 4/4, beats 1 and 3 are relatively strong, with 2 and 4 weaker. In 3/4, only beat 1 is strong. In 6/8, beats 1 and 4 are strong.
+Most measures have one **downbeat**(the strongest beat, always beat 1) followed by weaker beats. The pattern of strong and weak beats is what gives each time signature its distinctive feel. In 4/4, beats 1 and 3 are relatively strong, with 2 and 4 weaker. In 3/4, only beat 1 is strong. In 6/8, beats 1 and 4 are strong.
 
 ## Unusual time signatures
 
 Beyond the common ones, composers use a variety of less frequent time signatures:
 
-- **5/4** — five quarter-note beats per measure. Featured in Dave Brubeck's "Take Five" and Holst's "Mars." Usually felt as 3+2 or 2+3.
-- **7/8** — seven eighth-note beats per measure, typically felt in asymmetric groupings (3+2+2, 2+2+3, or 2+3+2).
-- **5/8, 11/8, 13/8** — similar asymmetric meters common in Balkan folk music and 20th-century classical works.
+- **5/4**, five quarter-note beats per measure. Featured in Dave Brubeck's "Take Five" and Holst's "Mars." Usually felt as 3+2 or 2+3.
+- **7/8**, seven eighth-note beats per measure, typically felt in asymmetric groupings (3+2+2, 2+2+3, or 2+3+2).
+- **5/8, 11/8, 13/8**, similar asymmetric meters common in Balkan folk music and 20th-century classical works.
 
 These **asymmetric** or **irregular meters** divide the measure into unequal groups. They create a feel that's neither duple nor triple but something more angular. Learning to count them takes practice but opens a lot of expressive territory that regular meters don't reach.
 
 ## Changing time signatures
 
-A piece can change time signatures mid-way through. When it does, a new time signature appears at the point of the change, replacing the previous one. Some pieces change frequently — every few measures, or even every measure — producing a shifting, unpredictable rhythm. Stravinsky's "Rite of Spring" is a famous example of frequent meter changes.
+A piece can change time signatures mid-way through. When it does, a new time signature appears at the point of the change, replacing the previous one. Some pieces change frequently (every few measures, or even every measure) producing a shifting, unpredictable rhythm. Stravinsky's "Rite of Spring" is a famous example of frequent meter changes.
 
 Within a piece, these changes are marked clearly. Once you see a new time signature, you apply it to every subsequent measure until a further change is indicated.
 
@@ -105,7 +105,7 @@ Historical dominance. Western music has favored four-beat organization since at 
 
 **What's the difference between 4/4 and 2/2?**
 
-They have the same number of quarter-note durations per measure — both equal one whole note — but the felt pulse is different. In 4/4, you feel four beats per measure. In 2/2, you feel two beats per measure (with each half note being a beat). The same rhythmic content can feel twice as fast or twice as slow depending on whether it's felt in 4 or in 2.
+They have the same number of quarter-note durations per measure (both equal one whole note) but the felt pulse is different. In 4/4, you feel four beats per measure. In 2/2, you feel two beats per measure (with each half note being a beat). The same rhythmic content can feel twice as fast or twice as slow depending on whether it's felt in 4 or in 2.
 
 **Why do 3/4 and 6/8 feel so different even though both have a "group of three" in them?**
 

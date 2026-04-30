@@ -40,10 +40,10 @@ export function QuintupletInMeasure({
   ariaLabel,
 }: QuintupletInMeasureProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playAt, ensureReady } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const { isPlaying, toggle } = useLoopingPlayback()
+  const { isPlaying, start, stop } = useLoopingPlayback()
 
   const parsed = parsePitch(pitch)
   if (!parsed) return null
@@ -98,8 +98,13 @@ export function QuintupletInMeasure({
     void play(pitch)
   }
 
-  const handlePlayAll = () => {
+  const handlePlayAll = async () => {
+    if (isPlaying) {
+      stop()
+      return
+    }
     setInteracted(true)
+    await ensureReady()
     const beatSec = 60 / tempo
     const quintStep = beatSec / 5
 
@@ -113,13 +118,11 @@ export function QuintupletInMeasure({
     })
     stepEvents.push({ idx: IDX_BEAT_4, offset: 3 * beatSec, durMs: beatSec * 1000 })
 
-    toggle(
+    void start(
       stepEvents.map(e => ({
         offset: e.offset,
-        fire: () => {
-          flashAt(e.idx, e.durMs)
-          void play(pitch)
-        },
+        audio: (time) => playAt(pitch, e.durMs / 1000 * 0.95, time),
+        visual: () => flashAt(e.idx, e.durMs),
       })),
       {
         iterationMs: 4 * beatSec * 1000,

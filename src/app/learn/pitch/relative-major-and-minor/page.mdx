@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'relative-major-and-minor',
   title: 'Relative Major and Minor',
   oneSentence:
-    'Every key signature corresponds to two keys — a major and a minor — that share the same pitches but have different tonics; the minor key is always a minor 3rd below its relative major, built on the major scale\'s 6th degree.',
+    'Every key signature corresponds to two keys (a major and a minor) that share the same pitches but have different tonics; the minor key is always a minor 3rd below its relative major, built on the major scale\'s 6th degree.',
   practice: [],
   related: [
     { title: 'Minor Key Signatures',       href: '/learn/pitch/minor-key-signatures' },
@@ -15,21 +15,21 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Every major scale secretly contains a minor scale inside it, and vice versa. Play the seven notes of C major — C, D, E, F, G, A, B — and start on A instead of C. You've now got an A natural minor scale: A, B, C, D, E, F, G. Same seven pitches. Different tonic. Different mood entirely, but same notes available.
+Every major scale secretly contains a minor scale inside it, and vice versa. Play the seven notes of C major (C, D, E, F, G, A, B) and start on A instead of C. You've now got an A natural minor scale: A, B, C, D, E, F, G. Same seven pitches. Different tonic. Different mood entirely, but same notes available.
 
 C major and A minor share their key signature (no sharps or flats). They share their pitch collection. They differ only in what feels like home. This is called the **relative** relationship, and it's one of the deepest structural features of Western tonal music.
 
-Every major key has a relative minor. Every minor key has a relative major. The two keys are functionally intertwined — composers move between them constantly, building whole passages in the relative minor of a major-key piece (or vice versa), taking advantage of the shared notes to transition smoothly.
+Every major key has a relative minor. Every minor key has a relative major. The two keys are functionally intertwined, composers move between them constantly, building whole passages in the relative minor of a major-key piece (or vice versa), taking advantage of the shared notes to transition smoothly.
 
 ## The visual
 
-<DiagramPlaceholder description="C major scale and A minor scale shown on the same staff, both using the same seven notes — just starting from different tonics." />
+<DiagramPlaceholder description="C major scale and A minor scale shown on the same staff, both using the same seven notes, just starting from different tonics." />
 
 <DiagramPlaceholder description="A circle-of-fifths diagram with major keys on the outer ring and their relative minors on the inner ring, clearly showing the relative pairings." />
 
@@ -53,7 +53,7 @@ Two quick techniques:
 - F major → F down a minor 3rd = D → D minor
 
 Or equivalently, use the 6th degree of the major scale:
-- C major: scale degrees are C(1)-D(2)-E(3)-F(4)-G(5)-A(6)-B(7). The 6th is A, so A minor is the relative minor.
+- C major: scale degrees are C (1)-D (2)-E (3)-F (4)-G (5)-A (6)-B (7). The 6th is A, so A minor is the relative minor.
 
 **From minor to relative major: count up a minor 3rd.**
 - A minor → A up a minor 3rd = C → C major
@@ -61,7 +61,7 @@ Or equivalently, use the 6th degree of the major scale:
 - D minor → D up a minor 3rd = F → F major
 
 Or equivalently, use the 3rd degree of the natural minor scale:
-- A minor: scale degrees are A(1)-B(2)-C(3)-D(4)-E(5)-F(6)-G(7). The 3rd is C, so C major is the relative major.
+- A minor: scale degrees are A (1)-B (2)-C (3)-D (4)-E (5)-F (6)-G (7). The 3rd is C, so C major is the relative major.
 
 Both methods work; use whichever is faster for you.
 
@@ -69,9 +69,9 @@ Both methods work; use whichever is faster for you.
 
 The relative major/minor relationship shows up constantly in tonal music:
 
-**Modulation between relative keys is seamless.** Because the two keys share all seven pitches, moving from, say, C major into A minor requires no new accidentals — just a shift in emphasis. The listener experiences a change of character (from bright to darker) without any jarring pitch changes.
+**Modulation between relative keys is seamless.** Because the two keys share all seven pitches, moving from, say, C major into A minor requires no new accidentals, just a shift in emphasis. The listener experiences a change of character (from bright to darker) without any jarring pitch changes.
 
-**Many pieces use both keys.** A common pattern in tonal music: a piece begins in a major key, visits the relative minor in its middle section, and returns to the major for the ending. This creates a clear structural arc — the minor section provides contrast, while the return to major provides resolution.
+**Many pieces use both keys.** A common pattern in tonal music: a piece begins in a major key, visits the relative minor in its middle section, and returns to the major for the ending. This creates a clear structural arc, the minor section provides contrast, while the return to major provides resolution.
 
 **Melodies and themes can be reframed.** Taking a melody originally conceived in one key and shifting its harmonic context to the relative key produces a dramatically different feel from the same pitches. Composers exploit this for variation and development.
 
@@ -105,9 +105,9 @@ Each row shows the key signature, its major key, and its relative minor. Learnin
 
 Don't confuse **relative minor** with **parallel minor**. These are two different relationships:
 
-**Relative minor** — shares the same key signature but has a different tonic. C major's relative minor is A minor (different tonic, same pitches).
+**Relative minor**, shares the same key signature but has a different tonic. C major's relative minor is A minor (different tonic, same pitches).
 
-**Parallel minor** — shares the same tonic but has a different key signature. C major's parallel minor is C minor (same tonic, different pitches).
+**Parallel minor**, shares the same tonic but has a different key signature. C major's parallel minor is C minor (same tonic, different pitches).
 
 Both relationships are important, and they come up in different contexts. Covered in the next page.
 
@@ -115,7 +115,7 @@ Both relationships are important, and they come up in different contexts. Covere
 
 **Why specifically a minor 3rd between relative keys?**
 
-Because the major scale's 6th degree is always a major 6th above the tonic, which means its corresponding minor scale's tonic is a minor 3rd below the major's tonic. Think of it from the minor side: natural minor has the same pitches as its relative major started from the 6th degree of the major. Going up from the relative minor tonic by a minor 3rd brings you to the 3rd degree of minor — which is the same pitch as the relative major's tonic.
+Because the major scale's 6th degree is always a major 6th above the tonic, which means its corresponding minor scale's tonic is a minor 3rd below the major's tonic. Think of it from the minor side: natural minor has the same pitches as its relative major started from the 6th degree of the major. Going up from the relative minor tonic by a minor 3rd brings you to the 3rd degree of minor, which is the same pitch as the relative major's tonic.
 
 **Can any two keys be relative to each other?**
 
@@ -130,4 +130,4 @@ Three main uses:
 
 **If I'm in a minor key, is the relative major my most important other key?**
 
-It's one of your most important. The **relative major** is the closest related major key, in the sense that it shares your pitches. But the **parallel major** (same tonic, different key signature) is also very important — it's another major key that shares your tonic, and moving from minor to parallel major is a powerful emotional shift. Both relationships matter; we'll cover parallel next.
+It's one of your most important. The **relative major** is the closest related major key, in the sense that it shares your pitches. But the **parallel major** (same tonic, different key signature) is also very important, it's another major key that shares your tonic, and moving from minor to parallel major is a powerful emotional shift. Both relationships matter; we'll cover parallel next.

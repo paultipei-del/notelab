@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'repeat-signs-and-navigation',
   title: 'Repeat Signs and Navigation',
   oneSentence:
-    'Repeat signs, first/second endings, and navigation markings like D.C., D.S., Coda, and Fine tell performers to play certain sections multiple times or jump around the score — letting composers notate repeated or returning material compactly without writing it out in full.',
+    'Repeat signs, first/second endings, and navigation markings like D.C., D.S., Coda, and Fine tell performers to play certain sections multiple times or jump around the score, letting composers notate repeated or returning material compactly without writing it out in full.',
   practice: [
     { kind: 'flashcard', label: 'Repeat & Structure Signs', detail: 'symbols', href: '/study/symbols-repeats' },
   ],
@@ -17,21 +17,21 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Music often contains repeated sections — a second verse using the same music as the first, a ternary form's return to the opening section, a da capo aria's return from the beginning. Writing out every repetition in full would waste enormous amounts of page space and make scores unwieldy. Instead, composers use a collection of **repeat signs** and **navigation markings** that tell the performer to play certain sections again, either exactly or with variations.
+Music often contains repeated sections, a second verse using the same music as the first, a ternary form's return to the opening section, a da capo aria's return from the beginning. Writing out every repetition in full would waste enormous amounts of page space and make scores unwieldy. Instead, composers use a collection of **repeat signs** and **navigation markings** that tell the performer to play certain sections again, either exactly or with variations.
 
-Reading these markings correctly is a basic literacy skill — miss them, and you'll play through material in the wrong order. This page covers the most common conventions: repeat bars, first and second endings, and the Italian-derived navigation phrases (*D.C., D.S., Coda, Fine*) that signal larger structural returns.
+Reading these markings correctly is a basic literacy skill, miss them, and you'll play through material in the wrong order. This page covers the most common conventions: repeat bars, first and second endings, and the Italian-derived navigation phrases (*D.C., D.S., Coda, Fine*) that signal larger structural returns.
 
 ## The visual
 
 <DiagramPlaceholder description="A section bracketed by repeat signs (:||), with arrows showing the player plays through to the end sign, then returns to the opening repeat sign to play the section again." />
 
-<DiagramPlaceholder description="A passage with first and second endings — a bracket labeled '1.' for the first pass, a bracket labeled '2.' for the second pass, showing how the music branches on repeat." />
+<DiagramPlaceholder description="A passage with first and second endings, a bracket labeled '1.' for the first pass, a bracket labeled '2.' for the second pass, showing how the music branches on repeat." />
 
 <DiagramPlaceholder description="A flowchart showing how D.C. al Fine, D.S. al Coda, and similar instructions direct the performer to jump around the score." />
 
@@ -39,8 +39,8 @@ Reading these markings correctly is a basic literacy skill — miss them, and yo
 
 **Repeat signs** are vertical lines with dots, placed at the start and end of a section to be repeated:
 
-- **Start repeat:** \|\| followed by two dots (:) — at the beginning of the repeated section
-- **End repeat:** two dots (:) followed by \|\| — at the end of the repeated section
+- **Start repeat:** \|\| followed by two dots (:), at the beginning of the repeated section
+- **End repeat:** two dots (:) followed by \|\|, at the end of the repeated section
 
 When you encounter an end repeat sign, you go back to the most recent start repeat sign (or to the beginning of the piece if no start repeat has appeared) and play through again.
 
@@ -60,30 +60,30 @@ The performer:
 2. Reaches the end repeat sign and goes back to the start repeat
 3. Plays through again, but this time skips the first ending and plays the second ending instead
 
-The first and second endings usually differ in small ways — perhaps the first ending leads back to the opening, while the second ending moves on to the next section. This is especially common in binary form and in many folk and pop songs.
+The first and second endings usually differ in small ways, perhaps the first ending leads back to the opening, while the second ending moves on to the next section. This is especially common in binary form and in many folk and pop songs.
 
 ## D.C., D.S., and Coda
 
 These Italian-derived markings indicate longer structural returns:
 
-**D.C. (da capo)** — "from the beginning." When you reach D.C., go back to the very beginning of the piece and play through again.
+**D.C. (da capo)**, "from the beginning." When you reach D.C., go back to the very beginning of the piece and play through again.
 
-**D.S. (dal segno)** — "from the sign." When you reach D.S., go back to the segno symbol (𝄋) marked earlier in the score and play from there.
+**D.S. (dal segno)**, "from the sign." When you reach D.S., go back to the segno symbol (𝄋) marked earlier in the score and play from there.
 
-**Segno (𝄋)** — the sign itself. Marks a specific return point for D.S. instructions.
+**Segno (𝄋)**, the sign itself. Marks a specific return point for D.S. instructions.
 
-**Fine** — "the end." After a D.C. or D.S., when you reach the Fine marking, stop. The piece is over.
+**Fine**, "the end." After a D.C. or D.S., when you reach the Fine marking, stop. The piece is over.
 
-**Coda** — a concluding section. When a score has a coda, the pattern is usually:
-- D.C. al Coda (or D.S. al Coda) — go back to the beginning (or to the segno) and play until you reach the "To Coda" marking (𝄌), then skip to the Coda section.
+**Coda**, a concluding section. When a score has a coda, the pattern is usually:
+- D.C. al Coda (or D.S. al Coda), go back to the beginning (or to the segno) and play until you reach the "To Coda" marking (𝄌), then skip to the Coda section.
 
-**D.C. al Fine** — go back to the beginning and play until Fine.
+**D.C. al Fine**, go back to the beginning and play until Fine.
 
-**D.S. al Fine** — go back to the segno and play until Fine.
+**D.S. al Fine**, go back to the segno and play until Fine.
 
-**D.C. al Coda** — go back to the beginning, play to the "To Coda" marker, then skip to the Coda.
+**D.C. al Coda**, go back to the beginning, play to the "To Coda" marker, then skip to the Coda.
 
-**D.S. al Coda** — go back to the segno, play to the "To Coda" marker, then skip to the Coda.
+**D.S. al Coda**, go back to the segno, play to the "To Coda" marker, then skip to the Coda.
 
 ## A full example
 
@@ -110,31 +110,31 @@ The total performance includes sections A (once), B (twice, with a cut the secon
 
 Printing music used to be expensive, and paper was precious. Repeat conventions emerged in part because they saved paper. A ternary form written with a full repeated A section would take twice as much space as the same piece notated with *D.C.*.
 
-Beyond paper-saving, these conventions also match how music is composed. A da capo aria was often conceived as "A section, B section, A section again" — the notation reflects this conceptual structure. The composer writes what's new (A and B), and the D.C. tells the performer to repeat A.
+Beyond paper-saving, these conventions also match how music is composed. A da capo aria was often conceived as "A section, B section, A section again", the notation reflects this conceptual structure. The composer writes what's new (A and B), and the D.C. tells the performer to repeat A.
 
-For performers, learning to navigate these markings fluently is part of basic reading. Unlike Italian tempo terms (which vary in interpretation), repeat markings are purely structural — the performer must follow them exactly or play the piece in the wrong order.
+For performers, learning to navigate these markings fluently is part of basic reading. Unlike Italian tempo terms (which vary in interpretation), repeat markings are purely structural, the performer must follow them exactly or play the piece in the wrong order.
 
 ## Less common navigation markings
 
-**𝄋 (segno)** — the "sign" that marks a return point. Always paired with a D.S. marking somewhere later in the score.
+**𝄋 (segno)**, the "sign" that marks a return point. Always paired with a D.S. marking somewhere later in the score.
 
-**𝄌 (coda symbol)** — marks where the coda begins, or where to jump to when "to Coda" is indicated.
+**𝄌 (coda symbol)**, marks where the coda begins, or where to jump to when "to Coda" is indicated.
 
-**\|: and :\|** — alternate notation for repeat bars (used in some European editions).
+**\|: and :\|**, alternate notation for repeat bars (used in some European editions).
 
-**Vamp** — an instruction to repeat a short passage (often 2-4 measures) an indeterminate number of times, typically used in jazz and pop as a groove pattern until something signals to move on.
+**Vamp**, an instruction to repeat a short passage (often 2-4 measures) an indeterminate number of times, typically used in jazz and pop as a groove pattern until something signals to move on.
 
-**Simile** — "in the same way." Continue with the same pattern, articulation, or style. Often used to save writing out repeated figures in detail.
+**Simile**, "in the same way." Continue with the same pattern, articulation, or style. Often used to save writing out repeated figures in detail.
 
 ## Common questions
 
 **What happens if a piece has nested repeats?**
 
-Rare, but possible. A piece might have repeat marks inside a D.C. structure. The convention is that the D.C. doesn't include the nested repeat marks — when you play from the beginning after D.C., you don't repeat the internal repeats again. This avoids infinite loops.
+Rare, but possible. A piece might have repeat marks inside a D.C. structure. The convention is that the D.C. doesn't include the nested repeat marks, when you play from the beginning after D.C., you don't repeat the internal repeats again. This avoids infinite loops.
 
 **Do repeats apply to performance only, or should I practice them too?**
 
-Both. Repeats are part of the music — you should practice and perform them. However, in practice sessions, you might skip repeats to save time. For performances, follow the markings exactly unless the conductor or ensemble has decided otherwise.
+Both. Repeats are part of the music, you should practice and perform them. However, in practice sessions, you might skip repeats to save time. For performances, follow the markings exactly unless the conductor or ensemble has decided otherwise.
 
 **What's the difference between D.C. al Fine and D.C. al Coda?**
 

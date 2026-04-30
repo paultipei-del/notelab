@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'melodic-and-harmonic-intervals',
   title: 'Melodic and Harmonic Intervals',
   oneSentence:
-    'A melodic interval is two notes played one after the other, while a harmonic interval is two notes played at the same time — the distance is the same in both cases, but the experience is completely different.',
+    'A melodic interval is two notes played one after the other, while a harmonic interval is two notes played at the same time, the distance is the same in both cases, but the experience is completely different.',
   practice: [],
   related: [
     { title: 'What an Interval Is',         href: '/learn/intervals/what-an-interval-is' },
@@ -16,13 +16,13 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-An interval is a distance between two pitches. But those two pitches can be played in two different ways: one after the other (creating a melody), or both at once (creating a chord or harmony). The interval itself — the number, the quality, the distance — stays the same. The musical *experience* changes significantly.
+An interval is a distance between two pitches. But those two pitches can be played in two different ways: one after the other (creating a melody), or both at once (creating a chord or harmony). The interval itself (the number, the quality, the distance) stays the same. The musical *experience* changes significantly.
 
 A melodic perfect fifth (C up to G played successively) feels like motion from one note to another. A harmonic perfect fifth (C and G played simultaneously) feels like a single sound with a rich internal structure. Both are perfect fifths. Only the presentation differs.
 
@@ -32,44 +32,44 @@ Understanding both kinds is essential because music uses both constantly, often 
 
 <Notation
   musicXml={MELODIC_FIFTH_XML}
-  caption="Melodic perfect fifth — C played first, then G. The ear experiences motion from one pitch to another."
-  ariaLabel="A treble staff with two half notes played in succession: C4 then G4 — a melodic perfect fifth."
+  caption="Melodic perfect fifth, C played first, then G. The ear experiences motion from one pitch to another."
+  ariaLabel="A treble staff with two half notes played in succession: C4 then G4, a melodic perfect fifth."
 />
 
 <Notation
   musicXml={HARMONIC_FIFTH_XML}
-  caption="Harmonic perfect fifth — C and G played simultaneously. Same interval, but experienced as a single stacked sound."
-  ariaLabel="A treble staff with C4 and G4 stacked as whole notes and sounded together — a harmonic perfect fifth."
+  caption="Harmonic perfect fifth, C and G played simultaneously. Same interval, but experienced as a single stacked sound."
+  ariaLabel="A treble staff with C4 and G4 stacked as whole notes and sounded together, a harmonic perfect fifth."
 />
 
 ## Melodic intervals
 
-A **melodic interval** is formed by two notes played in succession — one, then the other. The interval is experienced as *movement*: the voice or instrument moves from the first pitch to the second. You hear direction (up or down), distance (small steps or large leaps), and the specific quality of the motion.
+A **melodic interval** is formed by two notes played in succession, one, then the other. The interval is experienced as *movement*: the voice or instrument moves from the first pitch to the second. You hear direction (up or down), distance (small steps or large leaps), and the specific quality of the motion.
 
-Melodic intervals are the fabric of melody itself. A tune is essentially a sequence of melodic intervals, one after another. When you hum "Happy Birthday," you're navigating a series of specific intervals — some small (seconds), some larger (fifths, octaves) — each of which contributes to the overall shape.
+Melodic intervals are the fabric of melody itself. A tune is essentially a sequence of melodic intervals, one after another. When you hum "Happy Birthday," you're navigating a series of specific intervals (some small (seconds), some larger (fifths, octaves)) each of which contributes to the overall shape.
 
 Melodic intervals can be:
-- **Ascending** — the second note is higher than the first
-- **Descending** — the second note is lower than the first
+- **Ascending**, the second note is higher than the first
+- **Descending**, the second note is lower than the first
 
 The direction matters expressively. An ascending perfect fifth feels like opening up, reaching. A descending perfect fifth feels like settling, arriving. The interval's size is the same; the feeling is different.
 
 ## Harmonic intervals
 
-A **harmonic interval** is formed by two notes played at the same time. The two pitches blend into a single sound — not a chord exactly (a chord is typically three or more notes), but a dyad that has its own character based on the interval's quality.
+A **harmonic interval** is formed by two notes played at the same time. The two pitches blend into a single sound, not a chord exactly (a chord is typically three or more notes), but a dyad that has its own character based on the interval's quality.
 
 Harmonic intervals are the foundation of chord structure and vocal polyphony. Two singers holding different pitches simultaneously produce a harmonic interval. A pianist playing two notes together in the right hand produces a harmonic interval. In a string quartet, any two players sounding at the same time form a harmonic interval between them.
 
-Because harmonic intervals are heard simultaneously, **consonance and dissonance** play a larger role in their perception. A harmonic perfect fifth (C and G together) blends smoothly — it's highly consonant. A harmonic minor second (C and D♭ together) clashes and beats — it's dissonant. The same intervals presented melodically (C to G, C to D♭) feel different because the listener hears one note settle before the next arrives; the clash of simultaneous sounding is replaced by the motion between.
+Because harmonic intervals are heard simultaneously, **consonance and dissonance** play a larger role in their perception. A harmonic perfect fifth (C and G together) blends smoothly, it's highly consonant. A harmonic minor second (C and D♭ together) clashes and beats, it's dissonant. The same intervals presented melodically (C to G, C to D♭) feel different because the listener hears one note settle before the next arrives; the clash of simultaneous sounding is replaced by the motion between.
 
 ## The same interval, different feels
 
-Consider the tritone — C to F♯:
+Consider the tritone, C to F♯:
 
 - As a **melodic** interval, it's a startling leap. Hearing it in a melody is unusual; the ear registers the jump as harsh or unsettled.
 - As a **harmonic** interval, it's the most dissonant combination within the octave. Two notes a tritone apart sound tense, unstable, demanding resolution.
 
-The interval is the same (an augmented fourth or diminished fifth — six half steps). The sensation differs because melodic presentation lets the ear process the two notes one at a time, while harmonic presentation forces simultaneous perception.
+The interval is the same (an augmented fourth or diminished fifth, six half steps). The sensation differs because melodic presentation lets the ear process the two notes one at a time, while harmonic presentation forces simultaneous perception.
 
 Similarly, a harmonic octave (two notes an octave apart sounding together) feels like *one note with depth*, while a melodic octave (the same two notes played one after the other) feels like *motion across a large distance*. Both are octaves. Both are useful.
 
@@ -83,16 +83,16 @@ When analyzing music, we often track both: the melodic intervals shape the horiz
 
 **Is there any practical difference in how you identify a melodic vs. a harmonic interval?**
 
-The identification process is the same — count letter names for number, count half steps for quality. The *sound* differs, and the listener's experience differs, but on paper the interval is analyzed identically.
+The identification process is the same, count letter names for number, count half steps for quality. The *sound* differs, and the listener's experience differs, but on paper the interval is analyzed identically.
 
 **Are some intervals more common in melodies than in harmony, or vice versa?**
 
-Yes, somewhat. Seconds and thirds are extremely common in melodic motion — they're small, easy to sing. Octaves and fifths are very common in harmony because they're stable and rich. The tritone is often avoided in melodic motion (it's awkward to sing) but is common in harmony as part of dominant seventh chords. These tendencies are style- and era-dependent, but they exist.
+Yes, somewhat. Seconds and thirds are extremely common in melodic motion, they're small, easy to sing. Octaves and fifths are very common in harmony because they're stable and rich. The tritone is often avoided in melodic motion (it's awkward to sing) but is common in harmony as part of dominant seventh chords. These tendencies are style- and era-dependent, but they exist.
 
-**What about three notes played together — is that a chord or a collection of intervals?**
+**What about three notes played together, is that a chord or a collection of intervals?**
 
 Both, really. A three-note chord (a triad) contains three distinct harmonic intervals between its component pitches: root-to-third, root-to-fifth, and third-to-fifth. The chord *is* those intervals, layered and heard together. We analyze chords partly by identifying the intervals they contain. Chords get their own full treatment later; for now, remember that a chord is, at a fundamental level, a collection of simultaneous harmonic intervals.
 
 **Does the direction of a melodic interval change its name?**
 
-No, the name stays the same — a perfect fifth is a perfect fifth whether it's ascending or descending. But in analytical writing, you might say "ascending perfect fifth" or "descending perfect fifth" to indicate direction, since direction affects the melodic feel.
+No, the name stays the same, a perfect fifth is a perfect fifth whether it's ascending or descending. But in analytical writing, you might say "ascending perfect fifth" or "descending perfect fifth" to indicate direction, since direction affects the melodic feel.

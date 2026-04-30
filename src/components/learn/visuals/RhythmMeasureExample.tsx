@@ -1,8 +1,9 @@
 'use client'
 
 import React from 'react'
-import { Staff, RhythmicNote, Rest, Tie, TimeSignature, Caption, useNoteHighlight } from './primitives'
+import { Staff, RhythmicNote, Rest, Tie, TimeSignature, Caption } from './primitives'
 import { useSampler } from '@/lib/learn/audio/useSampler'
+import { useLoopingPlayback } from '@/lib/learn/audio/useLoopingPlayback'
 import { tokensFor, type LearnSize, lineY } from '@/lib/learn/visuals/tokens'
 import { parsePitch, staffPosition } from '@/lib/learn/visuals/pitch'
 
@@ -21,6 +22,8 @@ interface RhythmMeasureExampleProps {
   elements: RhythmElement[]
   /** Pitch each note is rendered at. Default 'G4'. */
   pitch?: string
+  /** Quarter-note BPM for the play button. Default 80. */
+  tempo?: number
   size?: LearnSize
   caption?: string
 }
@@ -35,23 +38,33 @@ const DURATION: Record<RhythmValue, number> = {
 
 /**
  * Renders a single 4/4 measure of mixed notes/rests with optional dots and
- * ties. Custom-built (not OSMD) so it centers cleanly and the caption can
- * sit close to the visual.
+ * ties. Click "Play" to loop the rhythm with a metronome ticking each
+ * beat — every notehead lights up one at a time as it sounds.
  */
 export function RhythmMeasureExample({
   elements,
   pitch = 'G4',
+  tempo = 80,
   size = 'inline',
   caption,
 }: RhythmMeasureExampleProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playAt, tickAt, ensureReady } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
-  const { highlightedMidis, highlight, flash } = useNoteHighlight()
+  // Index-based highlight: every note shares the same pitch, so a single
+  // active-element index walks through them sequentially during playback.
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
+  const { isPlaying, start, stop } = useLoopingPlayback()
+
+  const flashAt = (idx: number, durMs: number) => {
+    setActiveIndex(idx)
+    setTimeout(() => {
+      setActiveIndex(curr => (curr === idx ? null : curr))
+    }, durMs)
+  }
 
   const parsed = parsePitch(pitch)
   if (!parsed) return null
-  const midi = parsed.midi
   const pos = staffPosition(parsed, 'treble')
 
   const margin = Math.round(20 * T.scale + 8)
@@ -66,29 +79,93 @@ export function RhythmMeasureExample({
   const noteAreaEnd = staffX + staffWidth - Math.round(20 * T.scale)
   const noteAreaWidth = noteAreaEnd - noteAreaStart
 
-  // Beat-anchored positioning: every element sits at the x of its STARTING
-  // beat. Beat 1/2/3/4 (and sub-beats like 2.5) map to fixed positions that
-  // are identical across all examples on the page. A half rest at beat 3
-  // sits at the same x as a quarter note at beat 3, etc.
   const totalBeats = 4
-  // Each beat occupies 1/4 of the note area; the anchor sits at the
-  // (beat + 0.5)/4 fraction so that beat 1 and beat 4 have equal padding from
-  // the time signature and the right barline respectively.
   const beatX = (b: number) => noteAreaStart + ((b + 0.5) / totalBeats) * noteAreaWidth
 
-  let cursor = 0
-  const placed = elements.map((el) => {
-    const beatStart = cursor
+  const beatStarts = elements.reduce<number[]>((acc, el) => {
     const dur = DURATION[el.value] * (el.dotted ? 1.5 : 1)
-    cursor += dur
-    // Eighth notes sit 2px to the left of their beat anchor so the flag
-    // doesn't crowd whatever follows on the next beat.
+    return [...acc, acc[acc.length - 1] + dur]
+  }, [0])
+  const placed = elements.map((el, i) => {
+    const beatStart = beatStarts[i]
+    const dur = DURATION[el.value] * (el.dotted ? 1.5 : 1)
     const nudge = el.kind === 'note' && el.value === 'eighth' ? -4 : 0
     return { el, beatStart, dur, x: beatX(beatStart) + nudge }
   })
 
   const noteY = lineY(staffY, 0, T) + pos * T.step
   const restY = lineY(staffY, 2, T)
+
+  const handleNoteClick = (idx: number, durBeats: number) => {
+    setInteracted(true)
+    flashAt(idx, Math.max(280, durBeats * (60 / tempo) * 1000))
+    void play(pitch)
+  }
+
+  const handlePlayAll = async () => {
+    if (isPlaying) {
+      stop()
+      return
+    }
+    setInteracted(true)
+    // Wait for samples to finish loading before starting the loop —
+    // otherwise the Tone.Part would fire silently for the first second
+    // or two until the sampler caught up.
+    await ensureReady()
+    const beatSec = 60 / tempo
+    type Event = {
+      offset: number
+      audio?: (time: number) => void
+      visual?: () => void
+    }
+    const events: Event[] = []
+
+    // Metronome ticks on every beat. Accent the downbeat (beat 1) so the
+    // listener can hear the start of each measure.
+    for (let beat = 0; beat < totalBeats; beat++) {
+      const accent = beat === 0
+      events.push({
+        offset: beat * beatSec,
+        audio: (time) => tickAt(accent, time),
+      })
+    }
+
+    // Notes / rests with sequential highlight. A note that's the
+    // continuation of a tied pair flashes (so the eye sees the second
+    // notehead come alive) but does NOT re-trigger a new attack — the
+    // tie's whole point is to sound as one sustained note. For audio
+    // duration we sum the tied notes so the held note sustains across
+    // the whole tied span at one stroke.
+    placed.forEach((p, i) => {
+      const isContinuation =
+        p.el.kind === 'note' && i > 0 && placed[i - 1].el.tieToNext === true
+      // For an attack at index i, find how long the resulting sound
+      // should sustain by walking the tie chain forward.
+      let soundingBeats = p.dur
+      let j = i
+      while (j < placed.length - 1 && placed[j].el.tieToNext && placed[j + 1].el.kind === 'note') {
+        soundingBeats += placed[j + 1].dur
+        j++
+      }
+      const audioDurSec = Math.max(0.05, soundingBeats * beatSec * 0.95)
+      events.push({
+        offset: p.beatStart * beatSec,
+        audio: (time) => {
+          if (p.el.kind === 'note' && !isContinuation) {
+            playAt(pitch, audioDurSec, time)
+          }
+        },
+        visual: () => {
+          flashAt(i, p.dur * beatSec * 1000)
+        },
+      })
+    })
+
+    void start(events, {
+      iterationMs: totalBeats * beatSec * 1000,
+      onStop: () => setActiveIndex(null),
+    })
+  }
 
   return (
     <figure style={{ margin: '12px auto 8px', maxWidth: totalW, width: 'fit-content' }}>
@@ -117,7 +194,6 @@ export function RhythmMeasureExample({
           if (p.el.kind !== 'note' || !p.el.tieToNext) return null
           const next = placed[i + 1]
           if (!next || next.el.kind !== 'note') return null
-          // Tie above noteheads (curve over).
           return (
             <Tie
               key={`tie-${i}`}
@@ -133,8 +209,8 @@ export function RhythmMeasureExample({
         {/* Elements */}
         {placed.map((p, i) => {
           const x = p.x
+          const isActive = activeIndex === i
           if (p.el.kind === 'note') {
-            // Map dotted-* values to base value
             return (
               <RhythmicNote
                 key={`el-${i}`}
@@ -144,8 +220,8 @@ export function RhythmMeasureExample({
                 T={T}
                 stemDirection="up"
                 dotted={p.el.dotted}
-                highlight={highlightedMidis.includes(midi)}
-                onClick={() => { setInteracted(true); flash(midi); void play(pitch) }}
+                highlight={isActive}
+                onClick={() => handleNoteClick(i, p.dur)}
                 ariaLabel={`${pitch} ${p.el.dotted ? 'dotted ' : ''}${p.el.value}`}
               />
             )
@@ -161,6 +237,28 @@ export function RhythmMeasureExample({
           )
         })}
       </svg>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+        <button
+          type="button"
+          onClick={handlePlayAll}
+          disabled={interacted && !ready && !isPlaying}
+          style={{
+            fontFamily: T.fontLabel,
+            fontSize: 13,
+            padding: '8px 18px',
+            background: 'transparent',
+            border: `0.5px solid ${T.ink}`,
+            borderRadius: 8,
+            cursor: interacted && !ready && !isPlaying ? 'wait' : 'pointer',
+            color: T.ink,
+            opacity: interacted && !ready && !isPlaying ? 0.5 : 1,
+            minWidth: 130,
+            textAlign: 'center',
+          }}
+        >
+          {isPlaying ? 'Stop' : 'Play with metronome'}
+        </button>
+      </div>
       {interacted && !ready && (
         <div style={{ fontFamily: T.fontLabel, fontSize: T.smallLabelFontSize, color: T.inkSubtle, fontStyle: 'italic', textAlign: 'center', marginTop: 4 }}>
           Loading piano samples…

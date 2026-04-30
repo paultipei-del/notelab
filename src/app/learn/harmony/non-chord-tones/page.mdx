@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'non-chord-tones',
   title: 'Non-Chord Tones',
   oneSentence:
-    "Non-chord tones are the notes in a melody or voice that aren't members of the underlying chord — passing tones, neighbor tones, suspensions, appoggiaturas, and more — which add melodic interest, voice-leading smoothness, and expressive tension to otherwise static harmony.",
+    "Non-chord tones are the notes in a melody or voice that aren't members of the underlying chord (passing tones, neighbor tones, suspensions, appoggiaturas, and more) which add melodic interest, voice-leading smoothness, and expressive tension to otherwise static harmony.",
   practice: [
     { kind: 'flashcard', label: 'Non-Chord Tones Flashcards', detail: '12 cards', href: '/study/non-chord-tones' },
   ],
@@ -17,19 +17,19 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-When you analyze a piece chord by chord, you'll notice that not every note in the melody belongs to the chord being played underneath it. A melody might linger on a note that clashes with the chord, slip down to a note between chord tones, or hit a dissonance before resolving to a consonance. These **non-chord tones** (sometimes called "non-harmonic tones") are what give melodies their life. Without them, melodies would just be arpeggiated chord tones — pretty, but often flat and predictable.
+When you analyze a piece chord by chord, you'll notice that not every note in the melody belongs to the chord being played underneath it. A melody might linger on a note that clashes with the chord, slip down to a note between chord tones, or hit a dissonance before resolving to a consonance. These **non-chord tones** (sometimes called "non-harmonic tones") are what give melodies their life. Without them, melodies would just be arpeggiated chord tones, pretty, but often flat and predictable.
 
 Non-chord tones come in several distinct types, each with specific rules about how it's approached and how it resolves. Learning to identify them is essential for analysis, and learning to use them is essential for composition. Most of what makes a melody feel "melodic" rather than "chordal" comes from the skillful placement of non-chord tones.
 
 ## The visual
 
-<DiagramPlaceholder description="A simple four-voice chord progression with a melody on top, highlighting several non-chord tones — passing tone (between two chord tones), neighbor tone (leaving and returning), suspension (held from previous chord, resolving down) — each labeled." />
+<DiagramPlaceholder description="A simple four-voice chord progression with a melody on top, highlighting several non-chord tones, passing tone (between two chord tones), neighbor tone (leaving and returning), suspension (held from previous chord, resolving down), each labeled." />
 
 ## The main types of non-chord tones
 
@@ -63,7 +63,7 @@ Suspensions are typically labeled by their intervals above the bass: a "4-3" sus
 
 **Anticipation (ANT)**
 - Approached by step from a chord tone of the previous chord
-- Stays in place — the note doesn't move — as the chord changes
+- Stays in place (the note doesn't move) as the chord changes
 - When the new chord arrives, the anticipating note is now a chord tone of the new chord
 - Example: melody moves from E down to D while a C chord is held; the D is anticipating the G chord that arrives shortly, where D becomes a chord tone (the 5th of G)
 
@@ -77,7 +77,7 @@ Anticipations "arrive early" at the next chord's tone. They create a brief disso
 
 Appoggiaturas create a strong accent on a dissonance. The leap into the note draws attention; the subsequent stepwise resolution releases the tension. Appoggiaturas are especially common in Classical and Romantic music as expressive "sighs" or "leanings."
 
-**Escape tone (ET)** — sometimes called *échappée*
+**Escape tone (ET)**, sometimes called *échappée*
 - Approached by step
 - Resolved by leap in the opposite direction
 - A kind of "escape" from the melodic line's direction
@@ -96,17 +96,17 @@ Pedal points are especially common in climaxes, transitions, and endings. The te
 
 Non-chord tones can be **accented** (falling on a strong beat, creating emphasized dissonance) or **unaccented** (falling on a weak beat, passing by more subtly). Accented non-chord tones have more expressive weight; unaccented ones smooth melodic lines without drawing attention.
 
-A suspension is always accented — the held note falls on a strong beat of the new chord. A passing tone is typically unaccented — it passes between chord tones without emphasis.
+A suspension is always accented, the held note falls on a strong beat of the new chord. A passing tone is typically unaccented, it passes between chord tones without emphasis.
 
 ## Why non-chord tones matter
 
 Non-chord tones do several things:
 
-**They create melodic motion.** Without non-chord tones, a melody would only contain chord tones — an arpeggio. Melodies sound like melodies because they weave chord tones and non-chord tones together into fluid lines.
+**They create melodic motion.** Without non-chord tones, a melody would only contain chord tones, an arpeggio. Melodies sound like melodies because they weave chord tones and non-chord tones together into fluid lines.
 
 **They smooth voice leading.** Stepwise connections between chords are usually smoother than leaps. Passing tones fill gaps; neighbor tones add graceful turns. Voice leading becomes less angular with non-chord tones.
 
-**They create expressive tension.** Suspensions and appoggiaturas produce momentary dissonance that resolves to consonance — the microcosm of tonal music's tension-release dynamic. Many of the most expressive moments in classical music are created by non-chord tones.
+**They create expressive tension.** Suspensions and appoggiaturas produce momentary dissonance that resolves to consonance, the microcosm of tonal music's tension-release dynamic. Many of the most expressive moments in classical music are created by non-chord tones.
 
 **They allow richer harmony.** Non-chord tones let composers use simpler underlying chord progressions (maybe just I, IV, V) while producing melodic complexity. The chord tells you the harmony; the non-chord tones tell you where the emotional action is.
 
@@ -124,11 +124,11 @@ This process reveals the harmonic structure of a piece separately from its melod
 
 **How do I tell a passing tone from a neighbor tone?**
 
-A passing tone continues in the same direction after stepping to the non-chord tone (up, up, up — or down, down, down). A neighbor tone reverses direction (up, down — or down, up). Both are approached and resolved by step; the difference is whether the motion continues or turns back.
+A passing tone continues in the same direction after stepping to the non-chord tone (up, up, up, or down, down, down). A neighbor tone reverses direction (up, down, or down, up). Both are approached and resolved by step; the difference is whether the motion continues or turns back.
 
 **What's the difference between a suspension and an appoggiatura?**
 
-A **suspension** is held over from the previous chord (it was a chord tone before; now it's dissonant because the chord changed). An **appoggiatura** is approached by a leap into the dissonance (it wasn't part of the previous chord at all). Both are accented dissonances that resolve by step, but their approach is different — suspensions are "passive" (the note was already there); appoggiaturas are "active" (the voice leaps into the dissonance).
+A **suspension** is held over from the previous chord (it was a chord tone before; now it's dissonant because the chord changed). An **appoggiatura** is approached by a leap into the dissonance (it wasn't part of the previous chord at all). Both are accented dissonances that resolve by step, but their approach is different, suspensions are "passive" (the note was already there); appoggiaturas are "active" (the voice leaps into the dissonance).
 
 **Are non-chord tones used in jazz and pop?**
 
@@ -136,4 +136,4 @@ Extensively. Jazz melodies are full of non-chord tones, often extended chord ton
 
 **Do I need to identify all non-chord tones to understand a piece?**
 
-For deep analysis, yes — they reveal how melodies are constructed and what makes them expressive. For casual listening, no — you can enjoy the music without classifying every note. But once you learn to identify them, you hear melodies differently. You start noticing the specific moments of dissonance and resolution that create the music's emotional texture.
+For deep analysis, yes, they reveal how melodies are constructed and what makes them expressive. For casual listening, no, you can enjoy the music without classifying every note. But once you learn to identify them, you hear melodies differently. You start noticing the specific moments of dissonance and resolution that create the music's emotional texture.

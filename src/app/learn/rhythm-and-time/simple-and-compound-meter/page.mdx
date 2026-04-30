@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'simple-and-compound-meter',
   title: 'Simple and Compound Meter',
   oneSentence:
-    'Simple meter divides each beat into two equal parts, while compound meter divides each beat into three — a distinction that shapes the feel of almost every piece of Western music and explains why 3/4 and 6/8 sound completely different even though both have "three" in them.',
+    'Simple meter divides each beat into two equal parts, while compound meter divides each beat into three, a distinction that shapes the feel of almost every piece of Western music and explains why 3/4 and 6/8 sound completely different even though both have "three" in them.',
   practice: [
     { kind: 'flashcard', label: 'Simple Meters Flashcards',   detail: '8 cards', href: '/study/simple-meters' },
     { kind: 'flashcard', label: 'Compound Meters Flashcards', detail: '8 cards', href: '/study/compound-meters' },
@@ -18,13 +18,13 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Every beat in Western music can be split into smaller pieces. If you split a beat into two equal halves, you've got **simple meter**. If you split it into three equal thirds, you've got **compound meter**. Everything downstream — how the music feels, how you count it, how it dances — comes from which division is in use.
+Every beat in Western music can be split into smaller pieces. If you split a beat into two equal halves, you've got **simple meter**. If you split it into three equal thirds, you've got **compound meter**. Everything downstream (how the music feels, how you count it, how it dances) comes from which division is in use.
 
 Most beginning students learn 3/4 and 6/8 and find them confusing because both have "three" in them somewhere. The confusion clears up instantly once you see that 3/4 has *three beats* in a measure (simple triple) and 6/8 has *two beats* that each divide into three (compound duple). Same number of eighth notes per measure; completely different feel.
 
@@ -44,44 +44,44 @@ Most beginning students learn 3/4 and 6/8 and find them confusing because both h
     { numerator: 4, denominator: 4, beamGroups: [2, 2, 2, 2] },
     { numerator: 12, denominator: 8, beamGroups: [3, 3, 3, 3] },
   ]}
-  caption="4/4 beams eighth notes in four pairs — simple quadruple. 12/8 beams them in four triplets — compound quadruple. Both have four beats per measure; the beat divides differently."
+  caption="4/4 beams eighth notes in four pairs, simple quadruple. 12/8 beams them in four triplets, compound quadruple. Both have four beats per measure; the beat divides differently."
   ariaLabel="Two measures on a treble staff. First measure in 4/4 with eight beamed eighth notes in four pairs. Second measure in 12/8 with twelve beamed eighth notes in four triplets."
 />
 
 ## Simple meter
 
-In **simple meter**, each beat divides naturally into **two equal parts**. The beat is a quarter note; the division is two eighth notes. The counting syllable pattern is "**1 and 2 and 3 and 4 and**" — each beat has one halfway point.
+In **simple meter**, each beat divides naturally into **two equal parts**. The beat is a quarter note; the division is two eighth notes. The counting syllable pattern is "**1 and 2 and 3 and 4 and**", each beat has one halfway point.
 
 The most common simple meters:
 
-- **Simple duple — 2/4** — two beats per measure, each divided in two
-- **Simple triple — 3/4** — three beats per measure, each divided in two
-- **Simple quadruple — 4/4** — four beats per measure, each divided in two
+- **Simple duple (2/4**) two beats per measure, each divided in two
+- **Simple triple (3/4**) three beats per measure, each divided in two
+- **Simple quadruple (4/4**) four beats per measure, each divided in two
 
 The "simple" refers to the *division of the beat*, not the complexity of the meter. A simple meter is one where the beat splits in half.
 
 ## Compound meter
 
-In **compound meter**, each beat divides naturally into **three equal parts**. The beat is a dotted quarter note; the division is three eighth notes. The counting syllable pattern is "**1-and-a 2-and-a 3-and-a**" or "**1-2-3 4-5-6**" — each beat has three equal sub-parts.
+In **compound meter**, each beat divides naturally into **three equal parts**. The beat is a dotted quarter note; the division is three eighth notes. The counting syllable pattern is "**1-and-a 2-and-a 3-and-a**" or "**1-2-3 4-5-6**", each beat has three equal sub-parts.
 
 The most common compound meters:
 
-- **Compound duple — 6/8** — two beats per measure (each a dotted quarter), each divided into three
-- **Compound triple — 9/8** — three beats per measure (each a dotted quarter), each divided into three
-- **Compound quadruple — 12/8** — four beats per measure (each a dotted quarter), each divided into three
+- **Compound duple (6/8**) two beats per measure (each a dotted quarter), each divided into three
+- **Compound triple (9/8**) three beats per measure (each a dotted quarter), each divided into three
+- **Compound quadruple (12/8**) four beats per measure (each a dotted quarter), each divided into three
 
-In compound meter, the bottom number of the time signature (usually 8) refers to the eighth note, but the eighth note is *not* the beat — it's the subdivision. The actual beat is the dotted quarter, equal to three eighth notes. This is the main thing to internalize about compound meter: the bottom number is a subdivision, not a beat.
+In compound meter, the bottom number of the time signature (usually 8) refers to the eighth note, but the eighth note is *not* the beat, it's the subdivision. The actual beat is the dotted quarter, equal to three eighth notes. This is the main thing to internalize about compound meter: the bottom number is a subdivision, not a beat.
 
 ## How to tell which you're in
 
 Look at the top number of the time signature:
 
-- **Top numbers 2, 3, 4** — simple meter. Beats are quarter notes (if bottom is 4), divided into halves.
-- **Top numbers 6, 9, 12** — compound meter. Beats are dotted quarters (if bottom is 8), divided into thirds. Divide the top number by 3 to get the actual number of beats per measure (6/8 = 2 beats, 9/8 = 3 beats, 12/8 = 4 beats).
+- **Top numbers 2, 3, 4**, simple meter. Beats are quarter notes (if bottom is 4), divided into halves.
+- **Top numbers 6, 9, 12**, compound meter. Beats are dotted quarters (if bottom is 8), divided into thirds. Divide the top number by 3 to get the actual number of beats per measure (6/8 = 2 beats, 9/8 = 3 beats, 12/8 = 4 beats).
 
 This shortcut works because compound time signatures are constructed by multiplying the number of beats by three (the subdivision count). A 6/8 measure has 2 × 3 = 6 eighth-note subdivisions. A 12/8 measure has 4 × 3 = 12.
 
-The bottom number tells you what the *subdivision* is — usually 8, meaning eighth notes — but the *beat* is always a dotted version of that (dotted quarter = three eighths).
+The bottom number tells you what the *subdivision* is (usually 8, meaning eighth notes) but the *beat* is always a dotted version of that (dotted quarter = three eighths).
 
 ## Why compound meter exists
 
@@ -89,9 +89,9 @@ If compound meter is just triplets within a beat, why do we need a separate nota
 
 Two reasons.
 
-**First, readability.** A piece that's consistently in threes — a gigue, a tarantella, a 6/8 lullaby — would be drowning in triplet markings if written in simple meter. Compound meter builds the triplet feel into the time signature itself, so the notation stays clean.
+**First, readability.** A piece that's consistently in threes (a gigue, a tarantella, a 6/8 lullaby) would be drowning in triplet markings if written in simple meter. Compound meter builds the triplet feel into the time signature itself, so the notation stays clean.
 
-**Second, feel.** Compound meter isn't just "simple meter with triplets." The beat feels different — longer, more rolling, more dance-like. Music written natively in compound meter has a swing that simple-meter-plus-triplets doesn't fully capture.
+**Second, feel.** Compound meter isn't just "simple meter with triplets." The beat feels different, longer, more rolling, more dance-like. Music written natively in compound meter has a swing that simple-meter-plus-triplets doesn't fully capture.
 
 A 6/8 jig feels rolling. A 2/4 march feels striding. Both have six eighth notes per measure; they're completely different experiences.
 
@@ -101,9 +101,9 @@ A common beginner's mistake is counting every eighth note in 6/8, going "1-2-3-4
 
 The better approach: count the beats (the dotted quarters), feel the subdivisions inside them.
 
-- 6/8: count "1-2-3, 2-2-3" (or "one-and-a, two-and-a") — two beats, each with three subdivisions
-- 9/8: "1-2-3, 2-2-3, 3-2-3" — three beats
-- 12/8: "1-2-3, 2-2-3, 3-2-3, 4-2-3" — four beats
+- 6/8: count "1-2-3, 2-2-3" (or "one-and-a, two-and-a"), two beats, each with three subdivisions
+- 9/8: "1-2-3, 2-2-3, 3-2-3", three beats
+- 12/8: "1-2-3, 2-2-3, 3-2-3, 4-2-3", four beats
 
 Each "1" is a main beat. The "2" and "3" inside each group are subdivisions. Keeping the beat count low (2 in 6/8, 3 in 9/8, 4 in 12/8) helps you feel the meter naturally.
 
@@ -115,7 +115,7 @@ Simple. The top number 3 means three beats per measure, and each beat (an eighth
 
 **What about 3/2?**
 
-Also simple triple. Three half-note beats per measure, each dividing into two quarter notes. The pattern is the same as 3/4 — it's just notated with longer note values.
+Also simple triple. Three half-note beats per measure, each dividing into two quarter notes. The pattern is the same as 3/4, it's just notated with longer note values.
 
 **Why do 6/4 and 3/2 look similar but feel different?**
 
@@ -123,4 +123,4 @@ Also simple triple. Three half-note beats per measure, each dividing into two qu
 
 **Can I feel a 6/8 piece "in six" instead of "in two"?**
 
-At a slow tempo, yes — and some slow 6/8 pieces are conducted and felt in six, with each eighth note getting its own beat-like emphasis. As tempo increases, the feel consolidates into two dotted-quarter beats. There's a gray zone at slower tempos where both interpretations work. At fast tempos, "in two" is almost always the felt reality.
+At a slow tempo, yes, and some slow 6/8 pieces are conducted and felt in six, with each eighth note getting its own beat-like emphasis. As tempo increases, the feel consolidates into two dotted-quarter beats. There's a gray zone at slower tempos where both interpretations work. At fast tempos, "in two" is almost always the felt reality.

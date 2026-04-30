@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'the-circle-of-fifths',
   title: 'The Circle of Fifths',
   oneSentence:
-    'The circle of fifths is the diagram that organizes all twelve major keys — and their relative minors — around a circle, with each step clockwise adding one sharp and each step counter-clockwise adding one flat, making the tonal relationships between keys visible at a glance.',
+    'The circle of fifths is the diagram that organizes all twelve major keys (and their relative minors) around a circle, with each step clockwise adding one sharp and each step counter-clockwise adding one flat, making the tonal relationships between keys visible at a glance.',
   practice: [
     { kind: 'flashcard', label: 'Circle of Fifths Flashcards', detail: '12 cards', href: '/study/circle-of-fifths' },
   ],
@@ -18,7 +18,7 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
@@ -45,7 +45,7 @@ Start at the top: **C major** (no sharps or flats).
 - D (2) → A (3)
 - A (3) → E (4)
 - E (4) → B (5)
-- B (5) → F♯ (6) — also enharmonically G♭ (6 flats)
+- B (5) → F♯ (6), also enharmonically G♭ (6 flats)
 - F♯ (6) → C♯ (7)
 
 **Moving counter-clockwise** (down a perfect fifth each step, or equivalently up a perfect fourth), you add flats one at a time:
@@ -54,9 +54,9 @@ Start at the top: **C major** (no sharps or flats).
 - F (1) → B♭ (2)
 - B♭ (2) → E♭ (3)
 - E♭ (3) → A♭ (4)
-- A♭ (4) → D♭ (5) — also enharmonically C♯ (7 sharps)
-- D♭ (5) → G♭ (6) — also enharmonically F♯ (6 sharps)
-- G♭ (6) → C♭ (7) — also enharmonically B (5 sharps)
+- A♭ (4) → D♭ (5), also enharmonically C♯ (7 sharps)
+- D♭ (5) → G♭ (6), also enharmonically F♯ (6 sharps)
+- G♭ (6) → C♭ (7), also enharmonically B (5 sharps)
 
 The circle closes at the bottom, where sharp-keys and flat-keys overlap enharmonically. F♯ major and G♭ major are the same pitches spelled differently. C♯ major and D♭ major are the same pitches spelled differently.
 
@@ -69,11 +69,11 @@ When you move up a perfect fifth from any major key, the new tonic is the 5th de
 - C major: C, D, E, F, G, A, B
 - G major: G, A, B, C, D, E, **F♯**
 
-The only difference is that G major uses F♯ instead of F. Why? Because in G major, the 7th degree needs to be a half step below the tonic (to function as a leading tone). The 7th degree of G major is an F of some kind — but the interval from F natural to G is a whole step, not a half step. So F must be raised to F♯ to produce the proper leading-tone relationship.
+The only difference is that G major uses F♯ instead of F. Why? Because in G major, the 7th degree needs to be a half step below the tonic (to function as a leading tone). The 7th degree of G major is an F of some kind, but the interval from F natural to G is a whole step, not a half step. So F must be raised to F♯ to produce the proper leading-tone relationship.
 
 Each step clockwise (up a fifth) adds exactly one new sharp: the new key's 7th degree. This is always the next sharp in the fixed sharp order (F♯, C♯, G♯, D♯, A♯, E♯, B♯).
 
-Moving counter-clockwise (down a fifth, or up a fourth) adds exactly one new flat: the new key's 4th degree. In F major, the 4th degree is B♭ — one flat. In B♭ major, the 4th degree is E♭ — two flats. And so on. Each step adds the next flat in the fixed flat order (B♭, E♭, A♭, D♭, G♭, C♭, F♭).
+Moving counter-clockwise (down a fifth, or up a fourth) adds exactly one new flat: the new key's 4th degree. In F major, the 4th degree is B♭, one flat. In B♭ major, the 4th degree is E♭, two flats. And so on. Each step adds the next flat in the fixed flat order (B♭, E♭, A♭, D♭, G♭, C♭, F♭).
 
 ## Reading key signatures from the circle
 
@@ -93,7 +93,7 @@ These shortcuts make reading key signatures nearly instant once you've practiced
 
 ## Relative minors on the inner ring
 
-Every major key on the outer ring of the circle has a relative minor on the inner ring. The relative minor sits in the same position as its relative major — because they share the same key signature.
+Every major key on the outer ring of the circle has a relative minor on the inner ring. The relative minor sits in the same position as its relative major, because they share the same key signature.
 
 Going clockwise:
 - C major / A minor
@@ -114,7 +114,7 @@ Going counter-clockwise:
 - G♭ major / E♭ minor
 - C♭ major / A♭ minor
 
-The inner-ring minor keys follow the same circle-of-fifths relationships as the outer-ring major keys — A minor is to C major as E minor is to G major, etc.
+The inner-ring minor keys follow the same circle-of-fifths relationships as the outer-ring major keys, A minor is to C major as E minor is to G major, etc.
 
 ## What the circle tells you about key relationships
 
@@ -124,7 +124,7 @@ The circle encodes the strength of relationship between keys:
 
 **Keys two steps apart** share five of seven pitches. Still closely related.
 
-**Keys on opposite sides of the circle** (six steps apart) share only one pitch. They're the most distant tonal relatives. C major and F♯ major share only B — every other pitch is different.
+**Keys on opposite sides of the circle** (six steps apart) share only one pitch. They're the most distant tonal relatives. C major and F♯ major share only B, every other pitch is different.
 
 Composers use this knowledge to plan modulations. A piece modulating to the dominant (one step clockwise) is a close and smooth move. A piece modulating to the tritone (six steps, most distant) is dramatic and disorienting. The circle makes these distinctions visible geometrically.
 
@@ -132,11 +132,11 @@ Composers use this knowledge to plan modulations. A piece modulating to the domi
 
 **Why "fifths" and not "thirds" or "sevenths"?**
 
-Because the perfect fifth is the simplest interval after the octave (3:2 ratio) and the strongest harmonic relationship in the overtone series. Each perfect fifth shares six of seven pitches with its neighbor, producing the closest possible modulation with minimal disruption. Organizing keys by fifths creates the cleanest map of tonal relationships. Fifths also correspond to how dominant-tonic relationships work in tonal music — V to I is a motion down a fifth.
+Because the perfect fifth is the simplest interval after the octave (3:2 ratio) and the strongest harmonic relationship in the overtone series. Each perfect fifth shares six of seven pitches with its neighbor, producing the closest possible modulation with minimal disruption. Organizing keys by fifths creates the cleanest map of tonal relationships. Fifths also correspond to how dominant-tonic relationships work in tonal music, V to I is a motion down a fifth.
 
 **Why does the circle close?**
 
-Because twelve perfect fifths stacked on top of each other (almost) equal seven octaves. The relationship isn't mathematically perfect — real perfect fifths would overshoot slightly (the **Pythagorean comma**), but in equal temperament, fifths are slightly compressed so that twelve of them fit cleanly into seven octaves. This compromise is what makes the circle of fifths close cleanly in modern tuning.
+Because twelve perfect fifths stacked on top of each other (almost) equal seven octaves. The relationship isn't mathematically perfect, real perfect fifths would overshoot slightly (the **Pythagorean comma**), but in equal temperament, fifths are slightly compressed so that twelve of them fit cleanly into seven octaves. This compromise is what makes the circle of fifths close cleanly in modern tuning.
 
 **Why are some keys on the circle enharmonic duplicates?**
 
@@ -144,4 +144,4 @@ Because the same pitches can be spelled two ways when the sharp count crosses 6.
 
 **Do I need to memorize the whole circle?**
 
-For fluent work, yes — eventually. The circle becomes a mental shortcut that makes music theory calculations much faster. But you don't need to memorize it all at once. Start with the closest keys (C, G, F, D, B♭) and expand outward. Within a few weeks of regular use, the full circle becomes automatic.
+For fluent work, yes, eventually. The circle becomes a mental shortcut that makes music theory calculations much faster. But you don't need to memorize it all at once. Start with the closest keys (C, G, F, D, B♭) and expand outward. Within a few weeks of regular use, the full circle becomes automatic.

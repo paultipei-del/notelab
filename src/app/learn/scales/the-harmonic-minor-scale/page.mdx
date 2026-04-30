@@ -8,7 +8,7 @@ export const learnPage = {
   subtopic: 'the-harmonic-minor-scale',
   title: 'The Harmonic Minor Scale',
   oneSentence:
-    'The harmonic minor scale is the natural minor scale with its 7th degree raised a half step — a small change that creates a proper leading tone and enables the strong V-i cadence that defines tonal minor-key harmony.',
+    'The harmonic minor scale is the natural minor scale with its 7th degree raised a half step, a small change that creates a proper leading tone and enables the strong V-i cadence that defines tonal minor-key harmony.',
   practice: [
     { kind: 'flashcard', label: 'Minor Scales Flashcards', detail: '15 cards', href: '/study/minor-scales' },
   ],
@@ -19,7 +19,7 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
@@ -27,7 +27,7 @@ export default function Page({ children }) {
 
 Natural minor has a problem: no proper leading tone. The 7th degree is a whole step below the tonic, which produces a weak pull toward resolution. In tonal music, where the dominant chord's pull back to the tonic is foundational, this weakness matters.
 
-The solution is simple. Raise the 7th degree by a half step. That one change makes the 7th a half step below the tonic (now a leading tone) and restores the strong V-i harmonic resolution. The resulting scale is the **harmonic minor scale** — essentially natural minor with a raised 7th, used specifically for harmonic purposes.
+The solution is simple. Raise the 7th degree by a half step. That one change makes the 7th a half step below the tonic (now a leading tone) and restores the strong V-i harmonic resolution. The resulting scale is the **harmonic minor scale**, essentially natural minor with a raised 7th, used specifically for harmonic purposes.
 
 The name tells you what it's for. It's the minor scale adjusted to make proper tonal harmony work.
 
@@ -45,7 +45,7 @@ The name tells you what it's for. It's the minor scale adjusted to make proper t
 
 Harmonic minor's pattern, with the raised 7th:
 
-**Whole - Half - Whole - Whole - Half - Augmented 2nd - Half**
+**Whole (Half) Whole (Whole) Half (Augmented 2nd) Half**
 
 Or by scale degrees:
 - 1st to 2nd: whole step
@@ -53,10 +53,10 @@ Or by scale degrees:
 - 3rd to 4th: whole step
 - 4th to 5th: whole step
 - 5th to 6th: half step
-- 6th to 7th: **augmented 2nd (three half steps)** — the distinctive new interval
+- 6th to 7th: **augmented 2nd (three half steps)**, the distinctive new interval
 - 7th to 8th: half step
 
-The big change from natural minor is the 6th-to-7th interval. In natural minor, that's a whole step. In harmonic minor, it's an augmented 2nd — a half step larger than a whole step, because the 7th has been raised while the 6th stayed low.
+The big change from natural minor is the 6th-to-7th interval. In natural minor, that's a whole step. In harmonic minor, it's an augmented 2nd, a half step larger than a whole step, because the 7th has been raised while the 6th stayed low.
 
 ## Building any harmonic minor scale
 
@@ -72,23 +72,23 @@ Start from the natural minor form, then raise the 7th:
 - Raise the 7th: C becomes C♯
 - D harmonic minor: D, E, F, G, A, B♭, **C♯**, D
 
-The raised 7th is accidentally notated in the music (not written into the key signature, which still reflects the natural minor). When you see a piece in a minor key, you often see the raised 7th appearing as an accidental — that's the harmonic minor showing up within the natural-minor key signature.
+The raised 7th is accidentally notated in the music (not written into the key signature, which still reflects the natural minor). When you see a piece in a minor key, you often see the raised 7th appearing as an accidental, that's the harmonic minor showing up within the natural-minor key signature.
 
-## The augmented 2nd — harmonic minor's distinctive sound
+## The augmented 2nd, harmonic minor's distinctive sound
 
-The augmented 2nd between the 6th and 7th degrees is harmonic minor's most recognizable feature. It's a larger melodic jump than a whole step but smaller than a minor 3rd — an interval that sounds exotic, almost Middle Eastern or Hungarian in flavor.
+The augmented 2nd between the 6th and 7th degrees is harmonic minor's most recognizable feature. It's a larger melodic jump than a whole step but smaller than a minor 3rd, an interval that sounds exotic, almost Middle Eastern or Hungarian in flavor.
 
-In some musical traditions (Klezmer, Romani, Arabic-influenced music), the augmented 2nd is a desired coloring and appears prominently. In Classical and Romantic minor-key music, though, composers often avoid landing on the augmented 2nd melodically — it sounds awkward in purely stepwise melodic motion, like a miniature leap that breaks the flow.
+In some musical traditions (Klezmer, Romani, Arabic-influenced music), the augmented 2nd is a desired coloring and appears prominently. In Classical and Romantic minor-key music, though, composers often avoid landing on the augmented 2nd melodically, it sounds awkward in purely stepwise melodic motion, like a miniature leap that breaks the flow.
 
 This is why melodic minor exists. It's a modified version of harmonic minor that sidesteps the augmented 2nd for melodic contexts. We'll cover it next.
 
 ## When to use harmonic minor
 
-Harmonic minor gets used when you need a leading tone — which is essentially whenever you're constructing or analyzing a V-i cadence in a minor key. The V chord of a minor key needs the raised 7th to be a major chord with a leading tone, which produces the strong pull to the tonic.
+Harmonic minor gets used when you need a leading tone, which is essentially whenever you're constructing or analyzing a V-i cadence in a minor key. The V chord of a minor key needs the raised 7th to be a major chord with a leading tone, which produces the strong pull to the tonic.
 
 Example: in A minor, the V chord is E. In natural minor, E would be E-G-B (because the 7th of the scale, G, is natural). That's an E minor chord. E minor moving to A minor doesn't have the strong leading-tone pull of major-V-to-minor-i.
 
-With the raised 7th from harmonic minor, the V chord becomes E-G♯-B — an E major chord. The G♯ is now a leading tone, pulling strongly up to A. E major to A minor has the classic V-i cadence feel.
+With the raised 7th from harmonic minor, the V chord becomes E-G♯-B, an E major chord. The G♯ is now a leading tone, pulling strongly up to A. E major to A minor has the classic V-i cadence feel.
 
 So harmonic minor's primary function is *harmonic*: it provides the raised 7th needed for a proper V chord in a minor key. Composers use it when building chord progressions, and singers/instrumentalists learn it because its melodic shape appears constantly in minor-key music.
 
@@ -96,11 +96,11 @@ So harmonic minor's primary function is *harmonic*: it provides the raised 7th n
 
 **Why not just always use harmonic minor and forget natural minor?**
 
-Because melody sounds different from harmony. The augmented 2nd between the 6th and 7th degrees is harmonically useful but melodically awkward. For melodic lines, composers often prefer natural minor's simpler stepwise motion or melodic minor's adjusted shape. Harmonic minor is best thought of as "the minor scale's harmonic form" — useful when you need the leading tone for chord progressions, less ideal when you need smooth melodic motion through all seven degrees.
+Because melody sounds different from harmony. The augmented 2nd between the 6th and 7th degrees is harmonically useful but melodically awkward. For melodic lines, composers often prefer natural minor's simpler stepwise motion or melodic minor's adjusted shape. Harmonic minor is best thought of as "the minor scale's harmonic form", useful when you need the leading tone for chord progressions, less ideal when you need smooth melodic motion through all seven degrees.
 
 **Is the raised 7th always written with an accidental, or does it appear in the key signature?**
 
-Always with an accidental. The key signature for any minor key reflects the natural minor form. The raised 7th is a "temporary alteration" that appears as an accidental within the music. This is why minor-key pieces are full of sharps that aren't in the key signature — those are the raised 7ths of harmonic minor.
+Always with an accidental. The key signature for any minor key reflects the natural minor form. The raised 7th is a "temporary alteration" that appears as an accidental within the music. This is why minor-key pieces are full of sharps that aren't in the key signature, those are the raised 7ths of harmonic minor.
 
 **Are there scales with other raised degrees besides harmonic minor?**
 

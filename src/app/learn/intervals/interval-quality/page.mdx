@@ -9,7 +9,7 @@ export const learnPage = {
   subtopic: 'interval-quality',
   title: 'Interval Quality',
   oneSentence:
-    'An interval\'s quality — perfect, major, minor, augmented, or diminished — tells you the exact size of the interval in half steps, which determines how it sounds and how it functions in music.',
+    'An interval\'s quality (perfect, major, minor, augmented, or diminished) tells you the exact size of the interval in half steps, which determines how it sounds and how it functions in music.',
   practice: [
     { kind: 'flashcard', label: 'Intervals Flashcards', detail: '15 cards', href: '/study/intervals' },
   ],
@@ -20,7 +20,7 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
@@ -30,11 +30,11 @@ Interval number tells you how many letter names the interval spans. But interval
 
 There are five qualities used in interval naming:
 
-- **Perfect** — used only for unisons, fourths, fifths, and octaves
-- **Major** — used for seconds, thirds, sixths, and sevenths
-- **Minor** — the same numbers as major, but one half step smaller
-- **Augmented** — one half step larger than major or perfect
-- **Diminished** — one half step smaller than minor or perfect
+- **Perfect**, used only for unisons, fourths, fifths, and octaves
+- **Major**, used for seconds, thirds, sixths, and sevenths
+- **Minor**, the same numbers as major, but one half step smaller
+- **Augmented**, one half step larger than major or perfect
+- **Diminished**, one half step smaller than minor or perfect
 
 Quality plus number identifies every interval uniquely. A "perfect fifth" is different from a "diminished fifth." A "major third" is different from a "minor third." Together, the two dimensions fully specify an interval's sound and function.
 
@@ -42,7 +42,7 @@ Quality plus number identifies every interval uniquely. A "perfect fifth" is dif
 
 <Notation
   musicXml={FOUR_THIRDS_XML}
-  caption="Four thirds from C — all 'thirds' by number (C-E letter span), but four different qualities: major (4 half steps), minor (3), diminished (2), augmented (5)."
+  caption="Four thirds from C, all 'thirds' by number (C-E letter span), but four different qualities: major (4 half steps), minor (3), diminished (2), augmented (5)."
   ariaLabel="Four measures on a treble staff showing harmonic thirds from C: C-E (major third), C-E flat (minor third), C-E double flat (diminished third), C-E sharp (augmented third)."
 />
 
@@ -50,29 +50,29 @@ Quality plus number identifies every interval uniquely. A "perfect fifth" is dif
 
 ## Perfect intervals
 
-**Perfect intervals** are the unison, fourth, fifth, and octave. They're called "perfect" because they sound especially stable and consonant — their frequencies form very simple ratios (1:1, 4:3, 3:2, 2:1).
+**Perfect intervals** are the unison, fourth, fifth, and octave. They're called "perfect" because they sound especially stable and consonant, their frequencies form very simple ratios (1:1, 4:3, 3:2, 2:1).
 
 The perfect intervals from C, within a single octave:
-- **Perfect unison** — C and C at the same pitch. 0 half steps.
-- **Perfect fourth** — C to F. 5 half steps.
-- **Perfect fifth** — C to G. 7 half steps.
-- **Perfect octave** — C to C, an octave higher. 12 half steps.
+- **Perfect unison**, C and C at the same pitch. 0 half steps.
+- **Perfect fourth**, C to F. 5 half steps.
+- **Perfect fifth**, C to G. 7 half steps.
+- **Perfect octave**, C to C, an octave higher. 12 half steps.
 
-A perfect fourth, fifth, or octave has a default form. Any alteration (raising or lowering by a half step) produces an augmented or diminished version — not a major or minor one. That's an important distinction: perfect intervals don't have major or minor variants.
+A perfect fourth, fifth, or octave has a default form. Any alteration (raising or lowering by a half step) produces an augmented or diminished version, not a major or minor one. That's an important distinction: perfect intervals don't have major or minor variants.
 
 ## Major and minor intervals
 
-**Major and minor** intervals apply to seconds, thirds, sixths, and sevenths. These numbers come in two sizes — one larger (major), one smaller (minor) — and the difference between them is always one half step.
+**Major and minor** intervals apply to seconds, thirds, sixths, and sevenths. These numbers come in two sizes (one larger (major), one smaller (minor)) and the difference between them is always one half step.
 
 Starting from C:
-- **Major second** — C to D. 2 half steps.
-- **Minor second** — C to D♭. 1 half step.
-- **Major third** — C to E. 4 half steps.
-- **Minor third** — C to E♭. 3 half steps.
-- **Major sixth** — C to A. 9 half steps.
-- **Minor sixth** — C to A♭. 8 half steps.
-- **Major seventh** — C to B. 11 half steps.
-- **Minor seventh** — C to B♭. 10 half steps.
+- **Major second**, C to D. 2 half steps.
+- **Minor second**, C to D♭. 1 half step.
+- **Major third**, C to E. 4 half steps.
+- **Minor third**, C to E♭. 3 half steps.
+- **Major sixth**, C to A. 9 half steps.
+- **Minor sixth**, C to A♭. 8 half steps.
+- **Major seventh**, C to B. 11 half steps.
+- **Minor seventh**, C to B♭. 10 half steps.
 
 Minor is always a half step smaller than major. The number (second, third, sixth, seventh) stays the same; only the size shrinks.
 
@@ -82,25 +82,25 @@ The distinction between major and minor has enormous musical weight. Major third
 
 An **augmented interval** is one half step *larger* than the corresponding major or perfect interval. You get there by raising the upper note (or lowering the lower note) by a half step.
 
-- **Augmented fourth** — C to F♯. 6 half steps. (One half step larger than perfect fourth.)
-- **Augmented fifth** — C to G♯. 8 half steps.
-- **Augmented second** — C to D♯. 3 half steps. (One half step larger than major second.)
-- **Augmented sixth** — C to A♯. 10 half steps.
+- **Augmented fourth**, C to F♯. 6 half steps. (One half step larger than perfect fourth.)
+- **Augmented fifth**, C to G♯. 8 half steps.
+- **Augmented second**, C to D♯. 3 half steps. (One half step larger than major second.)
+- **Augmented sixth**, C to A♯. 10 half steps.
 
-Augmented intervals sound "stretched" — slightly outside the expected interval. They show up in harmonic minor scales (the augmented second between the sixth and seventh degrees), in augmented chords, and in chromatic passages.
+Augmented intervals sound "stretched", slightly outside the expected interval. They show up in harmonic minor scales (the augmented second between the sixth and seventh degrees), in augmented chords, and in chromatic passages.
 
-Notice something important: an augmented fourth (C to F♯) has the same *sound* as a diminished fifth (C to G♭). Both are six half steps. They're enharmonic equivalents — same pitch distance, different letter-name spellings. The tritone (six half steps) can be written either way depending on musical context.
+Notice something important: an augmented fourth (C to F♯) has the same *sound* as a diminished fifth (C to G♭). Both are six half steps. They're enharmonic equivalents, same pitch distance, different letter-name spellings. The tritone (six half steps) can be written either way depending on musical context.
 
 ## Diminished intervals
 
 A **diminished interval** is one half step *smaller* than the corresponding minor or perfect interval. You get there by lowering the upper note (or raising the lower note) by a half step.
 
-- **Diminished fifth** — C to G♭. 6 half steps. (One half step smaller than perfect fifth.)
-- **Diminished fourth** — C to F♭. 4 half steps.
-- **Diminished third** — C to E♭♭ (E double flat). 2 half steps. (One half step smaller than minor third.)
-- **Diminished seventh** — C to B♭♭ (B double flat). 9 half steps.
+- **Diminished fifth**, C to G♭. 6 half steps. (One half step smaller than perfect fifth.)
+- **Diminished fourth**, C to F♭. 4 half steps.
+- **Diminished third**, C to E♭♭ (E double flat). 2 half steps. (One half step smaller than minor third.)
+- **Diminished seventh**, C to B♭♭ (B double flat). 9 half steps.
 
-Diminished intervals sound "compressed" — tighter than minor. The diminished fifth (the tritone) is the most famous of these; it's the interval that defines the dominant seventh chord's internal tension.
+Diminished intervals sound "compressed", tighter than minor. The diminished fifth (the tritone) is the most famous of these; it's the interval that defines the dominant seventh chord's internal tension.
 
 ## The alteration pattern
 
@@ -112,22 +112,22 @@ A simple pattern governs all quality changes:
 **For seconds, thirds, sixths, and sevenths (major/minor intervals):**
 - Diminished ← (smaller by 1) **Minor** ← (smaller by 1) **Major** (larger by 1) → Augmented
 
-Notice that for non-perfect intervals, there's an intermediate step: between minor and diminished, and between major and augmented. Going from minor to diminished drops one more half step; going from major to augmented adds one more half step. For perfect intervals, augmented and diminished are one step away from perfect directly — no major or minor in between.
+Notice that for non-perfect intervals, there's an intermediate step: between minor and diminished, and between major and augmented. Going from minor to diminished drops one more half step; going from major to augmented adds one more half step. For perfect intervals, augmented and diminished are one step away from perfect directly, no major or minor in between.
 
 ## Common questions
 
 **Why do only some intervals have "perfect" quality?**
 
-Because fourths, fifths, and octaves produce the simplest frequency ratios (4:3, 3:2, 2:1), and the ear hears them as especially stable. Thirds, sixths, seconds, and sevenths come in two clear sizes (major and minor) that are both consonant or dissonant in different ways — neither is "perfect." The naming convention reflects this acoustic reality, though it's somewhat arbitrary at the boundary.
+Because fourths, fifths, and octaves produce the simplest frequency ratios (4:3, 3:2, 2:1), and the ear hears them as especially stable. Thirds, sixths, seconds, and sevenths come in two clear sizes (major and minor) that are both consonant or dissonant in different ways, neither is "perfect." The naming convention reflects this acoustic reality, though it's somewhat arbitrary at the boundary.
 
 **What's the difference between an augmented fourth and a diminished fifth if they sound the same?**
 
-They're enharmonic — identical in sound, different in spelling and function. C to F♯ is an augmented fourth (letter names span four: C, D, E, F). C to G♭ is a diminished fifth (letter names span five: C, D, E, F, G). The choice between them depends on context. In a harmonic progression moving C-F♯, the F♯ is the augmented fourth because the music is leaving the root C. In a dominant seventh chord (G-B-D-F), the F functions as a diminished fifth above B (a diminished fifth from B to F). Music theory cares about which spelling matches the music's function.
+They're enharmonic, identical in sound, different in spelling and function. C to F♯ is an augmented fourth (letter names span four: C, D, E, F). C to G♭ is a diminished fifth (letter names span five: C, D, E, F, G). The choice between them depends on context. In a harmonic progression moving C-F♯, the F♯ is the augmented fourth because the music is leaving the root C. In a dominant seventh chord (G-B-D-F), the F functions as a diminished fifth above B (a diminished fifth from B to F). Music theory cares about which spelling matches the music's function.
 
 **Are diminished intervals always dissonant?**
 
-Yes, in the sense that they create tension. Diminished intervals tend to sound unsettled because they're tighter than "natural" intervals would be. The diminished fifth is the most famous example — profoundly dissonant and one of the main drivers of harmonic motion in Western music.
+Yes, in the sense that they create tension. Diminished intervals tend to sound unsettled because they're tighter than "natural" intervals would be. The diminished fifth is the most famous example, profoundly dissonant and one of the main drivers of harmonic motion in Western music.
 
 **What about doubly-augmented or doubly-diminished intervals?**
 
-They exist but are rare. A doubly-augmented fourth would be C to F𝄪 (F double-sharp), seven half steps — the same sound as a perfect fifth. A doubly-diminished fifth would be C to G♭♭, six half steps — the same sound as a tritone. These appear occasionally in very chromatic music but are usually avoided because their spelling is unwieldy.
+They exist but are rare. A doubly-augmented fourth would be C to F𝄪 (F double-sharp), seven half steps, the same sound as a perfect fifth. A doubly-diminished fifth would be C to G♭♭, six half steps, the same sound as a tritone. These appear occasionally in very chromatic music but are usually avoided because their spelling is unwieldy.

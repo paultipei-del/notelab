@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'dynamics',
   title: 'Dynamics',
   oneSentence:
-    'Dynamic markings — from pianissimo (pp, very soft) through mezzo-forte (mf, moderately loud) to fortissimo (ff, very loud) — tell performers how loudly to play, creating the volume contrasts that shape music\'s emotional intensity.',
+    'Dynamic markings, from pianissimo (pp, very soft) through mezzo-forte (mf, moderately loud) to fortissimo (ff, very loud), tell performers how loudly to play, creating the volume contrasts that shape music\'s emotional intensity.',
   practice: [
     { kind: 'flashcard', label: 'Dynamics Flashcards', detail: '10 cards', href: '/study/dynamics' },
   ],
@@ -18,19 +18,19 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-**Dynamics** are the loudness and softness of music. A piece played entirely at the same volume — no changes, no contrast — feels flat regardless of how beautiful its notes are. Variation in volume is one of music's primary expressive tools. Loud passages can feel triumphant, aggressive, or overwhelming; soft passages can feel intimate, vulnerable, or mysterious. The shifts between them — and the degrees within them — are where much of music's emotional content lives.
+**Dynamics** are the loudness and softness of music. A piece played entirely at the same volume (no changes, no contrast) feels flat regardless of how beautiful its notes are. Variation in volume is one of music's primary expressive tools. Loud passages can feel triumphant, aggressive, or overwhelming; soft passages can feel intimate, vulnerable, or mysterious. The shifts between them (and the degrees within them) are where much of music's emotional content lives.
 
 Composers mark dynamics in the score using a set of standard abbreviations, mostly Italian. These markings tell performers how loudly to play each passage, with roughly seven distinct levels covering the range from barely audible to maximum volume. Learning the system takes minutes; using it expressively takes a lifetime.
 
 ## The visual
 
-<DiagramPlaceholder description="A short passage with dynamic markings throughout — beginning pp, building to mp, then mf, then f, then ff, with the markings clearly visible below the staff." />
+<DiagramPlaceholder description="A short passage with dynamic markings throughout, beginning pp, building to mp, then mf, then f, then ff, with the markings clearly visible below the staff." />
 
 <Diagram src="/diagrams/dynamics-range-bar.svg" caption="The standard dynamic range from pp (very soft) to ff (very loud)." />
 
@@ -38,31 +38,31 @@ Composers mark dynamics in the score using a set of standard abbreviations, most
 
 From softest to loudest:
 
-**pp — pianissimo** — very soft. The quietest typical dynamic in most music. Asks the performer to play at near-whisper volume, barely more than silence.
+**pp (pianissimo**) very soft. The quietest typical dynamic in most music. Asks the performer to play at near-whisper volume, barely more than silence.
 
-**p — piano** — soft. A quiet dynamic that still projects clearly. The word "piano" itself comes from this marking — the instrument was originally called *pianoforte* because it could play both soft and loud.
+**p (piano**) soft. A quiet dynamic that still projects clearly. The word "piano" itself comes from this marking, the instrument was originally called *pianoforte* because it could play both soft and loud.
 
-**mp — mezzo-piano** — moderately soft. Between piano and mezzo-forte. A gentle, understated dynamic.
+**mp, mezzo-piano**, moderately soft. Between piano and mezzo-forte. A gentle, understated dynamic.
 
-**mf — mezzo-forte** — moderately loud. Between mezzo-piano and forte. The "normal" conversational volume of music — neither quiet nor loud.
+**mf, mezzo-forte**, moderately loud. Between mezzo-piano and forte. The "normal" conversational volume of music, neither quiet nor loud.
 
-**f — forte** — loud. A strong, emphatic dynamic. Music at forte has energy and weight.
+**f (forte**) loud. A strong, emphatic dynamic. Music at forte has energy and weight.
 
-**ff — fortissimo** — very loud. Maximum typical volume, asking for full projection and power.
+**ff (fortissimo**) very loud. Maximum typical volume, asking for full projection and power.
 
-Each level is roughly twice the perceived loudness of the one below it. Moving from p to f covers a range of about 20-30 dB in a concert setting — a significant audible change.
+Each level is roughly twice the perceived loudness of the one below it. Moving from p to f covers a range of about 20-30 dB in a concert setting, a significant audible change.
 
-## Beyond the seven — extreme dynamics
+## Beyond the seven, extreme dynamics
 
 Composers occasionally extend the standard range for extra emphasis:
 
-**ppp — pianississimo** — extremely soft, barely audible.
+**ppp (pianississimo**) extremely soft, barely audible.
 
-**pppp, ppppp** — ever softer, pushing the performer's ability to produce sound at the edge of audibility.
+**pppp, ppppp**, ever softer, pushing the performer's ability to produce sound at the edge of audibility.
 
-**fff — fortississimo** — extremely loud, at the instrument's maximum capability.
+**fff (fortississimo**) extremely loud, at the instrument's maximum capability.
 
-**ffff, fffff** — ever louder, asking for every ounce of volume the performer can produce.
+**ffff, fffff**, ever louder, asking for every ounce of volume the performer can produce.
 
 These extreme markings signal the composer's desire for something beyond normal dynamic range. Tchaikovsky famously used **pppppp** in his *Pathétique* Symphony. Many Romantic composers wrote **ffff**s at climactic moments. These extremes are rare but dramatic when they appear.
 
@@ -70,36 +70,36 @@ These extreme markings signal the composer's desire for something beyond normal 
 
 Beyond the general dynamic levels, a few markings indicate more localized emphasis:
 
-**sfz — sforzando** (sometimes written **sf** or **sfz**) — a sudden, sharp accent on a single note, giving it strong emphasis. Typically played louder than its surroundings. The word means "forced" or "forcing" in Italian.
+**sfz (sforzando** (sometimes written **sf** or **sfz**)) a sudden, sharp accent on a single note, giving it strong emphasis. Typically played louder than its surroundings. The word means "forced" or "forcing" in Italian.
 
-**fp — forte-piano** — play the note loud, then immediately soft. A sharp attack followed by quick dropoff.
+**fp, forte-piano**, play the note loud, then immediately soft. A sharp attack followed by quick dropoff.
 
-**sffz — sforzatissimo** — an extremely strong sforzando, with even more force and emphasis.
+**sffz (sforzatissimo**) an extremely strong sforzando, with even more force and emphasis.
 
-**rfz — rinforzando** — a general reinforcement, sometimes applied to a group of notes or a passage, meaning "reinforce" or "strengthen."
+**rfz (rinforzando**) a general reinforcement, sometimes applied to a group of notes or a passage, meaning "reinforce" or "strengthen."
 
-These markings create emphasis *within* a dynamic context — a sudden sfz in the middle of a soft passage, for instance, creates dramatic contrast without changing the overall dynamic level.
+These markings create emphasis *within* a dynamic context, a sudden sfz in the middle of a soft passage, for instance, creates dramatic contrast without changing the overall dynamic level.
 
 ## How dynamics work in practice
 
-Dynamics aren't absolute — they're relative. What counts as "forte" in a solo piano piece might be the same physical volume as "mezzo-piano" in a full orchestra. The dynamics indicate intensity and projection relative to the piece's context, not specific decibel levels.
+Dynamics aren't absolute, they're relative. What counts as "forte" in a solo piano piece might be the same physical volume as "mezzo-piano" in a full orchestra. The dynamics indicate intensity and projection relative to the piece's context, not specific decibel levels.
 
 Performers interpret dynamics in context. A soloist playing Beethoven's *Pathétique* Sonata reaches their own personal "fortissimo" on the instrument. An orchestra doing the same marking in a Mahler symphony reaches a collectively much louder fortissimo. The marking communicates "maximum intensity within this context," not a fixed loudness.
 
 Good use of dynamics involves:
 
-- **Contrast** — varying between dynamics to avoid monotony
-- **Proportion** — making the relationships between dynamics audible (pp noticeably quieter than p; ff noticeably louder than f)
-- **Pacing** — building toward climactic dynamics gradually, then releasing
-- **Color** — using specific dynamics for specific expressive purposes
+- **Contrast**, varying between dynamics to avoid monotony
+- **Proportion**, making the relationships between dynamics audible (pp noticeably quieter than p; ff noticeably louder than f)
+- **Pacing**, building toward climactic dynamics gradually, then releasing
+- **Color**, using specific dynamics for specific expressive purposes
 
-Mastering dynamics is one of the fundamental skills of performance. A performer who plays all notes at the same volume — no matter how technically accomplished — will sound flat. A performer who uses dynamics beautifully can make even simple music feel deeply expressive.
+Mastering dynamics is one of the fundamental skills of performance. A performer who plays all notes at the same volume (no matter how technically accomplished) will sound flat. A performer who uses dynamics beautifully can make even simple music feel deeply expressive.
 
 ## Dynamic conventions across eras
 
 The use of dynamics has evolved:
 
-- **Baroque music** often uses very few dynamic markings. Dynamics were often understood to come from the texture and context (a passage with more voices is naturally louder than one with fewer). "Terraced dynamics" — sudden shifts between loud and soft — were more common than gradual changes.
+- **Baroque music** often uses very few dynamic markings. Dynamics were often understood to come from the texture and context (a passage with more voices is naturally louder than one with fewer). "Terraced dynamics"(sudden shifts between loud and soft) were more common than gradual changes.
 
 - **Classical music** added more explicit dynamic markings and introduced gradual changes (crescendos and decrescendos). The standard range from pp to ff was established during this era.
 
@@ -113,7 +113,7 @@ A performer reading a score should consider the era's conventions when interpret
 
 **How much louder is forte than piano?**
 
-Perceptually, roughly twice as loud. In decibel terms, about 10-15 dB louder. But the relationship is more about musical character than precise volume — forte should feel strong and confident; piano should feel soft and intimate. A performer's job is to create the appropriate musical character at each dynamic level.
+Perceptually, roughly twice as loud. In decibel terms, about 10-15 dB louder. But the relationship is more about musical character than precise volume, forte should feel strong and confident; piano should feel soft and intimate. A performer's job is to create the appropriate musical character at each dynamic level.
 
 **What's the difference between mp and mf?**
 

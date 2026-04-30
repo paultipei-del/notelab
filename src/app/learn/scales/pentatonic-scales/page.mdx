@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'pentatonic-scales',
   title: 'Pentatonic Scales',
   oneSentence:
-    'A pentatonic scale contains five notes instead of seven — a subset of a major or minor scale that leaves out the most tension-producing intervals, producing an open, universally pleasing sound used across cultures and styles.',
+    'A pentatonic scale contains five notes instead of seven, a subset of a major or minor scale that leaves out the most tension-producing intervals, producing an open, universally pleasing sound used across cultures and styles.',
   practice: [
     { kind: 'flashcard', label: 'Pentatonic, Blues, Chromatic, Whole Tone Flashcards', detail: '8 cards', href: '/study/other-scales' },
   ],
@@ -18,15 +18,15 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Take the major scale and remove two notes — specifically, the ones that cause the most tension (the 4th and 7th degrees). What you have left is a scale that contains almost no dissonance at all: every pair of notes sounds consonant with every other pair. That's a **pentatonic scale**, and it's one of the most universally pleasing sounds in all of music.
+Take the major scale and remove two notes, specifically, the ones that cause the most tension (the 4th and 7th degrees). What you have left is a scale that contains almost no dissonance at all: every pair of notes sounds consonant with every other pair. That's a **pentatonic scale**, and it's one of the most universally pleasing sounds in all of music.
 
-Pentatonic scales appear in virtually every culture on Earth, independently. Chinese folk music, Celtic traditional music, American blues, Appalachian folk, gospel, rock and roll, jazz, West African music — all use pentatonic scales heavily. The scale is so naturally consonant that almost anything you play on it sounds decent. Improvisers love it; beginners sound good on it immediately.
+Pentatonic scales appear in virtually every culture on Earth, independently. Chinese folk music, Celtic traditional music, American blues, Appalachian folk, gospel, rock and roll, jazz, West African music, all use pentatonic scales heavily. The scale is so naturally consonant that almost anything you play on it sounds decent. Improvisers love it; beginners sound good on it immediately.
 
 ## The visual
 
@@ -34,14 +34,14 @@ Pentatonic scales appear in virtually every culture on Earth, independently. Chi
   scale="major"
   tonic={60}
   dimmedMidis={[65, 71]}
-  caption="C major pentatonic — the major scale with the 4th (F) and 7th (B) removed. Those two omitted degrees are shown in gray."
+  caption="C major pentatonic, the major scale with the 4th (F) and 7th (B) removed. Those two omitted degrees are shown in gray."
 />
 
 <ScaleExplorer
   scale="natural-minor"
   tonic={69}
   dimmedMidis={[71, 77]}
-  caption="A minor pentatonic — A natural minor with the 2nd (B) and 6th (F) removed. Same pattern, different starting note: minor pentatonic is the relative minor of major pentatonic."
+  caption="A minor pentatonic, A natural minor with the 2nd (B) and 6th (F) removed. Same pattern, different starting note: minor pentatonic is the relative minor of major pentatonic."
 />
 
 ## The major pentatonic
@@ -75,14 +75,14 @@ Like major pentatonic, this scale omits the tension points. The 2nd and 6th are 
 
 Minor pentatonic is the backbone of blues, rock, and much American folk music. The familiar blues guitar riffs are largely built on minor pentatonic scales.
 
-## Major vs. minor pentatonic — closely related
+## Major vs. minor pentatonic, closely related
 
-A crucial relationship: **C major pentatonic and A minor pentatonic contain the exact same five notes** — C, D, E, G, A. They differ only in which note is heard as the tonic.
+A crucial relationship: **C major pentatonic and A minor pentatonic contain the exact same five notes**, C, D, E, G, A. They differ only in which note is heard as the tonic.
 
 - C major pentatonic: tonic is C. Notes: C, D, E, G, A, C.
 - A minor pentatonic: tonic is A. Notes: A, C, D, E, G, A.
 
-Same five pitches. Different tonic. Different feel — major pentatonic sounds bright; minor pentatonic sounds bluesier or darker.
+Same five pitches. Different tonic. Different feel, major pentatonic sounds bright; minor pentatonic sounds bluesier or darker.
 
 This relative-pentatonic relationship mirrors the relative-major/minor relationship of the full scales. Every major pentatonic has a "relative minor pentatonic" that shares its notes, starting three semitones down. Every minor pentatonic has a relative major pentatonic starting three semitones up.
 
@@ -104,7 +104,7 @@ Apply the interval pattern to any starting note.
 
 Pentatonic scales emerged independently in many musical traditions:
 
-- **Chinese music** has used pentatonic scales for thousands of years. The five notes are often named *gong, shang, jue, zhi, yu* — roughly corresponding to the five degrees of a major pentatonic.
+- **Chinese music** has used pentatonic scales for thousands of years. The five notes are often named *gong, shang, jue, zhi, yu*, roughly corresponding to the five degrees of a major pentatonic.
 - **Celtic and Scottish folk music** is heavily pentatonic. Many traditional tunes use only five notes of a major or minor pentatonic.
 - **American blues** is built on the minor pentatonic scale, often with the added "blue note" between the 3rd and 4th (or 4th and 5th, depending on analysis).
 - **Japanese folk music** uses several pentatonic scales, including variants that don't exactly match the Western major/minor pentatonic.
@@ -114,9 +114,9 @@ The consistency across cultures is striking. The pentatonic scale seems to refle
 
 ## Why pentatonic sounds so pleasing
 
-The major pentatonic contains only the strongest consonances within the major scale. No tritones. No minor seconds. No major sevenths. Every pair of notes is either a perfect 4th, perfect 5th, major 3rd, minor 3rd, major 2nd, or major 6th apart — all of which are consonant or mildly consonant.
+The major pentatonic contains only the strongest consonances within the major scale. No tritones. No minor seconds. No major sevenths. Every pair of notes is either a perfect 4th, perfect 5th, major 3rd, minor 3rd, major 2nd, or major 6th apart, all of which are consonant or mildly consonant.
 
-This means the scale is nearly impossible to play "wrong." Improvise on a major pentatonic over a major chord progression, and virtually anything you play will sound acceptable. The same is true of minor pentatonic over minor or blues progressions. This is why pentatonic scales are taught first to improvising students — they build confidence quickly because mistakes are rare.
+This means the scale is nearly impossible to play "wrong." Improvise on a major pentatonic over a major chord progression, and virtually anything you play will sound acceptable. The same is true of minor pentatonic over minor or blues progressions. This is why pentatonic scales are taught first to improvising students, they build confidence quickly because mistakes are rare.
 
 ## Common questions
 
@@ -130,8 +130,8 @@ Because the tension-producing notes in a full scale (the 4th, 7th, etc.) are wha
 
 **Is pentatonic the same thing in rock, blues, and jazz?**
 
-The minor pentatonic scale is essentially the same across these styles, but how it's used differs. Blues and rock lean heavily on the minor pentatonic plus the flat 5 ("blue note") — creating the minor blues scale. Jazz uses pentatonics flexibly, mixing major and minor pentatonics with chord-tone vocabulary. The scale is identical; the stylistic application varies.
+The minor pentatonic scale is essentially the same across these styles, but how it's used differs. Blues and rock lean heavily on the minor pentatonic plus the flat 5 ("blue note"), creating the minor blues scale. Jazz uses pentatonics flexibly, mixing major and minor pentatonics with chord-tone vocabulary. The scale is identical; the stylistic application varies.
 
 **Are there other pentatonic scales besides major and minor?**
 
-Yes — many. In Chinese music, there are five distinct modes of the major pentatonic (similar to the seven modes of a major scale). Japanese *In* and *Yo* scales are pentatonic but with different interval structures. Indonesian and Javanese gamelan use their own pentatonic scales. The major and minor pentatonic are the two most commonly used in Western music, but the pentatonic family is broad.
+Yes, many. In Chinese music, there are five distinct modes of the major pentatonic (similar to the seven modes of a major scale). Japanese *In* and *Yo* scales are pentatonic but with different interval structures. Indonesian and Javanese gamelan use their own pentatonic scales. The major and minor pentatonic are the two most commonly used in Western music, but the pentatonic family is broad.

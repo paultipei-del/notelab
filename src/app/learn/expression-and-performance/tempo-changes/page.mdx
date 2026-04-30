@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'tempo-changes',
   title: 'Tempo Changes',
   oneSentence:
-    'Tempo changes during a piece — accelerando (gradually faster), ritardando (gradually slower), a tempo (return to the original tempo), and fermata (pause or hold) — give music expressive flexibility, allowing passages to stretch, rush, or suspend time for dramatic effect.',
+    'Tempo changes during a piece, accelerando (gradually faster), ritardando (gradually slower), a tempo (return to the original tempo), and fermata (pause or hold), give music expressive flexibility, allowing passages to stretch, rush, or suspend time for dramatic effect.',
   practice: [
     { kind: 'flashcard', label: 'Tempo Markings Flashcards', detail: '12 cards', href: '/study/tempo' },
   ],
@@ -17,43 +17,43 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-A steady tempo throughout a piece would be mechanical. Music breathes — it speeds up at moments of excitement, slows down at moments of reflection, pauses at dramatic points. These changes in tempo — from barely perceptible rubato to dramatic ritardandos at cadences — are an essential part of expressive performance.
+A steady tempo throughout a piece would be mechanical. Music breathes, it speeds up at moments of excitement, slows down at moments of reflection, pauses at dramatic points. These changes in tempo (from barely perceptible rubato to dramatic ritardandos at cadences) are an essential part of expressive performance.
 
-Composers mark intended tempo changes with specific terms, usually Italian: *accelerando* for speeding up, *ritardando* for slowing down, and so on. Performers also apply smaller unmarked tempo changes as a matter of interpretation — the subtle give-and-take that makes music feel alive rather than metronomically rigid.
+Composers mark intended tempo changes with specific terms, usually Italian: *accelerando* for speeding up, *ritardando* for slowing down, and so on. Performers also apply smaller unmarked tempo changes as a matter of interpretation, the subtle give-and-take that makes music feel alive rather than metronomically rigid.
 
 ## The visual
 
-<DiagramPlaceholder description="A passage with tempo change markings — 'accel.' beneath a building passage, 'rit.' beneath a slowing passage, 'a tempo' marking a return to the original speed, and a fermata (held note) at a climactic moment." />
+<DiagramPlaceholder description="A passage with tempo change markings, 'accel.' beneath a building passage, 'rit.' beneath a slowing passage, 'a tempo' marking a return to the original speed, and a fermata (held note) at a climactic moment." />
 
 <DiagramPlaceholder description="A typical phrase ending with a ritardando into the cadence, showing how the slowing tempo aligns with the harmonic resolution." />
 
 ## Main tempo-change terms
 
-**accelerando (accel.)** — gradually getting faster. Used to build excitement, rush toward a climax, or transition between sections.
+**accelerando (accel.)**, gradually getting faster. Used to build excitement, rush toward a climax, or transition between sections.
 
-**ritardando (rit.)** — gradually getting slower. Used for settling, approaching a cadence, or giving weight to an important moment. Sometimes called "ritard" informally.
+**ritardando (rit.)**, gradually getting slower. Used for settling, approaching a cadence, or giving weight to an important moment. Sometimes called "ritard" informally.
 
-**rallentando (rall.)** — gradually getting slower, similar to ritardando. In some traditions rallentando is interpreted as a slightly broader, more deliberate slowing than ritardando, but the distinction is subtle and often unused.
+**rallentando (rall.)**, gradually getting slower, similar to ritardando. In some traditions rallentando is interpreted as a slightly broader, more deliberate slowing than ritardando, but the distinction is subtle and often unused.
 
-**stringendo** — pressing forward, getting faster. Similar to accelerando, with a connotation of urgent intensification.
+**stringendo**, pressing forward, getting faster. Similar to accelerando, with a connotation of urgent intensification.
 
-**a tempo** — "to the tempo." Return to the original tempo after a change. Typically marked after a ritardando or accelerando to signal that the regular tempo resumes.
+**a tempo**, "to the tempo." Return to the original tempo after a change. Typically marked after a ritardando or accelerando to signal that the regular tempo resumes.
 
-**tempo primo (tempo I)** — "first tempo." Return to the very first tempo of the piece (useful when there have been multiple tempo changes).
+**tempo primo (tempo I)**, "first tempo." Return to the very first tempo of the piece (useful when there have been multiple tempo changes).
 
-## Fermata — suspension of time
+## Fermata, suspension of time
 
 A **fermata** (also called a "pause" or "hold") is notated as a curved symbol above a note or rest, resembling an eye or a half-moon:
 
 **𝄐**
 
-A fermata tells the performer to hold the note (or rest) longer than its written value — how much longer is up to the performer's judgment. Fermatas create moments of suspension, where the pulse of the music temporarily stops and the note rings out until the performer decides to move on.
+A fermata tells the performer to hold the note (or rest) longer than its written value, how much longer is up to the performer's judgment. Fermatas create moments of suspension, where the pulse of the music temporarily stops and the note rings out until the performer decides to move on.
 
 Typical uses:
 - At the end of a piece (a final chord held slightly longer)
@@ -61,28 +61,28 @@ Typical uses:
 - In recitative-style passages (where the beat is flexible by nature)
 - At the end of sections to set up a new section
 
-There are also **luftpause** or "breath marks" — short commas above the staff indicating a brief pause for breath or silence. These are shorter than fermatas but serve a similar function of suspending forward motion briefly.
+There are also **luftpause** or "breath marks", short commas above the staff indicating a brief pause for breath or silence. These are shorter than fermatas but serve a similar function of suspending forward motion briefly.
 
-## Rubato — expressive flexibility
+## Rubato, expressive flexibility
 
-**Rubato** (literally "stolen time") is a performance technique where the tempo bends subtly within a phrase — slightly faster here, slightly slower there — without an overall change in the pulse. The "stolen" time is given back: a few notes that rush are balanced by a few notes that linger.
+**Rubato** (literally "stolen time") is a performance technique where the tempo bends subtly within a phrase (slightly faster here, slightly slower there) without an overall change in the pulse. The "stolen" time is given back: a few notes that rush are balanced by a few notes that linger.
 
 Rubato isn't typically marked explicitly; it's a matter of interpretation. Rubato might be indicated by words like "rubato" or "poco rubato" or "tempo flessibile," but even without marking, performers often apply subtle rubato as an expressive choice.
 
 Rubato varies by style:
 
-- **Classical music** uses restrained rubato — the tempo bends, but never too far. The overall pulse must remain recognizable.
-- **Romantic music** uses more dramatic rubato — especially in Chopin's piano music, where substantial freedom is expected.
-- **Jazz** uses rubato in specific ways — melodies "lag behind" or "push ahead" of the beat for expressive effect, while the rhythm section maintains the pulse.
-- **Folk music** uses rubato naturally — the lack of a rigid beat often allows significant temporal flexibility.
+- **Classical music** uses restrained rubato, the tempo bends, but never too far. The overall pulse must remain recognizable.
+- **Romantic music** uses more dramatic rubato, especially in Chopin's piano music, where substantial freedom is expected.
+- **Jazz** uses rubato in specific ways, melodies "lag behind" or "push ahead" of the beat for expressive effect, while the rhythm section maintains the pulse.
+- **Folk music** uses rubato naturally, the lack of a rigid beat often allows significant temporal flexibility.
 
-Rubato done well is invisible — the listener experiences the music as expressive and natural. Rubato done badly is noticeable — the music feels jerky, arbitrary, or wandering.
+Rubato done well is invisible, the listener experiences the music as expressive and natural. Rubato done badly is noticeable, the music feels jerky, arbitrary, or wandering.
 
-## When to slow down — the cadence convention
+## When to slow down, the cadence convention
 
 A very common tempo technique: slowing down slightly as a phrase approaches its cadence. This "softens the landing," giving the cadence weight and importance. The slowdown might be subtle (a few percent slower) or obvious (a full ritardando marked in the score).
 
-In Classical music, the ritardando at the final cadence of a movement is nearly universal. In jazz, the last bars of a performance often slow down deliberately. In folk music, cadences commonly breathe — no rigid pulse maintained through them.
+In Classical music, the ritardando at the final cadence of a movement is nearly universal. In jazz, the last bars of a performance often slow down deliberately. In folk music, cadences commonly breathe, no rigid pulse maintained through them.
 
 This is a perceptual convention: listeners hear phrases as rising-then-falling motions, and slowing at the end emphasizes the arrival. Whether or not the composer writes a ritardando, most performers apply one naturally at phrase endings and especially at piece endings.
 
@@ -94,7 +94,7 @@ Good tempo-change interpretation involves:
 
 **Matching the musical shape.** If the music is building intensity, accelerate proportionally. If the music is settling into repose, ritard gracefully.
 
-**Pacing.** A ritardando that happens too early in the phrase feels weak; one that's too sudden feels jerky. Usually the slowdown accelerates toward the end — the last few notes slow more than the earlier ones.
+**Pacing.** A ritardando that happens too early in the phrase feels weak; one that's too sudden feels jerky. Usually the slowdown accelerates toward the end, the last few notes slow more than the earlier ones.
 
 **Proportion.** In music with multiple tempo changes, the relationships between tempos matter. Going from Allegro to Adagio via a ritardando should feel like a significant shift; going from Allegro to Allegretto via a ritardando should feel like a subtle one.
 
@@ -104,16 +104,16 @@ Good tempo-change interpretation involves:
 
 **How fast is "accelerando"?**
 
-Variable. The marking just says "get faster." The specific rate depends on musical context — how much faster, over how many measures. A gradual accelerando over 16 measures builds slowly; a rapid accelerando over 2 measures rushes. The performer reads the musical context and chooses a rate that serves the music.
+Variable. The marking just says "get faster." The specific rate depends on musical context, how much faster, over how many measures. A gradual accelerando over 16 measures builds slowly; a rapid accelerando over 2 measures rushes. The performer reads the musical context and chooses a rate that serves the music.
 
 **What's the difference between a fermata and a long note?**
 
-A long note has a specific written duration (whole note, dotted half note, etc.). A fermata adds indeterminate extra length — the performer holds beyond the written duration. A whole note with a fermata means "hold this even longer than a whole note would naturally last."
+A long note has a specific written duration (whole note, dotted half note, etc.). A fermata adds indeterminate extra length, the performer holds beyond the written duration. A whole note with a fermata means "hold this even longer than a whole note would naturally last."
 
 **Should I always ritard at the end of pieces?**
 
-Usually yes, but the degree varies by style and context. A Bach fugue's ending might have a subtle ritardando that's barely perceptible. A Tchaikovsky symphony's ending might have a dramatic one. Pop and rock often don't ritard at all — the final chord hits on the beat. Context and style determine the appropriate choice.
+Usually yes, but the degree varies by style and context. A Bach fugue's ending might have a subtle ritardando that's barely perceptible. A Tchaikovsky symphony's ending might have a dramatic one. Pop and rock often don't ritard at all, the final chord hits on the beat. Context and style determine the appropriate choice.
 
 **Is rubato cheating somehow?**
 
-No — it's a standard expressive technique, written into the performance traditions of many styles. What matters is that rubato serves the music rather than drawing attention to itself. Rubato that feels natural and organic enhances expression; rubato that feels affected or arbitrary detracts from it.
+No, it's a standard expressive technique, written into the performance traditions of many styles. What matters is that rubato serves the music rather than drawing attention to itself. Rubato that feels natural and organic enhances expression; rubato that feels affected or arbitrary detracts from it.

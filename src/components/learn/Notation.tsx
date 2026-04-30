@@ -50,32 +50,21 @@ export default function Notation({ musicXml, caption, ariaLabel, zoom = 1 }: Not
       osmdInstance.load(musicXml).then(() => {
         if (!cancelled && osmdInstance) {
           osmdInstance.render()
-          // Brute-force center: OSMD generates a wrapper div + SVG with its
-          // own width/positioning. After render, measure the SVG natural
-          // width, then constrain the container to that width and let
-          // `margin: 0 auto` (set on the figure-level wrapper above) center it.
+          // OSMD renders <div><svg/></div>. To center the SVG, shrink OSMD's
+          // wrapper div to the SVG's natural width — then text-align:center
+          // on the outer container puts it dead center.
           const svg = container.querySelector('svg') as SVGSVGElement | null
-          if (svg) {
+          const inner = container.querySelector(':scope > div') as HTMLElement | null
+          if (svg && inner) {
             const w = svg.getBoundingClientRect().width
-            // Strip any width OSMD applied to the inner wrapper divs and set
-            // the SVG's display so margin auto works.
-            container.style.width = w ? `${Math.ceil(w)}px` : container.style.width
-            container.style.maxWidth = '100%'
-            container.style.marginLeft = 'auto'
-            container.style.marginRight = 'auto'
-            // Also force the SVG itself to block + auto margin in case the
-            // wrapper width approach misses anything.
+            if (w > 0) {
+              inner.style.width = `${Math.ceil(w)}px`
+              inner.style.display = 'inline-block'
+              inner.style.maxWidth = '100%'
+            }
+          }
+          if (svg) {
             svg.style.display = 'block'
-            svg.style.margin = '0 auto'
-            // Some OSMD wrappers are absolutely positioned — re-flow them.
-            Array.from(container.querySelectorAll('div')).forEach((d) => {
-              const el = d as HTMLElement
-              if (el.style.position === 'absolute') {
-                el.style.position = 'static'
-              }
-              el.style.marginLeft = 'auto'
-              el.style.marginRight = 'auto'
-            })
           }
         }
       }).catch(() => {
@@ -101,12 +90,11 @@ export default function Notation({ musicXml, caption, ariaLabel, zoom = 1 }: Not
           rule below centers that SVG inside its container regardless of the
           width OSMD assigns to it. */}
       <style>{`
-        .nl-notation > div > svg {
-          display: block;
-          margin: 0 auto;
+        .nl-notation > div > div {
+          display: inline-block;
         }
       `}</style>
-      <div id={divId} style={{ overflowX: 'auto', width: '100%', display: 'flex', justifyContent: 'center' }} />
+      <div id={divId} style={{ overflowX: 'auto', width: '100%', textAlign: 'center' }} />
       {caption && (
         <figcaption
           style={{

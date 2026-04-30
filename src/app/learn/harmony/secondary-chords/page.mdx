@@ -6,30 +6,30 @@ export const learnPage = {
   subtopic: 'secondary-chords',
   title: 'Secondary Chords',
   oneSentence:
-    'The secondary chords — ii, iii, vi, and sometimes vii° — are the minor-quality diatonic chords of a major key (plus the diminished leading-tone chord), each with specific harmonic functions that complement the primary I-IV-V system.',
+    'The secondary chords (ii, iii, vi, and sometimes vii°) are the minor-quality diatonic chords of a major key (plus the diminished leading-tone chord), each with specific harmonic functions that complement the primary I-IV-V system.',
   practice: [],
   related: [
-    { title: 'Primary Chords — I, IV, V',   href: '/learn/harmony/primary-chords' },
+    { title: 'Primary Chords, I, IV, V',   href: '/learn/harmony/primary-chords' },
     { title: 'The Leading-Tone Chord',       href: '/learn/harmony/the-leading-tone-chord' },
     { title: 'Roman Numeral Analysis',       href: '/learn/harmony/roman-numeral-analysis' },
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-The primary chords (I, IV, V) form the backbone of tonal harmony, but they're not the whole story. The other chords — **ii, iii, vi**, and sometimes **vii°** — provide harmonic variety, functional substitutions, and smoother voice leading. These are the **secondary chords**: in major keys, the minor-quality chords built on the 2nd, 3rd, and 6th degrees, plus the diminished chord on the 7th.
+The primary chords (I, IV, V) form the backbone of tonal harmony, but they're not the whole story. The other chords (**ii, iii, vi**, and sometimes **vii°**) provide harmonic variety, functional substitutions, and smoother voice leading. These are the **secondary chords**: in major keys, the minor-quality chords built on the 2nd, 3rd, and 6th degrees, plus the diminished chord on the 7th.
 
-Secondary chords aren't "lesser" than the primary chords — they're different, serving different roles. Many of the richest tonal progressions use secondary chords heavily. And some progressions, like ii-V-I (the backbone of jazz), center on a secondary chord as the pre-dominant.
+Secondary chords aren't "lesser" than the primary chords, they're different, serving different roles. Many of the richest tonal progressions use secondary chords heavily. And some progressions, like ii-V-I (the backbone of jazz), center on a secondary chord as the pre-dominant.
 
 ## The visual
 
 <DiagramPlaceholder description="The seven diatonic triads of C major on a grand staff, with the secondary chords (ii, iii, vi, vii°) highlighted and labeled." />
 
-<DiagramPlaceholder description="A typical progression using secondary chords — I - vi - ii - V - I - showing smooth voice leading." />
+<DiagramPlaceholder description="A typical progression using secondary chords (I) vi (ii) V (I) showing smooth voice leading." />
 
 ## The secondary chords of a major key
 
@@ -38,9 +38,9 @@ Secondary chords aren't "lesser" than the primary chords — they're different, 
 - Minor quality in major keys
 - In C major: Dm (D-F-A)
 
-The **ii chord** is a **pre-dominant** — it functions to lead toward V. A very common progression is ii-V-I, where ii sets up V, which then resolves to I. The root motion is smooth (ii to V is a descending fifth, V to I is also a descending fifth), and the chord qualities create a satisfying sequence: minor ii → major V → major I.
+The **ii chord** is a **pre-dominant**, it functions to lead toward V. A very common progression is ii-V-I, where ii sets up V, which then resolves to I. The root motion is smooth (ii to V is a descending fifth, V to I is also a descending fifth), and the chord qualities create a satisfying sequence: minor ii → major V → major I.
 
-ii shares two notes with IV (scale degrees 4 and 6), so ii often substitutes for IV in pre-dominant position. The result is a slightly darker, more nuanced pre-dominant sound — the minor quality of ii instead of the major quality of IV.
+ii shares two notes with IV (scale degrees 4 and 6), so ii often substitutes for IV in pre-dominant position. The result is a slightly darker, more nuanced pre-dominant sound, the minor quality of ii instead of the major quality of IV.
 
 In first inversion (ii6), the ii chord sounds especially smooth leading to V. The bass of ii6 is the 4th scale degree (same as IV), which makes the root movement to V even more natural.
 
@@ -56,16 +56,16 @@ When iii does appear, it's often:
 - As a coloristic substitute for I
 - In sequences and series of chords moving by descending thirds (I-vi-iii-I, etc.)
 
-iii shares notes with both I (scale degree 3) and V (scale degrees 3, 5, 7 — wait, V has 5-7-2, so iii shares only scale degree 3 — the shared note with I being the overlap). Its ambiguity makes it flexible but also less commonly used than ii or vi.
+iii shares notes with both I (scale degree 3) and V (scale degrees 3, 5, 7, wait, V has 5-7-2, so iii shares only scale degree 3, the shared note with I being the overlap). Its ambiguity makes it flexible but also less commonly used than ii or vi.
 
 **vi (the submediant chord)**
 - Built on scale degree 6
 - Minor quality in major keys
 - In C major: Am (A-C-E)
 
-The **vi chord** is one of the most important secondary chords. It's the relative minor of I — vi and I share the same pitches as their relative major/minor scales. This means vi can substitute for I in many contexts, creating a darker, more melancholy version of tonic function.
+The **vi chord** is one of the most important secondary chords. It's the relative minor of I, vi and I share the same pitches as their relative major/minor scales. This means vi can substitute for I in many contexts, creating a darker, more melancholy version of tonic function.
 
-**Deceptive cadence:** One of the most famous uses of vi is the deceptive cadence (V-vi). The ear expects V to resolve to I (the standard authentic cadence); when it resolves instead to vi, the effect is a "trick" — a deferred or avoided resolution that keeps the music going. Many classical pieces use deceptive cadences to extend a phrase beyond where it seems to want to end.
+**Deceptive cadence:** One of the most famous uses of vi is the deceptive cadence (V-vi). The ear expects V to resolve to I (the standard authentic cadence); when it resolves instead to vi, the effect is a "trick", a deferred or avoided resolution that keeps the music going. Many classical pieces use deceptive cadences to extend a phrase beyond where it seems to want to end.
 
 **Tonic substitute:** In pop and rock progressions, vi often stands in for I, creating a sense of minor-mode color within a major-key piece. The "Axis" progression (I-V-vi-IV) treats vi as a structural equal to I, and thousands of modern songs spend significant time on vi rather than I.
 
@@ -74,19 +74,19 @@ The **vi chord** is one of the most important secondary chords. It's the relativ
 - Diminished quality in major keys
 - In C major: B° (B-D-F)
 
-The **vii° chord** is technically a secondary chord (not a primary one) but functions nearly as a partial V7 — it shares three of V7's four notes (in C major, V7 is G-B-D-F and vii° is B-D-F, which is V7 minus its root). It has its own page for a closer look. vii° is less commonly used than the other secondary chords in root-position form; it appears most often in first inversion (vii°6) or as a leading-tone seventh chord (vii°7 or viiø7).
+The **vii° chord** is technically a secondary chord (not a primary one) but functions nearly as a partial V7, it shares three of V7's four notes (in C major, V7 is G-B-D-F and vii° is B-D-F, which is V7 minus its root). It has its own page for a closer look. vii° is less commonly used than the other secondary chords in root-position form; it appears most often in first inversion (vii°6) or as a leading-tone seventh chord (vii°7 or viiø7).
 
 ## How secondary chords interact with primary chords
 
 A typical well-crafted progression weaves primary and secondary chords into longer sequences:
 
-**I-vi-IV-V-I** — tonic, relative minor (tonic substitute), subdominant, dominant, tonic. Four distinct harmonic colors rather than just three.
+**I-vi-IV-V-I**, tonic, relative minor (tonic substitute), subdominant, dominant, tonic. Four distinct harmonic colors rather than just three.
 
-**I-ii-V-I** — tonic, pre-dominant (softer than IV), dominant, tonic. The ii chord adds color the IV chord wouldn't.
+**I-ii-V-I**, tonic, pre-dominant (softer than IV), dominant, tonic. The ii chord adds color the IV chord wouldn't.
 
-**I-iii-vi-IV-V-I** — an extended sequence using descending-third motion through most of the secondary chords before returning to V-I.
+**I-iii-vi-IV-V-I**, an extended sequence using descending-third motion through most of the secondary chords before returning to V-I.
 
-**I-vi-ii-V-I** — a classic "circle-of-fifths" progression, with each chord's root descending by a fifth to the next (except I to vi, which goes down a third). Used constantly in jazz, pop, and earlier tonal music.
+**I-vi-ii-V-I**, a classic "circle-of-fifths" progression, with each chord's root descending by a fifth to the next (except I to vi, which goes down a third). Used constantly in jazz, pop, and earlier tonal music.
 
 These progressions are richer than three-chord progressions because they use more of the diatonic vocabulary. The secondary chords add variety, allow smoother voice leading, and create multi-step harmonic motion.
 
@@ -106,7 +106,7 @@ Minor keys have their own pattern of secondary chords, with different qualities:
 - VI (major)
 - vii° (diminished, built on the raised 7th)
 
-Compared to major keys, minor keys have more diminished chords and more variability between natural and harmonic minor forms. This gives minor-key harmony a richer, more chromatic palette than major-key harmony — part of why minor-key music often sounds more emotionally complex.
+Compared to major keys, minor keys have more diminished chords and more variability between natural and harmonic minor forms. This gives minor-key harmony a richer, more chromatic palette than major-key harmony, part of why minor-key music often sounds more emotionally complex.
 
 ## Common questions
 

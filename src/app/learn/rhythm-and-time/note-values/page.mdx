@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'note-values',
   title: 'Note Values',
   oneSentence:
-    'Note values are the symbols that tell you how long a note lasts — whole, half, quarter, eighth, sixteenth — each worth exactly half the duration of the note above it in the hierarchy.',
+    'Note values are the symbols that tell you how long a note lasts (whole, half, quarter, eighth, sixteenth) each worth exactly half the duration of the note above it in the hierarchy.',
   practice: [
     { kind: 'flashcard', label: 'Note & Rest Values Flashcards', detail: '12 cards', href: '/study/symbols-note-values' },
   ],
@@ -18,13 +18,13 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Every note in written music has two jobs: tell you what pitch to play, and tell you how long to play it. The pitch comes from where the note sits on the staff. The duration comes from what the note *looks like* — whether it's hollow or filled in, whether it has a stem, whether it has flags or beams.
+Every note in written music has two jobs: tell you what pitch to play, and tell you how long to play it. The pitch comes from where the note sits on the staff. The duration comes from what the note *looks like*, whether it's hollow or filled in, whether it has a stem, whether it has flags or beams.
 
 These visual features are called **note values**. They form a simple doubling hierarchy: each note value is worth exactly half the duration of the one above it. Master the hierarchy once, and you can read any rhythmic duration in standard notation.
 
@@ -32,20 +32,20 @@ These visual features are called **note values**. They form a simple doubling hi
 
 <NoteValueHierarchy caption="Each note value is exactly half the duration of the one above it. The whole note holds the same time as two halves, four quarters, eight eighths (beamed in pairs), or sixteen sixteenths (beamed in groups of four)." />
 
-<BeatCountExample caption="Four quarter notes in a measure of 4/4 — each one gets one beat, and together they fill the measure. Click any to hear it." />
+<BeatCountExample caption="Four quarter notes in a measure of 4/4, each one gets one beat, and together they fill the measure. Click any to hear it." />
 
 ## The basic hierarchy
 
 The six most common note values, from longest to shortest:
 
-- **Whole note** — an open (hollow) notehead with no stem. Worth 4 beats in 4/4 time.
-- **Half note** — an open notehead with a stem. Worth 2 beats.
-- **Quarter note** — a filled (solid) notehead with a stem. Worth 1 beat.
-- **Eighth note** — a filled notehead with a stem and one flag. Worth 1/2 beat.
-- **Sixteenth note** — a filled notehead with a stem and two flags. Worth 1/4 beat.
-- **Thirty-second note** — stem with three flags. Worth 1/8 beat.
+- **Whole note**, an open (hollow) notehead with no stem. Worth 4 beats in 4/4 time.
+- **Half note**, an open notehead with a stem. Worth 2 beats.
+- **Quarter note**, a filled (solid) notehead with a stem. Worth 1 beat.
+- **Eighth note**, a filled notehead with a stem and one flag. Worth 1/2 beat.
+- **Sixteenth note**, a filled notehead with a stem and two flags. Worth 1/4 beat.
+- **Thirty-second note**, stem with three flags. Worth 1/8 beat.
 
-Each value is half the duration of the one above it. Two half notes equal one whole note. Two quarter notes equal one half note. Two eighth notes equal one quarter note. This halving relationship is the core of how Western rhythm is notated — durations are built from a simple binary tree rooted in the whole note.
+Each value is half the duration of the one above it. Two half notes equal one whole note. Two quarter notes equal one half note. Two eighth notes equal one quarter note. This halving relationship is the core of how Western rhythm is notated, durations are built from a simple binary tree rooted in the whole note.
 
 Shorter values exist (sixty-fourth, hundred-twenty-eighth) but are rare outside of very ornate or rapid passages.
 
@@ -59,23 +59,23 @@ The visual pattern builds up systematically:
 
 3. **Flags** (or beams) make the difference between quarter note and everything shorter. Each flag halves the value again. One flag = eighth note. Two flags = sixteenth. Three flags = thirty-second.
 
-4. **Beams** replace flags when two or more short notes sit together. Two eighth notes joined by a single beam look cleaner than two flagged eighth notes in a row, and they're easier to read at a glance. The number of beams matches the number of flags each individual note would have — one beam for eighths, two beams for sixteenths.
+4. **Beams** replace flags when two or more short notes sit together. Two eighth notes joined by a single beam look cleaner than two flagged eighth notes in a row, and they're easier to read at a glance. The number of beams matches the number of flags each individual note would have, one beam for eighths, two beams for sixteenths.
 
-Once you internalize the logic (notehead → stem → flags/beams), reading any note value is immediate. You're not memorizing six or eight separate symbols — you're reading one symbol that builds up from a small set of rules.
+Once you internalize the logic (notehead → stem → flags/beams), reading any note value is immediate. You're not memorizing six or eight separate symbols, you're reading one symbol that builds up from a small set of rules.
 
 ## How note values relate to the beat
 
 In most music, the **quarter note gets one beat**. That's the default assumption of a 4/4 time signature, and it's what makes the quarter note the natural reference point for most rhythmic thinking.
 
-But the quarter note isn't hardcoded as "one beat" — the time signature decides. In 3/4 or 4/4, the quarter note is the beat. In 6/8 or 9/8, the dotted quarter (or sometimes the eighth) is the beat. In 2/2 (cut time), the half note is the beat. Note values have fixed duration relationships *to each other*, but which value equals one beat depends on context.
+But the quarter note isn't hardcoded as "one beat", the time signature decides. In 3/4 or 4/4, the quarter note is the beat. In 6/8 or 9/8, the dotted quarter (or sometimes the eighth) is the beat. In 2/2 (cut time), the half note is the beat. Note values have fixed duration relationships *to each other*, but which value equals one beat depends on context.
 
-This is why learning note values thoroughly is essential. The values themselves never change — a half note is always twice as long as a quarter note — but the beat assignment shifts. Once you see the logic, reading any time signature becomes far easier.
+This is why learning note values thoroughly is essential. The values themselves never change (a half note is always twice as long as a quarter note) but the beat assignment shifts. Once you see the logic, reading any time signature becomes far easier.
 
 ## Naming conventions
 
 The naming reflects the relationship to the whole note. A whole note is one whole note; a half note is half of a whole note; a quarter note is a quarter of a whole note; and so on.
 
-Some countries use different names. British English uses: semibreve (whole), minim (half), crotchet (quarter), quaver (eighth), semiquaver (sixteenth), demisemiquaver (thirty-second). The logic is the same — a system of halvings from a root value — but the words come from Latin and older English musical terminology.
+Some countries use different names. British English uses: semibreve (whole), minim (half), crotchet (quarter), quaver (eighth), semiquaver (sixteenth), demisemiquaver (thirty-second). The logic is the same (a system of halvings from a root value) but the words come from Latin and older English musical terminology.
 
 American English and British English are the two dominant naming systems. Most international communication uses American names (whole, half, quarter) because of their directness. You'll encounter British names in older or UK-published scores and textbooks.
 
@@ -83,7 +83,7 @@ American English and British English are the two dominant naming systems. Most i
 
 **Why is it called a "quarter note" if it's the default beat?**
 
-For historical reasons. The whole note is called "whole" because it fills a whole measure in 4/4 — it was the reference unit when the naming system developed. The quarter note is a *quarter* of that reference. Whether it's the beat or not is a matter of the time signature; whether it's called a "quarter" is a matter of its fraction of the whole.
+For historical reasons. The whole note is called "whole" because it fills a whole measure in 4/4, it was the reference unit when the naming system developed. The quarter note is a *quarter* of that reference. Whether it's the beat or not is a matter of the time signature; whether it's called a "quarter" is a matter of its fraction of the whole.
 
 **How long does a whole note actually last?**
 
@@ -95,4 +95,4 @@ They exist. A **double whole note** or **breve** (2 whole notes, sometimes writt
 
 **How do beams work when I have mixed note values?**
 
-Each beam between two notes represents one flag's worth of value. A single beam connects two eighth notes. Two beams connect two sixteenth notes. When a group mixes values — say, an eighth note and two sixteenth notes — the beam structure has a primary beam connecting all three (representing the eighth-note value they share) and a secondary beam connecting just the two sixteenth notes (representing the extra halving). The rule: beams connect notes that share subdivisions, and extra beams appear where extra subdivisions do.
+Each beam between two notes represents one flag's worth of value. A single beam connects two eighth notes. Two beams connect two sixteenth notes. When a group mixes values (say, an eighth note and two sixteenth notes) the beam structure has a primary beam connecting all three (representing the eighth-note value they share) and a secondary beam connecting just the two sixteenth notes (representing the extra halving). The rule: beams connect notes that share subdivisions, and extra beams appear where extra subdivisions do.

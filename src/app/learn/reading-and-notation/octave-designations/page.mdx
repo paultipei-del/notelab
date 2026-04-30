@@ -8,7 +8,7 @@ export const learnPage = {
   subtopic: 'octave-designations',
   title: 'Octave Designations',
   oneSentence:
-    'Scientific pitch notation adds a number to each note name — C4 for middle C, A4 for the A above it, G3 for the G below — giving every pitch a precise, unambiguous label that tells you exactly which octave it lives in.',
+    'Scientific pitch notation adds a number to each note name (C4 for middle C, A4 for the A above it, G3 for the G below) giving every pitch a precise, unambiguous label that tells you exactly which octave it lives in.',
   practice: [],
   related: [
     { title: 'Note Names and the Musical Alphabet',   href: '/learn/reading-and-notation/note-names-and-the-musical-alphabet' },
@@ -17,15 +17,15 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Letter names tell you what pitch class a note belongs to — C, D, E, and so on — but they don't tell you *which* C, D, or E. A piano has eight Cs. An orchestra covers multiple octaves of every pitch. When a musician says "play a C," which C do they mean?
+Letter names tell you what pitch class a note belongs to (C, D, E, and so on) but they don't tell you *which* C, D, or E. A piano has eight Cs. An orchestra covers multiple octaves of every pitch. When a musician says "play a C," which C do they mean?
 
-Octave designations fix this. By adding a number after the letter name, we specify exactly which octave the note sits in. **Middle C** becomes **C4**. The C one octave higher is **C5**. The C one octave lower is **C3**. This system — **scientific pitch notation**, or SPN — has become the standard way to refer unambiguously to specific pitches.
+Octave designations fix this. By adding a number after the letter name, we specify exactly which octave the note sits in. **Middle C** becomes **C4**. The C one octave higher is **C5**. The C one octave lower is **C3**. This system (**scientific pitch notation**, or SPN) has become the standard way to refer unambiguously to specific pitches.
 
 ## The visual
 
@@ -41,7 +41,7 @@ Octave designations fix this. By adding a number after the letter name, we speci
   highlightedMidis={[60]}
   showLabels="all-c-with-octave"
   whiteKeyWidthOverride={14}
-  caption="The full 88-key piano. Each C is labeled with its octave number — C1 through C8. Middle C is C4, almost exactly in the middle of the keyboard. This naming system is called scientific pitch notation."
+  caption="The full 88-key piano. Each C is labeled with its octave number, C1 through C8. Middle C is C4, almost exactly in the middle of the keyboard. This naming system is called scientific pitch notation."
 />
 
 ## How scientific pitch notation works
@@ -52,7 +52,7 @@ Every pitch gets a letter (A through G) and a number (0 through 8, typically) in
 - Then: C5, D5, E5, F5, G5, A5, B5
 - Then: C6, and so on
 
-Notice that the number increments at C, not at A. This is a deliberate choice — it means a full octave (C to B) always shares the same number, which matches how musicians naturally think about octaves. The octave from C4 to B4 is "the fourth octave"; everything in it has a 4 after the letter.
+Notice that the number increments at C, not at A. This is a deliberate choice, it means a full octave (C to B) always shares the same number, which matches how musicians naturally think about octaves. The octave from C4 to B4 is "the fourth octave"; everything in it has a 4 after the letter.
 
 Sharps and flats keep their octave number with them: **C♯4** is the C♯ in the fourth octave, **B♭3** is the B♭ in the third octave.
 
@@ -60,20 +60,20 @@ Sharps and flats keep their octave number with them: **C♯4** is the C♯ in th
 
 An 88-key piano covers seven and a quarter octaves. The Cs on the keyboard are:
 
-- **C1** — second-lowest C, about 32.7 Hz, deep bass range
-- **C2** — pedal C, about 65.4 Hz, low bass
-- **C3** — bass C, about 130.8 Hz, bottom of tenor range
-- **C4** — **middle C**, about 261.6 Hz, the center of the keyboard
-- **C5** — treble C, about 523.3 Hz, the C above middle C
-- **C6** — "high C" for sopranos, about 1046.5 Hz
-- **C7** — very high, about 2093 Hz
-- **C8** — the highest C on a standard piano, about 4186 Hz
+- **C1**, second-lowest C, about 32.7 Hz, deep bass range
+- **C2**, pedal C, about 65.4 Hz, low bass
+- **C3**, bass C, about 130.8 Hz, bottom of tenor range
+- **C4**, **middle C**, about 261.6 Hz, the center of the keyboard
+- **C5**, treble C, about 523.3 Hz, the C above middle C
+- **C6**, "high C" for sopranos, about 1046.5 Hz
+- **C7**, very high, about 2093 Hz
+- **C8**, the highest C on a standard piano, about 4186 Hz
 
 The lowest note on a standard 88-key piano is **A0** (about 27.5 Hz); the highest is **C8**.
 
 ## A4 = 440 Hz, the tuning reference
 
-The pitch **A4** — the A above middle C — is the modern international tuning reference, set at **440 Hz**. Orchestras tune to this pitch; it's the note an oboist plays when the orchestra tunes at the start of a concert. Every other pitch in equal temperament is derived mathematically from A4's frequency.
+The pitch **A4**(the A above middle C) is the modern international tuning reference, set at **440 Hz**. Orchestras tune to this pitch; it's the note an oboist plays when the orchestra tunes at the start of a concert. Every other pitch in equal temperament is derived mathematically from A4's frequency.
 
 Historical performance practice often uses slightly different references (A=415 Hz for Baroque, A=432 Hz for some tuning philosophies), but A4=440 Hz is the default worldwide for modern music.
 
@@ -84,7 +84,7 @@ Scientific pitch notation is particularly valuable for:
 - **Unambiguous communication.** "Play a C" is vague; "play C5" is precise.
 - **Vocal range discussion.** A baritone's range might be roughly F2 to F4; a soprano's might be C4 to C6. The numbers communicate range instantly.
 - **Software and MIDI.** Music software, digital instruments, and MIDI all use SPN or a close variant. Middle C is MIDI note 60, and knowing this lets you program or troubleshoot musical software.
-- **Cross-instrument comparison.** Comparing the range of a flute (C4 to D7) with a cello (C2 to A5) is trivial in SPN — you can see at a glance where their ranges overlap.
+- **Cross-instrument comparison.** Comparing the range of a flute (C4 to D7) with a cello (C2 to A5) is trivial in SPN, you can see at a glance where their ranges overlap.
 
 ## Alternative systems
 
@@ -100,7 +100,7 @@ For practical purposes in the modern world, scientific pitch notation is the dom
 
 **Is octave 0 always the lowest octave?**
 
-Close — but it's not the absolute lowest. Octave 0 spans roughly 16 Hz to 32 Hz, most of which is below the threshold of audible pitch (about 20 Hz). A pipe organ's lowest pipes reach into octave 0, but most instruments and voices don't go that low.
+Close, but it's not the absolute lowest. Octave 0 spans roughly 16 Hz to 32 Hz, most of which is below the threshold of audible pitch (about 20 Hz). A pipe organ's lowest pipes reach into octave 0, but most instruments and voices don't go that low.
 
 **Why does the number change at C rather than A?**
 
@@ -117,4 +117,4 @@ Finding any specific pitch is a matter of locating its letter name within the ri
 
 **What does it mean when a score lists a range like "C4–G5"?**
 
-That the part goes as low as C4 (middle C) and as high as G5 (the G in the fifth octave). SPN makes ranges instantly readable. Compare to "middle C to the G above high C" — same information, but much slower to parse.
+That the part goes as low as C4 (middle C) and as high as G5 (the G in the fifth octave). SPN makes ranges instantly readable. Compare to "middle C to the G above high C", same information, but much slower to parse.

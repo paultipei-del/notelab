@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'seventh-chord-inversions',
   title: 'Seventh Chord Inversions',
   oneSentence:
-    'Seventh chords have four possible bass positions — root position (7), first inversion (6/5), second inversion (4/3), and third inversion (2) — each with distinctive figured-bass numbers and specific functional characteristics.',
+    'Seventh chords have four possible bass positions (root position (7), first inversion (6/5), second inversion (4/3), and third inversion (2)) each with distinctive figured-bass numbers and specific functional characteristics.',
   practice: [
     { kind: 'flashcard', label: 'Seventh Chord Inversions Flashcards', detail: '12 cards', href: '/study/seventh-chord-inversions' },
   ],
@@ -17,19 +17,19 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-A triad has three possible bass positions (root, first, second inversion). A seventh chord has four — because it has four chord tones, any of which can be in the bass. Each position has its own figured-bass signature, its own sound, and its own typical functional role.
+A triad has three possible bass positions (root, first, second inversion). A seventh chord has four, because it has four chord tones, any of which can be in the bass. Each position has its own figured-bass signature, its own sound, and its own typical functional role.
 
 Seventh chord inversions are more involved than triad inversions because there are more of them, and the figures (6/5, 4/3, 2) can feel cryptic at first. But the logic is consistent with the triad-inversion figures, and once you see the pattern, the four seventh-chord inversions become as familiar as the three triad inversions.
 
 ## The visual
 
-<DiagramPlaceholder description="A V7 chord in C major (G-B-D-F) shown in all four inversions — root position (G in bass), first inversion (B in bass), second inversion (D in bass), third inversion (F in bass) — each labeled with its figured bass." />
+<DiagramPlaceholder description="A V7 chord in C major (G-B-D-F) shown in all four inversions (root position (G in bass), first inversion (B in bass), second inversion (D in bass), third inversion (F in bass)) each labeled with its figured bass." />
 
 <DiagramPlaceholder description="A summary table showing each inversion's bass note, figure, and typical label format." />
 
@@ -60,7 +60,7 @@ Seventh chord inversions are more involved than triad inversions because there a
 
 - Figured bass: **2** (sometimes written 4/2)
 - Label example: V2 or V4/2
-- Sound: the most unstable inversion — has the characteristic "seventh in the bass" feel
+- Sound: the most unstable inversion, has the characteristic "seventh in the bass" feel
 - Typical use: the seventh (in the bass) resolves down by step to the next chord
 
 ## Figured-bass logic for seventh chords
@@ -79,9 +79,9 @@ If the figured bass feels arbitrary, just memorize the pattern: 7 → 6/5 → 4/
 
 ## Why third inversion is special
 
-Third inversion (with the seventh in the bass) is unique because the seventh — the chord's most dissonant note — is on the bottom. This creates strong directional pull: the seventh in the bass nearly always resolves *downward* by step to the next chord's root.
+Third inversion (with the seventh in the bass) is unique because the seventh (the chord's most dissonant note) is on the bottom. This creates strong directional pull: the seventh in the bass nearly always resolves *downward* by step to the next chord's root.
 
-Example: a G7 chord (G-B-D-F) in third inversion puts F in the bass. That F, the seventh of G7, wants to resolve down by step to E. In C major, this creates a V4/2 → I6 progression — G7 with F in the bass moving to C with E in the bass (first-inversion tonic).
+Example: a G7 chord (G-B-D-F) in third inversion puts F in the bass. That F, the seventh of G7, wants to resolve down by step to E. In C major, this creates a V4/2 → I6 progression, G7 with F in the bass moving to C with E in the bass (first-inversion tonic).
 
 This resolution pattern is a signature of third inversion. Almost every time you see a seventh chord in third inversion, it's setting up this stepwise descent in the bass to the next chord's third.
 
@@ -125,8 +125,8 @@ First, identify the chord's root by looking at the stacked-thirds form. Then loo
 
 **Are all seventh-chord inversions equally useful?**
 
-Not quite. Root position (7) and first inversion (6/5) are the most common — they appear in nearly every piece with seventh-chord harmonies. Second inversion (4/3) appears regularly but less often. Third inversion (2) is more specialized — it requires specific voice-leading contexts (the seventh-in-bass wanting to resolve down by step), so it appears in specific functional positions rather than anywhere.
+Not quite. Root position (7) and first inversion (6/5) are the most common, they appear in nearly every piece with seventh-chord harmonies. Second inversion (4/3) appears regularly but less often. Third inversion (2) is more specialized, it requires specific voice-leading contexts (the seventh-in-bass wanting to resolve down by step), so it appears in specific functional positions rather than anywhere.
 
-**What if I see a Roman numeral with no figure at all — is that root position or first inversion?**
+**What if I see a Roman numeral with no figure at all, is that root position or first inversion?**
 
-Root position. A Roman numeral with no figure indicates a root-position triad. A Roman numeral with "7" indicates a root-position seventh chord. The absence of any figure is the signal for root position — either triad or seventh chord depending on the Roman numeral's context.
+Root position. A Roman numeral with no figure indicates a root-position triad. A Roman numeral with "7" indicates a root-position seventh chord. The absence of any figure is the signal for root position, either triad or seventh chord depending on the Roman numeral's context.

@@ -7,32 +7,32 @@ export const learnPage = {
   subtopic: 'triad-inversions',
   title: 'Triad Inversions',
   oneSentence:
-    "A triad in root position has its root in the bass — in first inversion, the third is in the bass — and in second inversion, the fifth is in the bass; the three inversions are indicated by figured-bass numbers (nothing, 6, or 6/4) attached to the Roman numeral.",
+    "A triad in root position has its root in the bass (in first inversion, the third is in the bass) and in second inversion, the fifth is in the bass; the three inversions are indicated by figured-bass numbers (nothing, 6, or 6/4) attached to the Roman numeral.",
   practice: [
     { kind: 'flashcard', label: 'Triad Inversions Flashcards', detail: '12 cards', href: '/study/triad-inversions' },
   ],
   related: [
-    { title: 'Triads — The Fundamental Chord', href: '/learn/harmony/triads' },
+    { title: 'Triads, The Fundamental Chord', href: '/learn/harmony/triads' },
     { title: 'Figured Bass',                    href: '/learn/harmony/figured-bass' },
     { title: 'Interval Inversions',             href: '/learn/intervals/interval-inversions' },
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-A triad (C-E-G) is the same chord regardless of which note sits in the bass. But the sound changes depending on which chord tone is on the bottom. With C in the bass, it's called root position — the default, most stable voicing. With E in the bass, it's first inversion. With G in the bass, it's second inversion.
+A triad (C-E-G) is the same chord regardless of which note sits in the bass. But the sound changes depending on which chord tone is on the bottom. With C in the bass, it's called root position, the default, most stable voicing. With E in the bass, it's first inversion. With G in the bass, it's second inversion.
 
-These three inversions are just three different ways of arranging the same triad. They share the same chord identity but differ in voicing, stability, and typical usage. Understanding them is essential because real music uses all three — and the specific inversion often signals something about the chord's function.
+These three inversions are just three different ways of arranging the same triad. They share the same chord identity but differ in voicing, stability, and typical usage. Understanding them is essential because real music uses all three, and the specific inversion often signals something about the chord's function.
 
 ## The visual
 
 <Diagram src="/diagrams/triad-inversions.svg" caption="A C major triad in root position, first inversion, and second inversion." />
 
-<DiagramPlaceholder description="The same progression (C-E-G) shown with the bass moving smoothly — C in bass, E in bass, G in bass — illustrating how inversions allow stepwise bass lines." />
+<DiagramPlaceholder description="The same progression (C-E-G) shown with the bass moving smoothly (C in bass, E in bass, G in bass) illustrating how inversions allow stepwise bass lines." />
 
 ## Root position
 
@@ -40,7 +40,7 @@ These three inversions are just three different ways of arranging the same triad
 
 A triad in **root position** has its root in the bass. For a C major triad, C is in the bass. For an E minor triad, E is in the bass.
 
-Root position is the most stable form of a triad. The chord's identity matches its lowest sounding note — the chord literally stands on its root. This is the default position for stable, arrival-point chords (the tonic at the end of a phrase, most resting points in a progression).
+Root position is the most stable form of a triad. The chord's identity matches its lowest sounding note, the chord literally stands on its root. This is the default position for stable, arrival-point chords (the tonic at the end of a phrase, most resting points in a progression).
 
 When analyzing harmony, root-position triads are labeled with just the Roman numeral (e.g., "I" or "vi" or "V"). No figured-bass numbers are added.
 
@@ -48,15 +48,15 @@ When analyzing harmony, root-position triads are labeled with just the Roman num
 
 **Bass note: the third.**
 
-A triad in **first inversion** has its third in the bass. For a C major triad, E is in the bass, with C and G somewhere above. The chord is still a C major triad — same three pitches — but the lowest note is now the third, not the root.
+A triad in **first inversion** has its third in the bass. For a C major triad, E is in the bass, with C and G somewhere above. The chord is still a C major triad (same three pitches) but the lowest note is now the third, not the root.
 
-**Figured bass:** a **6** is added after the Roman numeral (e.g., "I6"). This indicates that a sixth (counted from the bass note) is present in the chord — specifically, the interval from E (bass) to C (root of the original triad) is a minor 6th. The 6 is shorthand for "the chord has a 6 above the bass," which is the signature of first inversion.
+**Figured bass:** a **6** is added after the Roman numeral (e.g., "I6"). This indicates that a sixth (counted from the bass note) is present in the chord, specifically, the interval from E (bass) to C (root of the original triad) is a minor 6th. The 6 is shorthand for "the chord has a 6 above the bass," which is the signature of first inversion.
 
-Technically the figure should be "6/3" (indicating both the 6th and 3rd above the bass), but "6" alone is the standard abbreviation — the 3rd is assumed.
+Technically the figure should be "6/3" (indicating both the 6th and 3rd above the bass), but "6" alone is the standard abbreviation, the 3rd is assumed.
 
 **Sound:** slightly less stable than root position, but still fairly solid. First-inversion triads are common in mid-progression voicings, in bass lines that move stepwise (rather than by leap), and in passages where the root note would be awkward to have in the bass.
 
-**Example:** C/E (written with a slash in pop-chord notation) or I6 (in Roman numeral analysis) — both mean "C major triad with E in the bass."
+**Example:** C/E (written with a slash in pop-chord notation) or I6 (in Roman numeral analysis), both mean "C major triad with E in the bass."
 
 ## Second inversion
 
@@ -64,19 +64,19 @@ Technically the figure should be "6/3" (indicating both the 6th and 3rd above th
 
 A triad in **second inversion** has its fifth in the bass. For a C major triad, G is in the bass, with C and E somewhere above.
 
-**Figured bass:** a **6/4** is added after the Roman numeral (e.g., "I6/4"). This indicates that both a 6th and a 4th above the bass are present — from G (bass) to E is a major 6th, and from G to C is a perfect 4th.
+**Figured bass:** a **6/4** is added after the Roman numeral (e.g., "I6/4"). This indicates that both a 6th and a 4th above the bass are present, from G (bass) to E is a major 6th, and from G to C is a perfect 4th.
 
-**Sound:** the least stable of the three inversions. Having the fifth in the bass creates an unusual harmonic tension — the chord feels like it's "leaning" on its fifth rather than standing on its root or third. Second-inversion triads don't usually appear as long-held chords because the instability is too obvious. Instead, they serve specific functional purposes.
+**Sound:** the least stable of the three inversions. Having the fifth in the bass creates an unusual harmonic tension, the chord feels like it's "leaning" on its fifth rather than standing on its root or third. Second-inversion triads don't usually appear as long-held chords because the instability is too obvious. Instead, they serve specific functional purposes.
 
 **Common uses for 6/4 chords:**
 
-1. **Cadential 6/4** — appears at a cadence, functioning as an embellishment of the dominant (V). Usually written "I6/4" but analyzed as V with a delayed resolution. The quintessential strong cadence is "I6/4 → V → I" — the tonic 6/4 resolves through the V to the tonic.
+1. **Cadential 6/4**, appears at a cadence, functioning as an embellishment of the dominant (V). Usually written "I6/4" but analyzed as V with a delayed resolution. The quintessential strong cadence is "I6/4 → V → I", the tonic 6/4 resolves through the V to the tonic.
 
-2. **Passing 6/4** — appears in stepwise bass motion, where the bass is moving from one note to another and the chord passes through a 6/4 position.
+2. **Passing 6/4**, appears in stepwise bass motion, where the bass is moving from one note to another and the chord passes through a 6/4 position.
 
-3. **Pedal 6/4** (or neighboring 6/4) — appears over a held bass note, with the upper voices briefly moving through a 6/4 figure before returning.
+3. **Pedal 6/4** (or neighboring 6/4), appears over a held bass note, with the upper voices briefly moving through a 6/4 figure before returning.
 
-In all three uses, the 6/4 is always treated as a special, unstable chord that needs specific handling. You wouldn't end a piece on a 6/4 chord — it would feel unfinished.
+In all three uses, the 6/4 is always treated as a special, unstable chord that needs specific handling. You wouldn't end a piece on a 6/4 chord, it would feel unfinished.
 
 ## Figured bass notation
 
@@ -92,9 +92,9 @@ These figures are added after the Roman numeral to specify which inversion of th
 
 ## Why inversions matter
 
-Inversions aren't just abstract theory — they're deeply practical:
+Inversions aren't just abstract theory, they're deeply practical:
 
-**Smoother bass lines.** A bass line that moves smoothly (by step) is more singable and more graceful than one that jumps around. Inversions let the bass stay smooth while the chord progression proceeds. If a progression goes C → F, the bass would have to leap from C to F in root position. But if the F is in first inversion (F/A), the bass moves from C up to A — smoother. Inversions give composers flexibility in bass-line writing.
+**Smoother bass lines.** A bass line that moves smoothly (by step) is more singable and more graceful than one that jumps around. Inversions let the bass stay smooth while the chord progression proceeds. If a progression goes C → F, the bass would have to leap from C to F in root position. But if the F is in first inversion (F/A), the bass moves from C up to A, smoother. Inversions give composers flexibility in bass-line writing.
 
 **Specific functional effects.** The cadential 6/4 has a distinctive sound that only works in that specific context. First-inversion chords tend to sound more "moving" or "transitional" than root-position chords, which tend to sound more "stable" or "arrived."
 
@@ -110,7 +110,7 @@ Because these figures describe the intervals from the bass note up to the chord'
 
 **Do inversions change the chord's quality?**
 
-No. A C major triad is C major in every inversion — major quality is determined by the interval structure of the chord's three notes, not by which is in the bass. The quality is invariant; only the voicing changes.
+No. A C major triad is C major in every inversion, major quality is determined by the interval structure of the chord's three notes, not by which is in the bass. The quality is invariant; only the voicing changes.
 
 **How do I identify which inversion a chord is in?**
 

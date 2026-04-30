@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'chromatic-scale-spelling',
   title: 'Chromatic Scale Spelling',
   oneSentence:
-    'The chromatic scale uses all twelve pitches within an octave, but when writing it out in notation, the convention is to spell ascending with sharps and descending with flats — preserving letter-name integrity and readability.',
+    'The chromatic scale uses all twelve pitches within an octave, but when writing it out in notation, the convention is to spell ascending with sharps and descending with flats, preserving letter-name integrity and readability.',
   practice: [
     { kind: 'flashcard', label: 'Pentatonic, Blues, Chromatic, Whole Tone Flashcards', detail: '8 cards', href: '/study/other-scales' },
   ],
@@ -17,23 +17,23 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-The chromatic scale contains all twelve pitches within an octave — every possible note in standard Western tuning. Writing the scale out in notation is straightforward in one sense (every half step is a separate note) but tricky in another (each of those half steps has two possible spellings, sharp or flat, and you have to pick one).
+The chromatic scale contains all twelve pitches within an octave, every possible note in standard Western tuning. Writing the scale out in notation is straightforward in one sense (every half step is a separate note) but tricky in another (each of those half steps has two possible spellings, sharp or flat, and you have to pick one).
 
 The convention that emerged over centuries is simple: **use sharps when ascending, flats when descending.** This produces the cleanest spelling, with each pitch having one clear name and the scale's letter-name integrity preserved as much as possible.
 
-The chromatic scale is the full palette. Spelling it correctly is less about melodic meaning (there's no "scale function" in a chromatic passage — all the notes are there) and more about notation hygiene. Do it consistently, and chromatic passages become readable instead of confusing.
+The chromatic scale is the full palette. Spelling it correctly is less about melodic meaning (there's no "scale function" in a chromatic passage, all the notes are there) and more about notation hygiene. Do it consistently, and chromatic passages become readable instead of confusing.
 
 ## The visual
 
-<DiagramPlaceholder description="A chromatic scale ascending from C to C on a treble staff, using sharps — C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B, C." />
+<DiagramPlaceholder description="A chromatic scale ascending from C to C on a treble staff, using sharps, C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B, C." />
 
-<DiagramPlaceholder description="A chromatic scale descending from C to C on a treble staff, using flats — C, B, B♭, A, A♭, G, G♭, F, E, E♭, D, D♭, C." />
+<DiagramPlaceholder description="A chromatic scale descending from C to C on a treble staff, using flats, C, B, B♭, A, A♭, G, G♭, F, E, E♭, D, D♭, C." />
 
 ## Ascending with sharps
 
@@ -61,11 +61,11 @@ The ascending-sharps / descending-flats convention reflects two ideas:
 
 **2. Letter-name integrity is preserved as much as possible.** Each letter name (A through G) appears exactly once in an ascending or descending chromatic scale. Using sharps ascending means every letter from C upward gets at least one note; using flats descending preserves the same property going down. If you mixed sharps and flats in the same direction, you'd end up with two notes sharing a letter (like C and C♯ and D♭ all in a row), which is confusing.
 
-The convention isn't strictly necessary — you could spell a chromatic scale any way you wanted, enharmonically. But the sharp-up / flat-down convention produces the cleanest visual reading and is universally taught.
+The convention isn't strictly necessary, you could spell a chromatic scale any way you wanted, enharmonically. But the sharp-up / flat-down convention produces the cleanest visual reading and is universally taught.
 
 ## Exceptions and mixed spelling
 
-In real music, chromatic passages often mix sharps and flats because the passage isn't an isolated scale — it's embedded in a specific harmonic context.
+In real music, chromatic passages often mix sharps and flats because the passage isn't an isolated scale, it's embedded in a specific harmonic context.
 
 - A chromatic passage within a sharp key (like E major) will tend toward sharp spellings throughout, regardless of direction.
 - A chromatic passage within a flat key (like A♭ major) will tend toward flat spellings.
@@ -75,13 +75,13 @@ The ascending-sharps / descending-flats convention is the default for isolated c
 
 ## When to use the chromatic scale
 
-Unlike major, minor, and modal scales, the chromatic scale isn't usually a piece's primary scale. You don't typically hear a piece "in chromatic" — chromatic scales lack a tonic and produce a kind of deliberately unstable tonal world.
+Unlike major, minor, and modal scales, the chromatic scale isn't usually a piece's primary scale. You don't typically hear a piece "in chromatic", chromatic scales lack a tonic and produce a kind of deliberately unstable tonal world.
 
 Instead, the chromatic scale shows up in two main ways:
 
 **1. As a passing motion.** Chromatic passages (going from one scale note to another by chromatic steps) are a staple of tonal music. They add color, smoothness, or expressive tension without fundamentally changing the key.
 
-**2. As a compositional tool.** Twelve-tone music (serialism), post-tonal 20th-century composition, and some avant-garde styles deliberately use the chromatic scale as a primary pitch source, avoiding the tonal hierarchies of major and minor scales. In these styles, the chromatic scale isn't a passing tool — it's the foundation.
+**2. As a compositional tool.** Twelve-tone music (serialism), post-tonal 20th-century composition, and some avant-garde styles deliberately use the chromatic scale as a primary pitch source, avoiding the tonal hierarchies of major and minor scales. In these styles, the chromatic scale isn't a passing tool, it's the foundation.
 
 For most music, though, the chromatic scale is a resource to be drawn from selectively rather than the primary vocabulary. Learning to spell it correctly is still important because chromatic passages appear constantly within otherwise tonal music.
 
@@ -89,16 +89,16 @@ For most music, though, the chromatic scale is a resource to be drawn from selec
 
 **Why not just use sharps for everything, or flats for everything?**
 
-Because then every letter name would have two notes in a row, which is hard to read. If you went up with all sharps (C, C♯, D, D♯, E, E♯, F♯, G, G♯...), you'd have both E and E♯, which is the same pitch as F — you'd have two notes between D♯ and F♯. The sharp-up / flat-down convention produces one clear note per letter name per direction, which is far easier to read.
+Because then every letter name would have two notes in a row, which is hard to read. If you went up with all sharps (C, C♯, D, D♯, E, E♯, F♯, G, G♯...), you'd have both E and E♯, which is the same pitch as F, you'd have two notes between D♯ and F♯. The sharp-up / flat-down convention produces one clear note per letter name per direction, which is far easier to read.
 
-**What about in a real piece — do composers always follow this convention?**
+**What about in a real piece, do composers always follow this convention?**
 
 Usually, but not always. Real music often adjusts based on harmonic context. A chromatic passage within a flat-key piece might use flats in both directions if the surrounding music is flat-heavy. A chromatic passage outlining a specific chord might spell altered notes according to that chord's structure. The convention is a sensible default, but musical context sometimes trumps it.
 
 **Do you have to use accidentals for every altered note?**
 
-Within a single measure, no — once an accidental is established, it applies to the same note through the rest of the measure. But in a chromatic passage, accidentals often appear frequently because the passage moves through many altered notes.
+Within a single measure, no, once an accidental is established, it applies to the same note through the rest of the measure. But in a chromatic passage, accidentals often appear frequently because the passage moves through many altered notes.
 
 **Are there any chromatic scales that don't use 12 notes?**
 
-Not in standard Western music. The chromatic scale is, by definition, all twelve pitches within an octave. Microtonal scales subdivide the octave further (24 quarter-tones per octave, for instance), but those aren't called chromatic scales — they're separate systems.
+Not in standard Western music. The chromatic scale is, by definition, all twelve pitches within an octave. Microtonal scales subdivide the octave further (24 quarter-tones per octave, for instance), but those aren't called chromatic scales, they're separate systems.

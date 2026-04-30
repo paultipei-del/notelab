@@ -48,14 +48,14 @@ export function SyncopationPattern({
   caption,
 }: SyncopationPatternProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playAt, tickAt, ensureReady } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
   // Index-based highlight: every note in the pattern shares the same pitch
   // (G4), so MIDI-based highlighting would light all notes at once. Track
   // which note's INDEX is currently active so playback walks through them
   // one at a time.
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const { isPlaying, toggle } = useLoopingPlayback()
+  const { isPlaying, start, stop } = useLoopingPlayback()
 
   const parsed = parsePitch(PITCH)
   if (!parsed) return null
@@ -91,22 +91,44 @@ export function SyncopationPattern({
     void play(PITCH)
   }
 
-  const handlePlayAll = () => {
+  const handlePlayAll = async () => {
+    if (isPlaying) {
+      stop()
+      return
+    }
     setInteracted(true)
+    await ensureReady()
     const beatSec = 60 / tempo
-    toggle(
-      PATTERN.map((p, i) => ({
+
+    type Event = {
+      offset: number
+      audio?: (time: number) => void
+      visual?: () => void
+    }
+    const events: Event[] = []
+
+    // Metronome ticks on every beat (1, 2, 3, 4). Accent on beat 1.
+    for (let beat = 0; beat < 4; beat++) {
+      const accent = beat === 0
+      events.push({
+        offset: beat * beatSec,
+        audio: (time) => tickAt(accent, time),
+      })
+    }
+
+    // Notes — sample-accurate audio + sequential highlight.
+    PATTERN.forEach((p, i) => {
+      events.push({
         offset: p.beat * beatSec,
-        fire: () => {
-          flashAt(i, p.durationBeats * beatSec * 1000)
-          void play(PITCH)
-        },
-      })),
-      {
-        iterationMs: 4 * beatSec * 1000,
-        onStop: () => setActiveIndex(null),
-      }
-    )
+        audio: (time) => playAt(PITCH, p.durationBeats * beatSec * 0.95, time),
+        visual: () => flashAt(i, p.durationBeats * beatSec * 1000),
+      })
+    })
+
+    void start(events, {
+      iterationMs: 4 * beatSec * 1000,
+      onStop: () => setActiveIndex(null),
+    })
   }
 
   const xForBeat = (b: number) => noteAreaStart + b * beatWidth
@@ -137,8 +159,6 @@ export function SyncopationPattern({
           const value: 'eighth' | 'quarter' | 'half' = p.value === 'dotted-quarter' ? 'quarter' : p.value
           const dotted = p.value === 'dotted-quarter'
           const isActive = activeIndex === i
-          // Static-coral marking on the offbeat note keeps that visual hint
-          // even at rest; the active highlight overrides it during playback.
           return (
             <RhythmicNote
               key={i}
@@ -148,8 +168,7 @@ export function SyncopationPattern({
               T={T}
               stemDirection="up"
               dotted={dotted}
-              highlight={isActive || p.offbeat}
-              highlightColor={p.offbeat ? T.highlightAccent : undefined}
+              highlight={isActive}
               onClick={() => handleNotePlay(i)}
               ariaLabel={`${PITCH} ${p.value}`}
             />

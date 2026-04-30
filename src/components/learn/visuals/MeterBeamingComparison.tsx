@@ -43,15 +43,21 @@ export function MeterBeamingComparison({
   const staffY = margin + Math.round(40 * T.scale)
 
   const clefReserve = Math.round(70 * T.scale)
-  const tsReserve = Math.round(46 * T.scale)
   const eighthUnit = Math.round(40 * T.scale)
   const groupGap = Math.round(14 * T.scale)
   const trailingPad = Math.round(14 * T.scale)
-  const tsXOffset = Math.round(20 * T.scale)
+
+  // Time-signature widths grow with digit count. A 2-digit numerator like
+  // `12` needs more left padding (so it doesn't sit on the barline) AND
+  // more total reserve (so it doesn't crowd the first note).
+  const tsXOffsetFor = (n: number) =>
+    Math.round((24 + (String(n).length - 1) * 16) * T.scale)
+  const tsReserveFor = (n: number) =>
+    Math.round((46 + (String(n).length - 1) * 30) * T.scale)
 
   const noteCount = (m: BeamingMeasure) => m.beamGroups.reduce((a, b) => a + b, 0)
   const measureWidth = (m: BeamingMeasure) =>
-    tsReserve +
+    tsReserveFor(m.numerator) +
     noteCount(m) * eighthUnit +
     Math.max(0, m.beamGroups.length - 1) * groupGap +
     trailingPad
@@ -70,8 +76,8 @@ export function MeterBeamingComparison({
   )
   const layout = measures.map((m, mi) => {
     const measureStart = measureStarts[mi]
-    const tsX = measureStart + tsXOffset
-    const noteAreaStart = measureStart + tsReserve
+    const tsX = measureStart + tsXOffsetFor(m.numerator)
+    const noteAreaStart = measureStart + tsReserveFor(m.numerator)
 
     const firstStart = noteAreaStart + Math.round(eighthUnit * 0.5)
     const groupStarts = m.beamGroups.reduce<number[]>((acc, _gSize, gi) => {

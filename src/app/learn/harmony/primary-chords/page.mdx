@@ -4,9 +4,9 @@ import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 export const learnPage = {
   topic: 'harmony',
   subtopic: 'primary-chords',
-  title: 'Primary Chords — I, IV, V',
+  title: 'Primary Chords, I, IV, V',
   oneSentence:
-    'The primary chords of any key — tonic (I), subdominant (IV), and dominant (V) — together contain all seven notes of the key and form the harmonic backbone of most tonal music, with the tonic providing rest, the dominant driving toward resolution, and the subdominant mediating between them.',
+    'The primary chords of any key (tonic (I), subdominant (IV), and dominant (V)) together contain all seven notes of the key and form the harmonic backbone of most tonal music, with the tonic providing rest, the dominant driving toward resolution, and the subdominant mediating between them.',
   practice: [],
   related: [
     { title: 'Roman Numeral Analysis',  href: '/learn/harmony/roman-numeral-analysis' },
@@ -15,13 +15,13 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Of the seven diatonic chords in any key, three carry most of the harmonic weight: the chords built on the **1st**, **4th**, and **5th** scale degrees — **I**, **IV**, and **V**. These are the **primary chords** (sometimes called the principal chords), and they're the harmonic backbone of most tonal music.
+Of the seven diatonic chords in any key, three carry most of the harmonic weight: the chords built on the **1st**, **4th**, and **5th** scale degrees, **I**, **IV**, and **V**. These are the **primary chords** (sometimes called the principal chords), and they're the harmonic backbone of most tonal music.
 
 The reason these three matter so much: together they contain every note of the scale. I has scale degrees 1, 3, 5. IV has 4, 6, 1. V has 5, 7, 2. Between them, all seven scale degrees are represented, meaning you can harmonize virtually any melody using just these three chords. Thousands of folk songs, hymns, blues, and pop songs do exactly that.
 
@@ -29,13 +29,13 @@ Beyond the mathematical completeness, I, IV, and V also occupy the three most im
 
 ## The visual
 
-<DiagramPlaceholder description="The three primary chords in C major — I (C-E-G), IV (F-A-C), V (G-B-D) — shown on a grand staff." />
+<DiagramPlaceholder description="The three primary chords in C major, I (C-E-G), IV (F-A-C), V (G-B-D), shown on a grand staff." />
 
-<DiagramPlaceholder description="A functional triangle showing I at the center (tonic/rest), V on one side (dominant/tension), IV on the other (subdominant/departure), with arrows indicating typical motion — IV → V → I." />
+<DiagramPlaceholder description="A functional triangle showing I at the center (tonic/rest), V on one side (dominant/tension), IV on the other (subdominant/departure), with arrows indicating typical motion, IV → V → I." />
 
 ## The tonic (I)
 
-The **tonic chord** is built on the 1st scale degree. It's named after the tonic note — the key's home — and shares that note's function: stability, rest, arrival. When a piece ends, it almost always ends on the tonic chord. When a progression resolves, it resolves to the tonic.
+The **tonic chord** is built on the 1st scale degree. It's named after the tonic note (the key's home) and shares that note's function: stability, rest, arrival. When a piece ends, it almost always ends on the tonic chord. When a progression resolves, it resolves to the tonic.
 
 **In C major:** I = C-E-G (C major triad).
 **In A minor:** i = A-C-E (A minor triad).
@@ -45,7 +45,7 @@ Key characteristics:
 - **Contains scale degrees 1, 3, 5.** In major, these produce a major triad. In minor, a minor triad.
 - **Always uppercase/lowercase based on quality.** Major key = I. Minor key = i.
 
-The tonic is the anchor point of the key. Every other chord is measured against it — how tense it is, how distant from it, how strongly it pulls toward it.
+The tonic is the anchor point of the key. Every other chord is measured against it, how tense it is, how distant from it, how strongly it pulls toward it.
 
 ## The dominant (V)
 
@@ -56,38 +56,38 @@ The **dominant chord** is built on the 5th scale degree. It's the chord with the
 
 Key characteristics:
 - **Tense, forward-driving.** The dominant wants to resolve to the tonic.
-- **Contains scale degrees 5, 7, 2.** The 7th is the key's leading tone — a half step below the tonic, with a strong upward pull to it.
+- **Contains scale degrees 5, 7, 2.** The 7th is the key's leading tone, a half step below the tonic, with a strong upward pull to it.
 - **Always major in tonal use.** Even in a minor key, the V chord is usually major (courtesy of harmonic minor's raised 7th), because the leading tone is essential to the dominant's function.
 
-The V-I motion is the most fundamental resolution in Western tonal harmony. It's the sound of "arriving home" — the completion of harmonic motion. Every authentic cadence (covered in a later page) involves V → I.
+The V-I motion is the most fundamental resolution in Western tonal harmony. It's the sound of "arriving home", the completion of harmonic motion. Every authentic cadence (covered in a later page) involves V → I.
 
 Adding a seventh to the dominant (V7) intensifies the pull. The 7th above the root forms a tritone with the 3rd, creating the strongest possible dissonance pointing toward resolution.
 
 ## The subdominant (IV)
 
-The **subdominant chord** is built on the 4th scale degree. It's less tense than the dominant but less stable than the tonic — the middle member of the primary-chord triangle.
+The **subdominant chord** is built on the 4th scale degree. It's less tense than the dominant but less stable than the tonic, the middle member of the primary-chord triangle.
 
 **In C major:** IV = F-A-C (F major triad).
 **In A minor:** iv = D-F-A (D minor triad).
 
 Key characteristics:
-- **Moderately stable.** The subdominant feels like a "departure from tonic" — not as tense as V, but not at rest.
-- **Contains scale degrees 4, 6, 1.** The shared scale degree 1 (the tonic) is why IV feels somewhat related to I — it contains the tonic as its 5th.
+- **Moderately stable.** The subdominant feels like a "departure from tonic", not as tense as V, but not at rest.
+- **Contains scale degrees 4, 6, 1.** The shared scale degree 1 (the tonic) is why IV feels somewhat related to I, it contains the tonic as its 5th.
 - **Typically moves to V or back to I.** The common progression I-IV-V-I has IV as a stepping stone between tonic stability and dominant tension.
 
-The subdominant is sometimes called the "away" chord — it creates a sense of leaving home without the urgent pull to return that V provides. Its gentler character makes it ideal for harmonic variety in progressions, cadential preparation, and as a softer resolution (the plagal cadence IV-I, the "amen" cadence).
+The subdominant is sometimes called the "away" chord, it creates a sense of leaving home without the urgent pull to return that V provides. Its gentler character makes it ideal for harmonic variety in progressions, cadential preparation, and as a softer resolution (the plagal cadence IV-I, the "amen" cadence).
 
 ## How I, IV, V work together
 
 The three primary chords create three functional positions in tonal music:
 
-- **Tonic (I)** — rest, home
-- **Subdominant (IV)** — departure, weak tension
-- **Dominant (V)** — strong tension, pulls back to tonic
+- **Tonic (I)**, rest, home
+- **Subdominant (IV)**, departure, weak tension
+- **Dominant (V)**, strong tension, pulls back to tonic
 
 A typical progression moves among these functions: away from the tonic, up to tension, back to rest. The simplest version:
 
-**I → IV → V → I** — tonic, away, tense, home. This four-chord progression is the skeleton of countless tonal pieces.
+**I → IV → V → I**, tonic, away, tense, home. This four-chord progression is the skeleton of countless tonal pieces.
 
 More elaborate progressions still orbit around these three functions. The **ii chord** is often a substitute for IV (it's also pre-dominant). The **vi chord** is often a substitute for I (it's the tonic's relative). But the three functional positions remain central: rest, away, tension, rest.
 
@@ -95,9 +95,9 @@ More elaborate progressions still orbit around these three functions. The **ii c
 
 In major keys, I, IV, and V are all major chords. This gives major-key music its characteristically bright, strong primary-chord sound.
 
-In minor keys, i and iv are minor chords (reflecting the minor tonic). But V — thanks to the raised 7th of harmonic minor — is typically major. This mixed quality (minor i and iv, major V) is one of the signatures of minor-key tonal harmony: the V-i cadence works because V is major, but the surrounding material has the darker character of the minor mode.
+In minor keys, i and iv are minor chords (reflecting the minor tonic). But V (thanks to the raised 7th of harmonic minor) is typically major. This mixed quality (minor i and iv, major V) is one of the signatures of minor-key tonal harmony: the V-i cadence works because V is major, but the surrounding material has the darker character of the minor mode.
 
-Some minor-key music uses natural minor's v (a minor v chord) instead of harmonic minor's major V. This produces a more modal, less functionally tense sound — common in folk music, some Renaissance-style pieces, and much modern popular music. The weak v doesn't pull as strongly toward the tonic, creating a different, less goal-directed harmonic feel.
+Some minor-key music uses natural minor's v (a minor v chord) instead of harmonic minor's major V. This produces a more modal, less functionally tense sound, common in folk music, some Renaissance-style pieces, and much modern popular music. The weak v doesn't pull as strongly toward the tonic, creating a different, less goal-directed harmonic feel.
 
 ## Three-chord songs
 
@@ -109,15 +109,15 @@ You can write and harmonize an enormous amount of music using only I, IV, and V.
 - Much country, rockabilly, and early rock and roll
 - Countless punk and garage rock tracks
 
-The three-chord framework is minimalist but extraordinarily flexible. Bob Dylan, Willie Nelson, Hank Williams, Bo Diddley, the Ramones — endless songwriters have built entire careers on three-chord songs.
+The three-chord framework is minimalist but extraordinarily flexible. Bob Dylan, Willie Nelson, Hank Williams, Bo Diddley, the Ramones, endless songwriters have built entire careers on three-chord songs.
 
-This isn't a limitation in the music's sophistication. Three-chord songs can be deeply expressive. The chords set the harmonic landscape; the melody, rhythm, lyrics, and performance shape the emotional content. Primary chords are a starting point — not a ceiling.
+This isn't a limitation in the music's sophistication. Three-chord songs can be deeply expressive. The chords set the harmonic landscape; the melody, rhythm, lyrics, and performance shape the emotional content. Primary chords are a starting point, not a ceiling.
 
 ## Common questions
 
 **Are I, IV, and V always major chords in every key?**
 
-In major keys, yes. In minor keys, i and iv are minor, and V is *usually* major (thanks to the raised 7th in harmonic minor) — though sometimes a natural minor v is used instead, which is minor in quality. The pattern shifts between major and minor keys but the three degrees (1, 4, 5) remain the primary chords regardless.
+In major keys, yes. In minor keys, i and iv are minor, and V is *usually* major (thanks to the raised 7th in harmonic minor), though sometimes a natural minor v is used instead, which is minor in quality. The pattern shifts between major and minor keys but the three degrees (1, 4, 5) remain the primary chords regardless.
 
 **Why specifically the 4th and 5th degrees (not, say, the 2nd and 6th)?**
 
@@ -129,4 +129,4 @@ Modulation changes which key you're in, which changes which scale degrees are I,
 
 **Do jazz musicians use the primary-chord idea?**
 
-Not usually as directly as pop or classical musicians. Jazz typically uses more complex chord vocabularies, with seventh chords as the default and substitutions common. But the *function* of tonic, subdominant, and dominant remains central to jazz harmony — the ii-V-I progression (a substitute for IV-V-I using ii instead of IV) is the jazz lingua franca, and the three functional positions still govern the harmonic logic.
+Not usually as directly as pop or classical musicians. Jazz typically uses more complex chord vocabularies, with seventh chords as the default and substitutions common. But the *function* of tonic, subdominant, and dominant remains central to jazz harmony, the ii-V-I progression (a substitute for IV-V-I using ii instead of IV) is the jazz lingua franca, and the three functional positions still govern the harmonic logic.

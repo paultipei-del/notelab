@@ -1,41 +1,55 @@
 /**
  * useSampler — React hook over a shared Tone.Sampler instance for /learn.
  *
- * Design contract (mirrors pianoPlayback.ts):
+ * Design contract:
  *   - Fire-and-forget. Errors are swallowed internally so audio failures
  *     never break drill or lesson flow.
- *   - Lazy-loaded. First call triggers Tone import + sample fetch.
+ *   - Eagerly loaded on first hook mount. By the time the user clicks a
+ *     play button, samples have been downloading in the background.
  *   - Module-global singleton. One sampler per browser tab.
  *
- * Differences from pianoPlayback's playPitch:
- *   - Full 29-note Salamander set (matches AudioCard) so /learn diagrams
- *     can render notes outside C3–A5 without warbly pitch-shifting.
- *   - Adds playSequence and playChord.
- *   - Exposes a `ready` boolean for optional UI loading states.
+ * Sample strategy:
+ *   - 5 sparse Salamander samples (every other octave from A1 → A5).
+ *     Tone.Sampler pitch-shifts to fill in the rest. Total payload is
+ *     ~1 MB instead of the full Salamander set's ~5 MB, so the page is
+ *     usable on slow connections and inside Vercel previews.
+ *   - Release time kept short (0.4) so consecutive notes in a rhythm
+ *     don't ring into each other and produce muddy overlap.
  *
- * Sample URLs match every existing sampler in the codebase, so the
- * browser cache hits across instances — no double-download cost.
+ * Safari unlock:
+ *   - Modern browsers (and Safari especially) require an AudioContext to
+ *     be resumed inside a user gesture. We attach a one-time
+ *     pointer/touch/key listener to `document` on first mount that calls
+ *     `Tone.start()` synchronously, so by the time the first Play button
+ *     is clicked the context is already running.
  */
 
 import { useEffect, useState } from 'react'
 
+// Tone's published types don't expose Sampler in a stable place across
+// versions, so keep the singletons at `any` — the call sites are tiny
+// and well-isolated.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let sharedSampler: any = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let sharedTone: any = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let metronomeSynth: any = null
 let samplerLoaded = false
 let samplerLoading = false
 const loadCallbacks: Array<() => void> = []
 const readyListeners = new Set<(ready: boolean) => void>()
 
+// Sparse sample set: every other octave, A natural. Tone.Sampler pitch
+// shifts to fill the gaps — the result is a recognisably piano-like
+// timbre at 1/5 the bandwidth of the full 29-sample set.
 const SALAMANDER_URLS: Record<string, string> = {
-  A0: 'A0.mp3',
-  C1: 'C1.mp3', 'D#1': 'Ds1.mp3', 'F#1': 'Fs1.mp3', A1: 'A1.mp3',
-  C2: 'C2.mp3', 'D#2': 'Ds2.mp3', 'F#2': 'Fs2.mp3', A2: 'A2.mp3',
-  C3: 'C3.mp3', 'D#3': 'Ds3.mp3', 'F#3': 'Fs3.mp3', A3: 'A3.mp3',
-  C4: 'C4.mp3', 'D#4': 'Ds4.mp3', 'F#4': 'Fs4.mp3', A4: 'A4.mp3',
-  C5: 'C5.mp3', 'D#5': 'Ds5.mp3', 'F#5': 'Fs5.mp3', A5: 'A5.mp3',
-  C6: 'C6.mp3', 'D#6': 'Ds6.mp3', 'F#6': 'Fs6.mp3', A6: 'A6.mp3',
-  C7: 'C7.mp3', 'D#7': 'Ds7.mp3', 'F#7': 'Fs7.mp3', A7: 'A7.mp3',
-  C8: 'C8.mp3',
+  A1: 'A1.mp3',
+  A2: 'A2.mp3',
+  A3: 'A3.mp3',
+  A4: 'A4.mp3',
+  A5: 'A5.mp3',
+  A6: 'A6.mp3',
 }
 
 function notifyReady(ready: boolean): void {
@@ -51,7 +65,9 @@ async function ensureSampler(): Promise<void> {
   return new Promise(resolve => {
     sharedSampler = new Tone.Sampler({
       urls: SALAMANDER_URLS,
-      release: 1,
+      // Short release so successive notes in a rhythm visual don't
+      // overlap into a muddy ring.
+      release: 0.4,
       baseUrl: 'https://tonejs.github.io/audio/salamander/',
       onload: () => {
         samplerLoaded = true
@@ -70,7 +86,6 @@ function normalisePitch(p: string): string {
   if (!m) return p
   const [, letter, accidental, octaveStr] = m
   const octave = parseInt(octaveStr, 10)
-  // Plain natural ('n') and no accidental are equivalent for playback.
   if (!accidental || accidental === 'n') return `${letter}${octave}`
   if (accidental === '#') return p
   if (accidental === 'b') {
@@ -100,6 +115,25 @@ function normalisePitch(p: string): string {
   return p
 }
 
+/**
+ * Synchronous AudioContext resume — must be called from a user gesture.
+ * If Tone hasn't been imported yet, this is a no-op (the gesture will
+ * have already started the import via `play()` etc).
+ */
+function unlockSync(): void {
+  if (!sharedTone) return
+  try {
+    const ctx = sharedTone.getContext?.()
+    if (ctx && ctx.state !== 'running') {
+      // Tone.start() resolves a promise but the underlying resume is
+      // synchronous-enough for Safari to honor it as part of the gesture.
+      void sharedTone.start()
+    }
+  } catch {
+    /* swallow — audio is best-effort */
+  }
+}
+
 async function unlockContext(): Promise<void> {
   if (!sharedTone) return
   if (sharedTone.getContext && sharedTone.getContext().state !== 'running') {
@@ -109,11 +143,58 @@ async function unlockContext(): Promise<void> {
   }
 }
 
+let documentUnlockerInstalled = false
+function installDocumentUnlocker(): void {
+  if (documentUnlockerInstalled) return
+  if (typeof document === 'undefined') return
+  documentUnlockerInstalled = true
+  const onFirstInteract = () => {
+    unlockSync()
+    document.removeEventListener('pointerdown', onFirstInteract)
+    document.removeEventListener('touchstart', onFirstInteract)
+    document.removeEventListener('keydown', onFirstInteract)
+  }
+  document.addEventListener('pointerdown', onFirstInteract, { once: true })
+  document.addEventListener('touchstart', onFirstInteract, { once: true })
+  document.addEventListener('keydown', onFirstInteract, { once: true })
+}
+
+function ensureMetronome(): void {
+  if (metronomeSynth || !sharedTone) return
+  try {
+    metronomeSynth = new sharedTone.Synth({
+      oscillator: { type: 'sine' },
+      envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.04 },
+    }).toDestination()
+    // Quieter than the sampler so it sits under the melodic notes.
+    if (metronomeSynth.volume) metronomeSynth.volume.value = -14
+  } catch {
+    metronomeSynth = null
+  }
+}
+
 export interface SamplerControls {
   ready: boolean
   play: (pitch: string, duration?: string) => Promise<void>
   playSequence: (pitches: string[], stagger?: number, duration?: string) => Promise<void>
   playChord: (pitches: string[], duration?: string) => Promise<void>
+  /** Brief click sound for metronome. `accent: true` for the downbeat. */
+  tick: (accent?: boolean) => Promise<void>
+  /**
+   * Sample-accurate scheduling: schedule a single note at a specific
+   * audio-context `time`. Synchronous — call inside a Tone.Part callback
+   * so the time argument lines up with the transport.
+   * Duration accepts seconds (number) or note-value strings ('4n', '8n').
+   */
+  playAt: (pitch: string, duration: number | string, time: number) => void
+  /** Sample-accurate metronome click at audio-context `time`. */
+  tickAt: (accent: boolean, time: number) => void
+  /**
+   * Resolves once the sampler has finished downloading and is ready to
+   * play. Use this in click handlers that *must* have audio before they
+   * start a loop, so the user doesn't see/hear a silent first iteration.
+   */
+  ensureReady: () => Promise<void>
 }
 
 export function useSampler(): SamplerControls {
@@ -121,11 +202,21 @@ export function useSampler(): SamplerControls {
 
   useEffect(() => {
     readyListeners.add(setReady)
+    // Eagerly start the download so audio is ready before the user
+    // clicks Play. Errors are silent — the play handler will retry.
+    void ensureSampler()
+    // Attach a once-only document-level audio unlocker for Safari /
+    // strict autoplay policies. Any first user interaction unlocks.
+    installDocumentUnlocker()
     return () => { readyListeners.delete(setReady) }
   }, [])
 
   const play = async (pitch: string, duration: string = '1n'): Promise<void> => {
     try {
+      // Best-effort synchronous unlock first so a real user gesture
+      // (this stack frame) unlocks the context even if samples are
+      // still loading.
+      unlockSync()
       await ensureSampler()
       if (!sharedSampler) return
       await unlockContext()
@@ -139,6 +230,7 @@ export function useSampler(): SamplerControls {
     duration: string = '4n',
   ): Promise<void> => {
     try {
+      unlockSync()
       await ensureSampler()
       if (!sharedSampler) return
       await unlockContext()
@@ -158,6 +250,7 @@ export function useSampler(): SamplerControls {
     duration: string = '2n',
   ): Promise<void> => {
     try {
+      unlockSync()
       await ensureSampler()
       if (!sharedSampler) return
       await unlockContext()
@@ -165,5 +258,46 @@ export function useSampler(): SamplerControls {
     } catch {}
   }
 
-  return { ready, play, playSequence, playChord }
+  const tick = async (accent: boolean = false): Promise<void> => {
+    try {
+      unlockSync()
+      await ensureSampler()
+      ensureMetronome()
+      if (!metronomeSynth) return
+      // Higher pitch + slight louder volume on the accented downbeat.
+      const pitch = accent ? 'A5' : 'E5'
+      metronomeSynth.triggerAttackRelease(pitch, '32n')
+    } catch {}
+  }
+
+  /**
+   * Synchronous, sample-accurate playback. Caller MUST ensure the sampler
+   * is loaded (e.g. by checking `ready`) before calling.
+   */
+  const playAt = (pitch: string, duration: number | string, time: number): void => {
+    try {
+      if (!sharedSampler) return
+      sharedSampler.triggerAttackRelease(normalisePitch(pitch), duration, time)
+    } catch {}
+  }
+
+  const tickAt = (accent: boolean, time: number): void => {
+    try {
+      ensureMetronome()
+      if (!metronomeSynth) return
+      metronomeSynth.triggerAttackRelease(accent ? 'A5' : 'E5', '32n', time)
+    } catch {}
+  }
+
+  const ensureReady = async (): Promise<void> => {
+    try {
+      unlockSync()
+      await ensureSampler()
+      // Audio context start can be a no-op if already running. Awaiting
+      // it guarantees we don't return before the sampler is callable.
+      await unlockContext()
+    } catch {}
+  }
+
+  return { ready, play, playSequence, playChord, tick, playAt, tickAt, ensureReady }
 }

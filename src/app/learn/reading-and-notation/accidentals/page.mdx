@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'accidentals',
   title: 'Accidentals',
   oneSentence:
-    'Accidentals are the symbols that raise or lower a pitch by a half step or a whole step — sharps, flats, naturals, double sharps, and double flats — and they let us notate every pitch in the chromatic scale using only seven letter names.',
+    'Accidentals are the symbols that raise or lower a pitch by a half step or a whole step (sharps, flats, naturals, double sharps, and double flats) and they let us notate every pitch in the chromatic scale using only seven letter names.',
   practice: [
     { kind: 'flashcard', label: 'Accidentals Flashcards', detail: '8 cards', href: '/study/symbols-accidentals' },
   ],
@@ -18,13 +18,13 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-The musical alphabet has seven letter names, but an octave contains twelve distinct pitches. To fill the gap, accidentals modify letter names — a sharp raises the pitch, a flat lowers it, a natural cancels either one. Without accidentals, the staff could only represent seven of the twelve chromatic pitches. With them, it represents all twelve, in every octave, with no ambiguity.
+The musical alphabet has seven letter names, but an octave contains twelve distinct pitches. To fill the gap, accidentals modify letter names, a sharp raises the pitch, a flat lowers it, a natural cancels either one. Without accidentals, the staff could only represent seven of the twelve chromatic pitches. With them, it represents all twelve, in every octave, with no ambiguity.
 
 Accidentals are small symbols, but they carry a lot of weight. They're the difference between a major and minor scale. They're what creates tension in a phrase and release at a cadence. They're the reason key signatures exist (key signatures are just accidentals written once at the beginning instead of repeatedly throughout a piece).
 
@@ -35,55 +35,55 @@ Accidentals are small symbols, but they carry a lot of weight. They're the diffe
 <NoteSequence
   pitches={['F#4', 'Fn4', 'F4', 'G4']}
   clef="treble"
-  caption="Accidentals persist within a measure. F♯ — then F♮ cancels the sharp — the third F stays natural by persistence — then G. Within one measure, an accidental affects every later occurrence of the same line/space until the next bar."
+  caption="Accidentals persist within a measure. F♯(then F♮ cancels the sharp) the third F stays natural by persistence, then G. Within one measure, an accidental affects every later occurrence of the same line/space until the next bar."
 />
 
 ## The five accidentals
 
-**Sharp (♯)** — raises the pitch **one half step**. A C with a sharp in front becomes C♯, which sounds a half step higher than C (the same pitch as D♭ on a piano).
+**Sharp (♯)**, raises the pitch **one half step**. A C with a sharp in front becomes C♯, which sounds a half step higher than C (the same pitch as D♭ on a piano).
 
-**Flat (♭)** — lowers the pitch **one half step**. A B with a flat in front becomes B♭, which sounds a half step lower than B (the same pitch as A♯ on a piano).
+**Flat (♭)**, lowers the pitch **one half step**. A B with a flat in front becomes B♭, which sounds a half step lower than B (the same pitch as A♯ on a piano).
 
-**Natural (♮)** — cancels any previous sharp or flat, returning the note to its unaltered pitch. If the key signature has an F♯, placing a natural in front of an F makes that specific F natural instead. If the previous F in the same measure was played as F♯ (because of a sharp earlier in the measure), a natural cancels that sharp for the remainder of the measure.
+**Natural (♮)**, cancels any previous sharp or flat, returning the note to its unaltered pitch. If the key signature has an F♯, placing a natural in front of an F makes that specific F natural instead. If the previous F in the same measure was played as F♯ (because of a sharp earlier in the measure), a natural cancels that sharp for the remainder of the measure.
 
-**Double sharp (𝄪)** — raises the pitch **one whole step** (two half steps). A double-sharp F (F𝄪) sounds the same as a natural G. Double sharps appear in certain keys (like the raised seventh of G♯ minor) where the theoretical spelling requires it.
+**Double sharp (𝄪)**, raises the pitch **one whole step** (two half steps). A double-sharp F (F𝄪) sounds the same as a natural G. Double sharps appear in certain keys (like the raised seventh of G♯ minor) where the theoretical spelling requires it.
 
-**Double flat (𝄫)** — lowers the pitch **one whole step**. A double-flat B (B𝄫) sounds the same as a natural A. Like double sharps, double flats are rare and usually appear for theoretical spelling reasons in less common keys.
+**Double flat (𝄫)**, lowers the pitch **one whole step**. A double-flat B (B𝄫) sounds the same as a natural A. Like double sharps, double flats are rare and usually appear for theoretical spelling reasons in less common keys.
 
 ## How accidentals work within a measure
 
-An accidental affects **only the specific line or space where it appears**, and only for the **remainder of the measure**. Once the next bar line passes, the accidental's effect resets — the next measure starts fresh, with only the key signature in effect.
+An accidental affects **only the specific line or space where it appears**, and only for the **remainder of the measure**. Once the next bar line passes, the accidental's effect resets, the next measure starts fresh, with only the key signature in effect.
 
-Within a measure, any note on the same line or space as an accidental is affected. So if the first note of a measure is C♯, and later in that same measure another C appears on the same line, that later C is also played as C♯ — no need to re-mark the sharp. But if a C appears on a *different* octave within the same measure, it's not automatically sharped; the accidental only applies to the exact staff position where it was written.
+Within a measure, any note on the same line or space as an accidental is affected. So if the first note of a measure is C♯, and later in that same measure another C appears on the same line, that later C is also played as C♯, no need to re-mark the sharp. But if a C appears on a *different* octave within the same measure, it's not automatically sharped; the accidental only applies to the exact staff position where it was written.
 
-This can be subtle, and modern notation often adds **courtesy accidentals** — a sharp, flat, or natural in parentheses or without parentheses, placed on a note that technically doesn't need one — to avoid confusion. If the reader might forget, the courtesy accidental makes the intent explicit.
+This can be subtle, and modern notation often adds **courtesy accidentals**(a sharp, flat, or natural in parentheses or without parentheses, placed on a note that technically doesn't need one) to avoid confusion. If the reader might forget, the courtesy accidental makes the intent explicit.
 
 ## Cancellation
 
 A sharp can be canceled by a natural (♮). A flat can also be canceled by a natural. A double sharp can be canceled by a single sharp (partial cancellation) or by a natural (full cancellation); same for a double flat.
 
-Modern notation often uses redundant cancellations for clarity. If a note was F♯ in the previous measure and now needs to be F natural, the new measure starts fresh by default — but composers often write a courtesy natural anyway, because readers may still expect the sharp.
+Modern notation often uses redundant cancellations for clarity. If a note was F♯ in the previous measure and now needs to be F natural, the new measure starts fresh by default, but composers often write a courtesy natural anyway, because readers may still expect the sharp.
 
 ## Why enharmonic spellings exist
 
-The pitch one half step above C can be written as either **C♯** or **D♭**. Physically, these are the same key on a piano. Musically, they're functionally different — C♯ is "C raised," part of the C family; D♭ is "D lowered," part of the D family. Composers choose between them based on the harmonic context. A piece in a sharp key (like E major) will spell that pitch as C♯. A piece in a flat key (like A♭ major) will spell it as D♭.
+The pitch one half step above C can be written as either **C♯** or **D♭**. Physically, these are the same key on a piano. Musically, they're functionally different, C♯ is "C raised," part of the C family; D♭ is "D lowered," part of the D family. Composers choose between them based on the harmonic context. A piece in a sharp key (like E major) will spell that pitch as C♯. A piece in a flat key (like A♭ major) will spell it as D♭.
 
-Enharmonic equivalents get their own full treatment on the next page. For now, know that every accidental produces a pitch that also has an alternate spelling — and choosing the right spelling is part of good notation.
+Enharmonic equivalents get their own full treatment on the next page. For now, know that every accidental produces a pitch that also has an alternate spelling, and choosing the right spelling is part of good notation.
 
 ## Common questions
 
 **Why use double sharps and double flats? Wouldn't a natural note be clearer?**
 
-In isolation, yes — F𝄪 is the same pitch as G, and writing G would be simpler. But within a key signature or a scale, the theoretical spelling matters. The raised seventh of G♯ minor, for example, is F𝄪 (F double-sharp), because the seventh degree of G♯ must be some form of F — writing G instead would disrupt the scale's alphabetical pattern and make the harmony harder to read. Double sharps and double flats preserve the letter sequence.
+In isolation, yes, F𝄪 is the same pitch as G, and writing G would be simpler. But within a key signature or a scale, the theoretical spelling matters. The raised seventh of G♯ minor, for example, is F𝄪 (F double-sharp), because the seventh degree of G♯ must be some form of F, writing G instead would disrupt the scale's alphabetical pattern and make the harmony harder to read. Double sharps and double flats preserve the letter sequence.
 
 **Do accidentals apply to different octaves?**
 
-Technically no. An accidental in treble clef at the A4 line applies only to A4 within that measure. An A5 in the same measure is not affected by the A4 accidental. In practice, though, many composers expect the accidental to carry across octaves for clarity — and modern editors often add courtesy accidentals to every altered note to prevent confusion. The strict rule is "same line/space only," but the practical rule is often "assume the composer means all octaves unless otherwise indicated."
+Technically no. An accidental in treble clef at the A4 line applies only to A4 within that measure. An A5 in the same measure is not affected by the A4 accidental. In practice, though, many composers expect the accidental to carry across octaves for clarity, and modern editors often add courtesy accidentals to every altered note to prevent confusion. The strict rule is "same line/space only," but the practical rule is often "assume the composer means all octaves unless otherwise indicated."
 
 **What about quarter-tone accidentals?**
 
-Some 20th- and 21st-century music uses quarter-tone alterations — raising or lowering a pitch by half of a half step. Special accidentals exist for this: a three-quarter-sharp (raises by three-quarters of a whole step), a quarter-sharp (raises by a quarter tone), and similar for flats. These are rare outside contemporary classical music and specific non-Western styles, and you won't encounter them in standard repertoire.
+Some 20th- and 21st-century music uses quarter-tone alterations, raising or lowering a pitch by half of a half step. Special accidentals exist for this: a three-quarter-sharp (raises by three-quarters of a whole step), a quarter-sharp (raises by a quarter tone), and similar for flats. These are rare outside contemporary classical music and specific non-Western styles, and you won't encounter them in standard repertoire.
 
 **How do accidentals interact with key signatures?**
 
-A key signature sets the default for a piece — "every F is F♯ unless otherwise indicated." An accidental within the music overrides the key signature for the specific note and measure where it appears. If a piece is in G major (one sharp, F♯) and a measure contains a natural sign in front of an F, that F is played natural for the rest of that measure only. The next measure returns to the key signature's default.
+A key signature sets the default for a piece, "every F is F♯ unless otherwise indicated." An accidental within the music overrides the key signature for the specific note and measure where it appears. If a piece is in G major (one sharp, F♯) and a measure contains a natural sign in front of an F, that F is played natural for the rest of that measure only. The next measure returns to the key signature's default.

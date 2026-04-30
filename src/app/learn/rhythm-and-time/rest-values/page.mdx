@@ -7,7 +7,7 @@ export const learnPage = {
   subtopic: 'rest-values',
   title: 'Rest Values',
   oneSentence:
-    'Rests are the symbols that tell you when *not* to play — each rest value matches a corresponding note value, so a quarter rest lasts one beat, a half rest lasts two, and so on.',
+    'Rests are the symbols that tell you when *not* to play, each rest value matches a corresponding note value, so a quarter rest lasts one beat, a half rest lasts two, and so on.',
   practice: [
     { kind: 'flashcard', label: 'Note & Rest Values Flashcards', detail: '12 cards', href: '/study/symbols-note-values' },
   ],
@@ -18,38 +18,38 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-Silence is as musical as sound. A rest is the written equivalent of silence — a symbol that tells the performer to stop playing for a specific duration, the same duration that the corresponding note value would have lasted. A quarter rest is exactly as long as a quarter note. A half rest is exactly as long as a half note. Every note value has a matching rest value, and they form the same halving hierarchy.
+Silence is as musical as sound. A rest is the written equivalent of silence, a symbol that tells the performer to stop playing for a specific duration, the same duration that the corresponding note value would have lasted. A quarter rest is exactly as long as a quarter note. A half rest is exactly as long as a half note. Every note value has a matching rest value, and they form the same halving hierarchy.
 
-Rests aren't empty space on the page. They're active silences — moments when the music *does nothing*, and that doing-nothing is part of the rhythm. A melody with good rests breathes. A melody without rests can feel cluttered or airless.
+Rests aren't empty space on the page. They're active silences, moments when the music *does nothing*, and that doing-nothing is part of the rhythm. A melody with good rests breathes. A melody without rests can feel cluttered or airless.
 
 ## The visual
 
-<RestValueHierarchy caption="The six common rest values. Each rest is exactly half the duration of the one above it — the same doubling hierarchy as note values, just in silence. A whole rest fills a 4/4 measure; a half rest fills two beats; and so on down." />
+<RestValueHierarchy caption="The six common rest values. Each rest is exactly half the duration of the one above it, the same doubling hierarchy as note values, just in silence. A whole rest fills a 4/4 measure; a half rest fills two beats; and so on down." />
 
-<AlternatingRestsExample caption="Note, rest, note, rest — four beats in 4/4 alternating. Rests take time just like notes do. Click either note to hear it." />
+<AlternatingRestsExample caption="Note, rest, note, rest, four beats in 4/4 alternating. Rests take time just like notes do. Click either note to hear it." />
 
 ## The basic hierarchy
 
 Each rest corresponds exactly to a note of the same name:
 
-- **Whole rest** — a small filled rectangle that hangs *below* the fourth line of the staff. Worth 4 beats in 4/4.
-- **Half rest** — a small filled rectangle that sits *on top of* the third line. Worth 2 beats.
-- **Quarter rest** — a distinctive zigzag symbol that fills most of the staff vertically. Worth 1 beat.
-- **Eighth rest** — a diagonal stroke with one flag. Worth 1/2 beat.
-- **Sixteenth rest** — a diagonal stroke with two flags. Worth 1/4 beat.
-- **Thirty-second rest** — a diagonal stroke with three flags. Worth 1/8 beat.
+- **Whole rest**, a small filled rectangle that hangs *below* the fourth line of the staff. Worth 4 beats in 4/4.
+- **Half rest**, a small filled rectangle that sits *on top of* the third line. Worth 2 beats.
+- **Quarter rest**, a distinctive zigzag symbol that fills most of the staff vertically. Worth 1 beat.
+- **Eighth rest**, a diagonal stroke with one flag. Worth 1/2 beat.
+- **Sixteenth rest**, a diagonal stroke with two flags. Worth 1/4 beat.
+- **Thirty-second rest**, a diagonal stroke with three flags. Worth 1/8 beat.
 
 The hierarchy is identical to the note-value hierarchy: each rest is half the duration of the one above it. Two eighth rests equal one quarter rest. Four sixteenth rests equal one quarter rest. Everything halves cleanly.
 
-## Whole rest vs. half rest — the easy confusion
+## Whole rest vs. half rest, the easy confusion
 
-These two are the most commonly confused rests because they look similar — both are small filled rectangles. The distinction is where they sit on the staff:
+These two are the most commonly confused rests because they look similar, both are small filled rectangles. The distinction is where they sit on the staff:
 
 - **Whole rest hangs below the fourth line.** A common memory device: the whole rest is "heavier" (4 beats), so it falls down off the line.
 - **Half rest sits on top of the third line.** Half rest is "lighter" (2 beats), so it sits up on top.
@@ -60,11 +60,11 @@ Read out loud: *whole hangs, half sits.* After a little practice this becomes in
 
 Rests behave exactly like notes for the purpose of counting beats. A quarter rest takes one beat; during that beat, you count it but don't play it. An eighth rest takes half a beat; you still feel the subdivision where it lives, but silently.
 
-When you're learning a passage with rests, count *through* them. Don't treat them as pauses between musical activity — treat them as music that happens to be silent. The pulse continues. The rest is a beat (or part of a beat) you're actively keeping time on without sound.
+When you're learning a passage with rests, count *through* them. Don't treat them as pauses between musical activity, treat them as music that happens to be silent. The pulse continues. The rest is a beat (or part of a beat) you're actively keeping time on without sound.
 
 ## The whole-measure rest
 
-Confusingly, the **whole rest** symbol is also used to represent an entire measure of rest, regardless of the time signature. A whole rest in a 3/4 measure means "rest for the whole measure" — three beats, not four.
+Confusingly, the **whole rest** symbol is also used to represent an entire measure of rest, regardless of the time signature. A whole rest in a 3/4 measure means "rest for the whole measure", three beats, not four.
 
 This is inherited convention. The whole rest originally meant "rest for a whole measure," and that meaning was preserved even as time signatures other than 4/4 became common. In practice, you read a whole rest in context: in 4/4, it lasts 4 beats; in 3/4, 3 beats; in 6/8, 6 eighth-note beats.
 
@@ -72,7 +72,7 @@ The symbol is used this way because a whole-measure rest is extremely common and
 
 ## Multi-measure rests
 
-For longer silences — many measures of rest in a row — scores often use a **multi-measure rest**: a thick horizontal line crossing the staff with a number above it, indicating how many measures of rest the performer waits.
+For longer silences (many measures of rest in a row) scores often use a **multi-measure rest**: a thick horizontal line crossing the staff with a number above it, indicating how many measures of rest the performer waits.
 
 A "7" above a multi-measure rest means "rest for seven measures." This is common in orchestral parts where one instrument might sit silent for long stretches while others play. The multi-measure rest keeps the page clean and lets the performer count their measures efficiently.
 
@@ -80,7 +80,7 @@ A "7" above a multi-measure rest means "rest for seven measures." This is common
 
 **Why do I feel compelled to fill rests with something?**
 
-Musicians new to rhythm often rush past rests, shortening them or skipping them entirely. It takes practice to treat silence as active rather than empty. The fix is to subdivide mentally *through* the rest — keep counting, keep feeling the pulse, just don't play. Rests become easier once you trust them as musical events rather than gaps.
+Musicians new to rhythm often rush past rests, shortening them or skipping them entirely. It takes practice to treat silence as active rather than empty. The fix is to subdivide mentally *through* the rest, keep counting, keep feeling the pulse, just don't play. Rests become easier once you trust them as musical events rather than gaps.
 
 **Can rests be tied like notes?**
 
@@ -88,7 +88,7 @@ No. Ties connect notes of the same pitch to extend their duration. Rests don't n
 
 **Do rests count as "missed notes" by the listener?**
 
-Absolutely not — the listener hears them as silences that are part of the music, and well-placed rests often carry more expressive weight than notes. The pause before a resolution, the beat of silence before a downbeat, the brief emptiness that lets a previous phrase ring — these are crucial to how music breathes.
+Absolutely not, the listener hears them as silences that are part of the music, and well-placed rests often carry more expressive weight than notes. The pause before a resolution, the beat of silence before a downbeat, the brief emptiness that lets a previous phrase ring, these are crucial to how music breathes.
 
 **Why do some scores have rests in the middle of a sustained chord?**
 

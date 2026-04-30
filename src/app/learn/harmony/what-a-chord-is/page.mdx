@@ -7,24 +7,24 @@ export const learnPage = {
   subtopic: 'what-a-chord-is',
   title: 'What a Chord Is',
   oneSentence:
-    'A chord is three or more pitches sounded together — usually built by stacking thirds from a root note — producing a single harmonic entity that carries more color, weight, and emotional specificity than any single interval alone.',
+    'A chord is three or more pitches sounded together (usually built by stacking thirds from a root note) producing a single harmonic entity that carries more color, weight, and emotional specificity than any single interval alone.',
   practice: [],
   related: [
-    { title: 'Triads — The Fundamental Chord',    href: '/learn/harmony/triads' },
+    { title: 'Triads, The Fundamental Chord',    href: '/learn/harmony/triads' },
     { title: 'What an Interval Is',                href: '/learn/intervals/what-an-interval-is' },
     { title: 'Melodic and Harmonic Intervals',     href: '/learn/intervals/melodic-and-harmonic-intervals' },
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-You've seen two notes played together (a harmonic interval) and heard its color. A perfect 5th sounds open. A major 3rd sounds warm. A minor 2nd sounds harsh. But three notes sounded together is a different kind of object entirely — no longer a distance between two points, but a **chord**: a single harmonic entity with its own character, texture, and function.
+You've seen two notes played together (a harmonic interval) and heard its color. A perfect 5th sounds open. A major 3rd sounds warm. A minor 2nd sounds harsh. But three notes sounded together is a different kind of object entirely, no longer a distance between two points, but a **chord**: a single harmonic entity with its own character, texture, and function.
 
-Chords are what build the harmonic world of a piece. When you hear the "emotional" content of music — whether it feels bright, dark, tense, restful, or resolved — you're mostly hearing chords. Melody traces a line; harmony provides the shifting landscape the line moves through. Chords are the basic units of that landscape.
+Chords are what build the harmonic world of a piece. When you hear the "emotional" content of music (whether it feels bright, dark, tense, restful, or resolved) you're mostly hearing chords. Melody traces a line; harmony provides the shifting landscape the line moves through. Chords are the basic units of that landscape.
 
 Western tonal music has organized chords into a remarkably coherent system, built almost entirely from stacking the same simple interval (thirds) in different combinations. Once you see the system, every chord you'll encounter becomes identifiable by a small number of rules.
 
@@ -32,7 +32,7 @@ Western tonal music has organized chords into a remarkably coherent system, buil
 
 <ChordExplorer
   pitches={['C4', 'E4', 'G4']}
-  caption="C major triad: three notes — C, E, G — sounded together as a single harmonic entity."
+  caption="C major triad: three notes (C, E, G) sounded together as a single harmonic entity."
 />
 
 <figure style={{ margin: '24px auto', textAlign: 'center' }}>
@@ -65,36 +65,36 @@ Western tonal music has organized chords into a remarkably coherent system, buil
 
 Strictly, a chord is **three or more pitches sounded simultaneously**. Two notes together is a dyad (or simply a harmonic interval); one note alone is a monophonic tone. Three notes together begins to create the sense of a unified harmonic entity rather than just a relationship between two pitches.
 
-But this is the minimum. In practice, chords frequently contain four, five, six, or more distinct pitches. A seventh chord has four notes. An extended jazz chord can have seven or eight. The defining feature isn't the exact count — it's that the pitches form a cohesive unit that functions as one harmonic object.
+But this is the minimum. In practice, chords frequently contain four, five, six, or more distinct pitches. A seventh chord has four notes. An extended jazz chord can have seven or eight. The defining feature isn't the exact count, it's that the pitches form a cohesive unit that functions as one harmonic object.
 
 ## Chords are built in thirds
 
-The defining feature of Western tonal chords is that they're built by **stacking thirds** from a root note. Start with a root, add a third above it, then another third above that, and you get a **triad** — the three-note core of virtually every chord in tonal music.
+The defining feature of Western tonal chords is that they're built by **stacking thirds** from a root note. Start with a root, add a third above it, then another third above that, and you get a **triad**, the three-note core of virtually every chord in tonal music.
 
 From C:
 - **Root:** C
 - **Third:** E (a third above C)
 - **Fifth:** G (a third above E, which is also a fifth above C)
 
-This gives you the C major triad: C-E-G. The third stacking is what makes it a triad. If you keep going — add another third — you get a seventh chord:
+This gives you the C major triad: C-E-G. The third stacking is what makes it a triad. If you keep going (add another third) you get a seventh chord:
 
 - **Seventh:** B (a third above G)
 
 C-E-G-B is a C major seventh chord. Stack one more third, and you get the 9th chord. Another, the 11th. Another, the 13th. Western harmony is, at its core, a system of thirds stacked into larger and larger chord structures.
 
-Not every harmony is built this way — some modern and experimental music uses chords built on fourths, fifths, or chromatic clusters. But for the vast majority of tonal music, third-stacking is the system, and understanding it unlocks the rest.
+Not every harmony is built this way, some modern and experimental music uses chords built on fourths, fifths, or chromatic clusters. But for the vast majority of tonal music, third-stacking is the system, and understanding it unlocks the rest.
 
 ## The three questions about any chord
 
 When you see or hear a chord, three questions identify it:
 
-**1. What's the root?** The root is the note the chord is named after — typically the lowest note in its stacked-third form, though a chord's root can appear in any voice.
+**1. What's the root?** The root is the note the chord is named after, typically the lowest note in its stacked-third form, though a chord's root can appear in any voice.
 
 **2. What kind of chord is it?** Major, minor, diminished, augmented, seventh, suspended, and so on. This is the chord's **quality**, determined by the specific intervals between its notes.
 
-**3. What's the lowest-sounding note (the bass)?** If the bass is the root, the chord is in **root position**. If another chord tone is in the bass, the chord is in an **inversion** — covered in its own pages.
+**3. What's the lowest-sounding note (the bass)?** If the bass is the root, the chord is in **root position**. If another chord tone is in the bass, the chord is in an **inversion**, covered in its own pages.
 
-Fluent chord reading is essentially answering these three questions instantly. With practice, you don't think "the root is C, the quality is major, the bass is E" — you just see "C major in first inversion" as a single perception.
+Fluent chord reading is essentially answering these three questions instantly. With practice, you don't think "the root is C, the quality is major, the bass is E", you just see "C major in first inversion" as a single perception.
 
 ## Chords vs. chord voicings
 
@@ -103,9 +103,9 @@ The same chord can be arranged in different ways. A C major chord always has the
 - Close position voicing: C-E-G all in the same octave
 - Open position voicing: C in one octave, E an octave up, G a further octave up
 - Doubled voicing: C-E-G-C (root doubled in the soprano)
-- Drop-2 voicing: G-C-E (fifth on the bottom, root in the middle) — a jazz-style reorganization
+- Drop-2 voicing: G-C-E (fifth on the bottom, root in the middle), a jazz-style reorganization
 
-All of these are C major chords. They differ in *voicing* — the practical arrangement of the pitches — but not in *chord identity*. The three pitches (C, E, G) are present in each.
+All of these are C major chords. They differ in *voicing*(the practical arrangement of the pitches) but not in *chord identity*. The three pitches (C, E, G) are present in each.
 
 Voicing affects the sound of a chord significantly, but the underlying chord is the same. When we analyze chords, we usually focus on the chord's identity first, its voicing second.
 
@@ -113,11 +113,11 @@ Voicing affects the sound of a chord significantly, but the underlying chord is 
 
 **Can two notes count as a chord?**
 
-Strictly speaking, no — two notes form a dyad or an interval, not a chord. In practice, though, a two-note "power chord" (a root and a fifth, common in rock guitar) is often treated informally as a chord because it functions as one harmonically. But if you need to be precise, a chord requires three or more pitches.
+Strictly speaking, no, two notes form a dyad or an interval, not a chord. In practice, though, a two-note "power chord" (a root and a fifth, common in rock guitar) is often treated informally as a chord because it functions as one harmonically. But if you need to be precise, a chord requires three or more pitches.
 
 **Does the order of the notes matter?**
 
-It depends on what you're analyzing. For the chord's **identity**, no — C-E-G, E-G-C, and G-C-E are all C major chords. For **inversion analysis**, yes — which note is lowest (the bass) determines whether the chord is in root position, first inversion, or second inversion. For **voicing**, absolutely — the arrangement affects the sound's color and clarity.
+It depends on what you're analyzing. For the chord's **identity**, no, C-E-G, E-G-C, and G-C-E are all C major chords. For **inversion analysis**, yes, which note is lowest (the bass) determines whether the chord is in root position, first inversion, or second inversion. For **voicing**, absolutely, the arrangement affects the sound's color and clarity.
 
 **Do all chords have to be built in thirds?**
 

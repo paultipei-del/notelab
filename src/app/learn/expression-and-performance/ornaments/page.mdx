@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'ornaments',
   title: 'Ornaments',
   oneSentence:
-    'Ornaments — trills, turns, mordents, appoggiaturas, grace notes — are small decorative flourishes that add color and elegance to melodies, often notated with compact symbols that expand into specific patterns of notes when performed.',
+    'Ornaments (trills, turns, mordents, appoggiaturas, grace notes) are small decorative flourishes that add color and elegance to melodies, often notated with compact symbols that expand into specific patterns of notes when performed.',
   practice: [
     { kind: 'flashcard', label: 'Ornament Types', detail: 'symbols', href: '/study/symbols-ornaments' },
     { kind: 'flashcard', label: 'Baroque Ornament Execution', detail: 'performance practice', href: '/study/baroque-ornament-execution' },
@@ -19,50 +19,50 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-An **ornament** is a small decorative flourish added to a note — not a separate melodic event, but a way of elaborating a single note to give it more life, color, or expressive weight. A plain quarter note becomes a trill; a simple melodic line becomes ornamented with turns and grace notes. The underlying note is still there; the ornament decorates it.
+An **ornament** is a small decorative flourish added to a note, not a separate melodic event, but a way of elaborating a single note to give it more life, color, or expressive weight. A plain quarter note becomes a trill; a simple melodic line becomes ornamented with turns and grace notes. The underlying note is still there; the ornament decorates it.
 
-Ornaments have been part of Western music for centuries. They reached their peak of sophistication in the Baroque era, when performers routinely added elaborate ornaments on their own beyond what the composer notated. In later periods, composers specified ornaments more carefully. Today, ornaments are still used in classical music, jazz, and many folk traditions — though sometimes less systematically than in the Baroque.
+Ornaments have been part of Western music for centuries. They reached their peak of sophistication in the Baroque era, when performers routinely added elaborate ornaments on their own beyond what the composer notated. In later periods, composers specified ornaments more carefully. Today, ornaments are still used in classical music, jazz, and many folk traditions, though sometimes less systematically than in the Baroque.
 
 Ornaments are notated with small symbols that compress a pattern of several notes into a single marking. Interpretation requires knowing both the symbol and the stylistic conventions for performing it.
 
 ## The visual
 
-<DiagramPlaceholder description="A melody line with various ornaments marked — a trill (tr), a mordent (a short zigzag), a turn (an S-shape), a grace note (a small note before a main note) — each labeled." />
+<DiagramPlaceholder description="A melody line with various ornaments marked, a trill (tr), a mordent (a short zigzag), a turn (an S-shape), a grace note (a small note before a main note), each labeled." />
 
-<DiagramPlaceholder description="Each ornament expanded to show what notes are actually played — e.g., a trill on a quarter note played as a rapid alternation between the note and the note above." />
+<DiagramPlaceholder description="Each ornament expanded to show what notes are actually played, e.g., a trill on a quarter note played as a rapid alternation between the note and the note above." />
 
 ## The main ornaments
 
-**Trill (tr or 𝆖)** — a rapid alternation between the written note and the note above it (usually a step higher). The trill can last anywhere from a brief flick to the entire duration of the written note. In the Baroque era, trills typically began on the upper note; in later periods, they often begin on the main note. The specific starting note is partly a matter of style.
+**Trill (tr or 𝆖)**, a rapid alternation between the written note and the note above it (usually a step higher). The trill can last anywhere from a brief flick to the entire duration of the written note. In the Baroque era, trills typically began on the upper note; in later periods, they often begin on the main note. The specific starting note is partly a matter of style.
 
 Example: a quarter note C with a trill might be played as C-D-C-D-C-D-C (rapid oscillation).
 
-**Mordent (𝆚 or a short zigzag)** — a quick oscillation between the main note, the note above (or below), and back to the main note. Usually just one "wiggle."
+**Mordent (𝆚 or a short zigzag)**, a quick oscillation between the main note, the note above (or below), and back to the main note. Usually just one "wiggle."
 
-- **Upper mordent** — main note, upper neighbor, main note. A quick up-and-back motion.
-- **Lower mordent** (also called "inverted mordent," notated with a vertical slash through the symbol) — main note, lower neighbor, main note. A quick down-and-back motion.
+- **Upper mordent**, main note, upper neighbor, main note. A quick up-and-back motion.
+- **Lower mordent** (also called "inverted mordent," notated with a vertical slash through the symbol), main note, lower neighbor, main note. A quick down-and-back motion.
 
 Example: a quarter note E with an upper mordent is played as E-F-E (quickly), all within the duration of the quarter note.
 
-**Turn (∽ or S-shape)** — a four-note ornament: upper neighbor, main note, lower neighbor, main note. The turn "turns around" the main note, visiting both its upper and lower neighbors.
+**Turn (∽ or S-shape)**, a four-note ornament: upper neighbor, main note, lower neighbor, main note. The turn "turns around" the main note, visiting both its upper and lower neighbors.
 
 Example: a quarter note C with a turn is played as D-C-B-C (within the note's duration).
 
-**Appoggiatura** — a small grace note, typically on the beat, that displaces the main note and resolves to it. The appoggiatura takes part of the main note's value — historically half of it (or the full value of a duple note, two-thirds of a triple note). Appoggiaturas are expressive "leanings" into the main note.
+**Appoggiatura**, a small grace note, typically on the beat, that displaces the main note and resolves to it. The appoggiatura takes part of the main note's value, historically half of it (or the full value of a duple note, two-thirds of a triple note). Appoggiaturas are expressive "leanings" into the main note.
 
 Example: a quarter note C preceded by a small D (appoggiatura) might be performed as an eighth-note D followed by an eighth-note C, with the D falling on the beat where C was written.
 
-**Grace note (acciaccatura)** — a small note slightly before the main note, typically short and quick (unlike the appoggiatura's expressive lean). Often notated with a small eighth note with a slash through its stem. Played as a quick "crushed" note just before the main note.
+**Grace note (acciaccatura)**, a small note slightly before the main note, typically short and quick (unlike the appoggiatura's expressive lean). Often notated with a small eighth note with a slash through its stem. Played as a quick "crushed" note just before the main note.
 
 Example: a quarter note C with a grace note B might be played as a very quick B followed by C, with C falling on the beat.
 
-**Slide** — a specific ornament where the melody slides through neighboring notes into the main note. Less common in classical music, more common in folk and popular traditions.
+**Slide**, a specific ornament where the melody slides through neighboring notes into the main note. Less common in classical music, more common in folk and popular traditions.
 
 ## Ornament conventions and style
 
@@ -74,21 +74,21 @@ How ornaments are performed depends heavily on the era and style:
 
 **Romantic ornamentation.** Less systematic than Baroque, with ornaments used for specific expressive purposes rather than as routine decoration. Chopin's mazurkas and waltzes use elaborate ornaments for coloristic effect.
 
-**Folk and popular music.** Often has its own ornament traditions — Celtic cran and grace-note decorations on bagpipe tunes, ornamentation in Indian classical music (gamakas), specific patterns in jazz (trills, bend-ups, slides). These are usually taught through oral tradition rather than notation.
+**Folk and popular music.** Often has its own ornament traditions, Celtic cran and grace-note decorations on bagpipe tunes, ornamentation in Indian classical music (gamakas), specific patterns in jazz (trills, bend-ups, slides). These are usually taught through oral tradition rather than notation.
 
 ## The role of the performer
 
-Ornaments sit at the boundary between composition and performance. In Baroque music, the notated ornaments are often just the starting point — the performer is expected to add additional ornaments, especially on repeats and during slow movements. A Baroque aria's repeated section might be completely different from its first statement, ornamented with improvised flourishes.
+Ornaments sit at the boundary between composition and performance. In Baroque music, the notated ornaments are often just the starting point, the performer is expected to add additional ornaments, especially on repeats and during slow movements. A Baroque aria's repeated section might be completely different from its first statement, ornamented with improvised flourishes.
 
 In later eras, ornaments become less improvisational. By the Classical period, most ornaments are explicitly notated, with less freedom for the performer to add their own.
 
-This means that interpreting ornaments in Baroque music involves understanding the conventions and making performance decisions. Interpreting ornaments in Classical and Romantic music is more straightforward — play what's marked, following conventional performance practice for the specific ornament.
+This means that interpreting ornaments in Baroque music involves understanding the conventions and making performance decisions. Interpreting ornaments in Classical and Romantic music is more straightforward, play what's marked, following conventional performance practice for the specific ornament.
 
 ## Notating ornaments clearly
 
 Modern scores often notate ornaments with both a symbol and (sometimes) an explanatory small-note realization nearby. A trill might be marked with *tr* and then followed by a footnote showing exactly what notes to play. This is helpful when the convention is ambiguous (e.g., whether a trill starts on the upper or main note).
 
-When in doubt, consult recordings of the specific piece by established performers. Their interpretations show how the ornaments have traditionally been performed — useful knowledge when preparing a piece yourself.
+When in doubt, consult recordings of the specific piece by established performers. Their interpretations show how the ornaments have traditionally been performed, useful knowledge when preparing a piece yourself.
 
 ## Common questions
 
@@ -102,8 +102,8 @@ In Baroque music, typically the upper note. In Classical music and later, typica
 
 **What's the difference between an appoggiatura and a grace note?**
 
-An appoggiatura is longer and expressive — it takes significant time from the main note (often half) and is played with weight. A grace note (acciaccatura) is very short and fast — barely more than an embellishment, played just before the beat. Notationally, acciaccaturas often have a slash through the stem, distinguishing them from appoggiaturas.
+An appoggiatura is longer and expressive, it takes significant time from the main note (often half) and is played with weight. A grace note (acciaccatura) is very short and fast, barely more than an embellishment, played just before the beat. Notationally, acciaccaturas often have a slash through the stem, distinguishing them from appoggiaturas.
 
 **Do I need to play every ornament exactly as marked?**
 
-In Classical and later music, generally yes — the composer marked specific ornaments for specific reasons. In Baroque music, there's more flexibility; the conventions allow for some improvisation, and performers sometimes add ornaments the composer didn't notate. The appropriate approach depends on the piece, the era, and your interpretive judgment.
+In Classical and later music, generally yes, the composer marked specific ornaments for specific reasons. In Baroque music, there's more flexibility; the conventions allow for some improvisation, and performers sometimes add ornaments the composer didn't notate. The appropriate approach depends on the piece, the era, and your interpretive judgment.

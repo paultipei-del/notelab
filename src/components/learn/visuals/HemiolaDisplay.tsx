@@ -35,7 +35,7 @@ export function HemiolaDisplay({
   caption,
 }: HemiolaDisplayProps) {
   const T = tokensFor(size)
-  const { ready, play } = useSampler()
+  const { ready, play, playAt, ensureReady } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
   const [activeKeys, setActiveKeys] = React.useState<ReadonlySet<NoteKey>>(new Set())
   const { isPlaying, start, stop } = useLoopingPlayback()
@@ -82,7 +82,7 @@ export function HemiolaDisplay({
     }, durMs)
   }
 
-  const playVoice = (voice: 'top' | 'bottom' | 'both') => {
+  const playVoice = async (voice: 'top' | 'bottom' | 'both') => {
     // Click the same button while it's playing → stop. Click a different
     // button → switch to that voice. The looping hook handles the
     // teardown of the previous schedule when start() is called again.
@@ -92,6 +92,9 @@ export function HemiolaDisplay({
     }
     setInteracted(true)
     setMode(voice)
+    // Wait for samples to be ready so the loop doesn't fire silently
+    // for its first iteration.
+    await ensureReady()
 
     const eighthSec = 60 / tempo  // 1 eighth-note duration
     const events: PlaybackEvent[] = []
@@ -100,11 +103,9 @@ export function HemiolaDisplay({
       TOP_NOTES.forEach((n, i) => {
         events.push({
           offset: n.slot * eighthSec,
-          fire: () => {
-            // Each top note (dotted quarter) lasts 3 eighth-note slots.
-            flashKey(`top-${i}` as NoteKey, 3 * eighthSec * 1000)
-            void play(TOP_PITCH)
-          },
+          // Top voice notes are dotted quarters → sustain 3 eighth slots.
+          audio: (time) => playAt(TOP_PITCH, 3 * eighthSec * 0.95, time),
+          visual: () => flashKey(`top-${i}` as NoteKey, 3 * eighthSec * 1000),
         })
       })
     }
@@ -112,16 +113,14 @@ export function HemiolaDisplay({
       BOTTOM_NOTES.forEach((n, i) => {
         events.push({
           offset: n.slot * eighthSec,
-          fire: () => {
-            // Each bottom note (quarter) lasts 2 eighth-note slots.
-            flashKey(`bot-${i}` as NoteKey, 2 * eighthSec * 1000)
-            void play(BOTTOM_PITCH)
-          },
+          // Bottom voice notes are quarters → sustain 2 eighth slots.
+          audio: (time) => playAt(BOTTOM_PITCH, 2 * eighthSec * 0.95, time),
+          visual: () => flashKey(`bot-${i}` as NoteKey, 2 * eighthSec * 1000),
         })
       })
     }
 
-    start(events, {
+    void start(events, {
       iterationMs: 6 * eighthSec * 1000,
       onStop: () => {
         setActiveKeys(new Set())

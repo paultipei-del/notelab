@@ -6,7 +6,7 @@ export const learnPage = {
   subtopic: 'figured-bass',
   title: 'Figured Bass',
   oneSentence:
-    'Figured bass is a shorthand system from the Baroque era — small numbers written beneath a bass line indicating which intervals to add above — that lives on today as the standard way to mark chord inversions in harmonic analysis.',
+    'Figured bass is a shorthand system from the Baroque era (small numbers written beneath a bass line indicating which intervals to add above) that lives on today as the standard way to mark chord inversions in harmonic analysis.',
   practice: [
     { kind: 'flashcard', label: 'Figured Bass Flashcards', detail: '12 cards', href: '/study/figured-bass' },
   ],
@@ -17,21 +17,21 @@ export const learnPage = {
   ],
 }
 
-export default function Page({ children }) {
+export default function Page ({ children }) {
   return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
 }
 
 ## The intuition
 
-In the Baroque era (roughly 1600–1750), composers wrote only the bass line and the melody, leaving the middle voices (the chords) to be filled in on the spot by a keyboard player or lutenist. To tell the performer which chords to play, composers added small numbers beneath the bass line. These numbers — **figured bass** — specified which intervals to include above the bass, enough information to determine the chord without writing out every note.
+In the Baroque era (roughly 1600–1750), composers wrote only the bass line and the melody, leaving the middle voices (the chords) to be filled in on the spot by a keyboard player or lutenist. To tell the performer which chords to play, composers added small numbers beneath the bass line. These numbers (**figured bass**) specified which intervals to include above the bass, enough information to determine the chord without writing out every note.
 
-The practice of filling in chords from figured bass is now mostly historical (outside Baroque specialist performance), but the notation system lives on. Modern music theory uses figured bass symbols to indicate chord inversions — the exact same numbers, still attached to the same bass notes, still communicating the same information. Every time you see "I6" or "V6/5" or "vii°4/3" in a modern analysis, you're reading figured bass.
+The practice of filling in chords from figured bass is now mostly historical (outside Baroque specialist performance), but the notation system lives on. Modern music theory uses figured bass symbols to indicate chord inversions, the exact same numbers, still attached to the same bass notes, still communicating the same information. Every time you see "I6" or "V6/5" or "vii°4/3" in a modern analysis, you're reading figured bass.
 
 ## The visual
 
 <DiagramPlaceholder description="A Baroque-style bass line with figured-bass numbers beneath each note, with the full chord realization written on a separate staff above." />
 
-<DiagramPlaceholder description="The same chord progression shown as Roman numerals with figured bass — showing how modern analysis uses the same numbers attached to scale-degree labels." />
+<DiagramPlaceholder description="The same chord progression shown as Roman numerals with figured bass, showing how modern analysis uses the same numbers attached to scale-degree labels." />
 
 ## The basic triad figures
 
@@ -39,11 +39,11 @@ For triads, there are three positions, each with its figured-bass signature:
 
 **Root position: (nothing, or 5/3 for completeness).**
 
-A root-position triad contains a 3rd and a 5th above its bass. Since these are the "default" intervals in a triad (a third above the root and a fifth above the root), they're not explicitly notated — the absence of figures means "root-position triad." Some texts write "5/3" to make this explicit, but in most modern analysis, root position has no figure at all.
+A root-position triad contains a 3rd and a 5th above its bass. Since these are the "default" intervals in a triad (a third above the root and a fifth above the root), they're not explicitly notated, the absence of figures means "root-position triad." Some texts write "5/3" to make this explicit, but in most modern analysis, root position has no figure at all.
 
 **First inversion: 6 (or 6/3).**
 
-A first-inversion triad has its third in the bass. The remaining chord tones form a 6th (to the root) and a 3rd (to the fifth — though now an inversion of the original fifth). Only the 6 is traditionally written, with the 3 assumed. So "6" after a Roman numeral indicates first inversion.
+A first-inversion triad has its third in the bass. The remaining chord tones form a 6th (to the root) and a 3rd (to the fifth, though now an inversion of the original fifth). Only the 6 is traditionally written, with the 3 assumed. So "6" after a Roman numeral indicates first inversion.
 
 **Second inversion: 6/4.**
 
@@ -62,10 +62,10 @@ For seventh chords, there are four inversions, and each has a distinctive figure
 
 The figures describe the intervals above the bass:
 
-- **7** — in root position, a 7th above the bass is the seventh of the chord.
-- **6/5** — in first inversion, the intervals above the bass include a 6th (to the original root) and a 5th (to the third).
-- **4/3** — in second inversion, the intervals include a 4th (to the root) and a 3rd (to the fifth).
-- **2** (often written as just "2") — in third inversion, the 2nd above the bass is the root; the full figure is 6/4/2, but it's abbreviated to just "2" because the 2nd alone is distinctive.
+- **7**, in root position, a 7th above the bass is the seventh of the chord.
+- **6/5**, in first inversion, the intervals above the bass include a 6th (to the original root) and a 5th (to the third).
+- **4/3**, in second inversion, the intervals include a 4th (to the root) and a 3rd (to the fifth).
+- **2** (often written as just "2"), in third inversion, the 2nd above the bass is the root; the full figure is 6/4/2, but it's abbreviated to just "2" because the 2nd alone is distinctive.
 
 These four figures for seventh chords are essential to read in harmonic analysis. They come up constantly in real music, especially for the V7 chord and its resolution.
 
@@ -75,29 +75,29 @@ In Baroque scores, you might see a bass line like:
 
 > [bass note C, figure "6"]  [bass note D, figure "7"]  [bass note G, no figure]
 
-Reading: the first bass note (C) takes a first-inversion chord (so chord built on A is implied — A-C-E). The second bass note (D) takes a seventh chord (D-F-A-C or similar). The third bass note (G) is root position — G major chord. The continuo player realizes this at the keyboard, improvising voicings and textures within the constraints the figures specify.
+Reading: the first bass note (C) takes a first-inversion chord (so chord built on A is implied, A-C-E). The second bass note (D) takes a seventh chord (D-F-A-C or similar). The third bass note (G) is root position, G major chord. The continuo player realizes this at the keyboard, improvising voicings and textures within the constraints the figures specify.
 
 In modern analysis, the same information appears as:
 
 > vi6 ... V7 ... I
 
-— with figures attached to Roman numerals indicating chord identity and inversion simultaneously. The figures are the same (6, 7, etc.); just the surrounding labels differ.
+- with figures attached to Roman numerals indicating chord identity and inversion simultaneously. The figures are the same (6, 7, etc.); just the surrounding labels differ.
 
 ## Accidentals in figured bass
 
 Figured bass also uses accidentals to modify specific intervals. A natural, sharp, or flat before a figure indicates that the interval above the bass should be raised or lowered:
 
-- **♯6** — the 6th above the bass is sharped
-- **♭3** — the 3rd above the bass is flatted (or simply lowered)
-- **5♭** — the 5th is flatted (with the flat to the right of the 5)
+- **♯6**, the 6th above the bass is sharped
+- **♭3**, the 3rd above the bass is flatted (or simply lowered)
+- **5♭**, the 5th is flatted (with the flat to the right of the 5)
 
-An accidental **without** a number refers to the 3rd by convention. So a lone sharp under a bass note means "raise the 3rd above the bass a half step" — often used to produce a major quality where the key signature would otherwise produce minor.
+An accidental **without** a number refers to the 3rd by convention. So a lone sharp under a bass note means "raise the 3rd above the bass a half step", often used to produce a major quality where the key signature would otherwise produce minor.
 
-These accidentals make figured bass extremely precise — you can specify any altered chord with a small handful of symbols.
+These accidentals make figured bass extremely precise, you can specify any altered chord with a small handful of symbols.
 
 ## Why figured bass survived
 
-Figured bass notation became obsolete as a performance practice by the late 18th century — classical composers began fully notating every pitch rather than leaving middle voices improvised. But the symbol system proved so clear and compact for indicating chord inversions that theorists kept using it for analysis.
+Figured bass notation became obsolete as a performance practice by the late 18th century, classical composers began fully notating every pitch rather than leaving middle voices improvised. But the symbol system proved so clear and compact for indicating chord inversions that theorists kept using it for analysis.
 
 Today, figured bass is:
 - **The standard notation** for chord inversions in Roman numeral analysis
@@ -114,7 +114,7 @@ Economy of notation. When a number is implicit (like the 3rd in first inversion,
 
 **What does "V7" mean exactly?**
 
-V (Roman numeral) means the chord is built on the 5th scale degree. 7 (figured bass) means it's a seventh chord — so a seventh is added above the root of that 5th-degree triad. In C major, V7 = G-B-D-F. The combination of Roman numeral + figured bass completely specifies a chord's root, quality (by the Roman numeral's case), and inversion (by the figured-bass number).
+V (Roman numeral) means the chord is built on the 5th scale degree. 7 (figured bass) means it's a seventh chord, so a seventh is added above the root of that 5th-degree triad. In C major, V7 = G-B-D-F. The combination of Roman numeral + figured bass completely specifies a chord's root, quality (by the Roman numeral's case), and inversion (by the figured-bass number).
 
 **Do I have to learn all the seventh-chord inversion figures (6/5, 4/3, 2)?**
 
@@ -122,4 +122,4 @@ Yes, if you want to read harmonic analysis fluently. These come up constantly, e
 
 **What's the difference between figured bass and a lead-sheet chord symbol?**
 
-A lead-sheet symbol (like "Cm" or "G7") tells you the chord's identity — root and quality — but doesn't tell you which note is in the bass. A figured bass symbol tells you the inversion (bass note and chord structure) but assumes the chord quality comes from context (the key signature, the Roman numeral). They're complementary systems: lead sheet emphasizes chord identity; figured bass emphasizes inversion. In modern analysis, Roman numerals + figured bass gives you both.
+A lead-sheet symbol (like "Cm" or "G7") tells you the chord's identity (root and quality) but doesn't tell you which note is in the bass. A figured bass symbol tells you the inversion (bass note and chord structure) but assumes the chord quality comes from context (the key signature, the Roman numeral). They're complementary systems: lead sheet emphasizes chord identity; figured bass emphasizes inversion. In modern analysis, Roman numerals + figured bass gives you both.
