@@ -456,6 +456,10 @@ export default function MetronomePage() {
             style={bpmInputStyle}
             aria-label="Beats per minute"
           />
+          {/* Invisible spacer mirroring the pulse dot so the BPM numeral
+              sits at true horizontal center of the row, not offset right
+              by the dot + gap. */}
+          <span style={{ ...pulseStyle, visibility: "hidden" }} aria-hidden />
         </div>
         <div style={bpmLabelStyle}>beats per minute</div>
 
