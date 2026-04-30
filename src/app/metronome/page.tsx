@@ -11,12 +11,12 @@ const TEMPO_NAMES: { name: string; max: number }[] = [
   { name: "larghetto",   max: 59 },
   { name: "lento",       max: 65 },
   { name: "adagio",      max: 71 },
-  { name: "andante",     max: 85 },
-  { name: "andantino",   max: 97 },
-  { name: "moderato",    max: 113 },
-  { name: "allegretto",  max: 119 },
-  { name: "allegro",     max: 156 },
-  { name: "vivace",      max: 175 },
+  { name: "andante",     max: 89 },
+  { name: "andantino",   max: 99 },
+  { name: "moderato",    max: 119 },
+  { name: "allegretto",  max: 131 },
+  { name: "allegro",     max: 167 },
+  { name: "vivace",      max: 179 },
   { name: "presto",      max: 199 },
   { name: "prestissimo", max: 400 },
 ];
@@ -62,7 +62,6 @@ export default function MetronomePage() {
   const [playing, setPlaying] = useState(false);
   const [pulse, setPulse] = useState(false);
   const [refOpen, setRefOpen] = useState(false);
-  const [bpmInput, setBpmInput] = useState("120");
   const [tapFlash, setTapFlash] = useState(false);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -74,10 +73,20 @@ export default function MetronomePage() {
   const tapTimesRef = useRef<number[]>([]);
   const tapResetRef = useRef<number | null>(null);
 
+  // BPM display node (contentEditable span). We sync it imperatively when
+  // the BPM changes externally (slider, +/-, tap), but don't touch it while
+  // the user is editing it directly.
+  const bpmDisplayRef = useRef<HTMLSpanElement | null>(null);
+  useEffect(() => {
+    const el = bpmDisplayRef.current;
+    if (!el) return;
+    if (document.activeElement === el) return; // user is typing, leave alone
+    if (el.textContent !== String(bpm)) el.textContent = String(bpm);
+  }, [bpm]);
+
   const setBpm = useCallback((n: number) => {
     const v = clampBpm(n);
     setBpmState(v);
-    setBpmInput(String(v));
   }, []);
 
   // ---------- audio ----------
@@ -261,9 +270,11 @@ export default function MetronomePage() {
     border: 0,
     outline: "none",
     textAlign: "center",
-    width: "4ch",
+    minWidth: "2.5ch",
     padding: 0,
     fontVariantNumeric: "tabular-nums",
+    display: "inline-block",
+    cursor: "text",
   };
   const bpmLabelStyle: CSSProperties = {
     fontFamily: SANS,
@@ -407,18 +418,41 @@ export default function MetronomePage() {
 
         <div style={bpmRowStyle}>
           <span style={pulseStyle} aria-hidden />
-          <input
-            type="text"
-            inputMode="numeric"
-            value={bpmInput}
-            onChange={(e) => {
-              const v = e.target.value.replace(/\D/g, "").slice(0, 3);
-              setBpmInput(v);
-              const n = parseInt(v, 10);
-              if (!isNaN(n)) setBpmState(clampBpm(n));
+          <span
+            ref={(el) => {
+              bpmDisplayRef.current = el;
+              // initial render: set text content once on mount
+              if (el && el.textContent === "") el.textContent = String(bpmRef.current);
             }}
-            onBlur={() => setBpmInput(String(bpm))}
-            onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+            role="textbox"
+            contentEditable
+            suppressContentEditableWarning
+            inputMode="numeric"
+            onInput={(e) => {
+              const el = e.currentTarget;
+              const raw = (el.textContent ?? "").replace(/\D/g, "").slice(0, 3);
+              const n = parseInt(raw, 10);
+              if (!isNaN(n)) {
+                setBpmState(clampBpm(n));
+              }
+            }}
+            onBlur={(e) => {
+              // normalize whatever the user left on screen
+              e.currentTarget.textContent = String(bpmRef.current);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                (e.currentTarget as HTMLElement).blur();
+              } else if (
+                e.key.length === 1 &&
+                !/[0-9]/.test(e.key) &&
+                !e.metaKey &&
+                !e.ctrlKey
+              ) {
+                e.preventDefault();
+              }
+            }}
             style={bpmInputStyle}
             aria-label="Beats per minute"
           />
