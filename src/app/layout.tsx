@@ -24,21 +24,13 @@ export const viewport = {
   maximumScale: 1,
 }
 
+// Icons follow Next.js's filesystem convention: app/favicon.ico,
+// app/icon.png, app/apple-icon.png are auto-served at the right URLs
+// and Next.js injects the matching <link> tags. No manual `icons`
+// metadata needed.
 export const metadata: Metadata = {
   title: 'NoteLab',
   description: 'Music theory flashcards for CM students and musicians',
-  icons: {
-    icon: [
-      // Dark logo for light system theme; white logo for dark theme.
-      // Browsers that honor `media` on <link rel="icon"> will pick the
-      // matching one; ones that don't will fall through to the first
-      // entry, which we want to be the dark mark on a light background.
-      { url: '/NoteLab_Logo.png',          media: '(prefers-color-scheme: light)', type: 'image/png' },
-      { url: '/NoteLab_Logo__white_.png',  media: '(prefers-color-scheme: dark)',  type: 'image/png' },
-    ],
-    shortcut: '/NoteLab_Logo.png',
-    apple: '/NoteLab_Logo.png',
-  },
 }
 
 export default function RootLayout({

@@ -134,12 +134,17 @@ export default function SiteHeader() {
               top: '5px',
               bottom: '5px',
               borderRadius: HDR_BTN_R,
-              // Stamped-paper pill: solid darker cream, slightly pressed
-              // into the page rather than lifted. Hover/active darkens
-              // toward the ink, never lighter toward white.
-              background: '#E8DEC4',
-              border: '1px solid #CFC4A4',
-              boxShadow: 'inset 0 1px 0 rgba(42,35,24,0.04)',
+              // Stamped-paper pill: pressed into the page, not lifted off
+              // it. Top-darker gradient + inner top shadow read as a
+              // recess; the warm bottom highlight + outer impression ring
+              // give it body without resorting to glassy white.
+              background: 'linear-gradient(180deg, #E2D8BC 0%, #ECE3CC 100%)',
+              border: '1px solid #C7BC9B',
+              boxShadow: [
+                'inset 0 1px 2px rgba(42,35,24,0.10)',
+                'inset 0 -1px 0 rgba(255,248,230,0.4)',
+                '0 0 0 0.5px rgba(42,35,24,0.03)',
+              ].join(', '),
               transition: 'left 300ms ease-out, width 300ms ease-out',
               pointerEvents: 'none',
               zIndex: 0,
