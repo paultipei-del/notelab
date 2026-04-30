@@ -14,8 +14,11 @@ export default function SiteFooter() {
 
   return (
     <footer style={{
-      borderTop: '1px solid #DDD8CA',
-      background: '#F2EDDF',
+      // Transparent footer over the page's bottom-shoulder warm cream.
+      // No fill, no rule — the vignette in globals.css carries the
+      // visual weight at the bottom of the viewport.
+      background: 'transparent',
+      borderTop: 'none',
       padding: '20px 24px',
       display: 'flex',
       alignItems: 'center',
@@ -23,31 +26,31 @@ export default function SiteFooter() {
       flexWrap: 'wrap' as const,
       gap: '12px',
     }}>
-      <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>
+      <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)' }}>
         © {new Date().getFullYear()} NoteLab
       </span>
 
       <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
         <Link href="/pricing" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
+          <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
           >
             Pricing
           </span>
         </Link>
         <Link href="/feedback" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
+          <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
           >
             Feedback
           </span>
         </Link>
         <Link href="/privacy" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#2A2318')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#7A7060')}
+          <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
           >
             Privacy Policy
           </span>

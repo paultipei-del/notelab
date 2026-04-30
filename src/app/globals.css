@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Page vignette ─────────────────────────────────────────────────────
+   Soft warm cream with deeper shoulders at the top and bottom edges.
+   Pinned to the viewport (background-attachment: fixed) so the warm
+   zones stay where the eye expects them no matter how long the page
+   is or where the user has scrolled. Header + footer are transparent
+   over this gradient so the whole page reads as one continuous paper. */
+html {
+  background:
+    linear-gradient(
+      to bottom,
+      #E8DFC3 0px,
+      #F2EDDF 220px,
+      #F2EDDF calc(100% - 220px),
+      #ECE4CC 100%
+    );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+body {
+  background: transparent;
+}
+
 /* Readable UI scale (Jost): prefer font-weight 400 from --nl-text-meta down */
 :root {
   --nl-text-body: 16px; /* hero sublines, primary secondary paragraphs */
@@ -2167,8 +2190,10 @@ button:not(:disabled):active {
   justify-content: space-between;
   padding: 0 max(12px, env(safe-area-inset-left)) 0 max(12px, env(safe-area-inset-right));
   height: 60px;
-  border-bottom: 1px solid #DDD8CA;
-  background: #F2EDDF;
+  /* Transparent: the page vignette behind shows through, so header reads
+     as part of the same paper as the body — no fill, no rule. */
+  border-bottom: none;
+  background: transparent;
   position: sticky;
   top: 0;
   z-index: 100;
