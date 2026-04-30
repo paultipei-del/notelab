@@ -87,7 +87,9 @@ export function SineWaveDiagram({
     if (isPlaying) {
       await stop()
     } else {
-      await start(frequency, amplitude * 0.3)  // cap gain at 0.3 to avoid being painful
+      // TEMP: louder gain to rule out volume as the cause of "no sound" in Safari.
+      // Restore to amplitude * 0.3 once playback is verified.
+      await start(frequency, Math.max(0.4, amplitude * 0.5))
     }
   }
 
