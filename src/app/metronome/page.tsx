@@ -1,445 +1,404 @@
-'use client'
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const F = 'var(--font-jost), sans-serif'
-const SERIF = 'var(--font-cormorant), serif'
+// ----- italian tempo lookup (single name per BPM) -----
+const TEMPO_NAMES: { name: string; max: number }[] = [
+  { name: "grave",       max: 39 },
+  { name: "largo",       max: 49 },
+  { name: "larghetto",   max: 59 },
+  { name: "lento",       max: 65 },
+  { name: "adagio",      max: 71 },
+  { name: "andante",     max: 85 },
+  { name: "andantino",   max: 97 },
+  { name: "moderato",    max: 113 },
+  { name: "allegretto",  max: 119 },
+  { name: "allegro",     max: 156 },
+  { name: "vivace",      max: 175 },
+  { name: "presto",      max: 199 },
+  { name: "prestissimo", max: 400 },
+];
+const nameFor = (bpm: number) =>
+  TEMPO_NAMES.find((t) => bpm <= t.max)?.name ?? "prestissimo";
 
-const MIN_BPM = 20
-const MAX_BPM = 400
+// canonical ranges from the standard chart
+const RANGES = [
+  { name: "largo",     lo: 40,  hi: 66 },
+  { name: "larghetto", lo: 60,  hi: 66 },
+  { name: "lento",     lo: 52,  hi: 108 },
+  { name: "adagio",    lo: 50,  hi: 76 },
+  { name: "andante",   lo: 56,  hi: 108 },
+  { name: "moderato",  lo: 66,  hi: 126 },
+  { name: "allegro",   lo: 84,  hi: 144 },
+  { name: "presto",    lo: 100, hi: 152 },
+  { name: "vivace",    lo: 80,  hi: 160 },
+];
 
-const TEMPOS: Array<[number, number, string]> = [
-  [20, 24, 'larghissimo'],
-  [25, 45, 'grave'],
-  [46, 52, 'largo'],
-  [53, 60, 'larghetto'],
-  [61, 66, 'adagio'],
-  [67, 76, 'adagietto'],
-  [77, 85, 'andante'],
-  [86, 98, 'andantino'],
-  [99, 109, 'moderato'],
-  [110, 121, 'allegretto'],
-  [122, 140, 'allegro'],
-  [141, 168, 'vivace'],
-  [169, 200, 'presto'],
-  [201, 400, 'prestissimo'],
-]
-
-const SILENT_MP3 =
-  'data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV'
-
-function tempoName(bpm: number): string {
-  for (const [min, max, label] of TEMPOS) {
-    if (bpm >= min && bpm <= max) return label
-  }
-  return ''
-}
+const MIN_BPM = 20;
+const MAX_BPM = 400;
+const clampBpm = (n: number) => Math.max(MIN_BPM, Math.min(MAX_BPM, Math.round(n)));
 
 export default function MetronomePage() {
-  const [bpm, setBpmState] = useState(120)
-  const [playing, setPlaying] = useState(false)
+  const [bpm, setBpmState] = useState(120);
+  const [playing, setPlaying] = useState(false);
+  const [pulse, setPulse] = useState(false);
+  const [refOpen, setRefOpen] = useState(false);
+  const [bpmInput, setBpmInput] = useState("120");
 
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const tickerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const nextBeatRef = useRef(0)
-  const bpmRef = useRef(120)
-  const playingRef = useRef(false)
-  const wakeLockRef = useRef<any>(null)
-  const silentAudioRef = useRef<HTMLAudioElement | null>(null)
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const nextNoteRef = useRef(0);
+  const timerRef = useRef<number | null>(null);
+  const bpmRef = useRef(bpm);
+  bpmRef.current = bpm;
 
-  const setBpm = useCallback((value: number) => {
-    const next = Math.max(MIN_BPM, Math.min(MAX_BPM, Math.round(value)))
-    bpmRef.current = next
-    setBpmState(next)
-    if (playingRef.current && audioContextRef.current) {
-      nextBeatRef.current = audioContextRef.current.currentTime + 0.05
+  // tap tempo
+  const tapTimesRef = useRef<number[]>([]);
+  const tapResetRef = useRef<number | null>(null);
+  const [tapFlash, setTapFlash] = useState(false);
+
+  const setBpm = useCallback((n: number) => {
+    const v = clampBpm(n);
+    setBpmState(v);
+    setBpmInput(String(v));
+  }, []);
+
+  // --- audio ---
+  const ensureAudio = useCallback(() => {
+    if (!audioCtxRef.current) {
+      const Ctor =
+        (window.AudioContext as typeof AudioContext) ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      audioCtxRef.current = new Ctor();
     }
-  }, [])
-
-  const beep = useCallback((t: number) => {
-    const actx = audioContextRef.current
-    if (!actx) return
-    try {
-      const o = actx.createOscillator()
-      const g = actx.createGain()
-      o.connect(g)
-      g.connect(actx.destination)
-      o.frequency.value = 1200
-      g.gain.setValueAtTime(0.8, t)
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.06)
-      o.start(t)
-      o.stop(t + 0.1)
-    } catch {
-      // Ignore audio scheduling errors from interrupted contexts.
+    if (audioCtxRef.current.state === "suspended") {
+      audioCtxRef.current.resume();
     }
-  }, [])
+  }, []);
 
-  const tick = useCallback(() => {
-    const actx = audioContextRef.current
-    if (!actx || !playingRef.current) return
-    const now = actx.currentTime
-    const interval = 60 / bpmRef.current
-    while (nextBeatRef.current < now + 0.12) {
-      beep(nextBeatRef.current)
-      nextBeatRef.current += interval
+  const click = useCallback((time: number) => {
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.setValueAtTime(1000, time);
+    gain.gain.setValueAtTime(0.0001, time);
+    gain.gain.exponentialRampToValueAtTime(0.4, time + 0.001);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.05);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(time);
+    osc.stop(time + 0.06);
+
+    const delay = Math.max(0, (time - ctx.currentTime) * 1000);
+    window.setTimeout(() => {
+      setPulse(true);
+      window.setTimeout(() => setPulse(false), 90);
+    }, delay);
+  }, []);
+
+  const scheduler = useCallback(() => {
+    const ctx = audioCtxRef.current;
+    if (!ctx) return;
+    const interval = 60.0 / bpmRef.current;
+    while (nextNoteRef.current < ctx.currentTime + 0.1) {
+      click(nextNoteRef.current);
+      nextNoteRef.current += interval;
     }
-  }, [beep])
+  }, [click]);
 
-  const startScheduler = useCallback(() => {
-    const actx = audioContextRef.current
-    if (!actx) return
-    nextBeatRef.current = actx.currentTime + 0.05
-    if (tickerRef.current) clearInterval(tickerRef.current)
-    tickerRef.current = setInterval(tick, 25)
-  }, [tick])
-
-  const unlockIOS = useCallback(() => {
-    try {
-      if (!silentAudioRef.current) {
-        const audio = new Audio(SILENT_MP3)
-        audio.loop = true
-        audio.volume = 0.001
-        silentAudioRef.current = audio
-      }
-      void silentAudioRef.current.play().catch(() => undefined)
-    } catch {
-      // No-op for unsupported browsers.
-    }
-  }, [])
-
-  const requestWakeLock = useCallback(async () => {
-    try {
-      const wakeLockApi = (navigator as any).wakeLock
-      if (!wakeLockApi) return
-      const lock = await wakeLockApi.request('screen')
-      wakeLockRef.current = lock
-      lock.addEventListener('release', () => {
-        wakeLockRef.current = null
-      })
-    } catch {
-      // Ignore if permission denied / unsupported.
-    }
-  }, [])
-
-  const releaseWakeLock = useCallback(() => {
-    const lock = wakeLockRef.current
-    if (!lock) return
-    void lock.release().catch(() => undefined)
-    wakeLockRef.current = null
-  }, [])
+  const start = useCallback(() => {
+    ensureAudio();
+    const ctx = audioCtxRef.current!;
+    nextNoteRef.current = ctx.currentTime + 0.05;
+    timerRef.current = window.setInterval(scheduler, 25);
+    setPlaying(true);
+  }, [ensureAudio, scheduler]);
 
   const stop = useCallback(() => {
-    playingRef.current = false
-    setPlaying(false)
-    if (tickerRef.current) {
-      clearInterval(tickerRef.current)
-      tickerRef.current = null
+    if (timerRef.current !== null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-  }, [])
+    setPlaying(false);
+    setPulse(false);
+  }, []);
 
-  const start = useCallback(async () => {
-    unlockIOS()
-
-    const existing = audioContextRef.current
-    if (existing) {
-      try {
-        await existing.close()
-      } catch {
-        // Ignore stale context close errors.
-      }
-      audioContextRef.current = null
-    }
-
-    const AC = window.AudioContext || (window as any).webkitAudioContext
-    if (!AC) {
-      window.alert('Web Audio not supported on this browser.')
-      return
-    }
-
-    const actx = new AC()
-    audioContextRef.current = actx
-
-    try {
-      const buf = actx.createBuffer(1, 1, actx.sampleRate)
-      const src = actx.createBufferSource()
-      src.buffer = buf
-      src.connect(actx.destination)
-      src.start(0)
-    } catch {
-      // Some browsers may reject silent unlock buffer.
-    }
-
-    playingRef.current = true
-    setPlaying(true)
-
-    if (actx.state === 'suspended') {
-      try {
-        await actx.resume()
-      } catch {
-        // Continue anyway; scheduler may still work on some browsers.
-      }
-    }
-    startScheduler()
-  }, [startScheduler, unlockIOS])
-
-  const togglePlay = useCallback(() => {
-    if (playingRef.current) {
-      stop()
-      releaseWakeLock()
-    } else {
-      void start()
-      void requestWakeLock()
-    }
-  }, [releaseWakeLock, requestWakeLock, start, stop])
-
+  // restart scheduling on tempo change while playing (interval changes)
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null
-      const tag = target?.tagName
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return
+    if (!playing) return;
+    // re-prime nextNoteTime so we don't backlog
+    if (audioCtxRef.current) {
+      nextNoteRef.current = audioCtxRef.current.currentTime + 0.05;
+    }
+  }, [bpm, playing]);
 
-      if (e.code === 'Space') {
-        e.preventDefault()
-        togglePlay()
-        return
-      }
-      if (e.key === 'ArrowUp') setBpm(bpmRef.current + 1)
-      if (e.key === 'ArrowDown') setBpm(bpmRef.current - 1)
+  useEffect(() => () => { if (timerRef.current !== null) clearInterval(timerRef.current); }, []);
+
+  // --- tap tempo ---
+  const tap = useCallback(() => {
+    const now = performance.now();
+    let times = [...tapTimesRef.current, now].filter((t) => now - t < 3000);
+    if (times.length > 6) times = times.slice(-6);
+    tapTimesRef.current = times;
+
+    if (tapResetRef.current) window.clearTimeout(tapResetRef.current);
+    tapResetRef.current = window.setTimeout(() => {
+      tapTimesRef.current = [];
+    }, 2000);
+
+    if (times.length >= 2) {
+      const intervals: number[] = [];
+      for (let i = 1; i < times.length; i++) intervals.push(times[i] - times[i - 1]);
+      const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+      const newBpm = Math.round(60000 / avg);
+      if (newBpm >= MIN_BPM && newBpm <= MAX_BPM) setBpm(newBpm);
     }
 
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && playingRef.current) {
-        void requestWakeLock()
-        if (silentAudioRef.current?.paused) {
-          void silentAudioRef.current.play().catch(() => undefined)
-        }
-        if (audioContextRef.current?.state === 'suspended') {
-          void audioContextRef.current.resume().catch(() => undefined)
-        }
-      } else if (document.visibilityState === 'hidden') {
-        releaseWakeLock()
-      }
-    }
+    setTapFlash(true);
+    window.setTimeout(() => setTapFlash(false), 100);
+  }, [setBpm]);
 
-    document.addEventListener('keydown', onKeyDown)
-    document.addEventListener('visibilitychange', onVisibilityChange)
+  // --- keyboard shortcuts ---
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target?.tagName === "INPUT" || target?.isContentEditable) return;
 
-    return () => {
-      document.removeEventListener('keydown', onKeyDown)
-      document.removeEventListener('visibilitychange', onVisibilityChange)
-      stop()
-      releaseWakeLock()
-      if (silentAudioRef.current) {
-        silentAudioRef.current.pause()
-        silentAudioRef.current = null
+      if (e.code === "Space") {
+        e.preventDefault();
+        playing ? stop() : start();
+      } else if (e.key.toLowerCase() === "t") {
+        e.preventDefault();
+        tap();
+      } else if (e.key === "ArrowUp" || e.key === "ArrowRight") {
+        e.preventDefault();
+        setBpm(bpmRef.current + 1);
+      } else if (e.key === "ArrowDown" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        setBpm(bpmRef.current - 1);
       }
-      const actx = audioContextRef.current
-      if (actx) {
-        void actx.close().catch(() => undefined)
-        audioContextRef.current = null
-      }
-    }
-  }, [releaseWakeLock, requestWakeLock, setBpm, stop, togglePlay])
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [playing, start, stop, tap, setBpm]);
+
+  const marking = useMemo(() => nameFor(bpm), [bpm]);
 
   return (
-    <div
-      style={{
-        background: '#F2EDDF',
-        height: 'calc(var(--nl-viewport-h) - var(--nl-site-header-h))',
-        minHeight: 'calc(var(--nl-viewport-h) - var(--nl-site-header-h))',
-        maxHeight: 'calc(var(--nl-viewport-h) - var(--nl-site-header-h))',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '24px 20px 16px',
-        boxSizing: 'border-box',
-        overflow: 'hidden',
-      }}
-    >
-      <div
-        style={{
-          fontFamily: SERIF,
-          fontWeight: 300,
-          fontSize: 'clamp(80px, 22vw, 160px)',
-          lineHeight: 1,
-          color: '#2A2318',
-          letterSpacing: '-0.02em',
-          textAlign: 'center',
-          userSelect: 'none',
-          paddingBottom: '1.1rem',
-        }}
-      >
-        {bpm}
-      </div>
+    <div className="min-h-screen bg-[#fafaf7] text-[#1a1a18] font-sans">
+      <main className="max-w-5xl mx-auto px-6 pt-16 pb-24">
+        <header className="text-center mb-16">
+          <h1 className="font-serif font-normal text-3xl tracking-tight">Metronome</h1>
+          <p className="mt-2 text-sm text-[#8a8a84]">tempo, ratios, and Italian markings in one view</p>
+        </header>
 
-      <div
-        style={{
-          fontFamily: F,
-          fontWeight: 300,
-          fontSize: 12,
-          letterSpacing: '0.35em',
-          color: '#A89F92',
-          textAlign: 'center',
-          marginTop: '0.45rem',
-          textTransform: 'uppercase',
-        }}
-      >
-        B P M
-      </div>
-
-      <div
-        style={{
-          fontFamily: F,
-          fontWeight: 300,
-          fontSize: 12,
-          letterSpacing: '0.2em',
-          color: '#B5AD9F',
-          textAlign: 'center',
-          marginTop: '0.35rem',
-          minHeight: 18,
-          textTransform: 'lowercase',
-        }}
-      >
-        {tempoName(bpm)}
-      </div>
-
-      <div
-        style={{
-          width: '100%',
-          maxWidth: 340,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1.35rem',
-          marginTop: '2.5rem',
-        }}
-      >
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', width: '100%' }}>
-          <button
-            type="button"
-            onClick={() => setBpm(bpm - 1)}
-            style={{
-              width: 38,
-              height: 38,
-              flexShrink: 0,
-              background: 'transparent',
-              border: '1px solid #C8C0B2',
-              color: '#988F82',
-              fontFamily: F,
-              fontSize: 20,
-              fontWeight: 300,
-              lineHeight: 1,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              touchAction: 'manipulation',
-            }}
+        {/* ---------- face ---------- */}
+        <section className="flex flex-col items-center gap-10">
+          <div
+            className="font-serif italic text-2xl text-[#4a4a46] tracking-wide h-7 transition-colors"
+            aria-live="polite"
           >
-            −
-          </button>
+            {marking}
+          </div>
 
-          <input
-            type="range"
-            min={MIN_BPM}
-            max={MAX_BPM}
-            step={1}
-            value={bpm}
-            onChange={(e) => setBpm(Number(e.target.value))}
-            style={{
-              appearance: 'none',
-              WebkitAppearance: 'none',
-              flex: 1,
-              height: 1,
-              background: '#C8C0B2',
-              outline: 'none',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          />
+          <div className="flex items-baseline gap-5">
+            <span
+              className={`block w-2.5 h-2.5 rounded-full transition-all duration-75 ${
+                pulse ? "bg-[#c9402c] scale-[1.4]" : "bg-[#e5e3dc]"
+              }`}
+              aria-hidden
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              value={bpmInput}
+              onChange={(e) => {
+                const v = e.target.value.replace(/\D/g, "").slice(0, 3);
+                setBpmInput(v);
+                const n = parseInt(v, 10);
+                if (!isNaN(n)) setBpmState(clampBpm(n));
+              }}
+              onBlur={() => setBpmInput(String(bpm))}
+              onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+              className="font-serif font-normal text-9xl leading-none tracking-tight bg-transparent border-0 outline-none w-[5ch] text-center tabular-nums"
+              aria-label="Beats per minute"
+            />
+          </div>
+          <div className="-mt-6 text-[0.7rem] tracking-[0.18em] uppercase text-[#8a8a84]">
+            beats per minute
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setBpm(bpm + 1)}
-            style={{
-              width: 38,
-              height: 38,
-              flexShrink: 0,
-              background: 'transparent',
-              border: '1px solid #C8C0B2',
-              color: '#988F82',
-              fontFamily: F,
-              fontSize: 20,
-              fontWeight: 300,
-              lineHeight: 1,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              touchAction: 'manipulation',
-            }}
-          >
-            +
-          </button>
-        </div>
+          <div className="w-full max-w-md flex items-center gap-4">
+            <button
+              onClick={() => setBpm(bpm - 1)}
+              className="w-9 h-9 rounded-full border border-[#e5e3dc] grid place-items-center text-[#4a4a46] hover:border-[#1a1a18] hover:text-[#1a1a18] active:scale-95 transition"
+              aria-label="Decrease BPM"
+            >
+              −
+            </button>
+            <input
+              type="range"
+              min={MIN_BPM}
+              max={MAX_BPM}
+              value={bpm}
+              onChange={(e) => setBpm(parseInt(e.target.value, 10))}
+              className="metronome-slider flex-1"
+              aria-label="Tempo"
+            />
+            <button
+              onClick={() => setBpm(bpm + 1)}
+              className="w-9 h-9 rounded-full border border-[#e5e3dc] grid place-items-center text-[#4a4a46] hover:border-[#1a1a18] hover:text-[#1a1a18] active:scale-95 transition"
+              aria-label="Increase BPM"
+            >
+              +
+            </button>
+          </div>
+          <div className="w-full max-w-md flex justify-between text-[0.7rem] text-[#8a8a84] tabular-nums -mt-7">
+            <span>{MIN_BPM}</span>
+            <span>{MAX_BPM}</span>
+          </div>
+
+          <div className="flex gap-3 mt-2">
+            <button
+              onClick={() => (playing ? stop() : start())}
+              className="font-sans text-[0.78rem] tracking-[0.12em] uppercase px-9 py-3.5 min-w-[160px] bg-[#1a1a18] text-[#fafaf7] hover:bg-black transition"
+            >
+              {playing ? "Stop" : "Play"}
+            </button>
+            <button
+              onClick={tap}
+              className={`font-sans text-[0.78rem] tracking-[0.12em] uppercase px-9 py-3.5 min-w-[120px] border border-[#1a1a18] transition ${
+                tapFlash ? "bg-[#1a1a18] text-[#fafaf7]" : "bg-transparent text-[#1a1a18] hover:bg-[#1a1a18] hover:text-[#fafaf7]"
+              }`}
+            >
+              Tap
+            </button>
+          </div>
+
+          <p className="mt-4 text-xs text-[#8a8a84]">
+            <span className="tracking-[0.14em] uppercase">space</span> play/stop
+            <span className="mx-2">·</span>
+            <span className="tracking-[0.14em] uppercase">t</span> tap
+            <span className="mx-2">·</span>
+            <span className="tracking-[0.14em] uppercase">↑↓</span> adjust
+          </p>
+        </section>
+
+        {/* ---------- reference drawer ---------- */}
+        <button
+          onClick={() => setRefOpen((v) => !v)}
+          className="mt-20 mx-auto flex items-center gap-2 px-2 py-2 text-[#4a4a46] hover:text-[#1a1a18] transition text-[0.78rem] tracking-[0.14em] uppercase"
+        >
+          <span>Reference</span>
+          <span className={`text-xs transition-transform duration-300 ${refOpen ? "rotate-180" : ""}`}>▾</span>
+        </button>
 
         <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            width: '100%',
-            marginTop: '-8px',
-          }}
+          className={`overflow-hidden border-t border-[#e5e3dc] mt-6 transition-[max-height] duration-500 ease-out ${
+            refOpen ? "max-h-[2400px]" : "max-h-0"
+          }`}
         >
-          <span style={{ fontFamily: F, fontSize: 10, fontWeight: 300, color: '#B5AD9F', letterSpacing: '0.15em' }}>
-            20
-          </span>
-          <span style={{ fontFamily: F, fontSize: 10, fontWeight: 300, color: '#B5AD9F', letterSpacing: '0.15em' }}>
-            400
-          </span>
+          <div className="pt-12 pb-4 grid md:grid-cols-2 gap-12">
+
+            <div>
+              <h3 className="font-serif text-lg font-medium mb-3">Ratios</h3>
+              <p className="font-serif text-[#4a4a46] text-[0.95rem] leading-relaxed mb-5">
+                Doubled and tripled tempos relative to the current BPM. Handy for working out polyrhythms or moving between note values that share a pulse.
+              </p>
+
+              <div className="grid grid-cols-3 border-t border-[#e5e3dc]">
+                <div className="text-center text-[0.65rem] tracking-[0.18em] uppercase text-[#8a8a84] py-3 border-b border-[#e5e3dc]">×1</div>
+                <div className="text-center text-[0.65rem] tracking-[0.18em] uppercase text-[#8a8a84] py-3 border-b border-[#e5e3dc]">×2</div>
+                <div className="text-center text-[0.65rem] tracking-[0.18em] uppercase text-[#8a8a84] py-3 border-b border-[#e5e3dc]">×3</div>
+                <div className="text-center py-3 border-b border-[#efede6]"><span className="font-serif text-2xl tabular-nums">{bpm}</span></div>
+                <div className="text-center py-3 border-b border-[#efede6]"><span className="font-serif text-xl tabular-nums text-[#8a8a84]">{bpm * 2}</span></div>
+                <div className="text-center py-3 border-b border-[#efede6]"><span className="font-serif text-xl tabular-nums text-[#8a8a84]">{bpm * 3}</span></div>
+              </div>
+
+              <h3 className="font-serif text-lg font-medium mt-10 mb-3">Note value at 80 BPM</h3>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                {[
+                  // SMuFL codepoints rendered via the site's Bravura font.
+                  // Unicode music glyphs left as fallback in the font chain.
+                  { glyph: "", fallback: "♪",  lbl: "adagio" },   // noteEighthUp
+                  { glyph: "", fallback: "♩",  lbl: "andante" },  // noteQuarterUp
+                  { glyph: "", fallback: "𝅗𝅥", lbl: "allegro" },  // noteHalfUp
+                  { glyph: "", fallback: "𝅝",  lbl: "presto" },   // noteWhole
+                ].map((ex) => (
+                  <div key={ex.lbl} className="flex items-baseline gap-2 font-serif">
+                    <span
+                      className="text-3xl leading-none"
+                      style={{ fontFamily: "Bravura, 'Bravura Text', 'Bravura Learn', serif" }}
+                      aria-hidden
+                    >
+                      {ex.glyph}
+                    </span>
+                    <span className="italic text-[#4a4a46]">{ex.lbl}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-serif text-lg font-medium mb-3">Italian tempo ranges</h3>
+              <div className="flex flex-col">
+                {RANGES.map((r) => {
+                  const active = bpm >= r.lo && bpm <= r.hi;
+                  return (
+                    <div
+                      key={r.name}
+                      className={`grid grid-cols-[1fr_auto] items-baseline py-2.5 border-b border-[#efede6] transition-colors ${
+                        active ? "text-[#c9402c]" : ""
+                      }`}
+                    >
+                      <span className="font-serif italic text-[1.05rem]">{r.name}</span>
+                      <span className={`font-sans text-[0.78rem] tabular-nums tracking-wider ${active ? "text-[#c9402c]" : "text-[#8a8a84]"}`}>
+                        {r.lo}–{r.hi}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <p className="mt-5 pt-5 border-t border-[#efede6] font-serif italic text-[0.95rem] text-[#8a8a84] leading-relaxed">
+                Many of these tempos sit close to a human pulse. A resting adult heart runs near 70 beats per minute, which lands inside the <span className="not-italic font-medium">andante</span> range and lines up with a comfortable walking pace. Smaller bodies beat faster: a child of seven holds around 90, and a fetal heart can reach 180.
+              </p>
+            </div>
+
+          </div>
         </div>
+      </main>
 
-        <button
-          type="button"
-          onClick={togglePlay}
-          style={{
-            width: '100%',
-            height: 48,
-            background: playing ? '#E8E4DC' : 'transparent',
-            border: `1px solid ${playing ? '#988F82' : '#B8AF9F'}`,
-            color: playing ? '#6F665A' : '#8F8578',
-            fontFamily: F,
-            fontWeight: 300,
-            fontSize: 11,
-            letterSpacing: '0.35em',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-            transition: 'background 0.2s, border-color 0.2s, color 0.2s',
-            touchAction: 'manipulation',
-          }}
-        >
-          {playing ? 'stop' : 'play'}
-        </button>
-      </div>
-
-      <style>{`
-        input[type='range']::-webkit-slider-thumb {
+      {/* slider styling, kept here so component is self-contained */}
+      <style jsx global>{`
+        .metronome-slider {
           -webkit-appearance: none;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #2A2318;
-          border: none;
+          appearance: none;
+          height: 1px;
+          background: #e5e3dc;
+          outline: none;
         }
-        input[type='range']::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
+        .metronome-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 14px;
+          height: 14px;
           border-radius: 50%;
-          background: #2A2318;
-          border: none;
+          background: #1a1a18;
+          cursor: grab;
+          border: 3px solid #fafaf7;
+          box-shadow: 0 0 0 1px #1a1a18;
+        }
+        .metronome-slider::-webkit-slider-thumb:active { cursor: grabbing; }
+        .metronome-slider::-moz-range-thumb {
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          background: #1a1a18;
+          cursor: grab;
+          border: 3px solid #fafaf7;
+          box-shadow: 0 0 0 1px #1a1a18;
         }
       `}</style>
     </div>
-  )
+  );
 }
