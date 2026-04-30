@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Cormorant_Garamond, Jost } from 'next/font/google'
 import './globals.css'
 import SiteHeader from '@/components/SiteHeader'
@@ -18,10 +18,20 @@ const jost = Jost({
   variable: '--font-jost',
 })
 
-export const viewport = {
+// viewport-fit=cover lets the page render under the iOS safe areas
+// (notch / Dynamic Island / home indicator) so the html gradient
+// flows under the system strips. theme-color tints Safari's own
+// chrome (address bar, bottom toolbar) to match the top of the
+// gradient, so the strips read as part of the same paper.
+export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#EEE6CD' },
+    { media: '(prefers-color-scheme: dark)',  color: '#EEE6CD' },
+  ],
 }
 
 // Icons follow Next.js's filesystem convention: app/favicon.ico,
@@ -31,6 +41,11 @@ export const viewport = {
 export const metadata: Metadata = {
   title: 'NoteLab',
   description: 'Music theory flashcards for CM students and musicians',
+  appleWebApp: {
+    capable: true,
+    title: 'NoteLab',
+    statusBarStyle: 'default',
+  },
 }
 
 export default function RootLayout({
