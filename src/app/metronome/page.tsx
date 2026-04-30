@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
-// ----- italian tempo lookup (single name per BPM) -----
+// =====================================================================
+// Italian tempo lookup, ordered so each BPM maps to a single best-fit name.
+// =====================================================================
 const TEMPO_NAMES: { name: string; max: number }[] = [
   { name: "grave",       max: 39 },
   { name: "largo",       max: 49 },
@@ -21,7 +23,7 @@ const TEMPO_NAMES: { name: string; max: number }[] = [
 const nameFor = (bpm: number) =>
   TEMPO_NAMES.find((t) => bpm <= t.max)?.name ?? "prestissimo";
 
-// canonical ranges from the standard chart
+// Canonical Italian tempo ranges from the standard mechanical-metronome chart.
 const RANGES = [
   { name: "largo",     lo: 40,  hi: 66 },
   { name: "larghetto", lo: 60,  hi: 66 },
@@ -38,12 +40,30 @@ const MIN_BPM = 20;
 const MAX_BPM = 400;
 const clampBpm = (n: number) => Math.max(MIN_BPM, Math.min(MAX_BPM, Math.round(n)));
 
+// =====================================================================
+// Design tokens, sourced from the live NoteLab CSS:
+//   text     #2A2318  (rgb(42,35,24))
+//   muted    #7A7060  (rgb(122,112,96))
+//   page bg  #F2EDDF  (set on <html>, we don't override)
+//   serif    var(--font-cormorant)
+//   sans     var(--font-jost)
+//   accent   warm rust for active beat + active range highlight
+// =====================================================================
+const INK = "#2A2318";
+const MUTE = "#7A7060";
+const RULE = "#D9D2BD";
+const RULE_SOFT = "#E6E0CE";
+const ACCENT = "#B0552B";
+const SERIF = "var(--font-cormorant), serif";
+const SANS = "var(--font-jost), sans-serif";
+
 export default function MetronomePage() {
   const [bpm, setBpmState] = useState(120);
   const [playing, setPlaying] = useState(false);
   const [pulse, setPulse] = useState(false);
   const [refOpen, setRefOpen] = useState(false);
   const [bpmInput, setBpmInput] = useState("120");
+  const [tapFlash, setTapFlash] = useState(false);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const nextNoteRef = useRef(0);
@@ -51,10 +71,8 @@ export default function MetronomePage() {
   const bpmRef = useRef(bpm);
   bpmRef.current = bpm;
 
-  // tap tempo
   const tapTimesRef = useRef<number[]>([]);
   const tapResetRef = useRef<number | null>(null);
-  const [tapFlash, setTapFlash] = useState(false);
 
   const setBpm = useCallback((n: number) => {
     const v = clampBpm(n);
@@ -62,7 +80,7 @@ export default function MetronomePage() {
     setBpmInput(String(v));
   }, []);
 
-  // --- audio ---
+  // ---------- audio ----------
   const ensureAudio = useCallback(() => {
     if (!audioCtxRef.current) {
       const Ctor =
@@ -70,9 +88,7 @@ export default function MetronomePage() {
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       audioCtxRef.current = new Ctor();
     }
-    if (audioCtxRef.current.state === "suspended") {
-      audioCtxRef.current.resume();
-    }
+    if (audioCtxRef.current.state === "suspended") audioCtxRef.current.resume();
   }, []);
 
   const click = useCallback((time: number) => {
@@ -122,10 +138,8 @@ export default function MetronomePage() {
     setPulse(false);
   }, []);
 
-  // restart scheduling on tempo change while playing (interval changes)
   useEffect(() => {
     if (!playing) return;
-    // re-prime nextNoteTime so we don't backlog
     if (audioCtxRef.current) {
       nextNoteRef.current = audioCtxRef.current.currentTime + 0.05;
     }
@@ -133,7 +147,7 @@ export default function MetronomePage() {
 
   useEffect(() => () => { if (timerRef.current !== null) clearInterval(timerRef.current); }, []);
 
-  // --- tap tempo ---
+  // ---------- tap tempo ----------
   const tap = useCallback(() => {
     const now = performance.now();
     let times = [...tapTimesRef.current, now].filter((t) => now - t < 3000);
@@ -141,9 +155,7 @@ export default function MetronomePage() {
     tapTimesRef.current = times;
 
     if (tapResetRef.current) window.clearTimeout(tapResetRef.current);
-    tapResetRef.current = window.setTimeout(() => {
-      tapTimesRef.current = [];
-    }, 2000);
+    tapResetRef.current = window.setTimeout(() => { tapTimesRef.current = []; }, 2000);
 
     if (times.length >= 2) {
       const intervals: number[] = [];
@@ -157,25 +169,15 @@ export default function MetronomePage() {
     window.setTimeout(() => setTapFlash(false), 100);
   }, [setBpm]);
 
-  // --- keyboard shortcuts ---
+  // ---------- keyboard ----------
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
       if (target?.tagName === "INPUT" || target?.isContentEditable) return;
-
-      if (e.code === "Space") {
-        e.preventDefault();
-        playing ? stop() : start();
-      } else if (e.key.toLowerCase() === "t") {
-        e.preventDefault();
-        tap();
-      } else if (e.key === "ArrowUp" || e.key === "ArrowRight") {
-        e.preventDefault();
-        setBpm(bpmRef.current + 1);
-      } else if (e.key === "ArrowDown" || e.key === "ArrowLeft") {
-        e.preventDefault();
-        setBpm(bpmRef.current - 1);
-      }
+      if (e.code === "Space") { e.preventDefault(); playing ? stop() : start(); }
+      else if (e.key.toLowerCase() === "t") { e.preventDefault(); tap(); }
+      else if (e.key === "ArrowUp" || e.key === "ArrowRight") { e.preventDefault(); setBpm(bpmRef.current + 1); }
+      else if (e.key === "ArrowDown" || e.key === "ArrowLeft") { e.preventDefault(); setBpm(bpmRef.current - 1); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -183,220 +185,478 @@ export default function MetronomePage() {
 
   const marking = useMemo(() => nameFor(bpm), [bpm]);
 
+  // =====================================================================
+  // STYLES (inline, mirroring the tap-tempo page's approach)
+  // =====================================================================
+  const wrap: CSSProperties = {
+    minHeight: "calc(100vh - var(--nl-site-header-h, 60px))",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "3rem 1.5rem 5rem",
+    color: INK,
+    fontFamily: SANS,
+    boxSizing: "border-box",
+  };
+  const headerStyle: CSSProperties = {
+    textAlign: "center",
+    marginBottom: "2.5rem",
+  };
+  const h1Style: CSSProperties = {
+    fontFamily: SERIF,
+    fontWeight: 300,
+    fontSize: "clamp(36px, 4.5vw, 48px)",
+    letterSpacing: "0.01em",
+    color: INK,
+    margin: 0,
+  };
+  const subStyle: CSSProperties = {
+    fontFamily: SANS,
+    fontSize: "var(--nl-text-meta, 14px)",
+    color: MUTE,
+    marginTop: "0.5rem",
+    letterSpacing: "0.01em",
+  };
+  const faceStyle: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "1.75rem",
+    width: "100%",
+    maxWidth: "560px",
+  };
+  const markingStyle: CSSProperties = {
+    fontFamily: SERIF,
+    fontStyle: "italic",
+    fontSize: "clamp(20px, 2.4vw, 28px)",
+    color: INK,
+    opacity: 0.7,
+    height: "1.4em",
+    letterSpacing: "0.01em",
+  };
+  const bpmRowStyle: CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "1.25rem",
+  };
+  const pulseStyle: CSSProperties = {
+    width: 10,
+    height: 10,
+    borderRadius: "50%",
+    background: pulse ? ACCENT : RULE,
+    transform: pulse ? "scale(1.5)" : "scale(1)",
+    transition: "background 80ms ease, transform 80ms ease",
+    flexShrink: 0,
+  };
+  const bpmInputStyle: CSSProperties = {
+    fontFamily: SERIF,
+    fontWeight: 300,
+    fontSize: "clamp(100px, 18vw, 160px)",
+    lineHeight: 1,
+    color: INK,
+    letterSpacing: "-0.03em",
+    background: "transparent",
+    border: 0,
+    outline: "none",
+    textAlign: "center",
+    width: "4ch",
+    padding: 0,
+    fontVariantNumeric: "tabular-nums",
+  };
+  const bpmLabelStyle: CSSProperties = {
+    fontFamily: SANS,
+    fontSize: "var(--nl-text-badge, 11px)",
+    letterSpacing: "0.18em",
+    textTransform: "uppercase",
+    color: MUTE,
+    marginTop: "-0.5rem",
+  };
+  const controlsRowStyle: CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    width: "100%",
+    maxWidth: "440px",
+  };
+  const stepBtnStyle: CSSProperties = {
+    width: 36,
+    height: 36,
+    border: `1px solid ${RULE}`,
+    background: "transparent",
+    borderRadius: "50%",
+    color: MUTE,
+    cursor: "pointer",
+    display: "grid",
+    placeItems: "center",
+    fontFamily: SANS,
+    fontSize: 16,
+    lineHeight: 1,
+    padding: 0,
+    transition: "all 150ms ease",
+    flexShrink: 0,
+  };
+  const sliderRangeStyle: CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "100%",
+    maxWidth: "440px",
+    fontSize: "var(--nl-text-badge, 11px)",
+    color: MUTE,
+    fontVariantNumeric: "tabular-nums",
+    letterSpacing: "0.05em",
+    marginTop: "-1rem",
+  };
+  const actionsStyle: CSSProperties = {
+    display: "flex",
+    gap: "0.75rem",
+    marginTop: "0.5rem",
+  };
+  const playBtnStyle: CSSProperties = {
+    fontFamily: SANS,
+    fontSize: "var(--nl-text-compact, 13px)",
+    letterSpacing: "0.16em",
+    textTransform: "uppercase",
+    padding: "0.95rem 2.4rem",
+    minWidth: 160,
+    background: INK,
+    color: "#F2EDDF",
+    border: `1px solid ${INK}`,
+    cursor: "pointer",
+    transition: "all 150ms ease",
+  };
+  const tapBtnStyle: CSSProperties = {
+    fontFamily: SANS,
+    fontSize: "var(--nl-text-compact, 13px)",
+    letterSpacing: "0.16em",
+    textTransform: "uppercase",
+    padding: "0.95rem 2.4rem",
+    minWidth: 120,
+    background: tapFlash ? INK : "transparent",
+    color: tapFlash ? "#F2EDDF" : INK,
+    border: `1px solid ${INK}`,
+    cursor: "pointer",
+    transition: "all 100ms ease",
+  };
+  const hintStyle: CSSProperties = {
+    fontFamily: SANS,
+    fontSize: "var(--nl-text-badge, 11px)",
+    color: MUTE,
+    marginTop: "0.75rem",
+    letterSpacing: "0.05em",
+  };
+  const refToggleStyle: CSSProperties = {
+    marginTop: "4rem",
+    background: "transparent",
+    border: 0,
+    cursor: "pointer",
+    color: MUTE,
+    fontFamily: SANS,
+    fontSize: "var(--nl-text-compact, 13px)",
+    letterSpacing: "0.16em",
+    textTransform: "uppercase",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    padding: "0.5rem 0.75rem",
+    transition: "color 150ms ease",
+  };
+  const refOuterStyle: CSSProperties = {
+    width: "100%",
+    maxWidth: "880px",
+    overflow: "hidden",
+    borderTop: `1px solid ${RULE}`,
+    marginTop: "1.25rem",
+    maxHeight: refOpen ? 2400 : 0,
+    transition: "max-height 500ms ease",
+  };
+  const refInnerStyle: CSSProperties = {
+    padding: "2.5rem 0 0.5rem",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "2.5rem",
+  };
+  const refH3Style: CSSProperties = {
+    fontFamily: SERIF,
+    fontWeight: 400,
+    fontSize: "clamp(20px, 2vw, 24px)",
+    color: INK,
+    margin: "0 0 0.75rem",
+    letterSpacing: "0.005em",
+  };
+  const refBodyStyle: CSSProperties = {
+    fontFamily: SERIF,
+    fontStyle: "italic",
+    fontSize: 17,
+    lineHeight: 1.55,
+    color: INK,
+    opacity: 0.75,
+    margin: "0 0 1.25rem",
+  };
+
   return (
-    <div className="min-h-screen bg-[#fafaf7] text-[#1a1a18] font-sans">
-      <main className="max-w-5xl mx-auto px-6 pt-16 pb-24">
-        <header className="text-center mb-16">
-          <h1 className="font-serif font-normal text-3xl tracking-tight">Metronome</h1>
-          <p className="mt-2 text-sm text-[#8a8a84]">tempo, ratios, and Italian markings in one view</p>
-        </header>
+    <div style={wrap}>
+      <header style={headerStyle}>
+        <h1 style={h1Style}>Metronome</h1>
+        <p style={subStyle}>tempo, ratios, and Italian markings in one view</p>
+      </header>
 
-        {/* ---------- face ---------- */}
-        <section className="flex flex-col items-center gap-10">
-          <div
-            className="font-serif italic text-2xl text-[#4a4a46] tracking-wide h-7 transition-colors"
-            aria-live="polite"
-          >
-            {marking}
-          </div>
+      <section style={faceStyle}>
+        <div style={markingStyle} aria-live="polite">{marking}</div>
 
-          <div className="flex items-baseline gap-5">
-            <span
-              className={`block w-2.5 h-2.5 rounded-full transition-all duration-75 ${
-                pulse ? "bg-[#c9402c] scale-[1.4]" : "bg-[#e5e3dc]"
-              }`}
-              aria-hidden
-            />
-            <input
-              type="text"
-              inputMode="numeric"
-              value={bpmInput}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, "").slice(0, 3);
-                setBpmInput(v);
-                const n = parseInt(v, 10);
-                if (!isNaN(n)) setBpmState(clampBpm(n));
-              }}
-              onBlur={() => setBpmInput(String(bpm))}
-              onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
-              className="font-serif font-normal text-9xl leading-none tracking-tight bg-transparent border-0 outline-none w-[5ch] text-center tabular-nums"
-              aria-label="Beats per minute"
-            />
-          </div>
-          <div className="-mt-6 text-[0.7rem] tracking-[0.18em] uppercase text-[#8a8a84]">
-            beats per minute
-          </div>
-
-          <div className="w-full max-w-md flex items-center gap-4">
-            <button
-              onClick={() => setBpm(bpm - 1)}
-              className="w-9 h-9 rounded-full border border-[#e5e3dc] grid place-items-center text-[#4a4a46] hover:border-[#1a1a18] hover:text-[#1a1a18] active:scale-95 transition"
-              aria-label="Decrease BPM"
-            >
-              −
-            </button>
-            <input
-              type="range"
-              min={MIN_BPM}
-              max={MAX_BPM}
-              value={bpm}
-              onChange={(e) => setBpm(parseInt(e.target.value, 10))}
-              className="metronome-slider flex-1"
-              aria-label="Tempo"
-            />
-            <button
-              onClick={() => setBpm(bpm + 1)}
-              className="w-9 h-9 rounded-full border border-[#e5e3dc] grid place-items-center text-[#4a4a46] hover:border-[#1a1a18] hover:text-[#1a1a18] active:scale-95 transition"
-              aria-label="Increase BPM"
-            >
-              +
-            </button>
-          </div>
-          <div className="w-full max-w-md flex justify-between text-[0.7rem] text-[#8a8a84] tabular-nums -mt-7">
-            <span>{MIN_BPM}</span>
-            <span>{MAX_BPM}</span>
-          </div>
-
-          <div className="flex gap-3 mt-2">
-            <button
-              onClick={() => (playing ? stop() : start())}
-              className="font-sans text-[0.78rem] tracking-[0.12em] uppercase px-9 py-3.5 min-w-[160px] bg-[#1a1a18] text-[#fafaf7] hover:bg-black transition"
-            >
-              {playing ? "Stop" : "Play"}
-            </button>
-            <button
-              onClick={tap}
-              className={`font-sans text-[0.78rem] tracking-[0.12em] uppercase px-9 py-3.5 min-w-[120px] border border-[#1a1a18] transition ${
-                tapFlash ? "bg-[#1a1a18] text-[#fafaf7]" : "bg-transparent text-[#1a1a18] hover:bg-[#1a1a18] hover:text-[#fafaf7]"
-              }`}
-            >
-              Tap
-            </button>
-          </div>
-
-          <p className="mt-4 text-xs text-[#8a8a84]">
-            <span className="tracking-[0.14em] uppercase">space</span> play/stop
-            <span className="mx-2">·</span>
-            <span className="tracking-[0.14em] uppercase">t</span> tap
-            <span className="mx-2">·</span>
-            <span className="tracking-[0.14em] uppercase">↑↓</span> adjust
-          </p>
-        </section>
-
-        {/* ---------- reference drawer ---------- */}
-        <button
-          onClick={() => setRefOpen((v) => !v)}
-          className="mt-20 mx-auto flex items-center gap-2 px-2 py-2 text-[#4a4a46] hover:text-[#1a1a18] transition text-[0.78rem] tracking-[0.14em] uppercase"
-        >
-          <span>Reference</span>
-          <span className={`text-xs transition-transform duration-300 ${refOpen ? "rotate-180" : ""}`}>▾</span>
-        </button>
-
-        <div
-          className={`overflow-hidden border-t border-[#e5e3dc] mt-6 transition-[max-height] duration-500 ease-out ${
-            refOpen ? "max-h-[2400px]" : "max-h-0"
-          }`}
-        >
-          <div className="pt-12 pb-4 grid md:grid-cols-2 gap-12">
-
-            <div>
-              <h3 className="font-serif text-lg font-medium mb-3">Ratios</h3>
-              <p className="font-serif text-[#4a4a46] text-[0.95rem] leading-relaxed mb-5">
-                Doubled and tripled tempos relative to the current BPM. Handy for working out polyrhythms or moving between note values that share a pulse.
-              </p>
-
-              <div className="grid grid-cols-3 border-t border-[#e5e3dc]">
-                <div className="text-center text-[0.65rem] tracking-[0.18em] uppercase text-[#8a8a84] py-3 border-b border-[#e5e3dc]">×1</div>
-                <div className="text-center text-[0.65rem] tracking-[0.18em] uppercase text-[#8a8a84] py-3 border-b border-[#e5e3dc]">×2</div>
-                <div className="text-center text-[0.65rem] tracking-[0.18em] uppercase text-[#8a8a84] py-3 border-b border-[#e5e3dc]">×3</div>
-                <div className="text-center py-3 border-b border-[#efede6]"><span className="font-serif text-2xl tabular-nums">{bpm}</span></div>
-                <div className="text-center py-3 border-b border-[#efede6]"><span className="font-serif text-xl tabular-nums text-[#8a8a84]">{bpm * 2}</span></div>
-                <div className="text-center py-3 border-b border-[#efede6]"><span className="font-serif text-xl tabular-nums text-[#8a8a84]">{bpm * 3}</span></div>
-              </div>
-
-              <h3 className="font-serif text-lg font-medium mt-10 mb-3">Note value at 80 BPM</h3>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                {[
-                  // SMuFL codepoints rendered via the site's Bravura font.
-                  // Unicode music glyphs left as fallback in the font chain.
-                  { glyph: "", fallback: "♪",  lbl: "adagio" },   // noteEighthUp
-                  { glyph: "", fallback: "♩",  lbl: "andante" },  // noteQuarterUp
-                  { glyph: "", fallback: "𝅗𝅥", lbl: "allegro" },  // noteHalfUp
-                  { glyph: "", fallback: "𝅝",  lbl: "presto" },   // noteWhole
-                ].map((ex) => (
-                  <div key={ex.lbl} className="flex items-baseline gap-2 font-serif">
-                    <span
-                      className="text-3xl leading-none"
-                      style={{ fontFamily: "Bravura, 'Bravura Text', 'Bravura Learn', serif" }}
-                      aria-hidden
-                    >
-                      {ex.glyph}
-                    </span>
-                    <span className="italic text-[#4a4a46]">{ex.lbl}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-serif text-lg font-medium mb-3">Italian tempo ranges</h3>
-              <div className="flex flex-col">
-                {RANGES.map((r) => {
-                  const active = bpm >= r.lo && bpm <= r.hi;
-                  return (
-                    <div
-                      key={r.name}
-                      className={`grid grid-cols-[1fr_auto] items-baseline py-2.5 border-b border-[#efede6] transition-colors ${
-                        active ? "text-[#c9402c]" : ""
-                      }`}
-                    >
-                      <span className="font-serif italic text-[1.05rem]">{r.name}</span>
-                      <span className={`font-sans text-[0.78rem] tabular-nums tracking-wider ${active ? "text-[#c9402c]" : "text-[#8a8a84]"}`}>
-                        {r.lo}–{r.hi}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <p className="mt-5 pt-5 border-t border-[#efede6] font-serif italic text-[0.95rem] text-[#8a8a84] leading-relaxed">
-                Many of these tempos sit close to a human pulse. A resting adult heart runs near 70 beats per minute, which lands inside the <span className="not-italic font-medium">andante</span> range and lines up with a comfortable walking pace. Smaller bodies beat faster: a child of seven holds around 90, and a fetal heart can reach 180.
-              </p>
-            </div>
-
-          </div>
+        <div style={bpmRowStyle}>
+          <span style={pulseStyle} aria-hidden />
+          <input
+            type="text"
+            inputMode="numeric"
+            value={bpmInput}
+            onChange={(e) => {
+              const v = e.target.value.replace(/\D/g, "").slice(0, 3);
+              setBpmInput(v);
+              const n = parseInt(v, 10);
+              if (!isNaN(n)) setBpmState(clampBpm(n));
+            }}
+            onBlur={() => setBpmInput(String(bpm))}
+            onKeyDown={(e) => { if (e.key === "Enter") (e.target as HTMLInputElement).blur(); }}
+            style={bpmInputStyle}
+            aria-label="Beats per minute"
+          />
         </div>
-      </main>
+        <div style={bpmLabelStyle}>beats per minute</div>
 
-      {/* slider styling, kept here so component is self-contained */}
+        <div style={controlsRowStyle}>
+          <button
+            type="button"
+            onClick={() => setBpm(bpm - 1)}
+            style={stepBtnStyle}
+            aria-label="Decrease BPM"
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = INK; e.currentTarget.style.color = INK; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = RULE; e.currentTarget.style.color = MUTE; }}
+          >
+            −
+          </button>
+          <input
+            type="range"
+            min={MIN_BPM}
+            max={MAX_BPM}
+            value={bpm}
+            onChange={(e) => setBpm(parseInt(e.target.value, 10))}
+            className="nl-metronome-slider"
+            aria-label="Tempo"
+          />
+          <button
+            type="button"
+            onClick={() => setBpm(bpm + 1)}
+            style={stepBtnStyle}
+            aria-label="Increase BPM"
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = INK; e.currentTarget.style.color = INK; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = RULE; e.currentTarget.style.color = MUTE; }}
+          >
+            +
+          </button>
+        </div>
+        <div style={sliderRangeStyle}>
+          <span>{MIN_BPM}</span>
+          <span>{MAX_BPM}</span>
+        </div>
+
+        <div style={actionsStyle}>
+          <button type="button" onClick={() => (playing ? stop() : start())} style={playBtnStyle}>
+            {playing ? "Stop" : "Play"}
+          </button>
+          <button type="button" onClick={tap} style={tapBtnStyle}>
+            Tap
+          </button>
+        </div>
+
+        <p style={hintStyle}>
+          space play/stop &nbsp;·&nbsp; t tap &nbsp;·&nbsp; ↑ ↓ adjust
+        </p>
+      </section>
+
+      <button
+        type="button"
+        onClick={() => setRefOpen((v) => !v)}
+        style={refToggleStyle}
+        onMouseEnter={(e) => { e.currentTarget.style.color = INK; }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = MUTE; }}
+      >
+        <span>Reference</span>
+        <span style={{
+          fontSize: 10,
+          display: "inline-block",
+          transition: "transform 300ms ease",
+          transform: refOpen ? "rotate(180deg)" : "rotate(0deg)",
+        }}>▼</span>
+      </button>
+
+      <div style={refOuterStyle}>
+        <div style={refInnerStyle}>
+
+          {/* LEFT COLUMN: ratios + note-value examples */}
+          <div>
+            <h3 style={refH3Style}>Ratios</h3>
+            <p style={refBodyStyle}>
+              Doubled and tripled tempos relative to the current BPM. Handy for working out polyrhythms or moving between note values that share a pulse.
+            </p>
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              borderTop: `1px solid ${RULE}`,
+            }}>
+              {["×1", "×2", "×3"].map((h) => (
+                <div key={h} style={{
+                  textAlign: "center",
+                  fontFamily: SANS,
+                  fontSize: "var(--nl-text-badge, 11px)",
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: MUTE,
+                  padding: "0.7rem 0",
+                  borderBottom: `1px solid ${RULE}`,
+                }}>{h}</div>
+              ))}
+              {[bpm, bpm * 2, bpm * 3].map((v, i) => (
+                <div key={i} style={{
+                  textAlign: "center",
+                  padding: "0.85rem 0",
+                  borderBottom: `1px solid ${RULE_SOFT}`,
+                }}>
+                  <span style={{
+                    fontFamily: SERIF,
+                    fontSize: i === 0 ? 28 : 22,
+                    fontWeight: 400,
+                    color: i === 0 ? INK : MUTE,
+                    fontVariantNumeric: "tabular-nums",
+                  }}>{v}</span>
+                </div>
+              ))}
+            </div>
+
+            <h3 style={{ ...refH3Style, marginTop: "2.25rem" }}>Note value at 80 BPM</h3>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "0.85rem 1.5rem",
+              marginTop: "0.5rem",
+            }}>
+              {[
+                { glyph: "\uE1D7", lbl: "adagio" },
+                { glyph: "\uE1D5", lbl: "andante" },
+                { glyph: "\uE1D3", lbl: "allegro" },
+                { glyph: "\uE1D2", lbl: "presto" },
+              ].map((ex) => (
+                <div key={ex.lbl} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.7rem",
+                }}>
+                  <span style={{
+                    fontFamily: 'Bravura, "Bravura Text", serif',
+                    fontSize: 28,
+                    lineHeight: 1,
+                    color: INK,
+                    width: "1.1em",
+                    display: "inline-block",
+                    textAlign: "center",
+                  }}>{ex.glyph}</span>
+                  <span style={{
+                    fontFamily: SERIF,
+                    fontStyle: "italic",
+                    fontSize: 17,
+                    color: INK,
+                    opacity: 0.8,
+                  }}>{ex.lbl}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: ranges + heart-rate note */}
+          <div>
+            <h3 style={refH3Style}>Italian tempo ranges</h3>
+            <div>
+              {RANGES.map((r) => {
+                const active = bpm >= r.lo && bpm <= r.hi;
+                return (
+                  <div key={r.name} style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr auto",
+                    alignItems: "baseline",
+                    padding: "0.6rem 0",
+                    borderBottom: `1px solid ${RULE_SOFT}`,
+                  }}>
+                    <span style={{
+                      fontFamily: SERIF,
+                      fontStyle: "italic",
+                      fontSize: 19,
+                      color: active ? ACCENT : INK,
+                      opacity: active ? 1 : 0.85,
+                      transition: "color 150ms ease",
+                    }}>{r.name}</span>
+                    <span style={{
+                      fontFamily: SANS,
+                      fontSize: "var(--nl-text-compact, 13px)",
+                      color: active ? ACCENT : MUTE,
+                      fontVariantNumeric: "tabular-nums",
+                      letterSpacing: "0.06em",
+                      transition: "color 150ms ease",
+                    }}>{r.lo}–{r.hi}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p style={{
+              marginTop: "1.5rem",
+              paddingTop: "1.25rem",
+              borderTop: `1px solid ${RULE_SOFT}`,
+              fontFamily: SERIF,
+              fontStyle: "italic",
+              fontSize: 17,
+              lineHeight: 1.55,
+              color: INK,
+              opacity: 0.7,
+            }}>
+              Many of these tempos sit close to a human pulse. A resting adult heart runs near 70 beats per minute, which lands inside the{" "}<span style={{ fontStyle: "normal", fontWeight: 500 }}>andante</span>{" "}range and lines up with a comfortable walking pace. Smaller bodies beat faster: a child of seven holds around 90, and a fetal heart can reach 180.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
       <style jsx global>{`
-        .metronome-slider {
-          -webkit-appearance: none;
+        .nl-metronome-slider {
+          flex: 1;
           appearance: none;
+          -webkit-appearance: none;
           height: 1px;
-          background: #e5e3dc;
+          background: ${RULE};
           outline: none;
+          margin: 0;
         }
-        .metronome-slider::-webkit-slider-thumb {
-          -webkit-appearance: none;
+        .nl-metronome-slider::-webkit-slider-thumb {
           appearance: none;
+          -webkit-appearance: none;
           width: 14px;
           height: 14px;
           border-radius: 50%;
-          background: #1a1a18;
+          background: ${INK};
           cursor: grab;
-          border: 3px solid #fafaf7;
-          box-shadow: 0 0 0 1px #1a1a18;
+          border: 3px solid #F2EDDF;
+          box-shadow: 0 0 0 1px ${INK};
         }
-        .metronome-slider::-webkit-slider-thumb:active { cursor: grabbing; }
-        .metronome-slider::-moz-range-thumb {
+        .nl-metronome-slider::-webkit-slider-thumb:active { cursor: grabbing; }
+        .nl-metronome-slider::-moz-range-thumb {
           width: 14px;
           height: 14px;
           border-radius: 50%;
-          background: #1a1a18;
+          background: ${INK};
           cursor: grab;
-          border: 3px solid #fafaf7;
-          box-shadow: 0 0 0 1px #1a1a18;
+          border: 3px solid #F2EDDF;
+          box-shadow: 0 0 0 1px ${INK};
         }
       `}</style>
     </div>
