@@ -39,6 +39,7 @@ export type FeatureKey =
   | 'flashcards:application_review'
   | 'ear_training:intervals_1'
   | 'ear_training:full'
+  | 'program:cm:preparatory'
   | 'program:cm:level_1'
   | 'program:cm:level_2'
   | 'program:cm:level_3_plus'
@@ -80,8 +81,11 @@ export const FEATURE_CATALOG: Record<FeatureKey, FeatureRule> = {
   'ear_training:intervals_1':      { free: true,  requiresPlus: false, requiresProgram: null },
   'ear_training:full':             { free: false, requiresPlus: true,  requiresProgram: null },
 
-  'program:cm:level_1':            { free: true,  requiresPlus: false, requiresProgram: null },
-  'program:cm:level_2':            { free: true,  requiresPlus: false, requiresProgram: null },
+  // CM: only the Preparatory level is free. Every numbered level (L1+) is
+  // gated behind Plus or the CM program purchase.
+  'program:cm:preparatory':        { free: true,  requiresPlus: false, requiresProgram: null },
+  'program:cm:level_1':            { free: false, requiresPlus: true,  requiresProgram: 'cm' },
+  'program:cm:level_2':            { free: false, requiresPlus: true,  requiresProgram: 'cm' },
   'program:cm:level_3_plus':       { free: false, requiresPlus: true,  requiresProgram: 'cm' },
   'program:cm:full':               { free: false, requiresPlus: true,  requiresProgram: 'cm' },
 

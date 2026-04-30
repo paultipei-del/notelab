@@ -30,23 +30,18 @@ function cardCount(deckId: string): number {
 }
 
 function LevelCard({ level }: { level: CMLevel }) {
-  // Feature keys use label-1/label-2 pattern but the catalog we wrote
-  // earlier has level_1 / level_2 / level_3_plus. For this page we only
-  // need to know *is this accessible to the user*; we can reuse an
-  // existing catalog key that covers this level. Preparatory / L1 / L2
-  // map to the free level_1/level_2 keys (everyone has access today).
-  // L3+ map to level_3_plus (gated once monetisation activates).
-  // The master FREE_NOW switch means everyone currently sees "Free"
-  // chips — we present the per-level price label regardless, since
-  // that's information about the product, not about access.
+  // Only the Preparatory level is free. Every numbered level is gated
+  // behind Plus or the CM program purchase. The master FREE_NOW switch
+  // currently opens all gates during beta, but the structural truth
+  // (free vs gated) is what we surface in the chip and price label.
   const access = useFeatureAccess(
-    level.slug === 'preparatory' ? 'program:cm:level_1'
-      : level.slug === 'level-1'     ? 'program:cm:level_1'
-      : level.slug === 'level-2'     ? 'program:cm:level_2'
+    level.slug === 'preparatory' ? 'program:cm:preparatory'
+      : level.slug === 'level-1' ? 'program:cm:level_1'
+      : level.slug === 'level-2' ? 'program:cm:level_2'
       : 'program:cm:level_3_plus',
   )
   const tierStyle = TIER_STYLE[level.tier]
-  const freeTier = level.slug === 'preparatory' || level.slug === 'level-1' || level.slug === 'level-2'
+  const freeTier = level.slug === 'preparatory'
 
   // Ownership chip. Three states:
   //  • Owned — user has the right (Plus, bundle, or individual purchase)

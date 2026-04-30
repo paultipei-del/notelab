@@ -20,9 +20,10 @@ interface Props {
   params: Promise<{ levelSlug: string }>
 }
 
-function featureKeyFor(level: CMLevel): 'program:cm:level_1' | 'program:cm:level_2' | 'program:cm:level_3_plus' {
-  if (level.slug === 'preparatory' || level.slug === 'level-1') return 'program:cm:level_1'
-  if (level.slug === 'level-2') return 'program:cm:level_2'
+function featureKeyFor(level: CMLevel): 'program:cm:preparatory' | 'program:cm:level_1' | 'program:cm:level_2' | 'program:cm:level_3_plus' {
+  if (level.slug === 'preparatory') return 'program:cm:preparatory'
+  if (level.slug === 'level-1')     return 'program:cm:level_1'
+  if (level.slug === 'level-2')     return 'program:cm:level_2'
   return 'program:cm:level_3_plus'
 }
 
@@ -37,10 +38,9 @@ export default function CMLevelPage({ params }: Props) {
   const estimatedHours = Math.max(1, Math.round(cardCount / 20))
   const sampleCard = deck?.cards[0]
 
-  // "Free tier" here is the same shape as on the index: Preparatory, L1,
-  // L2 are always free. Anything else requires Plus or a per-level/bundle
-  // purchase.
-  const freeTier = level.slug === 'preparatory' || level.slug === 'level-1' || level.slug === 'level-2'
+  // Only Preparatory is free. Every numbered level requires Plus or a
+  // per-level/bundle purchase.
+  const freeTier = level.slug === 'preparatory'
   const canStudy = freeTier || access.hasAccess
   const bundle = bundleForTier(level.tier)
 
