@@ -1,111 +1,67 @@
 /**
- * useTone — React hook for a shared Tone.Oscillator (sine wave generator).
+ * useTone — React hook for a continuous sine-wave generator.
  *
- * Used by physics-of-sound diagrams that need to play pure sine tones rather
- * than piano samples. Unlike useSampler, this synthesizes audio directly and
- * has no sample-loading delay — it's instant.
+ * Backed by raw Web Audio (AudioContext + OscillatorNode + GainNode),
+ * not Tone.js. The earlier Tone-backed version was unreliable in Safari
+ * because the click handler awaited a dynamic `import('tone')` *before*
+ * resuming the audio context — Safari drops the user-gesture context
+ * across awaits, so the resume silently failed.
  *
- * Same fire-and-forget contract as useSampler:
- *   - Errors are swallowed
- *   - Module-global singleton
- *   - Lazy-loaded on first call
+ * Raw Web Audio sidesteps the issue: the AudioContext exists from the
+ * moment the hook mounts, no async import sits between the click and
+ * the resume call, and `unlockSync()` always has a real context to
+ * resume.
  *
- * Safari unlock:
- *   - The previous version awaited a dynamic `import('tone')` *before*
- *     resuming the audio context. Safari treats every `await` as a chance
- *     to drop the user-gesture context, so resume() ran outside the
- *     gesture and silently failed. Fix: eagerly load Tone on mount,
- *     install a document-level pointer/touch/key listener that calls
- *     Tone.start() synchronously on the first interaction anywhere on the
- *     page, and call `unlockSync()` as the first line of `start()` so the
- *     resume happens inside the click stack frame even if Tone hasn't
- *     finished loading yet.
+ * Contract:
+ *   - Module-global singleton context + nodes; one tone per browser tab.
+ *   - Fire-and-forget. Errors are swallowed.
+ *   - Frequency / gain updates are smoothed with a tiny ramp so slider
+ *     drags don't produce zipper noise.
  */
 
 import { useEffect, useRef, useState } from 'react'
+import {
+  createAudioContext,
+  unlockSync,
+  installDocumentUnlocker,
+} from '@/lib/audio/audioContext'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let sharedOscillator: any = null
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let sharedGain: any = null
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let sharedTone: any = null
-let initialized = false
-let initializing = false
-const initCallbacks: Array<() => void> = []
+let sharedCtx: AudioContext | null = null
+let sharedOsc: OscillatorNode | null = null
+let sharedGain: GainNode | null = null
+let isStarted = false
+let unlockerInstalled = false
 
-async function ensureOscillator(): Promise<void> {
-  if (initialized) return
-  if (initializing) return new Promise(resolve => initCallbacks.push(resolve))
-  initializing = true
-  try {
-    const Tone = await import('tone')
-    sharedTone = Tone
-    sharedGain = new Tone.Gain(0.3).toDestination()
-    sharedOscillator = new Tone.Oscillator(440, 'sine').connect(sharedGain)
-    initialized = true
-    initializing = false
-    initCallbacks.forEach(cb => cb())
-    initCallbacks.length = 0
-  } catch {
-    initializing = false
+function ensureGraph(): void {
+  if (sharedCtx) return
+  const ctx = createAudioContext()
+  if (!ctx) return
+  sharedCtx = ctx
+
+  const gain = ctx.createGain()
+  // Start at 0 so the very first oscillator.start() doesn't pop —
+  // the start() handler ramps it up to the requested gain.
+  gain.gain.value = 0
+  gain.connect(ctx.destination)
+  sharedGain = gain
+
+  const osc = ctx.createOscillator()
+  osc.type = 'sine'
+  osc.frequency.value = 440
+  osc.connect(gain)
+  sharedOsc = osc
+
+  if (!unlockerInstalled) {
+    installDocumentUnlocker(ctx)
+    unlockerInstalled = true
   }
-}
-
-/**
- * Synchronous AudioContext resume. Must be called from a user-gesture
- * stack frame. If Tone hasn't finished importing yet, this is a no-op —
- * the document-level unlocker will catch a later gesture.
- */
-function unlockSync(): void {
-  if (!sharedTone) return
-  try {
-    const ctx = sharedTone.getContext?.()
-    if (ctx && ctx.state !== 'running') {
-      // Tone.start() resolves a promise but the underlying resume is
-      // synchronous-enough for Safari to honor it as part of the gesture.
-      void sharedTone.start()
-    }
-  } catch {
-    /* swallow — audio is best-effort */
-  }
-}
-
-async function unlockContext(): Promise<void> {
-  if (!sharedTone) return
-  if (sharedTone.getContext && sharedTone.getContext().state !== 'running') {
-    await sharedTone.start()
-  } else if (sharedTone.start) {
-    await sharedTone.start()
-  }
-}
-
-let documentUnlockerInstalled = false
-function installDocumentUnlocker(): void {
-  if (documentUnlockerInstalled) return
-  if (typeof document === 'undefined') return
-  documentUnlockerInstalled = true
-  const onFirstInteract = () => {
-    unlockSync()
-    document.removeEventListener('pointerdown', onFirstInteract)
-    document.removeEventListener('touchstart', onFirstInteract)
-    document.removeEventListener('keydown', onFirstInteract)
-  }
-  document.addEventListener('pointerdown', onFirstInteract, { once: true })
-  document.addEventListener('touchstart', onFirstInteract, { once: true })
-  document.addEventListener('keydown', onFirstInteract, { once: true })
 }
 
 export interface ToneControls {
-  /** Whether the tone is currently playing. */
   isPlaying: boolean
-  /** Start the tone. Idempotent if already playing. */
   start: (frequency?: number, gain?: number) => Promise<void>
-  /** Stop the tone. */
   stop: () => Promise<void>
-  /** Update the frequency in Hz while playing. */
   setFrequency: (hz: number) => void
-  /** Update the gain (0-1) while playing. */
   setGain: (gain: number) => void
 }
 
@@ -114,17 +70,16 @@ export function useTone(): ToneControls {
   const isPlayingRef = useRef(false)
 
   useEffect(() => {
-    // Eagerly start the Tone import so by the time the user clicks Play
-    // the module is already in memory and `start()` doesn't have to await
-    // a dynamic import.
-    void ensureOscillator()
-    // Document-level unlocker: any first user interaction anywhere on
-    // the page resumes the audio context. Safari requires this because
-    // it won't honor a resume that happens after an await.
-    installDocumentUnlocker()
+    // Eagerly build the audio graph on mount so the AudioContext exists
+    // by the time the user clicks Play. The context starts suspended;
+    // the document-level unlocker (or unlockSync inside start) resumes it.
+    ensureGraph()
     return () => {
-      if (isPlayingRef.current && sharedOscillator) {
-        try { sharedOscillator.stop() } catch {}
+      if (isPlayingRef.current && sharedGain && sharedCtx) {
+        try {
+          sharedGain.gain.cancelScheduledValues(sharedCtx.currentTime)
+          sharedGain.gain.linearRampToValueAtTime(0, sharedCtx.currentTime + 0.02)
+        } catch {}
         isPlayingRef.current = false
       }
     }
@@ -132,17 +87,28 @@ export function useTone(): ToneControls {
 
   const start = async (frequency: number = 440, gain: number = 0.3): Promise<void> => {
     try {
-      // FIRST line in the click handler path: synchronous resume so the
-      // user-gesture chain is honored. Anything async after this is fine.
-      unlockSync()
-      await ensureOscillator()
-      if (!sharedOscillator) return
-      await unlockContext()
-      sharedOscillator.frequency.value = frequency
-      sharedGain.gain.value = gain
-      if (sharedOscillator.state !== 'started') {
-        sharedOscillator.start()
+      // Build the graph if it's not built yet (e.g. SSR -> first interaction).
+      ensureGraph()
+      if (!sharedCtx || !sharedOsc || !sharedGain) return
+
+      // Synchronous resume FIRST so the user-gesture chain stays intact.
+      unlockSync(sharedCtx)
+
+      // Lazily start the oscillator on the first call. OscillatorNode is
+      // single-use in Web Audio — once stopped it can't be restarted, so
+      // we keep one running for the lifetime of the page and modulate
+      // gain/frequency to play and pause.
+      if (!isStarted) {
+        sharedOsc.start()
+        isStarted = true
       }
+
+      const t = sharedCtx.currentTime
+      sharedOsc.frequency.cancelScheduledValues(t)
+      sharedOsc.frequency.linearRampToValueAtTime(frequency, t + 0.01)
+      sharedGain.gain.cancelScheduledValues(t)
+      sharedGain.gain.linearRampToValueAtTime(gain, t + 0.01)
+
       isPlayingRef.current = true
       setIsPlaying(true)
     } catch {}
@@ -150,8 +116,10 @@ export function useTone(): ToneControls {
 
   const stop = async (): Promise<void> => {
     try {
-      if (sharedOscillator && sharedOscillator.state === 'started') {
-        sharedOscillator.stop()
+      if (sharedCtx && sharedGain) {
+        const t = sharedCtx.currentTime
+        sharedGain.gain.cancelScheduledValues(t)
+        sharedGain.gain.linearRampToValueAtTime(0, t + 0.02)
       }
       isPlayingRef.current = false
       setIsPlaying(false)
@@ -159,15 +127,21 @@ export function useTone(): ToneControls {
   }
 
   const setFrequency = (hz: number): void => {
-    if (sharedOscillator) {
-      try { sharedOscillator.frequency.value = hz } catch {}
-    }
+    if (!sharedCtx || !sharedOsc) return
+    try {
+      const t = sharedCtx.currentTime
+      sharedOsc.frequency.cancelScheduledValues(t)
+      sharedOsc.frequency.linearRampToValueAtTime(hz, t + 0.02)
+    } catch {}
   }
 
   const setGain = (gain: number): void => {
-    if (sharedGain) {
-      try { sharedGain.gain.value = gain } catch {}
-    }
+    if (!sharedCtx || !sharedGain) return
+    try {
+      const t = sharedCtx.currentTime
+      sharedGain.gain.cancelScheduledValues(t)
+      sharedGain.gain.linearRampToValueAtTime(gain, t + 0.02)
+    } catch {}
   }
 
   return { isPlaying, start, stop, setFrequency, setGain }
