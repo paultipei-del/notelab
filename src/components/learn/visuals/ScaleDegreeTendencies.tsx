@@ -9,28 +9,24 @@ interface ScaleDegreeTendenciesProps {
   caption?: string
 }
 
-const DEGREES = [
-  { num: 1, name: 'Tonic' },
-  { num: 2, name: 'Supertonic' },
-  { num: 3, name: 'Mediant' },
-  { num: 4, name: 'Subdominant' },
-  { num: 5, name: 'Dominant' },
-  { num: 6, name: 'Submediant' },
-  { num: 7, name: 'Leading Tone' },
-] as const
-
-interface Tendency {
-  from: number
-  to: number
-  label: string
-  /** Stack level: 0 closest to dots, higher = farther above. */
-  level: number
+interface DegreePosition {
+  col: number
+  num: number
+  name: string
+  tier: 'stable' | 'active'
+  resolveTo?: number
+  strength?: 'strong' | 'weak'
 }
 
-const TENDENCIES: Tendency[] = [
-  { from: 4, to: 5, label: 'subdominant → dominant', level: 0 },
-  { from: 5, to: 1, label: 'dominant → tonic', level: 1 },
-  { from: 7, to: 1, label: 'leading tone → tonic', level: 2 },
+const POSITIONS: DegreePosition[] = [
+  { col: 1, num: 1, name: 'Tonic',        tier: 'stable' },
+  { col: 2, num: 2, name: 'Supertonic',   tier: 'active', resolveTo: 1, strength: 'weak' },
+  { col: 3, num: 3, name: 'Mediant',      tier: 'stable' },
+  { col: 4, num: 4, name: 'Subdominant',  tier: 'active', resolveTo: 3, strength: 'weak' },
+  { col: 5, num: 5, name: 'Dominant',     tier: 'stable' },
+  { col: 6, num: 6, name: 'Submediant',   tier: 'active', resolveTo: 5, strength: 'weak' },
+  { col: 7, num: 7, name: 'Leading Tone', tier: 'active', resolveTo: 8, strength: 'strong' },
+  { col: 8, num: 1, name: 'Tonic',        tier: 'stable' },
 ]
 
 export function ScaleDegreeTendencies({
@@ -39,129 +35,186 @@ export function ScaleDegreeTendencies({
 }: ScaleDegreeTendenciesProps) {
   const T = tokensFor(size)
 
-  // Generous horizontal slot so functional names below don't crowd.
-  const slotWidth = Math.round(110 * T.scale + 20)
-  const margin = Math.round(28 * T.scale + 16)
-  const dotRadius = Math.round(15 * T.scale)
-  const innerWidth = slotWidth * 7
-  const totalW = margin * 2 + innerWidth
+  const numberFontSize = 24
+  const nameFontSize = 14
+  const annotationFontSize = 14
+  const nameLineHeight = nameFontSize + 3
 
-  // Vertical layout. Arrows stack ABOVE the dots, three levels.
-  const arcLevelGap = Math.round(48 * T.scale + 6)
-  const arcBaseGap = Math.round(20 * T.scale)
-  const arcsTopReserve = arcBaseGap + arcLevelGap * 3 + Math.round(20 * T.scale)
-  const dotsY = margin + arcsTopReserve
-  const numberLabelGap = Math.round(8 * T.scale)
-  const nameLabelGap = Math.round(20 * T.scale)
-  const totalH = dotsY + dotRadius + nameLabelGap + Math.round(36 * T.scale) + margin
+  const slotWidth = 90
+  const labelMargin = 60
+  const rightMargin = 24
+  const dotRadius = 24
+  const innerWidth = slotWidth * 8
+  const totalW = labelMargin + innerWidth + rightMargin
 
-  const dotX = (oneIndexed: number) => margin + (oneIndexed - 0.5) * slotWidth
+  const topPad = 32
+  const caretY = topPad
+  const stableY = caretY + 50
+  const tierGap = 96
+  const activeY = stableY + tierGap
+  const nameGap = 18
+  const nameY = activeY + dotRadius + nameGap + nameFontSize
+  const totalH = nameY + nameLineHeight + 20
+
+  const dotX = (col: number) => labelMargin + (col - 0.5) * slotWidth
 
   return (
-    <figure style={{ margin: '24px auto', width: 'fit-content', maxWidth: '100%' }}>
+    <figure style={{ margin: '24px auto', width: '100%' }}>
       <svg
         viewBox={`0 0 ${totalW} ${totalH}`}
         width="100%"
-        style={{ display: 'block', maxWidth: totalW, height: 'auto', margin: '0 auto' }}
+        style={{ display: 'block', height: 'auto', margin: '0 auto' }}
         role="img"
-        aria-label={caption ?? 'The seven scale degrees and their resolution tendencies.'}
+        aria-label={caption ?? 'The seven scale degrees split into stable (1, 3, 5) and active (2, 4, 6, 7) tiers, with arrows showing how active tones resolve to stable ones.'}
       >
-        {/* Three tendency arcs, stacked at distinct heights */}
-        {TENDENCIES.map((t, idx) => {
-          const x1 = dotX(t.from)
-          const x2 = dotX(t.to)
-          const dir = x2 > x1 ? 1 : -1
-          // Endpoints sit just above the source/target dots' circumference.
-          const endY = dotsY - dotRadius - Math.round(4 * T.scale)
-          // Each arc has its own level. Higher level = bigger peak rise.
-          const peakY = dotsY - arcBaseGap - arcLevelGap * (t.level + 1)
-          // Bezier control point pulls arc up to peak height.
-          const ctrlX = (x1 + x2) / 2
-          const ctrlY = peakY * 2 - endY
-          const arrowHeadHalf = Math.round(6 * T.scale)
-          // Arrow head: small triangle at the destination side.
-          const tipX = x2 - dir * (dotRadius + Math.round(2 * T.scale))
-          const baseX = tipX - dir * arrowHeadHalf * 1.6
+        {/* Subtle dashed rail through the stable tier — visually anchors "home" */}
+        <line
+          x1={dotX(1)}
+          y1={stableY}
+          x2={dotX(8)}
+          y2={stableY}
+          stroke={T.inkSubtle}
+          strokeWidth={0.8}
+          strokeDasharray="2 5"
+          opacity={0.45}
+        />
+
+        {/* Tier labels on the left */}
+        <text
+          x={labelMargin - Math.round(20 * T.scale + 8)}
+          y={stableY}
+          fontSize={annotationFontSize}
+          fontFamily={T.fontLabel}
+          fill={T.inkMuted}
+          textAnchor="end"
+          dominantBaseline="central"
+          fontStyle="italic"
+        >
+          stable
+        </text>
+        <text
+          x={labelMargin - Math.round(20 * T.scale + 8)}
+          y={activeY}
+          fontSize={annotationFontSize}
+          fontFamily={T.fontLabel}
+          fill={T.inkMuted}
+          textAnchor="end"
+          dominantBaseline="central"
+          fontStyle="italic"
+        >
+          active
+        </text>
+
+        {/* Caret labels at the top, one per column */}
+        {POSITIONS.map((p, idx) => (
+          <text
+            key={`hat-${idx}`}
+            x={dotX(p.col)}
+            y={caretY}
+            fontSize={annotationFontSize}
+            fontFamily={T.fontLabel}
+            fill={T.inkSubtle}
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
+            {`${p.num}̂`}
+          </text>
+        ))}
+
+        {/* Resolution arrows from active → stable */}
+        {POSITIONS.filter(p => p.resolveTo).map((p, idx) => {
+          const x1 = dotX(p.col)
+          const x2 = dotX(p.resolveTo!)
+          const dx = x2 - x1
+          const dy = stableY - activeY
+          const len = Math.sqrt(dx * dx + dy * dy)
+          const ux = dx / len
+          const uy = dy / len
+          const offset = Math.round(3 * T.scale)
+          const startX = x1 + ux * (dotRadius + offset)
+          const startY = activeY + uy * (dotRadius + offset)
+          const tipX = x2 - ux * (dotRadius + offset)
+          const tipY = stableY - uy * (dotRadius + offset)
+
+          const headHalf = Math.round(5 * T.scale + 1)
+          const headLen = headHalf * 1.9
+          const baseX = tipX - ux * headLen
+          const baseY = tipY - uy * headLen
+          const px = -uy
+          const py = ux
+          const leftX = baseX + px * headHalf
+          const leftY = baseY + py * headHalf
+          const rightX = baseX - px * headHalf
+          const rightY = baseY - py * headHalf
+
+          const isStrong = p.strength === 'strong'
+          const arrowColor = isStrong ? T.highlightAccent : T.inkSubtle
+          const arrowOpacity = isStrong ? 0.92 : 0.55
+          const arrowWidth = isStrong ? 2 : 1.3
+          const dashArray = isStrong ? undefined : '3 3'
+
           return (
-            <g key={`tend-${idx}`}>
-              <path
-                d={`M ${x1} ${endY} Q ${ctrlX} ${ctrlY} ${tipX} ${endY}`}
-                fill="none"
-                stroke={T.highlightAccent}
-                strokeWidth={1.6}
+            <g key={`arrow-${idx}`}>
+              <line
+                x1={startX}
+                y1={startY}
+                x2={baseX}
+                y2={baseY}
+                stroke={arrowColor}
+                strokeWidth={arrowWidth}
                 strokeLinecap="round"
-                opacity={0.9}
+                strokeDasharray={dashArray}
+                opacity={arrowOpacity}
               />
-              <path
-                d={`M ${baseX} ${endY - arrowHeadHalf} L ${tipX} ${endY} L ${baseX} ${endY + arrowHeadHalf} Z`}
-                fill={T.highlightAccent}
+              <polygon
+                points={`${tipX},${tipY} ${leftX},${leftY} ${rightX},${rightY}`}
+                fill={arrowColor}
+                opacity={arrowOpacity}
               />
-              {/* Label centered above the peak, tracking the arc's level. */}
-              <text
-                x={ctrlX}
-                y={peakY - 6}
-                fontSize={T.smallLabelFontSize + 1}
-                fontFamily={T.fontLabel}
-                fill={T.highlightAccent}
-                fontStyle="italic"
-                textAnchor="middle"
-              >
-                {t.label}
-              </text>
             </g>
           )
         })}
 
-        {/* Caret labels above each dot (e.g. "1̂") */}
-        {DEGREES.map(d => (
-          <text
-            key={`hat-${d.num}`}
-            x={dotX(d.num)}
-            y={dotsY - dotRadius - numberLabelGap}
-            fontSize={T.smallLabelFontSize}
-            fontFamily={T.fontLabel}
-            fill={T.inkSubtle}
-            textAnchor="middle"
-          >
-            {`${d.num}̂`}
-          </text>
-        ))}
-
-        {/* Dots with degree numbers and functional names */}
-        {DEGREES.map(d => {
-          const x = dotX(d.num)
+        {/* Dots — stable tier filled with accent, active tier outlined */}
+        {POSITIONS.map((p, idx) => {
+          const x = dotX(p.col)
+          const y = p.tier === 'stable' ? stableY : activeY
+          const isStable = p.tier === 'stable'
           return (
-            <g key={`dot-${d.num}`}>
+            <g key={`dot-${idx}`}>
               <circle
                 cx={x}
-                cy={dotsY}
+                cy={y}
                 r={dotRadius}
-                fill={T.bgPaper}
-                stroke={T.ink}
+                fill={isStable ? T.highlightAccent : T.bgPaper}
+                stroke={isStable ? T.highlightAccent : T.ink}
                 strokeWidth={1.4}
               />
               <text
                 x={x}
-                y={dotsY}
-                fontSize={T.labelFontSize + 2}
+                y={y}
+                fontSize={numberFontSize}
                 fontFamily={T.fontLabel}
-                fill={T.ink}
+                fill={isStable ? T.bgPaper : T.ink}
                 fontWeight={600}
                 textAnchor="middle"
                 dominantBaseline="central"
               >
-                {d.num}
+                {p.num}
               </text>
-              <text
-                x={x}
-                y={dotsY + dotRadius + nameLabelGap + T.labelFontSize}
-                fontSize={T.labelFontSize}
-                fontFamily={T.fontLabel}
-                fill={T.inkMuted}
-                textAnchor="middle"
-              >
-                {d.name}
-              </text>
+              {p.name.split(' ').map((line, lineIdx) => (
+                <text
+                  key={`name-${idx}-${lineIdx}`}
+                  x={x}
+                  y={nameY + lineIdx * nameLineHeight}
+                  fontSize={nameFontSize}
+                  fontFamily={T.fontLabel}
+                  fill={T.inkMuted}
+                  textAnchor="middle"
+                >
+                  {line}
+                </text>
+              ))}
             </g>
           )
         })}
