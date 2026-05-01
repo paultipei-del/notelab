@@ -114,12 +114,10 @@ export function AccidentalsShowcase({
                 {kind.glyph}
               </text>
 
-              {/* Whole notehead, clickable */}
+              {/* Whole notehead, clickable. Hit target is a precisely-sized
+                  invisible ellipse so hover doesn't bleed beyond the visible
+                  glyph (text bounding boxes are much taller than they look). */}
               <g
-                onClick={() => handlePlay(kind.offset)}
-                onMouseEnter={() => highlight(midi)}
-                onMouseLeave={() => highlight(null)}
-                style={{ cursor: 'pointer', transition: T.hoverTransition }}
                 role="button"
                 aria-label={`${letter}${kind.acc === 'n' ? '' : kind.acc}${octave}, ${kind.label}`}
               >
@@ -131,9 +129,22 @@ export function AccidentalsShowcase({
                   fill={fill}
                   textAnchor="middle"
                   dominantBaseline="central"
+                  pointerEvents="none"
                 >
                   {T.noteheadWholeGlyph}
                 </text>
+                <ellipse
+                  cx={x}
+                  cy={noteY}
+                  rx={Math.round(T.noteheadHalfHeight * 1.05)}
+                  ry={Math.round(T.noteheadHalfHeight * 0.95)}
+                  fill="transparent"
+                  pointerEvents="all"
+                  onClick={() => handlePlay(kind.offset)}
+                  onMouseEnter={() => highlight(midi)}
+                  onMouseLeave={() => highlight(null)}
+                  style={{ cursor: 'pointer' }}
+                />
               </g>
 
               {/* Label below */}

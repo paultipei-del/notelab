@@ -178,14 +178,7 @@ export function MultiClefDisplay({
               ))}
 
               {showNote && (
-                <g
-                  onClick={handleNotePlay}
-                  onMouseEnter={() => highlight(parsed.midi)}
-                  onMouseLeave={() => highlight(null)}
-                  style={{ cursor: 'pointer', transition: T.hoverTransition }}
-                  role="button"
-                  aria-label={`${pitch} on ${c} clef`}
-                >
+                <g role="button" aria-label={`${pitch} on ${c} clef`}>
                   <text
                     x={noteX}
                     y={noteY + T.noteheadDy}
@@ -194,9 +187,22 @@ export function MultiClefDisplay({
                     fill={fill}
                     textAnchor="middle"
                     dominantBaseline="central"
+                    pointerEvents="none"
                   >
                     {T.noteheadWholeGlyph}
                   </text>
+                  <ellipse
+                    cx={noteX}
+                    cy={noteY}
+                    rx={Math.round(T.noteheadHalfHeight * 1.05)}
+                    ry={Math.round(T.noteheadHalfHeight * 0.95)}
+                    fill="transparent"
+                    pointerEvents="all"
+                    onClick={handleNotePlay}
+                    onMouseEnter={() => highlight(parsed.midi)}
+                    onMouseLeave={() => highlight(null)}
+                    style={{ cursor: 'pointer' }}
+                  />
                 </g>
               )}
 

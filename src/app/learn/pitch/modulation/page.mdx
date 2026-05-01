@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { KeyChangeProgression } from '@/components/learn/visuals/KeyChangeProgression'
 
 export const learnPage = {
   topic: 'pitch',
@@ -27,9 +27,29 @@ Modulation is what gives tonal music its sense of journey. Without it, a piece s
 
 ## The visual
 
-<DiagramPlaceholder description="A short excerpt beginning in C major, pivoting through a shared chord, and arriving in G major, labeled 'pivot chord modulation'." />
+<KeyChangeProgression
+  type="pivot"
+  startKey={0}
+  startChord={['C4', 'E4', 'G4']}
+  pivotChord={['C4', 'E4', 'G4']}
+  pivotKey={1}
+  endKey={1}
+  endChord={['B3', 'D4', 'G4']}
+  reserveAccidentalSlots={4}
+  labels={{ start: 'C major', pivot: 'shared chord (C = I in C, IV in G)', end: 'G major' }}
+  caption="Pivot chord modulation. The C major chord is reinterpreted: it's I in C major and IV in G major. Once we accept that reinterpretation, we've moved smoothly into G major's harmonic world."
+/>
 
-<DiagramPlaceholder description="The same idea using a direct (chromatic) modulation from C major to A♭ major, a more dramatic shift." />
+<KeyChangeProgression
+  type="direct"
+  startKey={0}
+  startChord={['C4', 'E4', 'G4']}
+  pivotChord={['C4', 'Eb4', 'Ab4']}
+  endKey={-4}
+  endChord={['C4', 'Eb4', 'Ab4']}
+  labels={{ start: 'C major', pivot: 'abrupt shift', end: 'A♭ major' }}
+  caption="Direct modulation. No pivot chord — the music simply jumps to the new key. The contrast is dramatic and is often used at climactic moments to signal a new emotional zone."
+/>
 
 ## Types of modulation
 

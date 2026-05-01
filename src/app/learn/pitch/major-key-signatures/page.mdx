@@ -1,12 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import Notation from '@/components/learn/Notation'
-import {
-  C_MAJOR_XML,
-  G_MAJOR_XML,
-  D_MAJOR_XML,
-  F_MAJOR_XML,
-  B_FLAT_MAJOR_XML,
-} from './notations'
+import { KeySignatureRow } from '@/components/learn/visuals/KeySignatureRow'
 
 export const learnPage = {
   topic: 'pitch',
@@ -42,15 +35,16 @@ A piece in G major, for example, uses an F♯ throughout. Instead of marking tha
 
 ## The visual
 
-<Notation musicXml={C_MAJOR_XML} caption="C major, no sharps or flats" ariaLabel="Treble clef with no sharps or flats (C major)" />
-
-<Notation musicXml={G_MAJOR_XML} caption="G major, one sharp (F♯)" ariaLabel="Treble clef with one sharp, F sharp (G major)" />
-
-<Notation musicXml={D_MAJOR_XML} caption="D major, two sharps (F♯, C♯)" ariaLabel="Treble clef with two sharps, F sharp and C sharp (D major)" />
-
-<Notation musicXml={F_MAJOR_XML} caption="F major, one flat (B♭)" ariaLabel="Treble clef with one flat, B flat (F major)" />
-
-<Notation musicXml={B_FLAT_MAJOR_XML} caption="B♭ major, two flats (B♭, E♭)" ariaLabel="Treble clef with two flats, B flat and E flat (B flat major)" />
+<KeySignatureRow
+  entries={[
+    { accidentals: 0,  label: 'C major' },
+    { accidentals: 1,  label: 'G major', sublabel: '1♯ (F♯)' },
+    { accidentals: 2,  label: 'D major', sublabel: '2♯ (F♯ C♯)' },
+    { accidentals: -1, label: 'F major', sublabel: '1♭ (B♭)' },
+    { accidentals: -2, label: 'B♭ major', sublabel: '2♭ (B♭ E♭)' },
+  ]}
+  caption="A few common major key signatures. The number of sharps or flats is what makes each key distinct on the page."
+/>
 
 ## How key signatures are built
 

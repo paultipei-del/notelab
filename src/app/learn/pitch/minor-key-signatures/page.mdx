@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { KeySignatureStaff } from '@/components/learn/visuals/KeySignatureStaff'
+import { KeySignatureTable } from '@/components/learn/visuals/KeySignatureTable'
 
 export const learnPage = {
   topic: 'pitch',
@@ -29,9 +30,14 @@ There are fifteen minor key signatures, corresponding exactly to the fifteen maj
 
 ## The visual
 
-<DiagramPlaceholder description="A staff with one sharp, labeled as both G major and E minor, the 'relative' pair." />
+<KeySignatureStaff
+  accidentals={1}
+  labels={['G major', 'E minor']}
+  labelPosition="right"
+  caption="One sharp could mean G major OR E minor — they share the same key signature. The 'major or minor?' question is answered by which note feels like home in the music itself, not by the key signature alone."
+/>
 
-<DiagramPlaceholder description="The fifteen pairs of major and minor keys shown as a table, each pair sharing a key signature." />
+<KeySignatureTable caption="All fifteen pairs of major and minor keys. Each row shares one key signature; the major and its relative minor differ by which note you treat as the tonic." />
 
 ## The fifteen minor key signatures
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Staff, NoteHead, Caption, useNoteHighlight } from './primitives'
+import { Staff, NoteHead, Caption } from './primitives'
 import { useSampler } from '@/lib/learn/audio/useSampler'
 import { tokensFor, type LearnSize } from '@/lib/learn/visuals/tokens'
 import { parsePitch, aggregateBounds, type Clef } from '@/lib/learn/visuals/pitch'
@@ -49,7 +49,22 @@ export function ScaleComparison({
   const resolvedMode: 'staves' | 'degree-rows' = mode ?? (rows.length <= 3 ? 'staves' : 'degree-rows')
   const { ready, play, playSequence } = useSampler()
   const [interacted, setInteracted] = React.useState(false)
-  const { highlightedMidis, highlight, flash, flashSequence } = useNoteHighlight()
+
+  // Position-based highlight (row index + note index) so hover/flash on
+  // one row never bleeds into another row that happens to share the
+  // same MIDI pitch (e.g. C major and A minor sharing C5/B4/A4).
+  const [hoveredKey, setHoveredKey] = React.useState<string | null>(null)
+  const [flashedKeys, setFlashedKeys] = React.useState<Set<string>>(new Set())
+  const flashKey = React.useCallback((key: string, durationMs: number = 600) => {
+    setFlashedKeys(prev => new Set(prev).add(key))
+    setTimeout(() => {
+      setFlashedKeys(prev => {
+        const next = new Set(prev)
+        next.delete(key)
+        return next
+      })
+    }, durationMs)
+  }, [])
 
   // Parse all rows
   const parsedRows = rows.map(r => ({
@@ -61,16 +76,23 @@ export function ScaleComparison({
   if (validRows.length === 0) return null
 
   const maxLen = Math.max(...validRows.map(r => r.pitches.length))
-  const handlePitchClick = async (pitch: string, midi: number) => {
+  const noteKey = (rowIdx: number, noteIdx: number) => `${rowIdx}-${noteIdx}`
+  const isHot = (rowIdx: number, noteIdx: number) => {
+    const k = noteKey(rowIdx, noteIdx)
+    return hoveredKey === k || flashedKeys.has(k)
+  }
+
+  const handlePitchClick = async (rowIdx: number, noteIdx: number, pitch: string) => {
     setInteracted(true)
-    flash(midi, 700)
+    flashKey(noteKey(rowIdx, noteIdx), 700)
     await play(pitch)
   }
   const handleRowPlay = async (rowIdx: number) => {
     setInteracted(true)
     const r = validRows[rowIdx]
-    const midis = r.parsed.map(p => p!.midi)
-    flashSequence(midis, 280, 500)
+    r.parsed.forEach((_p, i) => {
+      setTimeout(() => flashKey(noteKey(rowIdx, i), 500), i * 280)
+    })
     await playSequence(r.pitches, 280, '4n')
   }
 
@@ -81,13 +103,18 @@ export function ScaleComparison({
 
   function renderStaves(): React.ReactElement {
     const margin = Math.round(20 * T.scale + 8)
-    const nameColumnWidth = Math.round(150 * T.scale)
-    const playColumnWidth = audio ? Math.round(90 * T.scale) : 0
-    // Horizontal slot per scale degree
-    const slotWidth = Math.round(56 * T.scale)
+    // Row-name font is tied to the staff size so it reads at a
+    // comparable visual weight to the noteheads next to it.
+    const rowNameFont = T.size === 'small' ? 14 : T.size === 'hero' ? 22 : T.size === 'jumbo' ? 28 : 17
+    // Trimmer side gutter so more of the SVG width goes to the staff itself.
+    const nameColumnWidth = Math.round(130 * T.scale)
+    const playColumnWidth = audio ? Math.round(60 * T.scale) : 0
+    // Horizontal slot per scale degree — bumped further so noteheads
+    // sit prominently apart and the whole staff reads larger.
+    const slotWidth = Math.round(112 * T.scale)
     // Reserve extra horizontal padding after the clef so the first
     // notehead doesn't crash into the clef's curl.
-    const clefPad = Math.round(18 * T.scale)
+    const clefPad = Math.round(20 * T.scale)
     const noteAreaWidth = slotWidth * maxLen
     const staffWidth = T.clefReserve + clefPad + noteAreaWidth + Math.round(16 * T.scale)
     const noteAreaX = T.clefReserve + clefPad
@@ -102,7 +129,7 @@ export function ScaleComparison({
     // Row height = headroom (for high notes hanging above the staff) +
     // 8 step lines + extra inter-row breathing room so noteheads of the
     // row below never crash into the staff lines above.
-    const rowHeight = headroom + staffHeightPerRow + Math.round(48 * T.scale)
+    const rowHeight = headroom + staffHeightPerRow + Math.round(64 * T.scale)
     const totalH = margin + degreeNumberH + rowHeight * validRows.length + margin
     const totalW = margin + nameColumnWidth + staffWidth + playColumnWidth + margin
 
@@ -142,9 +169,9 @@ export function ScaleComparison({
               <g key={`row-${rowIdx}`}>
                 {/* Name label, left */}
                 <text
-                  x={margin + nameColumnWidth - Math.round(12 * T.scale)}
+                  x={margin + nameColumnWidth - Math.round(14 * T.scale)}
                   y={sy + 4 * T.step + 4}
-                  fontSize={T.labelFontSize + 1}
+                  fontSize={rowNameFont}
                   fontFamily={T.fontDisplay}
                   fontStyle="italic"
                   fill={T.ink}
@@ -161,6 +188,8 @@ export function ScaleComparison({
                 {row.parsed.map((p, i) => {
                   if (!p) return null
                   const isHl = row.highlightedSet.has(row.pitches[i])
+                  const k = noteKey(rowIdx, i)
+                  const showHot = isHot(rowIdx, i)
                   return (
                     <NoteHead
                       key={`n-${rowIdx}-${i}-${p.midi}`}
@@ -170,10 +199,11 @@ export function ScaleComparison({
                       clef={'treble' as Clef}
                       T={T}
                       duration="whole"
-                      highlight={isHl || highlightedMidis.includes(p.midi)}
-                      onMouseEnter={() => highlight(p.midi)}
-                      onMouseLeave={() => highlight(null)}
-                      onClick={() => handlePitchClick(row.pitches[i], p.midi)}
+                      highlight={isHl || showHot}
+                      highlightColor={showHot ? T.highlightAccent : T.highlightAccentSoft}
+                      onMouseEnter={() => setHoveredKey(k)}
+                      onMouseLeave={() => setHoveredKey(null)}
+                      onClick={() => handlePitchClick(rowIdx, i, row.pitches[i])}
                       ariaLabel={`${row.name} degree ${i + 1}, ${row.pitches[i]}`}
                     />
                   )
@@ -275,7 +305,8 @@ export function ScaleComparison({
                 {row.parsed.map((p, i) => {
                   if (!p) return null
                   const isHl = row.highlightedSet.has(row.pitches[i])
-                  const isHot = isHl || highlightedMidis.includes(p.midi)
+                  const k = noteKey(rowIdx, i)
+                  const isHotCell = isHl || isHot(rowIdx, i)
                   // Pretty pitch with unicode accidentals
                   const display = row.pitches[i]
                     .replace(/^([A-G])b(\d)/, '$1♭$2')
@@ -287,9 +318,9 @@ export function ScaleComparison({
                     <g
                       key={`cell-${rowIdx}-${i}-${p.midi}`}
                       style={{ cursor: 'pointer' }}
-                      onMouseEnter={() => highlight(p.midi)}
-                      onMouseLeave={() => highlight(null)}
-                      onClick={() => handlePitchClick(row.pitches[i], p.midi)}
+                      onMouseEnter={() => setHoveredKey(k)}
+                      onMouseLeave={() => setHoveredKey(null)}
+                      onClick={() => handlePitchClick(rowIdx, i, row.pitches[i])}
                     >
                       <rect
                         x={cellX(i) - cellWidth / 2 + 2}
@@ -304,7 +335,7 @@ export function ScaleComparison({
                         y={ry}
                         fontSize={T.labelFontSize + 2}
                         fontFamily={T.fontLabel}
-                        fill={isHot ? T.highlightAccent : T.ink}
+                        fill={isHotCell ? T.highlightAccent : T.ink}
                         fontWeight={isHl ? 600 : 500}
                         textAnchor="middle"
                         dominantBaseline="middle"

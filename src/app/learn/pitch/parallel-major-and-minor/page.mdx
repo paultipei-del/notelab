@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { KeySignatureRow } from '@/components/learn/visuals/KeySignatureRow'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'pitch',
@@ -29,9 +30,41 @@ Parallel keys produce one of the most powerful shifts in tonal music: the sudden
 
 ## The visual
 
-<DiagramPlaceholder description="A staff showing C major (no accidentals) and C minor (three flats) side by side, both starting on C, illustrating that the tonic is the same but the pitches differ." />
+<KeySignatureRow
+  entries={[
+    { accidentals: 0,  label: 'C major' },
+    { accidentals: -3, label: 'C minor', sublabel: '3♭ (B♭ E♭ A♭)' },
+  ]}
+  caption="C major and C minor share the same tonic but differ by three flats. Same starting note; different mood."
+/>
 
-<DiagramPlaceholder description="A chord progression that modulates from C major to C minor, showing the dramatic tonal shift." />
+<figure style={{ margin: '24px auto', width: '100%' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <ChordProgression
+      title="C major"
+      accidentals={0}
+      reserveAccidentalSlots={3}
+      chords={[
+        { pitches: ['C4', 'E4', 'G4'],  label: 'I' },
+        { pitches: ['F4', 'A4', 'C5'],  label: 'IV' },
+        { pitches: ['G4', 'B4', 'D5'],  label: 'V' },
+      ]}
+    />
+    <ChordProgression
+      title="C minor"
+      accidentals={-3}
+      reserveAccidentalSlots={3}
+      chords={[
+        { pitches: ['C4', 'Eb4', 'G4'], label: 'i' },
+        { pitches: ['F4', 'Ab4', 'C5'], label: 'iv' },
+        { pitches: ['G4', 'B4', 'D5'],  label: 'V' },
+      ]}
+    />
+  </div>
+  <p style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', fontSize: 15, color: '#5F5E5A', fontStyle: 'italic', textAlign: 'center', marginTop: 16, lineHeight: 1.55, maxWidth: '64ch', marginLeft: 'auto', marginRight: 'auto' }}>
+    The same I-IV-V progression built in C major (top) and C minor (bottom). The tonic and subdominant flip from major to minor; the dominant traditionally stays major to retain its leading-tone pull. Click any chord to hear it, or Play to walk through the progression.
+  </p>
+</figure>
 
 ## The relationship
 

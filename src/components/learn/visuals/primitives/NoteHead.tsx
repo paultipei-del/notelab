@@ -62,13 +62,6 @@ export function NoteHead({
 
   return (
     <g
-      onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      style={{
-        cursor: interactive ? 'pointer' : 'default',
-        transition: T.hoverTransition,
-      }}
       role={interactive ? 'button' : undefined}
       aria-label={ariaLabel ?? `${pitch} on ${clef} clef`}
     >
@@ -78,6 +71,7 @@ export function NoteHead({
           x1={x - T.ledgerHalfWidth} y1={staffTop + lp * T.step}
           x2={x + T.ledgerHalfWidth} y2={staffTop + lp * T.step}
           stroke={fill} strokeWidth={T.ledgerLineStroke}
+          pointerEvents="none"
         />
       ))}
       {accGlyph && !noAccidental && (
@@ -85,6 +79,7 @@ export function NoteHead({
           x={x - T.accidentalKerning} y={noteY}
           fontSize={T.accidentalFontSize} fontFamily={T.fontMusic}
           fill={fill} textAnchor="middle" dominantBaseline="central"
+          pointerEvents="none"
         >
           {accGlyph}
         </text>
@@ -93,6 +88,7 @@ export function NoteHead({
         x={x} y={noteY + T.noteheadDy}
         fontSize={T.noteheadFontSize} fontFamily={T.fontMusic}
         fill={fill} textAnchor="middle" dominantBaseline="central"
+        pointerEvents="none"
       >
         {glyph}
       </text>
@@ -100,6 +96,27 @@ export function NoteHead({
         <line
           x1={stemX} y1={noteY} x2={stemX} y2={stemY2}
           stroke={fill} strokeWidth={T.stemStroke}
+          pointerEvents="none"
+        />
+      )}
+      {/* Invisible hit target sized precisely to the visible notehead so
+       *  that hover/click only fires when the cursor is over the oval —
+       *  SVG text elements have a much taller bounding box than their
+       *  visible glyph, which would otherwise leak into adjacent rows. */}
+      {interactive && (
+        <ellipse
+          cx={x}
+          cy={noteY}
+          rx={Math.round(T.noteheadHalfHeight * 1.05)}
+          ry={Math.round(T.noteheadHalfHeight * 0.95)}
+          fill="transparent"
+          pointerEvents="all"
+          onClick={onClick}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          style={{
+            cursor: 'pointer',
+          }}
         />
       )}
     </g>

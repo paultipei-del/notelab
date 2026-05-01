@@ -120,7 +120,7 @@ export function tokensFor(size: LearnSize): LearnTokens {
     ledgerLineStroke: Math.max(1.0, +(1.6 * scale).toFixed(2)),
     ledgerHalfWidth: Math.round(22 * scale),
 
-    accidentalFontSize: Math.round(60 * scale),
+    accidentalFontSize: Math.round(66 * scale),
     accidentalKerning: Math.round(26 * scale),
     sharpGlyph: '\uE262',
     flatGlyph: '\uE260',

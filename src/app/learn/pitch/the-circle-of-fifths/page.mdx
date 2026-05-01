@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { CircleOfFifths } from '@/components/learn/visuals/CircleOfFifths'
 
 export const learnPage = {
   topic: 'pitch',
@@ -30,9 +29,15 @@ This is the **circle of fifths**, and it's one of the most important diagrams in
 
 ## The visual
 
-<Diagram src="/diagrams/circle-of-fifths.svg" caption="Major keys on the outer ring, their relative minors on the inner." />
+<CircleOfFifths
+  mode="full"
+  caption="The circle of fifths arranges the twelve major keys clockwise by ascending fifths. Each adjacent pair differs by one accidental. Relative minors live on the inner ring."
+/>
 
-<DiagramPlaceholder description="A simplified half of the circle showing just the sharp keys with 1-7 sharps and their flat counterparts." />
+<CircleOfFifths
+  mode="enharmonic-pairs"
+  caption="At the bottom of the circle, the same pitches can be spelled with sharps or with flats. C♯ major (7 sharps) and D♭ major (5 flats) are enharmonic equivalents — they sound identical. F♯ major (6 sharps) and G♭ major (6 flats) likewise. Composers choose the spelling that fits the harmonic context."
+/>
 
 ## How the circle is built
 
@@ -95,24 +100,10 @@ These shortcuts make reading key signatures nearly instant once you've practiced
 
 Every major key on the outer ring of the circle has a relative minor on the inner ring. The relative minor sits in the same position as its relative major, because they share the same key signature.
 
-Going clockwise:
-- C major / A minor
-- G major / E minor
-- D major / B minor
-- A major / F♯ minor
-- E major / C♯ minor
-- B major / G♯ minor
-- F♯ major / D♯ minor
-- C♯ major / A♯ minor
-
-Going counter-clockwise:
-- F major / D minor
-- B♭ major / G minor
-- E♭ major / C minor
-- A♭ major / F minor
-- D♭ major / B♭ minor
-- G♭ major / E♭ minor
-- C♭ major / A♭ minor
+<CircleOfFifths
+  mode="directional-table"
+  caption="The same information laid out as a side-by-side reference: clockwise around the circle adds sharps; counter-clockwise adds flats. Each row pairs a major key with its relative minor."
+/>
 
 The inner-ring minor keys follow the same circle-of-fifths relationships as the outer-ring major keys, A minor is to C major as E minor is to G major, etc.
 

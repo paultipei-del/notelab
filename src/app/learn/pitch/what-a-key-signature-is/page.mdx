@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { KeySignatureRow } from '@/components/learn/visuals/KeySignatureRow'
+import { KeySignatureStaff } from '@/components/learn/visuals/KeySignatureStaff'
 
 export const learnPage = {
   topic: 'pitch',
@@ -27,9 +28,46 @@ That's all a key signature is: shorthand. It tells you which notes are altered t
 
 ## The visual
 
-<DiagramPlaceholder description="A staff with no key signature, then with one sharp (G major / E minor), then with two sharps, then with three, showing how sharps are added in a fixed order and accumulate at the beginning of the staff." />
+<KeySignatureRow
+  entries={[
+    { accidentals: 0, label: 'no key signature' },
+    { accidentals: 1, label: '+1 sharp (F♯)' },
+    { accidentals: 2, label: '+2 sharps (F♯ C♯)' },
+    { accidentals: 3, label: '+3 sharps (F♯ C♯ G♯)' },
+  ]}
+  caption="Sharps are added in a fixed order — F♯, C♯, G♯, D♯, A♯, E♯, B♯ — and accumulate at the beginning of every staff line. The position of each sharp on the staff is fixed by tradition."
+/>
 
-<DiagramPlaceholder description="A simple phrase first with all the sharps written as accidentals, then with the same pitches in the key signature, demonstrating how the key signature reduces visual clutter." />
+<figure style={{ margin: '32px auto', width: '100%' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, width: '88%' }}>
+      <div style={{ fontFamily: 'var(--font-jost), system-ui, sans-serif', fontSize: 14, color: '#5F5E5A', fontStyle: 'italic' }}>
+        Without key signature
+      </div>
+      <KeySignatureStaff
+        accidentals={0}
+        size="hero"
+        timeSignature={[4, 4]}
+        melodyPitches={['G4', 'A4', 'B4', 'D5', 'F#5', 'E5', 'D5', 'B4']}
+        forceExplicitAccidentals
+      />
+    </div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, width: '88%' }}>
+      <div style={{ fontFamily: 'var(--font-jost), system-ui, sans-serif', fontSize: 14, color: '#5F5E5A', fontStyle: 'italic' }}>
+        With key signature (G major)
+      </div>
+      <KeySignatureStaff
+        accidentals={1}
+        size="hero"
+        timeSignature={[4, 4]}
+        melodyPitches={['G4', 'A4', 'B4', 'D5', 'F#5', 'E5', 'D5', 'B4']}
+      />
+    </div>
+  </div>
+  <p style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', fontSize: 15, color: '#5F5E5A', fontStyle: 'italic', textAlign: 'center', marginTop: 16, lineHeight: 1.55, maxWidth: '64ch', marginLeft: 'auto', marginRight: 'auto' }}>
+    The same melody written two ways. Above, every F♯ carries an explicit sharp accidental, cluttering the page. Below, a single sharp in the key signature does the same job once, and the staff is cleaner.
+  </p>
+</figure>
 
 ## Where the key signature sits
 

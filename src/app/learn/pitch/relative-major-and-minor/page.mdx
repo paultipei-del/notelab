@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ScaleComparison } from '@/components/learn/visuals/ScaleComparison'
+import { KeySignatureRow } from '@/components/learn/visuals/KeySignatureRow'
 
 export const learnPage = {
   topic: 'pitch',
@@ -29,9 +30,23 @@ Every major key has a relative minor. Every minor key has a relative major. The 
 
 ## The visual
 
-<DiagramPlaceholder description="C major scale and A minor scale shown on the same staff, both using the same seven notes, just starting from different tonics." />
-
-<DiagramPlaceholder description="A circle-of-fifths diagram with major keys on the outer ring and their relative minors on the inner ring, clearly showing the relative pairings." />
+<ScaleComparison
+  mode="staves"
+  size="hero"
+  rows={[
+    {
+      name: 'C major',
+      pitches: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'],
+      highlightedPitches: ['C4', 'C5'],
+    },
+    {
+      name: 'A minor',
+      pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5'],
+      highlightedPitches: ['A4', 'A5'],
+    },
+  ]}
+  caption="C major and A minor use the exact same seven notes. What makes them different is which note feels like home — C for the major, A for the minor."
+/>
 
 ## The relationship
 
@@ -52,16 +67,42 @@ Two quick techniques:
 - G major → G down a minor 3rd = E → E minor
 - F major → F down a minor 3rd = D → D minor
 
-Or equivalently, use the 6th degree of the major scale:
-- C major: scale degrees are C (1)-D (2)-E (3)-F (4)-G (5)-A (6)-B (7). The 6th is A, so A minor is the relative minor.
+Or equivalently, take the **6th degree** of the major scale — that pitch is the relative minor's tonic.
+
+<ScaleComparison
+  mode="staves"
+  size="hero"
+  audio={false}
+  rows={[
+    {
+      name: 'C major',
+      pitches: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'],
+      highlightedPitches: ['A4'],
+    },
+  ]}
+  caption="Degree 6 of C major is A — the tonic of the relative minor."
+/>
 
 **From minor to relative major: count up a minor 3rd.**
 - A minor → A up a minor 3rd = C → C major
 - E minor → E up a minor 3rd = G → G major
 - D minor → D up a minor 3rd = F → F major
 
-Or equivalently, use the 3rd degree of the natural minor scale:
-- A minor: scale degrees are A (1)-B (2)-C (3)-D (4)-E (5)-F (6)-G (7). The 3rd is C, so C major is the relative major.
+Or equivalently, take the **3rd degree** of the natural minor scale — that pitch is the relative major's tonic.
+
+<ScaleComparison
+  mode="staves"
+  size="hero"
+  audio={false}
+  rows={[
+    {
+      name: 'A minor',
+      pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5'],
+      highlightedPitches: ['C5'],
+    },
+  ]}
+  caption="Degree 3 of A minor is C — the tonic of the relative major."
+/>
 
 Both methods work; use whichever is faster for you.
 
@@ -77,29 +118,22 @@ The relative major/minor relationship shows up constantly in tonal music:
 
 **Improvisers rely on it.** If you're improvising in a major key and want a darker sound, switching your melodic emphasis to the relative minor (same notes, different tonic) produces instant tonal variety.
 
-## The complete set of relative pairs
+## A few example pairs
 
-All fifteen pairs:
+<KeySignatureRow
+  layout="wrap"
+  entries={[
+    { accidentals: 0,  label: 'C major',  sublabel: 'A minor' },
+    { accidentals: 1,  label: 'G major',  sublabel: 'E minor' },
+    { accidentals: -1, label: 'F major',  sublabel: 'D minor' },
+    { accidentals: 3,  label: 'A major',  sublabel: 'F♯ minor' },
+    { accidentals: -3, label: 'E♭ major', sublabel: 'C minor' },
+    { accidentals: 4,  label: 'E major',  sublabel: 'C♯ minor' },
+  ]}
+  caption="Six example pairs. Each key signature corresponds to one major and one minor key; the minor tonic always sits a minor 3rd below its relative major."
+/>
 
-| Key Signature | Major | Minor |
-|---|---|---|
-| 7♭ | C♭ | A♭ |
-| 6♭ | G♭ | E♭ |
-| 5♭ | D♭ | B♭ |
-| 4♭ | A♭ | F |
-| 3♭ | E♭ | C |
-| 2♭ | B♭ | G |
-| 1♭ | F | D |
-| 0 | C | A |
-| 1♯ | G | E |
-| 2♯ | D | B |
-| 3♯ | A | F♯ |
-| 4♯ | E | C♯ |
-| 5♯ | B | G♯ |
-| 6♯ | F♯ | D♯ |
-| 7♯ | C♯ | A♯ |
-
-Each row shows the key signature, its major key, and its relative minor. Learning this table (or more practically, learning to compute the pairs from the minor-3rd rule) gives you instant access to all fifteen relative pairings.
+The full reference list of all fifteen pairs lives on the [Minor Key Signatures](/learn/pitch/minor-key-signatures) page. In practice, the minor-3rd rule (or the 6th-degree rule) gives you instant access to any pair without memorizing the table.
 
 ## Relative minor vs. parallel minor
 
