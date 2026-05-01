@@ -293,11 +293,11 @@ export function ChordExplorer({
   }
 
   return (
-    <figure style={{ margin: '24px auto', maxWidth: totalW, width: 'fit-content' }}>
+    <figure style={{ margin: '24px auto', width: 'fit-content', maxWidth: '100%' }}>
       <svg
         viewBox={`0 0 ${totalW} ${totalH}`}
         width="100%"
-        style={{ display: 'block', maxWidth: totalW, height: 'auto' }}
+        style={{ display: 'block', maxWidth: totalW, height: 'auto', margin: '0 auto' }}
         role="img"
         aria-label={caption ?? `Chord: ${pitches.join(', ')}`}
       >

@@ -1,15 +1,17 @@
 /**
  * Design tokens for the /learn primitive system.
  *
- * Three sizes scale linearly from a hero baseline (step=10):
+ * Sizes scale linearly from a hero baseline:
  *   - small  (step=5)  — dense reference material, comparison rows
- *   - inline (step=7)  — DEFAULT, figures inside MDX prose
- *   - hero   (step=10) — the marquee diagram of a topic
+ *   - inline (step=6)  — DEFAULT, figures inside MDX prose
+ *   - hero   (step=10) — marquee diagram of a topic
+ *   - jumbo  (step=14) — extra-large, used when hero still reads small
+ *                       (e.g. 6-dyad consonance row that needs to breathe)
  *
  * Don't override these inline. Add a new size or a new token here.
  */
 
-export type LearnSize = 'small' | 'inline' | 'hero'
+export type LearnSize = 'small' | 'inline' | 'hero' | 'jumbo'
 
 export interface LearnTokens {
   size: LearnSize
@@ -86,7 +88,7 @@ export interface LearnTokens {
 }
 
 export function tokensFor(size: LearnSize): LearnTokens {
-  const step = size === 'small' ? 5 : size === 'hero' ? 10 : 6
+  const step = size === 'small' ? 5 : size === 'hero' ? 10 : size === 'jumbo' ? 18 : 6
   const scale = step / 10
 
   return {
@@ -152,9 +154,9 @@ export function tokensFor(size: LearnSize): LearnTokens {
     bgCream: '#ECE3CC',
     border: '#EDE8DF',
 
-    captionFontSize: size === 'small' ? 12 : size === 'hero' ? 15 : 13,
-    labelFontSize: size === 'small' ? 10 : size === 'hero' ? 12 : 11,
-    smallLabelFontSize: size === 'small' ? 9 : 11,
+    captionFontSize: size === 'small' ? 12 : size === 'hero' ? 15 : size === 'jumbo' ? 19 : 13,
+    labelFontSize: size === 'small' ? 10 : size === 'hero' ? 12 : size === 'jumbo' ? 18 : 11,
+    smallLabelFontSize: size === 'small' ? 9 : size === 'jumbo' ? 16 : 11,
 
     bracketTick: 4,
     annotationBuffer: 6,

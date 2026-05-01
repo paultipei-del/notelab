@@ -73,9 +73,13 @@ export function TritoneContextDemo({
       : arrowShaftBottom - Math.round(8 * T.scale)
     const arrowX = noteX
 
-    // Tighten total height so the column doesn't carry empty space below
-    // the staff — the text label sits in HTML below the SVG.
-    const totalH = bounds.bottom + margin
+    // totalH must reach below the staff bottom — the treble clef glyph
+    // hangs ~4 staff-positions past the lowest line, and clipping it
+    // mid-curl looks broken (and was visually merging with the HTML
+    // text below the SVG).
+    const staffBottom = staffY + 8 * T.step
+    const clefTailReserve = Math.round(4 * T.step)
+    const totalH = Math.max(bounds.bottom, staffBottom + clefTailReserve) + margin
     const totalW = staffX + staffWidth + margin
 
     return (
@@ -124,11 +128,12 @@ export function TritoneContextDemo({
         <div
           style={{
             fontFamily: T.fontLabel,
-            fontSize: T.labelFontSize,
-            color: T.inkSubtle,
+            fontSize: 14,
+            color: T.ink,
+            fontWeight: 500,
             textAlign: 'center',
-            marginTop: 12,
-            lineHeight: 1.45,
+            marginTop: 14,
+            lineHeight: 1.5,
             maxWidth: 280,
           }}
         >

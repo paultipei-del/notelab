@@ -93,11 +93,20 @@ export function IntervalSet({
   const isGrand = clef === 'grand'
   const fallbackClef: Clef = !isGrand ? clef : 'treble'
 
+  // Label fonts scale up for hero size — the global token only bumps
+  // labelFontSize from 11 -> 12 between inline and hero, which leaves
+  // labels visibly tiny next to the doubled-size staff. Override here.
+  // Label fonts scale up at hero size — global tokens barely budge
+  // (12/11) which leaves the labels visibly tiny next to the doubled
+  // staff. Override here for hero only; small + inline keep defaults.
+  const labelFs = T.size === 'jumbo' ? 38 : T.size === 'hero' ? 22 : T.labelFontSize
+  const sublabelFs = T.size === 'jumbo' ? 30 : T.size === 'hero' ? 17 : T.smallLabelFontSize
+
   // ── Slot width: auto-size from the widest label / sublabel so the
   //    text never overlaps adjacent slots. We cap below at the existing
   //    notehead-width-driven minimum so dense rows still pack tightly.
-  const charWidthLabel = T.labelFontSize * 0.62
-  const charWidthSub = T.smallLabelFontSize * 0.62
+  const charWidthLabel = labelFs * 0.62
+  const charWidthSub = sublabelFs * 0.62
   const widestLabelChars = Math.max(0, ...intervals.map(iv => iv.label.length))
   const widestSubChars = Math.max(0, ...intervals.map(iv => (iv.sublabel ?? '').length))
   const labelTextWidth = widestLabelChars * charWidthLabel
@@ -108,8 +117,8 @@ export function IntervalSet({
 
   const margin = Math.round(20 * T.scale + 8)
   const braceReserve = isGrand ? Math.round(34 * T.scale) : 0
-  const labelHeight = T.labelFontSize + 4
-  const sublabelHeight = intervals.some(i => i.sublabel) ? T.smallLabelFontSize + 4 : 0
+  const labelHeight = labelFs + 4
+  const sublabelHeight = intervals.some(i => i.sublabel) ? sublabelFs + 4 : 0
 
   const staffX = margin + braceReserve
   const innerWidth = T.clefReserve + slotWidth * intervals.length + Math.round(12 * T.scale)
@@ -316,7 +325,7 @@ export function IntervalSet({
             >
               <text
                 x={cx} y={labelY}
-                fontSize={T.labelFontSize}
+                fontSize={labelFs}
                 fontFamily={T.fontLabel}
                 fill={dyadIsHot ? T.highlightAccent : T.ink}
                 fontWeight={500}
@@ -327,7 +336,7 @@ export function IntervalSet({
               {iv.sublabel && (
                 <text
                   x={cx} y={sublabelY}
-                  fontSize={T.smallLabelFontSize}
+                  fontSize={sublabelFs}
                   fontFamily={T.fontLabel}
                   fill={dyadIsHot ? T.highlightAccent : T.inkSubtle}
                   textAnchor="middle"
