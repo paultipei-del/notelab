@@ -15,6 +15,12 @@ interface KeyChangeProgressionProps {
   pivotKey?: number
   endKey: number
   endChord: string[]
+  /** Extra pitches played alongside each chord (e.g. bass roots) but not
+   *  rendered on the staff. Useful when you want a fuller harmonic sound
+   *  than the visible voicing implies. */
+  startAudioExtras?: string[]
+  pivotAudioExtras?: string[]
+  endAudioExtras?: string[]
   labels?: { start?: string; pivot?: string; end?: string }
   type?: 'pivot' | 'direct'
   size?: LearnSize
@@ -188,6 +194,9 @@ export function KeyChangeProgression({
   pivotKey,
   endKey,
   endChord,
+  startAudioExtras,
+  pivotAudioExtras,
+  endAudioExtras,
   labels,
   type = 'pivot',
   size = 'inline',
@@ -197,16 +206,27 @@ export function KeyChangeProgression({
   const T = tokensFor(size)
   const { playChord } = useSampler()
 
-  const playStart = () => playChord(startChord, '2n')
-  const playPivot = () => playChord(pivotChord, '2n')
-  const playEnd = () => playChord(endChord, '2n')
+  // Combine the visible chord notes with any audio-only extras (e.g. bass
+  // roots that should sound but not render).
+  const audioStart = [...startChord, ...(startAudioExtras ?? [])]
+  const audioPivot = [...pivotChord, ...(pivotAudioExtras ?? [])]
+  const audioEnd = [...endChord, ...(endAudioExtras ?? [])]
+
+  // Slowed-down playback: hold each chord longer and leave more space
+  // between them so listeners can hear the modulation breathe.
+  const chordDuration = '1n'
+  const sequenceGapMs = 1100
+
+  const playStart = () => playChord(audioStart, chordDuration)
+  const playPivot = () => playChord(audioPivot, chordDuration)
+  const playEnd = () => playChord(audioEnd, chordDuration)
 
   const playSequence = async () => {
-    await playChord(startChord, '4n')
-    await new Promise(r => setTimeout(r, 700))
-    await playChord(pivotChord, '4n')
-    await new Promise(r => setTimeout(r, 700))
-    await playChord(endChord, '2n')
+    await playChord(audioStart, chordDuration)
+    await new Promise(r => setTimeout(r, sequenceGapMs))
+    await playChord(audioPivot, chordDuration)
+    await new Promise(r => setTimeout(r, sequenceGapMs))
+    await playChord(audioEnd, chordDuration)
   }
 
   const startLabel = labels?.start ?? 'Start'
