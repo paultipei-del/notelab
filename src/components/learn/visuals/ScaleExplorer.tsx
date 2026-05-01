@@ -133,16 +133,29 @@ export function ScaleExplorer({
 
   const resolvedIntervals = intervals ?? SCALE_PRESETS[scale]
   const resolvedClef: Clef = clef ?? (tonic >= 60 ? 'treble' : 'bass')
-  const scaleMidis = resolvedIntervals.map(i => tonic + i)
-  if (pitches && pitches.length !== scaleMidis.length) {
+
+  // When pitches are provided, derive MIDIs from the actual pitch
+  // sequence (which preserves caller's order — including descending).
+  // Otherwise fall back to the preset's intervals applied to tonic.
+  const presetMidis = resolvedIntervals.map(i => tonic + i)
+  const pitchesValid = pitches && pitches.length > 0
+  const pitchMidis = pitchesValid
+    ? pitches.map(p => {
+        const m = p.match(/^([A-G])(##|bb|#|b|n)?(-?\d+)$/)
+        if (!m) return tonic
+        const LETTER = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 } as const
+        const acc = m[2]
+        const adj = acc === '#' ? 1 : acc === 'b' ? -1 : acc === '##' ? 2 : acc === 'bb' ? -2 : 0
+        return (parseInt(m[3], 10) + 1) * 12 + LETTER[m[1] as keyof typeof LETTER] + adj
+      })
+    : null
+  const scaleMidis = pitchMidis ?? presetMidis
+  if (pitches && !pitchMidis) {
     console.warn(
-      `ScaleExplorer: pitches length ${pitches.length} doesn't match scale length ${scaleMidis.length}; falling back to auto-derived spellings.`
+      `ScaleExplorer: pitches array invalid; falling back to auto-derived spellings.`
     )
   }
-  const scalePitches =
-    pitches && pitches.length === scaleMidis.length
-      ? pitches
-      : scaleMidis.map(midiToPitch)
+  const scalePitches = pitchesValid && pitches ? pitches : scaleMidis.map(midiToPitch)
   const dimmedSet = new Set(dimmedMidis)
 
   // Resolve intervalLabels: must match scale length or we ignore (warn) and

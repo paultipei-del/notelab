@@ -1,7 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import Notation from '@/components/learn/Notation'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import { SCALE_DEGREE_NAMES_XML } from './notations'
+import { ScaleDegreeTendencies } from '@/components/learn/visuals/ScaleDegreeTendencies'
 
 export const learnPage = {
   topic: 'scales',
@@ -37,7 +37,7 @@ Traditional names capture these functions: **tonic, supertonic, mediant, subdomi
   ariaLabel="C major scale with traditional scale-degree names."
 />
 
-<DiagramPlaceholder description="A horizontal line showing the seven degrees spaced out, with functional names below and arrows indicating resolution tendencies, leading tone → tonic, dominant → tonic, subdominant → dominant." />
+<ScaleDegreeTendencies caption="The seven scale degrees and their functional names. The arrows show the strongest resolution tendencies: the leading tone pulls up to the tonic, the dominant pulls home to the tonic, and the subdominant pushes toward the dominant. These tendencies are what give a key its sense of motion." />
 
 ## The seven scale degrees and their names
 

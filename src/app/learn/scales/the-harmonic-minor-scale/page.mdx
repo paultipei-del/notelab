@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { ScaleComparison } from '@/components/learn/visuals/ScaleComparison'
 
 export const learnPage = {
   topic: 'scales',
@@ -39,7 +38,15 @@ The name tells you what it's for. It's the minor scale adjusted to make proper t
   caption="A harmonic minor ascending, labeled with the interval pattern W-H-W-W-H-aug2-H. The augmented 2nd between the 6th and 7th degrees is harmonic minor's distinctive feature."
 />
 
-<Diagram src="/diagrams/three-minor-forms.svg" caption="Natural, harmonic, and melodic A minor. The raised 7th (G♯) is what distinguishes harmonic from natural minor." />
+<ScaleComparison
+  mode="staves"
+  rows={[
+    { name: 'natural minor', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5'] },
+    { name: 'harmonic minor', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G#5', 'A5'], highlightedPitches: ['G#5'] },
+    { name: 'melodic minor (asc)', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F#5', 'G#5', 'A5'], highlightedPitches: ['F#5', 'G#5'] },
+  ]}
+  caption="Natural, harmonic, and melodic A minor compared. The raised 7th (G♯, in coral) is what distinguishes harmonic from natural minor; melodic minor adds a raised 6th (F♯) on top."
+/>
 
 ## The interval pattern
 

@@ -1,7 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { ScaleComparison } from '@/components/learn/visuals/ScaleComparison'
 
 export const learnPage = {
   topic: 'scales',
@@ -37,7 +36,15 @@ The natural minor scale is one of three forms of minor in Western music. The oth
   caption="A natural minor scale ascending, labeled with the interval pattern W-H-W-W-H-W-W."
 />
 
-<Diagram src="/diagrams/three-minor-forms.svg" caption="The three forms of A minor (natural, harmonic, melodic) compared side by side." />
+<ScaleComparison
+  mode="staves"
+  rows={[
+    { name: 'natural minor', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5'] },
+    { name: 'harmonic minor', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G#5', 'A5'], highlightedPitches: ['G#5'] },
+    { name: 'melodic minor (asc)', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F#5', 'G#5', 'A5'], highlightedPitches: ['F#5', 'G#5'] },
+  ]}
+  caption="The three forms of A minor compared side by side. Natural minor is the foundation. Harmonic minor raises the 7th to give a stronger pull toward the tonic. Melodic minor (ascending) raises both the 6th and 7th to smooth out the gap that harmonic minor creates between degrees 6 and 7."
+/>
 
 ## The interval pattern
 

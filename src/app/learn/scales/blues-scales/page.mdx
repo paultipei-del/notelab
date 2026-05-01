@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
+import { ScaleComparison } from '@/components/learn/visuals/ScaleComparison'
 
 export const learnPage = {
   topic: 'scales',
@@ -36,27 +36,14 @@ The blues scale is the foundation of the blues itself, of course, but it's also 
   caption="A minor blues scale, A, C, D, E♭, E, G, A. The flatted 5th (E♭) is the blue note: it sits between the natural 4th (D) and natural 5th (E), giving the scale its distinctive sound."
 />
 
-<figure style={{ margin: '24px auto', textAlign: 'center' }}>
-  <div style={{ display: 'flex', gap: 32, justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-    <ScaleExplorer
-      scale="major"
-      tonic={60}
-      dimmedMidis={[65, 71]}
-      size="small"
-      showKeyboard={false}
-      showAudio={false}
-      caption="C major pentatonic, open, consonant."
-    />
-    <ScaleExplorer
-      scale="blues"
-      tonic={60}
-      size="small"
-      showKeyboard={false}
-      showAudio={false}
-      caption="C minor blues, bluesy, expressive."
-    />
-  </div>
-</figure>
+<ScaleComparison
+  mode="staves"
+  rows={[
+    { name: 'C major pentatonic', pitches: ['C4', 'D4', 'E4', 'G4', 'A4', 'C5'] },
+    { name: 'C minor blues', pitches: ['C4', 'Eb4', 'F4', 'Gb4', 'G4', 'Bb4', 'C5'], highlightedPitches: ['Gb4'] },
+  ]}
+  caption="C major pentatonic next to C minor blues. The pentatonic is open and consonant, five notes. The blues scale adds the flatted 5th (the coral 'blue note') for that distinctive bluesy tension."
+/>
 
 ## The minor blues scale
 
@@ -94,6 +81,13 @@ For C major blues: C, D, E♭, E, G, A, C. Six distinct pitches plus octave.
 The blue note here is the ♭3 (E♭), which sits between the 2nd (D) and 3rd (E). It functions similarly to the blue note in minor blues, an expressive passing tone that's bent or slid into.
 
 Major blues is less common than minor blues in popular music, but it appears regularly in country, folk, and certain jazz styles. The contrast between the major 3rd and the flat 3rd (both present in the scale) gives major blues a distinctive flavor that mixes bright and bluesy.
+
+<ScaleExplorer
+  scale="blues"
+  tonic={60}
+  pitches={['C4', 'D4', 'Eb4', 'E4', 'G4', 'A4', 'C5']}
+  caption="C major blues scale: C, D, E♭, E, G, A, C. The blue note here is the ♭3 (E♭), sitting between the 2nd (D) and 3rd (E). Major blues mixes the brightness of major with the bluesy tension of the chromatic ♭3."
+/>
 
 ## How the blues scale is used
 

@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
 
 export const learnPage = {
   topic: 'scales',
@@ -31,9 +31,19 @@ The chromatic scale is the full palette. Spelling it correctly is less about mel
 
 ## The visual
 
-<DiagramPlaceholder description="A chromatic scale ascending from C to C on a treble staff, using sharps, C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B, C." />
+<ScaleExplorer
+  scale="chromatic"
+  tonic={60}
+  pitches={['C4','C#4','D4','D#4','E4','F4','F#4','G4','G#4','A4','A#4','B4','C5']}
+  caption="The chromatic scale ascending — the conventional spelling uses sharps going up. Each step is a half step. C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B, C."
+/>
 
-<DiagramPlaceholder description="A chromatic scale descending from C to C on a treble staff, using flats, C, B, B♭, A, A♭, G, G♭, F, E, E♭, D, D♭, C." />
+<ScaleExplorer
+  scale="chromatic"
+  tonic={60}
+  pitches={['C5','B4','Bb4','A4','Ab4','G4','Gb4','F4','E4','Eb4','D4','Db4','C4']}
+  caption="The chromatic scale descending — flats are used going down. Same twelve pitches; different conventional spelling. Read left to right: C5, B, B♭, A, A♭, G, G♭, F, E, E♭, D, D♭, C4."
+/>
 
 ## Ascending with sharps
 

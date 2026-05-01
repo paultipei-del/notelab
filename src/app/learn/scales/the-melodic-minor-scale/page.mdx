@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ScaleExplorer } from '@/components/learn/visuals/ScaleExplorer'
+import { ScaleComparison } from '@/components/learn/visuals/ScaleComparison'
 
 export const learnPage = {
   topic: 'scales',
@@ -31,9 +32,28 @@ This dual-form structure is unique among Western scales. It reflects a practical
 
 ## The visual
 
-<DiagramPlaceholder description="A melodic minor ascending on a treble staff with raised 6th and 7th (F♯ and G♯), labeled, then descending with natural 6th and 7th (G and F), also labeled." />
+<ScaleExplorer
+  scale="melodic-minor"
+  tonic={69}
+  pitches={['A4', 'B4', 'C5', 'D5', 'E5', 'F#5', 'G#5', 'A5']}
+  caption="A melodic minor ascending. The 6th (F♯) and 7th (G♯) are raised to smooth the line upward toward the tonic."
+/>
 
-<DiagramPlaceholder description="The three minor forms compared side by side (natural, harmonic, and melodic) ascending." />
+<ScaleExplorer
+  scale="natural-minor"
+  tonic={69}
+  caption="A melodic minor descending. The 6th and 7th revert to natural — there's no need for the leading-tone pull when descending. Identical to natural minor descending."
+/>
+
+<ScaleComparison
+  mode="staves"
+  rows={[
+    { name: 'natural minor', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5', 'A5'] },
+    { name: 'harmonic minor', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G#5', 'A5'], highlightedPitches: ['G#5'] },
+    { name: 'melodic minor (asc)', pitches: ['A4', 'B4', 'C5', 'D5', 'E5', 'F#5', 'G#5', 'A5'], highlightedPitches: ['F#5', 'G#5'] },
+  ]}
+  caption="The three minor scales side by side. Each one alters the natural minor form to suit a different musical purpose."
+/>
 
 ## The traditional dual form
 

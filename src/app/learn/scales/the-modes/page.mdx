@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
+import { ScaleComparison } from '@/components/learn/visuals/ScaleComparison'
 
 export const learnPage = {
   topic: 'scales',
@@ -34,7 +34,19 @@ Modes matter because much of Western music, especially folk music, modal jazz, f
 
 <Diagram src="/diagrams/seven-modes.svg" caption="The seven modes of the major scale, shown as modal rotations starting on each degree." />
 
-<DiagramPlaceholder description="All seven modes starting on C (transposed to a common tonic), shown together for comparison." />
+<ScaleComparison
+  mode="degree-rows"
+  rows={[
+    { name: 'Ionian (major)', pitches: ['C4','D4','E4','F4','G4','A4','B4','C5'] },
+    { name: 'Dorian',         pitches: ['C4','D4','Eb4','F4','G4','A4','Bb4','C5'], highlightedPitches: ['Eb4','Bb4'] },
+    { name: 'Phrygian',       pitches: ['C4','Db4','Eb4','F4','G4','Ab4','Bb4','C5'], highlightedPitches: ['Db4','Eb4','Ab4','Bb4'] },
+    { name: 'Lydian',         pitches: ['C4','D4','E4','F#4','G4','A4','B4','C5'], highlightedPitches: ['F#4'] },
+    { name: 'Mixolydian',     pitches: ['C4','D4','E4','F4','G4','A4','Bb4','C5'], highlightedPitches: ['Bb4'] },
+    { name: 'Aeolian (natural minor)', pitches: ['C4','D4','Eb4','F4','G4','Ab4','Bb4','C5'], highlightedPitches: ['Eb4','Ab4','Bb4'] },
+    { name: 'Locrian',        pitches: ['C4','Db4','Eb4','F4','Gb4','Ab4','Bb4','C5'], highlightedPitches: ['Db4','Eb4','Gb4','Ab4','Bb4'] },
+  ]}
+  caption="The seven modes, all built from a common tonic of C. The highlighted pitches show each mode's altered notes relative to C major (Ionian)."
+/>
 
 ## The seven modes
 
