@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
+import { VoiceLeadingScore } from '@/components/learn/visuals/VoiceLeadingScore'
 
 export const learnPage = {
   topic: 'harmony',
@@ -27,9 +28,23 @@ In fact, vii° is essentially **V7 without the root**. The top three notes of V7
 
 ## The visual
 
-<DiagramPlaceholder description="In C major, a V7 chord (G-B-D-F) next to a vii° chord (B-D-F), showing that vii° is V7 minus its root." />
+<figure style={{ margin: '24px auto', textAlign: 'center' }}>
+  <div style={{ display: 'flex', gap: 32, justifyContent: 'center', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+    <ChordExplorer pitches={['G3','B3','D4','F4']} size="small" showKeyboard={false} label="V⁷" sublabel="G–B–D–F" />
+    <ChordExplorer pitches={['B3','D4','F4']} size="small" showKeyboard={false} label="vii°" sublabel="B–D–F" />
+  </div>
+  <figcaption>vii° is V⁷ with its root removed. The two chords share the same upper structure (the 3rd, 5th, and 7th of V⁷), so vii° has a similar dominant pull but with a lighter, less assertive sound.</figcaption>
+</figure>
 
-<DiagramPlaceholder description="A vii°6 resolving to I in C major, showing smooth voice leading, B to C, D to C (or E), F to E." />
+<VoiceLeadingScore
+  chords={[
+    { voices: { soprano: 'F4', alto: 'D4', tenor: 'B3', bass: 'D3' }, romanNumeral: 'vii°⁶' },
+    { voices: { soprano: 'E4', alto: 'C4', tenor: 'C4', bass: 'C3' }, romanNumeral: 'I' },
+  ]}
+  keySignature={0}
+  showVoiceMotion
+  caption="vii°⁶ resolving to I in C major. Each voice moves smoothly: soprano F → E (step down), alto D → C (step down to the tonic), tenor B → C (leading tone resolving up), bass D → C (step down to the tonic). The voice leading is the source of the satisfying resolution."
+/>
 
 ## The basic leading-tone chord
 

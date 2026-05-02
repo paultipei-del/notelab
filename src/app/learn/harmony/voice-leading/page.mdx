@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { VoiceLeadingScore } from '@/components/learn/visuals/VoiceLeadingScore'
 
 export const learnPage = {
   topic: 'harmony',
@@ -27,9 +27,28 @@ Good voice leading is what makes a chord progression feel like music instead of 
 
 ## The visual
 
-<DiagramPlaceholder description="Two four-voice realizations of the same I-IV-V-I progression in C major, one with awkward voice leading (lots of parallel motion, large leaps), one with smooth voice leading (stepwise motion, no parallels, close voicing)." />
+<VoiceLeadingScore
+  chords={[
+    { voices: { soprano: 'C5', alto: 'E4', tenor: 'G3', bass: 'C3' }, romanNumeral: 'I' },
+    { voices: { soprano: 'A5', alto: 'F4', tenor: 'A3', bass: 'F3' }, romanNumeral: 'IV' },
+    { voices: { soprano: 'D5', alto: 'B4', tenor: 'D4', bass: 'G3' }, romanNumeral: 'V' },
+    { voices: { soprano: 'G5', alto: 'E4', tenor: 'C4', bass: 'C3' }, romanNumeral: 'I' },
+  ]}
+  keySignature={0}
+  caption="Awkward: large leaps in the soprano (C5–A5–D5–G5) and lots of parallel motion across voices."
+/>
 
-<DiagramPlaceholder description="A chord progression with arrows indicating the motion of each voice, showing how soprano, alto, tenor, bass each move independently but together." />
+<VoiceLeadingScore
+  chords={[
+    { voices: { soprano: 'E5', alto: 'C5', tenor: 'G4', bass: 'C3' }, romanNumeral: 'I' },
+    { voices: { soprano: 'F5', alto: 'C5', tenor: 'A4', bass: 'F3' }, romanNumeral: 'IV' },
+    { voices: { soprano: 'D5', alto: 'B4', tenor: 'G4', bass: 'G3' }, romanNumeral: 'V' },
+    { voices: { soprano: 'E5', alto: 'C5', tenor: 'G4', bass: 'C3' }, romanNumeral: 'I' },
+  ]}
+  keySignature={0}
+  showVoiceMotion
+  caption="Smooth: each voice moves by step or stays put. Common tones held; no parallel 5ths or 8ves. Arrows trace each voice — soprano E–F–D–E, alto C–C–B–C, tenor G–A–G–G, bass C–F–G–C."
+/>
 
 ## The four voices
 

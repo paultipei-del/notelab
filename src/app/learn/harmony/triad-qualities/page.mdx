@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -35,9 +34,16 @@ These four qualities are the basic emotional palette of Western tonal harmony. E
 
 ## The visual
 
-<Diagram src="/diagrams/four-triad-qualities.svg" caption="The four triad qualities built on C." />
-
-<DiagramPlaceholder description="A visual showing the interval structure of each quality, which third (major or minor) and which fifth (perfect, diminished, augmented) is used." />
+<ChordProgression
+  chords={[
+    { pitches: ['C4','E4','G4'],  romanNumeral: 'major', label: 'M3 + m3' },
+    { pitches: ['C4','Eb4','G4'], romanNumeral: 'minor', label: 'm3 + M3' },
+    { pitches: ['C4','Eb4','Gb4'],romanNumeral: 'diminished', label: 'm3 + m3' },
+    { pitches: ['C4','E4','G#4'], romanNumeral: 'augmented', label: 'M3 + M3' },
+  ]}
+  clef="treble"
+  caption="Each triad quality has a distinctive stack of two thirds. Major has a major 3rd then a minor 3rd; minor flips it. Diminished stacks two minor 3rds; augmented stacks two major 3rds."
+/>
 
 ## Major triad
 

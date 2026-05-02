@@ -1928,6 +1928,48 @@ body:has(.nl-study-viewport) {
   margin: 24px 0;
 }
 
+/* Markdown tables. Default browser rendering collapses to a column of text
+   in the prose flow; this styles them as proper reference tables matching
+   the warm cream palette of the rest of the page. */
+.nl-learn-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.nl-learn-prose thead {
+  background: #ECE3CC;
+}
+.nl-learn-prose th {
+  font-weight: 500;
+  text-align: left;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: #5F5E5A;
+  padding: 10px 14px;
+  border-bottom: 1px solid #C7BC9A;
+}
+.nl-learn-prose td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #E5DCC0;
+  color: #2A2318;
+  vertical-align: top;
+}
+.nl-learn-prose tbody tr:last-child td {
+  border-bottom: none;
+}
+.nl-learn-prose tbody tr:hover {
+  background: rgba(217, 207, 174, 0.25);
+}
+.nl-learn-prose td strong,
+.nl-learn-prose th strong {
+  font-weight: 500;
+  color: #1A1A18;
+}
+
 /* Domain color tokens for deck tiles — low-saturation (≈30%), medium
    lightness (≈60%), evenly spaced across the hue wheel so adjacent decks
    in the grid read as visually distinct at scroll speed. */

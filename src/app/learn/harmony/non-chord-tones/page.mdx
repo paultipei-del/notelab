@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { VoiceLeadingScore } from '@/components/learn/visuals/VoiceLeadingScore'
 
 export const learnPage = {
   topic: 'harmony',
@@ -29,7 +29,24 @@ Non-chord tones come in several distinct types, each with specific rules about h
 
 ## The visual
 
-<DiagramPlaceholder description="A simple four-voice chord progression with a melody on top, highlighting several non-chord tones, passing tone (between two chord tones), neighbor tone (leaving and returning), suspension (held from previous chord, resolving down), each labeled." />
+<VoiceLeadingScore
+  chords={[
+    { voices: { soprano: 'C5', alto: 'E4', tenor: 'G3', bass: 'C3' }, romanNumeral: 'I' },
+    { voices: { soprano: 'D5', alto: 'E4', tenor: 'G3', bass: 'C3' }, romanNumeral: 'I' },
+    { voices: { soprano: 'E5', alto: 'F4', tenor: 'A3', bass: 'F3' }, romanNumeral: 'IV' },
+    { voices: { soprano: 'D5', alto: 'F4', tenor: 'A3', bass: 'F3' }, romanNumeral: 'IV' },
+    { voices: { soprano: 'E5', alto: 'F4', tenor: 'A3', bass: 'F3' }, romanNumeral: 'IV' },
+    { voices: { soprano: 'D5', alto: 'F4', tenor: 'B3', bass: 'G3' }, romanNumeral: 'V' },
+    { voices: { soprano: 'C5', alto: 'F4', tenor: 'B3', bass: 'G3' }, romanNumeral: 'V' },
+  ]}
+  keySignature={0}
+  annotations={[
+    { chordIdx: 1, voice: 'soprano', label: 'PT' },
+    { chordIdx: 3, voice: 'soprano', label: 'NT' },
+    { chordIdx: 5, voice: 'soprano', label: 'SUS' },
+  ]}
+  caption="A four-voice progression with three common non-chord tones in the soprano: a passing tone (PT) between C and E, a neighbor tone (NT) departing from and returning to E, and a suspension (SUS) where the previous chord's pitch is held over before resolving down."
+/>
 
 ## The main types of non-chord tones
 

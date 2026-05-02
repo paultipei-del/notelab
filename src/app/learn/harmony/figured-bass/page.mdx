@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { FiguredBassExample } from '@/components/learn/visuals/FiguredBassExample'
 
 export const learnPage = {
   topic: 'harmony',
@@ -29,9 +29,29 @@ The practice of filling in chords from figured bass is now mostly historical (ou
 
 ## The visual
 
-<DiagramPlaceholder description="A Baroque-style bass line with figured-bass numbers beneath each note, with the full chord realization written on a separate staff above." />
+<FiguredBassExample
+  notes={[
+    { pitch: 'C3', figures: [], realization: ['C4','E4','G4'] },
+    { pitch: 'E3', figures: ['6'], realization: ['C4','E4','G4'] },
+    { pitch: 'F3', figures: [], realization: ['C4','F4','A4'] },
+    { pitch: 'G3', figures: ['7'], realization: ['B3','D4','F4'] },
+    { pitch: 'C3', figures: [], realization: ['C4','E4','G4'] },
+  ]}
+  showRealization
+  caption="A Baroque-style bass line with figured-bass numbers beneath. The figures tell the keyboard player which intervals to add above each bass note, allowing the realization (top staff) to be improvised at the keyboard."
+/>
 
-<DiagramPlaceholder description="The same chord progression shown as Roman numerals with figured bass, showing how modern analysis uses the same numbers attached to scale-degree labels." />
+<FiguredBassExample
+  notes={[
+    { pitch: 'C3', figures: [], romanNumeral: 'I' },
+    { pitch: 'E3', figures: ['6'], romanNumeral: 'I⁶' },
+    { pitch: 'F3', figures: [], romanNumeral: 'IV' },
+    { pitch: 'G3', figures: ['7'], romanNumeral: 'V⁷' },
+    { pitch: 'C3', figures: [], romanNumeral: 'I' },
+  ]}
+  showRomanNumerals
+  caption="Modern analysis layers Roman numerals onto the same figured-bass numbers. The figures still mean the same thing — they just serve as inversion suffixes attached to the Roman numeral."
+/>
 
 ## The basic triad figures
 

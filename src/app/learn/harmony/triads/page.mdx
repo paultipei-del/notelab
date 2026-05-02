@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -27,9 +28,23 @@ Triads are the fundamental building blocks of Western tonal harmony. Master tria
 
 ## The visual
 
-<DiagramPlaceholder description="Four triads on a treble staff (C major, C minor, C diminished, C augmented) all built on the same root, showing the different qualities." />
+<ChordProgression
+  chords={[
+    { pitches: ['C4','E4','G4'],  romanNumeral: 'major' },
+    { pitches: ['C4','Eb4','G4'], romanNumeral: 'minor' },
+    { pitches: ['C4','Eb4','Gb4'],romanNumeral: 'diminished' },
+    { pitches: ['C4','E4','G#4'], romanNumeral: 'augmented' },
+  ]}
+  clef="treble"
+  caption="Four triads built on C, showing the four basic qualities. Major and minor differ by a half step in the third; diminished lowers the fifth as well; augmented raises it."
+/>
 
-<DiagramPlaceholder description="A triad broken into its three chord tones, each labeled, root (1), third (3), fifth (5)." />
+<ChordExplorer
+  pitches={['C4','E4','G4']}
+  showKeyboard={false}
+  toneLabels={['1 (root)', '3 (third)', '5 (fifth)']}
+  caption="A C major triad broken into its three chord tones. The root names the chord; the third determines the quality; the fifth provides stability."
+/>
 
 ## The three chord tones
 

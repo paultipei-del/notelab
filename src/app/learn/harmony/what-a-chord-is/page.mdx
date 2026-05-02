@@ -1,6 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -35,31 +36,16 @@ Western tonal music has organized chords into a remarkably coherent system, buil
   caption="C major triad: three notes (C, E, G) sounded together as a single harmonic entity."
 />
 
-<figure style={{ margin: '24px auto', textAlign: 'center' }}>
-  <div style={{ display: 'flex', gap: 24, justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-    <ChordExplorer
-      pitches={['C4']}
-      size="small"
-      showKeyboard={false}
-      showAudio={false}
-      caption="One note: a tone."
-    />
-    <ChordExplorer
-      pitches={['C4', 'E4']}
-      size="small"
-      showKeyboard={false}
-      showAudio={false}
-      caption="Two notes: a dyad (interval)."
-    />
-    <ChordExplorer
-      pitches={['C4', 'E4', 'G4']}
-      size="small"
-      showKeyboard={false}
-      showAudio={false}
-      caption="Three notes: a chord."
-    />
-  </div>
-</figure>
+<ChordProgression
+  chords={[
+    { pitches: ['C4'],                romanNumeral: 'tone', label: 'one note' },
+    { pitches: ['C4', 'E4'],          romanNumeral: 'dyad', label: 'two notes (interval)' },
+    { pitches: ['C4', 'E4', 'G4'],    romanNumeral: 'chord', label: 'three notes' },
+  ]}
+  clef="treble"
+  audio={false}
+  caption="One note is a tone; two notes form a dyad (an interval); three notes begin to function as a chord — a single harmonic entity."
+/>
 
 ## The minimum definition
 

@@ -10,7 +10,7 @@ import {
   parsePitch, staffPosition, midiToPitch, type Clef, type ParsedPitch,
 } from '@/lib/learn/visuals/pitch'
 import {
-  engraveChord, accidentalColumnX, type EngravedChord,
+  engraveChord, type EngravedChord,
 } from '@/lib/learn/visuals/chord-engraving'
 
 type ChordClef = Clef | 'grand'
@@ -36,6 +36,14 @@ interface ChordExplorerProps {
    * ways. Ignored for chords (3+ notes).
    */
   showMelodicControls?: boolean
+  /** Bold function/quality label rendered below the staff (e.g. "I", "V⁷", "Cmaj7", "major"). */
+  label?: string
+  /** Smaller sub-label below the main label (e.g. "C in bass", "major 7th"). */
+  sublabel?: string
+  /** Figured-bass numbers stacked vertically below the staff. */
+  figuredBass?: string[]
+  /** One label per pitch (low to high) rendered next to each notehead — e.g. ["1 (root)", "3 (third)", "5 (fifth)"]. */
+  toneLabels?: string[]
   caption?: string
 }
 
@@ -70,6 +78,10 @@ export function ChordExplorer({
   showKeyboard = true,
   showAudio = true,
   showMelodicControls = false,
+  label,
+  sublabel,
+  figuredBass,
+  toneLabels,
   caption,
 }: ChordExplorerProps) {
   const T = tokensFor(size)
@@ -96,9 +108,11 @@ export function ChordExplorer({
   const margin = Math.round(20 * T.scale + 8)
   const braceReserve = useGrand ? Math.round(34 * T.scale) : 0
   const compactStaffWidth = T.clefReserve + Math.round(140 * T.scale)
-  const innerWidth = showKeyboard
-    ? Math.max(420, T.keyboardWhiteKeyWidth * 7 + 80)
-    : compactStaffWidth
+  // When the keyboard is shown, anchor the staff width to the keyboard's
+  // span (8 white keys) so the staff and keyboard align edge-to-edge below
+  // each other instead of the keyboard floating inside a wider staff.
+  const keyboardSpan = T.keyboardWhiteKeyWidth * 8
+  const innerWidth = showKeyboard ? keyboardSpan : compactStaffWidth
   const staffX = margin + braceReserve
   const staffWidth = innerWidth
 
@@ -186,6 +200,24 @@ export function ChordExplorer({
 
   let cursorY = lowestStaveBottom + T.annotationBuffer
 
+  // Reserve vertical space for figured bass / label / sublabel stack below the staff.
+  const figuredBassFont = T.smallLabelFontSize + 1
+  const labelFont = T.size === 'small' ? 13 : T.size === 'hero' ? 17 : 15
+  const sublabelFont = T.size === 'small' ? 11 : T.size === 'hero' ? 14 : 12
+  const fbCount = figuredBass?.length ?? 0
+  const fbBlockH = fbCount > 0 ? Math.round(fbCount * (figuredBassFont * 1.05)) + 6 : 0
+  const labelBlockH = label ? labelFont + 6 : 0
+  const sublabelBlockH = sublabel ? sublabelFont + 4 : 0
+  const annotationBlockH = fbBlockH + labelBlockH + sublabelBlockH
+
+  const fbStartY = cursorY + (fbBlockH > 0 ? 4 : 0)
+  const labelY = fbStartY + fbBlockH
+  const sublabelY = labelY + labelBlockH
+
+  if (annotationBlockH > 0) {
+    cursorY += annotationBlockH + 4
+  }
+
   const keyboardGap = Math.max(20, T.step * 2.5)
   const keyboardWidth = T.keyboardWhiteKeyWidth * 8
   const keyboardX = staffX + (staffWidth - keyboardWidth) / 2
@@ -201,7 +233,18 @@ export function ChordExplorer({
   const totalH = showKeyboard
     ? keyboardY + T.keyboardWhiteKeyHeight + margin
     : cursorY + margin
-  const totalW = staffX + staffWidth + margin
+  // Reserve a column to the right of the staff for tone labels so they sit
+  // clearly past the staff lines instead of overlapping them. The label area
+  // is sized to the longest label string at smallLabelFontSize.
+  const labelGap = Math.round(18 * T.scale)
+  const toneLabelMaxChars = toneLabels?.reduce(
+    (m, s) => Math.max(m, s?.length ?? 0),
+    0,
+  ) ?? 0
+  const toneLabelAreaWidth = toneLabelMaxChars > 0
+    ? labelGap + Math.ceil(toneLabelMaxChars * T.smallLabelFontSize * 0.6) + Math.round(8 * T.scale)
+    : 0
+  const totalW = staffX + staffWidth + toneLabelAreaWidth + margin
 
   const handleNoteClick = async (midi: number) => {
     setInteracted(true)
@@ -241,15 +284,16 @@ export function ChordExplorer({
     await playSequence(ordered.map(n => n.pitch), 380, '4n')
   }
 
-  // Render helper — accidentals column for each stave sits left of leftmost notehead.
+  // Render helper — each accidental carries its own staggered x from the
+  // engraving algorithm, so chords with multiple accidentals (e.g. C-E♭-G♭)
+  // step into separate columns instead of stacking on top of each other.
   const renderStave = (layout: StaveLayout) => {
-    const accCol = accidentalColumnX(layout.noteXs, T)
     return (
       <g key={`stave-${layout.clef}`}>
         {layout.accidentals.map((a, i) => a && (
           <text
             key={`acc-${layout.clef}-${i}-${a.midi}`}
-            x={accCol}
+            x={a.x}
             y={a.y}
             fontSize={T.accidentalFontSize}
             fontFamily={T.fontMusic}
@@ -343,6 +387,111 @@ export function ChordExplorer({
               )
               : singleLayout && renderStave(singleLayout)
             }
+
+            {/* Tone labels — annotations sit in a column past the staff's
+                right edge so they never overlap staff lines. A thin leader
+                line connects each notehead to its label. */}
+            {toneLabels && toneLabels.length > 0 && (() => {
+              const layouts = useGrand
+                ? [trebleLayout, bassLayout].filter((l): l is StaveLayout => !!l)
+                : (singleLayout ? [singleLayout] : [])
+              // Map original-pitch index to "tone label index" by sorting by midi
+              // ascending so labels align with the low-to-high pitch order.
+              const sortedByMidi = parsedAll
+                .slice()
+                .sort((a, b) => a.p.midi - b.p.midi)
+                .map((x, idx) => ({ midi: x.p.midi, labelIdx: idx }))
+              const midiToLabel = new Map(sortedByMidi.map(x => [x.midi, x.labelIdx]))
+              const labelX = staffX + staffWidth + labelGap
+              return (
+                <g>
+                  {layouts.flatMap(layout =>
+                    layout.parsed.map((p, i) => {
+                      const lblIdx = midiToLabel.get(p.midi)
+                      if (lblIdx === undefined) return null
+                      const text = toneLabels[lblIdx]
+                      if (!text) return null
+                      const noteY = (layout.clef === 'treble' ? trebleStaffY : bassStaffY)
+                        + layout.positions[i] * T.step
+                      const leaderStart = layout.noteXs[i] + Math.round(14 * T.scale)
+                      return (
+                        <g key={`tone-${layout.clef}-${i}-${p.midi}`}>
+                          <line
+                            x1={leaderStart}
+                            y1={noteY}
+                            x2={labelX - Math.round(4 * T.scale)}
+                            y2={noteY}
+                            stroke={T.inkSubtle}
+                            strokeWidth={Math.max(0.6, T.staffLineStroke * 0.6)}
+                            strokeDasharray="2 3"
+                            pointerEvents="none"
+                          />
+                          <text
+                            x={labelX}
+                            y={noteY}
+                            fontSize={T.smallLabelFontSize}
+                            fontFamily={T.fontLabel}
+                            fill={T.inkMuted}
+                            dominantBaseline="central"
+                          >
+                            {text}
+                          </text>
+                        </g>
+                      )
+                    })
+                  )}
+                </g>
+              )
+            })()}
+
+            {/* Figured bass numbers — stacked vertically below the chord. */}
+            {figuredBass && figuredBass.length > 0 && figuredBass.map((fig, i) => (
+              <text
+                key={`fb-${i}`}
+                x={chordX}
+                y={fbStartY + (i + 0.5) * (figuredBassFont * 1.05)}
+                fontSize={figuredBassFont}
+                fontFamily={T.fontLabel}
+                fill={T.ink}
+                fontWeight={500}
+                textAnchor="middle"
+                dominantBaseline="central"
+              >
+                {fig}
+              </text>
+            ))}
+
+            {/* Main label */}
+            {label && (
+              <text
+                x={chordX}
+                y={labelY + labelFont / 2}
+                fontSize={labelFont}
+                fontFamily={T.fontLabel}
+                fill={T.ink}
+                fontWeight={600}
+                textAnchor="middle"
+                dominantBaseline="central"
+              >
+                {label}
+              </text>
+            )}
+
+            {/* Sub-label */}
+            {sublabel && (
+              <text
+                x={chordX}
+                y={sublabelY + sublabelFont / 2}
+                fontSize={sublabelFont}
+                fontFamily={T.fontLabel}
+                fill={T.inkMuted}
+                fontStyle="italic"
+                textAnchor="middle"
+                dominantBaseline="central"
+              >
+                {sublabel}
+              </text>
+            )}
           </>
         )}
         {showKeyboard && (

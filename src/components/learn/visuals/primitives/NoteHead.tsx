@@ -13,6 +13,8 @@ interface NoteHeadProps {
   T: LearnTokens
   duration?: 'whole' | 'half' | 'quarter'
   noStem?: boolean
+  /** Force stem direction. If omitted, auto-decides based on staff position. */
+  stemDirection?: 'up' | 'down'
   /** Suppress the accidental glyph. Used when a parent (e.g. ChordExplorer) renders accidentals in its own column. */
   noAccidental?: boolean
   dimmed?: boolean
@@ -28,6 +30,7 @@ export function NoteHead({
   pitch, staffTop, x, clef, T,
   duration = 'quarter',
   noStem = false,
+  stemDirection,
   noAccidental = false,
   dimmed = false,
   highlight = false,
@@ -44,7 +47,7 @@ export function NoteHead({
 
   // Stems-up for notes BELOW middle line (pos > 4), stems-down otherwise.
   // Stems-up attach to RIGHT of notehead, stems-down attach to LEFT.
-  const stemUp = pos > 4
+  const stemUp = stemDirection ? stemDirection === 'up' : pos > 4
   const stemX = stemUp ? x + T.stemXOffset : x - T.stemXOffset
   const stemY2 = stemUp ? noteY - T.stemLength : noteY + T.stemLength
 

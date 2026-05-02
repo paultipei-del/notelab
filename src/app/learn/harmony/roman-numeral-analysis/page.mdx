@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -31,9 +31,52 @@ Once you have this labeling system, every chord progression in every key can be 
 
 ## The visual
 
-<DiagramPlaceholder description="A four-chord progression in C major (C → F → G → C) labeled with Roman numerals (I → IV → V → I) and the same progression transposed to G major (G → C → D → G) with identical Roman numerals." />
+<ChordProgression
+  chords={[
+    { pitches: ['C4','E4','G4'], romanNumeral: 'I' },
+    { pitches: ['F4','A4','C5'], romanNumeral: 'IV' },
+    { pitches: ['G4','B4','D5'], romanNumeral: 'V' },
+    { pitches: ['C4','E4','G4'], romanNumeral: 'I' },
+  ]}
+  clef="treble"
+  keySignature={0}
+  caption="I–IV–V–I in C major."
+/>
 
-<DiagramPlaceholder description="A table showing the seven diatonic triads of a major key, each labeled with its Roman numeral and quality." />
+<ChordProgression
+  chords={[
+    { pitches: ['G4','B4','D5'], romanNumeral: 'I' },
+    { pitches: ['C4','E4','G4'], romanNumeral: 'IV' },
+    { pitches: ['D4','F#4','A4'], romanNumeral: 'V' },
+    { pitches: ['G4','B4','D5'], romanNumeral: 'I' },
+  ]}
+  clef="treble"
+  keySignature={1}
+  caption="The same progression transposed to G major. The actual pitches differ, but the Roman numerals are identical — they describe the function, not the specific notes."
+/>
+
+<figure style={{ margin: '24px auto', maxWidth: 600 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Scale degree</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Triad in C major</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Quality</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Roman numeral</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>1</td><td style={{ padding: '6px 12px' }}>C–E–G</td><td style={{ padding: '6px 12px' }}>major</td><td style={{ padding: '6px 12px' }}>I</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>2</td><td style={{ padding: '6px 12px' }}>D–F–A</td><td style={{ padding: '6px 12px' }}>minor</td><td style={{ padding: '6px 12px' }}>ii</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>3</td><td style={{ padding: '6px 12px' }}>E–G–B</td><td style={{ padding: '6px 12px' }}>minor</td><td style={{ padding: '6px 12px' }}>iii</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>4</td><td style={{ padding: '6px 12px' }}>F–A–C</td><td style={{ padding: '6px 12px' }}>major</td><td style={{ padding: '6px 12px' }}>IV</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>5</td><td style={{ padding: '6px 12px' }}>G–B–D</td><td style={{ padding: '6px 12px' }}>major</td><td style={{ padding: '6px 12px' }}>V</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>6</td><td style={{ padding: '6px 12px' }}>A–C–E</td><td style={{ padding: '6px 12px' }}>minor</td><td style={{ padding: '6px 12px' }}>vi</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>7</td><td style={{ padding: '6px 12px' }}>B–D–F</td><td style={{ padding: '6px 12px' }}>diminished</td><td style={{ padding: '6px 12px' }}>vii°</td></tr>
+    </tbody>
+  </table>
+  <figcaption>The seven diatonic triads of C major, each with its quality and Roman numeral.</figcaption>
+</figure>
 
 ## How Roman numerals work
 
@@ -51,35 +94,17 @@ A chord labeled **ii6** is a minor chord built on the 2nd scale degree, in first
 
 ## The seven diatonic triads, in Roman numerals
 
-In **major keys**, the seven diatonic triads have these qualities and labels:
+All three forms of the diatonic-triad set, side by side:
 
-- **I**, major (tonic)
-- **ii**, minor (supertonic)
-- **iii**, minor (mediant)
-- **IV**, major (subdominant)
-- **V**, major (dominant)
-- **vi**, minor (submediant)
-- **vii°**, diminished (leading tone)
-
-In **natural minor keys**, the pattern is different:
-
-- **i**, minor (tonic)
-- **ii°**, diminished (supertonic)
-- **III**, major (mediant)
-- **iv**, minor (subdominant)
-- **v**, minor (dominant)
-- **VI**, major (submediant)
-- **VII**, major (subtonic)
-
-In **harmonic minor** (used more often than natural minor in common-practice music), several qualities change:
-
-- **i**, minor (tonic)
-- **ii°**, diminished (supertonic)
-- **III+**, augmented (mediant, raised 5th)
-- **iv**, minor (subdominant)
-- **V**, **major** (dominant, now with the raised 7th as its 3rd)
-- **VI**, major (submediant)
-- **vii°**, **diminished** (leading tone, built on the raised 7th)
+| Degree | Function    | Major          | Natural minor       | Harmonic minor                                  |
+|--------|-------------|----------------|---------------------|-------------------------------------------------|
+| 1      | Tonic       | I (major)      | i (minor)           | i (minor)                                       |
+| 2      | Supertonic  | ii (minor)     | ii° (diminished)    | ii° (diminished)                                |
+| 3      | Mediant     | iii (minor)    | III (major)         | **III+ (augmented, raised 5th)**                |
+| 4      | Subdominant | IV (major)     | iv (minor)          | iv (minor)                                      |
+| 5      | Dominant    | V (major)      | v (minor)           | **V (major, raised 7th as its 3rd)**            |
+| 6      | Submediant  | vi (minor)     | VI (major)          | VI (major)                                      |
+| 7      | Leading tone / Subtonic | vii° (diminished) | VII (major) | **vii° (diminished, built on the raised 7th)** |
 
 The shift from natural minor's **v** to harmonic minor's **V** is the most important change, it restores the proper leading-tone dominant that drives V-i resolutions in minor keys.
 
@@ -87,9 +112,11 @@ The shift from natural minor's **v** to harmonic minor's **V** is the most impor
 
 The power of Roman numeral analysis is that the pattern of qualities is identical in every major key, and identical in every minor key. A I-IV-V-I progression in C major (C-F-G-C) has the exact same Roman numeral structure as I-IV-V-I in any other major key:
 
-- C major: C (I) → F (IV) → G (V) → C (I)
-- G major: G (I) → C (IV) → D (V) → G (I)
-- E♭ major: E♭ (I) → A♭ (IV) → B♭ (V) → E♭ (I)
+| Key      | I   | IV  | V   | I   |
+|----------|-----|-----|-----|-----|
+| C major  | C   | F   | G   | C   |
+| G major  | G   | C   | D   | G   |
+| E♭ major | E♭  | A♭  | B♭  | E♭  |
 
 Same Roman numerals, different pitches. The progression is functionally identical across all three keys.
 

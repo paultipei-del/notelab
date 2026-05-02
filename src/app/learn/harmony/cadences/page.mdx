@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -30,9 +29,73 @@ The five common cadences in tonal music each produce a distinct sense of closure
 
 ## The visual
 
-<Diagram src="/diagrams/cadences-at-a-glance.svg" caption="The four most common cadences, each ending a phrase in C major." />
+<figure style={{ margin: '24px auto', textAlign: 'center' }}>
+  <div style={{ display: 'flex', gap: 18, justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+    <ChordProgression
+      chords={[
+        { pitches: ['G3','B3','D4'], romanNumeral: 'V' },
+        { pitches: ['C4','E4','G4'], romanNumeral: 'I' },
+      ]}
+      clef="treble"
+      keySignature={0}
+      caption="Authentic (V → I)"
+      size="small"
+    />
+    <ChordProgression
+      chords={[
+        { pitches: ['F3','A3','C4'], romanNumeral: 'IV' },
+        { pitches: ['C4','E4','G4'], romanNumeral: 'I' },
+      ]}
+      clef="treble"
+      keySignature={0}
+      caption="Plagal (IV → I)"
+      size="small"
+    />
+    <ChordProgression
+      chords={[
+        { pitches: ['C4','E4','G4'], romanNumeral: 'I' },
+        { pitches: ['G3','B3','D4'], romanNumeral: 'V' },
+      ]}
+      clef="treble"
+      keySignature={0}
+      caption="Half (anything → V)"
+      size="small"
+    />
+    <ChordProgression
+      chords={[
+        { pitches: ['G3','B3','D4'], romanNumeral: 'V' },
+        { pitches: ['A3','C4','E4'], romanNumeral: 'vi' },
+      ]}
+      clef="treble"
+      keySignature={0}
+      caption="Deceptive (V → vi)"
+      size="small"
+    />
+  </div>
+  <figcaption>The four most common cadences, each shown as a 2-chord phrase ending. Authentic feels resolved; plagal feels final but softer; half feels suspended; deceptive subverts expectation.</figcaption>
+</figure>
 
-<DiagramPlaceholder description="A table summarizing cadence types with their chord progressions, strength, and typical usage." />
+<figure style={{ margin: '24px auto', maxWidth: 640 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Cadence</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Chord progression</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Strength</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Effect</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>Perfect authentic (PAC)</td><td style={{ padding: '6px 12px' }}>V → I (both root, melody on 1)</td><td style={{ padding: '6px 12px' }}>Strongest</td><td style={{ padding: '6px 12px' }}>Full stop</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Imperfect authentic (IAC)</td><td style={{ padding: '6px 12px' }}>V → I (inversion or melody not on 1)</td><td style={{ padding: '6px 12px' }}>Strong</td><td style={{ padding: '6px 12px' }}>Period</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Half (HC)</td><td style={{ padding: '6px 12px' }}>… → V</td><td style={{ padding: '6px 12px' }}>Medium</td><td style={{ padding: '6px 12px' }}>Comma, question</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Plagal (PC)</td><td style={{ padding: '6px 12px' }}>IV → I</td><td style={{ padding: '6px 12px' }}>Medium</td><td style={{ padding: '6px 12px' }}>"Amen", peaceful ending</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Deceptive (DC)</td><td style={{ padding: '6px 12px' }}>V → vi</td><td style={{ padding: '6px 12px' }}>Weakest</td><td style={{ padding: '6px 12px' }}>Surprise, deferred resolution</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Phrygian half</td><td style={{ padding: '6px 12px' }}>iv⁶ → V</td><td style={{ padding: '6px 12px' }}>Medium</td><td style={{ padding: '6px 12px' }}>Baroque / vintage</td></tr>
+    </tbody>
+  </table>
+  <figcaption>The standard cadences and their effect. PAC and IAC are the two flavors of authentic; the half cadence pauses on V; plagal, deceptive, and Phrygian half each provide softer or surprising alternatives.</figcaption>
+</figure>
 
 ## Authentic cadence (V → I)
 

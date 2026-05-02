@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { ChordExplorer } from '@/components/learn/visuals/ChordExplorer'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -30,9 +30,24 @@ Seventh chords are everywhere in tonal music. The dominant seventh chord (V7) is
 
 ## The visual
 
-<DiagramPlaceholder description="A C major seventh chord (C-E-G-B) on a treble staff, labeled with each chord tone, root, 3rd, 5th, 7th." />
+<ChordExplorer
+  pitches={['C4','E4','G4','B4']}
+  showKeyboard={false}
+  toneLabels={['1 (root)', '3 (third)', '5 (fifth)', '7 (seventh)']}
+  caption="A C major seventh chord (Cmaj7) — a triad with a major 7th added on top. The 7th gives the chord its characteristic open, jazzy color."
+/>
 
-<Diagram src="/diagrams/seventh-chord-qualities.svg" caption="The five main seventh-chord qualities, all built on C." />
+<ChordProgression
+  chords={[
+    { pitches: ['C4','E4','G4','B4'],   romanNumeral: 'Cmaj7', label: 'major 7th' },
+    { pitches: ['C4','E4','G4','Bb4'],  romanNumeral: 'C7',    label: 'dominant 7th' },
+    { pitches: ['C4','Eb4','G4','Bb4'], romanNumeral: 'Cm7',   label: 'minor 7th' },
+    { pitches: ['C4','Eb4','Gb4','Bb4'],romanNumeral: 'Cø7',   label: 'half-dim.' },
+    { pitches: ['C4','Eb4','Gb4','Bbb4'],romanNumeral: 'C°7',  label: 'diminished 7th' },
+  ]}
+  clef="treble"
+  caption="The five most common seventh-chord qualities, all built on C. Each combines a triad quality with a particular 7th to produce its distinctive sound."
+/>
 
 ## The five common seventh-chord qualities
 
@@ -100,15 +115,26 @@ Just as you can build a triad on each scale degree, you can build a seventh chor
 
 In C major:
 
-| Degree | Chord | Quality |
-|--------|-------|---------|
-| 1 (I7) | C-E-G-B | Major 7 |
-| 2 (ii7) | D-F-A-C | Minor 7 |
-| 3 (iii7) | E-G-B-D | Minor 7 |
-| 4 (IV7) | F-A-C-E | Major 7 |
-| 5 (V7) | G-B-D-F | **Dominant 7** |
-| 6 (vi7) | A-C-E-G | Minor 7 |
-| 7 (viiø7) | B-D-F-A | **Half-diminished 7** |
+<figure style={{ margin: '16px auto', maxWidth: 540 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Degree</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Chord</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Quality</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>1 (I7)</td><td style={{ padding: '6px 12px' }}>C–E–G–B</td><td style={{ padding: '6px 12px' }}>Major 7</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>2 (ii7)</td><td style={{ padding: '6px 12px' }}>D–F–A–C</td><td style={{ padding: '6px 12px' }}>Minor 7</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>3 (iii7)</td><td style={{ padding: '6px 12px' }}>E–G–B–D</td><td style={{ padding: '6px 12px' }}>Minor 7</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>4 (IV7)</td><td style={{ padding: '6px 12px' }}>F–A–C–E</td><td style={{ padding: '6px 12px' }}>Major 7</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>5 (V7)</td><td style={{ padding: '6px 12px' }}>G–B–D–F</td><td style={{ padding: '6px 12px' }}><strong>Dominant 7</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>6 (vi7)</td><td style={{ padding: '6px 12px' }}>A–C–E–G</td><td style={{ padding: '6px 12px' }}>Minor 7</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>7 (viiø7)</td><td style={{ padding: '6px 12px' }}>B–D–F–A</td><td style={{ padding: '6px 12px' }}><strong>Half-diminished 7</strong></td></tr>
+    </tbody>
+  </table>
+</figure>
 
 The pattern: M7, m7, m7, M7, **7**, m7, **ø7**. Every degree's seventh-chord quality is determined by the diatonic stacking of thirds in the scale.
 

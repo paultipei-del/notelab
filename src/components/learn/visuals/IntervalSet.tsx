@@ -6,7 +6,7 @@ import { useSampler } from '@/lib/learn/audio/useSampler'
 import { tokensFor, type LearnSize } from '@/lib/learn/visuals/tokens'
 import { parsePitch, type Clef, type ParsedPitch } from '@/lib/learn/visuals/pitch'
 import {
-  engraveChord, accidentalColumnX, type EngravedChord,
+  engraveChord, type EngravedChord,
 } from '@/lib/learn/visuals/chord-engraving'
 
 export interface IntervalEntry {
@@ -231,7 +231,6 @@ export function IntervalSet({
     dyadIdx: number,
     s: { clef: Clef; engraved: EngravedChord; pitches: string[] },
   ) => {
-    const accCol = accidentalColumnX(s.engraved.noteXs, T)
     const sy = s.clef === 'treble' ? trebleStaffY : bassStaffY
     const dyadIsHot = activeDyadIdx === dyadIdx || hoveredDyadIdx === dyadIdx
     return (
@@ -239,7 +238,7 @@ export function IntervalSet({
         {s.engraved.accidentals.map((a, i) => a && (
           <text
             key={`acc-${dyadIdx}-${s.clef}-${i}-${a.midi}`}
-            x={accCol}
+            x={a.x}
             y={a.y}
             fontSize={T.accidentalFontSize}
             fontFamily={T.fontMusic}

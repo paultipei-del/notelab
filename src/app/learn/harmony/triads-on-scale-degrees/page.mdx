@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { DiatonicTriadsRow } from '@/components/learn/visuals/DiatonicTriadsRow'
 
 export const learnPage = {
   topic: 'harmony',
@@ -28,9 +27,17 @@ Every piece of tonal music draws from this vocabulary. Most of the chords you he
 
 ## The visual
 
-<Diagram src="/diagrams/diatonic-triads-c-major.svg" caption="The seven diatonic triads of C major, labeled with Roman numerals and qualities." />
+<DiatonicTriadsRow
+  tonic="C4"
+  mode="major"
+  caption="The seven diatonic triads of C major. Each is built on a scale degree by stacking two thirds drawn from the C major scale. The Roman numerals encode both the position and the quality: capitals for major, lowercase for minor, ° for diminished."
+/>
 
-<DiagramPlaceholder description="The seven diatonic triads of A minor stacked on a grand staff, with their scale-degree labels (i, ii°, III, iv, V, VI, VII)." />
+<DiatonicTriadsRow
+  tonic="A4"
+  mode="natural-minor"
+  caption="The seven diatonic triads of A minor. Same logic, different qualities: the tonic (i) is now minor, and each Roman numeral reflects the chord's quality on that scale degree."
+/>
 
 ## Diatonic triads of the major scale
 
@@ -38,15 +45,29 @@ Build a triad on each scale degree, stacking thirds within the scale:
 
 In C major (pitches C, D, E, F, G, A, B):
 
-| Degree | Root | Third | Fifth | Chord | Quality |
-|--------|------|-------|-------|-------|---------|
-| 1 | C | E | G | C | **Major** |
-| 2 | D | F | A | Dm | **Minor** |
-| 3 | E | G | B | Em | **Minor** |
-| 4 | F | A | C | F | **Major** |
-| 5 | G | B | D | G | **Major** |
-| 6 | A | C | E | Am | **Minor** |
-| 7 | B | D | F | B° | **Diminished** |
+<figure style={{ margin: '16px auto', maxWidth: 640 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Degree</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Root</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Third</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Fifth</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Chord</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Quality</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>1</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}><strong>Major</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>2</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>Dm</td><td style={{ padding: '6px 12px' }}><strong>Minor</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>3</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>Em</td><td style={{ padding: '6px 12px' }}><strong>Minor</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>4</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}><strong>Major</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>5</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}><strong>Major</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>6</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}>Am</td><td style={{ padding: '6px 12px' }}><strong>Minor</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>7</td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>B°</td><td style={{ padding: '6px 12px' }}><strong>Diminished</strong></td></tr>
+    </tbody>
+  </table>
+</figure>
 
 The pattern of qualities in major:
 
@@ -58,15 +79,29 @@ This pattern is invariant across every major key. G major has G-Am-Bm-C-D-Em-F�
 
 In A minor (pitches A, B, C, D, E, F, G):
 
-| Degree | Root | Third | Fifth | Chord | Quality |
-|--------|------|-------|-------|-------|---------|
-| 1 | A | C | E | Am | **Minor** |
-| 2 | B | D | F | B° | **Diminished** |
-| 3 | C | E | G | C | **Major** |
-| 4 | D | F | A | Dm | **Minor** |
-| 5 | E | G | B | Em | **Minor** |
-| 6 | F | A | C | F | **Major** |
-| 7 | G | B | D | G | **Major** |
+<figure style={{ margin: '16px auto', maxWidth: 640 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Degree</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Root</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Third</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Fifth</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Chord</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Quality</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>1</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}>Am</td><td style={{ padding: '6px 12px' }}><strong>Minor</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>2</td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>B°</td><td style={{ padding: '6px 12px' }}><strong>Diminished</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>3</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}><strong>Major</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>4</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>Dm</td><td style={{ padding: '6px 12px' }}><strong>Minor</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>5</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>Em</td><td style={{ padding: '6px 12px' }}><strong>Minor</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>6</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}><strong>Major</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>7</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>G</td><td style={{ padding: '6px 12px' }}><strong>Major</strong></td></tr>
+    </tbody>
+  </table>
+</figure>
 
 The pattern of qualities in natural minor:
 
@@ -82,15 +117,29 @@ When you apply harmonic minor's raised 7th to building triads, some chords chang
 
 In A harmonic minor (A, B, C, D, E, F, G♯):
 
-| Degree | Root | Third | Fifth | Chord | Quality |
-|--------|------|-------|-------|-------|---------|
-| 1 | A | C | E | Am | Minor |
-| 2 | B | D | F | B° | Diminished |
-| 3 | C | E | **G♯** | C+ | **Augmented** |
-| 4 | D | F | A | Dm | Minor |
-| 5 | E | **G♯** | B | E | **Major** |
-| 6 | F | A | C | F | Major |
-| 7 | **G♯** | B | D | G♯° | **Diminished** |
+<figure style={{ margin: '16px auto', maxWidth: 640 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Degree</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Root</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Third</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Fifth</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Chord</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Quality</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>1</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}>Am</td><td style={{ padding: '6px 12px' }}>Minor</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>2</td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>B°</td><td style={{ padding: '6px 12px' }}>Diminished</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>3</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}><strong>G♯</strong></td><td style={{ padding: '6px 12px' }}>C+</td><td style={{ padding: '6px 12px' }}><strong>Augmented</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>4</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>Dm</td><td style={{ padding: '6px 12px' }}>Minor</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>5</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}><strong>G♯</strong></td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>E</td><td style={{ padding: '6px 12px' }}><strong>Major</strong></td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>6</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>A</td><td style={{ padding: '6px 12px' }}>C</td><td style={{ padding: '6px 12px' }}>F</td><td style={{ padding: '6px 12px' }}>Major</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>7</td><td style={{ padding: '6px 12px' }}><strong>G♯</strong></td><td style={{ padding: '6px 12px' }}>B</td><td style={{ padding: '6px 12px' }}>D</td><td style={{ padding: '6px 12px' }}>G♯°</td><td style={{ padding: '6px 12px' }}><strong>Diminished</strong></td></tr>
+    </tbody>
+  </table>
+</figure>
 
 The raised 7th (G♯) changes three chords:
 - **III** becomes augmented (C+)

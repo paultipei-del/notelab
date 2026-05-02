@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -29,9 +29,36 @@ Seventh chord inversions are more involved than triad inversions because there a
 
 ## The visual
 
-<DiagramPlaceholder description="A V7 chord in C major (G-B-D-F) shown in all four inversions (root position (G in bass), first inversion (B in bass), second inversion (D in bass), third inversion (F in bass)) each labeled with its figured bass." />
+<ChordProgression
+  chords={[
+    { pitches: ['G3','B3','D4','F4'], romanNumeral: 'V⁷',  label: 'root pos.', figuredBass: ['7'] },
+    { pitches: ['B3','D4','F4','G4'], romanNumeral: 'V⁶₅', label: '1st inv.',  figuredBass: ['6','5'] },
+    { pitches: ['D4','F4','G4','B4'], romanNumeral: 'V⁴₃', label: '2nd inv.',  figuredBass: ['4','3'] },
+    { pitches: ['F4','G4','B4','D5'], romanNumeral: 'V⁴₂', label: '3rd inv.',  figuredBass: ['4','2'] },
+  ]}
+  clef="treble"
+  caption="The dominant seventh chord (V⁷ = G-B-D-F) in all four inversions, on one staff. Each inversion has its own figured-bass shorthand: ⁷, ⁶/₅, ⁴/₃, ⁴/₂."
+/>
 
-<DiagramPlaceholder description="A summary table showing each inversion's bass note, figure, and typical label format." />
+<figure style={{ margin: '24px auto', maxWidth: 540 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Inversion</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Bass note</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Figure</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Label</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>root pos.</td><td style={{ padding: '6px 12px' }}>root</td><td style={{ padding: '6px 12px' }}>7</td><td style={{ padding: '6px 12px' }}>V⁷</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>1st inv.</td><td style={{ padding: '6px 12px' }}>3rd</td><td style={{ padding: '6px 12px' }}>6/5</td><td style={{ padding: '6px 12px' }}>V⁶₅</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>2nd inv.</td><td style={{ padding: '6px 12px' }}>5th</td><td style={{ padding: '6px 12px' }}>4/3</td><td style={{ padding: '6px 12px' }}>V⁴₃</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>3rd inv.</td><td style={{ padding: '6px 12px' }}>7th</td><td style={{ padding: '6px 12px' }}>4/2</td><td style={{ padding: '6px 12px' }}>V⁴₂</td></tr>
+    </tbody>
+  </table>
+  <figcaption>Summary of seventh-chord inversions: which note is in the bass, the figured-bass shorthand, and the analyst's label.</figcaption>
+</figure>
 
 ## The four inversions
 

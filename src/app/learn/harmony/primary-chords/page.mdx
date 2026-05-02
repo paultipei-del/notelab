@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
+import { FunctionalTriangle } from '@/components/learn/visuals/FunctionalTriangle'
 
 export const learnPage = {
   topic: 'harmony',
@@ -29,9 +30,21 @@ Beyond the mathematical completeness, I, IV, and V also occupy the three most im
 
 ## The visual
 
-<DiagramPlaceholder description="The three primary chords in C major, I (C-E-G), IV (F-A-C), V (G-B-D), shown on a grand staff." />
+<ChordProgression
+  chords={[
+    { pitches: ['C4','E4','G4'], romanNumeral: 'I', label: 'tonic' },
+    { pitches: ['F4','A4','C5'], romanNumeral: 'IV', label: 'subdominant' },
+    { pitches: ['G4','B4','D5'], romanNumeral: 'V', label: 'dominant' },
+  ]}
+  clef="treble"
+  keySignature={0}
+  caption="The three primary chords of C major: I, IV, and V. Together they can harmonize most simple melodies in the key."
+/>
 
-<DiagramPlaceholder description="A functional triangle showing I at the center (tonic/rest), V on one side (dominant/tension), IV on the other (subdominant/departure), with arrows indicating typical motion, IV → V → I." />
+<FunctionalTriangle
+  mode="major"
+  caption="The three primary chords arranged by function. The tonic (I) is home; the subdominant (IV) is departure; the dominant (V) is tension. The most common harmonic motion is IV → V → I."
+/>
 
 ## The tonic (I)
 

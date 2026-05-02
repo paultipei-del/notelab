@@ -1,6 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
-import Diagram from '@/components/learn/Diagram'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -30,9 +29,34 @@ These three inversions are just three different ways of arranging the same triad
 
 ## The visual
 
-<Diagram src="/diagrams/triad-inversions.svg" caption="A C major triad in root position, first inversion, and second inversion." />
+<ChordProgression
+  chords={[
+    { pitches: ['C4','E4','G4'], romanNumeral: 'I',  label: 'root pos.', figuredBass: [] },
+    { pitches: ['E4','G4','C5'], romanNumeral: 'I⁶', label: '1st inv.',   figuredBass: ['6'] },
+    { pitches: ['G4','C5','E5'], romanNumeral: 'I⁶₄', label: '2nd inv.',  figuredBass: ['6','4'] },
+  ]}
+  clef="treble"
+  caption="The same C major triad in three inversions on one staff. Root position has C as the lowest note; 1st inversion has E; 2nd inversion has G. Figured-bass numbers (6, and 6/4) encode each inversion in shorthand."
+/>
 
-<DiagramPlaceholder description="The same progression (C-E-G) shown with the bass moving smoothly (C in bass, E in bass, G in bass) illustrating how inversions allow stepwise bass lines." />
+<figure style={{ margin: '24px auto', maxWidth: 640 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Inversion</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Bass note</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Figured bass</th>
+        <th style={{ textAlign: 'left', padding: '6px 12px' }}>Roman numeral example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '6px 12px' }}>Root position</td><td style={{ padding: '6px 12px' }}>Root</td><td style={{ padding: '6px 12px' }}>(none) <span style={{ color: '#7A7060', fontSize: '12px' }}>— implied 5/3</span></td><td style={{ padding: '6px 12px' }}>I</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>First inversion</td><td style={{ padding: '6px 12px' }}>Third</td><td style={{ padding: '6px 12px' }}>6</td><td style={{ padding: '6px 12px' }}>I⁶</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Second inversion</td><td style={{ padding: '6px 12px' }}>Fifth</td><td style={{ padding: '6px 12px' }}>6/4</td><td style={{ padding: '6px 12px' }}>I⁶₄</td></tr>
+    </tbody>
+  </table>
+  <figcaption>Triad inversion summary: the bass note that defines each inversion, its figured-bass shorthand, and the Roman numeral that combines them. Root position is conventionally written without any figure, but its implied figure is <strong>5/3</strong> (a 5th and a 3rd above the bass). That figure is just so universal in tonal music that it's left off as the default.</figcaption>
+</figure>
 
 ## Root position
 

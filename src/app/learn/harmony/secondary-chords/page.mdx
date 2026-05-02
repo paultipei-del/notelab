@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { DiatonicTriadsRow } from '@/components/learn/visuals/DiatonicTriadsRow'
+import { ChordProgression } from '@/components/learn/visuals/ChordProgression'
 
 export const learnPage = {
   topic: 'harmony',
@@ -27,9 +28,25 @@ Secondary chords aren't "lesser" than the primary chords, they're different, ser
 
 ## The visual
 
-<DiagramPlaceholder description="The seven diatonic triads of C major on a grand staff, with the secondary chords (ii, iii, vi, vii°) highlighted and labeled." />
+<DiatonicTriadsRow
+  tonic="C4"
+  mode="major"
+  highlightedDegrees={[2, 3, 6, 7]}
+  caption="The seven diatonic triads of C major. The four highlighted in coral — ii, iii, vi, and vii° — are the secondary chords. They add color and motion beyond the primary I/IV/V."
+/>
 
-<DiagramPlaceholder description="A typical progression using secondary chords (I) vi (ii) V (I) showing smooth voice leading." />
+<ChordProgression
+  chords={[
+    { pitches: ['C5','E5','G5'], romanNumeral: 'I' },
+    { pitches: ['A4','C5','E5'], romanNumeral: 'vi' },
+    { pitches: ['D5','F5','A5'], romanNumeral: 'ii' },
+    { pitches: ['G4','B4','D5'], romanNumeral: 'V' },
+    { pitches: ['C5','E5','G5'], romanNumeral: 'I' },
+  ]}
+  clef="treble"
+  keySignature={0}
+  caption="A typical progression weaving secondary chords (vi, ii) into the basic I–V–I framework. The path I → vi → ii → V → I is one of the most common in popular music."
+/>
 
 ## The secondary chords of a major key
 
@@ -92,19 +109,14 @@ These progressions are richer than three-chord progressions because they use mor
 
 ## Secondary chords in minor keys
 
-Minor keys have their own pattern of secondary chords, with different qualities:
+Minor keys have their own pattern of secondary chords, with different qualities depending on which form of the minor scale is in play:
 
-**In natural minor:**
-- ii° (diminished)
-- III (major)
-- VI (major)
-- VII (major)
-
-**In harmonic minor:**
-- ii° (diminished)
-- III+ (augmented)
-- VI (major)
-- vii° (diminished, built on the raised 7th)
+| Scale degree | Natural minor | Harmonic minor                              |
+|--------------|---------------|---------------------------------------------|
+| ii           | ii° (diminished) | ii° (diminished)                         |
+| III          | III (major)   | III+ (augmented)                            |
+| VI           | VI (major)    | VI (major)                                  |
+| VII / vii    | VII (major)   | vii° (diminished, built on the raised 7th)  |
 
 Compared to major keys, minor keys have more diminished chords and more variability between natural and harmonic minor forms. This gives minor-key harmony a richer, more chromatic palette than major-key harmony, part of why minor-key music often sounds more emotionally complex.
 
