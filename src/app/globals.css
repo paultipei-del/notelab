@@ -1970,6 +1970,26 @@ body:has(.nl-study-viewport) {
   color: #1A1A18;
 }
 
+/* 12-bar blues phrase grouping. The form is three 4-bar phrases (bars 1-4,
+   5-8, 9-12). A bar line lives between bars 4↔5 and 8↔9. We render this as
+   a 2.5px solid ink right border on bars 4 and 8, plus a matching left
+   border on bars 5 and 9 so the line draws regardless of how the browser
+   resolves border-collapse priority between adjacent cells. Scoped to
+   .nl-blues-table so other prose tables stay unaffected. Cell positions:
+   col 1 = row label, col 2 = bar 1, …, col 5 = bar 4, …, col 9 = bar 8. */
+.nl-blues-table table th:nth-child(5),
+.nl-blues-table table td:nth-child(5),
+.nl-blues-table table th:nth-child(9),
+.nl-blues-table table td:nth-child(9) {
+  border-right: 1.5px solid #7A7060;
+}
+.nl-blues-table table th:nth-child(6),
+.nl-blues-table table td:nth-child(6),
+.nl-blues-table table th:nth-child(10),
+.nl-blues-table table td:nth-child(10) {
+  border-left: 1.5px solid #7A7060;
+}
+
 /* Domain color tokens for deck tiles — low-saturation (≈30%), medium
    lightness (≈60%), evenly spaced across the hue wheel so adjacent decks
    in the grid read as visually distinct at scroll speed. */

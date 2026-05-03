@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { ChordFunctionGrid } from '@/components/learn/visuals/ChordFunctionGrid'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -29,27 +29,38 @@ Knowing 12-bar blues opens up a huge repertoire of music. If you learn the form 
 
 ## The visual
 
-<DiagramPlaceholder description="A 12-bar blues progression in C (C-C-C-C / F-F-C-C / G-F-C-C) labeled with Roman numerals." />
-
-<DiagramPlaceholder description="A grid showing the 12 bars with chord changes at each bar, color-coded or labeled by chord function (I, IV, V)." />
+<ChordFunctionGrid
+  cells={[
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+    { chord: 'F', romanNumeral: 'IV', function: 'IV' },
+    { chord: 'F', romanNumeral: 'IV', function: 'IV' },
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+    { chord: 'G', romanNumeral: 'V',  function: 'V' },
+    { chord: 'F', romanNumeral: 'IV', function: 'IV' },
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+    { chord: 'C', romanNumeral: 'I',  function: 'I' },
+  ]}
+  showBarNumbers={true}
+  caption="The 12-bar blues as a grid. Each cell is one bar; the color encodes the chord function. The pattern of I (cream), IV (light coral), and V (coral) is the form's DNA."
+/>
 
 ## The basic 12-bar pattern
 
-The standard 12-bar blues progression, in 12 measures:
+The standard 12-bar blues progression maps the same Roman-numeral skeleton onto any key. Read each row across to see the same form expressed in three ways. The thicker vertical lines after bars 4 and 8 mark the three 4-bar phrases that make up the form.
 
-| Bar | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
-|-----|---|---|---|---|---|---|---|---|---|----|----|----|
-| Chord | I | I | I | I | IV | IV | I | I | V | IV | I | I |
+<div className="nl-blues-table">
 
-Written out in Roman numerals: I-I-I-I / IV-IV-I-I / V-IV-I-I
+| Bar             | 1 | 2 | 3 | 4 | 5  | 6  | 7 | 8 | 9 | 10 | 11 | 12 |
+|-----------------|---|---|---|---|----|----|---|---|---|----|----|----|
+| Roman numerals  | I | I | I | I | IV | IV | I | I | V | IV | I  | I  |
+| Blues in C      | C | C | C | C | F  | F  | C | C | G | F  | C  | C  |
+| Blues in F      | F | F | F | F | B♭ | B♭ | F | F | C | B♭ | F  | F  |
 
-Or in letter names for blues in C:
-
-**C-C-C-C / F-F-C-C / G-F-C-C**
-
-And in blues in G:
-
-**G-G-G-G / C-C-G-G / D-C-G-G**
+</div>
 
 The three chords are primary chords (tonic, subdominant, dominant), the same triad functions we've seen in tonal harmony. What's distinctive is the specific 12-bar arrangement: four bars of I, two bars of IV, two bars of I, one bar of V, one bar of IV, two bars of I.
 
@@ -59,11 +70,16 @@ In blues practice, these chords are usually played as **dominant seventh chords*
 
 Several standard variations exist:
 
-**Quick change (or quick four).** The second bar moves to IV before returning to I. This makes the progression:
+**Quick change (or quick four).** The second bar moves to IV before returning to I — adds a bit of harmonic motion early in the form, common in rock and roll and some classic blues.
 
-**I-IV-I-I / IV-IV-I-I / V-IV-I-I**
+<div className="nl-blues-table">
 
-Common in rock and roll and some classic blues. Adds a bit of harmonic motion early in the form.
+| Bar          | 1 | 2  | 3 | 4 | 5  | 6  | 7 | 8 | 9 | 10 | 11 | 12 |
+|--------------|---|----|---|---|----|----|---|---|---|----|----|----|
+| Standard     | I | I  | I | I | IV | IV | I | I | V | IV | I  | I  |
+| Quick change | I | **IV** | I | I | IV | IV | I | I | V | IV | I  | I  |
+
+</div>
 
 **Turnaround.** The last two bars often use a specific "turnaround" progression that leads back to the beginning of the next chorus. Common turnarounds:
 
@@ -75,11 +91,18 @@ The turnaround is usually in the last 1-2 bars and sets up the next 12-bar cycle
 
 **Minor blues.** Instead of major I, IV, V7, the progression uses minor i, iv, and V7 (keeping the major V7 for its leading-tone pull). Produces a darker, more dramatic blues character.
 
-**Jazz blues.** Many jazz variations add more chords between the standard 12 bars, especially in the second half. A common jazz blues might include:
+**Jazz blues.** Many jazz variations add more chords between the standard 12 bars, especially in the second half. A common jazz blues might look like:
 
-**I7 (IV7) I7 (I7 / IV7) IV7 (I7) VI7 / ii7 (V7) I7, V7**
+<div className="nl-blues-table">
 
-This keeps the basic I-IV-I structure but substitutes more chord changes in the second half, making the harmony richer and giving improvisers more to play over.
+| Bar         | 1  | 2   | 3  | 4  | 5   | 6   | 7  | 8   | 9   | 10 | 11 | 12 |
+|-------------|----|-----|----|----|-----|-----|----|-----|-----|----|----|----|
+| Standard    | I  | I   | I  | I  | IV  | IV  | I  | I   | V   | IV | I  | I  |
+| Jazz blues  | I7 | IV7 | I7 | I7 | IV7 | IV7 | I7 | VI7 | ii7 | V7 | I7 | V7 |
+
+</div>
+
+This keeps the basic I-IV-I structure but substitutes more chord changes in the second half (the **ii7-V7-I7** turnaround in bars 9-11 is the giveaway), making the harmony richer and giving improvisers more to play over.
 
 ## The blues and tonal theory
 

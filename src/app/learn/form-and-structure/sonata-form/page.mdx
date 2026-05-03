@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
+import { HarmonicTimeline } from '@/components/learn/visuals/HarmonicTimeline'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -34,7 +34,14 @@ This structure isn't arbitrary. It's a dramatic arc: setup, complication, resolu
 
 <Diagram src="/diagrams/sonata-form-map.svg" caption="Sonata form: statement, development, restatement in the home key." />
 
-<DiagramPlaceholder description="Harmonic map showing the tonal journey, starts in tonic, moves to dominant (or relative major), explores in development, returns to tonic for recapitulation." />
+<HarmonicTimeline
+  regions={[
+    { width: 0.4, sectionLabel: 'Exposition', keyLabel: 'I → V', variant: 'tonic' },
+    { width: 0.3, sectionLabel: 'Development', keyLabel: 'various keys', variant: 'unstable' },
+    { width: 0.3, sectionLabel: 'Recapitulation', keyLabel: 'I throughout', variant: 'tonic' },
+  ]}
+  caption="The tonal journey of a sonata-form movement. The exposition leaves home (I → V); the development wanders through unstable keys; the recapitulation resolves everything in the home key. The minor-key path is structurally identical with i → III replacing I → V — see the harmonic-plan table below."
+/>
 
 ## The three main sections
 
@@ -80,20 +87,20 @@ The tonal resolution is crucial, not the mere return of melodic material. A sona
 
 ## The harmonic plan
 
-A simple way to see sonata form is through its harmonic structure:
+A simple way to see sonata form is through its harmonic structure. Major-key and minor-key sonatas share the same structural skeleton; the second key area shifts (V in major, III/relative major in minor) and the recapitulation may close on a Picardy III in some minor-key works.
 
-| Section | Key plan |
-|---------|----------|
-| Exposition PT | Tonic (I) |
-| Exposition transition | I modulating to V (or III in minor) |
-| Exposition ST | V (or III) |
-| Exposition closing | V (or III) |
-| Development | Various keys, often distant |
-| Development retransition | Dominant of home key |
-| Recapitulation PT | Tonic (I) |
-| Recapitulation transition | Stays in I |
-| Recapitulation ST | Tonic (I) |
-| Recapitulation closing | I |
+| Section                     | Major key                          | Minor key                                  |
+|-----------------------------|------------------------------------|--------------------------------------------|
+| Exposition PT               | Tonic (I)                          | Tonic (i)                                  |
+| Exposition transition       | I modulating to V                  | i modulating to III (relative major)       |
+| Exposition ST               | V (dominant)                       | III (relative major)                       |
+| Exposition closing          | V                                  | III                                        |
+| Development                 | Various keys, often distant        | Various keys, often distant                |
+| Development retransition    | Dominant of home key (V)           | Dominant of home key (V of i)              |
+| Recapitulation PT           | Tonic (I)                          | Tonic (i)                                  |
+| Recapitulation transition   | Stays in I                         | Stays in i (no modulation needed)          |
+| Recapitulation ST           | Tonic (I)                          | Tonic (i, sometimes I — Picardy)           |
+| Recapitulation closing      | I                                  | i (or I via Picardy third)                 |
 
 The exposition creates tonal conflict (movement away from tonic). The development prolongs it. The recapitulation resolves it (everything in tonic). This is the structural essence of sonata form.
 

@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -34,7 +34,53 @@ Understanding binary form is the gateway to understanding more complex forms. Te
 
 <Diagram src="/diagrams/binary-vs-ternary.svg" caption="Binary (two sections, AB) and ternary (three sections, ABA) form." />
 
-<DiagramPlaceholder description="A short example of a Baroque minuet showing the A section (8 measures, ending in V) and B section (8 measures, ending back in I)." />
+<MusicalExample
+  clef="treble"
+  keySignature={1}
+  timeSignature={{ numerator: 3, denominator: 4 }}
+  bpm={120}
+  showMeasureNumbers
+  elements={[
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'E5', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'D5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'F#5', duration: 'e' },
+    { type: 'note', pitch: 'G5', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'D5', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'F#4', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'A4', duration: 'h.' },
+  ]}
+  systemBreaks={[4]}
+  annotations={[
+    { type: 'section', startIdx: 0, endIdx: 30, label: 'A section', sublabel: 'modulates I → V', position: 'above' },
+    { type: 'cadence', startIdx: 30, endIdx: 30, label: 'ends on V (D major)', position: 'below' },
+  ]}
+  caption="Christian Petzold, Minuet in G major, BWV Anh. 114 — A section (8 measures, c. 1725). From the Notebook for Anna Magdalena Bach. Engraved per Gould's Behind Bars conventions: per-beat beaming in 3/4 (eighths within each beat are beamed; quarters and dotted notes stand alone), beam-group stem direction following the average position of the group, and the closing cadence written as a single dotted half (filling the full bar) rather than half-note + rest. The A section is the canonical Baroque binary opening: it begins firmly in G major (I) and modulates to D major (V) by its closing cadence."
+/>
 
 ## The basic shape
 

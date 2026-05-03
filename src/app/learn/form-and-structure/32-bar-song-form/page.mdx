@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { FormDiagram } from '@/components/learn/visuals/FormDiagram'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -29,9 +30,85 @@ Understanding 32-bar form opens up the entire jazz standard repertoire. Thousand
 
 ## The visual
 
-<DiagramPlaceholder description="A schematic of 32-bar AABA form, four 8-bar sections, with A in the tonic, A repeated, B (the bridge) in a contrasting key, and A returning in the tonic for the final 8 bars." />
+<FormDiagram
+  rows={[
+    {
+      sections: [
+        { label: 'A', sublabel: '8 bars' },
+        { label: 'A', sublabel: '8 bars' },
+        { label: 'B', sublabel: '8 bars (bridge)', highlighted: true },
+        { label: 'A', sublabel: '8 bars' },
+      ],
+      caption: '32-bar AABA form.',
+    },
+    {
+      sections: [
+        { label: 'tonic' },
+        { label: 'tonic' },
+        { label: 'contrasting key' },
+        { label: 'tonic' },
+      ],
+      caption: 'Key areas: the bridge departs; the final A brings everything home.',
+    },
+  ]}
+  caption="The 32-bar AABA form: four 8-bar sections, with a contrasting bridge in the middle. The dominant form of the Great American Songbook."
+/>
 
-<DiagramPlaceholder description="The opening of a representative standard showing the A section's 8-bar structure." />
+<MusicalExample
+  clef="treble"
+  keySignature={-1}
+  timeSignature={{ numerator: 9, denominator: 8 }}
+  bpm={60}
+  showMeasureNumbers
+  elements={[
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'A5', duration: 'q.' },
+    { type: 'note', pitch: 'F5', duration: 'q.' },
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'G5', duration: 'e' },
+    { type: 'note', pitch: 'A5', duration: 'e' },
+    { type: 'note', pitch: 'G5', duration: 'q.' },
+    { type: 'note', pitch: 'F5', duration: 'q.' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'D5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'q.' },
+    { type: 'note', pitch: 'A5', duration: 'q.' },
+    { type: 'note', pitch: 'G5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'q.' },
+    { type: 'rest', duration: 'q.' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'q.' },
+    { type: 'note', pitch: 'C5', duration: 'q.' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'D5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'q.' },
+    { type: 'note', pitch: 'A5', duration: 'q.' },
+    { type: 'note', pitch: 'G5', duration: 'e' },
+    { type: 'note', pitch: 'A5', duration: 'e' },
+    { type: 'note', pitch: 'Bb5', duration: 'e' },
+    { type: 'note', pitch: 'A5', duration: 'q.' },
+    { type: 'note', pitch: 'G5', duration: 'q.' },
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'A5', duration: 'e' },
+    { type: 'note', pitch: 'G5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'q.' },
+    { type: 'rest', duration: 'q.' },
+  ]}
+  systemBreaks={[4]}
+  annotations={[
+    { type: 'section', startIdx: 0, endIdx: 39, label: 'A section', sublabel: '(8 bars, in tonic F major)', position: 'above' },
+    { type: 'cadence', startIdx: 38, endIdx: 38, label: 'authentic cadence', position: 'below' },
+  ]}
+  caption="Stephen Foster, 'Beautiful Dreamer' (1864) — opening 8-bar A section. A clean 8-bar phrase in F major (9/8 compound time) showing the typical AABA building block: a melodic phrase that establishes the home key and sets the song's character."
+/>
 
 ## The basic structure
 

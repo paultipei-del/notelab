@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -32,7 +32,50 @@ Ternary form is everywhere. Classical minuets and scherzos almost always use it 
 
 <Diagram src="/diagrams/binary-vs-ternary.svg" caption="Binary (two sections, AB) and ternary (three sections, ABA) form." />
 
-<DiagramPlaceholder description="The opening of a Classical minuet movement, showing the minuet (A) followed by the trio (B) followed by the return of the minuet (A)." />
+<MusicalExample
+  clef="treble"
+  keySignature={1}
+  timeSignature={{ numerator: 3, denominator: 4 }}
+  bpm={132}
+  showMeasureNumbers
+  elements={[
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'B4', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'A4', duration: 'q.' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'B4', duration: 'q' },
+    { type: 'note', pitch: 'A4', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'A4', duration: 'h' },
+    { type: 'rest', duration: 'q' },
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'B4', duration: 'q.' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'A4', duration: 'q' },
+    { type: 'note', pitch: 'B4', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'D5', duration: 'h' },
+    { type: 'rest', duration: 'q' },
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'B4', duration: 'q' },
+    { type: 'note', pitch: 'G4', duration: 'q' },
+    { type: 'note', pitch: 'A4', duration: 'q.' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+  ]}
+  systemBreaks={[4, 8]}
+  annotations={[
+    { type: 'section', startIdx: 0, endIdx: 11, label: 'A', sublabel: '(minuet)', position: 'above' },
+    { type: 'section', startIdx: 12, endIdx: 21, label: 'B', sublabel: '(trio)', position: 'above' },
+    { type: 'section', startIdx: 22, endIdx: 27, label: 'A', sublabel: '(return)', position: 'above' },
+  ]}
+  caption="Beethoven, Minuet in G major, WoO 10 No. 2 (1795) — sketch of ternary form. The opening minuet (A) is followed by a contrasting trio (B), and the minuet returns literally (A). This is a pedagogical simplification of the actual minuet to fit ternary form into 10 measures."
+/>
 
 ## The basic structure
 

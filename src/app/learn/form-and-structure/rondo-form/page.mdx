@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { FormDiagram } from '@/components/learn/visuals/FormDiagram'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -29,9 +30,85 @@ Classical-era composers used rondo form extensively, especially for the final mo
 
 ## The visual
 
-<DiagramPlaceholder description="A schematic showing the rondo pattern, A-B-A-C-A-B-A (a seven-part rondo) with the returning A sections in the tonic and the contrasting episodes in different keys or characters." />
+<FormDiagram
+  rows={[
+    {
+      sections: [
+        { label: 'A', highlighted: true },
+        { label: 'B' },
+        { label: 'A', highlighted: true },
+        { label: 'C' },
+        { label: 'A', highlighted: true },
+        { label: 'B' },
+        { label: 'A', highlighted: true },
+      ],
+      caption: 'Seven-part rondo (ABACABA).',
+    },
+    {
+      sections: [
+        { label: 'I (tonic)' },
+        { label: 'V or vi' },
+        { label: 'I' },
+        { label: 'IV or vi' },
+        { label: 'I' },
+        { label: 'V or vi' },
+        { label: 'I' },
+      ],
+      caption: 'Key areas: A always returns to the tonic; episodes (B, C) explore contrasting keys.',
+    },
+  ]}
+  caption="The seven-part rondo's distinctive pattern: a refrain (A) that keeps returning, with contrasting episodes between each return."
+/>
 
-<DiagramPlaceholder description="The opening of a Classical-era rondo finale, showing the rondo theme and its immediate return after the first episode." />
+<MusicalExample
+  clef="treble"
+  keySignature={0}
+  timeSignature={{ numerator: 3, denominator: 8 }}
+  bpm={92}
+  showMeasureNumbers
+  elements={[
+    { type: 'note', pitch: 'E5', duration: 's' },
+    { type: 'note', pitch: 'D#5', duration: 's' },
+    { type: 'note', pitch: 'E5', duration: 's' },
+    { type: 'note', pitch: 'D#5', duration: 's' },
+    { type: 'note', pitch: 'E5', duration: 's' },
+    { type: 'note', pitch: 'B4', duration: 's' },
+    { type: 'note', pitch: 'D5', duration: 's' },
+    { type: 'note', pitch: 'C5', duration: 's' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'rest', duration: 'e' },
+    { type: 'note', pitch: 'C4', duration: 's' },
+    { type: 'note', pitch: 'E4', duration: 's' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'rest', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'rest', duration: 'e' },
+    { type: 'note', pitch: 'E4', duration: 'e' },
+    { type: 'note', pitch: 'G#4', duration: 's' },
+    { type: 'note', pitch: 'B4', duration: 's' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'rest', duration: 'e' },
+    { type: 'note', pitch: 'E4', duration: 'e' },
+    { type: 'rest', duration: 'e' },
+    { type: 'rest', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 's' },
+    { type: 'note', pitch: 'D#5', duration: 's' },
+    { type: 'note', pitch: 'E5', duration: 's' },
+    { type: 'note', pitch: 'D#5', duration: 's' },
+    { type: 'note', pitch: 'E5', duration: 's' },
+    { type: 'note', pitch: 'B4', duration: 's' },
+    { type: 'note', pitch: 'D5', duration: 's' },
+    { type: 'note', pitch: 'C5', duration: 's' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'rest', duration: 'e' },
+  ]}
+  systemBreaks={[4]}
+  annotations={[
+    { type: 'section', startIdx: 0, endIdx: 23, label: 'A theme', position: 'above' },
+    { type: 'section', startIdx: 24, endIdx: 33, label: 'A theme returns', position: 'above' },
+  ]}
+  caption="Beethoven, Bagatelle in A minor, WoO 59 ('Für Elise', 1810) — opening rondo theme and its return. The famous E – D♯ – E – D♯ – E – B – D – C – A motif appears, develops through a brief contrasting phrase, and returns literally — the structural pattern listeners recognize even when they can't name what it is."
+/>
 
 ## The basic structure
 

@@ -1,5 +1,5 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicXmlScore } from '@/components/learn/visuals/MusicXmlScore'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -27,7 +27,58 @@ The form invites virtuosic display and compositional ingenuity. Can you write 10
 
 ## The visual
 
-<DiagramPlaceholder description="A simple 8-measure theme followed by three variations (one with added melodic ornamentation, one with rhythmic transformation, one with shift to parallel minor) showing how different variation techniques produce different characters while preserving the underlying structure." />
+<figure style={{ margin: '24px auto', textAlign: 'center' }}>
+  <div style={{ marginBottom: 16 }}>
+    <MusicXmlScore
+      src="/music/k265.musicxml"
+      measureRange={[1, 8]}
+      bpm={108}
+      systemBreaks={[4]}
+      caption="Theme — the simple Twinkle melody, both hands. 2/4 time, plain quarter notes; the left hand carries a simple supporting harmony."
+    />
+  </div>
+  <div style={{ marginBottom: 16 }}>
+    <MusicXmlScore
+      src="/music/k265.musicxml"
+      measureRange={[9, 16]}
+      bpm={108}
+      systemBreaks={[4]}
+      caption="Variation I — the right hand decorates the melody with running sixteenths while the left hand keeps the same harmonic outline as the theme."
+    />
+  </div>
+  <div style={{ marginBottom: 16 }}>
+    <MusicXmlScore
+      src="/music/k265-var3.musicxml"
+      measureRange={[1, 8]}
+      bpm={108}
+      systemBreaks={[4]}
+      caption="Variation III — continuous triplet eighths. The Twinkle harmonic skeleton is preserved underneath; the right hand spins it into rolling arpeggiated triplets."
+    />
+  </div>
+  <div>
+    <MusicXmlScore
+      src="/music/k265-var8.musicxml"
+      measureRange={[1, 8]}
+      bpm={92}
+      systemBreaks={[4]}
+      caption="Variation VIII — parallel minor. Same melodic skeleton, three flats in the key signature: the same shape in a darker emotional world."
+    />
+  </div>
+  <figcaption style={{
+    fontFamily: 'var(--font-cormorant), serif',
+    fontSize: 15,
+    fontStyle: 'italic',
+    color: '#5F5E5A',
+    textAlign: 'center',
+    marginTop: 12,
+    lineHeight: 1.55,
+    maxWidth: '64ch',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  }}>
+    Mozart, "Ah vous dirai-je, Maman" K. 265 (1781) — Theme and three variations. Same harmonic skeleton, different transformations: ornamentation, mode change, rhythmic re-shaping. K. 265 has 12 variations total in the original; we show four representative moments.
+  </figcaption>
+</figure>
 
 ## The theme
 

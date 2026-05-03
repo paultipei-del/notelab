@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { FormDiagram } from '@/components/learn/visuals/FormDiagram'
+import { MusicExampleCard } from '@/components/learn/visuals/MusicExampleCard'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -29,9 +30,29 @@ Fugue is arguably the most intellectually demanding of the classical forms. It r
 
 ## The visual
 
-<DiagramPlaceholder description="The opening of a fugue showing the subject entering in the first voice, followed by the answer (the subject transposed) in the second voice, followed by the subject returning in the third voice, demonstrating the cascading imitation." />
+<MusicExampleCard
+  composer="J.S. Bach"
+  piece="Fugue in C major from The Well-Tempered Clavier, Book 1, BWV 846 — opening exposition"
+  year="1722"
+  description="The textbook fugue. Voice 1 enters with the subject; voice 2 enters with the answer (subject transposed to the dominant); voice 3 enters with the subject. The cascading entries are the genre's signature."
+/>
 
-<DiagramPlaceholder description="A schematic of fugue structure, exposition (all voices enter with subject), episodes, middle entries (subject returns in related keys), final entries (subject in the tonic), coda." />
+<FormDiagram
+  rows={[
+    {
+      sections: [
+        { label: 'Exposition', sublabel: 'all voices enter with subject', highlighted: true },
+        { label: 'Episode', sublabel: 'modulating' },
+        { label: 'Middle entries', sublabel: 'subject in related keys' },
+        { label: 'Episode', sublabel: 'modulating' },
+        { label: 'Final entries', sublabel: 'subject in tonic', highlighted: true },
+        { label: 'Coda', sublabel: 'optional' },
+      ],
+      caption: 'Typical fugue layout.',
+    },
+  ]}
+  caption="A fugue's structural arc: the exposition introduces the subject in every voice, then the music alternates between episodes (without the subject) and middle entries (subject returns in different keys), eventually arriving at final entries in the tonic and an optional coda."
+/>
 
 ## The subject
 

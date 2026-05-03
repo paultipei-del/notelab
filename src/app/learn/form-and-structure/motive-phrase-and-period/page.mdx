@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
-import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -32,7 +32,67 @@ Most of Western tonal music builds up from these small units. Understanding them
 
 <Diagram src="/diagrams/period-structure.svg" caption="The classical period: two balanced four-measure phrases with cadences that answer each other." />
 
-<DiagramPlaceholder description="The first 16 measures of 'Twinkle, Twinkle Little Star' marked up to show motives, phrase boundaries, and the period structure." />
+<MusicalExample
+  clef="treble"
+  keySignature={0}
+  timeSignature={{ numerator: 4, denominator: 4 }}
+  bpm={108}
+  showMeasureNumbers
+  elements={[
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'E4', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'rest', duration: 'q' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'D5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'G5', duration: 'e' },
+    { type: 'note', pitch: 'A5', duration: 'e' },
+    { type: 'note', pitch: 'G5', duration: 'h' },
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'rest', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'E4', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'note', pitch: 'D5', duration: 'q' },
+    { type: 'note', pitch: 'C5', duration: 'q' },
+    { type: 'rest', duration: 'q' },
+    { type: 'note', pitch: 'F5', duration: 'e' },
+    { type: 'note', pitch: 'E5', duration: 'e' },
+    { type: 'note', pitch: 'D5', duration: 'e' },
+    { type: 'note', pitch: 'C5', duration: 'e' },
+    { type: 'note', pitch: 'B4', duration: 'e' },
+    { type: 'note', pitch: 'A4', duration: 'e' },
+    { type: 'note', pitch: 'G4', duration: 'e' },
+    { type: 'note', pitch: 'F4', duration: 'e' },
+    { type: 'note', pitch: 'E4', duration: 'h' },
+    { type: 'note', pitch: 'C4', duration: 'q' },
+    { type: 'rest', duration: 'q' },
+  ]}
+  systemBreaks={[4]}
+  annotations={[
+    { type: 'bracket', startIdx: 0, endIdx: 21, label: 'Antecedent', sublabel: '(question)', position: 'above' },
+    { type: 'bracket', startIdx: 22, endIdx: 43, label: 'Consequent', sublabel: '(answer)', position: 'above' },
+    { type: 'cadence', startIdx: 19, endIdx: 19, label: 'Half Cadence', position: 'below' },
+    { type: 'cadence', startIdx: 41, endIdx: 41, label: 'Authentic Cadence', position: 'below' },
+  ]}
+  caption="Mozart, Piano Sonata in C major, K. 545 — opening 8 measures (1788). The textbook parallel period: an antecedent phrase ending on a half cadence, answered by a parallel consequent phrase ending on an authentic cadence. Right hand only; the original has an Alberti-bass left hand in the same key."
+/>
 
 ## The motive
 
