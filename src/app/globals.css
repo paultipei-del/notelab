@@ -122,6 +122,10 @@ body:has(.nl-study-viewport) {
 
 .nl-study-main--stack {
   flex-direction: column;
+  /* In column mode the cross-axis is horizontal — without this override the
+     base `align-items: flex-start` pins children to the left, which makes
+     fixed-width cards (e.g. Quiz) "jump" left when entering the mode. */
+  align-items: center;
   justify-content: center;
   gap: 12px;
   overflow-y: auto;

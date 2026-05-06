@@ -134,36 +134,50 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
   // ── QUIZ QUESTION ──
   if (!currentCard) return null
   const progressPct = (index / total) * 100
+  const answeredSoFar = chosen ? index + 1 : index
 
   return (
     <div className="nl-study-viewport">
-
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 32px', gap: '16px', flexShrink: 0 }}>
-        <button onClick={onExit}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>
-          ← Exit Quiz
-        </button>
-        <div style={{ flex: 1, maxWidth: '400px', height: '4px', background: '#D9CFAE', borderRadius: '2px', overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${progressPct}%`, background: '#B5402A', borderRadius: '2px', transition: 'width 0.3s ease' }} />
+      {/* Topbar — mirrors StudyEngine so Quiz reads as the same surface */}
+      <header className="nl-study-topbar">
+        <div className="nl-study-topbar__row1">
+          <div className="nl-study-topbar__back">
+            <button type="button" onClick={onExit} className="nl-study-back-btn">
+              ← Back
+            </button>
+          </div>
+          <div className="nl-study-topbar__metrics nl-study-topbar__metrics--pair">
+            <div>
+              <span className="nl-study-topbar__metric-label">Answered</span>
+              <span className="nl-study-topbar__metric-value">{index + 1} / {total}</span>
+            </div>
+            <div>
+              <span className="nl-study-topbar__metric-label">Score</span>
+              <span className="nl-study-topbar__metric-value">
+                {score} / {answeredSoFar > 0 ? answeredSoFar : '—'}
+              </span>
+            </div>
+          </div>
         </div>
-        <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', whiteSpace: 'nowrap' }}>
-          {index + 1} / {total}
-        </span>
-      </div>
+        <p style={{
+          fontFamily: 'var(--font-cormorant), serif',
+          fontSize: 'var(--nl-text-compact)',
+          fontStyle: 'italic',
+          color: '#9A9081',
+          letterSpacing: '0.03em',
+          margin: 0,
+          textAlign: 'center',
+        }}>
+          {deck.title}
+        </p>
+        <div className="nl-study-progress-rail" aria-hidden>
+          <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
+        </div>
+      </header>
 
-      {/* Quiz label */}
-      <div style={{ textAlign: 'center', padding: '0 32px 8px', flexShrink: 0 }}>
-        <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#B5402A' }}>
-          Quiz Mode
-        </span>
-      </div>
-
-      {/* Card */}
-      <div className="nl-study-main nl-study-main--stack" style={{ padding: '0 24px 12px' }}>
-
-        {/* Question */}
-        <div style={{ width: '100%', maxWidth: '480px', marginBottom: '8px', flexShrink: 0 }}>
+      <div className="nl-study-main">
+        <div className="nl-study-mc-stack">
+          {/* Question */}
           {currentCard.type === 'audio' ? (
             <AudioCard card={currentCard} revealed={false} onReveal={() => {}} hideReveal />
           ) : currentCard.type === 'symbol' ? (
@@ -182,47 +196,47 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
               </p>
             </div>
           )}
-        </div>
 
-        {/* Answer options */}
-        <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {options.map((opt, i) => {
-            let bg = 'white'
-            let border = '#D9CFAE'
-            let color = '#1A1A18'
-            if (chosen) {
-              if (opt === correctAnswer) { bg = '#EAF3DE'; border = '#C0DD97'; color = '#3B6D11' }
-              else if (opt === chosen) { bg = '#FCEBEB'; border = '#F09595'; color = '#A32D2D' }
-              else { color = '#D9CFAE'; border = '#EDE8DF' }
-            }
-            return (
-              <button
-                key={i}
-                onClick={() => !chosen && answer(opt)}
-                disabled={!!chosen}
-                style={{
-                  background: bg,
-                  border: `1.5px solid ${border}`,
-                  borderRadius: '12px',
-                  padding: '14px 20px',
-                  textAlign: 'left',
-                  fontFamily: 'var(--font-jost), sans-serif',
-                  fontSize: 'var(--nl-text-ui)',
-                  fontWeight: 300,
-                  color,
-                  cursor: chosen ? 'default' : 'pointer',
-                  transition: 'all 0.15s',
-                  letterSpacing: '0.02em',
-                  lineHeight: 1.5,
-                }}
-              >
-                <span style={{ fontWeight: 400, marginRight: '10px', color: chosen ? color : '#7A7060' }}>
-                  {['A', 'B', 'C', 'D'][i]}.
-                </span>
-                {opt}
-              </button>
-            )
-          })}
+          {/* Answer options */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
+            {options.map((opt, i) => {
+              let bg = 'white'
+              let border = '#D9CFAE'
+              let color = '#1A1A18'
+              if (chosen) {
+                if (opt === correctAnswer) { bg = '#EAF3DE'; border = '#C0DD97'; color = '#3B6D11' }
+                else if (opt === chosen) { bg = '#FCEBEB'; border = '#F09595'; color = '#A32D2D' }
+                else { color = '#D9CFAE'; border = '#EDE8DF' }
+              }
+              return (
+                <button
+                  key={i}
+                  onClick={() => !chosen && answer(opt)}
+                  disabled={!!chosen}
+                  style={{
+                    background: bg,
+                    border: `1.5px solid ${border}`,
+                    borderRadius: '12px',
+                    padding: '14px 20px',
+                    textAlign: 'left',
+                    fontFamily: 'var(--font-jost), sans-serif',
+                    fontSize: 'var(--nl-text-ui)',
+                    fontWeight: 300,
+                    color,
+                    cursor: chosen ? 'default' : 'pointer',
+                    transition: 'all 0.15s',
+                    letterSpacing: '0.02em',
+                    lineHeight: 1.5,
+                  }}
+                >
+                  <span style={{ fontWeight: 400, marginRight: '10px', color: chosen ? color : '#7A7060' }}>
+                    {['A', 'B', 'C', 'D'][i]}.
+                  </span>
+                  {opt}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>

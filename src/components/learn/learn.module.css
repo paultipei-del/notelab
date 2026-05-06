@@ -128,8 +128,9 @@
 .tocList { list-style: none; padding: 0; margin: 0; }
 .tocItem {
   display: grid;
-  grid-template-columns: 24px 1fr auto;
-  gap: 8px;
+  /* Wide enough to hold "VIII" / "XIII" without crowding the title. */
+  grid-template-columns: 32px 1fr auto;
+  gap: 9px;
   align-items: baseline;
   padding: 7px 8px;
   cursor: pointer;
