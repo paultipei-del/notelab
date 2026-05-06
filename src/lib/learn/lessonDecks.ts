@@ -113,6 +113,21 @@ import { learnPage as sonataForm }             from '@/app/learn/form-and-struct
 import { learnPage as fugueImitative }         from '@/app/learn/form-and-structure/fugue-and-imitative-counterpoint/page.mdx'
 import { learnPage as twelveBarBlues }         from '@/app/learn/form-and-structure/12-bar-blues/page.mdx'
 import { learnPage as thirtyTwoBarSongForm }   from '@/app/learn/form-and-structure/32-bar-song-form/page.mdx'
+// IX. Expression and Performance
+import { learnPage as dynamics }               from '@/app/learn/expression-and-performance/dynamics/page.mdx'
+import { learnPage as crescendoDecrescendo }   from '@/app/learn/expression-and-performance/crescendo-and-decrescendo/page.mdx'
+import { learnPage as tempoMarkings }          from '@/app/learn/expression-and-performance/tempo-markings/page.mdx'
+import { learnPage as tempoChanges }           from '@/app/learn/expression-and-performance/tempo-changes/page.mdx'
+import { learnPage as articulation }           from '@/app/learn/expression-and-performance/articulation/page.mdx'
+import { learnPage as phrasingAndSlurs }       from '@/app/learn/expression-and-performance/phrasing-and-slurs/page.mdx'
+import { learnPage as italianTerms }           from '@/app/learn/expression-and-performance/italian-terms/page.mdx'
+import { learnPage as germanFrenchTerms }      from '@/app/learn/expression-and-performance/german-and-french-terms/page.mdx'
+import { learnPage as ornaments }              from '@/app/learn/expression-and-performance/ornaments/page.mdx'
+import { learnPage as pedalMarkings }          from '@/app/learn/expression-and-performance/pedal-markings/page.mdx'
+import { learnPage as repeatSignsNavigation } from '@/app/learn/expression-and-performance/repeat-signs-and-navigation/page.mdx'
+import { learnPage as textureMarkings }        from '@/app/learn/expression-and-performance/texture-markings/page.mdx'
+import { learnPage as readingScoresOpening }   from '@/app/learn/expression-and-performance/reading-a-scores-opening/page.mdx'
+import { learnPage as interpretationStyle }    from '@/app/learn/expression-and-performance/interpretation-and-personal-style/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -264,6 +279,21 @@ const LESSON_PAGES: LessonPageData[] = [
   fugueImitative,
   twelveBarBlues,
   thirtyTwoBarSongForm,
+  // IX. Expression and Performance
+  dynamics,
+  crescendoDecrescendo,
+  tempoMarkings,
+  tempoChanges,
+  articulation,
+  phrasingAndSlurs,
+  italianTerms,
+  germanFrenchTerms,
+  ornaments,
+  pedalMarkings,
+  repeatSignsNavigation,
+  textureMarkings,
+  readingScoresOpening,
+  interpretationStyle,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES
