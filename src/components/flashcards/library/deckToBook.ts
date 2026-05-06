@@ -1,6 +1,22 @@
 import { Deck, ProgressStore, Tier } from '@/lib/types'
 import { isDue } from '@/lib/sm2'
-import type { BookProps, BookHeight, BookWidth, BookState, BookTier } from './Book'
+import type { BookProps, BookHeight, BookWidth, BookState, BookTier, BookTopic } from './Book'
+
+const TOPIC_SET: ReadonlySet<BookTopic> = new Set([
+  'pitch', 'rhythm', 'harmony', 'expression', 'notation', 'form', 'technique',
+  'analysis', 'aural', 'construction',
+])
+
+export function firstTopic(deck: Deck): BookTopic | undefined {
+  if (!deck.tags) return undefined
+  for (const tag of deck.tags) {
+    if (tag.startsWith('topic:')) {
+      const t = tag.slice('topic:'.length) as BookTopic
+      if (TOPIC_SET.has(t)) return t
+    }
+  }
+  return undefined
+}
 
 const ROMAN: Record<number, string> = {
   1: 'i', 2: 'ii', 3: 'iii', 4: 'iv', 5: 'v',
@@ -125,6 +141,7 @@ export function deckToBookProps(deck: Deck, progress: ProgressStore): BookProps 
     title: deck.title,
     volume: roman(deck.tierOrder),
     tier,
+    topic: firstTopic(deck),
     height: pickHeight(deck.cards.length),
     width: pickWidth(deck.tierOrder, deck.cards.length),
     state: summary.state,

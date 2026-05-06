@@ -4,6 +4,7 @@ import { getTopic } from '@/lib/learn/topicTree'
 import { PARTS, findLesson } from '@/app/learn/_data/parts'
 import { LessonPosLine } from './LessonPosLine'
 import { AutoTOC } from './AutoTOC'
+import { lessonDeckId, type LessonFlashCard } from '@/lib/learn/lessonDeckMeta'
 import styles from './learn.module.css'
 
 const F = 'var(--font-jost), sans-serif'
@@ -32,6 +33,12 @@ export type LearnPageLayoutProps = {
   children: ReactNode
   practice: PracticeLink[]
   related: RelatedLink[]
+  /**
+   * Optional Q/A pairs authored alongside the lesson prose. When non-empty
+   * AND the lesson is registered in `LESSON_DECKS`, a Practice link to the
+   * auto-generated lesson deck is prepended automatically.
+   */
+  flashcards?: LessonFlashCard[]
 }
 
 const PRACTICE_KIND_LABEL: Record<PracticeLink['kind'], string> = {
@@ -58,8 +65,26 @@ export default function LearnPageLayout({
   children,
   practice,
   related,
+  flashcards,
 }: LearnPageLayoutProps) {
   const found = findLesson(PARTS, topic, subtopic)
+
+  // Auto-prepend a Practice link to the lesson's own deck when flashcards
+  // are authored. Skip when an entry for the same href already exists, so
+  // adding flashcards never duplicates a hand-curated link.
+  const lessonDeckHref = `/study/${lessonDeckId(topic, subtopic)}`
+  const practiceWithLessonDeck: PracticeLink[] =
+    flashcards && flashcards.length > 0 && !practice.some(p => p.href === lessonDeckHref)
+      ? [
+          {
+            kind: 'flashcard' as const,
+            label: `${title} — Concept Review`,
+            detail: `${flashcards.length} card${flashcards.length === 1 ? '' : 's'} from this lesson`,
+            href: lessonDeckHref,
+          },
+          ...practice,
+        ]
+      : practice
 
   const partLabel = found ? `Part ${ROMAN[found.partIndex] ?? found.partIndex + 1}` : ''
   const partRoman = found ? (ROMAN[found.partIndex] ?? `${found.partIndex + 1}`) : ''
@@ -177,7 +202,7 @@ export default function LearnPageLayout({
           )}
 
           {/* Practice */}
-          {practice.length > 0 && (
+          {practiceWithLessonDeck.length > 0 && (
             <section style={{ marginTop: '40px', paddingTop: '32px', borderTop: '1px solid #E5DCC0' }}>
               <h2
                 style={{
@@ -193,7 +218,7 @@ export default function LearnPageLayout({
                 Practice
               </h2>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {practice.map(p => {
+                {practiceWithLessonDeck.map(p => {
                   // Tag the link with a `from` param so the study page's
                   // Back button can return here instead of /flashcards.
                   const sep = p.href.includes('?') ? '&' : '?'

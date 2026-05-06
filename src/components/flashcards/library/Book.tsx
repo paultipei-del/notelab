@@ -4,6 +4,10 @@ import Link from 'next/link'
 import s from './library.module.css'
 
 export type BookTier = 'found' | 'inter' | 'adv'
+export type BookTopic =
+  | 'pitch' | 'rhythm' | 'harmony'
+  | 'expression' | 'notation' | 'form' | 'technique'
+  | 'analysis' | 'aural' | 'construction'
 export type BookHeight = 's' | 'm' | 'l' | 'xl'
 export type BookWidth = 'thin' | 'med' | 'thick'
 export type BookState = 'new' | 'active' | 'mastered'
@@ -14,6 +18,7 @@ export interface BookProps {
   title: string
   volume?: string
   tier: BookTier
+  topic?: BookTopic
   height: BookHeight
   width: BookWidth
   state: BookState
@@ -33,7 +38,7 @@ function StatN({ n, kind }: { n: number; kind?: 'due' | 'learning' }) {
 
 export default function Book(props: BookProps) {
   const {
-    href, title, volume, tier, height, width, state,
+    href, title, volume, tier, topic, height, width, state,
     cardCount, dueCount, learning, mastered,
     categoryLabel, lastSeenLabel, pctMastered,
   } = props
@@ -47,6 +52,7 @@ export default function Book(props: BookProps) {
       href={href}
       className={s.book}
       data-tier={tier}
+      data-topic={topic ?? undefined}
       data-h={height}
       data-w={width}
       data-state={state}

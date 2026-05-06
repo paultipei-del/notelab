@@ -1,6 +1,7 @@
 import { Deck } from './types'
 import { SIGHT_READ_DECKS, SIGHT_READ_PRO_IDS } from './sightReadDecks'
 import { GRAND_STAFF_DECKS, GRAND_STAFF_PRO_IDS } from './grandStaffDecks'
+import { LESSON_DECKS } from './learn/lessonDecks'
 import { EAR_TRAINING_INTERVALS, EAR_TRAINING_INTERVALS_II, EAR_TRAINING_INTERVALS_III, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_TRIADS_INVERSIONS, EAR_TRAINING_SEVENTH_CHORDS, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { REPEAT_SYMBOL_CARDS } from './cm-content/symbols-repeats'
@@ -964,6 +965,7 @@ export const DECKS: Deck[] = [
   },
   ...SIGHT_READ_DECKS,
   ...GRAND_STAFF_DECKS,
+  ...LESSON_DECKS,
 ]
 
 export const CM_DECK_IDS = [

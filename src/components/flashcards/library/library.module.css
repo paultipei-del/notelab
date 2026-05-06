@@ -385,6 +385,61 @@
   --gilt: #D9A24A; --gilt-deep: #82662A; --weave: #3A2350;
 }
 
+/* Topic palettes — when present, override tier colors. Pulled from the
+   --deck-color-* HSL system in globals.css; spine-top/weave are darker
+   variants tuned to read as proper antique-leather covers. */
+.book[data-topic="pitch"] {
+  --spine: hsl(215, 30%, 50%); --spine-top: hsl(215, 38%, 28%);
+  --gilt: #D9A24A; --gilt-deep: #8E6620;
+  --weave: hsl(215, 38%, 22%);
+}
+.book[data-topic="rhythm"] {
+  --spine: hsl(28, 38%, 52%); --spine-top: hsl(28, 48%, 28%);
+  --gilt: #F4D78A; --gilt-deep: #8E6620;
+  --weave: hsl(28, 48%, 22%);
+}
+.book[data-topic="harmony"] {
+  --spine: hsl(276, 28%, 50%); --spine-top: hsl(276, 38%, 28%);
+  --gilt: #D9A24A; --gilt-deep: #82662A;
+  --weave: hsl(276, 38%, 22%);
+}
+.book[data-topic="expression"] {
+  --spine: hsl(0, 35%, 56%); --spine-top: hsl(0, 42%, 32%);
+  --gilt: #D9A24A; --gilt-deep: #8E6620;
+  --weave: hsl(0, 42%, 24%);
+}
+.book[data-topic="notation"] {
+  --spine: hsl(210, 18%, 50%); --spine-top: hsl(210, 24%, 28%);
+  --gilt: #C9A24A; --gilt-deep: #826620;
+  --weave: hsl(210, 24%, 22%);
+}
+.book[data-topic="form"] {
+  --spine: hsl(140, 26%, 45%); --spine-top: hsl(140, 36%, 24%);
+  --gilt: #D9A24A; --gilt-deep: #82662A;
+  --weave: hsl(140, 36%, 18%);
+}
+.book[data-topic="technique"] {
+  --spine: hsl(42, 42%, 52%); --spine-top: hsl(42, 50%, 28%);
+  --gilt: #F4D78A; --gilt-deep: #8E6620;
+  --weave: hsl(42, 50%, 22%);
+}
+/* Application / cross-concept practice topics */
+.book[data-topic="analysis"] {
+  --spine: hsl(35, 38%, 50%); --spine-top: hsl(35, 48%, 26%);
+  --gilt: #F4D78A; --gilt-deep: #8E6620;
+  --weave: hsl(35, 48%, 20%);
+}
+.book[data-topic="aural"] {
+  --spine: hsl(180, 22%, 46%); --spine-top: hsl(180, 32%, 24%);
+  --gilt: #C9A24A; --gilt-deep: #826620;
+  --weave: hsl(180, 32%, 18%);
+}
+.book[data-topic="construction"] {
+  --spine: hsl(20, 30%, 45%); --spine-top: hsl(20, 40%, 24%);
+  --gilt: #D9A24A; --gilt-deep: #82662A;
+  --weave: hsl(20, 40%, 18%);
+}
+
 /* Per-book quiet variation — keeps the shelf from looking like clones */
 .books .book:nth-child(6n+1) { filter: hue-rotate(-3deg) brightness(1.02); }
 .books .book:nth-child(6n+2) { filter: hue-rotate( 4deg) brightness(0.96); }
@@ -470,13 +525,15 @@
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font-family: var(--font-cormorant), serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
   letter-spacing: 0.05em;
   line-height: 1;
   text-align: center;
+  /* Brighter centerline + stronger end stops give the gilt a metallic
+     pop. Tightened gold-to-cream-to-gold gradient. */
   background: linear-gradient(0deg,
-    #C99540 0%, #F4D78A 35%, #FFE9B0 55%, #F4D78A 75%, #C99540 100%);
+    #B07F2F 0%, #F0D284 30%, #FFF1C4 55%, #F0D284 80%, #B07F2F 100%);
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -484,9 +541,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Deeper drop-shadow stack — what carries legibility against the
+     leather. Two passes so the edge is crisp AND the body has weight. */
   filter:
-    drop-shadow(0 1px 0 rgba(0,0,0,0.55))
-    drop-shadow(0 0 1px rgba(0,0,0,0.35));
+    drop-shadow(0 1px 0 rgba(0,0,0,0.7))
+    drop-shadow(0 0 1.5px rgba(0,0,0,0.55))
+    drop-shadow(0 0 0.5px rgba(0,0,0,0.85));
 }
 .bookVolume {
   font-family: var(--font-cormorant), serif;
@@ -666,6 +726,17 @@
 .deckCard[data-tier="found"] { --tier-color: #B5402A; }
 .deckCard[data-tier="inter"] { --tier-color: #4A6B8A; }
 .deckCard[data-tier="adv"]   { --tier-color: #6B4A8A; }
+/* Topic palette wins when present — keeps Cards/List in sync with shelves. */
+.deckCard[data-topic="pitch"]        { --tier-color: hsl(215, 30%, 58%); }
+.deckCard[data-topic="rhythm"]       { --tier-color: hsl( 28, 38%, 56%); }
+.deckCard[data-topic="harmony"]      { --tier-color: hsl(276, 28%, 58%); }
+.deckCard[data-topic="expression"]   { --tier-color: hsl(  0, 35%, 60%); }
+.deckCard[data-topic="notation"]     { --tier-color: hsl(210, 18%, 56%); }
+.deckCard[data-topic="form"]         { --tier-color: hsl(140, 26%, 50%); }
+.deckCard[data-topic="technique"]    { --tier-color: hsl( 42, 42%, 54%); }
+.deckCard[data-topic="analysis"]     { --tier-color: hsl( 35, 38%, 52%); }
+.deckCard[data-topic="aural"]        { --tier-color: hsl(180, 22%, 48%); }
+.deckCard[data-topic="construction"] { --tier-color: hsl( 20, 30%, 50%); }
 .deckCardName {
   font-family: var(--font-cormorant), serif;
   font-weight: 500; font-size: 22px;
@@ -730,6 +801,16 @@
 .listRow[data-tier="found"] { --tier-color: #B5402A; }
 .listRow[data-tier="inter"] { --tier-color: #4A6B8A; }
 .listRow[data-tier="adv"]   { --tier-color: #6B4A8A; }
+.listRow[data-topic="pitch"]        { --tier-color: hsl(215, 30%, 58%); }
+.listRow[data-topic="rhythm"]       { --tier-color: hsl( 28, 38%, 56%); }
+.listRow[data-topic="harmony"]      { --tier-color: hsl(276, 28%, 58%); }
+.listRow[data-topic="expression"]   { --tier-color: hsl(  0, 35%, 60%); }
+.listRow[data-topic="notation"]     { --tier-color: hsl(210, 18%, 56%); }
+.listRow[data-topic="form"]         { --tier-color: hsl(140, 26%, 50%); }
+.listRow[data-topic="technique"]    { --tier-color: hsl( 42, 42%, 54%); }
+.listRow[data-topic="analysis"]     { --tier-color: hsl( 35, 38%, 52%); }
+.listRow[data-topic="aural"]        { --tier-color: hsl(180, 22%, 48%); }
+.listRow[data-topic="construction"] { --tier-color: hsl( 20, 30%, 50%); }
 .listSwatch {
   width: 6px; height: 22px; border-radius: 1px;
   background: var(--tier-color, #B5402A);
@@ -761,6 +842,134 @@
 .listColBar .b > div {
   height: 100%;
 }
+
+/* ---------- Practice & Review (workbook treatment) ----------
+   Cross-concept synthesis decks render as horizontal leather covers in a
+   grid (closed books viewed from above) — visually distinct from the
+   vertical spines on the concept shelves. */
+.tomeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 4px;
+  padding: 8px 0 12px;
+}
+.tome {
+  --spine: hsl(35, 38%, 52%);
+  --spine-top: hsl(35, 48%, 28%);
+  --gilt: #F4D78A;
+  --gilt-deep: #8E6620;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  border-radius: 6px;
+  padding: 8px;
+  aspect-ratio: 1.55 / 1;
+  background:
+    radial-gradient(ellipse 80% 100% at 50% 50%,
+      rgba(255,255,255,0.08) 0%,
+      rgba(255,255,255,0.00) 60%),
+    linear-gradient(135deg,
+      var(--spine-top) 0%,
+      var(--spine) 35%,
+      var(--spine) 65%,
+      var(--spine-top) 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.18) inset,
+    0 -1px 0 rgba(0,0,0,0.32) inset,
+    0 6px 12px rgba(42,35,24,0.20),
+    0 14px 24px -6px rgba(42,35,24,0.30);
+  transition:
+    transform 240ms cubic-bezier(0.33,1,0.68,1),
+    box-shadow 240ms cubic-bezier(0.33,1,0.68,1);
+  overflow: hidden;
+}
+/* Topic palette for tomes — overrides defaults */
+.tome[data-topic="analysis"]     { --spine: hsl(35, 38%, 52%); --spine-top: hsl(35, 48%, 28%); }
+.tome[data-topic="aural"]        { --spine: hsl(180, 22%, 46%); --spine-top: hsl(180, 32%, 24%); --gilt: #C9A24A; }
+.tome[data-topic="construction"] { --spine: hsl(20, 30%, 45%); --spine-top: hsl(20, 40%, 24%); --gilt: #D9A24A; }
+
+/* Subtle leather grain */
+.tome::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(0,0,0,0.00) 0px, rgba(0,0,0,0.05) 1px,
+      rgba(0,0,0,0.00) 3px, rgba(255,255,255,0.03) 4px,
+      rgba(0,0,0,0.00) 6px);
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.tome:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.22) inset,
+    0 -1px 0 rgba(0,0,0,0.32) inset,
+    0 14px 22px rgba(42,35,24,0.30),
+    0 24px 40px -10px rgba(42,35,24,0.36);
+}
+
+.tomeBorder {
+  position: relative; height: 100%;
+  border: 1px solid var(--gilt);
+  border-radius: 4px;
+  padding: 18px 22px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18);
+}
+.tomeCenter {
+  text-align: center;
+  display: flex; flex-direction: column; gap: 6px; align-items: center;
+}
+.tomeKicker {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gilt);
+  opacity: 0.85;
+}
+.tomeTitle {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 700; font-size: 22px;
+  letter-spacing: 0.01em; line-height: 1.15;
+  background: linear-gradient(180deg,
+    #B07F2F 0%, #F0D284 30%, #FFF1C4 55%, #F0D284 80%, #B07F2F 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter:
+    drop-shadow(0 1px 0 rgba(0,0,0,0.65))
+    drop-shadow(0 0 1px rgba(0,0,0,0.45));
+  max-width: 100%;
+}
+.tomeSub {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 10px; font-weight: 400;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.tomeSeal {
+  position: absolute;
+  top: -8px; right: -8px;
+  min-width: 26px; height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #C84A30, #8C2D1C 70%, #5A1C12 100%);
+  color: #FDFAF5;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 11px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow:
+    0 3px 8px rgba(140,45,28,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  padding: 0 5px;
+  font-variant-numeric: tabular-nums;
+  z-index: 2;
+}
+.tome[data-state="new"] { opacity: 0.85; filter: saturate(0.7); }
 
 /* ---------- Empty state ---------- */
 .empty {

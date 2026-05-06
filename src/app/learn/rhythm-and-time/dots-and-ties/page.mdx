@@ -15,6 +15,15 @@ export const learnPage = {
     { title: 'Rest Values',       href: '/learn/rhythm-and-time/rest-values' },
     { title: 'Time Signatures',   href: '/learn/rhythm-and-time/time-signatures' },
   ],
+  flashcards: [
+    { q: 'What does a dot after a notehead do?', a: 'Adds half of that note’s duration to its value. A dotted half = half + quarter = 3 beats; a dotted quarter = quarter + eighth = 1.5 beats.' },
+    { q: 'What is a tie?', a: 'A curved line connecting two notes of the same pitch, telling the performer to play them as a single sustained note equal to the sum of their durations.' },
+    { q: 'What is the difference between a tie and a slur?', a: 'A tie connects two notes of the **same pitch** (sustaining them as one). A slur connects notes of **different pitches** (smooth, legato phrasing).' },
+    { q: 'How long is a double-dotted half note in 4/4?', a: '3 ½ beats. Each successive dot adds half the previous dot’s value: half (2) + quarter (1) + eighth (½).' },
+    { q: 'When do you need a tie instead of a dot?', a: 'When the duration crosses a bar line, or when notation needs to show internal beat boundaries that a single dotted note would obscure.' },
+    { q: 'In which case is a dotted quarter preferred over a quarter tied to an eighth?', a: 'When the duration sits cleanly within one beat group — the dotted form is visually cleaner. Across bar lines or beat groupings, the tied form is required.' },
+    { q: 'Can dots apply to rests?', a: 'Yes. A dotted quarter rest = 1.5 beats of silence, a dotted half rest = 3 beats. Less common than dotted notes but valid.' },
+  ],
 }
 
 export default function Page ({ children }) {

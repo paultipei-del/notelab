@@ -9,15 +9,32 @@ import { Deck, ProgressStore } from '@/lib/types'
 
 import s from '@/components/flashcards/library/library.module.css'
 import Shelf from '@/components/flashcards/library/Shelf'
+import { PracticeShelf } from '@/components/flashcards/library/PracticeTome'
 import TodayStrip from '@/components/flashcards/library/TodayStrip'
 import MiniStreak, { StreakLevel } from '@/components/flashcards/library/MiniStreak'
 import Toolbar, { LibraryView, FilterChipDef } from '@/components/flashcards/library/Toolbar'
 import {
   deckToBookProps, summarize, DeckProgressSummary,
 } from '@/components/flashcards/library/deckToBook'
-import { BookProps } from '@/components/flashcards/library/Book'
+import { BookProps, BookTopic } from '@/components/flashcards/library/Book'
 
 const TIERED_DECKS: Deck[] = DECKS.filter(d => !!d.tier)
+
+// Topic palette (paper-friendly, slightly more saturated than the leather
+// spine variants). Used for the side-stripe in Cards / List views so they
+// echo the shelves view's color system.
+const TOPIC_COLOR: Record<BookTopic, string> = {
+  pitch:        'hsl(215, 30%, 58%)',
+  rhythm:       'hsl( 28, 38%, 56%)',
+  harmony:      'hsl(276, 28%, 58%)',
+  expression:   'hsl(  0, 35%, 60%)',
+  notation:     'hsl(210, 18%, 56%)',
+  form:         'hsl(140, 26%, 50%)',
+  technique:    'hsl( 42, 42%, 54%)',
+  analysis:     'hsl( 35, 38%, 52%)',
+  aural:        'hsl(180, 22%, 48%)',
+  construction: 'hsl( 20, 30%, 50%)',
+}
 
 interface DeckWithSummary {
   deck: Deck
@@ -158,17 +175,31 @@ export default function FlashcardsPage() {
   }, [allDecks, filter, query])
 
   const activeBooks = visible.filter(d => d.book.state === 'active').map(d => d.book)
-  const foundationsBooks = visible
-    .filter(d => d.deck.tier === 'foundations' && d.book.state !== 'active')
-    .map(d => d.book)
-  const intermediateBooks = visible
-    .filter(d => d.deck.tier === 'intermediate' && d.book.state !== 'active')
-    .map(d => d.book)
-  const advancedBooks = visible
-    .filter(d =>
-      (d.deck.tier === 'advanced' || d.deck.tier === 'application') &&
-      d.book.state !== 'active',
-    )
+  // Topic-grouped shelves — books appear on the shelf matching their first
+  // `topic:*` tag. Application-tier decks (Identify and Explain, Build and
+  // Transform, etc.) get their own "Practice & Review" shelf at the end
+  // since they're cross-concept by design.
+  const TOPIC_SHELF_DEFS: Array<{ id: BookTopic; label: string; subtitle: string }> = [
+    { id: 'pitch',      label: 'Pitch',      subtitle: 'notes, scales, keys' },
+    { id: 'rhythm',     label: 'Rhythm',     subtitle: 'time, meter, motion' },
+    { id: 'harmony',    label: 'Harmony',    subtitle: 'chords and the language between them' },
+    { id: 'expression', label: 'Expression', subtitle: 'tempo, dynamics, character' },
+    { id: 'notation',   label: 'Notation',   subtitle: 'the page and its conventions' },
+    { id: 'form',       label: 'Form',       subtitle: 'phrasing and architecture' },
+    { id: 'technique',  label: 'Technique',  subtitle: 'the craft of playing' },
+  ]
+  const topicShelves = TOPIC_SHELF_DEFS.map(t => ({
+    ...t,
+    books: visible
+      .filter(d =>
+        d.book.state !== 'active' &&
+        d.deck.tier !== 'application' &&
+        d.book.topic === t.id,
+      )
+      .map(d => d.book),
+  }))
+  const practiceBooks = visible
+    .filter(d => d.book.state !== 'active' && d.deck.tier === 'application')
     .map(d => d.book)
 
   // Today summary
@@ -257,20 +288,18 @@ export default function FlashcardsPage() {
                 count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
                 books={activeBooks}
               />
-              <Shelf
-                title="Foundations"
-                count={`${foundationsBooks.length} volumes · the bedrock`}
-                books={foundationsBooks}
-              />
-              <Shelf
-                title="Intermediate"
-                count={`${intermediateBooks.length} volumes · the working vocabulary`}
-                books={intermediateBooks}
-              />
-              <Shelf
-                title="Advanced"
-                count={`${advancedBooks.length} volumes · the rare shelf`}
-                books={advancedBooks}
+              {topicShelves.map(t => (
+                <Shelf
+                  key={t.id}
+                  title={t.label}
+                  count={`${t.books.length} volumes · ${t.subtitle}`}
+                  books={t.books}
+                />
+              ))}
+              <PracticeShelf
+                title="Practice & Review"
+                count={`${practiceBooks.length} workbooks · cross-concept challenges`}
+                books={practiceBooks}
               />
               {visible.length === 0 && (
                 <p className={s.empty}>No volumes match this view.</p>
@@ -299,6 +328,7 @@ function CardsGrid({ items }: { items: DeckWithSummary[] }) {
             href={`/study/${d.deck.id}`}
             className={s.deckCard}
             data-tier={d.book.tier}
+            data-topic={d.book.topic ?? undefined}
           >
             <div className={s.deckCardNameRow}>
               <div className={s.deckCardName}>{d.deck.title}</div>
@@ -338,14 +368,18 @@ function ListView({ items }: { items: DeckWithSummary[] }) {
       </div>
       {items.map(d => {
         const pct = Math.round(d.summary.pctMastered * 100)
-        const tierColor = d.book.tier === 'found' ? '#B5402A'
-          : d.book.tier === 'inter' ? '#4A6B8A' : '#6B4A8A'
+        const topicColor = d.book.topic ? TOPIC_COLOR[d.book.topic] : null
+        const tierColor = topicColor ?? (
+          d.book.tier === 'found' ? '#B5402A'
+            : d.book.tier === 'inter' ? '#4A6B8A' : '#6B4A8A'
+        )
         return (
           <Link
             key={d.deck.id}
             href={`/study/${d.deck.id}`}
             className={s.listRow}
             data-tier={d.book.tier}
+            data-topic={d.book.topic ?? undefined}
           >
             <div className={s.listSwatch} />
             <div className={s.listName}>
