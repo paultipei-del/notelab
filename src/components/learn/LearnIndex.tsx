@@ -1,0 +1,106 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import type { Part } from '@/app/learn/_data/parts'
+import { LearnHeader } from './LearnHeader'
+import { ResumeStrip, type ResumeData } from './ResumeStrip'
+import { TocRail } from './TocRail'
+import { PartFrontispiece } from './PartFrontispiece'
+import { LessonRow } from './LessonRow'
+import styles from './learn.module.css'
+
+type Props = {
+  parts: Part[]
+  resume: ResumeData | null
+  read: Set<string>
+  currentSlug: string | null
+}
+
+export function LearnIndex({ parts, resume, read, currentSlug }: Props) {
+  const totalLessons = parts.reduce((a, p) => a + p.lessons.length, 0)
+  const totalRead = [...read].length
+  const ledgerPct = totalLessons > 0 ? (totalRead / totalLessons) * 100 : 34
+
+  const [query, setQuery] = useState('')
+
+  // Filter parts/lessons by the search query. If the part's title matches,
+  // all its lessons stay visible. Otherwise only lessons whose name or
+  // description contains the query are kept; parts with no matches drop out.
+  const filteredParts = useMemo<Part[]>(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return parts
+    const out: Part[] = []
+    for (const part of parts) {
+      const partMatches = part.title.toLowerCase().includes(q)
+      if (partMatches) {
+        out.push(part)
+        continue
+      }
+      const lessons = part.lessons.filter(l =>
+        l.name.toLowerCase().includes(q) ||
+        l.desc.toLowerCase().includes(q),
+      )
+      if (lessons.length > 0) {
+        out.push({ ...part, lessons })
+      }
+    }
+    return out
+  }, [parts, query])
+
+  const isFiltering = query.trim().length > 0
+
+  return (
+    <div className={styles.page}>
+      <main className={styles.container}>
+        <ResumeStrip resume={resume} />
+        <LearnHeader
+          lessonCount={totalLessons}
+          query={query}
+          onQueryChange={setQuery}
+        />
+
+        <section className={styles.body}>
+          <TocRail parts={filteredParts} />
+
+          <div className={styles.ledger}>
+            {!isFiltering && (
+              <span className={styles.ledgerProgress} style={{ height: `${ledgerPct}%` }} />
+            )}
+
+            {filteredParts.length === 0 ? (
+              <p className={styles.noResults}>
+                No lessons match &ldquo;{query}&rdquo;.
+              </p>
+            ) : (
+              filteredParts.map((part, i) => {
+                const readCount = part.lessons.filter(l =>
+                  read.has(`${part.slug}/${l.slug}`) || read.has(l.slug),
+                ).length
+                return (
+                  <section key={part.slug} id={`part-${i}`} className={styles.part}>
+                    <PartFrontispiece part={part} readCount={readCount} />
+                    <ol className={styles.lessons}>
+                      {part.lessons.map((lesson, idx) => {
+                        const scoped = `${part.slug}/${lesson.slug}`
+                        return (
+                          <LessonRow
+                            key={lesson.slug}
+                            lesson={lesson}
+                            partSlug={part.slug}
+                            index={idx}
+                            isRead={read.has(scoped) || read.has(lesson.slug)}
+                            isCurrent={currentSlug === scoped || currentSlug === lesson.slug}
+                          />
+                        )
+                      })}
+                    </ol>
+                  </section>
+                )
+              })
+            )}
+          </div>
+        </section>
+      </main>
+    </div>
+  )
+}

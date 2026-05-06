@@ -252,7 +252,7 @@ function NoteIDExerciseInner() {
   const borderColor = group[activeIdx]?.status === 'wrong' ? '#F09595' : '#D9CFAE'
 
   return (
-    <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: 'transparent', display: 'flex', flexDirection: 'column' }}>
       {/* Utility bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px' }}>
         <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>← Back</button>

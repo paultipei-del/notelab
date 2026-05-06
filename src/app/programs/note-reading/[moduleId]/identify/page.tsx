@@ -710,7 +710,7 @@ function StandardIdentifySession({ moduleId }: { moduleId: string }) {
     : null
 
   return (
-    <div style={{ height: '100dvh', overflow: 'hidden', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ height: '100dvh', overflow: 'hidden', background: 'transparent', display: 'flex', flexDirection: 'column' }}>
       {/* Top bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', flexShrink: 0 }}>
         <button onClick={() => router.push(`/programs/note-reading/${moduleId}`)}

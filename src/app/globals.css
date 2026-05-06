@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tailwind 4 reads theme tokens from `@theme` blocks in CSS rather than
+   from the JS config. `inline` mode avoids re-emitting `--font-*` to
+   :root so we can reference the Next.js-loaded font CSS variables
+   (`--font-cormorant`, `--font-jost`) without a circular self-reference.
+   Result: `font-cormorant`, `font-jost`, `font-bravura` utilities work. */
+@theme inline {
+  --font-cormorant: var(--font-cormorant), serif;
+  --font-jost: var(--font-jost), sans-serif;
+  --font-bravura: "Bravura Learn", Bravura, serif;
+}
+
 /* ── Page vignette ─────────────────────────────────────────────────────
    Soft warm cream with deeper shoulders at the top and bottom edges.
    Header + footer are transparent over this gradient so the whole page
@@ -28,14 +39,18 @@ html {
    fixed. */
 @media (min-width: 769px) {
   html {
-    background:
-      linear-gradient(
-        to bottom,
-        #EEE6CD 0px,
-        #F2EDDF 200px,
-        #F2EDDF calc(100% - 220px),
-        #ECE4CC 100%
-      );
+    /* Background-color paints the canvas (incl. overscroll bounce zone);
+       the gradient draws within the html box on top. Without an explicit
+       color the gradient shorthand resets bg-color to transparent and
+       Safari's bounce shows white. */
+    background-color: #E9E3CE;
+    background-image: linear-gradient(
+      to bottom,
+      #EEE6CD 0px,
+      #F2EDDF 200px,
+      #F2EDDF calc(100% - 220px),
+      #ECE4CC 100%
+    );
     background-repeat: no-repeat;
   }
 }
@@ -58,7 +73,7 @@ body {
 
 /* ── Study / quiz — fill viewport *below* global SiteHeader (footer hidden on /study) ─ */
 .nl-study-viewport {
-  background: #F2EDDF;
+  background: transparent;
   display: flex;
   flex-direction: column;
   /* SiteHeader + this must fit in --nl-viewport-h (not raw 100dvh alone) */
@@ -82,7 +97,7 @@ body:has(.nl-study-viewport) {
 /* study/[deckId] loading + not-found — class-based only (avoids SSR/client inline style normalization mismatch) */
 .nl-study-page-shell {
   min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
-  background: #F2EDDF;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -126,7 +141,7 @@ body:has(.nl-study-viewport) {
   flex-direction: column;
   gap: 8px;
   padding: 10px max(32px, env(safe-area-inset-left)) 8px max(32px, env(safe-area-inset-right));
-  background: #F2EDDF;
+  background: transparent;
 }
 
 /* Ghost-outline back button used across the study viewport (topbar, browse

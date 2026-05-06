@@ -37,6 +37,7 @@ export const TOPIC_TREE: LearnTopic[] = [
       'Where music begins — vibration, pitch, the overtone series, and why Western music is built the way it is.',
     subtopics: [
       { slug: 'what-sound-is', title: 'What Sound Is', hasPage: true },
+      { slug: 'lesson-design-preview', title: 'Lesson Design Preview', hasPage: true },
       { slug: 'from-sound-to-pitch', title: 'From Sound to Pitch', hasPage: true },
       { slug: 'the-overtone-series', title: 'The Overtone Series', hasPage: true },
       { slug: 'consonance-and-dissonance', title: 'Consonance and Dissonance', hasPage: true },

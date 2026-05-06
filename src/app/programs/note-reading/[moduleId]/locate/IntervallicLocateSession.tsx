@@ -323,7 +323,7 @@ export default function IntervallicLocateSession({ moduleId }: { moduleId: strin
   const directionWord = currentQ.direction === 'up' ? 'up' : 'down'
 
   return (
-    <div style={{ minHeight: '100dvh', background: '#F2EDDF', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100dvh', background: 'transparent', display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', flexShrink: 0 }}>
         <button onClick={() => router.push(`/programs/note-reading/${moduleId}`)}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>

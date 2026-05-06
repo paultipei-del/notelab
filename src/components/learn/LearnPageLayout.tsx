@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { getTopic, getSubtopic } from '@/lib/learn/topicTree'
-import { LessonNavigation } from './LessonNavigation'
+import { getTopic } from '@/lib/learn/topicTree'
+import { PARTS, findLesson } from '@/app/learn/_data/parts'
+import { LessonPosLine } from './LessonPosLine'
+import { AutoTOC } from './AutoTOC'
+import styles from './learn.module.css'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 const ACCENT = '#B5402A'
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
 
 export type PracticeLink = {
   kind: 'flashcard' | 'tool' | 'ear-training' | 'program'
@@ -21,11 +25,11 @@ export type RelatedLink = {
 }
 
 export type LearnPageLayoutProps = {
-  topic: string          // slug, e.g. 'pitch'
-  subtopic: string       // slug, e.g. 'major-key-signatures'
-  title: string          // display title for the heading
-  oneSentence: string    // the lead paragraph directly under the heading
-  children: ReactNode    // the MDX body (sections 2–5 of the template)
+  topic: string
+  subtopic: string
+  title: string
+  oneSentence: string
+  children: ReactNode
   practice: PracticeLink[]
   related: RelatedLink[]
 }
@@ -37,16 +41,13 @@ const PRACTICE_KIND_LABEL: Record<PracticeLink['kind'], string> = {
   program:       'Program',
 }
 
-/**
- * Parses /learn/<topic>/<subtopic> from a related.href and checks the tree.
- * Returns whether the target is a published reference page — if not, the link
- * renders as plain text with a "(coming soon)" suffix per spec §5.
- */
 function relatedIsPublished(href: string): boolean {
   const match = href.match(/^\/learn\/([^/]+)\/([^/]+)\/?$/)
   if (!match) return false
-  const found = getSubtopic(match[1], match[2])
-  return !!found && found.subtopic.hasPage
+  const topicNode = getTopic(match[1])
+  if (!topicNode) return false
+  const sub = topicNode.subtopics.find(s => s.slug === match[2])
+  return !!sub && sub.hasPage
 }
 
 export default function LearnPageLayout({
@@ -58,208 +59,209 @@ export default function LearnPageLayout({
   practice,
   related,
 }: LearnPageLayoutProps) {
-  const topicNode = getTopic(topic)
-  const topicTitle = topicNode?.title ?? topic
+  const found = findLesson(PARTS, topic, subtopic)
+
+  const partLabel = found ? `Part ${ROMAN[found.partIndex] ?? found.partIndex + 1}` : ''
+  const partRoman = found ? (ROMAN[found.partIndex] ?? `${found.partIndex + 1}`) : ''
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <article style={{ maxWidth: '720px', margin: '0 auto', padding: '48px 32px 96px' }}>
-        {/* Breadcrumb */}
-        <nav
-          aria-label="Breadcrumb"
-          style={{
-            fontFamily: F,
-            fontSize: '13px',
-            fontWeight: 300,
-            color: '#7A7060',
-            letterSpacing: '0.05em',
-            marginBottom: '16px',
-          }}
-        >
-          <Link href="/learn" style={{ color: 'inherit', textDecoration: 'none' }}>Learn</Link>
-          <span style={{ margin: '0 8px' }}>/</span>
-          <Link href={`/learn/${topic}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-            {topicTitle}
-          </Link>
-          <span style={{ margin: '0 8px' }}>/</span>
-          <span style={{ color: '#2A2318' }}>{title}</span>
-        </nav>
-
-        {/* Page heading */}
-        <h1
-          style={{
-            fontFamily: SERIF,
-            fontWeight: 300,
-            fontSize: 'clamp(32px, 4.5vw, 48px)',
-            color: '#2A2318',
-            letterSpacing: '0.02em',
-            margin: '0 0 20px 0',
-          }}
-        >
-          {title}
-        </h1>
-
-        {/* The one-sentence answer */}
-        <p
-          style={{
-            fontFamily: SERIF,
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: '20px',
-            color: '#4A4540',
-            lineHeight: 1.55,
-            margin: '0 0 40px 0',
-            maxWidth: '640px',
-          }}
-        >
-          {oneSentence}
-        </p>
-
-        {/* MDX body — sections 2-5 of the template. The MDX file provides its
-            own prose + notation. Typography for headings and paragraphs lives
-            in the CSS class below so MDX markdown stays clean. */}
-        <div className="nl-learn-prose">
-          {children}
+    <div className={styles.page}>
+      {/* Sticky chrome — prev/next buttons + part progress, blends with site header */}
+      {found && (
+        <div className={styles.chrome}>
+          <LessonPosLine
+            partLabel={partLabel}
+            partTitle={found.part.title}
+            lessonIndexInPart={found.lessonIndex + 1}
+            lessonsInPart={found.part.lessons.length}
+            courseIndex={found.courseIndex + 1}
+            courseTotal={found.courseTotal}
+            prev={found.prev ? {
+              name: found.prev.lesson.name,
+              href: `/learn/${found.prev.part.slug}/${found.prev.lesson.slug}`,
+            } : null}
+            next={found.next ? {
+              name: found.next.lesson.name,
+              href: `/learn/${found.next.part.slug}/${found.next.lesson.slug}`,
+            } : null}
+          />
         </div>
+      )}
 
-        {/* Where this connects */}
-        {related.length > 0 && (
-          <section style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid #D9CFAE' }}>
-            <h2
-              style={{
-                fontFamily: F,
-                fontSize: '13px',
-                fontWeight: 500,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: '#7A7060',
-                margin: '0 0 16px 0',
-              }}
-            >
-              Where this connects
-            </h2>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {related.map(r => {
-                const published = relatedIsPublished(r.href)
-                return (
-                  <li key={r.href} style={{ marginBottom: '10px' }}>
-                    {published ? (
-                      <Link
-                        href={r.href}
-                        style={{
-                          fontFamily: SERIF,
-                          fontWeight: 500,
-                          fontSize: '17px',
-                          color: ACCENT,
-                          textDecoration: 'none',
-                          letterSpacing: '0.01em',
-                        }}
-                      >
-                        {r.title} →
-                      </Link>
-                    ) : (
+      {/* Floating "back to part" tab on the left edge */}
+      {found && (
+        <Link
+          href={`/learn#part-${found.partIndex}`}
+          className={styles.gutterTab}
+          title={`Back to ${partLabel} contents`}
+        >
+          <span className={styles.gutterRoman}>{partRoman}</span>
+          <span className={styles.gutterLabel}>{partLabel}</span>
+        </Link>
+      )}
+
+      {/* Right-rail "On this page" auto-built from MDX h2 headings */}
+      <AutoTOC containerSelector=".nl-learn-prose" />
+
+      <main className={styles.stage}>
+        <div className={styles.col}>
+          <h1 className={styles.lessonTitle}>{title}</h1>
+          <p className={styles.lessonSubtitle}>{oneSentence}</p>
+
+          {/* MDX body */}
+          <div className={`${styles.lessonProse} nl-learn-prose`}>
+            {children}
+          </div>
+
+          {/* Where this connects */}
+          {related.length > 0 && (
+            <section style={{ marginTop: '64px', paddingTop: '32px', borderTop: '1px solid #E5DCC0' }}>
+              <h2
+                style={{
+                  fontFamily: F,
+                  fontSize: '11px',
+                  fontWeight: 500,
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  color: '#7A7060',
+                  margin: '0 0 16px 0',
+                }}
+              >
+                Where this connects
+              </h2>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {related.map(r => {
+                  const published = relatedIsPublished(r.href)
+                  return (
+                    <li key={r.href} style={{ marginBottom: '10px' }}>
+                      {published ? (
+                        <Link
+                          href={r.href}
+                          style={{
+                            fontFamily: SERIF,
+                            fontWeight: 500,
+                            fontSize: '17px',
+                            color: ACCENT,
+                            textDecoration: 'none',
+                            letterSpacing: '0.01em',
+                          }}
+                        >
+                          {r.title} →
+                        </Link>
+                      ) : (
+                        <span
+                          style={{
+                            fontFamily: SERIF,
+                            fontWeight: 400,
+                            fontSize: '17px',
+                            color: '#9A9081',
+                            letterSpacing: '0.01em',
+                          }}
+                        >
+                          {r.title}{' '}
+                          <span style={{ fontFamily: F, fontSize: '12px', fontStyle: 'italic', color: '#9A9081' }}>
+                            (coming soon)
+                          </span>
+                        </span>
+                      )}
+                      {r.blurb && (
+                        <span style={{ display: 'block', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginTop: '2px' }}>
+                          {r.blurb}
+                        </span>
+                      )}
+                    </li>
+                  )
+                })}
+              </ul>
+            </section>
+          )}
+
+          {/* Practice */}
+          {practice.length > 0 && (
+            <section style={{ marginTop: '40px', paddingTop: '32px', borderTop: '1px solid #E5DCC0' }}>
+              <h2
+                style={{
+                  fontFamily: F,
+                  fontSize: '11px',
+                  fontWeight: 500,
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  color: '#7A7060',
+                  margin: '0 0 16px 0',
+                }}
+              >
+                Practice
+              </h2>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {practice.map(p => (
+                  <li key={p.href} style={{ marginBottom: '12px' }}>
+                    <Link
+                      href={p.href}
+                      style={{
+                        display: 'block',
+                        padding: '14px 18px',
+                        border: '1px solid #D9CFAE',
+                        borderRadius: '12px',
+                        background: '#ECE3CC',
+                        textDecoration: 'none',
+                      }}
+                    >
                       <span
                         style={{
+                          display: 'block',
+                          fontFamily: F,
+                          fontSize: '11px',
+                          fontWeight: 500,
+                          letterSpacing: '0.18em',
+                          textTransform: 'uppercase',
+                          color: '#7A7060',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {PRACTICE_KIND_LABEL[p.kind]}
+                      </span>
+                      <span
+                        style={{
+                          display: 'block',
                           fontFamily: SERIF,
-                          fontWeight: 400,
-                          fontSize: '17px',
-                          color: '#9A9081',
+                          fontWeight: 500,
+                          fontSize: '18px',
+                          color: '#1A1A18',
                           letterSpacing: '0.01em',
                         }}
                       >
-                        {r.title}{' '}
-                        <span style={{ fontFamily: F, fontSize: '12px', fontStyle: 'italic', color: '#9A9081' }}>
-                          (coming soon)
+                        {p.label}
+                        <span style={{ color: ACCENT, marginLeft: '6px' }}>→</span>
+                      </span>
+                      {p.detail && (
+                        <span style={{ display: 'block', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginTop: '2px' }}>
+                          {p.detail}
                         </span>
-                      </span>
-                    )}
-                    {r.blurb && (
-                      <span style={{ display: 'block', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginTop: '2px' }}>
-                        {r.blurb}
-                      </span>
-                    )}
+                      )}
+                    </Link>
                   </li>
-                )
-              })}
-            </ul>
-          </section>
-        )}
+                ))}
+              </ul>
+            </section>
+          )}
 
-        {/* Practice */}
-        {practice.length > 0 && (
-          <section style={{ marginTop: '40px', paddingTop: '32px', borderTop: '1px solid #D9CFAE' }}>
-            <h2
-              style={{
-                fontFamily: F,
-                fontSize: '13px',
-                fontWeight: 500,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: '#7A7060',
-                margin: '0 0 16px 0',
-              }}
-            >
-              Practice
-            </h2>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {practice.map(p => (
-                <li key={p.href} style={{ marginBottom: '12px' }}>
-                  <Link
-                    href={p.href}
-                    style={{
-                      display: 'block',
-                      padding: '14px 18px',
-                      border: '1px solid #D9CFAE',
-                      borderRadius: '12px',
-                      background: '#ECE3CC',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <span
-                      style={{
-                        display: 'block',
-                        fontFamily: F,
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        letterSpacing: '0.14em',
-                        textTransform: 'uppercase',
-                        color: '#7A7060',
-                        marginBottom: '4px',
-                      }}
-                    >
-                      {PRACTICE_KIND_LABEL[p.kind]}
-                    </span>
-                    <span
-                      style={{
-                        display: 'block',
-                        fontFamily: SERIF,
-                        fontWeight: 500,
-                        fontSize: '18px',
-                        color: '#1A1A18',
-                        letterSpacing: '0.01em',
-                      }}
-                    >
-                      {p.label}
-                      <span style={{ color: ACCENT, marginLeft: '6px' }}>→</span>
-                    </span>
-                    {p.detail && (
-                      <span style={{ display: 'block', fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', marginTop: '2px' }}>
-                        {p.detail}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+          {/* Up next end-link */}
+          {found?.next && (
+            <div className={styles.endLink}>
+              <span className={styles.endLinkKicker}>Up next</span>
+              <Link
+                href={`/learn/${found.next.part.slug}/${found.next.lesson.slug}`}
+                className={styles.endLinkA}
+              >
+                {found.next.lesson.name}
+              </Link>{' '}→
+            </div>
+          )}
 
-        {/* Previous/next lesson navigation, derived from the linear curriculum */}
-        <LessonNavigation topic={topic} slug={subtopic} />
-
-        {/* reference to subtopic slug kept for debuggability; not rendered */}
-        <span data-subtopic={subtopic} hidden />
-      </article>
+          {/* reference to subtopic slug kept for debuggability; not rendered */}
+          <span data-subtopic={subtopic} hidden />
+        </div>
+      </main>
     </div>
   )
 }

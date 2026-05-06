@@ -11,6 +11,7 @@ const config: Config = {
       fontFamily: {
         cormorant: ['var(--font-cormorant)', 'serif'],
         jost: ['var(--font-jost)', 'sans-serif'],
+        bravura: ['"Bravura Learn"', 'Bravura', 'serif'],
       },
     },
   },
