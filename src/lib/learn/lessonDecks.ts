@@ -67,6 +67,18 @@ import { learnPage as intervalInversions }     from '@/app/learn/intervals/inter
 import { learnPage as enharmonicIntervals }    from '@/app/learn/intervals/enharmonic-intervals/page.mdx'
 import { learnPage as compoundIntervals }      from '@/app/learn/intervals/compound-intervals/page.mdx'
 import { learnPage as cdRevisited }            from '@/app/learn/intervals/consonance-and-dissonance-revisited/page.mdx'
+// V. Scales
+import { learnPage as whatAScaleIs }           from '@/app/learn/scales/what-a-scale-is/page.mdx'
+import { learnPage as theMajorScale }          from '@/app/learn/scales/the-major-scale/page.mdx'
+import { learnPage as scaleDegreeNames }       from '@/app/learn/scales/scale-degrees-and-their-names/page.mdx'
+import { learnPage as theNaturalMinorScale }   from '@/app/learn/scales/the-natural-minor-scale/page.mdx'
+import { learnPage as theHarmonicMinorScale }  from '@/app/learn/scales/the-harmonic-minor-scale/page.mdx'
+import { learnPage as theMelodicMinorScale }   from '@/app/learn/scales/the-melodic-minor-scale/page.mdx'
+import { learnPage as theModes }               from '@/app/learn/scales/the-modes/page.mdx'
+import { learnPage as pentatonicScales }       from '@/app/learn/scales/pentatonic-scales/page.mdx'
+import { learnPage as bluesScales }            from '@/app/learn/scales/blues-scales/page.mdx'
+import { learnPage as chromaticScaleSpelling } from '@/app/learn/scales/chromatic-scale-spelling/page.mdx'
+import { learnPage as wholeToneOctatonic }     from '@/app/learn/scales/whole-tone-and-octatonic-scales/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -172,6 +184,18 @@ const LESSON_PAGES: LessonPageData[] = [
   enharmonicIntervals,
   compoundIntervals,
   cdRevisited,
+  // V. Scales
+  whatAScaleIs,
+  theMajorScale,
+  scaleDegreeNames,
+  theNaturalMinorScale,
+  theHarmonicMinorScale,
+  theMelodicMinorScale,
+  theModes,
+  pentatonicScales,
+  bluesScales,
+  chromaticScaleSpelling,
+  wholeToneOctatonic,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES

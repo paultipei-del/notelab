@@ -15,6 +15,16 @@ export const learnPage = {
     { title: 'Accidentals',             href: '/learn/reading-and-notation/accidentals' },
     { title: 'Enharmonic Equivalents',  href: '/learn/reading-and-notation/enharmonic-equivalents' },
   ],
+  flashcards: [
+    { q: 'What does the chromatic scale contain?', a: 'All twelve pitches within an octave — every possible note in standard Western tuning.' },
+    { q: 'What is the standard spelling convention for the chromatic scale?', a: 'Use sharps when ascending, flats when descending. Each altered note moves "in the direction of the scale."' },
+    { q: 'How is the chromatic scale spelled ascending from C?', a: 'C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B, C.' },
+    { q: 'How is the chromatic scale spelled descending from C?', a: 'C, B, B♭, A, A♭, G, G♭, F, E, E♭, D, D♭, C.' },
+    { q: 'Why does the convention exist?', a: 'It preserves letter-name integrity (each letter appears once per direction) and aligns the accidental with the direction of motion, producing the cleanest reading.' },
+    { q: 'Does real music always follow the ascending-sharps / descending-flats rule?', a: 'No — harmonic context often overrides direction. A passage in a flat key tends toward flats in both directions; one outlining a chord may spell its alterations to match the chord.' },
+    { q: 'Why is the chromatic scale rarely used as a piece\'s primary scale?', a: 'It lacks a tonic, producing a deliberately unstable tonal world. It usually appears as passing motion within tonal music — except in twelve-tone and post-tonal styles, which use it as the foundation.' },
+    { q: 'Why not use sharps for everything in both directions?', a: 'That would put two notes on the same letter (e.g., E and E♯ in a row), making the scale hard to read. The direction-based convention gives one clear note per letter per direction.' },
+  ],
 }
 
 export default function Page ({ children }) {
