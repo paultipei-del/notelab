@@ -87,6 +87,22 @@ import { learnPage as relativeMajorMinor }     from '@/app/learn/pitch/relative-
 import { learnPage as parallelMajorMinor }     from '@/app/learn/pitch/parallel-major-and-minor/page.mdx'
 import { learnPage as theCircleOfFifths }      from '@/app/learn/pitch/the-circle-of-fifths/page.mdx'
 import { learnPage as modulation }             from '@/app/learn/pitch/modulation/page.mdx'
+// VII. Harmony
+import { learnPage as whatAChordIs }           from '@/app/learn/harmony/what-a-chord-is/page.mdx'
+import { learnPage as triads }                 from '@/app/learn/harmony/triads/page.mdx'
+import { learnPage as triadQualities }         from '@/app/learn/harmony/triad-qualities/page.mdx'
+import { learnPage as triadsOnScaleDegrees }   from '@/app/learn/harmony/triads-on-scale-degrees/page.mdx'
+import { learnPage as triadInversions }        from '@/app/learn/harmony/triad-inversions/page.mdx'
+import { learnPage as figuredBass }            from '@/app/learn/harmony/figured-bass/page.mdx'
+import { learnPage as seventhChords }          from '@/app/learn/harmony/seventh-chords/page.mdx'
+import { learnPage as seventhChordInversions } from '@/app/learn/harmony/seventh-chord-inversions/page.mdx'
+import { learnPage as romanNumeralAnalysis }   from '@/app/learn/harmony/roman-numeral-analysis/page.mdx'
+import { learnPage as primaryChords }          from '@/app/learn/harmony/primary-chords/page.mdx'
+import { learnPage as secondaryChords }        from '@/app/learn/harmony/secondary-chords/page.mdx'
+import { learnPage as theLeadingToneChord }    from '@/app/learn/harmony/the-leading-tone-chord/page.mdx'
+import { learnPage as cadences }               from '@/app/learn/harmony/cadences/page.mdx'
+import { learnPage as nonChordTones }          from '@/app/learn/harmony/non-chord-tones/page.mdx'
+import { learnPage as voiceLeading }           from '@/app/learn/harmony/voice-leading/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -212,6 +228,22 @@ const LESSON_PAGES: LessonPageData[] = [
   parallelMajorMinor,
   theCircleOfFifths,
   modulation,
+  // VII. Harmony
+  whatAChordIs,
+  triads,
+  triadQualities,
+  triadsOnScaleDegrees,
+  triadInversions,
+  figuredBass,
+  seventhChords,
+  seventhChordInversions,
+  romanNumeralAnalysis,
+  primaryChords,
+  secondaryChords,
+  theLeadingToneChord,
+  cadences,
+  nonChordTones,
+  voiceLeading,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES
