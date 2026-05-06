@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Card, Deck, StudyMode, RatingValue, SessionStats, ProgressStore, QueueCard } from '@/lib/types'
 import { sm2, formatInterval, buildQueue, shuffle } from '@/lib/sm2'
 import { loadProgress, saveCardProgress } from '@/lib/progressSync'
+import { markDeckVisited } from '@/lib/deckActivity'
 
 export function useStudySession(deck: Deck | null, userId: string | null = null, initialMode: StudyMode = 'flip') {
   const [progress, setProgress] = useState<ProgressStore>({})
@@ -26,6 +27,7 @@ export function useStudySession(deck: Deck | null, userId: string | null = null,
   useEffect(() => {
     if (!deck) return
     setProgressLoaded(false)
+    markDeckVisited(deck.id)
 
     loadProgress(userId).then(stored => {
       setProgress(stored)
