@@ -56,6 +56,17 @@ import { learnPage as tuplets }                from '@/app/learn/rhythm-and-time
 import { learnPage as syncopation }            from '@/app/learn/rhythm-and-time/syncopation/page.mdx'
 import { learnPage as hemiola }                from '@/app/learn/rhythm-and-time/hemiola/page.mdx'
 import { learnPage as anacrusis }              from '@/app/learn/rhythm-and-time/anacrusis/page.mdx'
+// IV. Intervals
+import { learnPage as whatAnIntervalIs }       from '@/app/learn/intervals/what-an-interval-is/page.mdx'
+import { learnPage as halfStepsWholeSteps }    from '@/app/learn/intervals/half-steps-and-whole-steps/page.mdx'
+import { learnPage as melodicHarmonic }        from '@/app/learn/intervals/melodic-and-harmonic-intervals/page.mdx'
+import { learnPage as intervalNumber }         from '@/app/learn/intervals/interval-number/page.mdx'
+import { learnPage as intervalQuality }        from '@/app/learn/intervals/interval-quality/page.mdx'
+import { learnPage as sevenReferenceIntervals } from '@/app/learn/intervals/the-seven-reference-intervals/page.mdx'
+import { learnPage as intervalInversions }     from '@/app/learn/intervals/interval-inversions/page.mdx'
+import { learnPage as enharmonicIntervals }    from '@/app/learn/intervals/enharmonic-intervals/page.mdx'
+import { learnPage as compoundIntervals }      from '@/app/learn/intervals/compound-intervals/page.mdx'
+import { learnPage as cdRevisited }            from '@/app/learn/intervals/consonance-and-dissonance-revisited/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -150,6 +161,17 @@ const LESSON_PAGES: LessonPageData[] = [
   syncopation,
   hemiola,
   anacrusis,
+  // IV. Intervals
+  whatAnIntervalIs,
+  halfStepsWholeSteps,
+  melodicHarmonic,
+  intervalNumber,
+  intervalQuality,
+  sevenReferenceIntervals,
+  intervalInversions,
+  enharmonicIntervals,
+  compoundIntervals,
+  cdRevisited,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES

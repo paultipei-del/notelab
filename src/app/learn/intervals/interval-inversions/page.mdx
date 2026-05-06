@@ -15,6 +15,15 @@ export const learnPage = {
     { title: 'Interval Quality',               href: '/learn/intervals/interval-quality' },
     { title: 'The Seven Reference Intervals',  href: '/learn/intervals/the-seven-reference-intervals' },
   ],
+  flashcards: [
+    { q: 'What is an interval inversion?', a: 'Moving the lower note up an octave (or the upper note down an octave) so the two pitches form a different interval — usually smaller — bearing a precise relationship to the original.' },
+    { q: 'What do the numbers of an interval and its inversion sum to?', a: '9. A 3rd inverts to a 6th, a 4th to a 5th, a 2nd to a 7th, a unison to an octave.' },
+    { q: 'What does a major interval invert to?', a: 'A minor interval. Major 3rd → minor 6th; major 7th → minor 2nd.' },
+    { q: 'What does a perfect interval invert to?', a: 'A perfect interval — perfect stays perfect under inversion (P5 ↔ P4, octave ↔ unison).' },
+    { q: 'What does an augmented interval invert to?', a: 'A diminished interval (and vice versa). An aug 4th inverts to a dim 5th — both 6 half steps.' },
+    { q: 'What do the half-step counts of an interval and its inversion sum to?', a: '12 — a perfect octave. (Major 3rd = 4 half steps; minor 6th = 8 half steps; 4 + 8 = 12.)' },
+    { q: 'Why is the tritone its own inversion?', a: 'It sits exactly halfway through the octave (6 half steps), so flipping it produces another 6-half-step interval — augmented 4th ↔ diminished 5th.' },
+  ],
 }
 
 export default function Page ({ children }) {

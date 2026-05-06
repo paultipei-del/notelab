@@ -16,6 +16,15 @@ export const learnPage = {
     { title: 'Enharmonic Equivalents',  href: '/learn/reading-and-notation/enharmonic-equivalents' },
     { title: 'Interval Inversions',     href: '/learn/intervals/interval-inversions' },
   ],
+  flashcards: [
+    { q: 'What are enharmonic intervals?', a: 'Intervals that sound identical (same number of half steps) but are spelled with different letter-name combinations — e.g., augmented 4th vs. diminished 5th, both six half steps.' },
+    { q: 'How is an augmented 4th different from a diminished 5th in spelling and function?', a: 'Aug 4th (e.g., C–F♯) spans 4 letters and tends to resolve outward (F♯ → G). Dim 5th (e.g., C–G♭) spans 5 letters and tends to resolve inward (G♭ → F). Same sound, different musical meaning.' },
+    { q: 'Name the enharmonic equivalent of a minor 3rd.', a: 'An augmented 2nd (both = 3 half steps). Common in harmonic minor between scale degrees 6 and 7.' },
+    { q: 'In a dominant 7th chord, is the tritone spelled as an augmented 4th or a diminished 5th?', a: 'Diminished 5th. In C7 (C–E–G–B♭), the tritone lies between E and B♭, which spans 5 letters (E, F, G, A, B).' },
+    { q: 'How does the key signature influence enharmonic spelling?', a: 'Sharp keys spell altered tones with sharps (favoring augmented intervals); flat keys spell with flats (favoring diminished intervals).' },
+    { q: 'In equal temperament, do enharmonic intervals sound truly identical?', a: 'Yes — they’re the exact same number of half steps. In historical tunings (mean-tone, just intonation), they could sound very slightly different.' },
+    { q: 'What is the only interval with no enharmonic equivalent?', a: 'The perfect octave — C to C is always an octave; respelling either note doesn’t produce a different valid interval name.' },
+  ],
 }
 
 export default function Page ({ children }) {
