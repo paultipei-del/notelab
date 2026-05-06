@@ -93,10 +93,20 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
         <p style={{
           fontFamily: 'var(--font-cormorant), serif',
           fontWeight: 300,
-          fontSize: card.type === 'symbol' ? '20px' : 'clamp(22px, 4vw, 36px)',
+          fontSize: (() => {
+            if (card.type === 'symbol') return '20px'
+            // Adaptive sizing for long lesson-deck questions so they don't
+            // overflow the term card (matches FlipCard / MultipleChoice).
+            const len = term.length
+            const cap = len < 50 ? 36 : len < 100 ? 28 : len < 200 ? 22 : len < 300 ? 18 : 16
+            return `clamp(15px, 3vw, ${cap}px)`
+          })(),
           color: '#2A2318',
           letterSpacing: '0.02em',
-          lineHeight: 1.3,
+          lineHeight: 1.4,
+          maxWidth: '100%',
+          wordBreak: 'break-word',
+          hyphens: 'auto',
         }}>
           {term}
         </p>

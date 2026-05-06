@@ -95,7 +95,17 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
       )
     }
     return (
-      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(24px, 4vw, 40px)', textAlign: 'center', letterSpacing: '0.01em', color: '#2A2318', lineHeight: 1.3 }}>
+      <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300,
+        fontSize: (() => {
+          // Match FlipCard's adaptive sizing so long lesson-deck questions
+          // ("Are overtones from a vibrating string in tune with…") shrink
+          // to fit instead of overflowing the question card.
+          const len = card.front.length
+          const cap = len < 50 ? 40 : len < 100 ? 32 : len < 200 ? 24 : len < 300 ? 20 : 17
+          return `clamp(16px, 3.5vw, ${cap}px)`
+        })(),
+        textAlign: 'center', letterSpacing: '0.01em', color: '#2A2318', lineHeight: 1.4,
+        maxWidth: '100%', wordBreak: 'break-word', hyphens: 'auto' }}>
         {card.front}
       </p>
     )
