@@ -128,6 +128,17 @@ import { learnPage as repeatSignsNavigation } from '@/app/learn/expression-and-p
 import { learnPage as textureMarkings }        from '@/app/learn/expression-and-performance/texture-markings/page.mdx'
 import { learnPage as readingScoresOpening }   from '@/app/learn/expression-and-performance/reading-a-scores-opening/page.mdx'
 import { learnPage as interpretationStyle }    from '@/app/learn/expression-and-performance/interpretation-and-personal-style/page.mdx'
+// X. Notation Details
+import { learnPage as beamingRules }           from '@/app/learn/notation-details/beaming-rules/page.mdx'
+import { learnPage as stemDirection }          from '@/app/learn/notation-details/stem-direction/page.mdx'
+import { learnPage as voicesOnSingleStaff }    from '@/app/learn/notation-details/voices-on-a-single-staff/page.mdx'
+import { learnPage as cautionaryAccidentals } from '@/app/learn/notation-details/cautionary-accidentals/page.mdx'
+import { learnPage as transposition }          from '@/app/learn/notation-details/transposition/page.mdx'
+import { learnPage as transposingInstruments } from '@/app/learn/notation-details/transposing-instruments/page.mdx'
+import { learnPage as scoreReading }           from '@/app/learn/notation-details/score-reading/page.mdx'
+import { learnPage as leadSheets }             from '@/app/learn/notation-details/lead-sheets-and-chord-symbols/page.mdx'
+import { learnPage as tablature }              from '@/app/learn/notation-details/tablature/page.mdx'
+import { learnPage as historicalNotation }     from '@/app/learn/notation-details/historical-notation-oddities/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -294,6 +305,17 @@ const LESSON_PAGES: LessonPageData[] = [
   textureMarkings,
   readingScoresOpening,
   interpretationStyle,
+  // X. Notation Details
+  beamingRules,
+  stemDirection,
+  voicesOnSingleStaff,
+  cautionaryAccidentals,
+  transposition,
+  transposingInstruments,
+  scoreReading,
+  leadSheets,
+  tablature,
+  historicalNotation,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES

@@ -13,6 +13,16 @@ export const learnPage = {
     { title: 'Simple and Compound Meter', href: '/learn/rhythm-and-time/simple-and-compound-meter' },
     { title: 'Time Signatures',           href: '/learn/rhythm-and-time/time-signatures' },
   ],
+  flashcards: [
+    { q: 'What\'s the fundamental rule of beaming?', a: 'Beam notes to show the beat structure — group them so the beaming visually reveals the meter\'s underlying pulse.' },
+    { q: 'How are eight eighth notes beamed in 4/4?', a: 'In two groups of four (one group per two beats) or four groups of two (one per beat). Never beamed all eight together.' },
+    { q: 'How are six eighth notes beamed in 6/8?', a: 'Two groups of three (one group per dotted-quarter beat) — reflecting compound duple meter. Visually distinguishes 6/8 from 3/4.' },
+    { q: 'How are six eighth notes beamed in 3/4?', a: 'Three groups of two (one group per quarter-note beat) — reflecting simple triple meter.' },
+    { q: 'When a beam contains mixed values (e.g., eighth + two sixteenths), how is it drawn?', a: 'A primary beam connects all three notes (the eighth-note value); a secondary beam appears only between the two sixteenths.' },
+    { q: 'What happens to beams when a rest interrupts the group?', a: 'The beam typically breaks at the rest. Some modern editions continue the beam over the rest if all notes belong to the same beat, but this is stylistic.' },
+    { q: 'Is cross-beat beaming generally allowed?', a: 'Generally avoided because it obscures the beat structure. Exceptions: deliberate syncopation, modern/contemporary music, jazz swing patterns.' },
+    { q: 'How is beam direction (up or down) determined?', a: 'By the majority of notes in the group. Most notes below the middle line → beams above (stems up); most above → beams below (stems down).' },
+  ],
 }
 
 export default function Page ({ children }) {
