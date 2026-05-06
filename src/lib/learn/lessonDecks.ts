@@ -139,6 +139,15 @@ import { learnPage as scoreReading }           from '@/app/learn/notation-detail
 import { learnPage as leadSheets }             from '@/app/learn/notation-details/lead-sheets-and-chord-symbols/page.mdx'
 import { learnPage as tablature }              from '@/app/learn/notation-details/tablature/page.mdx'
 import { learnPage as historicalNotation }     from '@/app/learn/notation-details/historical-notation-oddities/page.mdx'
+// XI. Aural Skills
+import { learnPage as whatEarTrainingIs }      from '@/app/learn/aural-skills/what-ear-training-is/page.mdx'
+import { learnPage as intervalRecognition }    from '@/app/learn/aural-skills/interval-recognition/page.mdx'
+import { learnPage as chordIdentification }    from '@/app/learn/aural-skills/chord-identification/page.mdx'
+import { learnPage as melodicDictation }       from '@/app/learn/aural-skills/melodic-dictation/page.mdx'
+import { learnPage as rhythmicDictation }      from '@/app/learn/aural-skills/rhythmic-dictation/page.mdx'
+import { learnPage as sightSinging }           from '@/app/learn/aural-skills/sight-singing/page.mdx'
+import { learnPage as solfegeMovableDo }       from '@/app/learn/aural-skills/solfege-and-movable-do/page.mdx'
+import { learnPage as developingYourEar }      from '@/app/learn/aural-skills/developing-your-ear-over-time/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -316,6 +325,15 @@ const LESSON_PAGES: LessonPageData[] = [
   leadSheets,
   tablature,
   historicalNotation,
+  // XI. Aural Skills
+  whatEarTrainingIs,
+  intervalRecognition,
+  chordIdentification,
+  melodicDictation,
+  rhythmicDictation,
+  sightSinging,
+  solfegeMovableDo,
+  developingYourEar,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES
