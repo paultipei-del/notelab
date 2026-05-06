@@ -24,7 +24,7 @@ const CHALLENGE_DECK_IDS = new Set([
 ])
 import { stopMic } from '@/components/cards/PlayItCard2'
 import PlayItCard2 from '@/components/cards/PlayItCard2'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface StudyEngineProps { deck: Deck; userId: string | null; onQuiz: () => void }
 type ViewMode = 'study' | 'browse'
@@ -53,6 +53,7 @@ function formatTopbarTime(ms: number, isPlay: boolean): string {
 
 export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const isSightReadDeckInit = deck.id.startsWith('sight-read-')
   const [viewMode, setViewMode] = useState<ViewMode>('study')
   const [showIntro, setShowIntro] = useState(deck.id.startsWith('sight-read-'))
@@ -90,11 +91,20 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
   function goPrev() { setFlipIndex(i => Math.max(i - 1, 0)); setFlipRevealed(false) }
   function goBack() {
     if (mode === 'play') { stopMic() }
-    // Route explicitly to the owning collection rather than using history.
-    // Without this, users who jumped between decks in a single session
-    // would land on the *previous* deck instead of the index page.
-    // Decks with a `tier` live on /flashcards (including `ear-to-paper`,
-    // which is an Application & Review deck despite its `ear-` id prefix).
+    // Honor a `?from=` hint when present (set by Practice links inside
+    // Learn lessons) — but only if it's a same-origin relative path so
+    // we never bounce to an arbitrary URL.
+    const from = searchParams?.get('from')
+    if (from && from.startsWith('/') && !from.startsWith('//')) {
+      router.push(from)
+      return
+    }
+    // Default: route explicitly to the owning collection rather than
+    // using history. Without this, users who jumped between decks in a
+    // single session would land on the *previous* deck instead of the
+    // index page. Decks with a `tier` live on /flashcards (including
+    // `ear-to-paper`, which is an Application & Review deck despite its
+    // `ear-` id prefix).
     const isEarTraining = deck.id.startsWith('ear-') && !deck.tier
     const target = isEarTraining ? '/ear-training' : '/flashcards'
     router.push(target)

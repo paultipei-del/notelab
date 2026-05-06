@@ -193,10 +193,16 @@ export default function LearnPageLayout({
                 Practice
               </h2>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {practice.map(p => (
+                {practice.map(p => {
+                  // Tag the link with a `from` param so the study page's
+                  // Back button can return here instead of /flashcards.
+                  const sep = p.href.includes('?') ? '&' : '?'
+                  const lessonPath = `/learn/${topic}/${subtopic}`
+                  const href = `${p.href}${sep}from=${encodeURIComponent(lessonPath)}`
+                  return (
                   <li key={p.href} style={{ marginBottom: '12px' }}>
                     <Link
-                      href={p.href}
+                      href={href}
                       style={{
                         display: 'block',
                         padding: '14px 18px',
@@ -240,7 +246,8 @@ export default function LearnPageLayout({
                       )}
                     </Link>
                   </li>
-                ))}
+                  )
+                })}
               </ul>
             </section>
           )}

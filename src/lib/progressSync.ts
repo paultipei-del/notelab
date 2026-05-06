@@ -1,15 +1,26 @@
 import { getSupabaseClient } from './supabase'
 import { CardProgress, ProgressStore } from './types'
 
-// Load progress — tries Supabase first, falls back to localStorage
-export async function loadProgress(userId: string | null): Promise<ProgressStore> {
-  if (!userId) {
-    try {
-      return JSON.parse(localStorage.getItem('notelab-progress') || '{}')
-    } catch {
-      return {}
-    }
+function readLocalProgress(): ProgressStore {
+  if (typeof window === 'undefined') return {}
+  try {
+    return JSON.parse(localStorage.getItem('notelab-progress') || '{}')
+  } catch {
+    return {}
   }
+}
+
+// Load progress — for signed-in users, merge Supabase rows with the
+// localStorage mirror. saveCardProgress writes localStorage synchronously
+// before firing the (async) Supabase upsert, so a freshly-completed session
+// can be in localStorage before the network round-trip lands. Letting
+// localStorage override the Supabase response keeps the Today strip /
+// resume / streak in sync with the most recent activity even when the
+// user navigates back to /flashcards immediately after studying.
+export async function loadProgress(userId: string | null): Promise<ProgressStore> {
+  const local = readLocalProgress()
+
+  if (!userId) return local
 
   const supabase = getSupabaseClient()
   const { data, error } = await supabase
@@ -17,18 +28,19 @@ export async function loadProgress(userId: string | null): Promise<ProgressStore
     .select('*')
     .eq('user_id', userId)
 
-  if (error || !data) return {}
+  if (error || !data) return local
 
-  const store: ProgressStore = {}
+  const remote: ProgressStore = {}
   data.forEach((row: any) => {
-    store[`${row.deck_id}-${row.card_id}`] = {
+    remote[`${row.deck_id}-${row.card_id}`] = {
       easeFactor: row.ease_factor,
       interval: row.interval,
       repetitions: row.repetitions,
       dueDate: row.due_date,
     }
   })
-  return store
+  // localStorage wins per-key — it's the freshest copy on this device.
+  return { ...remote, ...local }
 }
 
 // Save a single card's progress
