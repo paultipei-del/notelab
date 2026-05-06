@@ -67,6 +67,87 @@ import { learnPage as intervalInversions }     from '@/app/learn/intervals/inter
 import { learnPage as enharmonicIntervals }    from '@/app/learn/intervals/enharmonic-intervals/page.mdx'
 import { learnPage as compoundIntervals }      from '@/app/learn/intervals/compound-intervals/page.mdx'
 import { learnPage as cdRevisited }            from '@/app/learn/intervals/consonance-and-dissonance-revisited/page.mdx'
+// V. Scales
+import { learnPage as whatAScaleIs }           from '@/app/learn/scales/what-a-scale-is/page.mdx'
+import { learnPage as theMajorScale }          from '@/app/learn/scales/the-major-scale/page.mdx'
+import { learnPage as scaleDegreeNames }       from '@/app/learn/scales/scale-degrees-and-their-names/page.mdx'
+import { learnPage as theNaturalMinorScale }   from '@/app/learn/scales/the-natural-minor-scale/page.mdx'
+import { learnPage as theHarmonicMinorScale }  from '@/app/learn/scales/the-harmonic-minor-scale/page.mdx'
+import { learnPage as theMelodicMinorScale }   from '@/app/learn/scales/the-melodic-minor-scale/page.mdx'
+import { learnPage as theModes }               from '@/app/learn/scales/the-modes/page.mdx'
+import { learnPage as pentatonicScales }       from '@/app/learn/scales/pentatonic-scales/page.mdx'
+import { learnPage as bluesScales }            from '@/app/learn/scales/blues-scales/page.mdx'
+import { learnPage as chromaticScaleSpelling } from '@/app/learn/scales/chromatic-scale-spelling/page.mdx'
+import { learnPage as wholeToneOctatonic }     from '@/app/learn/scales/whole-tone-and-octatonic-scales/page.mdx'
+// VI. Pitch / Key Signatures
+import { learnPage as whatAKeySignatureIs }    from '@/app/learn/pitch/what-a-key-signature-is/page.mdx'
+import { learnPage as majorKeySignatures }     from '@/app/learn/pitch/major-key-signatures/page.mdx'
+import { learnPage as minorKeySignatures }     from '@/app/learn/pitch/minor-key-signatures/page.mdx'
+import { learnPage as relativeMajorMinor }     from '@/app/learn/pitch/relative-major-and-minor/page.mdx'
+import { learnPage as parallelMajorMinor }     from '@/app/learn/pitch/parallel-major-and-minor/page.mdx'
+import { learnPage as theCircleOfFifths }      from '@/app/learn/pitch/the-circle-of-fifths/page.mdx'
+import { learnPage as modulation }             from '@/app/learn/pitch/modulation/page.mdx'
+// VII. Harmony
+import { learnPage as whatAChordIs }           from '@/app/learn/harmony/what-a-chord-is/page.mdx'
+import { learnPage as triads }                 from '@/app/learn/harmony/triads/page.mdx'
+import { learnPage as triadQualities }         from '@/app/learn/harmony/triad-qualities/page.mdx'
+import { learnPage as triadsOnScaleDegrees }   from '@/app/learn/harmony/triads-on-scale-degrees/page.mdx'
+import { learnPage as triadInversions }        from '@/app/learn/harmony/triad-inversions/page.mdx'
+import { learnPage as figuredBass }            from '@/app/learn/harmony/figured-bass/page.mdx'
+import { learnPage as seventhChords }          from '@/app/learn/harmony/seventh-chords/page.mdx'
+import { learnPage as seventhChordInversions } from '@/app/learn/harmony/seventh-chord-inversions/page.mdx'
+import { learnPage as romanNumeralAnalysis }   from '@/app/learn/harmony/roman-numeral-analysis/page.mdx'
+import { learnPage as primaryChords }          from '@/app/learn/harmony/primary-chords/page.mdx'
+import { learnPage as secondaryChords }        from '@/app/learn/harmony/secondary-chords/page.mdx'
+import { learnPage as theLeadingToneChord }    from '@/app/learn/harmony/the-leading-tone-chord/page.mdx'
+import { learnPage as cadences }               from '@/app/learn/harmony/cadences/page.mdx'
+import { learnPage as nonChordTones }          from '@/app/learn/harmony/non-chord-tones/page.mdx'
+import { learnPage as voiceLeading }           from '@/app/learn/harmony/voice-leading/page.mdx'
+// VIII. Form and Structure
+import { learnPage as motivePhrasePeriod }     from '@/app/learn/form-and-structure/motive-phrase-and-period/page.mdx'
+import { learnPage as binaryForm }             from '@/app/learn/form-and-structure/binary-form/page.mdx'
+import { learnPage as ternaryForm }            from '@/app/learn/form-and-structure/ternary-form/page.mdx'
+import { learnPage as rondoForm }              from '@/app/learn/form-and-structure/rondo-form/page.mdx'
+import { learnPage as themeAndVariations }     from '@/app/learn/form-and-structure/theme-and-variations/page.mdx'
+import { learnPage as sonataForm }             from '@/app/learn/form-and-structure/sonata-form/page.mdx'
+import { learnPage as fugueImitative }         from '@/app/learn/form-and-structure/fugue-and-imitative-counterpoint/page.mdx'
+import { learnPage as twelveBarBlues }         from '@/app/learn/form-and-structure/12-bar-blues/page.mdx'
+import { learnPage as thirtyTwoBarSongForm }   from '@/app/learn/form-and-structure/32-bar-song-form/page.mdx'
+// IX. Expression and Performance
+import { learnPage as dynamics }               from '@/app/learn/expression-and-performance/dynamics/page.mdx'
+import { learnPage as crescendoDecrescendo }   from '@/app/learn/expression-and-performance/crescendo-and-decrescendo/page.mdx'
+import { learnPage as tempoMarkings }          from '@/app/learn/expression-and-performance/tempo-markings/page.mdx'
+import { learnPage as tempoChanges }           from '@/app/learn/expression-and-performance/tempo-changes/page.mdx'
+import { learnPage as articulation }           from '@/app/learn/expression-and-performance/articulation/page.mdx'
+import { learnPage as phrasingAndSlurs }       from '@/app/learn/expression-and-performance/phrasing-and-slurs/page.mdx'
+import { learnPage as italianTerms }           from '@/app/learn/expression-and-performance/italian-terms/page.mdx'
+import { learnPage as germanFrenchTerms }      from '@/app/learn/expression-and-performance/german-and-french-terms/page.mdx'
+import { learnPage as ornaments }              from '@/app/learn/expression-and-performance/ornaments/page.mdx'
+import { learnPage as pedalMarkings }          from '@/app/learn/expression-and-performance/pedal-markings/page.mdx'
+import { learnPage as repeatSignsNavigation } from '@/app/learn/expression-and-performance/repeat-signs-and-navigation/page.mdx'
+import { learnPage as textureMarkings }        from '@/app/learn/expression-and-performance/texture-markings/page.mdx'
+import { learnPage as readingScoresOpening }   from '@/app/learn/expression-and-performance/reading-a-scores-opening/page.mdx'
+import { learnPage as interpretationStyle }    from '@/app/learn/expression-and-performance/interpretation-and-personal-style/page.mdx'
+// X. Notation Details
+import { learnPage as beamingRules }           from '@/app/learn/notation-details/beaming-rules/page.mdx'
+import { learnPage as stemDirection }          from '@/app/learn/notation-details/stem-direction/page.mdx'
+import { learnPage as voicesOnSingleStaff }    from '@/app/learn/notation-details/voices-on-a-single-staff/page.mdx'
+import { learnPage as cautionaryAccidentals } from '@/app/learn/notation-details/cautionary-accidentals/page.mdx'
+import { learnPage as transposition }          from '@/app/learn/notation-details/transposition/page.mdx'
+import { learnPage as transposingInstruments } from '@/app/learn/notation-details/transposing-instruments/page.mdx'
+import { learnPage as scoreReading }           from '@/app/learn/notation-details/score-reading/page.mdx'
+import { learnPage as leadSheets }             from '@/app/learn/notation-details/lead-sheets-and-chord-symbols/page.mdx'
+import { learnPage as tablature }              from '@/app/learn/notation-details/tablature/page.mdx'
+import { learnPage as historicalNotation }     from '@/app/learn/notation-details/historical-notation-oddities/page.mdx'
+// XI. Aural Skills
+import { learnPage as whatEarTrainingIs }      from '@/app/learn/aural-skills/what-ear-training-is/page.mdx'
+import { learnPage as intervalRecognition }    from '@/app/learn/aural-skills/interval-recognition/page.mdx'
+import { learnPage as chordIdentification }    from '@/app/learn/aural-skills/chord-identification/page.mdx'
+import { learnPage as melodicDictation }       from '@/app/learn/aural-skills/melodic-dictation/page.mdx'
+import { learnPage as rhythmicDictation }      from '@/app/learn/aural-skills/rhythmic-dictation/page.mdx'
+import { learnPage as sightSinging }           from '@/app/learn/aural-skills/sight-singing/page.mdx'
+import { learnPage as solfegeMovableDo }       from '@/app/learn/aural-skills/solfege-and-movable-do/page.mdx'
+import { learnPage as developingYourEar }      from '@/app/learn/aural-skills/developing-your-ear-over-time/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -172,6 +253,87 @@ const LESSON_PAGES: LessonPageData[] = [
   enharmonicIntervals,
   compoundIntervals,
   cdRevisited,
+  // V. Scales
+  whatAScaleIs,
+  theMajorScale,
+  scaleDegreeNames,
+  theNaturalMinorScale,
+  theHarmonicMinorScale,
+  theMelodicMinorScale,
+  theModes,
+  pentatonicScales,
+  bluesScales,
+  chromaticScaleSpelling,
+  wholeToneOctatonic,
+  // VI. Pitch / Key Signatures
+  whatAKeySignatureIs,
+  majorKeySignatures,
+  minorKeySignatures,
+  relativeMajorMinor,
+  parallelMajorMinor,
+  theCircleOfFifths,
+  modulation,
+  // VII. Harmony
+  whatAChordIs,
+  triads,
+  triadQualities,
+  triadsOnScaleDegrees,
+  triadInversions,
+  figuredBass,
+  seventhChords,
+  seventhChordInversions,
+  romanNumeralAnalysis,
+  primaryChords,
+  secondaryChords,
+  theLeadingToneChord,
+  cadences,
+  nonChordTones,
+  voiceLeading,
+  // VIII. Form and Structure
+  motivePhrasePeriod,
+  binaryForm,
+  ternaryForm,
+  rondoForm,
+  themeAndVariations,
+  sonataForm,
+  fugueImitative,
+  twelveBarBlues,
+  thirtyTwoBarSongForm,
+  // IX. Expression and Performance
+  dynamics,
+  crescendoDecrescendo,
+  tempoMarkings,
+  tempoChanges,
+  articulation,
+  phrasingAndSlurs,
+  italianTerms,
+  germanFrenchTerms,
+  ornaments,
+  pedalMarkings,
+  repeatSignsNavigation,
+  textureMarkings,
+  readingScoresOpening,
+  interpretationStyle,
+  // X. Notation Details
+  beamingRules,
+  stemDirection,
+  voicesOnSingleStaff,
+  cautionaryAccidentals,
+  transposition,
+  transposingInstruments,
+  scoreReading,
+  leadSheets,
+  tablature,
+  historicalNotation,
+  // XI. Aural Skills
+  whatEarTrainingIs,
+  intervalRecognition,
+  chordIdentification,
+  melodicDictation,
+  rhythmicDictation,
+  sightSinging,
+  solfegeMovableDo,
+  developingYourEar,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES

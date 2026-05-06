@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { DECKS } from '@/lib/decks'
 import { loadProgress } from '@/lib/progressSync'
+import { readDeckActivity, DeckActivityMap } from '@/lib/deckActivity'
 import { Deck, ProgressStore } from '@/lib/types'
 
 import s from '@/components/flashcards/library/library.module.css'
@@ -136,6 +137,7 @@ export default function FlashcardsPage() {
   const { user, loading: authLoading } = useAuth()
   const [progress, setProgress] = useState<ProgressStore>({})
   const [progressLoaded, setProgressLoaded] = useState(false)
+  const [deckActivity, setDeckActivity] = useState<DeckActivityMap>({})
   const [query, setQuery] = useState('')
   const [view, setView] = useState<LibraryView>('shelves')
   const [filter, setFilter] = useState('all')
@@ -150,6 +152,7 @@ export default function FlashcardsPage() {
     loadProgress(user?.id ?? null).then(p => {
       if (!cancelled) {
         setProgress(p)
+        setDeckActivity(readDeckActivity())
         setProgressLoaded(true)
       }
     })
@@ -215,13 +218,21 @@ export default function FlashcardsPage() {
   }, 0)
   const estMinutes = Math.max(1, Math.round(totalDue * 0.25))
 
-  // Resume target — most-recently-seen deck with cards still due/learning
+  // Resume target — most-recently-seen deck with cards still due/learning.
+  // SM-2 progress only updates on rate(), which doesn't fire in flip mode,
+  // so we fold in deckActivity (visit timestamp written on every study load)
+  // and take the max so flip-mode reviews count too.
+  const lastTouchedAt = (d: DeckWithSummary): number => {
+    const sm2 = d.summary.lastSeenAt ?? 0
+    const visit = deckActivity[d.deck.id] ?? 0
+    return Math.max(sm2, visit)
+  }
   const resumeCandidate = [...allDecks]
-    .filter(d => d.summary.lastSeenAt && d.book.state !== 'mastered')
-    .sort((a, b) => (b.summary.lastSeenAt ?? 0) - (a.summary.lastSeenAt ?? 0))[0]
+    .filter(d => lastTouchedAt(d) > 0 && d.book.state !== 'mastered')
+    .sort((a, b) => lastTouchedAt(b) - lastTouchedAt(a))[0]
   const resumeName = resumeCandidate?.deck.title
-  const resumeAgo = resumeCandidate?.summary.lastSeenAt
-    ? relTimeShort(resumeCandidate.summary.lastSeenAt)
+  const resumeAgo = resumeCandidate
+    ? relTimeShort(lastTouchedAt(resumeCandidate))
     : undefined
   const resumeHref = resumeCandidate
     ? `/study/${resumeCandidate.deck.id}`

@@ -21,6 +21,16 @@ export const learnPage = {
     { title: 'Major Scales', href: '/learn/pitch/major-scales' },
     { title: 'Enharmonic Equivalents', href: '/learn/pitch/enharmonic-equivalents' },
   ],
+  flashcards: [
+    { q: 'How many major key signatures exist?', a: 'Fifteen, one with no accidentals (C major), seven with sharps, seven with flats.' },
+    { q: 'What is the order of sharps in major key signatures?', a: 'F C G D A E B, each new sharp key adds the next sharp in this order.' },
+    { q: 'How do you find a sharp-key tonic from its signature?', a: 'Take the last sharp and go up a half step. Three sharps end on G♯; up a half step is A → A major.' },
+    { q: 'How do you find a flat-key tonic from its signature?', a: 'The second-to-last flat is the tonic. Three flats (B♭ E♭ A♭): the second-to-last is E♭ → E♭ major. (F major, with one flat, is memorized.)' },
+    { q: 'Why does each step around the circle of fifths add one accidental?', a: 'Moving up a fifth, the new tonic\'s 7th degree must be raised a half step (one new sharp = the new leading tone). Moving down a fifth, the 4th degree of the new key requires one new flat.' },
+    { q: 'What are the three enharmonic major-key pairs?', a: 'F♯ major / G♭ major (both 6 accidentals), C♯ major / D♭ major (7 sharps vs. 5 flats), B major / C♭ major (5 sharps vs. 7 flats). Composers pick the spelling that fits the harmonic context.' },
+    { q: 'Why isn\'t there a key with both sharps and flats in its signature?', a: 'The two systems are alternative ways to write the same set of pitches and are never combined. A signature is always all sharps or all flats.' },
+    { q: 'What is the leading-tone rule for sharp keys?', a: 'The last sharp in a sharp-key signature is always the leading tone (7th degree) of that key, a half step below the tonic.' },
+  ],
 }
 
 export default function Page ({ children }) {

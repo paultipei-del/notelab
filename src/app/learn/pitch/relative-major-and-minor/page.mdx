@@ -14,6 +14,16 @@ export const learnPage = {
     { title: 'Parallel Major and Minor',   href: '/learn/pitch/parallel-major-and-minor' },
     { title: 'The Natural Minor Scale',    href: '/learn/scales/the-natural-minor-scale' },
   ],
+  flashcards: [
+    { q: 'What does it mean for two keys to be "relative"?', a: 'They share the same key signature (and therefore the same seven pitches) but have different tonics.' },
+    { q: 'What is the relative minor of C major?', a: 'A minor. C major\'s 6th degree is A; both share zero accidentals.' },
+    { q: 'How do you find the relative minor from a major key?', a: 'Count down a minor 3rd from the major tonic, or equivalently, take the 6th degree of the major scale.' },
+    { q: 'How do you find the relative major from a minor key?', a: 'Count up a minor 3rd from the minor tonic, or equivalently, take the 3rd degree of the natural minor scale.' },
+    { q: 'Why does modulation between relative keys feel smooth?', a: 'Because the two keys share all seven pitches. Moving between them needs no new accidentals, only a shift in tonal emphasis.' },
+    { q: 'What\'s the difference between relative and parallel keys?', a: 'Relative keys share key signature and pitches but differ in tonic (C major / A minor). Parallel keys share tonic but differ in key signature and pitches (C major / C minor).' },
+    { q: 'How many relative pairs exist?', a: 'Fifteen, one for each key signature, from seven sharps to seven flats.' },
+    { q: 'What is the relative major of D minor?', a: 'F major (one flat). D up a minor 3rd is F.' },
+  ],
 }
 
 export default function Page ({ children }) {

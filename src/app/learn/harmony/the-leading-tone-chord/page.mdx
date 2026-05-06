@@ -14,6 +14,16 @@ export const learnPage = {
     { title: 'Seventh Chords',         href: '/learn/harmony/seventh-chords' },
     { title: 'Cadences',               href: '/learn/harmony/cadences' },
   ],
+  flashcards: [
+    { q: 'What is the leading-tone chord?', a: 'vii°, the diminished triad built on the 7th scale degree. In C major: B-D-F. Functions as a substitute for V7.' },
+    { q: 'Why does vii° behave like V7?', a: 'It contains the top three notes of V7 (in C major, vii° = B-D-F = V7 minus its root G). The tritone between B and F provides the same resolution pull.' },
+    { q: 'In what inversion does vii° most often appear?', a: 'First inversion, vii°⁶, because the diminished triad in root position is too unstable, and first inversion produces smooth stepwise voice leading to I.' },
+    { q: 'What is the half-diminished seventh chord (viiø7)?', a: 'vii° + minor 7th, used in major keys (e.g., B-D-F-A in C major). Slightly softer than fully diminished.' },
+    { q: 'What is the fully diminished seventh chord (vii°7)?', a: 'vii° + diminished 7th, used in minor keys with raised 7th (e.g., G♯-B-D-F in A harmonic minor). All four notes are minor 3rds apart.' },
+    { q: 'Why is vii°7 a powerful modulation chord?', a: 'Its symmetric stack of minor 3rds means any of its notes can be reinterpreted enharmonically as a new leading tone, allowing resolution to any of four different keys.' },
+    { q: 'When would you choose vii° over V7?', a: 'For smoother, less assertive cadences; when the bass is moving stepwise (vii°⁶ → I keeps bass smooth); for a more subtle harmonic color than V7\'s full dominant weight.' },
+    { q: 'Why is vii° always diminished in major?', a: 'The interval from scale degree 7 to scale degree 4 (its 5th) is always a tritone in any major scale, producing the diminished root-to-5th interval that defines the diminished triad.' },
+  ],
 }
 
 export default function Page ({ children }) {

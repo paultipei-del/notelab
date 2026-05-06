@@ -13,6 +13,16 @@ export const learnPage = {
     { title: 'Beaming Rules',               href: '/learn/notation-details/beaming-rules' },
     { title: 'Voices on a Single Staff',    href: '/learn/notation-details/voices-on-a-single-staff' },
   ],
+  flashcards: [
+    { q: 'What\'s the basic stem direction rule for a single voice?', a: 'Notes below the middle line have stems pointing UP (right of notehead). Notes above the middle line have stems pointing DOWN (left of notehead).' },
+    { q: 'Where does the middle line fall in treble clef?', a: 'The B line (middle B). Notes below B have upward stems; notes above B have downward stems.' },
+    { q: 'What happens for notes ON the middle line?', a: 'Stem direction is flexible, chosen for visual balance with surrounding notes.' },
+    { q: 'How does stem direction work with multiple voices on a staff?', a: 'Upper voice has stems UP always (regardless of pitch); lower voice has stems DOWN always. The voice is identified by stem direction, not pitch position.' },
+    { q: 'In a 4-voice SATB grand staff, what are the stem rules?', a: 'Treble staff: soprano stems up, alto stems down. Bass staff: tenor stems up, bass stems down.' },
+    { q: 'What\'s the standard stem length?', a: 'Typically one octave\'s worth of space on the staff. Stems may be slightly longer to reach a natural endpoint outside the staff.' },
+    { q: 'How are stems handled in chords?', a: 'Direction follows the same rules based on the outermost notes. When two notes a 2nd apart appear in a chord, they sit on opposite sides of the stem (the "zigzag" look).' },
+    { q: 'Where do articulation markings sit relative to stems?', a: 'Opposite the stem: stem up = markings below the note; stem down = markings above. This keeps markings visible.' },
+  ],
 }
 
 export default function Page ({ children }) {

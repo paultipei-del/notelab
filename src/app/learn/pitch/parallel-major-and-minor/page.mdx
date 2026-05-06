@@ -14,6 +14,16 @@ export const learnPage = {
     { title: 'The Major Scale',            href: '/learn/scales/the-major-scale' },
     { title: 'The Natural Minor Scale',    href: '/learn/scales/the-natural-minor-scale' },
   ],
+  flashcards: [
+    { q: 'What does it mean for two keys to be "parallel"?', a: 'They share the same tonic but have different key signatures (and therefore different pitch collections).' },
+    { q: 'What is the parallel minor of C major?', a: 'C minor, same tonic (C), but with three flats (B♭, E♭, A♭) instead of zero.' },
+    { q: 'Which scale degrees change when moving from major to parallel minor?', a: 'The 3rd, 6th, and 7th, all lowered a half step. The tonic, 2nd, 4th, and 5th stay the same.' },
+    { q: 'How does the key signature shift between parallel keys?', a: 'Always three steps in the flat direction (counter-clockwise around the circle of fifths) when moving from major to minor; three steps in the sharp direction going the other way.' },
+    { q: 'What is a Picardy third?', a: 'A piece in a minor key ending on its parallel-major tonic chord, a "surprise resolution" using a major 3rd instead of minor. A standard Baroque closing gesture.' },
+    { q: 'What is a borrowed chord?', a: 'A chord taken from the parallel key for momentary color, e.g., a C major piece using a iv (F minor) borrowed from C minor for a brief dark moment.' },
+    { q: 'Which is more dramatic, relative or parallel modulation?', a: 'Parallel, same tonic, completely different character. Relative modulation is smoother because the two keys share all seven pitches.' },
+    { q: 'What is modal interchange?', a: 'A jazz/contemporary technique that generalizes the parallel-key idea, borrowing chords from any parallel mode (parallel Dorian, Phrygian, etc.) for color.' },
+  ],
 }
 
 export default function Page ({ children }) {

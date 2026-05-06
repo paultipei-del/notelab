@@ -15,6 +15,16 @@ export const learnPage = {
     { title: 'Primary Chords, I, IV, V',     href: '/learn/harmony/primary-chords' },
     { title: 'Cadences',                      href: '/learn/harmony/cadences' },
   ],
+  flashcards: [
+    { q: 'What does Roman numeral analysis label?', a: 'Each chord by the scale degree of its root (I, ii, iii, IV, V, vi, vii°), making harmonic relationships visible across any key.' },
+    { q: 'How is chord quality encoded in Roman numerals?', a: 'Case, uppercase for major (I, IV, V), lowercase for minor (ii, iii, vi), with ° for diminished (vii°) and + for augmented (III+).' },
+    { q: 'What does V7 mean?', a: 'A seventh chord built on the 5th scale degree, the dominant seventh. In C major, V7 = G-B-D-F.' },
+    { q: 'What does ii⁶ mean?', a: 'A first-inversion minor chord built on the 2nd scale degree. In C major, ii⁶ = D-F-A with F in the bass.' },
+    { q: 'Why use Roman numerals instead of letter names?', a: 'They show function, not just identity. Roman numeral analyses are transposable across keys, the same I-V-vi-IV applies to every key.' },
+    { q: 'What does V/V mean?', a: 'A secondary dominant, the dominant of the dominant. In C major, V is G, so V/V is the dominant of G, which is D major.' },
+    { q: 'What\'s the most famous Roman numeral progression in jazz?', a: 'ii7-V7-I7, the central pre-dominant/dominant/tonic motion of jazz harmony.' },
+    { q: 'How do Roman numerals handle modulation?', a: 'Either continue using the original key\'s numerals (with chromatic labels for foreign chords) or switch to the new key\'s numerals at the modulation point.' },
+  ],
 }
 
 export default function Page ({ children }) {
