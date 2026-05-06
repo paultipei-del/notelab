@@ -79,6 +79,14 @@ import { learnPage as pentatonicScales }       from '@/app/learn/scales/pentaton
 import { learnPage as bluesScales }            from '@/app/learn/scales/blues-scales/page.mdx'
 import { learnPage as chromaticScaleSpelling } from '@/app/learn/scales/chromatic-scale-spelling/page.mdx'
 import { learnPage as wholeToneOctatonic }     from '@/app/learn/scales/whole-tone-and-octatonic-scales/page.mdx'
+// VI. Pitch / Key Signatures
+import { learnPage as whatAKeySignatureIs }    from '@/app/learn/pitch/what-a-key-signature-is/page.mdx'
+import { learnPage as majorKeySignatures }     from '@/app/learn/pitch/major-key-signatures/page.mdx'
+import { learnPage as minorKeySignatures }     from '@/app/learn/pitch/minor-key-signatures/page.mdx'
+import { learnPage as relativeMajorMinor }     from '@/app/learn/pitch/relative-major-and-minor/page.mdx'
+import { learnPage as parallelMajorMinor }     from '@/app/learn/pitch/parallel-major-and-minor/page.mdx'
+import { learnPage as theCircleOfFifths }      from '@/app/learn/pitch/the-circle-of-fifths/page.mdx'
+import { learnPage as modulation }             from '@/app/learn/pitch/modulation/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -196,6 +204,14 @@ const LESSON_PAGES: LessonPageData[] = [
   bluesScales,
   chromaticScaleSpelling,
   wholeToneOctatonic,
+  // VI. Pitch / Key Signatures
+  whatAKeySignatureIs,
+  majorKeySignatures,
+  minorKeySignatures,
+  relativeMajorMinor,
+  parallelMajorMinor,
+  theCircleOfFifths,
+  modulation,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES

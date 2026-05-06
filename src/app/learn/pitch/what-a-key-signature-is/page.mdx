@@ -14,6 +14,16 @@ export const learnPage = {
     { title: 'Minor Key Signatures', href: '/learn/pitch/minor-key-signatures' },
     { title: 'The Major Scale',      href: '/learn/scales/the-major-scale' },
   ],
+  flashcards: [
+    { q: 'What is a key signature?', a: 'A cluster of sharps or flats placed at the start of every staff line, indicating which notes are altered throughout the piece — notational shorthand for the scale the music is built on.' },
+    { q: 'Where is the key signature placed on a staff line?', a: 'Immediately after the clef and before the time signature. Order: clef, key signature, time signature.' },
+    { q: 'What is the order of sharps in a key signature?', a: 'F♯, C♯, G♯, D♯, A♯, E♯, B♯ — always added in this fixed order.' },
+    { q: 'What is the order of flats in a key signature?', a: 'B♭, E♭, A♭, D♭, G♭, C♭, F♭ — the reverse letter order of sharps.' },
+    { q: 'Why is the key signature reproduced at the start of every staff line?', a: 'Readability — it keeps the key fresh in the reader\'s mind and lets a performer open to any page and immediately see the key.' },
+    { q: 'How does a key signature differ from an accidental?', a: 'An accidental affects only one note within one measure. A key signature affects every note of that pitch class throughout the piece, in every octave, until a key change replaces it.' },
+    { q: 'Does the key signature alone tell you whether a piece is major or minor?', a: 'No. Each key signature corresponds to two keys — a major and its relative minor. The actual key is determined by the music itself (final chord, opening, melodic emphasis).' },
+    { q: 'What happens when the key changes mid-piece?', a: 'A new key signature is written at the change point (usually a barline). Previous accidentals not in the new signature are typically cancelled with naturals before the new signature appears.' },
+  ],
 }
 
 export default function Page ({ children }) {
