@@ -103,6 +103,16 @@ import { learnPage as theLeadingToneChord }    from '@/app/learn/harmony/the-lea
 import { learnPage as cadences }               from '@/app/learn/harmony/cadences/page.mdx'
 import { learnPage as nonChordTones }          from '@/app/learn/harmony/non-chord-tones/page.mdx'
 import { learnPage as voiceLeading }           from '@/app/learn/harmony/voice-leading/page.mdx'
+// VIII. Form and Structure
+import { learnPage as motivePhrasePeriod }     from '@/app/learn/form-and-structure/motive-phrase-and-period/page.mdx'
+import { learnPage as binaryForm }             from '@/app/learn/form-and-structure/binary-form/page.mdx'
+import { learnPage as ternaryForm }            from '@/app/learn/form-and-structure/ternary-form/page.mdx'
+import { learnPage as rondoForm }              from '@/app/learn/form-and-structure/rondo-form/page.mdx'
+import { learnPage as themeAndVariations }     from '@/app/learn/form-and-structure/theme-and-variations/page.mdx'
+import { learnPage as sonataForm }             from '@/app/learn/form-and-structure/sonata-form/page.mdx'
+import { learnPage as fugueImitative }         from '@/app/learn/form-and-structure/fugue-and-imitative-counterpoint/page.mdx'
+import { learnPage as twelveBarBlues }         from '@/app/learn/form-and-structure/12-bar-blues/page.mdx'
+import { learnPage as thirtyTwoBarSongForm }   from '@/app/learn/form-and-structure/32-bar-song-form/page.mdx'
 
 // Topic slug from `topicTree.ts` → topic tag used by the library to color
 // & shelf the deck. Picks the closest concept shelf; lessons whose parent
@@ -244,6 +254,16 @@ const LESSON_PAGES: LessonPageData[] = [
   cadences,
   nonChordTones,
   voiceLeading,
+  // VIII. Form and Structure
+  motivePhrasePeriod,
+  binaryForm,
+  ternaryForm,
+  rondoForm,
+  themeAndVariations,
+  sonataForm,
+  fugueImitative,
+  twelveBarBlues,
+  thirtyTwoBarSongForm,
 ]
 
 export const LESSON_DECKS: Deck[] = LESSON_PAGES
