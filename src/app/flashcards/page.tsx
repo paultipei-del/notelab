@@ -419,6 +419,7 @@ function ListView({ items }: { items: DeckWithSummary[] }) {
       <div className={s.listHead}>
         <span />
         <span>Volume</span>
+        <span>Category</span>
         <span>Progress</span>
         <span>Due</span>
         <span>Cards</span>
@@ -440,10 +441,8 @@ function ListView({ items }: { items: DeckWithSummary[] }) {
             data-topic={d.book.topic ?? undefined}
           >
             <div className={s.listSwatch} />
-            <div className={s.listName}>
-              {d.deck.title}
-              {d.deck.category && <small>{d.deck.category}</small>}
-            </div>
+            <div className={s.listName}>{d.deck.title}</div>
+            <div className={s.listCategory}>{d.deck.category ?? '—'}</div>
             <div className={`${s.listCol} ${s.listColBar}`}>
               <div className="b" style={{
                 flex: 1, height: 4,

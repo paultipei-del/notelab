@@ -807,7 +807,7 @@
 }
 .listHead {
   display: grid;
-  grid-template-columns: 18px 1fr 110px 90px 90px 90px;
+  grid-template-columns: 18px 1fr 140px 110px 90px 90px 90px;
   gap: 16px;
   padding: 8px 8px;
   border-bottom: 1px solid #D9CFAE;
@@ -818,7 +818,7 @@
 }
 .listRow {
   display: grid;
-  grid-template-columns: 18px 1fr 110px 90px 90px 90px;
+  grid-template-columns: 18px 1fr 140px 110px 90px 90px 90px;
   gap: 16px;
   padding: 12px 8px;
   border-bottom: 1px solid #E5DCC0;
@@ -849,12 +849,10 @@
   font-weight: 500; font-size: 18px;
   color: #2A2318;
 }
-.listName small {
-  display: block;
+.listCategory {
   font-family: var(--font-jost), sans-serif;
   font-size: 11px; color: #7A7060;
   font-weight: 300; letter-spacing: 0.02em;
-  margin-top: 2px;
 }
 .listCol {
   font-family: var(--font-jost), sans-serif;
