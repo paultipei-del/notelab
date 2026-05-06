@@ -62,7 +62,7 @@ import type {
   Voice,
   ClefName,
 } from '@/lib/learn/visuals/notation-types'
-import { ARTIC_GLYPHS, ORNAMENT_GLYPHS, DYNAMIC_GLYPHS } from '@/lib/bravura'
+import { ARTIC_GLYPHS, ORNAMENT_GLYPHS, DYNAMIC_GLYPHS, PEDAL_GLYPHS, B } from '@/lib/bravura'
 
 interface MusicalExampleProps {
   /** v2 input: full Score. Takes precedence over `elements`+`clef`. */
@@ -502,6 +502,16 @@ export function MusicalExample(props: MusicalExampleProps) {
   const footroom = Math.round(48 * T.scale + 12)
   const annotationHeadroom = annotations && annotations.length > 0
     ? Math.round(34 * T.scale + 10) : 0
+  const hasTempoMarkings = (score.tempoMarkings?.length ?? 0) > 0
+  const tempoHeadroom = hasTempoMarkings ? Math.round(28 * T.scale + 10) : 0
+  const hasVoiceMarks = staves.some(stave =>
+    stave.voices.some(v =>
+      (v.dynamics?.length ?? 0) > 0
+      || (v.hairpins?.length ?? 0) > 0
+      || (v.pedalMarks?.length ?? 0) > 0,
+    ),
+  )
+  const voiceMarksFootroom = hasVoiceMarks ? Math.round(36 * T.scale + 12) : 0
   const measureNumberFootroom = showMeasureNumbers
     ? Math.round(20 * T.scale + 6) : 0
   const systemSpacing = Math.round(60 * T.scale + 24)
@@ -590,7 +600,7 @@ export function MusicalExample(props: MusicalExampleProps) {
 
   // Per-system layout.
   const systems: SystemLayout[] = []
-  let curSystemTop = headroom + annotationHeadroom
+  let curSystemTop = headroom + annotationHeadroom + tempoHeadroom
 
   systemSlices.forEach(([sliceStart, sliceEnd], systemIdx) => {
     const showTimeSig = systemIdx === 0
@@ -812,7 +822,7 @@ export function MusicalExample(props: MusicalExampleProps) {
       bodyStartX,
     })
 
-    curSystemTop += oneSystemHeight + footroom + measureNumberFootroom + systemSpacing
+    curSystemTop += oneSystemHeight + footroom + voiceMarksFootroom + measureNumberFootroom + systemSpacing
   })
 
   // ── Equal-length system stretch (page-fill) ──
@@ -888,6 +898,63 @@ export function MusicalExample(props: MusicalExampleProps) {
       })
     })
   })
+
+  // Per-(stave, voice) cumulative-beat → x lookup. Used to resolve
+  // dynamics / hairpins / pedal / tempo "beat" anchors to a screen x.
+  // beat 0 = downbeat of measure 0; beat == numerator = downbeat of measure 1.
+  // Mid-piece time-signature changes aren't yet honored here (the code
+  // assumes one constant time signature, matching the rest of v2).
+  interface TimingEntry {
+    cumBeat: number
+    beatLen: number
+    x: number
+    systemIdx: number
+    staffTop: number
+    measureRightX: number
+  }
+  const voiceTiming = new Map<string, TimingEntry[]>()
+  systems.forEach(sys => {
+    sys.measures.forEach(mLayout => {
+      const measureStart = mLayout.globalIdx * timeSignature.numerator
+      mLayout.staves.forEach(staveLayout => {
+        staveLayout.voices.forEach(voiceLayout => {
+          const key = `s${staveLayout.staveIdx}v${voiceLayout.voiceIdx}`
+          if (!voiceTiming.has(key)) voiceTiming.set(key, [])
+          const arr = voiceTiming.get(key)!
+          voiceLayout.placed.forEach(p => {
+            arr.push({
+              cumBeat: measureStart + p.measured.beatStart,
+              beatLen: p.measured.beatLen,
+              x: p.x,
+              systemIdx: sys.systemIdx,
+              staffTop: staveLayout.staffTop,
+              measureRightX: mLayout.x0 + mLayout.width,
+            })
+          })
+        })
+      })
+    })
+  })
+  voiceTiming.forEach(arr => arr.sort((a, b) => a.cumBeat - b.cumBeat))
+
+  function resolveBeat(si: number, vi: number, beat: number): TimingEntry | null {
+    const arr = voiceTiming.get(`s${si}v${vi}`)
+    if (!arr || arr.length === 0) return null
+    // Prefer the entry whose [cumBeat, cumBeat+beatLen) contains `beat`.
+    for (const entry of arr) {
+      if (beat >= entry.cumBeat - 1e-6 && beat < entry.cumBeat + entry.beatLen - 1e-6) {
+        return entry
+      }
+    }
+    // Fall back: nearest by cumBeat distance (handles past-end beats).
+    let best = arr[0]
+    let bestDist = Math.abs(arr[0].cumBeat - beat)
+    for (const e of arr) {
+      const d = Math.abs(e.cumBeat - beat)
+      if (d < bestDist) { best = e; bestDist = d }
+    }
+    return best
+  }
 
   // ── Audio playback ────────────────────────────────────────────────────
   const handleNoteClick = async (
@@ -1367,6 +1434,274 @@ export function MusicalExample(props: MusicalExampleProps) {
           }
           return <g>{arcs}</g>
         })()}
+
+        {/* Dynamics — Bravura glyph below treble / above bass at the
+            anchored beat. Optional italic 'modifier' text immediately
+            after (e.g. 'subito'). */}
+        {staves.flatMap((stave, si) =>
+          stave.voices.flatMap((voice, vi) =>
+            (voice.dynamics ?? []).map((dyn, di) => {
+              const entry = resolveBeat(si, vi, dyn.beat)
+              if (!entry) return null
+              const above = stave.clef === 'bass'
+              const baseY = above
+                ? entry.staffTop - Math.round(14 * T.scale + 6)
+                : entry.staffTop + 8 * T.step + Math.round(22 * T.scale + 8)
+              const glyph = DYNAMIC_GLYPHS[dyn.level]
+              const dynFontSize = Math.round(T.noteheadFontSize * 0.85)
+              return (
+                <g key={`dyn-s${si}v${vi}-${di}`}>
+                  <text
+                    x={entry.x}
+                    y={baseY}
+                    fontSize={dynFontSize}
+                    fontFamily={T.fontMusic}
+                    fill={T.ink}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                  >
+                    {glyph}
+                  </text>
+                  {dyn.modifier && (
+                    <text
+                      x={entry.x + Math.round(dynFontSize * 0.6)}
+                      y={baseY}
+                      fontSize={T.smallLabelFontSize}
+                      fontFamily={T.fontLabel}
+                      fontStyle="italic"
+                      fill={T.inkSubtle}
+                      textAnchor="start"
+                      dominantBaseline="central"
+                    >
+                      {dyn.modifier}
+                    </text>
+                  )}
+                </g>
+              )
+            }),
+          ),
+        )}
+
+        {/* Hairpins — two converging/diverging lines. Cross-system spans
+            split into per-system segments at the body edges of each system. */}
+        {staves.flatMap((stave, si) =>
+          stave.voices.flatMap((voice, vi) =>
+            (voice.hairpins ?? []).flatMap((hp, hi) => {
+              const startEntry = resolveBeat(si, vi, hp.startBeat)
+              const endEntry = resolveBeat(si, vi, hp.endBeat)
+              if (!startEntry || !endEntry) return []
+              const placement = hp.placement
+                ?? (stave.clef === 'bass' ? 'above' : 'below')
+              const above = placement === 'above'
+              const aperture = Math.round(8 * T.scale + 4)
+              const segments: React.ReactNode[] = []
+              for (let s = startEntry.systemIdx; s <= endEntry.systemIdx; s++) {
+                const sys = systems[s]
+                const isStart = s === startEntry.systemIdx
+                const isEnd = s === endEntry.systemIdx
+                const last = sys.measures[sys.measures.length - 1]
+                const sysRight = last.x0 + last.width
+                const sysLeft = sys.bodyStartX
+                const x1 = isStart ? startEntry.x : sysLeft
+                const x2 = isEnd ? endEntry.x : sysRight
+                const yBase = above
+                  ? sys.staffTops[si] - Math.round(14 * T.scale + 6)
+                  : sys.staffTops[si] + 8 * T.step + Math.round(28 * T.scale + 8)
+                // Compute apertures per system endpoint. Crescendo: tip on
+                // the LEFT only at the true start; right side opens.
+                // Decrescendo: opens at left, tip on the RIGHT only at end.
+                let leftAp: number, rightAp: number
+                if (hp.direction === 'cresc') {
+                  leftAp = isStart ? 0 : aperture * 0.9
+                  rightAp = isEnd ? aperture : aperture * 0.9
+                } else {
+                  leftAp = isStart ? aperture : aperture * 0.9
+                  rightAp = isEnd ? 0 : aperture * 0.9
+                }
+                segments.push(
+                  <g key={`hp-s${si}v${vi}-${hi}-sys${s}`}>
+                    <line
+                      x1={x1} y1={yBase - leftAp / 2}
+                      x2={x2} y2={yBase - rightAp / 2}
+                      stroke={T.ink} strokeWidth={1}
+                    />
+                    <line
+                      x1={x1} y1={yBase + leftAp / 2}
+                      x2={x2} y2={yBase + rightAp / 2}
+                      stroke={T.ink} strokeWidth={1}
+                    />
+                  </g>,
+                )
+              }
+              return segments
+            }),
+          ),
+        )}
+
+        {/* Pedal markings — typically attached to the bass-clef voice in
+            piano music. 'text' style: Ped./✱ glyphs at endpoints. 'bracket'
+            style: continuous bracket below the bottom-most stave. */}
+        {staves.flatMap((stave, si) =>
+          stave.voices.flatMap((voice, vi) =>
+            (voice.pedalMarks ?? []).flatMap((pm, pi) => {
+              const startEntry = resolveBeat(si, vi, pm.startBeat)
+              const endEntry = resolveBeat(si, vi, pm.endBeat)
+              if (!startEntry || !endEntry) return []
+              const style = pm.style ?? 'text'
+              const baseY = (sys: SystemLayout) =>
+                sys.staffTops[sys.staffTops.length - 1]
+                  + 8 * T.step + Math.round(34 * T.scale + 10)
+              if (style === 'text') {
+                const items: React.ReactNode[] = []
+                items.push(
+                  <text
+                    key={`ped-text-s${si}v${vi}-${pi}-start`}
+                    x={startEntry.x}
+                    y={baseY(systems[startEntry.systemIdx])}
+                    fontSize={Math.round(T.noteheadFontSize * 0.7)}
+                    fontFamily={T.fontMusic}
+                    fill={T.ink}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                  >{PEDAL_GLYPHS.ped}</text>,
+                )
+                items.push(
+                  <text
+                    key={`ped-text-s${si}v${vi}-${pi}-end`}
+                    x={endEntry.x}
+                    y={baseY(systems[endEntry.systemIdx])}
+                    fontSize={Math.round(T.noteheadFontSize * 0.65)}
+                    fontFamily={T.fontMusic}
+                    fill={T.ink}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                  >{PEDAL_GLYPHS.pedRelease}</text>,
+                )
+                return items
+              }
+              // bracket style — split by system
+              const segments: React.ReactNode[] = []
+              for (let s = startEntry.systemIdx; s <= endEntry.systemIdx; s++) {
+                const sys = systems[s]
+                const isStart = s === startEntry.systemIdx
+                const isEnd = s === endEntry.systemIdx
+                const last = sys.measures[sys.measures.length - 1]
+                const x1 = isStart ? startEntry.x : sys.bodyStartX
+                const x2 = isEnd ? endEntry.x : (last.x0 + last.width)
+                const y = baseY(sys)
+                const tickH = Math.round(7 * T.scale + 2)
+                segments.push(
+                  <g key={`ped-bracket-s${si}v${vi}-${pi}-sys${s}`}>
+                    <line x1={x1} y1={y} x2={x2} y2={y}
+                      stroke={T.ink} strokeWidth={1.2} />
+                    {isStart && (
+                      <line x1={x1} y1={y} x2={x1} y2={y - tickH}
+                        stroke={T.ink} strokeWidth={1.2} />
+                    )}
+                    {isEnd && (
+                      <line x1={x2} y1={y} x2={x2} y2={y - tickH}
+                        stroke={T.ink} strokeWidth={1.2} />
+                    )}
+                  </g>,
+                )
+              }
+              return segments
+            }),
+          ),
+        )}
+
+        {/* Tempo markings — above the topmost staff. 'normal' = bold serif
+            tempo word; 'change' = italic (rit., a tempo); 'change-with-line'
+            = italic + dashed continuation line spanning to endMeasureIdx. */}
+        {(score.tempoMarkings ?? []).flatMap((tm, ti) => {
+          const cumBeat = tm.measureIdx * timeSignature.numerator + (tm.beat ?? 0)
+          const entry = resolveBeat(0, 0, cumBeat)
+          if (!entry) return []
+          const sys = systems[entry.systemIdx]
+          const baseY = sys.staffTops[0] - Math.round(28 * T.scale + 12)
+          const style = tm.style ?? 'normal'
+          const items: React.ReactNode[] = []
+          if (tm.text) {
+            items.push(
+              <text
+                key={`tempo-${ti}-text`}
+                x={entry.x}
+                y={baseY}
+                fontSize={style === 'normal'
+                  ? Math.round(T.labelFontSize + 4)
+                  : T.labelFontSize}
+                fontFamily={T.fontLabel}
+                fontStyle={style === 'normal' ? 'normal' : 'italic'}
+                fontWeight={style === 'normal' ? 600 : 500}
+                fill={T.ink}
+                textAnchor={style === 'normal' ? 'start' : 'middle'}
+                dominantBaseline="central"
+              >{tm.text}</text>,
+            )
+          }
+          if (tm.metronome) {
+            const xMetro = entry.x
+              + (tm.text ? Math.round(60 * T.scale + 32) : 0)
+            // Use Bravura full-note glyph for the beat note, then "= NNN"
+            // as italic text. Falls back to quarter glyph for whole/half.
+            const beatNoteGlyph = (() => {
+              const base = tm.metronome.beatNote[0]
+              if (base === 'h') return B.halfNoteUp
+              if (base === 'e') return B.eighthNoteUp
+              return B.quarterNoteUp
+            })()
+            items.push(
+              <g key={`tempo-${ti}-metro`}>
+                <text
+                  x={xMetro}
+                  y={baseY + Math.round(2 * T.scale)}
+                  fontSize={Math.round(T.labelFontSize + 6)}
+                  fontFamily={T.fontMusic}
+                  fill={T.ink}
+                  textAnchor="start"
+                  dominantBaseline="central"
+                >{beatNoteGlyph}</text>
+                <text
+                  x={xMetro + Math.round(14 * T.scale + 6)}
+                  y={baseY}
+                  fontSize={T.labelFontSize}
+                  fontFamily={T.fontLabel}
+                  fontStyle="italic"
+                  fill={T.ink}
+                  textAnchor="start"
+                  dominantBaseline="central"
+                >{`= ${tm.metronome.bpm}`}</text>
+              </g>,
+            )
+          }
+          if (style === 'change-with-line' && tm.endMeasureIdx !== undefined) {
+            const endCumBeat = (tm.endMeasureIdx + 1) * timeSignature.numerator - 0.0001
+            const endEntry = resolveBeat(0, 0, endCumBeat)
+            if (endEntry) {
+              for (let s = entry.systemIdx; s <= endEntry.systemIdx; s++) {
+                const sysS = systems[s]
+                const isStart = s === entry.systemIdx
+                const isEnd = s === endEntry.systemIdx
+                const last = sysS.measures[sysS.measures.length - 1]
+                const x1 = isStart
+                  ? entry.x + Math.round(40 * T.scale + 12)
+                  : sysS.bodyStartX
+                const x2 = isEnd ? endEntry.x : (last.x0 + last.width)
+                const y = sysS.staffTops[0] - Math.round(22 * T.scale + 8)
+                items.push(
+                  <line
+                    key={`tempo-${ti}-line-${s}`}
+                    x1={x1} y1={y} x2={x2} y2={y}
+                    stroke={T.ink}
+                    strokeWidth={1}
+                    strokeDasharray="4 3"
+                  />,
+                )
+              }
+            }
+          }
+          return items
+        })}
 
         {/* Annotations target the primary line. */}
         {annotations && annotations.length > 0 && annotations.map((ann, ai) => (

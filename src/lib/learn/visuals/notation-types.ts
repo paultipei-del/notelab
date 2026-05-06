@@ -130,6 +130,47 @@ export interface Voice {
    * leave 'auto'.
    */
   stemPolicy?: 'auto' | 'up' | 'down'
+  /**
+   * Dynamic markings (pp, p, mf, f, sfz, …) anchored to a beat position.
+   * Rendered as Bravura glyphs below the staff (treble) or above (bass).
+   * `modifier` adds an italic word after the glyph (e.g. 'subito', 'molto').
+   */
+  dynamics?: DynamicMark[]
+  /**
+   * Crescendo / decrescendo wedges spanning a beat range. Anchored to the
+   * same baseline as `dynamics`, so a `p < f` pattern aligns visually.
+   * Cross-system spans split into per-system segments mirroring slurs.
+   */
+  hairpins?: Hairpin[]
+  /**
+   * Pedal markings (sustain pedal). Typically only on the bass-clef voice
+   * for piano music. 'text' style renders Ped./✱ glyphs at the endpoints;
+   * 'bracket' style draws a continuous bracket below the staff.
+   */
+  pedalMarks?: PedalMark[]
+}
+
+export interface DynamicMark {
+  /** Beat position from the start of the voice (beat 0 = downbeat of measure 1). */
+  beat: number
+  level: DynamicLevel
+  /** Optional italic word rendered immediately after the glyph. */
+  modifier?: string
+}
+
+export interface Hairpin {
+  startBeat: number
+  endBeat: number
+  direction: 'cresc' | 'decresc'
+  /** Default: 'below' for treble, 'above' for bass. */
+  placement?: 'above' | 'below'
+}
+
+export interface PedalMark {
+  startBeat: number
+  endBeat: number
+  /** 'text' = Ped. + ✱ at endpoints; 'bracket' = continuous bracket. Default 'text'. */
+  style?: 'text' | 'bracket'
 }
 
 /** One stave (treble or bass) carrying one or more voices. */
@@ -164,6 +205,32 @@ export interface Score {
   keyChanges?: Array<{ measureIdx: number; fifths: number }>
   /** Mid-score time signature changes. */
   timeChanges?: Array<{ measureIdx: number; timeSignature: TimeSignature }>
+  /**
+   * Tempo markings rendered above the top staff. Each marking can carry
+   * a text label (e.g. 'Allegro'), a metronome equation (e.g. ♩ = 120),
+   * or both. `style: 'change-with-line'` adds a dashed continuation line
+   * spanning measureIdx → endMeasureIdx for rit. / accel. passages.
+   */
+  tempoMarkings?: TempoMarking[]
+}
+
+export interface TempoMarking {
+  /** 0-indexed within the score's measure list. */
+  measureIdx: number
+  /** Beat within the measure. Default 0 (downbeat). */
+  beat?: number
+  /** Display text. E.g. 'Allegro', 'a tempo', 'Andante con moto'. */
+  text?: string
+  /** Metronome equation (♩ = N). */
+  metronome?: { beatNote: Duration; bpm: number }
+  /**
+   * 'normal' (default): bold serif, prominent at start of measure.
+   * 'change': italic, smaller, used for rit. / accel. / a tempo.
+   * 'change-with-line': italic + dashed line spanning to endMeasureIdx.
+   */
+  style?: 'normal' | 'change' | 'change-with-line'
+  /** End measure for 'change-with-line'. */
+  endMeasureIdx?: number
 }
 
 /**
