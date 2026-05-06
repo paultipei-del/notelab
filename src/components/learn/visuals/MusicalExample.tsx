@@ -17,13 +17,29 @@
  * share a time grid: all voices land on the same x for elements that begin
  * on the same beat.
  *
- * Limitations (filled in by later Phase work):
- *   - Phase 2: tuplets
- *   - Phase 3: slurs
- *   - Phase 4: articulations / dynamics / ornaments / grace notes
- *   - Phase 5: repeats, key/time changes mid-piece, cross-system ties
- *   - Phase 6: cross-staff stems, beam slope
- *   - Phase 7: optical / proportional spacing engine
+ * Score-marking annotations (added in Chapter IX infra):
+ *   voice.dynamics[]    DynamicMark { beat, level, modifier? } — Bravura
+ *                       glyph (pp/p/mp/mf/f/ff/sfz/fz) below treble or
+ *                       above bass at the resolved beat x.
+ *   voice.hairpins[]    Hairpin { startBeat, endBeat, direction, placement? }
+ *                       — two-line wedge (`<` cresc., `>` decresc.) split
+ *                       cleanly across systems.
+ *   voice.pedalMarks[]  PedalMark { startBeat, endBeat, style? } — 'text'
+ *                       renders Ped./✱ glyphs at endpoints; 'bracket'
+ *                       draws a continuous bracket below the bottom-most
+ *                       stave with end ticks.
+ *   score.tempoMarkings[]  TempoMarking { measureIdx, beat?, text?, metronome?,
+ *                       style?, endMeasureIdx? } — placed above the top
+ *                       staff. 'normal' = bold serif (Allegro); 'change'
+ *                       = italic (rit., a tempo); 'change-with-line' adds
+ *                       a dashed continuation line spanning to endMeasureIdx.
+ *
+ * Limitations still open:
+ *   - Grace notes (data field exists but renderer skips them)
+ *   - Tremolo, arpeggio sign
+ *   - Mid-piece key / time changes (data fields exist, no renderer)
+ *   - Cross-staff stems, asymmetric-meter beaming (5/4, 7/8)
+ *   - Audio velocity from dynamics (visual-only for now)
  *
  * Audio uses the shared Tone.js sampler. Each voice schedules its own
  * sequence on a common start time. Tied chains within a voice trigger one

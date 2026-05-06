@@ -3,6 +3,8 @@
 import React from 'react'
 import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 import { MusicXmlScore } from '@/components/learn/visuals/MusicXmlScore'
+import { TempoTermsLadder } from '@/components/learn/visuals/TempoTermsLadder'
+import { NavigationFlowchart } from '@/components/learn/visuals/NavigationFlowchart'
 import type { MusicalElement, Score } from '@/lib/learn/visuals/notation-types'
 
 /**
@@ -196,6 +198,176 @@ const periodMelody: MusicalElement[] = [
   { type: 'note', pitch: 'C5', duration: 'h' },
 ]
 
+/* ── Phase C–F showcase fixtures ──────────────────────────────────────── */
+
+// 8 quarter-note pitches stepping through scale degrees, repeated across
+// 8 bars in 4/4 → 32 quarter notes total. Each measure-downbeat (beats
+// 0, 4, 8, …, 28) gets a different dynamic level.
+function repeatedQuarterScale(): MusicalElement[] {
+  const pitches = ['C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'G5', 'F5']
+  const out: MusicalElement[] = []
+  for (let bar = 0; bar < 8; bar++) {
+    for (let beat = 0; beat < 4; beat++) {
+      out.push({ type: 'note', pitch: pitches[(bar + beat) % pitches.length], duration: 'q' })
+    }
+  }
+  return out
+}
+
+const dynamicsShowcase: Score = {
+  timeSignature: { numerator: 4, denominator: 4 },
+  keySignature: 0,
+  staves: [{
+    clef: 'treble',
+    voices: [{
+      elements: repeatedQuarterScale(),
+      dynamics: [
+        { beat: 0,  level: 'pp' },
+        { beat: 4,  level: 'p' },
+        { beat: 8,  level: 'mp' },
+        { beat: 12, level: 'mf', modifier: 'subito' },
+        { beat: 16, level: 'f' },
+        { beat: 20, level: 'ff' },
+        { beat: 24, level: 'sfz' },
+        { beat: 28, level: 'fz' },
+      ],
+    }],
+  }],
+}
+
+// 4-bar treble-clef passage with three hairpin shapes layered with dynamics.
+const hairpinsShowcase: Score = {
+  timeSignature: { numerator: 4, denominator: 4 },
+  keySignature: 0,
+  staves: [{
+    clef: 'treble',
+    voices: [{
+      elements: [
+        // Measure 1 — short cresc.
+        { type: 'note', pitch: 'C5', duration: 'q' },
+        { type: 'note', pitch: 'D5', duration: 'q' },
+        { type: 'note', pitch: 'E5', duration: 'q' },
+        { type: 'note', pitch: 'F5', duration: 'q' },
+        // Measures 2–4 — long decresc. (cross-system if break is at m. 2).
+        { type: 'note', pitch: 'G5', duration: 'q' },
+        { type: 'note', pitch: 'A5', duration: 'q' },
+        { type: 'note', pitch: 'B5', duration: 'q' },
+        { type: 'note', pitch: 'A5', duration: 'q' },
+        { type: 'note', pitch: 'G5', duration: 'q' },
+        { type: 'note', pitch: 'F5', duration: 'q' },
+        { type: 'note', pitch: 'E5', duration: 'q' },
+        { type: 'note', pitch: 'D5', duration: 'q' },
+        // Measure 4 (last bar) — p < f > pattern wraps cresc/decresc with dynamics.
+        { type: 'note', pitch: 'C5', duration: 'q' },
+        { type: 'note', pitch: 'E5', duration: 'q' },
+        { type: 'note', pitch: 'G5', duration: 'q' },
+        { type: 'note', pitch: 'C5', duration: 'q' },
+      ],
+      dynamics: [
+        { beat: 0,  level: 'p' },
+        { beat: 4,  level: 'mp' },
+        { beat: 12, level: 'p' },
+        { beat: 16, level: 'f' },
+      ],
+      hairpins: [
+        { startBeat: 0, endBeat: 4, direction: 'cresc' },
+        { startBeat: 4, endBeat: 12, direction: 'decresc' },
+        { startBeat: 12, endBeat: 14, direction: 'cresc' },
+        { startBeat: 14, endBeat: 16, direction: 'decresc' },
+      ],
+    }],
+  }],
+}
+
+const tempoShowcase: Score = {
+  timeSignature: { numerator: 4, denominator: 4 },
+  keySignature: 0,
+  staves: [{
+    clef: 'treble',
+    voices: [{
+      elements: [
+        // m. 1
+        { type: 'note', pitch: 'G4', duration: 'q' },
+        { type: 'note', pitch: 'A4', duration: 'q' },
+        { type: 'note', pitch: 'B4', duration: 'q' },
+        { type: 'note', pitch: 'C5', duration: 'q' },
+        // m. 2
+        { type: 'note', pitch: 'D5', duration: 'q' },
+        { type: 'note', pitch: 'E5', duration: 'q' },
+        { type: 'note', pitch: 'F5', duration: 'q' },
+        { type: 'note', pitch: 'G5', duration: 'q' },
+        // m. 3 — start of rit.
+        { type: 'note', pitch: 'A5', duration: 'q' },
+        { type: 'note', pitch: 'G5', duration: 'q' },
+        { type: 'note', pitch: 'F5', duration: 'q' },
+        { type: 'note', pitch: 'E5', duration: 'q' },
+        // m. 4 — end of rit.
+        { type: 'note', pitch: 'D5', duration: 'h' },
+        { type: 'note', pitch: 'C5', duration: 'h' },
+        // m. 5 — a tempo
+        { type: 'note', pitch: 'G4', duration: 'q' },
+        { type: 'note', pitch: 'C5', duration: 'q' },
+        { type: 'note', pitch: 'E5', duration: 'q' },
+        { type: 'note', pitch: 'G5', duration: 'q' },
+      ],
+    }],
+  }],
+  tempoMarkings: [
+    { measureIdx: 0, text: 'Allegro', metronome: { beatNote: 'q', bpm: 120 }, style: 'normal' },
+    { measureIdx: 2, text: 'rit.', style: 'change-with-line', endMeasureIdx: 3 },
+    { measureIdx: 4, text: 'a tempo', style: 'change' },
+  ],
+}
+
+// Grand-staff fixture for pedal showcases. RH: simple chord progression
+// in C major. LH: bass octaves. Pedal markings on the bass voice.
+const PEDAL_RH: MusicalElement[] = [
+  { type: 'note', pitches: ['C5', 'E5', 'G5'], duration: 'h' },
+  { type: 'note', pitches: ['C5', 'F5', 'A5'], duration: 'h' },
+  { type: 'note', pitches: ['B4', 'D5', 'G5'], duration: 'h' },
+  { type: 'note', pitches: ['C5', 'E5', 'G5'], duration: 'h' },
+]
+const PEDAL_LH: MusicalElement[] = [
+  { type: 'note', pitch: 'C3', duration: 'h' },
+  { type: 'note', pitch: 'F3', duration: 'h' },
+  { type: 'note', pitch: 'G3', duration: 'h' },
+  { type: 'note', pitch: 'C3', duration: 'h' },
+]
+
+const pedalTextShowcase: Score = {
+  timeSignature: { numerator: 4, denominator: 4 },
+  keySignature: 0,
+  staves: [
+    { clef: 'treble', voices: [{ elements: PEDAL_RH }] },
+    { clef: 'bass',
+      voices: [{
+        elements: PEDAL_LH,
+        pedalMarks: [
+          { startBeat: 0, endBeat: 4,  style: 'text' },
+          { startBeat: 4, endBeat: 12, style: 'text' },
+        ],
+      }],
+    },
+  ],
+}
+
+const pedalBracketShowcase: Score = {
+  timeSignature: { numerator: 4, denominator: 4 },
+  keySignature: 0,
+  staves: [
+    { clef: 'treble', voices: [{ elements: PEDAL_RH }] },
+    { clef: 'bass',
+      voices: [{
+        elements: PEDAL_LH,
+        pedalMarks: [
+          { startBeat: 0, endBeat: 4,  style: 'bracket' },
+          { startBeat: 4, endBeat: 12, style: 'bracket' },
+        ],
+      }],
+    },
+  ],
+}
+
 export default function MusicalExampleTestPage() {
   return (
     <main
@@ -328,6 +500,68 @@ export default function MusicalExampleTestPage() {
             },
           ]}
           caption="Two parallel four-measure phrases. The antecedent ends on a half cadence; the consequent answers with an authentic cadence."
+        />
+      </Section>
+
+      <Section title="9. Dynamics — all 8 levels with subito modifier">
+        <MusicalExample
+          score={dynamicsShowcase}
+          bpm={88}
+          caption="pp · p · mp · mf · f · ff · sfz · fz across eight bars on a treble-clef line. The mf carries the modifier 'subito' to confirm the italic suffix renders next to the Bravura glyph."
+        />
+      </Section>
+
+      <Section title="10. Hairpins — short cresc, long decresc, p < f > pattern">
+        <MusicalExample
+          score={hairpinsShowcase}
+          bpm={84}
+          systemBreaks={[2]}
+          caption="A short crescendo wedge in m. 1, a long decrescendo in mm. 2-4 (cross-system after the break), and a p < f > shape across the last two bars demonstrates dynamics + hairpins on a shared baseline."
+        />
+      </Section>
+
+      <Section title="11. Tempo markings — Allegro + ♩=120 + rit. + a tempo">
+        <MusicalExample
+          score={tempoShowcase}
+          bpm={120}
+          systemBreaks={[2]}
+          caption="'Allegro' with metronome equation at the start; a 'change-with-line' rit. spans the last two measures of the first system; 'a tempo' resumes on the second system."
+        />
+      </Section>
+
+      <Section title="12. Pedal — text style (Ped./✱) and bracket style on grand staff">
+        <MusicalExample
+          score={pedalTextShowcase}
+          bpm={72}
+          caption="Pedal markings on the bass voice in 'text' style: Ped. at the engagement, ✱ at the release. Spans two pedal changes."
+        />
+        <MusicalExample
+          score={pedalBracketShowcase}
+          bpm={72}
+          caption="Same passage, 'bracket' style: a continuous bracket below the bass staff with end ticks at engage and release."
+        />
+      </Section>
+
+      <Section title="13. TempoTermsLadder — slow → fast vertical reference">
+        <TempoTermsLadder
+          highlight="Allegro"
+          caption="Standard Italian tempo terms ordered by approximate BPM range. Allegro is highlighted to show the active-term treatment."
+        />
+      </Section>
+
+      <Section title="14. NavigationFlowchart — D.S. al Coda flow">
+        <NavigationFlowchart
+          sections={[
+            { label: 'Section A', sublabel: 'opening' },
+            { label: 'Section B', sublabel: 'segno marker', variant: 'highlighted' },
+            { label: 'Section C', sublabel: 'D.S. al Coda' },
+            { label: 'Coda', variant: 'destination' },
+          ]}
+          jumps={[
+            { fromIdx: 2, toIdx: 1, label: 'D.S. — back to segno' },
+            { fromIdx: 1, toIdx: 3, label: 'al Coda — skip to coda' },
+          ]}
+          caption="At the D.S. marking, return to the segno; play forward; at the 'To Coda' indication, skip to the Coda."
         />
       </Section>
     </main>
