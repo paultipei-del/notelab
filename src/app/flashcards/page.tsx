@@ -365,10 +365,57 @@ function CardsGrid({ items }: { items: DeckWithSummary[] }) {
   )
 }
 
+type ListSortKey = 'default' | 'name' | 'category' | 'due' | 'lastSeen'
+const LIST_SORTS: { key: ListSortKey; label: string }[] = [
+  { key: 'default',  label: 'Default' },
+  { key: 'name',     label: 'Name (A→Z)' },
+  { key: 'category', label: 'Category' },
+  { key: 'due',      label: 'Most due' },
+  { key: 'lastSeen', label: 'Recently seen' },
+]
+
 function ListView({ items }: { items: DeckWithSummary[] }) {
+  const [sortKey, setSortKey] = useState<ListSortKey>('default')
+
+  const sorted = useMemo(() => {
+    if (sortKey === 'default') return items
+    const arr = [...items]
+    if (sortKey === 'name') {
+      arr.sort((a, b) => a.deck.title.localeCompare(b.deck.title))
+    } else if (sortKey === 'category') {
+      arr.sort((a, b) => {
+        const ca = a.deck.category ?? '￿'
+        const cb = b.deck.category ?? '￿'
+        const c = ca.localeCompare(cb)
+        return c !== 0 ? c : a.deck.title.localeCompare(b.deck.title)
+      })
+    } else if (sortKey === 'due') {
+      arr.sort((a, b) => {
+        const diff = b.summary.dueCount - a.summary.dueCount
+        return diff !== 0 ? diff : a.deck.title.localeCompare(b.deck.title)
+      })
+    } else if (sortKey === 'lastSeen') {
+      arr.sort((a, b) => (b.summary.lastSeenAt ?? 0) - (a.summary.lastSeenAt ?? 0))
+    }
+    return arr
+  }, [items, sortKey])
+
   if (items.length === 0) return <p className={s.empty}>No volumes match this view.</p>
   return (
     <div className={s.listView}>
+      <div className={s.listSortBar}>
+        <span className={s.listSortLabel}>Sort</span>
+        {LIST_SORTS.map(({ key, label }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setSortKey(key)}
+            className={`${s.listSortChip} ${sortKey === key ? s.active : ''}`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       <div className={s.listHead}>
         <span />
         <span>Volume</span>
@@ -377,7 +424,7 @@ function ListView({ items }: { items: DeckWithSummary[] }) {
         <span>Cards</span>
         <span>Last seen</span>
       </div>
-      {items.map(d => {
+      {sorted.map(d => {
         const pct = Math.round(d.summary.pctMastered * 100)
         const topicColor = d.book.topic ? TOPIC_COLOR[d.book.topic] : null
         const tierColor = topicColor ?? (
