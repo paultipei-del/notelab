@@ -62,6 +62,7 @@ import type {
   Voice,
   ClefName,
 } from '@/lib/learn/visuals/notation-types'
+import { ARTIC_GLYPHS, ORNAMENT_GLYPHS, DYNAMIC_GLYPHS } from '@/lib/bravura'
 
 interface MusicalExampleProps {
   /** v2 input: full Score. Takes precedence over `elements`+`clef`. */
@@ -104,34 +105,10 @@ const FLAG_DOWN_8 = ''
 const FLAG_DOWN_16 = ''
 const AUG_DOT = ''
 
-// SMuFL articulation glyphs (above/below variants). Codepoints per the
-// SMuFL standard articulation range U+E4A0–U+E4FF.
-const ARTIC_GLYPHS: Record<string, { above: string; below: string }> = {
-  accent:        { above: '', below: '' },
-  staccato:      { above: '', below: '' },
-  tenuto:        { above: '', below: '' },
-  staccatissimo: { above: '', below: '' },
-  marcato:       { above: '', below: '' },
-  fermata:       { above: '', below: '' },
-}
-// SMuFL ornament glyphs — common-practice ornaments.
-const ORNAMENT_GLYPHS: Record<string, string> = {
-  trill:           '',
-  mordent:         '',
-  invertedMordent: '',
-  turn:            '',
-}
-// SMuFL dynamics — used by Phase-4 dynamics rendering.
-const DYNAMIC_GLYPHS: Record<string, string> = {
-  pp:  '',
-  p:   '',
-  mp:  '',
-  mf:  '',
-  f:   '',
-  ff:  '',
-  sfz: '',
-  fz:  '',
-}
+// SMuFL glyph maps for articulations / ornaments / dynamics live in
+// '@/lib/bravura' so they can be reused by other primitives. The local
+// destructure below keeps the reference style of the rest of this file
+// unchanged.
 
 function isWhole(d: Duration): boolean {
   return d[0] === 'w'
