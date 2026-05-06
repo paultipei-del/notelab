@@ -778,7 +778,7 @@
 }
 .listSortBar {
   display: flex; align-items: center; gap: 8px;
-  padding: 12px 8px 8px;
+  padding: 14px 8px 12px;
   flex-wrap: wrap;
 }
 .listSortLabel {
@@ -787,19 +787,6 @@
   letter-spacing: 0.16em; text-transform: uppercase;
   color: #7A7060;
   margin-right: 4px;
-}
-.listSortChip {
-  display: inline-flex; align-items: center;
-  padding: 5px 12px; border-radius: 100px;
-  background: rgba(253,250,245,0.55);
-  border: 1px solid rgba(211,209,199,0.6);
-  font-family: var(--font-jost), sans-serif;
-  font-size: 11px; font-weight: 500;
-  color: #4A4540; cursor: pointer; letter-spacing: 0.02em;
-}
-.listSortChip:hover { background: #FDFAF5; }
-.listSortChip.active {
-  background: #2A2318; color: #FDFAF5; border-color: #2A2318;
 }
 .listHead {
   display: grid;

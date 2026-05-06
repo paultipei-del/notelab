@@ -410,7 +410,7 @@ function ListView({ items }: { items: DeckWithSummary[] }) {
             key={key}
             type="button"
             onClick={() => setSortKey(key)}
-            className={`${s.listSortChip} ${sortKey === key ? s.active : ''}`}
+            className={`${s.filterChip} ${sortKey === key ? s.active : ''}`}
           >
             {label}
           </button>
