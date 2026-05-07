@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { HarmonicTimeline } from '@/components/learn/visuals/HarmonicTimeline'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -39,7 +41,14 @@ Ear training isn't a destination, you don't "complete" it. It's a practice that 
 
 ## The visual
 
-<DiagramPlaceholder description="A timeline showing typical progression, year 1: basic intervals, chord qualities, simple dictation. year 2-3: complex dictation, sight-singing, inversions. year 4+: advanced harmonic analysis, complex chromaticism, internal hearing without external sound." />
+<HarmonicTimeline
+  regions={[
+    { width: 0.25, sectionLabel: 'Year 1', keyLabel: 'Basic intervals, chord qualities, simple dictation', variant: 'tonic' },
+    { width: 0.35, sectionLabel: 'Year 2-3', keyLabel: 'Complex dictation, sight-singing, inversions, modes', variant: 'unstable' },
+    { width: 0.4, sectionLabel: 'Year 4+', keyLabel: 'Advanced harmonic analysis, chromaticism, internal hearing', variant: 'tonic' },
+  ]}
+  caption="A typical ear-training progression. Year 1 builds the foundational vocabulary — the ear's alphabet. Years 2-3 add complexity and start integrating the skills (dictation requires hearing intervals AND meter AND key all at once). Year 4 and beyond is where active ear-training fades into musicianship — eventually, you don't 'identify' an interval; you just hear it as the music it is."
+/>
 
 ## The typical progression
 
@@ -122,3 +131,17 @@ Progress in ear training is often non-linear. You might feel stuck for weeks, th
 **Can I develop ear training just by listening to a lot of music?**
 
 Partially. Extensive listening does develop ears, especially for recognizing styles and genres. But deliberate practice (actively identifying intervals, chords, and rhythms) produces specific, rapid improvement. Combine extensive listening (for exposure and enjoyment) with focused practice (for skill development). Both work together.
+
+<EarTrainingCTA
+  intro="The decks below are organized roughly by difficulty. Start where you're comfortable; move through them in any order:"
+  decks={[
+    { name: 'Intervals I', slug: 'ear-intervals', cards: '12 cards', description: 'Foundational — start here if everything else is new.' },
+    { name: 'Triads', slug: 'ear-triads', cards: '8 cards', description: 'Major, minor, diminished, augmented.' },
+    { name: 'Cadences', slug: 'ear-cadences', cards: '4 cards', description: 'How phrases end — the four standard cadences.' },
+    { name: 'Scales', slug: 'ear-scales', cards: '4 cards', description: 'Major and the three minor variants.' },
+    { name: '7th Chords', slug: 'ear-seventh-chords', cards: '6 cards', description: 'The five most common 7th chords.' },
+    { name: 'Triads — Inversions', slug: 'ear-triads-inversions', cards: '12 cards', description: 'Hearing the difference between root position, 1st inv, 2nd inv.' },
+    { name: 'Intervals II', slug: 'ear-intervals-ii', cards: '12 cards', description: 'Compound intervals (m9 through double octave).' },
+    { name: 'Intervals III — Advanced', slug: 'ear-intervals-iii', cards: '48 cards', description: 'All intervals, ascending and descending, varied roots.' },
+  ]}
+/>

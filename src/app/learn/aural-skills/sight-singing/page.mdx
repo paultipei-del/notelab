@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -44,7 +46,53 @@ Sight-singing is a hallmark of serious music education. Conservatories and music
 
 ## The visual
 
-<DiagramPlaceholder description="A simple melody (4-8 measures) in the treble clef, in an easy key like C major, with markers indicating scale degrees or solfège syllables below each note." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 0, endIdx: 0, label: 'do', position: 'below' },
+      { type: 'label', startIdx: 1, endIdx: 1, label: 'mi', position: 'below' },
+      { type: 'label', startIdx: 2, endIdx: 2, label: 'sol', position: 'below' },
+      { type: 'label', startIdx: 3, endIdx: 3, label: 'mi', position: 'below' },
+      { type: 'label', startIdx: 4, endIdx: 4, label: 'fa', position: 'below' },
+      { type: 'label', startIdx: 5, endIdx: 5, label: 're', position: 'below' },
+      { type: 'label', startIdx: 6, endIdx: 6, label: 'ti', position: 'below' },
+      { type: 'label', startIdx: 7, endIdx: 7, label: 'do', position: 'below' },
+      { type: 'label', startIdx: 8, endIdx: 8, label: 're', position: 'below' },
+      { type: 'label', startIdx: 9, endIdx: 9, label: 'mi', position: 'below' },
+      { type: 'label', startIdx: 10, endIdx: 10, label: 'fa', position: 'below' },
+      { type: 'label', startIdx: 11, endIdx: 11, label: 're', position: 'below' },
+      { type: 'label', startIdx: 12, endIdx: 12, label: 'do', position: 'below' },
+      { type: 'label', startIdx: 13, endIdx: 13, label: 'mi', position: 'below' },
+      { type: 'label', startIdx: 14, endIdx: 14, label: 'do', position: 'below' },
+    ],
+  }}
+  bpm={88}
+  caption="A simple C-major melody with solfège syllables labeled below each note. To practice sight-singing: look at the score, hear the C-major scale in your head, then sing the syllables (do-mi-sol-mi-fa-re-ti-do...) at the marked tempo. Click Play afterward to check yourself."
+/>
 
 ## The approach
 
@@ -133,3 +181,10 @@ Solfège is usually the most effective for sight-singing, for the reasons mentio
 **How does sight-singing relate to sight-reading on an instrument?**
 
 They're related but different. Sight-reading on piano involves finger placement and eye-hand coordination; sight-singing involves vocal production and pitch imagination. Both require fluent reading of the notation. Many musicians develop one skill more than the other, but strong sight-singers often become strong sight-readers and vice versa because both depend on fluent musical imagination.
+
+<EarTrainingCTA
+  intro="Sight-singing practice decks are coming soon. Until then, the foundational skill is hearing intervals between notes — practice with:"
+  decks={[
+    { name: 'Intervals I', slug: 'ear-intervals', cards: '12 cards', description: 'Build the ear-to-voice connection with simple intervals.' },
+  ]}
+/>

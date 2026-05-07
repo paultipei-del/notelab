@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -47,7 +49,52 @@ Interval recognition develops through specific practice. Most people need dozens
 
 ## The visual
 
-<DiagramPlaceholder description="Each of the seven reference intervals (major 2nd, major 3rd, perfect 4th, perfect 5th, major 6th, major 7th, octave) shown on a staff, with an 'ear symbol' indicating these should be heard and recognized, not just read." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'C6', duration: 'q' },
+          { type: 'rest', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'bracket', startIdx: 0, endIdx: 1, label: 'M2', position: 'above' },
+      { type: 'bracket', startIdx: 3, endIdx: 4, label: 'M3', position: 'above' },
+      { type: 'bracket', startIdx: 6, endIdx: 7, label: 'P4', position: 'above' },
+      { type: 'bracket', startIdx: 9, endIdx: 10, label: 'P5', position: 'above' },
+      { type: 'bracket', startIdx: 12, endIdx: 13, label: 'M6', position: 'above' },
+      { type: 'bracket', startIdx: 15, endIdx: 16, label: 'M7', position: 'above' },
+      { type: 'bracket', startIdx: 18, endIdx: 19, label: 'P8', position: 'above' },
+    ],
+  }}
+  bpm={92}
+  systemBreaks={[4]}
+  caption="The seven reference intervals from C, played ascending. Click Play to hear each in sequence — but for ear training, the goal is to recognize them in any order, in any key. Use the Ear Training decks below to drill recognition."
+/>
 
 ## The approach
 
@@ -169,3 +216,12 @@ Yes. Solfège is a powerful tool but not the only way. You can use song referenc
 **What's the most practical interval to learn first?**
 
 Major and minor 3rds, or perfect 4ths and 5ths. These are extremely common in music and very useful. The 3rds are essential because they define chord qualities (major vs. minor). The 5th is distinctive and functionally important (it's the strongest interval in the overtone series). Start with these four intervals; the rest will follow.
+
+<EarTrainingCTA
+  intro="Practice interval recognition with audio:"
+  decks={[
+    { name: 'Intervals I', slug: 'ear-intervals', cards: '12 cards', description: 'All intervals from minor 2nd to octave, ascending.' },
+    { name: 'Intervals II', slug: 'ear-intervals-ii', cards: '12 cards', description: 'Compound intervals — minor 9th through double octave.' },
+    { name: 'Intervals III — Advanced', slug: 'ear-intervals-iii', cards: '48 cards', description: 'All intervals m2–P15, ascending and descending, varied roots.' },
+  ]}
+/>

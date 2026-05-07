@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { EarTrainingMap } from '@/components/learn/visuals/EarTrainingMap'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -41,7 +43,9 @@ This page introduces what ear training covers and why it matters. The rest of Pa
 
 ## The visual
 
-<DiagramPlaceholder description="A branching chart showing the main areas of ear training (pitch recognition, rhythm recognition, harmonic recognition, reproduction skills, internal hearing) with specific skills under each." />
+<EarTrainingMap
+  caption="The five main areas of ear training. Pitch and rhythm recognition are foundational; harmonic recognition layers on top; reproduction skills (sight-singing, dictation) are where listening becomes active. Internal hearing — being able to audiate without external sound — is the long-term goal."
+/>
 
 ## What ear training includes
 
@@ -135,3 +139,13 @@ Probably not. Adults can develop most aural skills, though absolute pitch is har
 **What if I'm "tone deaf"?**
 
 True tone deafness (amusia) is rare, about 4% of the population. Most people who call themselves tone deaf actually have normal pitch perception but haven't developed the skills to use it consciously. If you can recognize when a singer is out of tune, hum a familiar tune reasonably well, or tell the difference between major and minor music, you're not tone deaf. Ear training will work for you.
+
+<EarTrainingCTA
+  intro="Ready to start practicing? NoteLab has dedicated Ear Training decks for each major skill area:"
+  decks={[
+    { name: 'Intervals I', slug: 'ear-intervals', cards: '12 cards', description: 'All intervals from minor 2nd to octave, ascending.' },
+    { name: 'Triads', slug: 'ear-triads', cards: '8 cards', description: 'Major, minor, diminished, and augmented triads — root position.' },
+    { name: 'Cadences', slug: 'ear-cadences', cards: '4 cards', description: 'Authentic, half, plagal, and deceptive cadences.' },
+    { name: 'Scales', slug: 'ear-scales', cards: '4 cards', description: 'Major, natural minor, harmonic minor, melodic minor.' },
+  ]}
+/>
