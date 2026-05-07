@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -44,9 +45,69 @@ Learning Italian performance terms is one of the first practical tasks for any c
 
 ## The visual
 
-<DiagramPlaceholder description="A short passage with various Italian markings (tempo, dynamics, character indications) labeled with translations below." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 3, denominator: 4 },
+    keySignature: 1,
+    tempoMarkings: [
+      { measureIdx: 0, text: 'Andante cantabile', style: 'normal' },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q.' },
+          { type: 'note', pitch: 'G5', duration: 'e' },
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'D6', duration: 'h' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h.' },
+        ],
+        dynamics: [
+          { beat: 0, level: 'p', modifier: 'dolce' },
+          { beat: 9, level: 'mf', modifier: 'espressivo' },
+        ],
+      }],
+    }],
+  }}
+  bpm={88}
+  caption="A short passage with Italian markings throughout. 'Andante cantabile' (walking pace, in a singing manner) sets the tempo and character. 'p dolce' (soft, sweet). 'mf espressivo' (moderately loud, with feeling) shifts the mood as the line climbs."
+/>
 
-<DiagramPlaceholder description="A table of the most common categories of Italian terms: tempo, dynamics, character, technique." />
+<figure style={{ margin: '24px auto', maxWidth: 720 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Category</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Term</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '8px 12px', verticalAlign: 'top' }} rowSpan={4}><strong>Tempo</strong></td><td style={{ padding: '6px 12px' }}>Allegro</td><td style={{ padding: '6px 12px' }}>Fast, lively</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Andante</td><td style={{ padding: '6px 12px' }}>Walking pace</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Adagio</td><td style={{ padding: '6px 12px' }}>Slow, at ease</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>Largo</td><td style={{ padding: '6px 12px' }}>Very slow, broad</td></tr>
+      <tr><td style={{ padding: '8px 12px', verticalAlign: 'top' }} rowSpan={3}><strong>Dynamics</strong></td><td style={{ padding: '6px 12px' }}>piano (p)</td><td style={{ padding: '6px 12px' }}>Soft</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>forte (f)</td><td style={{ padding: '6px 12px' }}>Loud</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>crescendo</td><td style={{ padding: '6px 12px' }}>Gradually louder</td></tr>
+      <tr><td style={{ padding: '8px 12px', verticalAlign: 'top' }} rowSpan={4}><strong>Character</strong></td><td style={{ padding: '6px 12px' }}>cantabile</td><td style={{ padding: '6px 12px' }}>Singing</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>dolce</td><td style={{ padding: '6px 12px' }}>Sweetly</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>espressivo</td><td style={{ padding: '6px 12px' }}>With expression</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>maestoso</td><td style={{ padding: '6px 12px' }}>Majestically</td></tr>
+      <tr><td style={{ padding: '8px 12px', verticalAlign: 'top' }} rowSpan={3}><strong>Technique</strong></td><td style={{ padding: '6px 12px' }}>legato</td><td style={{ padding: '6px 12px' }}>Smoothly connected</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>staccato</td><td style={{ padding: '6px 12px' }}>Detached</td></tr>
+      <tr><td style={{ padding: '6px 12px' }}>pizzicato</td><td style={{ padding: '6px 12px' }}>Plucked (strings)</td></tr>
+    </tbody>
+  </table>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>The most common Italian musical terms organized by category. Italian became the universal language of music in the 17th century, and most expression markings are still in Italian today.</figcaption>
+</figure>
 
 ## Tempo terms (summarized)
 

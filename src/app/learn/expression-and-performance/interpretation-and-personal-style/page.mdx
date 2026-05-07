@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -37,7 +38,40 @@ This page is about that space. What do performers actually decide? How do they d
 
 ## The visual
 
-<DiagramPlaceholder description="The opening of a familiar phrase (e.g., the first measures of Chopin's Prelude in E minor) (with annotations showing multiple possible interpretations (different dynamics, tempo, phrasing)) suggesting how the same notation supports varied performances." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 1,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 0, endIdx: 0, label: 'A: tender, slow, p', position: 'above' },
+      { type: 'label', startIdx: 6, endIdx: 6, label: 'B: assertive, mf, slight rubato', position: 'above' },
+      { type: 'label', startIdx: 11, endIdx: 11, label: 'C: dramatic, f, ritardando', position: 'above' },
+    ],
+  }}
+  bpm={84}
+  systemBreaks={[2]}
+  caption="A short minor-key phrase with three different interpretation possibilities labeled. The same notation supports each of these readings — a tender pianissimo opening, an assertive medium crescendo, or a dramatic fortissimo with ritardando — and a hundred more. Interpretation is what the performer brings beyond what the notation specifies."
+/>
 
 ## What the score leaves open
 

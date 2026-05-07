@@ -1,6 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import Diagram from '@/components/learn/Diagram'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -40,7 +41,47 @@ Composers mark dynamics in the score using a set of standard abbreviations, most
 
 ## The visual
 
-<DiagramPlaceholder description="A short passage with dynamic markings throughout, beginning pp, building to mp, then mf, then f, then ff, with the markings clearly visible below the staff." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'h' },
+          { type: 'note', pitch: 'C6', duration: 'h' },
+          { type: 'note', pitch: 'B5', duration: 'h' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+        ],
+        dynamics: [
+          { beat: 0, level: 'pp' },
+          { beat: 8, level: 'mp' },
+          { beat: 12, level: 'mf' },
+          { beat: 16, level: 'f' },
+          { beat: 20, level: 'ff' },
+        ],
+      }],
+    }],
+  }}
+  bpm={88}
+  systemBreaks={[3]}
+  caption="A short passage building from pp to ff. The dynamic markings (italic letters below the staff) tell the performer roughly how loudly to play, with each step about twice the perceived loudness of the previous level."
+/>
 
 <Diagram src="/diagrams/dynamics-range-bar.svg" caption="The standard dynamic range from pp (very soft) to ff (very loud)." />
 

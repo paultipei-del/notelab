@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -40,9 +41,107 @@ Learning some basic German and French music terminology opens up large areas of 
 
 ## The visual
 
-<DiagramPlaceholder description="A passage from Schumann showing German markings like 'lebhaft' and 'mit Ausdruck,' and a passage from Debussy showing French markings like 'doucement' and 'avec élégance', both with translations." />
+<figure style={{ margin: '24px auto' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: -3,
+        tempoMarkings: [{ measureIdx: 0, text: 'Lebhaft', style: 'normal' }],
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'Eb5', duration: 'q.', slur: 'start' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'G5', duration: 'q' },
+              { type: 'note', pitch: 'Bb5', duration: 'q', slur: 'stop' },
+              { type: 'note', pitch: 'Ab5', duration: 'h', slur: 'start' },
+              { type: 'note', pitch: 'G5', duration: 'q' },
+              { type: 'note', pitch: 'F5', duration: 'q', slur: 'stop' },
+              { type: 'note', pitch: 'Eb5', duration: 'w' },
+            ],
+            dynamics: [{ beat: 0, level: 'mp' }],
+          }],
+        }],
+        annotations: [
+          { type: 'label', startIdx: 0, endIdx: 0, label: 'mit Ausdruck', position: 'below' },
+        ],
+      }}
+      bpm={108}
+      caption="Schumann-style: 'Lebhaft' (lively) and 'mit Ausdruck' (with expression). Common in 19th-century German Romantic repertoire."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: -5,
+        tempoMarkings: [{ measureIdx: 0, text: 'Modéré', style: 'normal' }],
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'Db5', duration: 'q' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'Ab5', duration: 'e' },
+              { type: 'note', pitch: 'Db6', duration: 'q' },
+              { type: 'note', pitch: 'Ab5', duration: 'q' },
+              { type: 'note', pitch: 'Gb5', duration: 'q.' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'Eb5', duration: 'h' },
+              { type: 'note', pitch: 'Db5', duration: 'h' },
+              { type: 'note', pitch: 'Db5', duration: 'h' },
+              { type: 'note', pitch: 'Db5', duration: 'w' },
+            ],
+            dynamics: [{ beat: 0, level: 'pp' }],
+          }],
+        }],
+        annotations: [
+          { type: 'label', startIdx: 0, endIdx: 0, label: 'doucement, avec élégance', position: 'below' },
+        ],
+      }}
+      bpm={92}
+      caption="Debussy-style: 'Modéré' (moderate) and 'doucement, avec élégance' (gently, with elegance). French Impressionist markings emphasize atmospheric character."
+    />
+  </div>
+</figure>
 
-<DiagramPlaceholder description="Tables showing the most common German and French markings with their translations." />
+<figure style={{ margin: '24px auto', maxWidth: 720 }}>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+    <table style={{ borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif', fontSize: 14 }}>
+      <thead>
+        <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+          <th colSpan={2} style={{ padding: '8px 12px', fontFamily: 'var(--font-cormorant), serif', fontSize: 16, textAlign: 'left' }}>German</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style={{ padding: '6px 12px' }}>schnell</td><td style={{ padding: '6px 12px' }}>fast</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>langsam</td><td style={{ padding: '6px 12px' }}>slow</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>lebhaft</td><td style={{ padding: '6px 12px' }}>lively</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>ruhig</td><td style={{ padding: '6px 12px' }}>peaceful</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>mit Ausdruck</td><td style={{ padding: '6px 12px' }}>with expression</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>nicht zu</td><td style={{ padding: '6px 12px' }}>not too</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>mässig</td><td style={{ padding: '6px 12px' }}>moderately</td></tr>
+      </tbody>
+    </table>
+    <table style={{ borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif', fontSize: 14 }}>
+      <thead>
+        <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+          <th colSpan={2} style={{ padding: '8px 12px', fontFamily: 'var(--font-cormorant), serif', fontSize: 16, textAlign: 'left' }}>French</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style={{ padding: '6px 12px' }}>vif</td><td style={{ padding: '6px 12px' }}>lively</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>lent</td><td style={{ padding: '6px 12px' }}>slow</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>modéré</td><td style={{ padding: '6px 12px' }}>moderate</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>doucement</td><td style={{ padding: '6px 12px' }}>gently</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>avec élégance</td><td style={{ padding: '6px 12px' }}>with elegance</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>très</td><td style={{ padding: '6px 12px' }}>very</td></tr>
+        <tr><td style={{ padding: '6px 12px' }}>en cédant</td><td style={{ padding: '6px 12px' }}>yielding (slowing)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>The most common German and French markings. Both languages share many concepts with Italian — 'schnell' = 'allegro' = 'vif' — but each carries its own cultural color.</figcaption>
+</figure>
 
 ## German performance terms
 

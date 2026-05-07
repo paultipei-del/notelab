@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { TempoTermsLadder } from '@/components/learn/visuals/TempoTermsLadder'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -39,9 +41,89 @@ Composers mark tempo at the beginning of each piece or movement. The most common
 
 ## The visual
 
-<DiagramPlaceholder description="The opening of three different movements with their tempo markings shown prominently above the first measure, e.g., 'Adagio' on a slow movement, 'Allegro' on a fast one, 'Moderato' on a middle-speed one." />
+<figure style={{ margin: '24px auto' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        tempoMarkings: [{ measureIdx: 0, text: 'Adagio', style: 'normal' }],
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'E5', duration: 'h' },
+              { type: 'note', pitch: 'D5', duration: 'h' },
+              { type: 'note', pitch: 'C5', duration: 'h' },
+              { type: 'note', pitch: 'B4', duration: 'h' },
+            ],
+            dynamics: [{ beat: 0, level: 'p' }],
+          }],
+        }],
+      }}
+      bpm={66}
+      caption="Adagio (slow, ~60-76 BPM) — long sustained notes; the music breathes."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        tempoMarkings: [{ measureIdx: 0, text: 'Allegro', style: 'normal' }],
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'e' },
+              { type: 'note', pitch: 'D5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'G5', duration: 'e' },
+              { type: 'note', pitch: 'A5', duration: 'e' },
+              { type: 'note', pitch: 'G5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'D5', duration: 'q' },
+              { type: 'note', pitch: 'C5', duration: 'h' },
+            ],
+            dynamics: [{ beat: 0, level: 'mf' }],
+          }],
+        }],
+      }}
+      bpm={132}
+      caption="Allegro (fast, ~120-168 BPM) — energetic, eighth notes flowing."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 3, denominator: 4 },
+        keySignature: 1,
+        tempoMarkings: [{ measureIdx: 0, text: 'Moderato', style: 'normal' }],
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'D5', duration: 'q' },
+              { type: 'note', pitch: 'G4', duration: 'q' },
+              { type: 'note', pitch: 'B4', duration: 'q' },
+              { type: 'note', pitch: 'A4', duration: 'q.' },
+              { type: 'note', pitch: 'B4', duration: 'e' },
+              { type: 'note', pitch: 'C5', duration: 'q' },
+              { type: 'note', pitch: 'B4', duration: 'q' },
+              { type: 'note', pitch: 'A4', duration: 'q' },
+              { type: 'note', pitch: 'G4', duration: 'q' },
+            ],
+            dynamics: [{ beat: 0, level: 'mp' }],
+          }],
+        }],
+      }}
+      bpm={108}
+      caption="Moderato (moderate, ~108-120 BPM) — a comfortable middle pace."
+    />
+  </div>
+</figure>
 
-<DiagramPlaceholder description="A vertical bar showing common Italian tempo terms from slowest (Grave, Largo) at the bottom to fastest (Prestissimo) at the top, with approximate BPM ranges." />
+<TempoTermsLadder
+  caption="Common Italian tempo terms from slowest at the bottom to fastest at the top, with their approximate BPM ranges. These terms have meant different things in different historical periods — modern conventions are roughly what's shown."
+/>
 
 ## The Italian tempo terms
 

@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -39,9 +40,57 @@ Articulation markings are small symbols placed above or below the noteheads: a d
 
 ## The visual
 
-<DiagramPlaceholder description="A passage with various articulation markings (staccato dots on some notes, a slur over others, tenuto bars on a few, and an accent on one) all labeled." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q', articulations: ['staccato'] },
+          { type: 'note', pitch: 'E5', duration: 'q', articulations: ['staccato'] },
+          { type: 'note', pitch: 'G5', duration: 'q', articulations: ['staccato'] },
+          { type: 'note', pitch: 'C6', duration: 'q', articulations: ['staccato'] },
+          { type: 'note', pitch: 'B5', duration: 'q', slur: 'start' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q', slur: 'stop' },
+          { type: 'note', pitch: 'E5', duration: 'q', articulations: ['tenuto'] },
+          { type: 'note', pitch: 'D5', duration: 'q', articulations: ['tenuto'] },
+          { type: 'note', pitch: 'C5', duration: 'q', articulations: ['accent'] },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h', articulations: ['marcato', 'fermata'] },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  caption="A passage demonstrating four articulations. Staccato (dots) shortens notes; slurs (curves) connect notes smoothly; tenuto (bars) holds notes their full value; marcato (^) emphasizes the note. The fermata (𝄐) holds a note longer than its written duration."
+/>
 
-<DiagramPlaceholder description="A chart showing the seven most common articulation symbols with their names and rough descriptions." />
+<figure style={{ margin: '24px auto', maxWidth: 720 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Symbol</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Name</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Effect</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '8px 12px', fontFamily: 'var(--font-bravura)', fontSize: 18 }}>•</td><td style={{ padding: '8px 12px' }}>Staccato</td><td style={{ padding: '8px 12px' }}>Detached, shortened (~half value)</td></tr>
+      <tr><td style={{ padding: '8px 12px', fontFamily: 'var(--font-bravura)', fontSize: 18 }}>―</td><td style={{ padding: '8px 12px' }}>Tenuto</td><td style={{ padding: '8px 12px' }}>Held to full value, slight stress</td></tr>
+      <tr><td style={{ padding: '8px 12px', fontFamily: 'var(--font-bravura)', fontSize: 18 }}>&gt;</td><td style={{ padding: '8px 12px' }}>Accent</td><td style={{ padding: '8px 12px' }}>Strong attack, normal duration</td></tr>
+      <tr><td style={{ padding: '8px 12px', fontFamily: 'var(--font-bravura)', fontSize: 18 }}>^</td><td style={{ padding: '8px 12px' }}>Marcato</td><td style={{ padding: '8px 12px' }}>Stronger than accent, sharper</td></tr>
+      <tr><td style={{ padding: '8px 12px', fontFamily: 'var(--font-bravura)', fontSize: 18 }}>▼</td><td style={{ padding: '8px 12px' }}>Staccatissimo</td><td style={{ padding: '8px 12px' }}>Even shorter than staccato</td></tr>
+      <tr><td style={{ padding: '8px 12px', fontFamily: 'var(--font-bravura)', fontSize: 18 }}>𝄐</td><td style={{ padding: '8px 12px' }}>Fermata</td><td style={{ padding: '8px 12px' }}>Hold longer than written</td></tr>
+      <tr><td style={{ padding: '8px 12px', fontFamily: 'var(--font-bravura)', fontSize: 18 }}>⌣</td><td style={{ padding: '8px 12px' }}>Slur</td><td style={{ padding: '8px 12px' }}>Connect smoothly (legato)</td></tr>
+    </tbody>
+  </table>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>The seven most common articulation symbols. Each tells the performer how to attack and shape an individual note — the smallest scale of musical expression.</figcaption>
+</figure>
 
 ## The main articulation markings
 

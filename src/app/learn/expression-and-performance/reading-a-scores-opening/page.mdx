@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -39,9 +40,106 @@ This page is about synthesis, how tempo, meter, and related markings combine to 
 
 ## The visual
 
-<DiagramPlaceholder description="Three different opening packages shown side by side, a Bach Baroque opening (C major, 4/4, no tempo marking), a Mozart Classical opening (G major, 3/4, Allegro), a Chopin Romantic opening (D-flat major, 6/8, Andantino), each with the opening markings highlighted." />
+<figure style={{ margin: '24px auto' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'G5', duration: 'e' },
+              { type: 'note', pitch: 'C6', duration: 'e' },
+              { type: 'note', pitch: 'D5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'A5', duration: 'e' },
+              { type: 'note', pitch: 'D6', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'G5', duration: 'e' },
+              { type: 'note', pitch: 'B5', duration: 'e' },
+              { type: 'note', pitch: 'E6', duration: 'e' },
+              { type: 'note', pitch: 'C6', duration: 'h' },
+            ],
+          }],
+        }],
+      }}
+      bpm={108}
+      caption="Bach Baroque opening (c. 1722). C major, 4/4, no tempo marking, no dynamics. The era trusted performers to bring their own tempo and expression."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 3, denominator: 4 },
+        keySignature: 1,
+        tempoMarkings: [{ measureIdx: 0, text: 'Allegro', style: 'normal' }],
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'D5', duration: 'q' },
+              { type: 'note', pitch: 'G5', duration: 'q' },
+              { type: 'note', pitch: 'B5', duration: 'q' },
+              { type: 'note', pitch: 'A5', duration: 'q.' },
+              { type: 'note', pitch: 'G5', duration: 'e' },
+              { type: 'note', pitch: 'F#5', duration: 'q' },
+              { type: 'note', pitch: 'G5', duration: 'h.' },
+            ],
+            dynamics: [{ beat: 0, level: 'p' }],
+          }],
+        }],
+      }}
+      bpm={132}
+      caption="Mozart Classical opening (c. 1788). G major, 3/4, Allegro tempo marking, p dynamic. The Classical era added explicit tempo and dynamic markings."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 6, denominator: 8 },
+        keySignature: -5,
+        tempoMarkings: [{ measureIdx: 0, text: 'Andantino', style: 'normal' }],
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'F5', duration: 'q.' },
+              { type: 'note', pitch: 'Ab5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'Db5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'q' },
+              { type: 'note', pitch: 'Eb5', duration: 'e' },
+              { type: 'note', pitch: 'Db5', duration: 'q.' },
+            ],
+            dynamics: [{ beat: 0, level: 'p', modifier: 'dolce' }],
+          }],
+        }],
+      }}
+      bpm={92}
+      caption="Chopin Romantic opening (c. 1839). D♭ major, 6/8, Andantino tempo, p dolce. The Romantic era piled on character markings: dynamics, tempo, AND expression terms together."
+    />
+  </div>
+</figure>
 
-<DiagramPlaceholder description="A checklist of elements to scan at the start of any piece: clef, key signature, time signature, tempo, dynamic, expression marking." />
+<figure style={{ margin: '24px auto', maxWidth: 600 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Element</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>What it tells you</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '8px 12px' }}>Clef</td><td style={{ padding: '8px 12px' }}>Which staff (treble or bass) and pitch range</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Key signature</td><td style={{ padding: '8px 12px' }}>The home key — sharps or flats throughout</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Time signature</td><td style={{ padding: '8px 12px' }}>Beats per measure and beat unit</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Tempo marking</td><td style={{ padding: '8px 12px' }}>How fast (e.g., Allegro, ♩ = 120)</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Dynamic</td><td style={{ padding: '8px 12px' }}>Starting volume (e.g., p, mf)</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Expression / character</td><td style={{ padding: '8px 12px' }}>Mood (e.g., cantabile, dolce, espressivo)</td></tr>
+    </tbody>
+  </table>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>Six things to scan at the top of any score before you play a note. Each tells you something different about the piece you're about to play.</figcaption>
+</figure>
 
 ## The standard opening package
 

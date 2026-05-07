@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -39,9 +40,78 @@ Composers mark intended tempo changes with specific terms, usually Italian: *acc
 
 ## The visual
 
-<DiagramPlaceholder description="A passage with tempo change markings, 'accel.' beneath a building passage, 'rit.' beneath a slowing passage, 'a tempo' marking a return to the original speed, and a fermata (held note) at a climactic moment." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    tempoMarkings: [
+      { measureIdx: 0, text: 'Andante', style: 'normal' },
+      { measureIdx: 1, text: 'accel.', style: 'change-with-line', endMeasureIdx: 2 },
+      { measureIdx: 3, text: 'a tempo', style: 'change' },
+      { measureIdx: 5, text: 'rit.', style: 'change-with-line', endMeasureIdx: 6 },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'h', articulations: ['fermata'] },
+          { type: 'note', pitch: 'C6', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'w' },
+        ],
+      }],
+    }],
+  }}
+  bpm={88}
+  systemBreaks={[3, 6]}
+  caption="A passage with multiple tempo changes: 'accel.' building speed into a fermata (held note), 'a tempo' restoring the original speed, then 'rit.' slowing into the final cadence. The dashed lines under change markings show the duration of the change."
+/>
 
-<DiagramPlaceholder description="A typical phrase ending with a ritardando into the cadence, showing how the slowing tempo aligns with the harmonic resolution." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    tempoMarkings: [
+      { measureIdx: 2, text: 'rit.', style: 'change-with-line', endMeasureIdx: 3 },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'h', articulations: ['fermata'] },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+      }],
+    }],
+  }}
+  bpm={92}
+  caption="A phrase ending with ritardando into a final cadence. The 'rit.' marking begins partway through the phrase and continues through the cadence, with the slowing tempo aligning with the harmonic resolution."
+/>
 
 ## Main tempo-change terms
 

@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -39,9 +40,113 @@ Both types look similar on the page, and performers interpret context to know wh
 
 ## The visual
 
-<DiagramPlaceholder description="A phrase with a long phrasing slur spanning 8 measures, showing the overall shape, and smaller legato slurs within it connecting groups of 2-4 notes for specific articulation." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'e', slur: 'start' },
+          { type: 'note', pitch: 'D5', duration: 'e' },
+          { type: 'note', pitch: 'E5', duration: 'e' },
+          { type: 'note', pitch: 'F5', duration: 'e', slur: 'stop' },
+          { type: 'note', pitch: 'G5', duration: 'e', slur: 'start' },
+          { type: 'note', pitch: 'A5', duration: 'e' },
+          { type: 'note', pitch: 'B5', duration: 'e' },
+          { type: 'note', pitch: 'C6', duration: 'e', slur: 'stop' },
+          { type: 'note', pitch: 'B5', duration: 'e', slur: 'start' },
+          { type: 'note', pitch: 'A5', duration: 'e' },
+          { type: 'note', pitch: 'G5', duration: 'e' },
+          { type: 'note', pitch: 'F5', duration: 'e', slur: 'stop' },
+          { type: 'note', pitch: 'E5', duration: 'e', slur: 'start' },
+          { type: 'note', pitch: 'D5', duration: 'e' },
+          { type: 'note', pitch: 'C5', duration: 'e' },
+          { type: 'note', pitch: 'B4', duration: 'e', slur: 'stop' },
+          { type: 'note', pitch: 'C5', duration: 'q', slur: 'start' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'G4', duration: 'q', slur: 'stop' },
+          { type: 'note', pitch: 'F4', duration: 'q', slur: 'start' },
+          { type: 'note', pitch: 'G4', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q', slur: 'stop' },
+          { type: 'note', pitch: 'C5', duration: 'q', slur: 'start' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q', slur: 'stop' },
+          { type: 'note', pitch: 'G5', duration: 'q', slur: 'start' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q', slur: 'stop' },
+          { type: 'note', pitch: 'D5', duration: 'q', slur: 'start' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'w', slur: 'stop' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'bracket', startIdx: 0, endIdx: 36, label: 'phrase', sublabel: '8 measures', position: 'above' },
+    ],
+  }}
+  bpm={92}
+  systemBreaks={[4]}
+  caption="A long musical phrase shaped by a top-level bracket spanning 8 measures, with smaller legato slurs (the curves) connecting groups of 2-4 notes within. The slurs show local articulation; the bracket shows the larger phrase arc."
+/>
 
-<DiagramPlaceholder description="Two passages side-by-side (one without slurs (notes played detached), one with a slur over all the notes (notes played smoothly connected)) showing the difference in performance." />
+<figure style={{ margin: '24px auto' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'q' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'G5', duration: 'q' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'F5', duration: 'q' },
+              { type: 'note', pitch: 'D5', duration: 'q' },
+              { type: 'note', pitch: 'B4', duration: 'q' },
+              { type: 'note', pitch: 'C5', duration: 'q' },
+            ],
+          }],
+        }],
+      }}
+      bpm={108}
+      caption="Without slur — each note detached, played separately."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'q', slur: 'start' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'G5', duration: 'q' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'F5', duration: 'q' },
+              { type: 'note', pitch: 'D5', duration: 'q' },
+              { type: 'note', pitch: 'B4', duration: 'q' },
+              { type: 'note', pitch: 'C5', duration: 'q', slur: 'stop' },
+            ],
+          }],
+        }],
+      }}
+      bpm={108}
+      caption="With slur — all notes connected smoothly, played legato."
+    />
+  </div>
+</figure>
 
 ## Phrasing slurs
 

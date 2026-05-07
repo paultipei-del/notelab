@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -43,9 +44,81 @@ Ornaments are notated with small symbols that compress a pattern of several note
 
 ## The visual
 
-<DiagramPlaceholder description="A melody line with various ornaments marked, a trill (tr), a mordent (a short zigzag), a turn (an S-shape), a grace note (a small note before a main note), each labeled." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q', ornaments: ['trill'] },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'A5', duration: 'q', ornaments: ['mordent'] },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q', ornaments: ['turn'] },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 1, endIdx: 1, label: 'trill (tr)', position: 'above' },
+      { type: 'label', startIdx: 3, endIdx: 3, label: 'mordent', position: 'above' },
+      { type: 'label', startIdx: 6, endIdx: 6, label: 'turn', position: 'above' },
+      { type: 'label', startIdx: 9, endIdx: 9, label: 'grace note (would precede)', position: 'above' },
+    ],
+  }}
+  bpm={92}
+  caption="A melody with four common ornaments: trill (rapid alternation), mordent (a single quick alternation), turn (S-shaped figure around the note), and grace note (a quick decoration before the main note). Each adds melodic decoration without changing the underlying harmony."
+/>
 
-<DiagramPlaceholder description="Each ornament expanded to show what notes are actually played, e.g., a trill on a quarter note played as a rapid alternation between the note and the note above." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 's' },
+          { type: 'note', pitch: 'F5', duration: 's' },
+          { type: 'note', pitch: 'E5', duration: 's' },
+          { type: 'note', pitch: 'F5', duration: 's' },
+          { type: 'note', pitch: 'E5', duration: 's' },
+          { type: 'note', pitch: 'F5', duration: 's' },
+          { type: 'note', pitch: 'E5', duration: 's' },
+          { type: 'note', pitch: 'F5', duration: 's' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 's' },
+          { type: 'note', pitch: 'G5', duration: 's' },
+          { type: 'note', pitch: 'A5', duration: 'e' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 's' },
+          { type: 'note', pitch: 'E5', duration: 's' },
+          { type: 'note', pitch: 'D5', duration: 's' },
+          { type: 'note', pitch: 'E5', duration: 's' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'bracket', startIdx: 1, endIdx: 8, label: 'trill (alternating)', position: 'above' },
+      { type: 'bracket', startIdx: 10, endIdx: 12, label: 'mordent (3 notes)', position: 'above' },
+      { type: 'bracket', startIdx: 15, endIdx: 18, label: 'turn (4 notes)', position: 'above' },
+    ],
+  }}
+  bpm={92}
+  caption="The same ornaments unwrapped into the actual notes a performer plays. Each ornament is shorthand for a specific small pattern of notes built from the main note and its neighbors."
+/>
 
 ## The main ornaments
 

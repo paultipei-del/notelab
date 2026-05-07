@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { NavigationFlowchart } from '@/components/learn/visuals/NavigationFlowchart'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -39,11 +41,82 @@ Reading these markings correctly is a basic literacy skill, miss them, and you'l
 
 ## The visual
 
-<DiagramPlaceholder description="A section bracketed by repeat signs (:||), with arrows showing the player plays through to the end sign, then returns to the opening repeat sign to play the section again." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    measureMarks: [
+      { measureIdx: 0, startRepeat: true },
+      { measureIdx: 3, endRepeat: true },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'w' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  caption="A 4-bar section bracketed by repeat signs. The double bar with two dots on the right (start repeat) and the double bar with two dots on the left (end repeat) tell the performer: play through to the end repeat, then return to the start repeat and play the section again."
+/>
 
-<DiagramPlaceholder description="A passage with first and second endings, a bracket labeled '1.' for the first pass, a bracket labeled '2.' for the second pass, showing how the music branches on repeat." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    measureMarks: [
+      { measureIdx: 0, startRepeat: true },
+      { measureIdx: 2, voltaNumber: 1, voltaCloseRight: true, endRepeat: true },
+      { measureIdx: 3, voltaNumber: 2, voltaCloseRight: true },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  caption="A passage with first and second endings. On the first pass, play measures 1, 2, and the '1.' ending (m. 3). Then return to the start repeat and play measures 1, 2 again, but skip the '1.' ending and play the '2.' ending (m. 4) instead. This compact notation saves writing two slightly different endings in full."
+/>
 
-<DiagramPlaceholder description="A flowchart showing how D.C. al Fine, D.S. al Coda, and similar instructions direct the performer to jump around the score." />
+<NavigationFlowchart
+  sections={[
+    { label: 'Section A', sublabel: 'opening' },
+    { label: 'Section B', sublabel: 'segno marker here', variant: 'highlighted' },
+    { label: 'Section C', sublabel: 'D.S. al Coda' },
+    { label: 'Coda', variant: 'destination' },
+  ]}
+  jumps={[
+    { fromIdx: 2, toIdx: 1, label: 'D.S. (back to segno)' },
+    { fromIdx: 1, toIdx: 3, label: 'al Coda (skip to coda)' },
+  ]}
+  caption="D.S. al Coda: at the D.S. marking, return to the segno; play forward; when you hit the 'To Coda' indication, skip to the Coda. Similar instructions (D.C. al Fine, D.C. al Coda, D.S. al Fine) all work the same way — they let composers compactly represent music that loops back and around."
+/>
 
 ## Repeat bars
 
