@@ -111,6 +111,13 @@ interface MusicalExampleProps {
   beamOverride?: 'standard' | 'all-together' | 'none'
   /** Suppress the Play button and click-to-play feedback. Default false. */
   audio?: boolean
+  /**
+   * '5-line' (default) is normal pitched notation. '1-line' renders a
+   * single horizontal line, no clef, no key signature; pitch fields are
+   * IGNORED — every notehead sits on the line. For rhythmic-only
+   * notation. Audio plays each rhythmic note at a neutral fixed pitch.
+   */
+  staffType?: '5-line' | '1-line'
   showPlayButton?: boolean
   showMeasureNumbers?: boolean
   size?: LearnSize
@@ -285,12 +292,14 @@ export function MusicalExample(props: MusicalExampleProps) {
     annotations,
     beamOverride = 'standard',
     audio = true,
+    staffType = '5-line',
     showPlayButton: showPlayButtonRaw = true,
     showMeasureNumbers = false,
     size = 'inline',
     caption,
   } = props
   const showPlayButton = audio && showPlayButtonRaw
+  const isOneLine = staffType === '1-line'
 
   const T = tokensFor(size)
   const sampler = useSampler()
@@ -721,6 +730,20 @@ export function MusicalExample(props: MusicalExampleProps) {
             }
             if (mEl.element.type === 'note') {
               const ps = pitchesOf(mEl.element)
+              if (isOneLine) {
+                // 1-line staff: every note sits on the single line.
+                // Pitches are ignored visually; positions = [4] (middle).
+                for (let pi = 0; pi < Math.max(1, ps.length); pi++) {
+                  entry.positions.push(4)
+                  entry.accidentals.push(null)
+                }
+                entry.stemDir = 'up'
+                beamGroups.forEach((bg, bgi) => {
+                  if (bg.indices.includes(idxInMeasure)) entry.beamGroupIdx = bgi
+                })
+                placed.push(entry)
+                return
+              }
               for (const pitch of ps) {
                 const parsed = parsePitch(pitch)
                 if (!parsed) {
@@ -1068,8 +1091,20 @@ export function MusicalExample(props: MusicalExampleProps) {
             activeClefByStave[si]?.[sliceStart] ?? staves[si].clef
           return (
           <g key={`sys-${sys.systemIdx}`}>
-            {/* Staves: one per stave in the score, plus brace if multi. */}
-            {staves.map((_, si) => (
+            {/* Staves: one per stave in the score, plus brace if multi.
+                In 1-line mode, draw a single line at the staff middle and
+                skip the clef. */}
+            {isOneLine ? staves.map((_, si) => (
+              <line
+                key={`staff-${sys.systemIdx}-${si}`}
+                x1={margin}
+                x2={margin + sys.staffWidth}
+                y1={sys.staffTops[si] + 4 * T.step}
+                y2={sys.staffTops[si] + 4 * T.step}
+                stroke={T.staffLineColor}
+                strokeWidth={T.staffLineStroke}
+              />
+            )) : staves.map((_, si) => (
               <Staff
                 key={`staff-${sys.systemIdx}-${si}`}
                 clef={systemStartClef(si)}
@@ -1090,7 +1125,7 @@ export function MusicalExample(props: MusicalExampleProps) {
 
             {/* Per-stave key signature on every system. */}
             {staves.map((_, si) => {
-              if (ksCount === 0) return null
+              if (ksCount === 0 || isOneLine) return null
               const posMap = ksPosFor(systemStartClef(si))
               return (
                 <g key={`ks-${sys.systemIdx}-${si}`}>
