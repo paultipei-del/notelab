@@ -212,6 +212,19 @@ export interface Score {
    * spanning measureIdx → endMeasureIdx for rit. / accel. passages.
    */
   tempoMarkings?: TempoMarking[]
+  /**
+   * Lead-sheet style chord symbols ('C', 'Am7', 'G/B', 'F#dim') anchored
+   * to a beat. Rendered above the top staff in serif text — sit between
+   * any tempo markings and the staff itself.
+   */
+  chordSymbols?: ChordSymbol[]
+}
+
+export interface ChordSymbol {
+  /** Beat position from the start of the score (beat 0 = downbeat of m. 1). */
+  beat: number
+  /** Chord text. Examples: 'C', 'Am7', 'G/B', 'Cmaj7', 'F#dim'. */
+  symbol: string
 }
 
 export interface TempoMarking {

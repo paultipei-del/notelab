@@ -155,16 +155,42 @@ function beatBoundaries(ts: TimeSignature): number[] {
   return out
 }
 
+/** Beam-grouping mode. 'standard' is the only correct setting for real
+ *  music; 'all-together' and 'none' exist for ONE pedagogical demo on
+ *  the beaming-rules lesson and should never be used elsewhere. */
+export type BeamOverride = 'standard' | 'all-together' | 'none'
+
 /**
  * Identify beam groups within a single measure. Beamable durations
  * (eighths and sixteenths, dotted or not) that share a beat-group and are
  * adjacent get joined into one beam. Notes longer than an eighth, rests,
  * and beat boundaries terminate any in-progress group.
+ *
+ * `override`:
+ *   - 'standard' (default): the engraving rule above.
+ *   - 'all-together': beam ALL beamable elements as one group, ignoring
+ *     beat boundaries. (Wrong-on-purpose demo only.)
+ *   - 'none': no beam groups; every eighth/sixteenth gets a flag.
  */
 export function groupIntoBeams(
   measure: MeasuredElement[],
   ts: TimeSignature,
+  override: BeamOverride = 'standard',
 ): BeamGroup[] {
+  if (override === 'none') return []
+  if (override === 'all-together') {
+    const indices: number[] = []
+    const counts: number[] = []
+    measure.forEach((m, i) => {
+      const isNote = m.element.type === 'note'
+      const dur = m.element.duration
+      if (isNote && BEAMABLE.has(dur)) {
+        indices.push(i)
+        counts.push(dur.startsWith('s') ? 2 : 1)
+      }
+    })
+    return indices.length >= 2 ? [{ indices, beamCounts: counts }] : []
+  }
   const boundaries = beatBoundaries(ts)
   const groups: BeamGroup[] = []
   let current: { indices: number[]; counts: number[] } | null = null

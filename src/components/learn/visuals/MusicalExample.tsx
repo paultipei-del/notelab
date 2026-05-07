@@ -102,6 +102,15 @@ interface MusicalExampleProps {
   systemBreaks?: number[]
   /** Annotations target the primary line (stave 0, voice 0). */
   annotations?: MusicalAnnotation[]
+  /**
+   * Beam-grouping override. Only useful for the beaming-rules lesson.
+   * 'standard' (default) follows engraving rules. 'all-together' beams
+   * every beamable note as one group (wrong on purpose). 'none' draws
+   * no beams (every eighth/sixteenth flagged). Don't use elsewhere.
+   */
+  beamOverride?: 'standard' | 'all-together' | 'none'
+  /** Suppress the Play button and click-to-play feedback. Default false. */
+  audio?: boolean
   showPlayButton?: boolean
   showMeasureNumbers?: boolean
   size?: LearnSize
@@ -274,11 +283,14 @@ export function MusicalExample(props: MusicalExampleProps) {
     bpm = 80,
     systemBreaks,
     annotations,
-    showPlayButton = true,
+    beamOverride = 'standard',
+    audio = true,
+    showPlayButton: showPlayButtonRaw = true,
     showMeasureNumbers = false,
     size = 'inline',
     caption,
   } = props
+  const showPlayButton = audio && showPlayButtonRaw
 
   const T = tokensFor(size)
   const sampler = useSampler()
@@ -520,6 +532,8 @@ export function MusicalExample(props: MusicalExampleProps) {
     ? Math.round(34 * T.scale + 10) : 0
   const hasTempoMarkings = (score.tempoMarkings?.length ?? 0) > 0
   const tempoHeadroom = hasTempoMarkings ? Math.round(34 * T.scale + 14) : 0
+  const hasChordSymbols = (score.chordSymbols?.length ?? 0) > 0
+  const chordSymbolHeadroom = hasChordSymbols ? Math.round(20 * T.scale + 8) : 0
   const hasVoiceMarks = staves.some(stave =>
     stave.voices.some(v =>
       (v.dynamics?.length ?? 0) > 0
@@ -616,7 +630,7 @@ export function MusicalExample(props: MusicalExampleProps) {
 
   // Per-system layout.
   const systems: SystemLayout[] = []
-  let curSystemTop = headroom + annotationHeadroom + tempoHeadroom
+  let curSystemTop = headroom + annotationHeadroom + tempoHeadroom + chordSymbolHeadroom
 
   systemSlices.forEach(([sliceStart, sliceEnd], systemIdx) => {
     const showTimeSig = systemIdx === 0
@@ -682,7 +696,7 @@ export function MusicalExample(props: MusicalExampleProps) {
         const voiceLayouts: VoiceMeasureLayout[] = stave.voices.map((voice, vi) => {
           const voiceMeasure = measuresByVoice[si][vi][mi] ?? []
           const policy = effectiveStemPolicy(voice, vi, stave.voices.length)
-          const beamGroups = groupIntoBeams(voiceMeasure, timeSignature)
+          const beamGroups = groupIntoBeams(voiceMeasure, timeSignature, beamOverride)
           const placed: PlacedElement[] = []
 
           const accidentalsRunning = new Map<string, string>()
@@ -981,6 +995,7 @@ export function MusicalExample(props: MusicalExampleProps) {
     duration: Duration,
     tuplet?: { actual: number; normal: number },
   ) => {
+    if (!audio) return
     flashCellByKey(`s${staveIdx}v${voiceIdx}i${origIdx}`)
     const seconds = durationToSeconds(duration, bpm, timeSignature, tuplet)
     await sampler.ensureReady()
@@ -1678,6 +1693,30 @@ export function MusicalExample(props: MusicalExampleProps) {
             }),
           ),
         )}
+
+        {/* Chord symbols — lead-sheet harmony names ('C', 'Am7', 'G/B')
+            anchored to a beat. Sit above the top staff in serif text,
+            below tempo markings. */}
+        {(score.chordSymbols ?? []).map((cs, ci) => {
+          const cumBeat = cs.beat
+          const entry = resolveBeat(0, 0, cumBeat)
+          if (!entry) return null
+          const sys = systems[entry.systemIdx]
+          const baseY = sys.staffTops[0] - Math.round(8 * T.scale + 6)
+          return (
+            <text
+              key={`chord-${ci}`}
+              x={entry.x}
+              y={baseY}
+              fontSize={Math.round(T.labelFontSize + 3)}
+              fontFamily={T.fontDisplay}
+              fontWeight={500}
+              fill={T.highlightAccent}
+              textAnchor="middle"
+              dominantBaseline="central"
+            >{cs.symbol}</text>
+          )
+        })}
 
         {/* Tempo markings — above the topmost staff. Per engraving
             convention:
