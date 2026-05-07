@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -41,9 +42,111 @@ This page covers how to read lead sheets, the system of chord symbols, and the c
 
 ## The visual
 
-<DiagramPlaceholder description="A lead sheet showing a melody line with chord symbols above each measure (including basic triads (C, Am, F, G), seventh chords (Cmaj7, Am7, Dm7, G7), and altered chords) with explanations of each symbol." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    chordSymbols: [
+      { beat: 0, symbol: 'C' },
+      { beat: 4, symbol: 'Am' },
+      { beat: 8, symbol: 'F' },
+      { beat: 12, symbol: 'G' },
+      { beat: 16, symbol: 'Cmaj7' },
+      { beat: 20, symbol: 'Am7' },
+      { beat: 24, symbol: 'Dm7' },
+      { beat: 28, symbol: 'G7' },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'h' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  systemBreaks={[4]}
+  caption="A short lead sheet. The melody is fully notated; the chords are written as symbols above each measure — a player or accompanist supplies the actual voicing. Basic triads (C, Am, F, G) on the first line; seventh chords (Cmaj7, Am7, Dm7, G7) on the second."
+/>
 
-<DiagramPlaceholder description="A 'fake book' entry showing a complete lead sheet for a jazz standard, with melody, chord symbols, and clear section markers." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: -1,
+    chordSymbols: [
+      { beat: 0, symbol: 'F' },
+      { beat: 4, symbol: 'Dm7' },
+      { beat: 8, symbol: 'Gm7' },
+      { beat: 12, symbol: 'C7' },
+      { beat: 16, symbol: 'F' },
+      { beat: 20, symbol: 'Bb' },
+      { beat: 24, symbol: 'Gm7' },
+      { beat: 28, symbol: 'C7' },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'Bb5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'h' },
+          { type: 'note', pitch: 'Bb4', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'Bb5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'section', startIdx: 0, endIdx: 11, label: 'A', position: 'above' },
+      { type: 'section', startIdx: 12, endIdx: 23, label: 'A', position: 'above' },
+    ],
+  }}
+  bpm={120}
+  systemBreaks={[4]}
+  caption="A fake book entry: melody, chord symbols, and section markers (A, A) above each repeated section. This is the working format for jazz musicians and pop accompanists — the bare minimum to play a song. The chord symbols reveal a ii-V-I progression in F major, the bedrock of jazz harmony."
+/>
 
 ## The chord symbol system
 

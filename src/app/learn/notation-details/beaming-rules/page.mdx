@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -39,11 +40,103 @@ This page covers the conventions: how beams work, what grouping rules apply in d
 
 ## The visual
 
-<DiagramPlaceholder description="A measure of 4/4 with eight eighth notes, first shown incorrectly (all beamed together in one group of 8), then correctly (beamed in two groups of 4, matching the beat structure of 4/4)." />
+<figure style={{ margin: '24px auto' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'e' },
+              { type: 'note', pitch: 'D5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'G5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'D5', duration: 'e' },
+            ],
+          }],
+        }],
+      }}
+      beamOverride="all-together"
+      bpm={108}
+      audio={false}
+      caption="Wrong: all 8 eighths beamed as one group. The reader can't see the beat structure."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'e' },
+              { type: 'note', pitch: 'D5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'G5', duration: 'e' },
+              { type: 'note', pitch: 'F5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'D5', duration: 'e' },
+            ],
+          }],
+        }],
+      }}
+      bpm={108}
+      caption="Correct: beamed in two groups of 4, matching the half-bar structure of 4/4."
+    />
+  </div>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>The same 8 eighth notes beamed wrong (one group of 8) and beamed correctly (two groups of 4). Beam groupings should reveal the meter — you should be able to FEEL the downbeats from the visual alone.</figcaption>
+</figure>
 
-<DiagramPlaceholder description="A measure of 6/8 with six eighth notes, beamed in two groups of 3, showing compound duple meter." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 6, denominator: 8 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'e' },
+          { type: 'note', pitch: 'D5', duration: 'e' },
+          { type: 'note', pitch: 'E5', duration: 'e' },
+          { type: 'note', pitch: 'F5', duration: 'e' },
+          { type: 'note', pitch: 'G5', duration: 'e' },
+          { type: 'note', pitch: 'A5', duration: 'e' },
+        ],
+      }],
+    }],
+  }}
+  bpm={120}
+  caption="6/8 with six eighth notes, beamed in two groups of 3. The beaming reveals 6/8's compound duple structure: two beats per bar, each beat divided into three."
+/>
 
-<DiagramPlaceholder description="A measure with mixed values (quarter, two eighths, quarter, two eighths), showing how eighths are beamed in pairs within the beat structure." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'e' },
+          { type: 'note', pitch: 'E5', duration: 'e' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'e' },
+          { type: 'note', pitch: 'A5', duration: 'e' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  caption="A measure with mixed values. Each beat is one quarter long; the eighths within each beat are beamed in pairs. The unbeamed quarter notes break the visual flow at every beat boundary, making the meter even clearer."
+/>
 
 ## The basic rule, beam within beats
 

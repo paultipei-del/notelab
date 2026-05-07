@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -41,9 +42,71 @@ This page explains the most common transposing instruments and how their transpo
 
 ## The visual
 
-<DiagramPlaceholder description="A vertical bar showing several instruments (piano, violin, flute, B♭ clarinet, F horn, alto saxophone, English horn) each with a note C and the resulting concert pitch shown beside it." />
+<figure style={{ margin: '24px auto', maxWidth: 720 }}>
+  <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif', fontSize: 14 }}>
+    <thead>
+      <tr style={{ borderBottom: '1px solid #1A1A18' }}>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Instrument</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Written</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Sounds</th>
+        <th style={{ textAlign: 'left', padding: '8px 12px' }}>Transposition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style={{ padding: '8px 12px' }}>Piano, Violin, Flute</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>concert pitch</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Clarinet in B♭</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>B♭</td><td style={{ padding: '8px 12px' }}>down a major 2nd</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Trumpet in B♭</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>B♭</td><td style={{ padding: '8px 12px' }}>down a major 2nd</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Horn in F</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>F</td><td style={{ padding: '8px 12px' }}>down a perfect 5th</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Alto Saxophone (E♭)</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>E♭</td><td style={{ padding: '8px 12px' }}>down a major 6th</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Tenor Saxophone (B♭)</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>B♭</td><td style={{ padding: '8px 12px' }}>down a major 9th</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>English Horn</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>F</td><td style={{ padding: '8px 12px' }}>down a perfect 5th</td></tr>
+      <tr><td style={{ padding: '8px 12px' }}>Bass Clarinet (B♭)</td><td style={{ padding: '8px 12px' }}>C</td><td style={{ padding: '8px 12px' }}>B♭</td><td style={{ padding: '8px 12px' }}>down a major 9th</td></tr>
+    </tbody>
+  </table>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>Common transposing instruments. When a clarinetist plays a written C, they sound a B♭. The instrument's name (e.g., "Clarinet in B♭") tells you the transposition: the written C sounds as the instrument's "key" pitch.</figcaption>
+</figure>
 
-<DiagramPlaceholder description="A C4 (middle C) shown as written for each of several instruments, alongside the concert pitch (how the audience hears it) for each." />
+<figure style={{ margin: '24px auto' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{ clef: 'treble', voices: [{ elements: [{ type: 'note', pitch: 'C5', duration: 'w' }] }] }],
+      }}
+      audio={false}
+      caption="Piano / violin / flute (concert pitch): written C4 = sounds C4."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{ clef: 'treble', voices: [{ elements: [{ type: 'note', pitch: 'C5', duration: 'w' }] }] }],
+      }}
+      audio={false}
+      caption="B♭ clarinet: written C4 = sounds B♭3 (down a major 2nd)."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{ clef: 'treble', voices: [{ elements: [{ type: 'note', pitch: 'C5', duration: 'w' }] }] }],
+      }}
+      audio={false}
+      caption="Horn in F: written C4 = sounds F3 (down a perfect 5th)."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{ clef: 'treble', voices: [{ elements: [{ type: 'note', pitch: 'C5', duration: 'w' }] }] }],
+      }}
+      audio={false}
+      caption="Alto saxophone (E♭): written C4 = sounds E♭3 (down a major 6th)."
+    />
+  </div>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>The same written note (a middle C) produces different sounding pitches depending on the instrument. This is why an orchestra's "concert C" requires each transposing instrument to read a different written note — composers and arrangers handle this when writing out parts.</figcaption>
+</figure>
 
 ## What "transposing" means for an instrument
 

@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -39,9 +40,98 @@ This page covers those conventions. Reading multi-voice notation is a skill that
 
 ## The visual
 
-<DiagramPlaceholder description="A single staff with two voices, the upper voice with all stems up, the lower voice with all stems down, each with its own rhythm and rests; the voices move independently." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [
+        {
+          elements: [
+            { type: 'note', pitch: 'G5', duration: 'h' },
+            { type: 'note', pitch: 'A5', duration: 'q' },
+            { type: 'note', pitch: 'B5', duration: 'q' },
+            { type: 'note', pitch: 'C6', duration: 'w' },
+          ],
+          stemPolicy: 'up',
+        },
+        {
+          elements: [
+            { type: 'note', pitch: 'C4', duration: 'q' },
+            { type: 'rest', duration: 'q' },
+            { type: 'note', pitch: 'E4', duration: 'q' },
+            { type: 'note', pitch: 'G4', duration: 'q' },
+            { type: 'note', pitch: 'C4', duration: 'q' },
+            { type: 'note', pitch: 'E4', duration: 'q' },
+            { type: 'note', pitch: 'G4', duration: 'q' },
+            { type: 'note', pitch: 'C5', duration: 'q' },
+          ],
+          stemPolicy: 'down',
+        },
+      ],
+    }],
+  }}
+  bpm={108}
+  caption="Two voices on a single staff. The upper voice (stems up) holds long notes; the lower voice (stems down) plays its own rhythmic pattern with rests. Each voice has independent rhythm — that's why this needs separate notation rather than chord notation."
+/>
 
-<DiagramPlaceholder description="A keyboard grand staff with two voices on each staff, showing how the soprano-alto distinction works above and tenor-bass distinction works below." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [
+      {
+        clef: 'treble',
+        voices: [
+          {
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'q' },
+              { type: 'note', pitch: 'D5', duration: 'q' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'C5', duration: 'q' },
+            ],
+            stemPolicy: 'up',
+          },
+          {
+            elements: [
+              { type: 'note', pitch: 'G4', duration: 'q' },
+              { type: 'note', pitch: 'A4', duration: 'q' },
+              { type: 'note', pitch: 'G4', duration: 'q' },
+              { type: 'note', pitch: 'G4', duration: 'q' },
+            ],
+            stemPolicy: 'down',
+          },
+        ],
+      },
+      {
+        clef: 'bass',
+        voices: [
+          {
+            elements: [
+              { type: 'note', pitch: 'E4', duration: 'q' },
+              { type: 'note', pitch: 'F4', duration: 'q' },
+              { type: 'note', pitch: 'C4', duration: 'q' },
+              { type: 'note', pitch: 'E4', duration: 'q' },
+            ],
+            stemPolicy: 'up',
+          },
+          {
+            elements: [
+              { type: 'note', pitch: 'C3', duration: 'q' },
+              { type: 'note', pitch: 'F3', duration: 'q' },
+              { type: 'note', pitch: 'C3', duration: 'q' },
+              { type: 'note', pitch: 'C3', duration: 'q' },
+            ],
+            stemPolicy: 'down',
+          },
+        ],
+      },
+    ],
+  }}
+  bpm={88}
+  caption="SATB writing on a keyboard grand staff. Soprano and Alto share the treble staff (Soprano stems up, Alto stems down); Tenor and Bass share the bass staff (Tenor stems up, Bass stems down). Four voices in two staves."
+/>
 
 ## Basic conventions
 
