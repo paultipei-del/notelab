@@ -65,6 +65,24 @@ export function TempoTermsLadder({
     return padTop + ladderH * (1 - clamped)
   }
 
+  // Auto-spread label rows that would otherwise sit too close together
+  // (Largo and Lento have nearly identical BPM ranges). Walk slow→fast
+  // (high y → low y) and shift each row up if it's within minSpacing of
+  // the previous one. The bar's tick line still points to the true bpm,
+  // but the label sits at the spread y.
+  const minSpacing = T.labelFontSize + 5
+  const sortedByBpm = [...entries].sort((a, b) => a.approximateMidBpm - b.approximateMidBpm)
+  const labelYByTerm = new Map<string, number>()
+  let prevY: number | null = null
+  for (const e of sortedByBpm) {
+    let y = yForBpm(e.approximateMidBpm)
+    if (prevY !== null && prevY - y < minSpacing) {
+      y = prevY - minSpacing
+    }
+    labelYByTerm.set(e.term, y)
+    prevY = y
+  }
+
   return (
     <figure style={{ margin: '24px auto', width: '100%' }}>
       <svg
@@ -101,16 +119,22 @@ export function TempoTermsLadder({
           />
         ))}
 
-        {/* Per-term label rows. Each row: a short connector line + term + range. */}
+        {/* Per-term label rows. Each row: a short connector line + term + range.
+            The connector starts at the bar's true tick y (yForBpm) and bends
+            to the spread label y when needed, so visually-spread labels still
+            point to the correct BPM band. */}
         {entries.map(e => {
-          const y = yForBpm(e.approximateMidBpm)
+          const tickY = yForBpm(e.approximateMidBpm)
+          const y = labelYByTerm.get(e.term) ?? tickY
           const isHighlight = highlight && e.term === highlight
           const fill = isHighlight ? T.highlightAccent : T.ink
           const weight = isHighlight ? 600 : 500
           return (
             <g key={e.term}>
+              {/* Connector: starts at the true tick y on the bar; bends
+                  diagonally to the (possibly spread) label y. */}
               <line
-                x1={ladderW + 2} y1={y}
+                x1={ladderW + 2} y1={tickY}
                 x2={ladderW + labelGapX - 4} y2={y}
                 stroke={isHighlight ? T.highlightAccent : T.inkSubtle}
                 strokeWidth={isHighlight ? 1.2 : 0.8}
@@ -142,21 +166,23 @@ export function TempoTermsLadder({
           )
         })}
 
-        {/* Vertical-axis arrows: faster ↑ at top, slower ↓ at bottom. */}
+        {/* Vertical-axis cues: FASTER ↑ at top, ↓ SLOWER at bottom.
+            Anchored at start (x = 0) so the letter-spaced text extends
+            rightward beyond the narrow bar without clipping the leading F. */}
         <text
-          x={ladderW / 2} y={padTop - 8}
+          x={0} y={padTop - 8}
           fontSize={T.smallLabelFontSize}
           fontFamily={T.fontLabel}
           fill={T.inkSubtle}
-          textAnchor="middle"
+          textAnchor="start"
           letterSpacing="0.16em"
         >FASTER ↑</text>
         <text
-          x={ladderW / 2} y={padTop + ladderH + 14}
+          x={0} y={padTop + ladderH + 14}
           fontSize={T.smallLabelFontSize}
           fontFamily={T.fontLabel}
           fill={T.inkSubtle}
-          textAnchor="middle"
+          textAnchor="start"
           letterSpacing="0.16em"
         >↓ SLOWER</text>
       </svg>

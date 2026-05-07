@@ -519,7 +519,7 @@ export function MusicalExample(props: MusicalExampleProps) {
   const annotationHeadroom = annotations && annotations.length > 0
     ? Math.round(34 * T.scale + 10) : 0
   const hasTempoMarkings = (score.tempoMarkings?.length ?? 0) > 0
-  const tempoHeadroom = hasTempoMarkings ? Math.round(28 * T.scale + 10) : 0
+  const tempoHeadroom = hasTempoMarkings ? Math.round(34 * T.scale + 14) : 0
   const hasVoiceMarks = staves.some(stave =>
     stave.voices.some(v =>
       (v.dynamics?.length ?? 0) > 0
@@ -1468,9 +1468,11 @@ export function MusicalExample(props: MusicalExampleProps) {
               // Modifier ('subito', 'sub.', 'molto', etc.) sits to the
               // LEFT of the glyph in italic serif. Read order matches
               // pronunciation: "sub. f" → first the qualifier, then the
-              // dynamic level the qualifier applies to.
-              const modifierFontSize = T.smallLabelFontSize
-              const modifierGap = Math.round(modifierFontSize * 0.4)
+              // dynamic level the qualifier applies to. Sized in line with
+              // the dynamic glyph's optical weight (italic Bodoni at the
+              // dynamic letter's cap-height reads as a pair).
+              const modifierFontSize = Math.round(T.labelFontSize + 3)
+              const modifierGap = Math.round(modifierFontSize * 0.45)
               return (
                 <g key={`dyn-s${si}v${vi}-${di}`}>
                   {dyn.modifier && (
@@ -1526,6 +1528,16 @@ export function MusicalExample(props: MusicalExampleProps) {
                 .some(d => Math.abs(d.beat - hp.startBeat) < 1e-6)
               const endHasDyn = (voice.dynamics ?? [])
                 .some(d => Math.abs(d.beat - hp.endBeat) < 1e-6)
+              // Detect another hairpin meeting this one at startBeat or
+              // endBeat (back-to-back cresc / decresc shapes). Add a small
+              // breathing gap so the two tips don't touch.
+              const hairpinGap = Math.round(6 * T.scale + 2)
+              const otherStartsAtMyEnd = (voice.hairpins ?? [])
+                .some((other, j) => j !== hi
+                  && Math.abs(other.startBeat - hp.endBeat) < 1e-6)
+              const otherEndsAtMyStart = (voice.hairpins ?? [])
+                .some((other, j) => j !== hi
+                  && Math.abs(other.endBeat - hp.startBeat) < 1e-6)
               const segments: React.ReactNode[] = []
               for (let s = startEntry.systemIdx; s <= endEntry.systemIdx; s++) {
                 const sys = systems[s]
@@ -1534,13 +1546,21 @@ export function MusicalExample(props: MusicalExampleProps) {
                 const last = sys.measures[sys.measures.length - 1]
                 const sysRight = last.x0 + last.width
                 const sysLeft = sys.bodyStartX
-                const startOffset = isStart && startHasDyn ? dynGap : 0
-                const endOffset = isEnd && endHasDyn ? -dynGap : 0
+                const startOffset = isStart
+                  ? (startHasDyn ? dynGap : 0)
+                    + (otherEndsAtMyStart ? hairpinGap : 0)
+                  : 0
+                const endOffset = isEnd
+                  ? (endHasDyn ? -dynGap : 0)
+                    + (otherStartsAtMyEnd ? -hairpinGap : 0)
+                  : 0
                 const x1 = isStart ? startEntry.x + startOffset : sysLeft
                 const x2 = isEnd ? endEntry.x + endOffset : sysRight
+                // Hairpin baseline matches the dynamic baseline so a
+                // 'p < f' pattern reads as one horizontal phrase.
                 const yBase = above
                   ? sys.staffTops[si] - Math.round(14 * T.scale + 6)
-                  : sys.staffTops[si] + 8 * T.step + Math.round(28 * T.scale + 8)
+                  : sys.staffTops[si] + 8 * T.step + Math.round(22 * T.scale + 8)
                 // Compute apertures per system endpoint. Crescendo: tip on
                 // the LEFT only at the true start; right side opens.
                 // Decrescendo: opens at left, tip on the RIGHT only at end.
@@ -1587,10 +1607,25 @@ export function MusicalExample(props: MusicalExampleProps) {
                   + 8 * T.step + Math.round(34 * T.scale + 10)
               if (style === 'text') {
                 const items: React.ReactNode[] = []
+                // When two pedal marks meet (release + immediate re-engage
+                // at the same beat), the ✱ and Ped. would otherwise occupy
+                // the same x. Offset the ✱ slightly LEFT and the Ped.
+                // slightly RIGHT so both glyphs read clearly.
+                const collisionGap = Math.round(12 * T.scale + 6)
+                const startCollidesWithPriorEnd = (voice.pedalMarks ?? [])
+                  .some((other, j) => j !== pi
+                    && Math.abs(other.endBeat - pm.startBeat) < 1e-6)
+                const endCollidesWithNextStart = (voice.pedalMarks ?? [])
+                  .some((other, j) => j !== pi
+                    && Math.abs(other.startBeat - pm.endBeat) < 1e-6)
+                const startX = startEntry.x
+                  + (startCollidesWithPriorEnd ? collisionGap : 0)
+                const endX = endEntry.x
+                  + (endCollidesWithNextStart ? -collisionGap : 0)
                 items.push(
                   <text
                     key={`ped-text-s${si}v${vi}-${pi}-start`}
-                    x={startEntry.x}
+                    x={startX}
                     y={baseY(systems[startEntry.systemIdx])}
                     fontSize={Math.round(T.noteheadFontSize * 0.7)}
                     fontFamily={T.fontMusic}
@@ -1602,7 +1637,7 @@ export function MusicalExample(props: MusicalExampleProps) {
                 items.push(
                   <text
                     key={`ped-text-s${si}v${vi}-${pi}-end`}
-                    x={endEntry.x}
+                    x={endX}
                     y={baseY(systems[endEntry.systemIdx])}
                     fontSize={Math.round(T.noteheadFontSize * 0.65)}
                     fontFamily={T.fontMusic}
@@ -1671,9 +1706,13 @@ export function MusicalExample(props: MusicalExampleProps) {
           const tempoTextX = isMeasureZeroHeadline ? margin : entry.x
           const tempoTextAnchor: 'start' | 'middle' =
             style === 'normal' ? 'start' : 'middle'
+          // Tempo headline (Allegro, Andante) prints at ~14-16pt in
+          // engraved scores; tempo changes (rit., a tempo) at ~12-13pt.
+          // Scaled to our screen units that lands at +7 / +4 above the
+          // base label size.
           const tempoFontSize = style === 'normal'
-            ? Math.round(T.labelFontSize + 4)
-            : Math.round(T.labelFontSize + 1)
+            ? Math.round(T.labelFontSize + 7)
+            : Math.round(T.labelFontSize + 4)
           if (tm.text) {
             items.push(
               <text
