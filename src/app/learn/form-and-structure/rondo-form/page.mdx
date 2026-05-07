@@ -1,6 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import { FormDiagram } from '@/components/learn/visuals/FormDiagram'
-import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { MusicXmlScore } from '@/components/learn/visuals/MusicXmlScore'
 
 export const learnPage = {
   topic: 'form-and-structure',
@@ -70,54 +70,13 @@ Classical-era composers used rondo form extensively, especially for the final mo
   caption="The seven-part rondo's distinctive pattern: a refrain (A) that keeps returning, with contrasting episodes between each return."
 />
 
-<MusicalExample
-  clef="treble"
-  keySignature={0}
-  timeSignature={{ numerator: 3, denominator: 8 }}
-  bpm={92}
+<MusicXmlScore
+  src="/music/fur-elise-beethoven.musicxml"
+  measureRange={[0, 8]}
+  bpm={103}
+  systemBreaks={[5]}
   showMeasureNumbers
-  elements={[
-    { type: 'note', pitch: 'E5', duration: 's' },
-    { type: 'note', pitch: 'D#5', duration: 's' },
-    { type: 'note', pitch: 'E5', duration: 's' },
-    { type: 'note', pitch: 'D#5', duration: 's' },
-    { type: 'note', pitch: 'E5', duration: 's' },
-    { type: 'note', pitch: 'B4', duration: 's' },
-    { type: 'note', pitch: 'D5', duration: 's' },
-    { type: 'note', pitch: 'C5', duration: 's' },
-    { type: 'note', pitch: 'A4', duration: 'e' },
-    { type: 'rest', duration: 'e' },
-    { type: 'note', pitch: 'C4', duration: 's' },
-    { type: 'note', pitch: 'E4', duration: 's' },
-    { type: 'note', pitch: 'A4', duration: 'e' },
-    { type: 'rest', duration: 'e' },
-    { type: 'note', pitch: 'B4', duration: 'e' },
-    { type: 'rest', duration: 'e' },
-    { type: 'note', pitch: 'E4', duration: 'e' },
-    { type: 'note', pitch: 'G#4', duration: 's' },
-    { type: 'note', pitch: 'B4', duration: 's' },
-    { type: 'note', pitch: 'C5', duration: 'e' },
-    { type: 'rest', duration: 'e' },
-    { type: 'note', pitch: 'E4', duration: 'e' },
-    { type: 'rest', duration: 'e' },
-    { type: 'rest', duration: 'e' },
-    { type: 'note', pitch: 'E5', duration: 's' },
-    { type: 'note', pitch: 'D#5', duration: 's' },
-    { type: 'note', pitch: 'E5', duration: 's' },
-    { type: 'note', pitch: 'D#5', duration: 's' },
-    { type: 'note', pitch: 'E5', duration: 's' },
-    { type: 'note', pitch: 'B4', duration: 's' },
-    { type: 'note', pitch: 'D5', duration: 's' },
-    { type: 'note', pitch: 'C5', duration: 's' },
-    { type: 'note', pitch: 'A4', duration: 'e' },
-    { type: 'rest', duration: 'e' },
-  ]}
-  systemBreaks={[4]}
-  annotations={[
-    { type: 'section', startIdx: 0, endIdx: 23, label: 'A theme', position: 'above' },
-    { type: 'section', startIdx: 24, endIdx: 33, label: 'A theme returns', position: 'above' },
-  ]}
-  caption="Beethoven, Bagatelle in A minor, WoO 59 ('Für Elise', 1810) — opening rondo theme and its return. The famous E – D♯ – E – D♯ – E – B – D – C – A motif appears, develops through a brief contrasting phrase, and returns literally — the structural pattern listeners recognize even when they can't name what it is."
+  caption="Beethoven, Bagatelle in A minor, WoO 59 ('Für Elise', 1810), opening of the rondo theme. The famous E - D♯ - E - D♯ - E - B - D - C - A motif is the refrain that returns repeatedly throughout the piece, separated by contrasting episodes. That recurrence is the very structure that makes this a rondo."
 />
 
 ## The basic structure

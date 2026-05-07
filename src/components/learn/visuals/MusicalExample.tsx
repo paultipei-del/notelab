@@ -324,7 +324,7 @@ export function MusicalExample(props: MusicalExampleProps) {
   const sampler = useSampler()
 
   const score = React.useMemo(() => buildScoreFromProps(props), [props])
-  const { staves, timeSignature, keySignature = 0 } = score
+  const { staves, timeSignature, keySignature = 0, pickupBeats } = score
   // Author-friendly fallback: some MDX pages nest `annotations` inside the
   // `score` prop. Honor either form; top-level wins if both are provided.
   const annotations = annotationsTopLevel ?? (score as Score & { annotations?: MusicalAnnotation[] }).annotations
@@ -375,9 +375,9 @@ export function MusicalExample(props: MusicalExampleProps) {
   // Per stave, per voice → measure list. measuresByVoice[s][v] = measures[]
   const measuresByVoice = React.useMemo(() => {
     return staves.map(stave =>
-      stave.voices.map(voice => groupIntoMeasures(voice.elements, timeSignature)),
+      stave.voices.map(voice => groupIntoMeasures(voice.elements, timeSignature, pickupBeats)),
     )
-  }, [staves, timeSignature])
+  }, [staves, timeSignature, pickupBeats])
 
   // Total measure count = max across all voices. Voices that fall short get
   // empty trailing measures (silent). v2 Phase 1 expects equal-length voices;
@@ -1622,21 +1622,29 @@ export function MusicalExample(props: MusicalExampleProps) {
                     )
                   })()}
 
-                  {/* Measure number below the lowest stave. */}
-                  {showMeasureNumbers && (
-                    <text
-                      x={m.x0 + m.width / 2}
-                      y={sys.staffTops[sys.staffTops.length - 1]
-                        + staffHeight + Math.round(18 * T.scale + 6)}
-                      fontSize={T.smallLabelFontSize}
-                      fontFamily={T.fontLabel}
-                      fill={T.inkSubtle}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                    >
-                      {m.globalIdx + 1}
-                    </text>
-                  )}
+                  {/* Measure number below the lowest stave. With a pickup,
+                      the pickup itself is unnumbered and the first full bar
+                      is "1"; otherwise numbering starts at 1 from the first
+                      bar. */}
+                  {showMeasureNumbers && (() => {
+                    const hasPickup = pickupBeats !== undefined && pickupBeats > 1e-6
+                    if (hasPickup && m.globalIdx === 0) return null
+                    const displayNum = hasPickup ? m.globalIdx : m.globalIdx + 1
+                    return (
+                      <text
+                        x={m.x0 + m.width / 2}
+                        y={sys.staffTops[sys.staffTops.length - 1]
+                          + staffHeight + Math.round(18 * T.scale + 6)}
+                        fontSize={T.smallLabelFontSize}
+                        fontFamily={T.fontLabel}
+                        fill={T.inkSubtle}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                      >
+                        {displayNum}
+                      </text>
+                    )
+                  })()}
                 </g>
               )
             })}
@@ -2414,16 +2422,22 @@ function renderPlaced(
   const staffTop = stave.staffTop
 
   if (el.type === 'rest') {
-    const restValue = restValueFor(el.duration)
-    const dotted = isDotted(el.duration)
+    // Per Gould: a rest representing an entire measure of silence is always
+    // notated with the whole-rest glyph hanging from line 4 — regardless of
+    // the actual meter (3/8, 6/8, etc.). The `wholeMeasureRest` flag
+    // overrides the per-duration glyph to make this happen.
+    const isWholeBar = el.wholeMeasureRest === true
+    const restValue = isWholeBar ? 'whole' : restValueFor(el.duration)
+    const dotted = !isWholeBar && isDotted(el.duration)
     const xCenter = p.x
     // Default rest position: middle line of the 5-line staff
     // (lineY n=2 → staffTop + 4*step). For multi-voice on the same stave,
     // stack voice 0 rests above the middle and voice 1 rests below — far
     // enough that the rest glyph doesn't touch the other voice's notes
-    // above or below the stave middle.
+    // above or below the stave middle. Whole-measure rests skip the
+    // multi-voice offset and stay at the conventional hanging position.
     let restY = staffTop + 4 * T.step
-    if (voice.multiVoice) {
+    if (voice.multiVoice && !isWholeBar) {
       const offset = 3 * T.step
       restY = voice.voiceIdx === 0 ? restY - offset : restY + offset
     }

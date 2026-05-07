@@ -100,6 +100,12 @@ export interface MusicalRest {
   duration: Duration
   /** Tuplet metadata — same semantics as MusicalNote.tuplet. */
   tuplet?: { actual: number; normal: number }
+  /** True when this rest represents an entire measure of silence
+   *  (regardless of meter). The renderer always draws the whole-rest glyph
+   *  hanging from line 4 (one staff space above the middle line) for these,
+   *  per Gould — even in 3/8, 6/8, etc. The `duration` still carries the
+   *  actual measure length so beat math and audio remain correct. */
+  wholeMeasureRest?: boolean
 }
 
 export type MusicalElement = MusicalNote | MusicalRest
@@ -240,6 +246,15 @@ export interface Score {
    * any tempo markings and the staff itself.
    */
   chordSymbols?: ChordSymbol[]
+  /**
+   * Pickup (anacrusis) length in BEATS (where 1 beat = the time-signature
+   * denominator). When set, the renderer carves off the first `pickupBeats`
+   * worth of each voice as a partial first measure (numbered 0, no measure
+   * number printed) followed by a barline; the remaining elements then
+   * group into full measures normally. Set to undefined / 0 for music that
+   * starts on the downbeat.
+   */
+  pickupBeats?: number
 }
 
 export interface ChordSymbol {

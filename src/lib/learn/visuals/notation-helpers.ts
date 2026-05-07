@@ -88,27 +88,35 @@ export interface MeasuredElement {
 export function groupIntoMeasures(
   elements: MusicalElement[],
   ts: TimeSignature,
+  pickupBeats?: number,
 ): MeasuredElement[][] {
   const beatsPerMeasure = ts.numerator
   const measures: MeasuredElement[][] = []
   let current: MeasuredElement[] = []
   let cursor = 0
+  // For a pickup measure, the first measure caps at `pickupBeats` beats
+  // instead of the full `beatsPerMeasure`. Once we've closed it, all
+  // subsequent measures use the normal beat budget.
+  let pickupActive = pickupBeats !== undefined && pickupBeats > 1e-6
+  const currentCap = () => (pickupActive ? (pickupBeats as number) : beatsPerMeasure)
 
   elements.forEach((element, origIdx) => {
     const len = durationToBeats(element.duration, ts, element.tuplet)
-    if (cursor + len > beatsPerMeasure + 1e-6) {
+    if (cursor + len > currentCap() + 1e-6) {
       // Push the current measure and start a new one. Element starts the
       // new measure at beat 0.
       if (current.length > 0) measures.push(current)
       current = []
       cursor = 0
+      pickupActive = false
     }
     current.push({ element, origIdx, beatStart: cursor, beatLen: len })
     cursor += len
-    if (cursor >= beatsPerMeasure - 1e-6) {
+    if (cursor >= currentCap() - 1e-6) {
       measures.push(current)
       current = []
       cursor = 0
+      pickupActive = false
     }
   })
 

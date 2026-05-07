@@ -36,13 +36,13 @@ export function Rest({ value, x, y, T, highlight = false, onClick }: RestProps) 
   //    from top" (one step above middle line, position 2).
   //  • restHalf  (E4E4): origin at BOTTOM of rect → sits on middle line
   //    (position 4).
-  //  • Quarter / eighth / shorter: glyphs are designed centered on the
-  //    middle line; rendered with alphabetic baseline shifted slightly so
-  //    the visible glyph reads as centered on the line.
+  //  • Quarter / eighth / shorter: Bravura registers these so the glyph
+  //    body is vertically centered on the middle line at the alphabetic
+  //    baseline, so the y arg (= middle line) is used directly with no dy.
   // The `y` arg is always the middle line; the dy below selects the line.
   const dy = value === 'whole' ? -2 * T.step
     : value === 'half' ? 0
-    : 2 * T.step
+    : Math.round(-T.step * 0.5)
   return (
     <text
       x={x}

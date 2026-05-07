@@ -34,6 +34,7 @@ import type {
   MeasureMark,
 } from '@/lib/learn/visuals/notation-types'
 import type { Clef } from '@/lib/learn/visuals/pitch'
+import { durationToBeats as durationToBeatsLocal } from '@/lib/learn/visuals/notation-helpers'
 
 /** Map MusicXML articulation tag names to our Articulation codes. */
 const ARTICULATION_MAP: Record<string, Articulation> = {
@@ -351,6 +352,8 @@ export function parseMusicXmlScore(
   const systemBreaks: number[] = []
   // Per-measure marks (repeats + voltas).
   const measureMarks: MeasureMark[] = []
+  // Measures explicitly flagged as anacruses (<measure implicit="yes">).
+  const implicitMeasures = new Set<number>()
   function ensureMark(arr: MeasureMark[], measureIdx: number): MeasureMark {
     let m = arr.find(x => x.measureIdx === measureIdx)
     if (!m) {
@@ -386,6 +389,7 @@ export function parseMusicXmlScore(
   for (const measure of measureEls) {
     const num = parseInt(measure.getAttribute('number') ?? '0', 10)
     const inRange = num >= measureFrom && num <= measureTo
+    if (measure.getAttribute('implicit') === 'yes') implicitMeasures.add(num)
 
     const attrs = measure.querySelector('attributes')
     if (attrs) {
@@ -517,11 +521,12 @@ export function parseMusicXmlScore(
       const restEl = child.querySelector('rest')
       const isRest = restEl !== null
       // <rest measure="yes"/> = full-measure rest; emit a single rest of
-      // the time-signature's full-measure duration. The <type> element is
-      // typically absent on these.
+      // the time-signature's full-measure duration, tagged so the renderer
+      // draws the conventional whole-rest glyph hanging from line 4. The
+      // <type> element is typically absent on these.
       if (isRest && restEl?.getAttribute('measure') === 'yes') {
         const dur = fullMeasureDuration({ numerator: activeBeats, denominator: activeBeatType })
-        pushElement(num, noteStaff, noteVoice, { type: 'rest', duration: dur })
+        pushElement(num, noteStaff, noteVoice, { type: 'rest', duration: dur, wholeMeasureRest: true })
         // Make sure this voice is now known on its staff so the back-fill
         // logic below treats subsequent missing measures as gaps to fill.
         if (!voicesPerStaff.has(noteStaff)) voicesPerStaff.set(noteStaff, new Set())
@@ -571,7 +576,8 @@ export function parseMusicXmlScore(
 
   // Resolve missing-voice gaps: for every staff+voice that appears in ANY
   // measure of the requested range, ensure each measure has at least one
-  // element. Empty measures get a measure rest.
+  // element. Empty measures get a measure rest (rendered as a whole-rest
+  // glyph hanging from line 4, per Gould).
   const ts: TimeSignature = { numerator: activeBeats, denominator: activeBeatType }
   const fullRestDur = fullMeasureDuration(ts)
   const finalVoiceMap = new Map<string, MusicalElement[]>()
@@ -581,9 +587,31 @@ export function parseMusicXmlScore(
       for (const voice of voices) {
         const key = voiceKey(staff, voice)
         const measureElements = inner.get(key)
-          ?? [{ type: 'rest', duration: fullRestDur } as MusicalElement]
+          ?? [{ type: 'rest', duration: fullRestDur, wholeMeasureRest: true } as MusicalElement]
         if (!finalVoiceMap.has(key)) finalVoiceMap.set(key, [])
         for (const el of measureElements) finalVoiceMap.get(key)!.push(el)
+      }
+    }
+  }
+
+  // Pickup detection: if the first in-range measure is marked `implicit="yes"`
+  // (anacrusis), measure its actual beat-content and emit `pickupBeats` so
+  // the renderer can carve it off as a partial first bar followed by a
+  // proper barline, rather than merging it with measure 1.
+  let pickupBeats: number | undefined
+  if (implicitMeasures.has(measureFrom)) {
+    const firstBuf = buf.get(measureFrom)
+    if (firstBuf) {
+      let maxBeats = 0
+      for (const els of firstBuf.values()) {
+        const total = els.reduce(
+          (sum, el) => sum + durationToBeatsLocal(el.duration, ts, el.tuplet),
+          0,
+        )
+        if (total > maxBeats) maxBeats = total
+      }
+      if (maxBeats > 0 && maxBeats < ts.numerator - 1e-6) {
+        pickupBeats = maxBeats
       }
     }
   }
@@ -618,6 +646,7 @@ export function parseMusicXmlScore(
       timeSignature: ts,
       keySignature: activeFifths,
       ...(measureMarks.length > 0 ? { measureMarks } : {}),
+      ...(pickupBeats !== undefined ? { pickupBeats } : {}),
     },
     systemBreaks: systemBreaks.slice().sort((a, b) => a - b),
     skippedTuplets,
