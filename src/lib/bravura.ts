@@ -148,3 +148,17 @@ export const PEDAL_GLYPHS = {
   pedRelease: '\uE655',
 } as const
 
+// ── Metronome-mark glyphs ─────────────────────────────────────────────
+// SMuFL provides a dedicated range for inline metronome notation: note
+// glyphs sized to align with surrounding text. The full musical note
+// glyphs at U+E1D5+ are designed as standalone musical glyphs and are
+// too tall to sit inline with text — these met-range variants are the
+// correct choice for "♩ = 120" style markings.
+export const METRONOME_GLYPHS = {
+  half:            '\uECA0',  // metNoteHalfUp
+  quarter:         '\uECA2',  // metNoteQuarterUp
+  eighth:          '\uECA3',  // metNote8thUp
+  sixteenth:       '\uECA5',  // metNote16thUp
+  augmentationDot: '\uECB7',  // metAugmentationDot
+} as const
+

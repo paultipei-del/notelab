@@ -78,7 +78,7 @@ import type {
   Voice,
   ClefName,
 } from '@/lib/learn/visuals/notation-types'
-import { ARTIC_GLYPHS, ORNAMENT_GLYPHS, DYNAMIC_GLYPHS, PEDAL_GLYPHS, B } from '@/lib/bravura'
+import { ARTIC_GLYPHS, ORNAMENT_GLYPHS, DYNAMIC_GLYPHS, PEDAL_GLYPHS, METRONOME_GLYPHS } from '@/lib/bravura'
 
 interface MusicalExampleProps {
   /** v2 input: full Score. Takes precedence over `elements`+`clef`. */
@@ -1452,8 +1452,8 @@ export function MusicalExample(props: MusicalExampleProps) {
         })()}
 
         {/* Dynamics — Bravura glyph below treble / above bass at the
-            anchored beat. Optional italic 'modifier' text immediately
-            after (e.g. 'subito'). */}
+            anchored beat. Optional italic 'modifier' renders BEFORE the
+            glyph per engraving convention ("sub. f", "subito p"). */}
         {staves.flatMap((stave, si) =>
           stave.voices.flatMap((voice, vi) =>
             (voice.dynamics ?? []).map((dyn, di) => {
@@ -1465,8 +1465,28 @@ export function MusicalExample(props: MusicalExampleProps) {
                 : entry.staffTop + 8 * T.step + Math.round(22 * T.scale + 8)
               const glyph = DYNAMIC_GLYPHS[dyn.level]
               const dynFontSize = Math.round(T.noteheadFontSize * 0.85)
+              // Modifier ('subito', 'sub.', 'molto', etc.) sits to the
+              // LEFT of the glyph in italic serif. Read order matches
+              // pronunciation: "sub. f" → first the qualifier, then the
+              // dynamic level the qualifier applies to.
+              const modifierFontSize = T.smallLabelFontSize
+              const modifierGap = Math.round(modifierFontSize * 0.4)
               return (
                 <g key={`dyn-s${si}v${vi}-${di}`}>
+                  {dyn.modifier && (
+                    <text
+                      x={entry.x - Math.round(dynFontSize * 0.36) - modifierGap}
+                      y={baseY}
+                      fontSize={modifierFontSize}
+                      fontFamily={T.fontDisplay}
+                      fontStyle="italic"
+                      fill={T.ink}
+                      textAnchor="end"
+                      dominantBaseline="central"
+                    >
+                      {dyn.modifier}
+                    </text>
+                  )}
                   <text
                     x={entry.x}
                     y={baseY}
@@ -1478,20 +1498,6 @@ export function MusicalExample(props: MusicalExampleProps) {
                   >
                     {glyph}
                   </text>
-                  {dyn.modifier && (
-                    <text
-                      x={entry.x + Math.round(dynFontSize * 0.6)}
-                      y={baseY}
-                      fontSize={T.smallLabelFontSize}
-                      fontFamily={T.fontLabel}
-                      fontStyle="italic"
-                      fill={T.inkSubtle}
-                      textAnchor="start"
-                      dominantBaseline="central"
-                    >
-                      {dyn.modifier}
-                    </text>
-                  )}
                 </g>
               )
             }),
@@ -1499,7 +1505,9 @@ export function MusicalExample(props: MusicalExampleProps) {
         )}
 
         {/* Hairpins — two converging/diverging lines. Cross-system spans
-            split into per-system segments at the body edges of each system. */}
+            split into per-system segments at the body edges of each system.
+            Endpoints clear adjacent dynamic glyphs by a small horizontal
+            gap so the wedge never collides with the dynamic letter. */}
         {staves.flatMap((stave, si) =>
           stave.voices.flatMap((voice, vi) =>
             (voice.hairpins ?? []).flatMap((hp, hi) => {
@@ -1510,6 +1518,14 @@ export function MusicalExample(props: MusicalExampleProps) {
                 ?? (stave.clef === 'bass' ? 'above' : 'below')
               const above = placement === 'above'
               const aperture = Math.round(8 * T.scale + 4)
+              // Detect dynamic markings at the same beat on this voice;
+              // a hairpin tip touching a dynamic glyph is the most common
+              // overlap, so skirt past it by ~half a glyph + small gap.
+              const dynGap = Math.round(T.noteheadFontSize * 0.5 + 4)
+              const startHasDyn = (voice.dynamics ?? [])
+                .some(d => Math.abs(d.beat - hp.startBeat) < 1e-6)
+              const endHasDyn = (voice.dynamics ?? [])
+                .some(d => Math.abs(d.beat - hp.endBeat) < 1e-6)
               const segments: React.ReactNode[] = []
               for (let s = startEntry.systemIdx; s <= endEntry.systemIdx; s++) {
                 const sys = systems[s]
@@ -1518,8 +1534,10 @@ export function MusicalExample(props: MusicalExampleProps) {
                 const last = sys.measures[sys.measures.length - 1]
                 const sysRight = last.x0 + last.width
                 const sysLeft = sys.bodyStartX
-                const x1 = isStart ? startEntry.x : sysLeft
-                const x2 = isEnd ? endEntry.x : sysRight
+                const startOffset = isStart && startHasDyn ? dynGap : 0
+                const endOffset = isEnd && endHasDyn ? -dynGap : 0
+                const x1 = isStart ? startEntry.x + startOffset : sysLeft
+                const x2 = isEnd ? endEntry.x + endOffset : sysRight
                 const yBase = above
                   ? sys.staffTops[si] - Math.round(14 * T.scale + 6)
                   : sys.staffTops[si] + 8 * T.step + Math.round(28 * T.scale + 8)
@@ -1626,9 +1644,19 @@ export function MusicalExample(props: MusicalExampleProps) {
           ),
         )}
 
-        {/* Tempo markings — above the topmost staff. 'normal' = bold serif
-            tempo word; 'change' = italic (rit., a tempo); 'change-with-line'
-            = italic + dashed continuation line spanning to endMeasureIdx. */}
+        {/* Tempo markings — above the topmost staff. Per engraving
+            convention:
+              - 'normal' tempo words (Allegro, Andante) are BOLD ROMAN
+                SERIF (Bodoni-family). For measure-0 normal markings the
+                anchor is the system's left edge so the word sits above
+                the system header (clef + ks + ts) rather than the first
+                note.
+              - 'change' (rit., a tempo, accel.) is ITALIC SERIF, regular
+                weight, anchored at the beat where the change starts.
+              - Metronome marks use the SMuFL met-range glyphs (designed
+                for inline text alignment, NOT the full-note glyphs at
+                U+E1D5+). When a tempo word is present the metronome is
+                parenthesized after it: "Allegro (♩ = 120)". */}
         {(score.tempoMarkings ?? []).flatMap((tm, ti) => {
           const cumBeat = tm.measureIdx * timeSignature.numerator + (tm.beat ?? 0)
           const entry = resolveBeat(0, 0, cumBeat)
@@ -1637,56 +1665,90 @@ export function MusicalExample(props: MusicalExampleProps) {
           const baseY = sys.staffTops[0] - Math.round(28 * T.scale + 12)
           const style = tm.style ?? 'normal'
           const items: React.ReactNode[] = []
+          // For a 'normal' tempo at measure 0, sit above the system
+          // header (left margin), not at the first note's x.
+          const isMeasureZeroHeadline = style === 'normal' && tm.measureIdx === 0
+          const tempoTextX = isMeasureZeroHeadline ? margin : entry.x
+          const tempoTextAnchor: 'start' | 'middle' =
+            style === 'normal' ? 'start' : 'middle'
+          const tempoFontSize = style === 'normal'
+            ? Math.round(T.labelFontSize + 4)
+            : Math.round(T.labelFontSize + 1)
           if (tm.text) {
             items.push(
               <text
                 key={`tempo-${ti}-text`}
-                x={entry.x}
+                x={tempoTextX}
                 y={baseY}
-                fontSize={style === 'normal'
-                  ? Math.round(T.labelFontSize + 4)
-                  : T.labelFontSize}
-                fontFamily={T.fontLabel}
+                fontSize={tempoFontSize}
+                fontFamily={T.fontDisplay}
                 fontStyle={style === 'normal' ? 'normal' : 'italic'}
-                fontWeight={style === 'normal' ? 600 : 500}
+                fontWeight={style === 'normal' ? 600 : 400}
                 fill={T.ink}
-                textAnchor={style === 'normal' ? 'start' : 'middle'}
+                textAnchor={tempoTextAnchor}
                 dominantBaseline="central"
               >{tm.text}</text>,
             )
           }
           if (tm.metronome) {
-            const xMetro = entry.x
-              + (tm.text ? Math.round(60 * T.scale + 32) : 0)
-            // Use Bravura full-note glyph for the beat note, then "= NNN"
-            // as italic text. Falls back to quarter glyph for whole/half.
-            const beatNoteGlyph = (() => {
-              const base = tm.metronome.beatNote[0]
-              if (base === 'h') return B.halfNoteUp
-              if (base === 'e') return B.eighthNoteUp
-              return B.quarterNoteUp
+            // SMuFL met-range glyph chosen by beat-note base. Dotted
+            // beat-notes get an augmentation-dot glyph appended.
+            const baseDur = tm.metronome.beatNote[0]
+            const dotted = tm.metronome.beatNote.endsWith('.')
+            const metGlyph = (() => {
+              if (baseDur === 'h') return METRONOME_GLYPHS.half
+              if (baseDur === 'e') return METRONOME_GLYPHS.eighth
+              if (baseDur === 's') return METRONOME_GLYPHS.sixteenth
+              return METRONOME_GLYPHS.quarter
             })()
+            const noteWithDot = dotted
+              ? `${metGlyph} ${METRONOME_GLYPHS.augmentationDot}`
+              : metGlyph
+            // Right edge of the tempo word (rough estimate from char count
+            // × cap-height). When no tempo word, anchor at entry.x.
+            const charWidthEstimate = Math.round(tempoFontSize * 0.55)
+            const tempoWordRight = tm.text
+              ? tempoTextX
+                + (tempoTextAnchor === 'middle'
+                    ? Math.round(tm.text.length * charWidthEstimate * 0.5)
+                    : Math.round(tm.text.length * charWidthEstimate))
+              : entry.x
+            const xMetro = tm.text
+              ? tempoWordRight + Math.round(8 * T.scale + 4)
+              : entry.x
+            const metFontSize = Math.round(T.labelFontSize + 2)
             items.push(
               <g key={`tempo-${ti}-metro`}>
+                {tm.text && (
+                  <text
+                    x={xMetro - Math.round(metFontSize * 0.32)}
+                    y={baseY}
+                    fontSize={metFontSize}
+                    fontFamily={T.fontDisplay}
+                    fill={T.ink}
+                    textAnchor="end"
+                    dominantBaseline="central"
+                  >(</text>
+                )}
                 <text
                   x={xMetro}
-                  y={baseY + Math.round(2 * T.scale)}
-                  fontSize={Math.round(T.labelFontSize + 6)}
+                  y={baseY}
+                  fontSize={metFontSize}
                   fontFamily={T.fontMusic}
                   fill={T.ink}
                   textAnchor="start"
                   dominantBaseline="central"
-                >{beatNoteGlyph}</text>
+                >{noteWithDot}</text>
                 <text
-                  x={xMetro + Math.round(14 * T.scale + 6)}
+                  x={xMetro + Math.round(metFontSize * 0.95) + (dotted ? Math.round(metFontSize * 0.36) : 0)}
                   y={baseY}
-                  fontSize={T.labelFontSize}
-                  fontFamily={T.fontLabel}
+                  fontSize={metFontSize}
+                  fontFamily={T.fontDisplay}
                   fontStyle="italic"
                   fill={T.ink}
                   textAnchor="start"
                   dominantBaseline="central"
-                >{`= ${tm.metronome.bpm}`}</text>
+                >{` = ${tm.metronome.bpm}${tm.text ? ')' : ''}`}</text>
               </g>,
             )
           }
