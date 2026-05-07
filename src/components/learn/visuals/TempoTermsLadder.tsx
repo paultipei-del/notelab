@@ -21,8 +21,12 @@ interface TempoTermsLadderProps {
 
 const DEFAULT_ENTRIES: TempoTermEntry[] = [
   { term: 'Grave',        bpmRange: '25–45',  approximateMidBpm: 35 },
-  { term: 'Largo',        bpmRange: '40–60',  approximateMidBpm: 50 },
-  { term: 'Lento',        bpmRange: '45–60',  approximateMidBpm: 53 },
+  // Largo and Lento occupy nearly the same BPM band in print (Largo
+  // 40–60 = "broad / dignified", Lento 45–60 = "slow"). For the visual
+  // ladder we place Largo at the lower half of its range and Lento at
+  // the upper half so the labels separate cleanly.
+  { term: 'Largo',        bpmRange: '40–60',  approximateMidBpm: 45 },
+  { term: 'Lento',        bpmRange: '45–60',  approximateMidBpm: 55 },
   { term: 'Adagio',       bpmRange: '66–76',  approximateMidBpm: 71 },
   { term: 'Andante',      bpmRange: '76–108', approximateMidBpm: 92 },
   { term: 'Moderato',     bpmRange: '108–120', approximateMidBpm: 114 },
@@ -49,11 +53,14 @@ export function TempoTermsLadder({
 
   const minBpm = 25
   const maxBpm = 220
-  const ladderH = Math.round(360 * T.scale + 80)
+  // Tall bar so each tempo band gets its own breathing room — at this
+  // height even Largo (45) and Lento (55) sit ~22px apart, well above
+  // the labelFontSize+5 minimum.
+  const ladderH = Math.round(540 * T.scale + 120)
   const ladderW = Math.round(48 * T.scale + 12)
   const labelGapX = Math.round(18 * T.scale + 8)
-  const padTop = 24
-  const padBottom = 24
+  const padTop = 28
+  const padBottom = 28
   const totalH = ladderH + padTop + padBottom
   const labelMaxLen = entries.reduce((m, e) => Math.max(m, e.term.length + e.bpmRange.length + 3), 0)
   const totalW = ladderW + labelGapX + Math.round(labelMaxLen * T.labelFontSize * 0.55) + 24
