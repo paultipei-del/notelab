@@ -64,7 +64,7 @@ Both types look similar on the page, and performers interpret context to know wh
           { type: 'note', pitch: 'D5', duration: 'e' },
           { type: 'note', pitch: 'C5', duration: 'e' },
           { type: 'note', pitch: 'B4', duration: 'e', slur: 'stop' },
-          { type: 'note', pitch: 'C5', duration: 'q', slur: 'start' },
+          { type: 'note', pitch: 'C5', duration: 'q', slur: 'start', forceStem: 'up' },
           { type: 'note', pitch: 'B4', duration: 'q' },
           { type: 'note', pitch: 'A4', duration: 'q' },
           { type: 'note', pitch: 'G4', duration: 'q', slur: 'stop' },
@@ -113,14 +113,14 @@ Both types look similar on the page, and performers interpret context to know wh
               { type: 'note', pitch: 'E5', duration: 'q' },
               { type: 'note', pitch: 'F5', duration: 'q' },
               { type: 'note', pitch: 'D5', duration: 'q' },
-              { type: 'note', pitch: 'B4', duration: 'q' },
+              { type: 'note', pitch: 'B4', duration: 'q', forceStem: 'down' },
               { type: 'note', pitch: 'C5', duration: 'q' },
             ],
           }],
         }],
       }}
       bpm={108}
-      caption="Without slur — each note detached, played separately."
+      caption="Without slur — each note in its default articulation. Neither explicitly connected (legato) nor detached (staccato); the exact feel depends on instrument and style."
     />
     <MusicalExample
       score={{
@@ -136,7 +136,7 @@ Both types look similar on the page, and performers interpret context to know wh
               { type: 'note', pitch: 'E5', duration: 'q' },
               { type: 'note', pitch: 'F5', duration: 'q' },
               { type: 'note', pitch: 'D5', duration: 'q' },
-              { type: 'note', pitch: 'B4', duration: 'q' },
+              { type: 'note', pitch: 'B4', duration: 'q', forceStem: 'down' },
               { type: 'note', pitch: 'C5', duration: 'q', slur: 'stop' },
             ],
           }],

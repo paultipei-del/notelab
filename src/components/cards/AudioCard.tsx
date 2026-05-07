@@ -129,6 +129,60 @@ export default function AudioCard({ card, revealed, onReveal, compact, hideRevea
       sharedSampler.triggerAttackRelease(notes[0], Q, now + Q)
       sharedSampler.triggerAttackRelease([notes[0], notes[1]], H, now + 2 * Q)
       totalDuration = Math.round((3 * Q + H + 0.5) * 1000)
+    } else if (pattern === 'tonicized-note') {
+      // Tonic-chord arpeggio (audioChords[0], 4 notes ascending) → pause →
+      // sustained test note (audioNotes[0]). Establishes key context for
+      // scale-degree / pitch-in-context decks.
+      const TONIC = card.audioChords?.[0] ?? []
+      const stepT = 0.22
+      TONIC.forEach((n: string, i: number) => {
+        sharedSampler.triggerAttackRelease(n, stepT, now + i * stepT)
+      })
+      const testStart = now + TONIC.length * stepT + 0.45
+      sharedSampler.triggerAttackRelease(notes[0], 1.5, testStart)
+      totalDuration = Math.round((TONIC.length * stepT + 0.45 + 1.7) * 1000)
+    } else if (pattern === 'tonicized-arpeggio') {
+      // Tonic-chord arpeggio → pause → 3-note triad arpeggio ascending.
+      // The third (top) note sustains for ~1s.
+      const TONIC = card.audioChords?.[0] ?? []
+      const stepT = 0.22
+      TONIC.forEach((n: string, i: number) => {
+        sharedSampler.triggerAttackRelease(n, stepT, now + i * stepT)
+      })
+      const testStart = now + TONIC.length * stepT + 0.45
+      const stepA = 0.32
+      notes.forEach((n: string, i: number) => {
+        const dur = i === notes.length - 1 ? 1.0 : stepA
+        sharedSampler.triggerAttackRelease(n, dur, testStart + i * stepA)
+      })
+      totalDuration = Math.round((TONIC.length * stepT + 0.45 + (notes.length - 1) * stepA + 1.0 + 0.4) * 1000)
+    } else if (pattern === 'tonicized-pattern') {
+      // Tonic-chord arpeggio → pause → melodic pattern at quarter = 80.
+      const TONIC = card.audioChords?.[0] ?? []
+      const stepT = 0.22
+      TONIC.forEach((n: string, i: number) => {
+        sharedSampler.triggerAttackRelease(n, stepT, now + i * stepT)
+      })
+      const testStart = now + TONIC.length * stepT + 0.45
+      const Q = 60 / 80
+      notes.forEach((n: string, i: number) => {
+        sharedSampler.triggerAttackRelease(n, Q, testStart + i * Q)
+      })
+      totalDuration = Math.round((TONIC.length * stepT + 0.45 + notes.length * Q + 0.4) * 1000)
+    } else if (pattern === 'rhythm-pattern') {
+      // Sequence of (fixed pitch, duration-in-beats) — for rhythm-recognition
+      // cards. Default pitch D4, default tempo 92 bpm.
+      const beats = card.audioRhythm ?? []
+      const pitch = card.audioPitch ?? 'D4'
+      const bpm = card.audioBpm ?? 92
+      const Q = 60 / bpm
+      let cursor = 0
+      beats.forEach((b: number) => {
+        const dur = Math.abs(b)
+        if (b > 0) sharedSampler.triggerAttackRelease(pitch, dur * Q * 0.92, now + cursor)
+        cursor += dur * Q
+      })
+      totalDuration = Math.round((cursor + 0.5) * 1000)
     }
 
     timeoutRef.current = setTimeout(() => setPlayState('ready'), totalDuration)

@@ -41,55 +41,59 @@ This page covers the conventions: how beams work, what grouping rules apply in d
 ## The visual
 
 <figure style={{ margin: '24px auto' }}>
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-    <MusicalExample
-      score={{
-        timeSignature: { numerator: 4, denominator: 4 },
-        keySignature: 0,
-        staves: [{
-          clef: 'treble',
-          voices: [{
-            elements: [
-              { type: 'note', pitch: 'C5', duration: 'e' },
-              { type: 'note', pitch: 'D5', duration: 'e' },
-              { type: 'note', pitch: 'E5', duration: 'e' },
-              { type: 'note', pitch: 'F5', duration: 'e' },
-              { type: 'note', pitch: 'G5', duration: 'e' },
-              { type: 'note', pitch: 'F5', duration: 'e' },
-              { type: 'note', pitch: 'E5', duration: 'e' },
-              { type: 'note', pitch: 'D5', duration: 'e' },
-            ],
+  <div className="nl-comparison-pair">
+    <div className="nl-pull-caption">
+      <MusicalExample
+        score={{
+          timeSignature: { numerator: 4, denominator: 4 },
+          keySignature: 0,
+          staves: [{
+            clef: 'treble',
+            voices: [{
+              elements: [
+                { type: 'note', pitch: 'C5', duration: 'e' },
+                { type: 'note', pitch: 'D5', duration: 'e' },
+                { type: 'note', pitch: 'E5', duration: 'e' },
+                { type: 'note', pitch: 'F5', duration: 'e' },
+                { type: 'note', pitch: 'G5', duration: 'e' },
+                { type: 'note', pitch: 'F5', duration: 'e' },
+                { type: 'note', pitch: 'E5', duration: 'e' },
+                { type: 'note', pitch: 'D5', duration: 'e' },
+              ],
+            }],
           }],
-        }],
-      }}
-      beamOverride="all-together"
-      bpm={108}
-      audio={false}
-      caption="Wrong: all 8 eighths beamed as one group. The reader can't see the beat structure."
-    />
-    <MusicalExample
-      score={{
-        timeSignature: { numerator: 4, denominator: 4 },
-        keySignature: 0,
-        staves: [{
-          clef: 'treble',
-          voices: [{
-            elements: [
-              { type: 'note', pitch: 'C5', duration: 'e' },
-              { type: 'note', pitch: 'D5', duration: 'e' },
-              { type: 'note', pitch: 'E5', duration: 'e' },
-              { type: 'note', pitch: 'F5', duration: 'e' },
-              { type: 'note', pitch: 'G5', duration: 'e' },
-              { type: 'note', pitch: 'F5', duration: 'e' },
-              { type: 'note', pitch: 'E5', duration: 'e' },
-              { type: 'note', pitch: 'D5', duration: 'e' },
-            ],
+        }}
+        beamOverride="all-together"
+        bpm={108}
+        audio={false}
+        caption="Wrong: all 8 eighths beamed as one group. The reader can't see the beat structure."
+      />
+    </div>
+    <div className="nl-pull-caption">
+      <MusicalExample
+        score={{
+          timeSignature: { numerator: 4, denominator: 4 },
+          keySignature: 0,
+          staves: [{
+            clef: 'treble',
+            voices: [{
+              elements: [
+                { type: 'note', pitch: 'C5', duration: 'e' },
+                { type: 'note', pitch: 'D5', duration: 'e' },
+                { type: 'note', pitch: 'E5', duration: 'e' },
+                { type: 'note', pitch: 'F5', duration: 'e' },
+                { type: 'note', pitch: 'G5', duration: 'e' },
+                { type: 'note', pitch: 'F5', duration: 'e' },
+                { type: 'note', pitch: 'E5', duration: 'e' },
+                { type: 'note', pitch: 'D5', duration: 'e' },
+              ],
+            }],
           }],
-        }],
-      }}
-      bpm={108}
-      caption="Correct: beamed in two groups of 4, matching the half-bar structure of 4/4."
-    />
+        }}
+        bpm={108}
+        caption="Correct: beamed in two groups of 4, matching the half-bar structure of 4/4."
+      />
+    </div>
   </div>
   <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>The same 8 eighth notes beamed wrong (one group of 8) and beamed correctly (two groups of 4). Beam groupings should reveal the meter — you should be able to FEEL the downbeats from the visual alone.</figcaption>
 </figure>
@@ -149,6 +153,19 @@ In a 3/4 measure with six eighth notes, you beam them in three groups of two (on
 In a 6/8 measure with six eighth notes, you beam them in two groups of three (one group per dotted-quarter beat), not as three groups of two, because 6/8 is compound duple meter, with beats of three eighth notes each.
 
 Beaming follows the meter's implicit grouping. Reading a score, you can often tell the meter just from how the beams are grouped, even without looking at the time signature.
+
+## Beam grouping at a glance
+
+| Meter | Type              | Eighth notes / bar | Beam grouping        |
+| ----- | ----------------- | ------------------ | -------------------- |
+| 2/4   | simple duple      | 4                  | 2 + 2                |
+| 3/4   | simple triple     | 6                  | 2 + 2 + 2            |
+| 4/4   | simple quadruple  | 8                  | 4 + 4 (or 2+2+2+2)   |
+| 6/8   | compound duple    | 6                  | 3 + 3                |
+| 9/8   | compound triple   | 9                  | 3 + 3 + 3            |
+| 12/8  | compound quadruple| 12                 | 3 + 3 + 3 + 3        |
+
+Sixteenth notes follow the same logic at twice the resolution: each "group of N eighths" becomes a "group of N×2 sixteenths" if you keep beat-grouping, or splits into pairs/quads of sixteenths within each beat.
 
 ## Simple meter beaming
 

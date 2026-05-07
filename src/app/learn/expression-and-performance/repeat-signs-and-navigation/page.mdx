@@ -21,9 +21,9 @@ export const learnPage = {
     { q: 'What do repeat bars (‖: … :‖) mean?', a: 'Play the section between the start and end repeat signs twice. After reaching the end repeat, return to the most recent start repeat.' },
     { q: 'What do first and second endings (volta brackets) mean?', a: 'First time through: play ending "1." then go back to the start repeat. Second time: skip ending "1." and play ending "2." instead.' },
     { q: 'What does D.C. al Fine mean?', a: '"Da capo al Fine", go back to the beginning of the piece and play through until you reach the Fine marking, where the piece ends.' },
-    { q: 'What does D.S. al Coda mean?', a: '"Dal segno al Coda", go back to the segno (𝄋), play until the "To Coda" marker (𝄌), then jump to the Coda section.' },
-    { q: 'What is the segno symbol?', a: '𝄋, the "sign" marking a return point used with D.S. (dal segno) instructions.' },
-    { q: 'What is a coda?', a: 'A concluding section, usually marked with a coda sign (𝄌). After D.C. al Coda or D.S. al Coda, the performer jumps to the coda after reaching the "To Coda" marker.' },
+    { q: 'What does D.S. al Coda mean?', a: '"Dal segno al Coda" — go back to the segno sign, play until the "To Coda" marker, then jump to the Coda section.' },
+    { q: 'What is the segno symbol?', a: 'The "sign" — an S-shape with a slash and two dots — marks a return point used with D.S. (dal segno) instructions.' },
+    { q: 'What is a coda?', a: 'A concluding section, usually marked with a coda sign (a circle with a cross). After D.C. al Coda or D.S. al Coda, the performer jumps to the coda after reaching the "To Coda" marker.' },
     { q: 'What does Fine mean?', a: '"The end", marks where the piece ends, typically used after a D.C. or D.S. instruction has sent the performer back.' },
     { q: 'What does "vamp" mean?', a: 'Repeat a short passage (often 2-4 measures) an indeterminate number of times, common in jazz and pop as a groove pattern until something signals to move on.' },
   ],
@@ -60,8 +60,8 @@ Reading these markings correctly is a basic literacy skill, miss them, and you'l
           { type: 'note', pitch: 'G5', duration: 'h' },
           { type: 'note', pitch: 'F5', duration: 'h' },
           { type: 'note', pitch: 'E5', duration: 'q' },
-          { type: 'note', pitch: 'D5', duration: 'q' },
-          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
           { type: 'note', pitch: 'C5', duration: 'w' },
         ],
       }],
@@ -77,8 +77,8 @@ Reading these markings correctly is a basic literacy skill, miss them, and you'l
     keySignature: 0,
     measureMarks: [
       { measureIdx: 0, startRepeat: true },
-      { measureIdx: 2, voltaNumber: 1, voltaCloseRight: true, endRepeat: true },
-      { measureIdx: 3, voltaNumber: 2, voltaCloseRight: true },
+      { measureIdx: 3, voltaNumber: 1, voltaCloseRight: true, endRepeat: true },
+      { measureIdx: 4, voltaNumber: 2, voltaCloseRight: true },
     ],
     staves: [{
       clef: 'treble',
@@ -90,6 +90,10 @@ Reading these markings correctly is a basic literacy skill, miss them, and you'l
           { type: 'note', pitch: 'F5', duration: 'q' },
           { type: 'note', pitch: 'D5', duration: 'q' },
           { type: 'note', pitch: 'B4', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
           { type: 'note', pitch: 'D5', duration: 'q' },
           { type: 'note', pitch: 'F5', duration: 'q' },
           { type: 'note', pitch: 'D5', duration: 'h' },
@@ -101,7 +105,7 @@ Reading these markings correctly is a basic literacy skill, miss them, and you'l
     }],
   }}
   bpm={108}
-  caption="A passage with first and second endings. On the first pass, play measures 1, 2, and the '1.' ending (m. 3). Then return to the start repeat and play measures 1, 2 again, but skip the '1.' ending and play the '2.' ending (m. 4) instead. This compact notation saves writing two slightly different endings in full."
+  caption="A passage with first and second endings. On the first pass, play measures 1–4 (with the '1.' ending at m. 4). Then return to the start repeat and play measures 1, 2, 3 again, but skip the '1.' ending and play the '2.' ending (m. 5) instead. This compact notation saves writing two slightly different endings in full."
 />
 
 <NavigationFlowchart
@@ -151,14 +155,14 @@ These Italian-derived markings indicate longer structural returns:
 
 **D.C. (da capo)**, "from the beginning." When you reach D.C., go back to the very beginning of the piece and play through again.
 
-**D.S. (dal segno)**, "from the sign." When you reach D.S., go back to the segno symbol (𝄋) marked earlier in the score and play from there.
+**D.S. (dal segno)**, "from the sign." When you reach D.S., go back to the segno symbol (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>) marked earlier in the score and play from there.
 
-**Segno (𝄋)**, the sign itself. Marks a specific return point for D.S. instructions.
+**Segno (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>)**, the sign itself. Marks a specific return point for D.S. instructions.
 
 **Fine**, "the end." After a D.C. or D.S., when you reach the Fine marking, stop. The piece is over.
 
 **Coda**, a concluding section. When a score has a coda, the pattern is usually:
-- D.C. al Coda (or D.S. al Coda), go back to the beginning (or to the segno) and play until you reach the "To Coda" marking (𝄌), then skip to the Coda section.
+- D.C. al Coda (or D.S. al Coda), go back to the beginning (or to the segno) and play until you reach the "To Coda" marking (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>), then skip to the Coda section.
 
 **D.C. al Fine**, go back to the beginning and play until Fine.
 
@@ -175,7 +179,7 @@ Consider a piece with this structure:
 - Section A (the opening, from measure 1)
 - A *segno* symbol at measure 9
 - Section B (from measure 9)
-- A "To Coda" marker (𝄌) at measure 33
+- A "To Coda" marker (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>) at measure 33
 - Section B continues through measure 48, marked "D.S. al Coda"
 - A Coda section at measure 49
 
@@ -199,9 +203,9 @@ For performers, learning to navigate these markings fluently is part of basic re
 
 ## Less common navigation markings
 
-**𝄋 (segno)**, the "sign" that marks a return point. Always paired with a D.S. marking somewhere later in the score.
+**<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span> (segno)**, the "sign" that marks a return point. Always paired with a D.S. marking somewhere later in the score.
 
-**𝄌 (coda symbol)**, marks where the coda begins, or where to jump to when "to Coda" is indicated.
+**<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span> (coda symbol)**, marks where the coda begins, or where to jump to when "to Coda" is indicated.
 
 **\|: and :\|**, alternate notation for repeat bars (used in some European editions).
 

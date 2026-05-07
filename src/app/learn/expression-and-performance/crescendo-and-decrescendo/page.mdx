@@ -67,11 +67,11 @@ Crescendos build tension and excitement. Decrescendos release tension and settle
         dynamics: [
           { beat: 0, level: 'p' },
           { beat: 8, level: 'f' },
-          { beat: 16, level: 'p' },
+          { beat: 14, level: 'p' },
         ],
         hairpins: [
           { startBeat: 0, endBeat: 7, direction: 'cresc', placement: 'below' },
-          { startBeat: 8, endBeat: 15, direction: 'decresc', placement: 'below' },
+          { startBeat: 8, endBeat: 14, direction: 'decresc', placement: 'below' },
         ],
       }],
     }],
@@ -112,8 +112,8 @@ Crescendos build tension and excitement. Decrescendos release tension and settle
       }],
     }],
     annotations: [
-      { type: 'label', startIdx: 1, endIdx: 1, label: 'cresc.', position: 'below' },
-      { type: 'label', startIdx: 9, endIdx: 9, label: 'dim.', position: 'below' },
+      { type: 'label', startIdx: 1, endIdx: 1, label: 'cresc.', position: 'below', dynamicLine: true },
+      { type: 'label', startIdx: 9, endIdx: 9, label: 'dim.', position: 'below', dynamicLine: true },
     ],
   }}
   bpm={92}

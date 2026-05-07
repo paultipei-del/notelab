@@ -38,40 +38,66 @@ This page is about that space. What do performers actually decide? How do they d
 
 ## The visual
 
-<MusicalExample
-  score={{
-    timeSignature: { numerator: 4, denominator: 4 },
-    keySignature: 1,
-    staves: [{
-      clef: 'treble',
-      voices: [{
-        elements: [
-          { type: 'note', pitch: 'E5', duration: 'q' },
-          { type: 'note', pitch: 'F#5', duration: 'q' },
-          { type: 'note', pitch: 'G5', duration: 'q' },
-          { type: 'note', pitch: 'F#5', duration: 'q' },
-          { type: 'note', pitch: 'E5', duration: 'q' },
-          { type: 'note', pitch: 'D5', duration: 'q' },
-          { type: 'note', pitch: 'B4', duration: 'h' },
-          { type: 'note', pitch: 'E5', duration: 'q' },
-          { type: 'note', pitch: 'F#5', duration: 'q' },
-          { type: 'note', pitch: 'G5', duration: 'q' },
-          { type: 'note', pitch: 'A5', duration: 'q' },
-          { type: 'note', pitch: 'B5', duration: 'h' },
-          { type: 'note', pitch: 'E5', duration: 'h' },
-        ],
+<figure style={{ margin: '24px auto 48px auto' }}>
+  <MusicalExample
+    score={{
+      timeSignature: { numerator: 4, denominator: 4 },
+      keySignature: 1,
+      staves: [{
+        clef: 'treble',
+        voices: [{
+          elements: [
+            { type: 'note', pitch: 'E5', duration: 'q' },
+            { type: 'note', pitch: 'F#5', duration: 'q' },
+            { type: 'note', pitch: 'G5', duration: 'q' },
+            { type: 'note', pitch: 'F#5', duration: 'q' },
+            { type: 'note', pitch: 'E5', duration: 'q' },
+            { type: 'note', pitch: 'D5', duration: 'q' },
+            { type: 'note', pitch: 'B4', duration: 'h' },
+            { type: 'note', pitch: 'E5', duration: 'q' },
+            { type: 'note', pitch: 'F#5', duration: 'q' },
+            { type: 'note', pitch: 'G5', duration: 'q' },
+            { type: 'note', pitch: 'A5', duration: 'q' },
+            { type: 'note', pitch: 'B5', duration: 'h' },
+            { type: 'note', pitch: 'E5', duration: 'h' },
+          ],
+        }],
       }],
-    }],
-    annotations: [
-      { type: 'label', startIdx: 0, endIdx: 0, label: 'A: tender, slow, p', position: 'above' },
-      { type: 'label', startIdx: 6, endIdx: 6, label: 'B: assertive, mf, slight rubato', position: 'above' },
-      { type: 'label', startIdx: 11, endIdx: 11, label: 'C: dramatic, f, ritardando', position: 'above' },
-    ],
-  }}
-  bpm={84}
-  systemBreaks={[2]}
-  caption="A short minor-key phrase with three different interpretation possibilities labeled. The same notation supports each of these readings — a tender pianissimo opening, an assertive medium crescendo, or a dramatic fortissimo with ritardando — and a hundred more. Interpretation is what the performer brings beyond what the notation specifies."
-/>
+      annotations: [
+        { type: 'label', startIdx: 0,  endIdx: 0,  label: 'A', position: 'above' },
+        { type: 'label', startIdx: 6,  endIdx: 6,  label: 'B', position: 'above' },
+        { type: 'label', startIdx: 11, endIdx: 11, label: 'C', position: 'above' },
+      ],
+    }}
+    bpm={84}
+    systemBreaks={[2]}
+  />
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'auto auto 1fr',
+      columnGap: 14,
+      rowGap: 6,
+      maxWidth: 520,
+      margin: '4px auto 0 auto',
+      fontFamily: 'var(--font-cormorant), serif',
+      fontSize: 15,
+      lineHeight: 1.4,
+      color: '#2A2318',
+    }}
+  >
+    <span style={{ fontWeight: 600, fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif' }}>A</span>
+    <span style={{ fontStyle: 'italic', color: '#5F5E5A' }}>tender, slow</span>
+    <span style={{ fontFamily: 'var(--font-bravura)', fontSize: 22, color: '#2A2318', alignSelf: 'center', lineHeight: 1, position: 'relative', top: 5 }}>{''}</span>
+    <span style={{ fontWeight: 600, fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif' }}>B</span>
+    <span style={{ fontStyle: 'italic', color: '#5F5E5A' }}>assertive, slight rubato</span>
+    <span style={{ fontFamily: 'var(--font-bravura)', fontSize: 22, color: '#2A2318', alignSelf: 'center', lineHeight: 1, position: 'relative', top: 5 }}>{''}</span>
+    <span style={{ fontWeight: 600, fontFamily: 'var(--font-freight-text-pro), var(--font-cormorant), serif' }}>C</span>
+    <span style={{ fontStyle: 'italic', color: '#5F5E5A' }}>dramatic, ritardando</span>
+    <span style={{ fontFamily: 'var(--font-bravura)', fontSize: 22, color: '#2A2318', alignSelf: 'center', lineHeight: 1, position: 'relative', top: 5 }}>{''}</span>
+  </div>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 14, color: '#5F5E5A', fontSize: 14, lineHeight: 1.55, maxWidth: '60ch', marginLeft: 'auto', marginRight: 'auto' }}>The same minor-key phrase, three valid readings — and a hundred more. Interpretation is what the performer brings beyond what the notation specifies.</figcaption>
+</figure>
 
 ## What the score leaves open
 

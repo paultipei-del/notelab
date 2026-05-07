@@ -44,10 +44,15 @@ export interface Card {
   // audio cards
   audioNotes?: string[]        // e.g. ['C4', 'E4', 'G4'] for harmonic playback
   audioChords?: string[][]     // e.g. [['C4','E4','G4'], ['G4','B4','D5']] for cadences
-  audioPattern?: 'harmonic' | 'ascending' | 'descending' | 'cadence' | 'scale' | 'interval-ascending' | 'interval-descending' | 'chord-cascade'
+  audioPattern?: 'harmonic' | 'ascending' | 'descending' | 'cadence' | 'scale' | 'interval-ascending' | 'interval-descending' | 'chord-cascade' | 'tonicized-note' | 'tonicized-arpeggio' | 'tonicized-pattern' | 'rhythm-pattern'
   audioLabel?: string          // shown on front: e.g. 'Major Triad'
   audioHint?: string           // optional hint: e.g. 'Root position, C major'
   audioDuration?: string       // Tone.js duration e.g. '4n', '2n', '1n'
+  // Rhythm-pattern decks: durations in beats (e.g. [1,1,0.5,0.5,2]).
+  // Played as a sequence on a single fixed pitch (`audioPitch` or D4).
+  audioRhythm?: number[]
+  audioPitch?: string          // fixed pitch for 'rhythm-pattern' (default D4)
+  audioBpm?: number            // tempo for 'rhythm-pattern' (default 92)
   // Pedagogical tags — union-merged with the parent deck's tags for filtering.
   tags?: string[]
 }

@@ -46,51 +46,51 @@ Composers mark tempo at the beginning of each piece or movement. The most common
     <MusicalExample
       score={{
         timeSignature: { numerator: 4, denominator: 4 },
-        keySignature: 0,
+        keySignature: -3,
         tempoMarkings: [{ measureIdx: 0, text: 'Adagio', style: 'normal' }],
         staves: [{
           clef: 'treble',
           voices: [{
             elements: [
-              { type: 'note', pitch: 'E5', duration: 'h' },
+              { type: 'note', pitch: 'Eb5', duration: 'h' },
               { type: 'note', pitch: 'D5', duration: 'h' },
               { type: 'note', pitch: 'C5', duration: 'h' },
-              { type: 'note', pitch: 'B4', duration: 'h' },
+              { type: 'note', pitch: 'Bb4', duration: 'h' },
             ],
             dynamics: [{ beat: 0, level: 'p' }],
           }],
         }],
       }}
       bpm={66}
-      caption="Adagio (slow, ~60-76 BPM) — long sustained notes; the music breathes."
+      caption="Adagio (slow, ~60-76 BPM) — long sustained notes; the music breathes. In E♭ major: tonic, leading-tone, submediant, dominant."
     />
     <MusicalExample
       score={{
         timeSignature: { numerator: 4, denominator: 4 },
-        keySignature: 0,
+        keySignature: 5,
         tempoMarkings: [{ measureIdx: 0, text: 'Allegro', style: 'normal' }],
         staves: [{
           clef: 'treble',
           voices: [{
             elements: [
-              { type: 'note', pitch: 'C5', duration: 'e' },
-              { type: 'note', pitch: 'D5', duration: 'e' },
+              { type: 'note', pitch: 'B4', duration: 'e' },
+              { type: 'note', pitch: 'C#5', duration: 'e' },
+              { type: 'note', pitch: 'D#5', duration: 'e' },
               { type: 'note', pitch: 'E5', duration: 'e' },
-              { type: 'note', pitch: 'F5', duration: 'e' },
-              { type: 'note', pitch: 'G5', duration: 'e' },
-              { type: 'note', pitch: 'A5', duration: 'e' },
-              { type: 'note', pitch: 'G5', duration: 'e' },
-              { type: 'note', pitch: 'F5', duration: 'e' },
-              { type: 'note', pitch: 'E5', duration: 'q' },
-              { type: 'note', pitch: 'D5', duration: 'q' },
-              { type: 'note', pitch: 'C5', duration: 'h' },
+              { type: 'note', pitch: 'F#5', duration: 'e' },
+              { type: 'note', pitch: 'G#5', duration: 'e' },
+              { type: 'note', pitch: 'F#5', duration: 'e' },
+              { type: 'note', pitch: 'E5', duration: 'e' },
+              { type: 'note', pitch: 'D#5', duration: 'q' },
+              { type: 'note', pitch: 'C#5', duration: 'q' },
+              { type: 'note', pitch: 'B4', duration: 'h' },
             ],
             dynamics: [{ beat: 0, level: 'mf' }],
           }],
         }],
       }}
       bpm={132}
-      caption="Allegro (fast, ~120-168 BPM) — energetic, eighth notes flowing."
+      caption="Allegro (fast, ~120-168 BPM) — energetic, eighth notes flowing. In B major: a scalar climb up the tonic triad and back down."
     />
     <MusicalExample
       score={{
@@ -165,9 +165,9 @@ A **metronome marking** gives a specific tempo in beats per minute (BPM). The fo
 
 meaning "the quarter note equals 120 beats per minute." Sometimes a different note value is specified:
 
-- **♩ = 60**, quarter note at 60 BPM (one beat per second)
-- **𝅗𝅥 = 88**, half note at 88 BPM (for cut-time pieces)
-- **♪ = 144**, eighth note at 144 BPM (for pieces with eighth-note pulse)
+- **<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.25em', verticalAlign: 'middle' }}>{''}</span> = 60**, quarter note at 60 BPM (one beat per second)
+- **<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.25em', verticalAlign: 'middle' }}>{''}</span> = 88**, half note at 88 BPM (for cut-time pieces)
+- **<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.25em', verticalAlign: 'middle' }}>{''}</span> = 144**, eighth note at 144 BPM (for pieces with eighth-note pulse)
 
 The metronome marking is precise. Unlike Italian tempo terms, it leaves no ambiguity, the performer should use a metronome to check. In practice, performers sometimes deviate from strict metronome markings for expressive reasons, but the written marking establishes the composer's intended baseline.
 

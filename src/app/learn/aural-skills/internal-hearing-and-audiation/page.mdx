@@ -1,0 +1,166 @@
+import LearnPageLayout from '@/components/learn/LearnPageLayout'
+import { DevelopmentStages } from '@/components/learn/visuals/DevelopmentStages'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
+
+export const learnPage = {
+  topic: 'aural-skills',
+  subtopic: 'internal-hearing-and-audiation',
+  title: 'Internal Hearing and Audiation',
+  oneSentence:
+    'Internal hearing is the ability to imagine music vividly without external sound, and audiation, Edwin Gordon\'s term for it, is the deepest aural skill: hearing a score in your head, composing mentally, and recognising harmony, rhythm, and meaning before any note is played.',
+  practice: [],
+  related: [
+    { title: 'Sight-Singing',                      href: '/learn/aural-skills/sight-singing' },
+    { title: 'Solfège and Movable Do',             href: '/learn/aural-skills/solfege-and-movable-do' },
+    { title: 'Developing Your Ear Over Time',      href: '/learn/aural-skills/developing-your-ear-over-time' },
+  ],
+  flashcards: [
+    { q: 'What is internal hearing?', a: 'The ability to vividly imagine music in your head without any external sound, hearing pitches, rhythms, harmony, and timbre as if they were actually playing.' },
+    { q: 'What is audiation?', a: 'A term coined by music educator Edwin Gordon for the cognitive process of hearing and comprehending music for which the sound is not physically present. It encompasses imagining, predicting, and understanding music mentally.' },
+    { q: 'How is audiation different from imagination?', a: 'General imagination might evoke a vague sense of music. Audiation is specific: actual pitches, in actual keys, with actual rhythms and harmony. It\'s the same skill a fluent reader uses to "hear" a sentence as they read it.' },
+    { q: 'What are the main types of audiation?', a: 'Pitch audiation (imagining notes), rhythm audiation (imagining pulse and pattern), harmonic audiation (imagining chords and progressions), and notation audiation (hearing music from a score).' },
+    { q: 'Can audiation be developed?', a: 'Yes. It is built through deliberate practice that links sound, syllable, and notation. Solfège, dictation, sight-singing, and following scores while listening all build audiation directly.' },
+    { q: 'Why does audiation matter for a musician?', a: 'It\'s the foundation of every other musical skill. Composers compose what they audiate. Conductors hear the score before they raise the baton. Performers anticipate every note. Improvisers shape phrases they\'ve already heard mentally.' },
+    { q: 'What\'s a simple way to test your audiation?', a: 'Pick a familiar tune. Without singing or humming, play it in your head, all the way through, in tempo, in tune. If you can hear it clearly start to finish, your audiation for that piece is solid.' },
+    { q: 'Does audiation require absolute pitch?', a: 'No. Most audiation is relative — you imagine pitches in relation to a tonic, not at exact frequencies. Some musicians audiate in absolute pitch, but it\'s neither necessary nor common.' },
+  ],
+}
+
+export default function Page ({ children }) {
+  return <LearnPageLayout {...learnPage}>{children}</LearnPageLayout>
+}
+
+## The intuition
+
+Close your eyes for a moment and "hear" the opening four notes of Beethoven's Fifth. If you know the piece, the notes appear in your mind: short-short-short-LONG, in a specific key, with specific orchestration, at a specific tempo. You're not really hearing them; no sound is reaching your ears. But something internal is unmistakably playing the music for you.
+
+That capability is **internal hearing**. The American music educator Edwin Gordon gave it a more precise name: **audiation**. He defined audiation as the cognitive process of hearing and comprehending music for which the sound is not physically present. It's the musical equivalent of the inner voice you hear when you read silently.
+
+Audiation is, arguably, the central goal of ear training. Every other aural skill is a stepping stone toward it. You drill intervals so you can audiate intervals. You practise dictation so you can audiate melodies you haven't heard. You sing solfège so you can audiate scale degrees in any key. The destination of all this practice is a fluent musical inner ear.
+
+This page explains what internal hearing is, how it differs from related skills, and how to develop it deliberately.
+
+## Audiation vs. related skills
+
+Several skills are easy to confuse with audiation:
+
+| Skill | What it is | How it differs from audiation |
+| --- | --- | --- |
+| **Pitch memory** | Recalling a pitch you just heard | Short-term recall of a sound that was real; audiation can construct music that was never sounded |
+| **Imagination** | Vague mental impression of music | Audiation is specific: actual pitches, rhythms, harmonies, in tempo |
+| **Inner singing / humming** | Subvocal version of singing | Audiation has no muscular component; it's purely cognitive |
+| **Absolute pitch** | Naming a pitch you hear | Audiation works with relative pitch and doesn't require AP |
+| **Sight-reading** | Producing sound from notation | Sight-reading uses audiation under the hood — the score is audiated first, then performed |
+
+Audiation is the substrate. Sight-singing, sight-reading, dictation, and improvisation all draw on it.
+
+## The dimensions of audiation
+
+Following Gordon's framework, audiation operates across several musical dimensions, all of which can be developed independently:
+
+| Dimension | What you imagine | Practice that builds it |
+| --- | --- | --- |
+| **Pitch audiation** | Specific notes in a tonal context | Solfège, scale-degree drills, single-note dictation |
+| **Interval audiation** | Distance between two pitches | Interval ear-training decks, sight-singing leaps |
+| **Rhythm audiation** | Pulse, meter, and pattern | Rhythmic dictation, clapping back, counting aloud |
+| **Harmonic audiation** | Chords and progressions | Cadence ID, triad/seventh-chord drills, hearing changes |
+| **Melodic audiation** | A complete melodic shape | Melodic dictation, transcribing songs you know |
+| **Notation audiation** | Hearing what a score says | Reading silently while imagining the sound; following scores while listening |
+| **Compositional audiation** | Music that doesn't yet exist | Improvising mentally, composing without an instrument |
+
+Most musicians develop several of these unevenly. A jazz player may have powerful harmonic and improvisational audiation but weaker notation audiation. A conductor often has very strong notation audiation. A choral singer typically has strong pitch and melodic audiation. Awareness of which dimensions are strong (and which are weaker) is the starting point for targeted practice.
+
+## How audiation develops
+
+Audiation grows through repeated linking of three things: a sound, a name (syllable, scale degree, or chord label), and a notation. Each repetition tightens the bond. Eventually, any one of the three can summon the others — you see notation and the sound appears; you hear a sound and a name presents itself; you think a chord name and you hear it.
+
+<DevelopmentStages
+  stages={[
+    {
+      period: 'Stage 1',
+      headline: 'Sound to syllable.',
+      skills: [
+        'Sing solfège along with what you hear so the syllable becomes attached to the sound.',
+        'Identify intervals, triads, and cadences by ear with feedback (drills, decks, dictation).',
+      ],
+      variant: 'tonic',
+    },
+    {
+      period: 'Stage 2',
+      headline: 'Syllable to sound.',
+      skills: [
+        'Sing solfège from a written exercise without first hearing it (sight-singing).',
+        'Predict the next chord in a progression before it arrives.',
+        'Imagine a melody from memory in tempo, in tune, all the way through.',
+      ],
+      variant: 'unstable',
+    },
+    {
+      period: 'Stage 3',
+      headline: 'Notation to sound.',
+      skills: [
+        'Read a score silently and hear the music play in your head.',
+        'Follow recordings with the score open; notice how the page resolves into the sound.',
+        'Transcribe music from listening alone, then check your work against the score.',
+      ],
+      variant: 'unstable',
+    },
+    {
+      period: 'Stage 4',
+      headline: 'Sound from nothing.',
+      skills: [
+        'Compose in your head, hearing whole phrases before notating them.',
+        'Improvise mentally over imagined chord changes; play a phrase only after you\'ve heard it.',
+        'Conduct or rehearse a piece without the recording — the score is enough.',
+      ],
+      variant: 'expert',
+    },
+  ]}
+  caption="Audiation builds by tightening the link between three things — sound, syllable/name, and notation. Each stage adds another direction the link can travel."
+/>
+
+## Practising audiation directly
+
+Most ear-training practice builds audiation indirectly. A few exercises target it explicitly:
+
+**Silent reading.** Take a piece you know well and read the score silently from beginning to end. Don't sing, don't tap, don't move your fingers. Just hear it in your head. Then play a recording and compare what your mental version got right and wrong. Start with simple pieces (a hymn, a short folk song) and work upward.
+
+**The "stop and predict" drill.** Listen to a piece. At any point, pause the recording and try to audiate the next phrase. Then resume and check yourself. Discrepancies tell you where your audiation is weak — a missed harmonic resolution, a melodic leap you didn't predict, a rhythm you misheard.
+
+**Mental transposition.** Take a familiar tune. Audiate it in its original key. Then audiate it transposed up a major third. Then up a fifth. This forces the syllable layer to do the work, since the absolute pitches are different in each version.
+
+**Internal solfège.** As you go through your day, hear melodies in your head and label them with solfège syllables. Most people already audiate songs; adding the syllable layer turns passive imagination into trainable audiation.
+
+**Score reading away from an instrument.** Pick a score, sit somewhere quiet, and read it the way you'd read a novel. Don't worry about catching every detail; let the page convert into sound at whatever speed is comfortable. Over time the conversion gets faster and more reliable.
+
+## Common questions
+
+**Is audiation the same as having music "stuck in your head"?**
+
+Not quite. Music stuck in your head is involuntary and usually limited to fragments. Audiation is voluntary and can be sustained, navigated, and altered at will. The two share machinery in the brain, but only audiation is a trained skill.
+
+**How can you tell whether you're really audiating or just remembering?**
+
+Try transposition or mental alteration. If you can shift a melody up a fourth in your head, change its rhythm, or sing it in solfège, you're audiating. If you can only "play it back" in its original form like a recording, that's closer to memory.
+
+**Do composers really hear their music before they write it?**
+
+Many do, especially in the late stages of practice. Mozart's letters describe pieces appearing to him whole. Beethoven, after going deaf, composed entirely by audiation. But beginners shouldn't compare themselves to those extremes; even moderately developed audiation is enough to compose, arrange, and improvise meaningfully.
+
+**Will I lose audiation if I stop practising?**
+
+The drilled skills (interval ID, dictation accuracy) will fade with disuse. Audiation itself, once developed, is sticky — it tends to remain available even after years away from active practice, much like the ability to read.
+
+**How long does serious audiation take to develop?**
+
+For tonal music in familiar idioms, basic notation-to-sound audiation usually emerges within 2 to 3 years of consistent ear training. Full fluency, where any score becomes sound and any imagined sound becomes notatable, is a decade-long project. The good news is that progress is continuous: every drill you do contributes to it.
+
+<EarTrainingCTA
+  intro="Audiation grows through every ear-training skill. Practise the underlying components:"
+  decks={[
+    { name: 'Solfège I: Scale Degrees', slug: 'ear-solfege-i', cards: '14 cards', description: 'The bedrock of pitch audiation in tonal music.' },
+    { name: 'Pitch in Context II: Chromatic', slug: 'ear-pitch-in-context-ii', cards: '12 cards', description: 'Extends audiation beyond the diatonic seven.' },
+    { name: 'Cadences', slug: 'ear-cadences', cards: '4 cards', description: 'Trains harmonic audiation — predicting where a phrase wants to go.' },
+    { name: 'Melodic Patterns', slug: 'ear-melodic-patterns', cards: '12 cards', description: 'Hearing short melodic shapes, the building blocks of melodic audiation.' },
+  ]}
+/>

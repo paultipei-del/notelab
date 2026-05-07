@@ -115,6 +115,29 @@ export default function AudioBrowseRow({ card }: AudioBrowseRowProps) {
         sampler.triggerAttackRelease(note, '8n', now + i * 0.35)
       })
       totalDuration = notes.length * 350 + 400
+    } else if (pattern === 'tonicized-note') {
+      // Browse mode: skip tonicization, just play the test note.
+      sampler.triggerAttackRelease(notes[0], '2n', now)
+      totalDuration = 1500
+    } else if (pattern === 'tonicized-arpeggio' || pattern === 'tonicized-pattern') {
+      // Browse mode: skip tonicization, play the pattern ascending.
+      const step = 0.35
+      notes.forEach((note: string, i: number) => {
+        sampler.triggerAttackRelease(note, step, now + i * step)
+      })
+      totalDuration = notes.length * 350 + 400
+    } else if (pattern === 'rhythm-pattern') {
+      const beats = card.audioRhythm ?? []
+      const pitch = card.audioPitch ?? 'D4'
+      const bpm = card.audioBpm ?? 92
+      const Q = 60 / bpm
+      let cursor = 0
+      beats.forEach((b: number) => {
+        const dur = Math.abs(b)
+        if (b > 0) sampler.triggerAttackRelease(pitch, dur * Q * 0.92, now + cursor)
+        cursor += dur * Q
+      })
+      totalDuration = Math.round((cursor + 0.4) * 1000)
     }
 
     timeoutRef.current = setTimeout(() => setPlaying(false), totalDuration)

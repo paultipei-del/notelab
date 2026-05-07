@@ -1,6 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
 import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { MusicXmlScore } from '@/components/learn/visuals/MusicXmlScore'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -42,33 +43,11 @@ This page is about synthesis, how tempo, meter, and related markings combine to 
 
 <figure style={{ margin: '24px auto' }}>
   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-    <MusicalExample
-      score={{
-        timeSignature: { numerator: 4, denominator: 4 },
-        keySignature: 0,
-        staves: [{
-          clef: 'treble',
-          voices: [{
-            elements: [
-              { type: 'note', pitch: 'C5', duration: 'e' },
-              { type: 'note', pitch: 'E5', duration: 'e' },
-              { type: 'note', pitch: 'G5', duration: 'e' },
-              { type: 'note', pitch: 'C6', duration: 'e' },
-              { type: 'note', pitch: 'D5', duration: 'e' },
-              { type: 'note', pitch: 'F5', duration: 'e' },
-              { type: 'note', pitch: 'A5', duration: 'e' },
-              { type: 'note', pitch: 'D6', duration: 'e' },
-              { type: 'note', pitch: 'E5', duration: 'e' },
-              { type: 'note', pitch: 'G5', duration: 'e' },
-              { type: 'note', pitch: 'B5', duration: 'e' },
-              { type: 'note', pitch: 'E6', duration: 'e' },
-              { type: 'note', pitch: 'C6', duration: 'h' },
-            ],
-          }],
-        }],
-      }}
-      bpm={108}
-      caption="Bach Baroque opening (c. 1722). C major, 4/4, no tempo marking, no dynamics. The era trusted performers to bring their own tempo and expression."
+    <MusicXmlScore
+      src="/music/invention.musicxml"
+      measureRange={[1, 2]}
+      bpm={90}
+      caption="Bach, Invention No. 1 in C Major, BWV 772 — opening (c. 1723). C major, 4/4, no tempo marking, no dynamics. The Baroque era trusted performers to bring their own tempo and expression."
     />
     <MusicalExample
       score={{

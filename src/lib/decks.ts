@@ -3,6 +3,7 @@ import { SIGHT_READ_DECKS, SIGHT_READ_PRO_IDS } from './sightReadDecks'
 import { GRAND_STAFF_DECKS, GRAND_STAFF_PRO_IDS } from './grandStaffDecks'
 import { LESSON_DECKS } from './learn/lessonDecks'
 import { EAR_TRAINING_INTERVALS, EAR_TRAINING_INTERVALS_II, EAR_TRAINING_INTERVALS_III, EAR_TRAINING_TRIADS, EAR_TRAINING_TRIADS_BROWSE, EAR_TRAINING_TRIADS_INVERSIONS, EAR_TRAINING_SEVENTH_CHORDS, EAR_TRAINING_CADENCES, EAR_TRAINING_SCALES } from './cm-content/audio-ear-training'
+import { EAR_TRAINING_SOLFEGE_I, EAR_TRAINING_SOLFEGE_II, EAR_TRAINING_PITCH_IN_CONTEXT_I, EAR_TRAINING_PITCH_IN_CONTEXT_II, EAR_TRAINING_MELODIC_PATTERNS, EAR_TRAINING_RHYTHM_PATTERNS } from './cm-content/audio-ear-training-extended'
 import { DYNAMICS_SYMBOL_CARDS, ARTICULATION_SYMBOL_CARDS, ACCIDENTAL_SYMBOL_CARDS, NOTE_VALUES_SYMBOL_CARDS } from './cm-content/symbols-dynamics'
 import { REPEAT_SYMBOL_CARDS } from './cm-content/symbols-repeats'
 import { CLEF_SYMBOL_CARDS } from './cm-content/symbols-clefs'
@@ -820,6 +821,47 @@ export const DECKS: Deck[] = [
   },
 
   {
+    id: 'ear-solfege-i',
+    title: 'Solfège I: Scale Degrees',
+    description: 'Identify each scale degree by ear after the tonic is established.',
+    tag: 'free',
+    group: 'Melodic Foundations',
+    cards: EAR_TRAINING_SOLFEGE_I,
+  },
+  {
+    id: 'ear-solfege-ii',
+    title: 'Solfège II: Tonic Triads',
+    description: 'Identify diatonic triads by their root scale degree.',
+    tag: 'free',
+    group: 'Melodic Foundations',
+    cards: EAR_TRAINING_SOLFEGE_II,
+  },
+  {
+    id: 'ear-pitch-in-context-i',
+    title: 'Pitch in Context I: Diatonic',
+    description: 'Identify diatonic notes by scale-degree number after the key is established.',
+    tag: 'free',
+    group: 'Melodic Foundations',
+    cards: EAR_TRAINING_PITCH_IN_CONTEXT_I,
+  },
+  {
+    id: 'ear-pitch-in-context-ii',
+    title: 'Pitch in Context II: Chromatic',
+    description: 'Identify both diatonic and chromatic notes by scale degree.',
+    tag: 'free',
+    group: 'Melodic Foundations',
+    cards: EAR_TRAINING_PITCH_IN_CONTEXT_II,
+  },
+  {
+    id: 'ear-melodic-patterns',
+    title: 'Melodic Patterns',
+    description: 'Identify short melodic fragments by pattern — a melodic-dictation MVP.',
+    tag: 'free',
+    group: 'Melodic Foundations',
+    cards: EAR_TRAINING_MELODIC_PATTERNS,
+  },
+
+  {
     id: 'ear-intervals',
     title: 'Intervals I',
     description: 'Listen and identify all intervals from minor 2nd to octave, ascending.',
@@ -837,7 +879,7 @@ export const DECKS: Deck[] = [
   },
   {
     id: 'ear-intervals-iii',
-    title: 'Intervals III — Advanced',
+    title: 'Intervals III: Advanced',
     description: 'All intervals m2–P15, ascending and descending, varied roots.',
     tag: 'free',
     group: 'Intervals',
@@ -854,7 +896,7 @@ export const DECKS: Deck[] = [
   },
   {
     id: 'ear-triads-inversions',
-    title: 'Triads — Inversions',
+    title: 'Triads: Inversions',
     description: 'Identify first and second inversions of major and minor triads by ear.',
     tag: 'free',
     group: 'Chords & Harmony',
@@ -883,6 +925,14 @@ export const DECKS: Deck[] = [
     tag: 'free',
     group: 'Scales',
     cards: EAR_TRAINING_SCALES,
+  },
+  {
+    id: 'ear-rhythm-patterns',
+    title: 'Rhythm Patterns',
+    description: 'Identify short rhythmic fragments by pattern.',
+    tag: 'free',
+    group: 'Rhythm',
+    cards: EAR_TRAINING_RHYTHM_PATTERNS,
   },
 
   // ── CM COLLECTIONS ──

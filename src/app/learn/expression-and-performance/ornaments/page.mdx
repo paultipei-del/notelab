@@ -19,9 +19,9 @@ export const learnPage = {
     { title: 'Non-Chord Tones',                href: '/learn/harmony/non-chord-tones' },
   ],
   flashcards: [
-    { q: 'What is a trill?', a: 'A rapid alternation between the written note and the note above it, usually a step higher. Notated as "tr" or 𝆖.' },
+    { q: 'What is a trill?', a: 'A rapid alternation between the written note and the note above it, usually a step higher. Notated as "tr" or a stylized tr-shaped glyph above the note.' },
     { q: 'What is a mordent?', a: 'A quick oscillation: main note → upper neighbor → main note (upper mordent), or main note → lower neighbor → main note (lower mordent, with a slash through the symbol).' },
-    { q: 'What is a turn (∽)?', a: 'A four-note ornament, upper neighbor, main note, lower neighbor, main note. The figure "turns around" the main note.' },
+    { q: 'What is a turn?', a: 'A four-note ornament, upper neighbor, main note, lower neighbor, main note. The figure "turns around" the main note.' },
     { q: 'What is an appoggiatura?', a: 'A small grace note (typically on the beat) that displaces the main note and resolves to it, takes part of the main note\'s value. An expressive "leaning."' },
     { q: 'What is a grace note (acciaccatura)?', a: 'A very short, quick note just before the main note, often with a slash through its stem. "Crushed" briefly before the beat.' },
     { q: 'What\'s the difference between appoggiatura and acciaccatura?', a: 'Appoggiatura is longer and expressive, takes significant time from the main note. Acciaccatura is very short and fast, barely more than an embellishment played just before the beat.' },
@@ -61,21 +61,12 @@ Ornaments are notated with small symbols that compress a pattern of several note
           { type: 'note', pitch: 'E5', duration: 'q', ornaments: ['turn'] },
           { type: 'note', pitch: 'D5', duration: 'q' },
           { type: 'note', pitch: 'C5', duration: 'h' },
-          { type: 'note', pitch: 'D5', duration: 'q' },
-          { type: 'note', pitch: 'C5', duration: 'q' },
-          { type: 'note', pitch: 'B4', duration: 'h' },
         ],
       }],
     }],
-    annotations: [
-      { type: 'label', startIdx: 1, endIdx: 1, label: 'trill (tr)', position: 'above' },
-      { type: 'label', startIdx: 3, endIdx: 3, label: 'mordent', position: 'above' },
-      { type: 'label', startIdx: 6, endIdx: 6, label: 'turn', position: 'above' },
-      { type: 'label', startIdx: 9, endIdx: 9, label: 'grace note (would precede)', position: 'above' },
-    ],
   }}
   bpm={92}
-  caption="A melody with four common ornaments: trill (rapid alternation), mordent (a single quick alternation), turn (S-shaped figure around the note), and grace note (a quick decoration before the main note). Each adds melodic decoration without changing the underlying harmony."
+  caption="A melody with three common ornaments notated as compact symbols above the notes — trill, mordent, and turn. Each is shorthand for the quick pattern of notes shown unwrapped in the next example."
 />
 
 <MusicalExample
@@ -91,11 +82,7 @@ Ornaments are notated with small symbols that compress a pattern of several note
           { type: 'note', pitch: 'F5', duration: 's' },
           { type: 'note', pitch: 'E5', duration: 's' },
           { type: 'note', pitch: 'F5', duration: 's' },
-          { type: 'note', pitch: 'E5', duration: 's' },
-          { type: 'note', pitch: 'F5', duration: 's' },
-          { type: 'note', pitch: 'E5', duration: 's' },
-          { type: 'note', pitch: 'F5', duration: 's' },
-          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
           { type: 'note', pitch: 'A5', duration: 's' },
           { type: 'note', pitch: 'G5', duration: 's' },
           { type: 'note', pitch: 'A5', duration: 'e' },
@@ -111,41 +98,41 @@ Ornaments are notated with small symbols that compress a pattern of several note
       }],
     }],
     annotations: [
-      { type: 'bracket', startIdx: 1, endIdx: 8, label: 'trill (alternating)', position: 'above' },
-      { type: 'bracket', startIdx: 10, endIdx: 12, label: 'mordent (3 notes)', position: 'above' },
-      { type: 'bracket', startIdx: 15, endIdx: 18, label: 'turn (4 notes)', position: 'above' },
+      { type: 'bracket', startIdx: 1, endIdx: 4, label: 'trill (alternating)', position: 'above' },
+      { type: 'bracket', startIdx: 6, endIdx: 8, label: 'mordent (3 notes)', position: 'above' },
+      { type: 'bracket', startIdx: 11, endIdx: 14, label: 'turn (4 notes)', position: 'above' },
     ],
   }}
   bpm={92}
-  caption="The same ornaments unwrapped into the actual notes a performer plays. Each ornament is shorthand for a specific small pattern of notes built from the main note and its neighbors."
+  caption="The same ornaments unwrapped into the actual notes a performer plays. Each ornament is shorthand for a specific small pattern: the trill alternates the principal and upper notes within a single beat, the mordent flicks once to a neighbor and back, the turn loops around the main note. Modern convention starts the trill on the principal note; Baroque practice often started on the upper note instead."
 />
 
 ## The main ornaments
 
-**Trill (tr or 𝆖)**, a rapid alternation between the written note and the note above it (usually a step higher). The trill can last anywhere from a brief flick to the entire duration of the written note. In the Baroque era, trills typically began on the upper note; in later periods, they often begin on the main note. The specific starting note is partly a matter of style.
+**Trill (tr or <span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span>)**, a rapid alternation between the written note and the note above it (usually a step higher). The trill can last anywhere from a brief flick to the entire duration of the written note. In the Baroque era, trills typically began on the upper note; in later periods, they often begin on the main note. The specific starting note is partly a matter of style.
 
 Example: a quarter note C with a trill might be played as C-D-C-D-C-D-C (rapid oscillation).
 
-**Mordent (𝆚 or a short zigzag)**, a quick oscillation between the main note, the note above (or below), and back to the main note. Usually just one "wiggle."
+**Mordent (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span> or a short zigzag)**, a quick oscillation between the main note, the note above (or below), and back to the main note. Usually just one "wiggle."
 
-- **Upper mordent**, main note, upper neighbor, main note. A quick up-and-back motion.
-- **Lower mordent** (also called "inverted mordent," notated with a vertical slash through the symbol), main note, lower neighbor, main note. A quick down-and-back motion.
+- **Upper mordent (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span>)**, main note, upper neighbor, main note. A quick up-and-back motion.
+- **Lower mordent (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span>)** (also called "inverted mordent," notated with a vertical slash through the symbol), main note, lower neighbor, main note. A quick down-and-back motion.
 
 Example: a quarter note E with an upper mordent is played as E-F-E (quickly), all within the duration of the quarter note.
 
-**Turn (∽ or S-shape)**, a four-note ornament: upper neighbor, main note, lower neighbor, main note. The turn "turns around" the main note, visiting both its upper and lower neighbors.
+**Turn (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span> or S-shape)**, a four-note ornament: upper neighbor, main note, lower neighbor, main note. The turn "turns around" the main note, visiting both its upper and lower neighbors.
 
 Example: a quarter note C with a turn is played as D-C-B-C (within the note's duration).
 
-**Appoggiatura**, a small grace note, typically on the beat, that displaces the main note and resolves to it. The appoggiatura takes part of the main note's value, historically half of it (or the full value of a duple note, two-thirds of a triple note). Appoggiaturas are expressive "leanings" into the main note.
+**Appoggiatura (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span>)**, a small grace note, typically on the beat, that displaces the main note and resolves to it. The appoggiatura takes part of the main note's value, historically half of it (or the full value of a duple note, two-thirds of a triple note). Appoggiaturas are expressive "leanings" into the main note.
 
 Example: a quarter note C preceded by a small D (appoggiatura) might be performed as an eighth-note D followed by an eighth-note C, with the D falling on the beat where C was written.
 
-**Grace note (acciaccatura)**, a small note slightly before the main note, typically short and quick (unlike the appoggiatura's expressive lean). Often notated with a small eighth note with a slash through its stem. Played as a quick "crushed" note just before the main note.
+**Grace note / acciaccatura (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span>)**, a small note slightly before the main note, typically short and quick (unlike the appoggiatura's expressive lean). Often notated with a small eighth note with a slash through its stem. Played as a quick "crushed" note just before the main note.
 
 Example: a quarter note C with a grace note B might be played as a very quick B followed by C, with C falling on the beat.
 
-**Slide**, a specific ornament where the melody slides through neighboring notes into the main note. Less common in classical music, more common in folk and popular traditions.
+**Slide (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.7em' }}>{''}</span>)**, a specific ornament where the melody slides through neighboring notes into the main note. Less common in classical music, more common in folk and popular traditions.
 
 ## Ornament conventions and style
 

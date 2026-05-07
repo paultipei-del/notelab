@@ -22,7 +22,7 @@ export function Caption({ children, T, variant = 'figure' }: CaptionProps) {
         color: T.inkMuted,
         fontStyle: 'italic',
         textAlign: 'center',
-        marginTop: 12,
+        marginTop: 6,
         lineHeight: 1.55,
         maxWidth: '64ch',
         marginLeft: 'auto',

@@ -71,7 +71,7 @@ Rhythmic dictation is a foundation for melodic dictation. Many teachers have stu
   }}
   staffType="1-line"
   bpm={92}
-  caption="A 4-bar rhythm written on a single-line staff (percussion-style notation). The pitch doesn't matter — only the rhythm. In a dictation exercise, you'd hear this clapped or played and write down the note durations. Click Play to hear the rhythm."
+  caption="A 4-bar rhythm written on a single-line staff (percussion-style notation). The pitch doesn't matter, only the rhythm. In a dictation exercise, you'd hear this clapped or played and write down the note durations. Click Play to hear the rhythm."
 />
 
 <MusicalExample
@@ -101,25 +101,12 @@ Rhythmic dictation is a foundation for melodic dictation. Many teachers have stu
         ],
       }],
     }],
-    annotations: [
-      { type: 'label', startIdx: 0, endIdx: 0, label: '1', position: 'below' },
-      { type: 'label', startIdx: 1, endIdx: 1, label: '2', position: 'below' },
-      { type: 'label', startIdx: 2, endIdx: 2, label: '&', position: 'below' },
-      { type: 'label', startIdx: 3, endIdx: 3, label: '3', position: 'below' },
-      { type: 'label', startIdx: 5, endIdx: 5, label: '1', position: 'below' },
-      { type: 'label', startIdx: 6, endIdx: 6, label: '&', position: 'below' },
-      { type: 'label', startIdx: 7, endIdx: 7, label: '2', position: 'below' },
-      { type: 'label', startIdx: 8, endIdx: 8, label: '4', position: 'below' },
-      { type: 'label', startIdx: 9, endIdx: 9, label: '1', position: 'below' },
-      { type: 'label', startIdx: 11, endIdx: 11, label: '3', position: 'below' },
-      { type: 'label', startIdx: 12, endIdx: 12, label: '4', position: 'below' },
-      { type: 'label', startIdx: 13, endIdx: 13, label: '1', position: 'below' },
-      { type: 'label', startIdx: 15, endIdx: 15, label: '4', position: 'below' },
-    ],
   }}
   staffType="1-line"
+  showBeatNumbers
+  metronome
   bpm={92}
-  caption="The same rhythm with counting syllables ('1, 2-and, 3') below each note. Counting aloud while listening forces your ear to lock onto the pulse — by the time you write the rhythm, you've already mentally placed every note in the bar."
+  caption="The same rhythm with the four beats marked beneath each measure, plus a metronome click on every beat. Counting aloud ('1, 2, 3, 4') while listening locks your ear onto the pulse, so by the time you write the rhythm you've already mentally placed every note within the bar."
 />
 
 ## The basic approach
@@ -213,6 +200,8 @@ Yes, usually. Rhythmic notation needs to account for all the time in each measur
 Clapping back tests your ability to reproduce a rhythm physically. Writing it down tests your ability to recognize and notate it. Both are important skills, but dictation is more formally tested and requires the additional skill of notation. Clapping back is often a precursor to dictation in teaching.
 
 <EarTrainingCTA
-  intro="Rhythmic dictation practice decks are coming soon. The fundamental skill — feeling the meter — develops with regular listening practice."
-  decks={[]}
+  intro="Practice rhythm pattern recognition:"
+  decks={[
+    { name: 'Rhythm Patterns', slug: 'ear-rhythm-patterns', cards: '12 cards', description: 'Identify short rhythmic fragments. The MVP for rhythmic-dictation skills.' },
+  ]}
 />

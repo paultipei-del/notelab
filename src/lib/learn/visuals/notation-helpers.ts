@@ -356,6 +356,25 @@ function accToGlyph(
 }
 
 /**
+ * Map a pitch's literal modifier to an accidental glyph kind, regardless
+ * of measure context or key signature. Used for cautionary accidentals
+ * where the glyph must always render (F5 → 'natural', F#5 → 'sharp', etc).
+ */
+export function cautionaryAccidentalKind(
+  pitch: string,
+): 'sharp' | 'flat' | 'natural' | 'doubleSharp' | 'doubleFlat' {
+  const m = pitch.match(/^([A-G])(##|bb|#|b|n)?(-?\d+)$/)
+  if (!m) return 'natural'
+  const [, , accStr] = m
+  const acc = (accStr ?? '') as '' | '#' | 'b' | '##' | 'bb' | 'n'
+  if (acc === '#') return 'sharp'
+  if (acc === 'b') return 'flat'
+  if (acc === '##') return 'doubleSharp'
+  if (acc === 'bb') return 'doubleFlat'
+  return 'natural'
+}
+
+/**
  * Pitches of a note element as a uniform array. Handles both `pitch` and
  * `pitches` shapes.
  */
@@ -363,6 +382,18 @@ export function pitchesOf(n: MusicalNote): string[] {
   if (n.pitches && n.pitches.length > 0) return n.pitches
   if (n.pitch) return [n.pitch]
   return []
+}
+
+/**
+ * Audio-pitches for a note element. Falls back to the displayed pitch when
+ * no override is set, which is the case for almost every note. Used by the
+ * transposing-instruments lesson where the staff shows the written pitch
+ * but playback should produce the sounding pitch.
+ */
+export function playPitchesOf(n: MusicalNote): string[] {
+  if (n.playPitches && n.playPitches.length > 0) return n.playPitches
+  if (n.playPitch) return [n.playPitch]
+  return pitchesOf(n)
 }
 
 /**

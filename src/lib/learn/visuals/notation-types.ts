@@ -22,6 +22,12 @@ export interface MusicalNote {
   pitch?: string
   /** Multiple pitches sounding together as a chord. */
   pitches?: string[]
+  /** Override the audio pitch independently of the displayed pitch. Used
+   *  for transposing-instrument examples where the staff shows the
+   *  written pitch but playback should produce the sounding pitch. */
+  playPitch?: string
+  /** Chord override for audio (rare). */
+  playPitches?: string[]
   duration: Duration
   /**
    * If true, this note is tied to the next note. The tie is rendered as a
@@ -56,6 +62,17 @@ export interface MusicalNote {
   ornaments?: Ornament[]
   /** True if this is a grace note (rendered smaller, no rhythmic time). */
   grace?: boolean
+  /** Render this note's accidental as a courtesy/cautionary marking — the
+   *  glyph (♯/♭/♮) is forced to display even if engraving rules wouldn't
+   *  require it, and is wrapped in parentheses. The kind follows the
+   *  pitch's literal modifier (F5 → ♮, F#5 → ♯, Bb5 → ♭). For chords,
+   *  applies to every pitch in the chord. */
+  cautionary?: boolean
+  /** Audio articulation hint. 'pluck' shortens the played duration to mimic
+   *  pizzicato / hard staccato / percussive sounds without changing the
+   *  visible notation. The cursor still advances by the full notated
+   *  duration. Default 'normal'. */
+  playArtic?: 'normal' | 'pluck'
 }
 
 /** Articulation glyphs supported by the renderer. */
@@ -108,6 +125,11 @@ export interface MusicalAnnotation {
   position?: AnnotationPosition
   /** Smaller secondary label (e.g. "(question)" beneath "Antecedent"). */
   sublabel?: string
+  /** For below-position labels: align the label baseline with the dynamic
+   *  glyph row (so 'cresc.' / 'dim.' / 'poco a poco' read inline with
+   *  surrounding dynamic markings) and render in italic serif at a
+   *  slightly larger pt size. Has no effect on above-position labels. */
+  dynamicLine?: boolean
 }
 
 /* ── v2 multi-voice / multi-staff data model ──────────────────────────── */

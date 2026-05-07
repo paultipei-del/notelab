@@ -10,8 +10,10 @@ import { durationToBeats, durationToSeconds } from '@/lib/learn/visuals/notation
 export interface TabNote {
   /** 1 = high E (top line), 6 = low E (bottom line). Standard guitar convention. */
   string: number
-  /** 0 = open, 1-24 typical. */
+  /** 0 = open, 1-24 typical. Ignored when `muted` is true. */
   fret: number
+  /** Render an "✗" instead of a fret number — muted/dead string. */
+  muted?: boolean
   duration?: Duration
 }
 
@@ -33,7 +35,8 @@ interface TabExampleProps {
   tuning?: [string, string, string, string, string, string]
   timeSignature?: TimeSignature
   showTuning?: boolean
-  /** Show "TAB" label on the left edge. Default true. */
+  /** Show "TAB" label on the left edge. Default false (it's redundant —
+   *  the staff layout already reads as tablature). */
   showLabel?: boolean
   bpm?: number
   audio?: boolean
@@ -83,7 +86,7 @@ export function TabExample({
   tuning = STANDARD_TUNING,
   timeSignature,
   showTuning = true,
-  showLabel = true,
+  showLabel = false,
   bpm = 100,
   audio = true,
   size = 'inline',
@@ -92,14 +95,17 @@ export function TabExample({
   const T = tokensFor(size)
   const sampler = useSampler()
 
-  const lineGap = Math.round(11 * T.scale + 4)        // distance between strings
+  const lineGap = Math.round(15 * T.scale + 6)        // distance between strings
   const stringCount = 6
   const tabHeight = (stringCount - 1) * lineGap
   const padTop = 24
   const padBottom = 8
+  // Left margin reserves space for: TAB label (~38) + gap + tuning column (~16) + gap.
+  const labelW = Math.round(34 * T.scale + 12)
+  const tuningColW = Math.round(20 * T.scale + 8)
   const padLeft = showLabel
-    ? Math.round(28 * T.scale + 6) + (showTuning ? Math.round(18 * T.scale + 6) : 0)
-    : (showTuning ? Math.round(18 * T.scale + 6) : 0) + 8
+    ? labelW + (showTuning ? tuningColW : 0) + 12
+    : (showTuning ? tuningColW : 0) + 12
   const slotW = Math.round(36 * T.scale + 14)
   const padRight = 16
   const totalW = padLeft + elements.length * slotW + padRight + 8
@@ -124,12 +130,15 @@ export function TabExample({
   }
 
   const fontSize = Math.round(13 * T.scale + 4)
-  const numberBg = '#FAFAFA'
+  // Warm cream that matches the page paper. The page body is rendered over
+  // a #DDD3B7-ish gradient; this slightly-lighter cream blends with the
+  // surrounding figure area while still breaking the string line cleanly.
+  const numberBg = '#E5DBC0'
 
   async function playElement(el: TabElement) {
     if (!audio) return
     if (isTabRest(el)) return
-    await sampler.ensureReady()
+    await sampler.ensureGuitarReady()
     const Tone = await import('tone')
     const t = Tone.now()
     const ts: TimeSignature = timeSignature ?? { numerator: 4, denominator: 4 }
@@ -137,14 +146,15 @@ export function TabExample({
     const seconds = durationToSeconds(dur, bpm, ts)
     const notes = isTabChord(el) ? el.frets : [el as TabNote]
     notes.forEach(n => {
+      if (n.muted) return
       const p = fretToPitch(n.string, n.fret, tuning)
-      sampler.playAt(p, seconds, t)
+      sampler.playGuitarAt(p, seconds, t)
     })
   }
 
   async function playAll() {
     if (!audio) return
-    await sampler.ensureReady()
+    await sampler.ensureGuitarReady()
     const Tone = await import('tone')
     const startTime = Tone.now() + 0.1
     const ts: TimeSignature = timeSignature ?? { numerator: 4, denominator: 4 }
@@ -158,7 +168,7 @@ export function TabExample({
         const notes = isTabChord(el) ? el.frets : [el as TabNote]
         notes.forEach(n => {
           const p = fretToPitch(n.string, n.fret, tuning)
-          sampler.playAt(p, seconds, startTime + cursor)
+          sampler.playGuitarAt(p, seconds, startTime + cursor)
         })
       }
       cursor += seconds
@@ -174,28 +184,29 @@ export function TabExample({
         role="img"
         aria-label={caption ?? 'Guitar tablature example'}
       >
-        {/* TAB label (vertical). */}
+        {/* TAB label, sits in the left margin. textAnchor="start" pins the
+            left edge to its x so it never clips against the SVG x=0. */}
         {showLabel && (
           <text
-            x={Math.round(10 * T.scale + 4)}
+            x={6}
             y={padTop + tabHeight / 2}
             fontSize={Math.round(T.labelFontSize + 4)}
             fontFamily={T.fontDisplay}
             fontWeight={600}
             fill={T.inkSubtle}
-            textAnchor="middle"
+            textAnchor="start"
             dominantBaseline="central"
             letterSpacing="0.16em"
           >TAB</text>
         )}
 
-        {/* Tuning letters at left. tuning[0] = low E (string 6, bottom);
-            tuning[5] = high E (string 1, top). Loop displays high → low. */}
+        {/* Tuning letters between TAB and the strings — own dedicated column.
+            tuning[0] = low E (string 6, bottom); tuning[5] = high E (string 1, top). */}
         {showTuning && [1, 2, 3, 4, 5, 6].map(s => {
           const tuningIdx = 6 - s
           const pitchStr = tuning[tuningIdx]
           const letter = pitchStr.match(/^([A-G][#b]?)/)?.[1] ?? '?'
-          const xLabel = padLeft - Math.round(10 * T.scale + 6)
+          const xLabel = padLeft - Math.round(tuningColW / 2)
           return (
             <text
               key={`tn-${s}`}
@@ -268,8 +279,8 @@ export function TabExample({
             >
               {notes.map((n, ni) => {
                 const y = yOfString(n.string)
-                const fretText = String(n.fret)
-                const numW = fontSize * (fretText.length === 2 ? 1.3 : 0.8)
+                const fretText = n.muted ? '✗' : String(n.fret)
+                const numW = fontSize * (n.muted ? 0.9 : fretText.length === 2 ? 1.3 : 0.8)
                 return (
                   <g key={`n-${i}-${ni}`}>
                     {/* Background patch to break the string line under the number. */}
@@ -286,7 +297,7 @@ export function TabExample({
                       fontSize={fontSize}
                       fontFamily={T.fontLabel}
                       fontWeight={600}
-                      fill={T.ink}
+                      fill={n.muted ? T.inkSubtle : T.ink}
                       textAnchor="middle"
                       dominantBaseline="central"
                     >{fretText}</text>
