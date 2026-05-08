@@ -43,9 +43,18 @@ export const TOPIC_SHELF_DEFS: ReadonlyArray<SectionDef & { topic: BookTopic }> 
  * Empty sections are kept in the returned array — callers decide whether
  * to render or skip empty sections (Cards/List skip; Shelves keeps them
  * because the section card always shows).
+ *
+ * Pass `recencyOf` to sort the Currently-reading group with the most
+ * recently touched deck first (higher number = more recent).
  */
-export function groupBySection(items: DeckWithSummary[]): Section[] {
-  const active = items.filter(d => d.book.state === 'active')
+export function groupBySection(
+  items: DeckWithSummary[],
+  recencyOf?: (d: DeckWithSummary) => number,
+): Section[] {
+  let active = items.filter(d => d.book.state === 'active')
+  if (recencyOf) {
+    active = [...active].sort((a, b) => recencyOf(b) - recencyOf(a))
+  }
   const nonActive = items.filter(d => d.book.state !== 'active')
 
   const topicSections: Section[] = TOPIC_SHELF_DEFS.map(t => ({
