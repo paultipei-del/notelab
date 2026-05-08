@@ -42,9 +42,9 @@ export default function LandingPage() {
           position: 'sticky',
           top: 0,
           zIndex: 50,
-          background: 'rgba(245,242,236,0.88)',
+          background: 'transparent',
           backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(211,209,199,0.6)',
+          WebkitBackdropFilter: 'blur(12px)',
         }}
       >
         <Link href="/landing" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
