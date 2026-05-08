@@ -101,7 +101,15 @@ export default function MobileShelf({ title, count, seeAllHref = '#', books }: M
   const currentBook = books[currentIndex] ?? books[0]
 
   return (
-    <section onClick={dismissOnOutside} style={{ marginBottom: 36 }}>
+    <section
+      onClick={dismissOnOutside}
+      style={{
+        marginBottom: 36,
+        // Off-screen sections skip painting during scroll.
+        contentVisibility: 'auto',
+        containIntrinsicSize: '0 460px',
+      }}
+    >
       {/* Section header */}
       <div style={{ padding: '0 20px 12px' }}>
         <div
