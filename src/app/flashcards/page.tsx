@@ -137,7 +137,22 @@ export default function FlashcardsPage() {
     return allDecks.filter(d => applyFilter(d, filter) && applyQuery(d, query))
   }, [allDecks, filter, query])
 
-  const activeBooks = visible.filter(d => d.book.state === 'active').map(d => d.book)
+  // Most-recent activity per deck. SM-2 progress only updates on rate(),
+  // which doesn't fire in flip mode, so we fold in deckActivity (a visit
+  // timestamp written on every study load) and take the max — so simply
+  // opening a deck in flip mode also bubbles it to the top.
+  const lastTouchedAt = (d: DeckWithSummary): number => {
+    const sm2 = d.summary.lastSeenAt ?? 0
+    const visit = deckActivity[d.deck.id] ?? 0
+    return Math.max(sm2, visit)
+  }
+
+  // Currently-reading shelf — most-recently-touched at the top so the deck
+  // you just opened lands first.
+  const activeBooks = visible
+    .filter(d => d.book.state === 'active')
+    .sort((a, b) => lastTouchedAt(b) - lastTouchedAt(a))
+    .map(d => d.book)
   // Topic-grouped shelves use the same TOPIC_SHELF_DEFS that Cards/List read
   // from sectionGrouping.ts — single source of truth.
   const topicShelves = TOPIC_SHELF_DEFS.map(t => ({
@@ -157,7 +172,12 @@ export default function FlashcardsPage() {
     .map(d => d.book)
 
   // Pre-grouped section list consumed by CardsView and ListView.
-  const sections = useMemo(() => groupBySection(visible), [visible])
+  // recencyOf sorts the Currently-reading group most-recent first.
+  const sections = useMemo(
+    () => groupBySection(visible, lastTouchedAt),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [visible, deckActivity],
+  )
 
   // Today summary
   const totalDue = allDecks.reduce((sum, d) => sum + d.summary.dueCount, 0)
@@ -173,14 +193,6 @@ export default function FlashcardsPage() {
   const estMinutes = Math.max(1, Math.round(totalDue * 0.25))
 
   // Resume target — most-recently-seen deck with cards still due/learning.
-  // SM-2 progress only updates on rate(), which doesn't fire in flip mode,
-  // so we fold in deckActivity (visit timestamp written on every study load)
-  // and take the max so flip-mode reviews count too.
-  const lastTouchedAt = (d: DeckWithSummary): number => {
-    const sm2 = d.summary.lastSeenAt ?? 0
-    const visit = deckActivity[d.deck.id] ?? 0
-    return Math.max(sm2, visit)
-  }
   const resumeCandidate = [...allDecks]
     .filter(d => lastTouchedAt(d) > 0 && d.book.state !== 'mastered')
     .sort((a, b) => lastTouchedAt(b) - lastTouchedAt(a))[0]
