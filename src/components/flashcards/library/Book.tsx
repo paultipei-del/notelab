@@ -40,10 +40,11 @@ interface ShelfBookProps extends BookProps {
   isHovered: boolean
   onHoverStart: () => void
   onHoverEnd: () => void
+  onClick?: () => void
 }
 
 const Book = React.forwardRef<HTMLDivElement, ShelfBookProps>(function Book(
-  { title, dueCount, href, isHovered, onHoverStart, onHoverEnd },
+  { title, dueCount, href, isHovered, onHoverStart, onHoverEnd, onClick },
   ref,
 ) {
   const router = useRouter()
@@ -64,7 +65,7 @@ const Book = React.forwardRef<HTMLDivElement, ShelfBookProps>(function Book(
       }}
       onMouseEnter={onHoverStart}
       onMouseLeave={onHoverEnd}
-      onClick={() => router.push(href)}
+      onClick={onClick ?? (() => router.push(href))}
       role="link"
       aria-label={title}
     >

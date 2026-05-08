@@ -208,10 +208,6 @@ export default function MobileShelf({ title, count, seeAllHref = '#', books }: M
                 <div
                   key={b.id}
                   ref={(el: HTMLDivElement | null) => { bookRefs.current[i] = el }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleTap(i)
-                  }}
                   style={{ padding: '0 2px', display: 'flex', alignItems: 'flex-end' }}
                 >
                   <Book
@@ -219,6 +215,7 @@ export default function MobileShelf({ title, count, seeAllHref = '#', books }: M
                     isHovered={selectedIndex === i}
                     onHoverStart={() => {}}
                     onHoverEnd={() => {}}
+                    onClick={() => handleTap(i)}
                   />
                 </div>
               ))}
