@@ -188,8 +188,8 @@ export function DevelopmentStages({ stages, caption }: DevelopmentStagesProps) {
       {caption && (
         <figcaption
           style={{
-            fontFamily: 'var(--font-cormorant), serif',
-            fontStyle: 'italic',
+            fontFamily: 'var(--font-jost), sans-serif',
+            fontWeight: 300,
             textAlign: 'center',
             marginTop: 18,
             color: '#5F5E5A',

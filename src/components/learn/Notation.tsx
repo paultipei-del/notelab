@@ -101,7 +101,6 @@ export default function Notation({ musicXml, caption, ariaLabel, zoom = 1 }: Not
             fontFamily: 'var(--font-jost), sans-serif',
             fontSize: '13px',
             fontWeight: 300,
-            fontStyle: 'italic',
             color: '#7A7060',
             marginTop: '4px',
           }}

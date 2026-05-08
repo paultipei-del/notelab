@@ -19,6 +19,7 @@
     "@types/mdx": "^2.0.13",
     "@vercel/analytics": "^2.0.1",
     "autoprefixer": "^10.4.27",
+    "framer-motion": "^12.38.0",
     "jszip": "^3.10.1",
     "next": "16.2.0",
     "opensheetmusicdisplay": "^1.9.7",

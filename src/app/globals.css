@@ -1905,7 +1905,7 @@ body:has(.nl-study-viewport) {
 }
 .nl-learn-prose h2 {
   font-family: var(--font-cormorant), serif;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 26px;
   color: #2A2318;
   letter-spacing: 0.01em;
