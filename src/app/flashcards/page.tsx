@@ -10,7 +10,10 @@ import { Deck, ProgressStore } from '@/lib/types'
 
 import s from '@/components/flashcards/library/library.module.css'
 import Shelf from '@/components/flashcards/library/Shelf'
+import MobileShelf from '@/components/flashcards/library/MobileShelf'
 import ExaminationHall from '@/components/flashcards/library/ExaminationHall'
+import MobileExaminationHall from '@/components/flashcards/library/MobileExaminationHall'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import TodayStrip from '@/components/flashcards/library/TodayStrip'
 import MiniStreak, { StreakLevel } from '@/components/flashcards/library/MiniStreak'
 import Toolbar, { LibraryView, FilterChipDef } from '@/components/flashcards/library/Toolbar'
@@ -141,6 +144,7 @@ export default function FlashcardsPage() {
   const [query, setQuery] = useState('')
   const [view, setView] = useState<LibraryView>('shelves')
   const [filter, setFilter] = useState('all')
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (!authLoading && !user) window.location.href = '/landing'
@@ -294,20 +298,41 @@ export default function FlashcardsPage() {
         <main className={s.shelves}>
           {view === 'shelves' && (
             <>
-              <Shelf
-                title="Currently reading"
-                count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
-                books={activeBooks}
-              />
-              {topicShelves.map(t => (
-                <Shelf
-                  key={t.id}
-                  title={t.label}
-                  count={`${t.books.length} volumes · ${t.subtitle}`}
-                  books={t.books}
-                />
-              ))}
-              <ExaminationHall books={practiceBooks} />
+              {isMobile ? (
+                <>
+                  <MobileShelf
+                    title="Currently reading"
+                    count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
+                    books={activeBooks}
+                  />
+                  {topicShelves.map(t => (
+                    <MobileShelf
+                      key={t.id}
+                      title={t.label}
+                      count={`${t.books.length} volumes · ${t.subtitle}`}
+                      books={t.books}
+                    />
+                  ))}
+                  <MobileExaminationHall books={practiceBooks} />
+                </>
+              ) : (
+                <>
+                  <Shelf
+                    title="Currently reading"
+                    count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
+                    books={activeBooks}
+                  />
+                  {topicShelves.map(t => (
+                    <Shelf
+                      key={t.id}
+                      title={t.label}
+                      count={`${t.books.length} volumes · ${t.subtitle}`}
+                      books={t.books}
+                    />
+                  ))}
+                  <ExaminationHall books={practiceBooks} />
+                </>
+              )}
               {visible.length === 0 && (
                 <p className={s.empty}>No volumes match this view.</p>
               )}

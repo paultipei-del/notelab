@@ -1022,3 +1022,50 @@
     padding: 14px 0 0; height: auto;
   }
 }
+
+/* ---------- Mobile (< 768px) ---------- */
+@media (max-width: 767.98px) {
+  .wrap {
+    padding: 0 0 60px;
+  }
+  .pageHead {
+    padding: 24px 20px 12px;
+  }
+  .h1 {
+    font-size: 40px;
+    line-height: 1.0;
+    margin-bottom: 10px;
+  }
+  .lead {
+    font-size: 15px;
+    max-width: 100%;
+  }
+  .eyebrow {
+    margin-bottom: 8px;
+  }
+  /* Due Today banner — vertical stack on mobile */
+  .today {
+    margin: 12px 20px 0;
+    padding: 16px 18px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .todaySeal {
+    align-self: flex-start;
+  }
+  .todayInfo { width: 100%; }
+  .streakInline,
+  .resume {
+    width: 100%;
+    margin: 0;
+  }
+  /* Filter pill row + search input — full-bleed with edge padding */
+  .toolbar {
+    padding: 0 20px;
+  }
+  /* Empty-state copy stays centered but with mobile padding */
+  .empty {
+    padding: 0 20px;
+  }
+}
