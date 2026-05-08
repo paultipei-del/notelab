@@ -16,6 +16,7 @@ import TodayStrip from '@/components/flashcards/library/TodayStrip'
 import Toolbar, { LibraryView, FilterChipDef } from '@/components/flashcards/library/Toolbar'
 import CardsView from '@/components/flashcards/library/CardsView'
 import ListView from '@/components/flashcards/library/ListView'
+import LazyMount from '@/components/flashcards/library/LazyMount'
 import {
   deckToBookProps, summarize,
 } from '@/components/flashcards/library/deckToBook'
@@ -248,14 +249,17 @@ export default function FlashcardsPage() {
                   books={activeBooks}
                 />
                 {topicShelves.map(t => (
-                  <Shelf
-                    key={t.id}
-                    title={t.label}
-                    count={`${t.books.length} volumes · ${t.subtitle}`}
-                    books={t.books}
-                  />
+                  <LazyMount key={t.id} minHeight={360}>
+                    <Shelf
+                      title={t.label}
+                      count={`${t.books.length} volumes · ${t.subtitle}`}
+                      books={t.books}
+                    />
+                  </LazyMount>
                 ))}
-                <ExaminationHall books={practiceBooks} />
+                <LazyMount minHeight={360}>
+                  <ExaminationHall books={practiceBooks} />
+                </LazyMount>
               </div>
 
               {/* Mobile layout — hidden at and above 768px via CSS */}
@@ -266,14 +270,17 @@ export default function FlashcardsPage() {
                   books={activeBooks}
                 />
                 {topicShelves.map(t => (
-                  <MobileShelf
-                    key={t.id}
-                    title={t.label}
-                    count={`${t.books.length} volumes · ${t.subtitle}`}
-                    books={t.books}
-                  />
+                  <LazyMount key={t.id} minHeight={460}>
+                    <MobileShelf
+                      title={t.label}
+                      count={`${t.books.length} volumes · ${t.subtitle}`}
+                      books={t.books}
+                    />
+                  </LazyMount>
                 ))}
-                <MobileExaminationHall books={practiceBooks} />
+                <LazyMount minHeight={460}>
+                  <MobileExaminationHall books={practiceBooks} />
+                </LazyMount>
               </div>
 
               {visible.length === 0 && (
