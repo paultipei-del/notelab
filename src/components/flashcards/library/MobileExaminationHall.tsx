@@ -287,7 +287,13 @@ function MobileCustomCard() {
 
 export default function MobileExaminationHall({ books }: MobileExaminationHallProps) {
   return (
-    <section style={{ marginBottom: 36 }}>
+    <section
+      style={{
+        marginBottom: 36,
+        contentVisibility: 'auto',
+        containIntrinsicSize: '0 460px',
+      }}
+    >
       <div style={{ padding: '0 20px 12px' }}>
         <div
           style={{

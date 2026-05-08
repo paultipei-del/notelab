@@ -89,6 +89,12 @@ export default function Shelf({ title, count, seeAllHref = '#', books }: ShelfPr
         alignItems: 'flex-end',
         gap: 28,
         marginBottom: 64,
+        // Skip rendering off-screen shelves during scroll. ~360px is the
+        // typical shelf height (book ≤280 + plank + spacing), so the browser
+        // reserves space without painting until the section enters the
+        // viewport — major scroll-perf win on a 168-book page.
+        contentVisibility: 'auto',
+        containIntrinsicSize: '0 360px',
       }}
     >
       <SectionCard label={title} sublabel={count} seeAllHref={seeAllHref} />
