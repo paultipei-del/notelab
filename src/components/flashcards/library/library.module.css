@@ -697,89 +697,69 @@
 }
 
 /* ---------- Cards view ---------- */
-.cardsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px;
+.cardsViewDesktop {
+  display: flex; flex-direction: column; gap: 32px;
   margin-top: 8px;
 }
+.cardsSection { /* spacing handled by parent gap */ }
+.cardsGridDesktop {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.cardsViewMobile {
+  display: flex; flex-direction: column; gap: 28px;
+  margin-top: 8px;
+}
+.cardsSectionMobile { /* spacing handled by parent gap */ }
+.cardsSectionHeaderPad { padding: 0 20px; }
+.cardsStackMobile {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 0 20px;
+}
+
 .deckCard {
   position: relative;
-  padding: 18px 20px;
-  background: #F5EFD8;
-  border: 1px solid #C7BC9B; border-radius: 12px;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.5) inset,
-    0 2px 6px rgba(26,26,24,0.04);
+  background: rgba(255, 250, 238, 0.7);
+  border: 1px solid rgba(139, 105, 20, 0.2);
+  border-radius: 3px;
+  padding: 16px 18px;
   text-decoration: none; color: inherit;
-  overflow: hidden;
-  transition: transform 0.15s, box-shadow 0.15s;
-  display: flex; flex-direction: column; gap: 10px;
-  min-height: 130px;
+  display: flex; flex-direction: column;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 3px rgba(40, 20, 8, 0.05);
 }
 .deckCard:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.5) inset,
-    0 8px 20px rgba(26,26,24,0.10);
+  border-color: rgba(139, 105, 20, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(40, 20, 8, 0.1);
 }
-.deckCard::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 4px;
-  background: var(--tier-color, #B5402A);
-}
-.deckCard[data-tier="found"] { --tier-color: #B5402A; }
-.deckCard[data-tier="inter"] { --tier-color: #4A6B8A; }
-.deckCard[data-tier="adv"]   { --tier-color: #6B4A8A; }
-/* Topic palette wins when present — keeps Cards/List in sync with shelves. */
-.deckCard[data-topic="pitch"]        { --tier-color: hsl(215, 30%, 58%); }
-.deckCard[data-topic="rhythm"]       { --tier-color: hsl( 28, 38%, 56%); }
-.deckCard[data-topic="harmony"]      { --tier-color: hsl(276, 28%, 58%); }
-.deckCard[data-topic="expression"]   { --tier-color: hsl(  0, 35%, 60%); }
-.deckCard[data-topic="notation"]     { --tier-color: hsl(210, 18%, 56%); }
-.deckCard[data-topic="form"]         { --tier-color: hsl(140, 26%, 50%); }
-.deckCard[data-topic="technique"]    { --tier-color: hsl( 42, 42%, 54%); }
-.deckCard[data-topic="analysis"]     { --tier-color: hsl( 35, 38%, 52%); }
-.deckCard[data-topic="aural"]        { --tier-color: hsl(180, 22%, 48%); }
-.deckCard[data-topic="construction"] { --tier-color: hsl( 20, 30%, 50%); }
-.deckCardName {
+.deckCardCompact { padding: 14px 16px; }
+.deckCardTitle {
   font-family: var(--font-cormorant), serif;
-  font-weight: 500; font-size: 22px;
-  line-height: 1.1; color: #2A2318;
+  font-size: 19px; font-weight: 500;
+  color: #1a1208; line-height: 1.2;
+  letter-spacing: -0.005em;
+  margin-bottom: 4px;
+  min-height: 46px;
 }
-.deckCardNameRow {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 12px;
+.deckCardCompact .deckCardTitle {
+  font-size: 17px;
+  min-height: 41px;
 }
-.deckCardPct {
-  font-family: var(--font-cormorant), serif;
-  font-weight: 400; font-size: 18px;
-  color: #5E574A; font-variant-numeric: tabular-nums;
+.deckCardEyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #a0381c;
+  font-weight: 600; opacity: 0.85;
+  margin-bottom: 12px;
 }
-.deckCardPct.due { color: #B5402A; font-weight: 500; }
-.deckCardMeta {
-  font-family: var(--font-jost), sans-serif;
-  font-size: 11px; color: #7A7060; letter-spacing: 0.04em;
-}
-.deckCardBar {
-  height: 4px; background: rgba(122,112,96,0.15);
-  border-radius: 100px; overflow: hidden; margin-top: auto;
-}
-.deckCardBar > div {
-  height: 100%; background: var(--tier-color); border-radius: 100px;
-}
-.deckCardStat {
-  display: flex; gap: 14px;
-  font-family: var(--font-jost), sans-serif;
-  font-size: 11px; color: #5E574A;
-}
-.deckCardStat span b { color: #B5402A; font-weight: 500; }
 
 /* ---------- List view ---------- */
-.listView {
+.listViewWrap {
   display: flex; flex-direction: column;
-  margin-top: 8px;
-  border-top: 1px solid #E5DCC0;
+  margin-top: 4px;
 }
 .listSortBar {
   display: flex; align-items: center; gap: 6px;
@@ -795,8 +775,7 @@
   margin-right: 14px;
   flex-shrink: 0;
 }
-/* Ghost variant of .filterChip — transparent until active, so the row
-   reads as quiet navigation rather than a second filter bar. */
+/* Ghost variant — transparent until active. */
 .listSortChip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 12px; border-radius: 100px;
@@ -810,71 +789,116 @@
 .listSortChip.active {
   background: #2A2318; color: #FDFAF5; border-color: #2A2318;
 }
-.listHead {
+
+.listSection { margin-bottom: 28px; }
+.listSectionMobile { margin-bottom: 28px; }
+.listSectionHeaderPadMobile { padding: 0 20px; }
+
+.listTableHead {
   display: grid;
-  grid-template-columns: 18px 1fr 140px 110px 90px 90px 90px;
+  grid-template-columns: 3px 2.4fr 1.4fr 2fr 1fr;
   gap: 16px;
-  padding: 8px 8px;
-  border-bottom: 1px solid #D9CFAE;
-  font-family: var(--font-jost), sans-serif;
-  font-size: 10px; font-weight: 500;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  color: #7A7060;
+  padding: 0 16px 8px;
+  border-bottom: 1px solid rgba(139, 105, 20, 0.15);
+  margin-bottom: 4px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #8a7560;
 }
-.listRow {
+.listTableHeadRight { text-align: right; padding-right: 16px; }
+
+.listRowDesktop {
   display: grid;
-  grid-template-columns: 18px 1fr 140px 110px 90px 90px 90px;
-  gap: 16px;
-  padding: 12px 8px;
-  border-bottom: 1px solid #E5DCC0;
-  text-decoration: none; color: inherit;
+  grid-template-columns: 3px 2.4fr 1.4fr 2fr 1fr;
   align-items: center;
-  transition: background 0.15s;
+  gap: 16px;
+  padding: 12px 0 12px 16px;
+  border-bottom: 1px solid rgba(139, 105, 20, 0.1);
+  cursor: pointer;
+  text-decoration: none; color: inherit;
+  transition: background 0.1s;
 }
-.listRow:hover { background: rgba(186,117,23,0.04); }
-.listRow[data-tier="found"] { --tier-color: #B5402A; }
-.listRow[data-tier="inter"] { --tier-color: #4A6B8A; }
-.listRow[data-tier="adv"]   { --tier-color: #6B4A8A; }
-.listRow[data-topic="pitch"]        { --tier-color: hsl(215, 30%, 58%); }
-.listRow[data-topic="rhythm"]       { --tier-color: hsl( 28, 38%, 56%); }
-.listRow[data-topic="harmony"]      { --tier-color: hsl(276, 28%, 58%); }
-.listRow[data-topic="expression"]   { --tier-color: hsl(  0, 35%, 60%); }
-.listRow[data-topic="notation"]     { --tier-color: hsl(210, 18%, 56%); }
-.listRow[data-topic="form"]         { --tier-color: hsl(140, 26%, 50%); }
-.listRow[data-topic="technique"]    { --tier-color: hsl( 42, 42%, 54%); }
-.listRow[data-topic="analysis"]     { --tier-color: hsl( 35, 38%, 52%); }
-.listRow[data-topic="aural"]        { --tier-color: hsl(180, 22%, 48%); }
-.listRow[data-topic="construction"] { --tier-color: hsl( 20, 30%, 50%); }
-.listSwatch {
-  width: 6px; height: 22px; border-radius: 1px;
-  background: var(--tier-color, #B5402A);
+.listRowDesktop:hover { background: rgba(255, 250, 238, 0.4); }
+.listRowStripe {
+  width: 3px; height: 24px; border-radius: 1px;
 }
-.listName {
+.listRowTitle {
   font-family: var(--font-cormorant), serif;
-  font-weight: 500; font-size: 18px;
-  color: #2A2318;
+  font-size: 16px; font-weight: 500;
+  color: #1a1208;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.listCategory {
-  font-family: var(--font-jost), sans-serif;
-  font-size: 11px; color: #7A7060;
-  font-weight: 300; letter-spacing: 0.02em;
+.listRowCategory {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: #8a7560;
+  font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.listCol {
-  font-family: var(--font-jost), sans-serif;
-  font-size: 12px; color: #5E574A;
-  font-variant-numeric: tabular-nums;
+.listRowStatus { /* default block */ }
+.listRowLastSeen {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic; font-size: 12px;
+  color: #a89878;
+  text-align: right; padding-right: 16px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.listCol b { color: #2A2318; font-weight: 500; }
-.listCol.due b { color: #B5402A; }
-.listColBar {
-  display: flex; align-items: center; gap: 8px;
+
+/* Mobile list rows — stacked, full-bleed */
+.listRowMobile {
+  display: flex; align-items: stretch;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(139, 105, 20, 0.1);
+  text-decoration: none; color: inherit;
+  cursor: pointer;
 }
-.listColBar .b {
-  flex: 1; height: 4px; background: rgba(122,112,96,0.15);
-  border-radius: 100px; overflow: hidden;
+.listRowMobileStripe {
+  width: 3px; flex: 0 0 auto;
+  border-radius: 1px;
 }
-.listColBar .b > div {
-  height: 100%;
+.listRowMobileBody { flex: 1; min-width: 0; }
+.listRowMobileTitleRow {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 4px;
+}
+.listRowMobileTitle {
+  flex: 1; min-width: 0;
+  font-family: var(--font-cormorant), serif;
+  font-size: 17px; font-weight: 500;
+  color: #1a1208; line-height: 1.2;
+  letter-spacing: -0.005em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.listRowMobileDue {
+  flex: 0 0 auto;
+  font-family: var(--font-cormorant), serif;
+  font-size: 13px; color: #a0381c;
+}
+.listRowMobileMeta {
+  display: flex; align-items: center;
+  gap: 8px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 12px; color: #8a7560;
+  font-style: italic;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.listRowMobileMetaCat {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-style: normal;
+  font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: #a0381c;
+  font-weight: 600; opacity: 0.8;
+  flex: 0 0 auto;
+}
+.listRowMobileMetaSep { opacity: 0.5; flex: 0 0 auto; }
+.listRowMobileBar {
+  margin-top: 8px;
+  height: 2px;
+  background: rgba(139, 105, 20, 0.15);
+  border-radius: 1px;
+  overflow: hidden;
 }
 
 /* ---------- Practice & Review (workbook treatment) ----------
