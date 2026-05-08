@@ -82,9 +82,13 @@ const Book = React.forwardRef<HTMLDivElement, ShelfBookProps>(function Book(
           transformOrigin: 'bottom center',
           transformStyle: 'preserve-3d',
           position: 'relative',
-          filter: `drop-shadow(0 ${isHovered ? 16 : 3}px ${
+          // box-shadow instead of filter:drop-shadow — drop-shadow forces a
+          // per-element compositor layer and re-rasterizes during scroll,
+          // which causes paint to fall behind on long, dense shelves. The
+          // book is rectangular so the visual is effectively identical.
+          boxShadow: `0 ${isHovered ? 16 : 3}px ${
             isHovered ? 18 : 4
-          }px rgba(40, 20, 8, ${isHovered ? 0.45 : 0.25}))`,
+          }px rgba(40, 20, 8, ${isHovered ? 0.45 : 0.25})`,
         }}
       >
         {/* SPINE */}
