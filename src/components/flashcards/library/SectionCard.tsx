@@ -19,6 +19,13 @@ interface SectionCardProps {
   seeAllHref?: string
   eyebrow?: string
   linkText?: string
+  /**
+   * Push the card (and its brass rule) up by this many pixels via
+   * `margin-bottom`. Used by bookshelves to lift the brass rule from
+   * below the wood plank up to the level of the plank's top edge so it
+   * reads as a continuation of the shelf line. ExaminationHall passes 0.
+   */
+  floorOffset?: number
 }
 
 export function SectionCard({
@@ -27,6 +34,7 @@ export function SectionCard({
   seeAllHref = '#',
   eyebrow = 'Section',
   linkText = 'See all →',
+  floorOffset = 0,
 }: SectionCardProps) {
   return (
     <div
@@ -34,6 +42,7 @@ export function SectionCard({
         flex: '0 0 200px',
         paddingBottom: 30,
         position: 'relative',
+        marginBottom: floorOffset,
       }}
     >
       <div
