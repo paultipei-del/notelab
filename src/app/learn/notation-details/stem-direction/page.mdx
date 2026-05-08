@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -37,9 +38,63 @@ Getting stem direction right is one of the most basic notational skills. Wrong s
 
 ## The visual
 
-<DiagramPlaceholder description="A staff showing notes at various positions, notes below the middle line with stems going up, notes above the middle line with stems going down, notes on the middle line (case-by-case choice)." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'F4', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  audio={false}
+  caption="Stem direction follows staff position automatically. Notes below the middle line (B4 on treble) get stems pointing up; notes above get stems pointing down. The middle line itself is a judgment call, usually based on what's around it."
+/>
 
-<DiagramPlaceholder description="A two-voice example on a single staff, upper voice with all stems up, lower voice with all stems down, demonstrating voice separation by stem direction." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [
+        {
+          elements: [
+            { type: 'note', pitch: 'G5', duration: 'q' },
+            { type: 'note', pitch: 'A5', duration: 'q' },
+            { type: 'note', pitch: 'B5', duration: 'q' },
+            { type: 'note', pitch: 'C6', duration: 'q' },
+          ],
+          stemPolicy: 'up',
+        },
+        {
+          elements: [
+            { type: 'note', pitch: 'C4', duration: 'q' },
+            { type: 'note', pitch: 'D4', duration: 'q' },
+            { type: 'note', pitch: 'E4', duration: 'q' },
+            { type: 'note', pitch: 'F4', duration: 'q' },
+          ],
+          stemPolicy: 'down',
+        },
+      ],
+    }],
+  }}
+  bpm={108}
+  audio={false}
+  caption="Two voices on the same staff. The upper voice has all stems forced up; the lower voice has all stems forced down. Even though the noteheads don't overlap here, the stem direction visually separates the two melodic lines."
+/>
 
 ## The basic rule, single voice
 

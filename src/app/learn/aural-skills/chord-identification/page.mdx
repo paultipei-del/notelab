@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -43,9 +45,69 @@ Chord identification is essential for several musical activities:
 
 ## The visual
 
-<DiagramPlaceholder description="Four basic triads (C major, C minor, C diminished, C augmented) played as harmonic (blocked) chords, each labeled with its quality." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitches: ['C4', 'E4', 'G4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitches: ['C4', 'Eb4', 'G4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitches: ['C4', 'Eb4', 'Gb4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitches: ['C4', 'E4', 'G#4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 0, endIdx: 0, label: 'C major', position: 'above' },
+      { type: 'label', startIdx: 2, endIdx: 2, label: 'C minor', position: 'above' },
+      { type: 'label', startIdx: 4, endIdx: 4, label: 'C diminished', position: 'above' },
+      { type: 'label', startIdx: 6, endIdx: 6, label: 'C augmented', position: 'above' },
+    ],
+  }}
+  bpm={70}
+  caption="The four basic triad qualities, all built on C. Major sounds bright; minor sounds darker; diminished sounds tense and unresolved; augmented sounds restless and ambiguous. Click each chord to hear it on its own."
+/>
 
-<DiagramPlaceholder description="The most common seventh chords (major 7, dominant 7, minor 7, half-diminished 7, fully diminished 7) played as blocked chords, all built on C." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitches: ['C4', 'E4', 'G4', 'B4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitches: ['C4', 'E4', 'G4', 'Bb4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitches: ['C4', 'Eb4', 'G4', 'Bb4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitches: ['C4', 'Eb4', 'Gb4', 'Bb4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+          { type: 'note', pitches: ['C4', 'Eb4', 'Gb4', 'Bbb4'], duration: 'h' },
+          { type: 'rest', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 0, endIdx: 0, label: 'Cmaj7', position: 'above' },
+      { type: 'label', startIdx: 2, endIdx: 2, label: 'C7', position: 'above' },
+      { type: 'label', startIdx: 4, endIdx: 4, label: 'Cm7', position: 'above' },
+      { type: 'label', startIdx: 6, endIdx: 6, label: 'Cm7♭5', position: 'above' },
+      { type: 'label', startIdx: 8, endIdx: 8, label: 'Cdim7', position: 'above' },
+    ],
+  }}
+  bpm={70}
+  systemBreaks={[3]}
+  caption="The five most common seventh chords, all built on C. Each adds a 7th above the triad's three notes. The flavor differs strikingly: maj7 is dreamy, dom7 wants to resolve, m7 is mellow, m7♭5 is half-diminished and unstable, dim7 is symmetrically tense."
+/>
 
 ## The basic triads, starting point
 
@@ -126,3 +188,12 @@ These are the domain of advanced jazz ear training. Most musicians learn the bas
 **How do I identify chord progressions?**
 
 Chord identification is the first step; recognizing how chords connect (progressions) is a related but separate skill. Typical training: listen to a progression, identify the Roman numeral of each chord, hear the functional relationships (I → IV → V → I, for example). Harmonic dictation (the skill of writing down heard chord progressions) is the full form of this practice. It takes time to develop but is eminently learnable.
+
+<EarTrainingCTA
+  intro="Practice chord identification with audio:"
+  decks={[
+    { name: 'Triads', slug: 'ear-triads', cards: '8 cards', description: 'Identify major, minor, diminished, and augmented triads in root position.' },
+    { name: 'Triads: Inversions', slug: 'ear-triads-inversions', cards: '12 cards', description: 'Identify first and second inversions of major and minor triads.' },
+    { name: '7th Chords', slug: 'ear-seventh-chords', cards: '6 cards', description: 'Identify m7, mM7, maj7, dom7, half-diminished, and fully diminished 7th chords.' },
+  ]}
+/>

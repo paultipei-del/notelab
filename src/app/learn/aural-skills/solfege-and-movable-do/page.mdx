@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -41,24 +43,90 @@ This page covers the basic solfège system, the distinction between fixed-do and
 
 ## The visual
 
-<DiagramPlaceholder description="A C major scale with each note labeled with its solfège syllable, C=do, D=re, E=mi, F=fa, G=sol, A=la, B=ti, C=do." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C4', duration: 'q' },
+          { type: 'note', pitch: 'D4', duration: 'q' },
+          { type: 'note', pitch: 'E4', duration: 'q' },
+          { type: 'note', pitch: 'F4', duration: 'q' },
+          { type: 'note', pitch: 'G4', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 0, endIdx: 0, label: 'do', position: 'below' },
+      { type: 'label', startIdx: 1, endIdx: 1, label: 're', position: 'below' },
+      { type: 'label', startIdx: 2, endIdx: 2, label: 'mi', position: 'below' },
+      { type: 'label', startIdx: 3, endIdx: 3, label: 'fa', position: 'below' },
+      { type: 'label', startIdx: 4, endIdx: 4, label: 'sol', position: 'below' },
+      { type: 'label', startIdx: 5, endIdx: 5, label: 'la', position: 'below' },
+      { type: 'label', startIdx: 6, endIdx: 6, label: 'ti', position: 'below' },
+      { type: 'label', startIdx: 7, endIdx: 7, label: 'do', position: 'below' },
+    ],
+  }}
+  bpm={100}
+  caption="The C major scale labeled with solfège syllables. C is do, D is re, E is mi, and so on. Click any note to hear it; click Play to hear the whole scale."
+/>
 
-<DiagramPlaceholder description="The same scale transposed to G major, with the solfège syllables staying in the same positions (G=do, A=re, B=mi, etc.), showing how movable-do keeps the syllables tied to scale degrees, not absolute pitches." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 1,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'G4', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 0, endIdx: 0, label: 'do', position: 'below' },
+      { type: 'label', startIdx: 1, endIdx: 1, label: 're', position: 'below' },
+      { type: 'label', startIdx: 2, endIdx: 2, label: 'mi', position: 'below' },
+      { type: 'label', startIdx: 3, endIdx: 3, label: 'fa', position: 'below' },
+      { type: 'label', startIdx: 4, endIdx: 4, label: 'sol', position: 'below' },
+      { type: 'label', startIdx: 5, endIdx: 5, label: 'la', position: 'below' },
+      { type: 'label', startIdx: 6, endIdx: 6, label: 'ti', position: 'below' },
+      { type: 'label', startIdx: 7, endIdx: 7, label: 'do', position: 'below' },
+    ],
+  }}
+  bpm={100}
+  caption="The same scale transposed to G major. The pitches are different (G, A, B, C, D, E, F♯, G), but the solfège syllables stay the same, because solfège (in 'movable do') labels scale degrees, not absolute pitches. 'Do' is always the tonic, wherever the music is."
+/>
 
 ## The seven basic syllables
 
 The core solfège syllables for a major scale:
 
-- **Do**, 1st degree (tonic)
-- **Re**, 2nd degree (supertonic)
-- **Mi**, 3rd degree (mediant)
-- **Fa**, 4th degree (subdominant)
-- **Sol**, 5th degree (dominant)
-- **La**, 6th degree (submediant)
-- **Ti**, 7th degree (leading tone)
-- **Do**, 8th degree (tonic, one octave up)
+| Syllable | Degree | Function | C major | G major |
+| --- | --- | --- | --- | --- |
+| **Do** | 1 | tonic | C | G |
+| **Re** | 2 | supertonic | D | A |
+| **Mi** | 3 | mediant | E | B |
+| **Fa** | 4 | subdominant | F | C |
+| **Sol** | 5 | dominant | G | D |
+| **La** | 6 | submediant | A | E |
+| **Ti** | 7 | leading tone | B | F♯ |
+| **Do** | 8 (8va) | tonic | C | G |
 
-In C major, do is C, re is D, mi is E, and so on up to do (high C). In G major, do is G, re is A, mi is B, and so on. The syllables stay tied to scale degrees, regardless of key.
+The syllables stay tied to scale degrees, regardless of key.
 
 This is the "movable-do" system, do moves to whichever note is the tonic. It's the most common system used in American, British, and many other English-language music programs.
 
@@ -88,21 +156,20 @@ This page focuses on movable-do, since that's the most common starting point in 
 
 ## Chromatic syllables
 
-What about notes outside the basic major scale, sharps and flats? Movable-do uses altered syllables:
+What about notes outside the basic major scale, sharps and flats? Movable-do uses altered syllables. The vowel changes to **"i"** for raised notes and **"e"** (or "a") for lowered notes.
 
-**Raised syllables (sharps)**, change the vowel to "i":
-- Di (raised do), between do and re
-- Ri (raised re), between re and mi
-- Fi (raised fa), between fa and sol
-- Si (raised sol), between sol and la
-- Li (raised la), between la and ti
-
-**Lowered syllables (flats)**, change the vowel to "a" (usually "e"):
-- Ra (lowered re), between do and re
-- Me (lowered mi), between re and mi
-- Le (lowered la), between sol and la
-- Te (lowered ti), between la and ti
-- Fe (lowered fa), rare; between mi and fa
+| Direction | Syllable | From | Lies between |
+| --- | --- | --- | --- |
+| ↑ raised | **Di** | Do | do – re |
+| ↑ raised | **Ri** | Re | re – mi |
+| ↑ raised | **Fi** | Fa | fa – sol |
+| ↑ raised | **Si** | Sol | sol – la |
+| ↑ raised | **Li** | La | la – ti |
+| ↓ lowered | **Ra** | Re | do – re |
+| ↓ lowered | **Me** | Mi | re – mi |
+| ↓ lowered | **Le** | La | sol – la |
+| ↓ lowered | **Te** | Ti | la – ti |
+| ↓ lowered | **Fe** | Fa (rare) | mi – fa |
 
 For a chromatic scale starting from C, the syllables ascending are:
 do, di, re, ri, mi, fa, fi, sol, si, la, li, ti, do
@@ -130,14 +197,16 @@ Many teachers use la-based minor for early training and then introduce do-based 
 
 A powerful extension of solfège is the **Curwen hand sign system**, where each syllable has an associated hand position:
 
-- Do, fist at waist
-- Re, flat hand at diagonal (like shaking hands)
-- Mi, flat hand horizontal (palm down)
-- Fa, thumb pointing down
-- Sol, flat hand vertical (like a salute)
-- La, hand in C-shape
-- Ti, finger pointing up
-- Do, fist above head
+| Syllable | Hand sign |
+| --- | --- |
+| **Do** (1) | Fist at waist |
+| **Re** (2) | Flat hand at a diagonal (like shaking hands) |
+| **Mi** (3) | Flat hand horizontal, palm down |
+| **Fa** (4) | Thumb pointing down |
+| **Sol** (5) | Flat hand vertical (like a salute) |
+| **La** (6) | Hand in a C-shape |
+| **Ti** (7) | Finger pointing up |
+| **Do** (8) | Fist above the head |
 
 Hand signs add a physical dimension to solfège. Singing while showing the signs reinforces memory and helps internalize the syllable-pitch connection. Hand signs are especially common in Kodály-based music education (particularly for children) but work well at any level.
 
@@ -171,3 +240,12 @@ Not necessarily. Classical musicians in European traditions often use fixed-do. 
 **How do I learn solfège quickly?**
 
 Start simple. Learn the basic major scale syllables (do, re, mi, fa, sol, la, ti, do). Sing familiar melodies in solfège, folk songs like "Mary Had a Little Lamb" or "Oh When the Saints." Practice consistently, a few minutes a day. Within a month of regular practice, you'll have the basic syllables memorized and usable.
+
+<EarTrainingCTA
+  intro="Practice solfège recognition with audio:"
+  decks={[
+    { name: 'Solfège I: Scale Degrees', slug: 'ear-solfege-i', cards: '14 cards', description: 'Hear a single note in a key context, identify the scale degree.' },
+    { name: 'Solfège II: Tonic Triads', slug: 'ear-solfege-ii', cards: '8 cards', description: 'Identify diatonic triads by their root scale degree.' },
+    { name: 'Pitch in Context I: Diatonic', slug: 'ear-pitch-in-context-i', cards: '7 cards', description: 'The same skill, framed by scale-degree number.' },
+  ]}
+/>

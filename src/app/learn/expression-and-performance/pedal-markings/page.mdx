@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -41,25 +42,99 @@ Pedal markings are specific to piano music. Other instruments have their own exp
 
 ## The visual
 
-<DiagramPlaceholder description="A passage with traditional pedal markings, 'Ped.' beneath a note where the pedal is pressed, and '*' indicating release, with the pedal held for a specific duration." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [
+      {
+        clef: 'treble',
+        voices: [{
+          elements: [
+            { type: 'note', pitches: ['C5', 'E5', 'G5'], duration: 'h' },
+            { type: 'note', pitches: ['B4', 'D5', 'G5'], duration: 'h' },
+            { type: 'note', pitches: ['C5', 'F5', 'A5'], duration: 'h' },
+            { type: 'note', pitches: ['B4', 'D5', 'G5'], duration: 'h' },
+            { type: 'note', pitches: ['C5', 'E5', 'G5'], duration: 'w' },
+          ],
+        }],
+      },
+      {
+        clef: 'bass',
+        voices: [{
+          elements: [
+            { type: 'note', pitch: 'C3', duration: 'h' },
+            { type: 'note', pitch: 'G2', duration: 'h' },
+            { type: 'note', pitch: 'F2', duration: 'h' },
+            { type: 'note', pitch: 'G2', duration: 'h' },
+            { type: 'note', pitch: 'C3', duration: 'w' },
+          ],
+          pedalMarks: [
+            { startBeat: 0, endBeat: 7, style: 'text' },
+            { startBeat: 8, endBeat: 11, style: 'text' },
+          ],
+        }],
+      },
+    ],
+  }}
+  bpm={88}
+  caption="Traditional pedal notation: 'Ped.' beneath the bass staff marks where the pedal is pressed; '*' marks the release. The pedal is held while one harmony plays, then released and re-pressed when the harmony changes — the beats between Ped. and * tell the player exactly when."
+/>
 
-<DiagramPlaceholder description="The same passage notated with the modern 'pedal bracket', a curved line beneath the staff showing continuous pedaling with breaks where the pedal changes." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [
+      {
+        clef: 'treble',
+        voices: [{
+          elements: [
+            { type: 'note', pitches: ['C5', 'E5', 'G5'], duration: 'h' },
+            { type: 'note', pitches: ['B4', 'D5', 'G5'], duration: 'h' },
+            { type: 'note', pitches: ['C5', 'F5', 'A5'], duration: 'h' },
+            { type: 'note', pitches: ['B4', 'D5', 'G5'], duration: 'h' },
+            { type: 'note', pitches: ['C5', 'E5', 'G5'], duration: 'w' },
+          ],
+        }],
+      },
+      {
+        clef: 'bass',
+        voices: [{
+          elements: [
+            { type: 'note', pitch: 'C3', duration: 'h' },
+            { type: 'note', pitch: 'G2', duration: 'h' },
+            { type: 'note', pitch: 'F2', duration: 'h' },
+            { type: 'note', pitch: 'G2', duration: 'h' },
+            { type: 'note', pitch: 'C3', duration: 'w' },
+          ],
+          pedalMarks: [
+            { startBeat: 0, endBeat: 7, style: 'bracket' },
+            { startBeat: 8, endBeat: 11, style: 'bracket' },
+          ],
+        }],
+      },
+    ],
+  }}
+  bpm={88}
+  caption="Modern pedal notation uses a continuous bracket beneath the staff. The bracket shows the start and end of pedal use clearly — easier to read at a glance than the traditional Ped./* convention. Modern editions often use this style."
+/>
 
 ## Traditional pedal notation
 
 The older convention:
 
-**Ped.**, press the pedal. Usually placed beneath a note where the pedal should engage.
+**<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>**, press the pedal. Usually placed beneath a note where the pedal should engage.
 
-**✻ (asterisk or star)**, release the pedal. Placed where the pedal should come up.
+**<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>** (asterisk or star), release the pedal. Placed where the pedal should come up.
 
 A pedal marking might look like:
 
-**Ped.**   [passage plays]   **✻**
+**<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>**   [passage plays]   **<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>**
 
 meaning: press the pedal here, continue playing, release it there.
 
-This notation is clear for individual pedal changes but becomes unwieldy when the pedal changes frequently. A passage with pedal changing on every beat would have many Ped./✻ markings, cluttering the page.
+This notation is clear for individual pedal changes but becomes unwieldy when the pedal changes frequently. A passage with pedal changing on every beat would have many <span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>/<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span> markings, cluttering the page.
 
 ## Modern pedal notation, the bracket
 
@@ -67,7 +142,7 @@ The newer (and now more common) convention:
 
 A **curved line** beneath the staff, with a sharp "V" or angular drop indicating where the pedal releases and re-presses. The line is unbroken where the pedal stays down; it has a quick break where the pedal is released and immediately re-pressed.
 
-This notation handles frequent pedaling more gracefully. Instead of Ped./✻/Ped./✻ everywhere, you see a continuous line with small "V" breaks at each pedal change.
+This notation handles frequent pedaling more gracefully. Instead of <span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>/<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>/<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>/<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span> everywhere, you see a continuous line with small "V" breaks at each pedal change.
 
 Both notations appear in modern scores. Some editions use one; some use the other; some use both. The principle is the same: the markings tell you when to hold the pedal and when to release.
 

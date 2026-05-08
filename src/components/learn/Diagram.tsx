@@ -45,7 +45,6 @@ export default function Diagram({
             fontFamily: F,
             fontSize: '13px',
             fontWeight: 300,
-            fontStyle: 'italic',
             color: '#7A7060',
             lineHeight: 1.55,
           }}

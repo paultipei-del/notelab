@@ -1905,7 +1905,7 @@ body:has(.nl-study-viewport) {
 }
 .nl-learn-prose h2 {
   font-family: var(--font-cormorant), serif;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 26px;
   color: #2A2318;
   letter-spacing: 0.01em;
@@ -1945,6 +1945,59 @@ body:has(.nl-study-viewport) {
 .nl-learn-prose .nl-notation {
   max-width: none;
   margin: 24px 0;
+}
+
+/* Stacked-pair wrapper for a standard-notation figure on top of a matching
+   tablature figure. Removes the inner figures' default 24px vertical
+   margins so the two read as a single tightly-coupled visual. */
+.nl-learn-prose .nl-tab-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 24px auto;
+}
+.nl-learn-prose .nl-tab-stack > figure {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Tight-grouped example wrapper: keeps the caption visually attached to
+   ITS staff by reducing the figure's bottom space, while preserving a
+   clear gap above so successive examples don't run into each other. */
+.nl-learn-prose .nl-tight-example {
+  margin-top: 40px;
+  margin-bottom: 0;
+}
+.nl-learn-prose .nl-tight-example > figure {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.nl-learn-prose .nl-tight-example:first-of-type {
+  margin-top: 16px;
+}
+
+/* Before/after comparison wrapper: two related MusicalExamples stacked as
+   a single visual unit (e.g. "Original" vs "Transposed up a fifth"). The
+   inner figures' default 48px bottom margin is collapsed to a small
+   inter-pair gap so the two examples read as siblings of one comparison. */
+.nl-learn-prose .nl-comparison-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.nl-learn-prose .nl-comparison-pair > figure {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Pull the figure caption UP into the SVG's empty footroom so it sits
+   visually anchored to the staff above instead of floating equidistant
+   between two staves. Used in comparison contexts where MusicalExamples
+   stack tightly. */
+.nl-learn-prose .nl-pull-caption > figure > p {
+  margin-top: -32px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Markdown tables. Default browser rendering collapses to a column of text

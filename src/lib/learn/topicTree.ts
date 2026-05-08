@@ -243,6 +243,7 @@ export const TOPIC_TREE: LearnTopic[] = [
       { slug: 'melodic-dictation', title: 'Melodic Dictation', hasPage: true },
       { slug: 'rhythmic-dictation', title: 'Rhythmic Dictation', hasPage: true },
       { slug: 'sight-singing', title: 'Sight-Singing', hasPage: true },
+      { slug: 'internal-hearing-and-audiation', title: 'Internal Hearing and Audiation', hasPage: true },
       { slug: 'developing-your-ear-over-time', title: 'Developing Your Ear Over Time', hasPage: true },
     ],
   },

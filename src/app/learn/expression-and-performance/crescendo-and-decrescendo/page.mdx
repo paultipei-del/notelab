@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -39,9 +40,85 @@ Crescendos build tension and excitement. Decrescendos release tension and settle
 
 ## The visual
 
-<DiagramPlaceholder description="A passage with a crescendo hairpin (< opening rightward) spanning several measures, going from p to f, then a decrescendo hairpin (> closing rightward) going from f back to p." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'C6', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+        dynamics: [
+          { beat: 0, level: 'p' },
+          { beat: 8, level: 'f' },
+          { beat: 14, level: 'p' },
+        ],
+        hairpins: [
+          { startBeat: 0, endBeat: 7, direction: 'cresc', placement: 'below' },
+          { startBeat: 8, endBeat: 14, direction: 'decresc', placement: 'below' },
+        ],
+      }],
+    }],
+  }}
+  bpm={92}
+  caption="A passage with crescendo (<) and decrescendo (>) hairpins. The opening hairpin tells the player to gradually grow louder from p to f over two measures; the closing hairpin reverses the journey back to p."
+/>
 
-<DiagramPlaceholder description="The same passage marked with the words 'cresc.' and 'dim.' instead of hairpins, showing the alternative notation." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'C6', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+        dynamics: [
+          { beat: 0, level: 'p' },
+          { beat: 8, level: 'f' },
+          { beat: 16, level: 'p' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 1, endIdx: 1, label: 'cresc.', position: 'below', dynamicLine: true },
+      { type: 'label', startIdx: 9, endIdx: 9, label: 'dim.', position: 'below', dynamicLine: true },
+    ],
+  }}
+  bpm={92}
+  caption="The same passage with the words 'cresc.' (crescendo) and 'dim.' (diminuendo) instead of hairpins. The two notations are equivalent — composers choose based on context and personal preference."
+/>
 
 ## Notation
 

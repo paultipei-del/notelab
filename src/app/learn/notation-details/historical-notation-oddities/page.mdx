@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicExampleCard } from '@/components/learn/visuals/MusicExampleCard'
+import { FiguredBassExample } from '@/components/learn/visuals/FiguredBassExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -39,9 +41,24 @@ This page covers some of the most common historical oddities: unusual clef posit
 
 ## The visual
 
-<DiagramPlaceholder description="Side-by-side comparison of Renaissance notation (with C clefs in unusual positions and older rhythmic shapes) and modern notation of the same music, showing how the conventions differ." />
+<MusicExampleCard
+  composer="(Anonymous)"
+  piece="Renaissance polyphony — Mensural notation comparison"
+  year="c. 1500"
+  description="A side-by-side comparison of Renaissance mensural notation (with C clefs in unusual positions and older note shapes — longa, breve, semibreve) and the same music in modern notation. Building Renaissance notation requires its own infrastructure (mensural note shapes, alto/tenor clefs in non-standard positions, ligatures); this figure is reserved for a future build."
+/>
 
-<DiagramPlaceholder description="A Baroque continuo part with figured bass (numbers beneath the bass line) and a modern realization of the same passage with the chords written out." />
+<FiguredBassExample
+  notes={[
+    { pitch: 'C3', figures: [], realization: ['C4', 'E4', 'G4'] },
+    { pitch: 'E3', figures: ['6'], realization: ['C4', 'E4', 'G4'] },
+    { pitch: 'F3', figures: [], realization: ['C4', 'F4', 'A4'] },
+    { pitch: 'G3', figures: ['7'], realization: ['B3', 'D4', 'F4'] },
+    { pitch: 'C3', figures: [], realization: ['C4', 'E4', 'G4'] },
+  ]}
+  showRealization
+  caption="A Baroque continuo part: the bass line with figured-bass numbers below indicating which chords to play. The figures (6, 6, 7, etc.) tell the keyboardist what intervals above the bass note to fill in. Performers realized the chord voicings on the spot — figured bass is musical shorthand for harmony, much like modern lead-sheet chord symbols."
+/>
 
 ## Older clef positions
 

@@ -458,7 +458,8 @@
 .lessonSubtitle {
   font-family: var(--font-cormorant), 'Cormorant Garamond', serif;
   font-style: italic; font-weight: 400;
-  font-size: 22px; line-height: 1.45; color: #5E574A; margin: 0 0 48px; max-width: 540px;
+  font-size: 22px; line-height: 1.45; color: #5E574A; margin: 0 auto 48px auto; max-width: 540px;
+  text-wrap: balance;
 }
 .lessonH2 {
   font-family: var(--font-cormorant), 'Cormorant Garamond', serif;

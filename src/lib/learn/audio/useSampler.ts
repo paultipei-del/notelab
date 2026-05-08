@@ -35,6 +35,20 @@ let sharedSampler: any = null
 let sharedTone: any = null
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let metronomeSynth: any = null
+// Real acoustic-guitar sampler for tab examples. Uses public samples from
+// nbrosowsky/tonejs-instruments (same hosting model as the Salamander piano).
+// Pitch-shifted from a sparse set of As to fill the full guitar range.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let guitarSampler: any = null
+let guitarLoaded = false
+let guitarLoading = false
+const guitarLoadCallbacks: Array<() => void> = []
+// Master gain node — sampler and metronome both route through this. Used
+// to silence in-flight + future-scheduled audio events when Stop is pressed
+// (Web Audio doesn't expose a way to cancel a future-scheduled buffer
+// source, so we mute the output instead and restore it on next play).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let masterGain: any = null
 let samplerLoaded = false
 let samplerLoading = false
 const loadCallbacks: Array<() => void> = []
@@ -56,12 +70,18 @@ function notifyReady(ready: boolean): void {
   readyListeners.forEach(cb => cb(ready))
 }
 
+function ensureMasterGain(): void {
+  if (masterGain || !sharedTone) return
+  masterGain = new sharedTone.Gain(1).toDestination()
+}
+
 async function ensureSampler(): Promise<void> {
   if (samplerLoaded) return
   if (samplerLoading) return new Promise(resolve => loadCallbacks.push(resolve))
   samplerLoading = true
   const Tone = await import('tone')
   sharedTone = Tone
+  ensureMasterGain()
   return new Promise(resolve => {
     sharedSampler = new Tone.Sampler({
       urls: SALAMANDER_URLS,
@@ -77,7 +97,7 @@ async function ensureSampler(): Promise<void> {
         notifyReady(true)
         resolve()
       },
-    }).toDestination()
+    }).connect(masterGain)
   })
 }
 
@@ -162,15 +182,51 @@ function installDocumentUnlocker(): void {
 function ensureMetronome(): void {
   if (metronomeSynth || !sharedTone) return
   try {
+    ensureMasterGain()
     metronomeSynth = new sharedTone.Synth({
       oscillator: { type: 'sine' },
       envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.04 },
-    }).toDestination()
+    }).connect(masterGain)
     // Quieter than the sampler so it sits under the melodic notes.
     if (metronomeSynth.volume) metronomeSynth.volume.value = -14
   } catch {
     metronomeSynth = null
   }
+}
+
+// Sparse acoustic-guitar samples. Tone.Sampler pitch-shifts to fill gaps.
+const GUITAR_URLS: Record<string, string> = {
+  A2: 'A2.mp3',
+  A3: 'A3.mp3',
+  A4: 'A4.mp3',
+  E2: 'E2.mp3',
+  E3: 'E3.mp3',
+  E4: 'E4.mp3',
+}
+
+function ensureGuitar(): Promise<void> {
+  if (guitarLoaded) return Promise.resolve()
+  if (guitarLoading) {
+    return new Promise(resolve => guitarLoadCallbacks.push(resolve))
+  }
+  if (!sharedTone) return Promise.resolve()
+  guitarLoading = true
+  ensureMasterGain()
+  return new Promise(resolve => {
+    guitarSampler = new sharedTone.Sampler({
+      urls: GUITAR_URLS,
+      release: 1.2,
+      baseUrl: 'https://nbrosowsky.github.io/tonejs-instruments/samples/guitar-acoustic/',
+      onload: () => {
+        guitarLoaded = true
+        guitarLoading = false
+        guitarLoadCallbacks.forEach(cb => cb())
+        guitarLoadCallbacks.length = 0
+        resolve()
+      },
+    }).connect(masterGain)
+    if (guitarSampler.volume) guitarSampler.volume.value = -1
+  })
 }
 
 export interface SamplerControls {
@@ -189,6 +245,20 @@ export interface SamplerControls {
   playAt: (pitch: string, duration: number | string, time: number) => void
   /** Sample-accurate metronome click at audio-context `time`. */
   tickAt: (accent: boolean, time: number) => void
+  /** Acoustic-guitar sampler voice for tab examples. Same scheduling
+   *  contract as `playAt`. Caller must `await ensureGuitarReady()` before
+   *  the first scheduled play (samples are loaded lazily). */
+  playGuitarAt: (pitch: string, duration: number | string, time: number) => void
+  /** Loads the guitar sampler. Resolves once samples are decoded and the
+   *  sampler is ready to schedule. Idempotent. */
+  ensureGuitarReady: () => Promise<void>
+  /**
+   * Stops all audio output: silences any currently sounding notes and mutes
+   * the master output so any future events scheduled by `playAt`/`tickAt`
+   * (which Web Audio can't cancel after the fact) produce silence. The
+   * next `ensureReady()` call restores the gain so subsequent plays work.
+   */
+  stopAll: () => void
   /**
    * Resolves once the sampler has finished downloading and is ready to
    * play. Use this in click handlers that *must* have audio before they
@@ -289,6 +359,44 @@ export function useSampler(): SamplerControls {
     } catch {}
   }
 
+  const playGuitarAt = (pitch: string, duration: number | string, time: number): void => {
+    try {
+      // ensureGuitar() must have already resolved before scheduling; otherwise
+      // the call here is a no-op. TabExample's playAll awaits ensureReady()
+      // before scheduling, so we kick off the guitar load there too.
+      if (!guitarSampler || !guitarLoaded) return
+      guitarSampler.triggerAttackRelease(normalisePitch(pitch), duration, time)
+    } catch {}
+  }
+
+  const stopAll = (): void => {
+    try {
+      const now = sharedTone?.now?.() ?? 0
+      // Release any currently sounding voices immediately.
+      sharedSampler?.releaseAll?.(now)
+      guitarSampler?.releaseAll?.(now)
+      // Mute the master output so events already scheduled into the future
+      // (which Web Audio can't cancel once queued) play into silence.
+      if (masterGain && masterGain.gain) {
+        masterGain.gain.cancelScheduledValues?.(now)
+        masterGain.gain.value = 0
+      }
+    } catch {}
+  }
+
+  const ensureGuitarReady = async (): Promise<void> => {
+    try {
+      unlockSync()
+      await ensureSampler()  // also brings up sharedTone + masterGain
+      await unlockContext()
+      if (masterGain && masterGain.gain) {
+        masterGain.gain.cancelScheduledValues?.(sharedTone.now())
+        masterGain.gain.value = 1
+      }
+      await ensureGuitar()
+    } catch {}
+  }
+
   const ensureReady = async (): Promise<void> => {
     try {
       unlockSync()
@@ -296,8 +404,14 @@ export function useSampler(): SamplerControls {
       // Audio context start can be a no-op if already running. Awaiting
       // it guarantees we don't return before the sampler is callable.
       await unlockContext()
+      // Restore master gain in case a previous Stop muted it. Subsequent
+      // plays through this sampler audibly resume.
+      if (masterGain && masterGain.gain) {
+        masterGain.gain.cancelScheduledValues?.(sharedTone.now())
+        masterGain.gain.value = 1
+      }
     } catch {}
   }
 
-  return { ready, play, playSequence, playChord, tick, playAt, tickAt, ensureReady }
+  return { ready, play, playSequence, playChord, tick, playAt, tickAt, playGuitarAt, ensureGuitarReady, stopAll, ensureReady }
 }

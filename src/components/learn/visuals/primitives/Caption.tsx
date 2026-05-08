@@ -17,12 +17,12 @@ export function Caption({ children, T, variant = 'figure' }: CaptionProps) {
   const figureFontSize = T.size === 'small' ? 14 : T.size === 'hero' ? 17 : 15
   const style: React.CSSProperties = variant === 'figure'
     ? {
-        fontFamily: T.fontDisplay,
+        fontFamily: T.fontLabel,
         fontSize: figureFontSize,
+        fontWeight: 300,
         color: T.inkMuted,
-        fontStyle: 'italic',
         textAlign: 'center',
-        marginTop: 12,
+        marginTop: 6,
         lineHeight: 1.55,
         maxWidth: '64ch',
         marginLeft: 'auto',

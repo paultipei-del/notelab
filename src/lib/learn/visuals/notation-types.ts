@@ -22,6 +22,12 @@ export interface MusicalNote {
   pitch?: string
   /** Multiple pitches sounding together as a chord. */
   pitches?: string[]
+  /** Override the audio pitch independently of the displayed pitch. Used
+   *  for transposing-instrument examples where the staff shows the
+   *  written pitch but playback should produce the sounding pitch. */
+  playPitch?: string
+  /** Chord override for audio (rare). */
+  playPitches?: string[]
   duration: Duration
   /**
    * If true, this note is tied to the next note. The tie is rendered as a
@@ -56,6 +62,17 @@ export interface MusicalNote {
   ornaments?: Ornament[]
   /** True if this is a grace note (rendered smaller, no rhythmic time). */
   grace?: boolean
+  /** Render this note's accidental as a courtesy/cautionary marking — the
+   *  glyph (♯/♭/♮) is forced to display even if engraving rules wouldn't
+   *  require it, and is wrapped in parentheses. The kind follows the
+   *  pitch's literal modifier (F5 → ♮, F#5 → ♯, Bb5 → ♭). For chords,
+   *  applies to every pitch in the chord. */
+  cautionary?: boolean
+  /** Audio articulation hint. 'pluck' shortens the played duration to mimic
+   *  pizzicato / hard staccato / percussive sounds without changing the
+   *  visible notation. The cursor still advances by the full notated
+   *  duration. Default 'normal'. */
+  playArtic?: 'normal' | 'pluck'
 }
 
 /** Articulation glyphs supported by the renderer. */
@@ -83,6 +100,12 @@ export interface MusicalRest {
   duration: Duration
   /** Tuplet metadata — same semantics as MusicalNote.tuplet. */
   tuplet?: { actual: number; normal: number }
+  /** True when this rest represents an entire measure of silence
+   *  (regardless of meter). The renderer always draws the whole-rest glyph
+   *  hanging from line 4 (one staff space above the middle line) for these,
+   *  per Gould — even in 3/8, 6/8, etc. The `duration` still carries the
+   *  actual measure length so beat math and audio remain correct. */
+  wholeMeasureRest?: boolean
 }
 
 export type MusicalElement = MusicalNote | MusicalRest
@@ -108,6 +131,11 @@ export interface MusicalAnnotation {
   position?: AnnotationPosition
   /** Smaller secondary label (e.g. "(question)" beneath "Antecedent"). */
   sublabel?: string
+  /** For below-position labels: align the label baseline with the dynamic
+   *  glyph row (so 'cresc.' / 'dim.' / 'poco a poco' read inline with
+   *  surrounding dynamic markings) and render in italic serif at a
+   *  slightly larger pt size. Has no effect on above-position labels. */
+  dynamicLine?: boolean
 }
 
 /* ── v2 multi-voice / multi-staff data model ──────────────────────────── */
@@ -130,6 +158,47 @@ export interface Voice {
    * leave 'auto'.
    */
   stemPolicy?: 'auto' | 'up' | 'down'
+  /**
+   * Dynamic markings (pp, p, mf, f, sfz, …) anchored to a beat position.
+   * Rendered as Bravura glyphs below the staff (treble) or above (bass).
+   * `modifier` adds an italic word after the glyph (e.g. 'subito', 'molto').
+   */
+  dynamics?: DynamicMark[]
+  /**
+   * Crescendo / decrescendo wedges spanning a beat range. Anchored to the
+   * same baseline as `dynamics`, so a `p < f` pattern aligns visually.
+   * Cross-system spans split into per-system segments mirroring slurs.
+   */
+  hairpins?: Hairpin[]
+  /**
+   * Pedal markings (sustain pedal). Typically only on the bass-clef voice
+   * for piano music. 'text' style renders Ped./✱ glyphs at the endpoints;
+   * 'bracket' style draws a continuous bracket below the staff.
+   */
+  pedalMarks?: PedalMark[]
+}
+
+export interface DynamicMark {
+  /** Beat position from the start of the voice (beat 0 = downbeat of measure 1). */
+  beat: number
+  level: DynamicLevel
+  /** Optional italic word rendered immediately after the glyph. */
+  modifier?: string
+}
+
+export interface Hairpin {
+  startBeat: number
+  endBeat: number
+  direction: 'cresc' | 'decresc'
+  /** Default: 'below' for treble, 'above' for bass. */
+  placement?: 'above' | 'below'
+}
+
+export interface PedalMark {
+  startBeat: number
+  endBeat: number
+  /** 'text' = Ped. + ✱ at endpoints; 'bracket' = continuous bracket. Default 'text'. */
+  style?: 'text' | 'bracket'
 }
 
 /** One stave (treble or bass) carrying one or more voices. */
@@ -164,6 +233,54 @@ export interface Score {
   keyChanges?: Array<{ measureIdx: number; fifths: number }>
   /** Mid-score time signature changes. */
   timeChanges?: Array<{ measureIdx: number; timeSignature: TimeSignature }>
+  /**
+   * Tempo markings rendered above the top staff. Each marking can carry
+   * a text label (e.g. 'Allegro'), a metronome equation (e.g. ♩ = 120),
+   * or both. `style: 'change-with-line'` adds a dashed continuation line
+   * spanning measureIdx → endMeasureIdx for rit. / accel. passages.
+   */
+  tempoMarkings?: TempoMarking[]
+  /**
+   * Lead-sheet style chord symbols ('C', 'Am7', 'G/B', 'F#dim') anchored
+   * to a beat. Rendered above the top staff in serif text — sit between
+   * any tempo markings and the staff itself.
+   */
+  chordSymbols?: ChordSymbol[]
+  /**
+   * Pickup (anacrusis) length in BEATS (where 1 beat = the time-signature
+   * denominator). When set, the renderer carves off the first `pickupBeats`
+   * worth of each voice as a partial first measure (numbered 0, no measure
+   * number printed) followed by a barline; the remaining elements then
+   * group into full measures normally. Set to undefined / 0 for music that
+   * starts on the downbeat.
+   */
+  pickupBeats?: number
+}
+
+export interface ChordSymbol {
+  /** Beat position from the start of the score (beat 0 = downbeat of m. 1). */
+  beat: number
+  /** Chord text. Examples: 'C', 'Am7', 'G/B', 'Cmaj7', 'F#dim'. */
+  symbol: string
+}
+
+export interface TempoMarking {
+  /** 0-indexed within the score's measure list. */
+  measureIdx: number
+  /** Beat within the measure. Default 0 (downbeat). */
+  beat?: number
+  /** Display text. E.g. 'Allegro', 'a tempo', 'Andante con moto'. */
+  text?: string
+  /** Metronome equation (♩ = N). */
+  metronome?: { beatNote: Duration; bpm: number }
+  /**
+   * 'normal' (default): bold serif, prominent at start of measure.
+   * 'change': italic, smaller, used for rit. / accel. / a tempo.
+   * 'change-with-line': italic + dashed line spanning to endMeasureIdx.
+   */
+  style?: 'normal' | 'change' | 'change-with-line'
+  /** End measure for 'change-with-line'. */
+  endMeasureIdx?: number
 }
 
 /**

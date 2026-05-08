@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { TabExample } from '@/components/learn/visuals/TabExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -39,9 +41,87 @@ For guitarists, bassists, and other fretboard players, tab is often the go-to no
 
 ## The visual
 
-<DiagramPlaceholder description="A guitar tab showing the six-line staff representing the six strings, with numbers indicating fret positions, and a standard music staff above showing the same music in traditional notation, so the reader can compare the two systems." />
+<figure className="nl-tab-stack">
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'bass',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C3', duration: 'q' },
+              { type: 'note', pitch: 'E3', duration: 'q' },
+              { type: 'note', pitch: 'G3', duration: 'q' },
+              { type: 'note', pitch: 'C4', duration: 'q' },
+              { type: 'note', pitch: 'E4', duration: 'q' },
+              { type: 'note', pitch: 'G4', duration: 'q' },
+              { type: 'note', pitch: 'E4', duration: 'q' },
+              { type: 'note', pitch: 'C4', duration: 'q' },
+            ],
+          }],
+        }],
+      }}
+      bpm={108}
+      audio={false}
+    />
+    <TabExample
+      elements={[
+        { string: 5, fret: 3, duration: 'q' },
+        { string: 4, fret: 2, duration: 'q' },
+        { string: 3, fret: 0, duration: 'q' },
+        { string: 2, fret: 1, duration: 'q' },
+        { string: 1, fret: 0, duration: 'q' },
+        { string: 1, fret: 3, duration: 'q' },
+        { string: 1, fret: 0, duration: 'q' },
+        { string: 2, fret: 1, duration: 'q' },
+      ]}
+      timeSignature={{ numerator: 4, denominator: 4 }}
+      bpm={108}
+    />
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>The same melody in standard notation (top) and guitar tablature (bottom). The tab's six lines represent the six strings of a guitar, with line 1 on top (high E) and line 6 at the bottom (low E). Each number shows which fret to press on that string. Tab tells the guitarist exactly WHERE to play every note, much more practical than standard notation when learning a piece by ear or transcribing a recording.</figcaption>
+</figure>
 
-<DiagramPlaceholder description="A short riff shown in both standard notation and tab, with an arrow indicating how to translate between them." />
+<figure className="nl-tab-stack">
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'bass',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'E3', duration: 'e' },
+              { type: 'note', pitch: 'G3', duration: 'e' },
+              { type: 'note', pitch: 'A3', duration: 'e' },
+              { type: 'note', pitch: 'A#3', duration: 'e' },
+              { type: 'note', pitch: 'B3', duration: 'q' },
+              { type: 'note', pitch: 'A3', duration: 'q' },
+              { type: 'note', pitch: 'G3', duration: 'h' },
+              { type: 'note', pitch: 'E3', duration: 'h' },
+            ],
+          }],
+        }],
+      }}
+      bpm={104}
+      audio={false}
+    />
+    <TabExample
+      elements={[
+        { string: 4, fret: 2, duration: 'e' },
+        { string: 3, fret: 0, duration: 'e' },
+        { string: 3, fret: 2, duration: 'e' },
+        { string: 3, fret: 3, duration: 'e' },
+        { string: 3, fret: 4, duration: 'q' },
+        { string: 3, fret: 2, duration: 'q' },
+        { string: 3, fret: 0, duration: 'h' },
+        { string: 4, fret: 2, duration: 'h' },
+      ]}
+      timeSignature={{ numerator: 4, denominator: 4 }}
+      bpm={104}
+    />
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>A blues-style riff in E. The standard notation tells you the pitches; the tab tells you the physical fingering, which string and which fret. Both convey the same music, but each prioritizes different information.</figcaption>
+</figure>
 
 ## How tablature works
 
@@ -58,18 +138,48 @@ The middle lines represent the strings in between, in their usual tuning order (
 
 ## Reading a simple guitar tab
 
-Consider a short tab:
+Consider a short tab — a C major chord struck four times:
 
-```
-E|--0--0--0--0--|
-B|--1--1--1--1--|
-G|--0--0--0--0--|
-D|--2--2--2--2--|
-A|--3--3--3--3--|
-E|--X--X--X--X--|
-```
+<TabExample
+  elements={[
+    { frets: [
+      { string: 6, fret: 0, muted: true },
+      { string: 5, fret: 3 },
+      { string: 4, fret: 2 },
+      { string: 3, fret: 0 },
+      { string: 2, fret: 1 },
+      { string: 1, fret: 0 },
+    ], duration: 'q' },
+    { frets: [
+      { string: 6, fret: 0, muted: true },
+      { string: 5, fret: 3 },
+      { string: 4, fret: 2 },
+      { string: 3, fret: 0 },
+      { string: 2, fret: 1 },
+      { string: 1, fret: 0 },
+    ], duration: 'q' },
+    { frets: [
+      { string: 6, fret: 0, muted: true },
+      { string: 5, fret: 3 },
+      { string: 4, fret: 2 },
+      { string: 3, fret: 0 },
+      { string: 2, fret: 1 },
+      { string: 1, fret: 0 },
+    ], duration: 'q' },
+    { frets: [
+      { string: 6, fret: 0, muted: true },
+      { string: 5, fret: 3 },
+      { string: 4, fret: 2 },
+      { string: 3, fret: 0 },
+      { string: 2, fret: 1 },
+      { string: 1, fret: 0 },
+    ], duration: 'q' },
+  ]}
+  timeSignature={{ numerator: 4, denominator: 4 }}
+  bpm={88}
+/>
 
-This represents a C major chord played four times. The X on the bottom line means don't play that string. The 3 on the A string, 2 on the D string, 0 on the G string, 1 on the B string, and 0 on the high E string (all played together) produce a C major chord.
+The ✗ on the low E string means don't play that string. The 3 on the A string, 2 on the D string, 0 on the G string, 1 on the B string, and 0 on the high E string — all played together — produce a C major chord.
 
 Each stacked vertical column represents a single chord or note. A horizontal sequence represents notes played one after another.
 

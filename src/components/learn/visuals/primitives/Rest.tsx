@@ -16,10 +16,10 @@ interface RestProps {
   value: RestValue
   x: number
   /**
-   * Y reference point. For rests on a 5-line staff the convention is to pass
-   * `staffY + 2 * T.step` (the middle line). Whole rests hang from the line
-   * above; half rests sit on the line; quarter and shorter rests center
-   * vertically on the middle.
+   * Y of the staff middle line (B4 in treble clef = position 4). The Rest
+   * primitive picks the correct vertical anchor per rest type. SMuFL rest
+   * glyphs use alphabetic baseline at their convention origin: bottom edge
+   * for half/quarter/shorter, top edge for whole rest.
    */
   y: number
   T: LearnTokens
@@ -30,11 +30,19 @@ interface RestProps {
 export function Rest({ value, x, y, T, highlight = false, onClick }: RestProps) {
   const glyph = REST_GLYPHS[value]
   const fill = highlight ? T.highlightAccent : T.ink
-  // Whole rest hangs below the line above; half rest sits on top of the line.
-  // Both visually offset slightly so the glyph lands where notation expects.
-  const dy = value === 'whole' ? -T.step * 0.5
-    : value === 'half' ? -T.step * 0.5
-    : 0
+  // SMuFL convention: rest glyphs are drawn with their alphabetic baseline
+  // at the staff line they attach to.
+  //  • restWhole (E4E3): origin at TOP of rect → hangs from "second line
+  //    from top" (one step above middle line, position 2).
+  //  • restHalf  (E4E4): origin at BOTTOM of rect → sits on middle line
+  //    (position 4).
+  //  • Quarter / eighth / shorter: Bravura registers these so the glyph
+  //    body is vertically centered on the middle line at the alphabetic
+  //    baseline, so the y arg (= middle line) is used directly with no dy.
+  // The `y` arg is always the middle line; the dy below selects the line.
+  const dy = value === 'whole' ? -2 * T.step
+    : value === 'half' ? 0
+    : Math.round(-T.step * 0.5)
   return (
     <text
       x={x}
@@ -43,7 +51,7 @@ export function Rest({ value, x, y, T, highlight = false, onClick }: RestProps) 
       fontFamily={T.fontMusic}
       fill={fill}
       textAnchor="middle"
-      dominantBaseline="central"
+      dominantBaseline="alphabetic"
       onClick={onClick}
       style={{ cursor: onClick ? 'pointer' : 'default', transition: T.hoverTransition }}
     >

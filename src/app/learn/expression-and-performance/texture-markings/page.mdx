@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'expression-and-performance',
@@ -37,9 +38,71 @@ Texture markings are especially important in orchestral and ensemble scores. Wit
 
 ## The visual
 
-<DiagramPlaceholder description="A string section passage marked 'divisi' showing the violins split into two parts, then an 'unisoni' marking bringing them back together on a single line." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitches: ['G5', 'E5'], duration: 'q' },
+          { type: 'note', pitches: ['A5', 'F5'], duration: 'q' },
+          { type: 'note', pitches: ['B5', 'G5'], duration: 'q' },
+          { type: 'note', pitches: ['C6', 'A5'], duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 4, endIdx: 4, label: 'divisi', position: 'above' },
+      { type: 'label', startIdx: 8, endIdx: 8, label: 'unisoni', position: 'above' },
+    ],
+  }}
+  bpm={108}
+  caption="A string section passage. 'Divisi' (split) at m. 2 tells the violin section to split into two parts — half play the upper notes, half the lower. 'Unisoni' (united) at m. 3 brings them back together on a single line."
+/>
 
-<DiagramPlaceholder description="The same passage marked alternately 'pizz.' (pizzicato) and 'arco' (with the bow), showing the change in playing technique." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q', playArtic: 'pluck' },
+          { type: 'note', pitch: 'E5', duration: 'q', playArtic: 'pluck' },
+          { type: 'note', pitch: 'G5', duration: 'q', playArtic: 'pluck' },
+          { type: 'note', pitch: 'C6', duration: 'q', playArtic: 'pluck' },
+          { type: 'note', pitch: 'B5', duration: 'q', playArtic: 'pluck' },
+          { type: 'note', pitch: 'A5', duration: 'q', playArtic: 'pluck' },
+          { type: 'note', pitch: 'G5', duration: 'h', playArtic: 'pluck' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'w' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'label', startIdx: 0, endIdx: 0, label: 'pizz.', position: 'above' },
+      { type: 'label', startIdx: 7, endIdx: 7, label: 'arco', position: 'above' },
+    ],
+  }}
+  bpm={108}
+  caption="The same passage, but now 'pizz.' (pizzicato) at m. 1 tells the player to pluck the strings instead of bowing, then 'arco' (with the bow) at m. 3 returns to bowing. The change in technique transforms the sound while the notes stay the same."
+/>
 
 ## Distribution markings
 
@@ -93,7 +156,7 @@ Texture markings are especially important in orchestral and ensemble scores. Wit
 
 **Tre corde**, remove the soft pedal, returning to full sound.
 
-**Pedal markings (Ped., ✻, or bracket)**, use of the sustain pedal, as covered separately.
+**Pedal markings (<span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>, <span style={{ fontFamily: 'var(--font-bravura)', fontSize: '1.35em' }}>{''}</span>, or bracket)**, use of the sustain pedal, as covered separately.
 
 ## Voice markings
 

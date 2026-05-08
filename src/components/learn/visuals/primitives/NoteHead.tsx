@@ -17,6 +17,10 @@ interface NoteHeadProps {
   stemDirection?: 'up' | 'down'
   /** Suppress the accidental glyph. Used when a parent (e.g. ChordExplorer) renders accidentals in its own column. */
   noAccidental?: boolean
+  /** Override the computed staff position. Used for 1-line (rhythm-only) staves
+   *  where every note sits on the single line regardless of pitch. When set,
+   *  ledger lines and the pitch-based stem-direction default are suppressed. */
+  posOverride?: number
   dimmed?: boolean
   highlight?: boolean
   highlightColor?: string
@@ -32,6 +36,7 @@ export function NoteHead({
   noStem = false,
   stemDirection,
   noAccidental = false,
+  posOverride,
   dimmed = false,
   highlight = false,
   highlightColor,
@@ -39,7 +44,7 @@ export function NoteHead({
 }: NoteHeadProps) {
   const parsed = parsePitch(pitch)
   if (!parsed) return null
-  const pos = staffPosition(parsed, clef)
+  const pos = posOverride ?? staffPosition(parsed, clef)
   const noteY = staffTop + pos * T.step
   const fill = highlight
     ? (highlightColor ?? T.highlightAccent)
@@ -60,7 +65,7 @@ export function NoteHead({
     : parsed.accidental === 'n' ? T.naturalGlyph
     : null
 
-  const ledgers = ledgerLinePositions(pos)
+  const ledgers = posOverride !== undefined ? [] : ledgerLinePositions(pos)
   const interactive = !!(onClick || onMouseEnter)
 
   return (

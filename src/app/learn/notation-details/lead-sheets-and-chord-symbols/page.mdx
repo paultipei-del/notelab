@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -41,9 +42,111 @@ This page covers how to read lead sheets, the system of chord symbols, and the c
 
 ## The visual
 
-<DiagramPlaceholder description="A lead sheet showing a melody line with chord symbols above each measure (including basic triads (C, Am, F, G), seventh chords (Cmaj7, Am7, Dm7, G7), and altered chords) with explanations of each symbol." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    chordSymbols: [
+      { beat: 0, symbol: 'C' },
+      { beat: 4, symbol: 'Am' },
+      { beat: 8, symbol: 'F' },
+      { beat: 12, symbol: 'G' },
+      { beat: 16, symbol: 'Cmaj7' },
+      { beat: 20, symbol: 'Am7' },
+      { beat: 24, symbol: 'Dm7' },
+      { beat: 28, symbol: 'G7' },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'B5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'h' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  systemBreaks={[4]}
+  caption="A short lead sheet. The melody is fully notated; the chords are written as symbols above each measure — a player or accompanist supplies the actual voicing. Basic triads (C, Am, F, G) on the first line; seventh chords (Cmaj7, Am7, Dm7, G7) on the second."
+/>
 
-<DiagramPlaceholder description="A 'fake book' entry showing a complete lead sheet for a jazz standard, with melody, chord symbols, and clear section markers." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: -1,
+    chordSymbols: [
+      { beat: 0, symbol: 'F' },
+      { beat: 4, symbol: 'Dm7' },
+      { beat: 8, symbol: 'Gm7' },
+      { beat: 12, symbol: 'C7' },
+      { beat: 16, symbol: 'F' },
+      { beat: 20, symbol: 'Bb' },
+      { beat: 24, symbol: 'Gm7' },
+      { beat: 28, symbol: 'C7' },
+    ],
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'Bb5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'h' },
+          { type: 'note', pitch: 'Bb4', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'Bb5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'h' },
+        ],
+      }],
+    }],
+    annotations: [
+      { type: 'section', startIdx: 0, endIdx: 11, label: 'A', position: 'above' },
+      { type: 'section', startIdx: 12, endIdx: 23, label: 'A', position: 'above' },
+    ],
+  }}
+  bpm={120}
+  systemBreaks={[4]}
+  caption="A fake book entry: melody, chord symbols, and section markers (A, A) above each repeated section. This is the working format for jazz musicians and pop accompanists — the bare minimum to play a song. The chord symbols reveal a ii-V-I progression in F major, the bedrock of jazz harmony."
+/>
 
 ## The chord symbol system
 
@@ -63,38 +166,53 @@ Basic elements:
 
 ## Common chord symbols
 
-**Basic triads:**
-- **C**, C major triad
-- **Cm** or **C-**, C minor triad
-- **C°** or **Cdim**, C diminished triad
-- **C+** or **Caug**, C augmented triad
-- **Csus** or **Csus4**, C suspended (fourth replaces third): C-F-G
-- **Csus2**, C suspended second (second replaces third): C-D-G
+**Basic triads.**
 
-**Seventh chords:**
-- **C7**, C dominant 7 (C major triad + minor 7th): C-E-G-B♭
-- **Cmaj7** or **C△7**, C major 7 (C major triad + major 7th): C-E-G-B
-- **Cm7** or **C-7**, C minor 7: C-E♭-G-B♭
-- **Cm7♭5** or **Cø7**, C half-diminished 7: C-E♭-G♭-B♭
-- **C°7** or **Cdim7**, C fully diminished 7: C-E♭-G♭-A (or B♭♭)
+| Symbol | Name | Notes (on C) |
+| --- | --- | --- |
+| **C** | C major | C – E – G |
+| **Cm** or **C-** | C minor | C – E♭ – G |
+| **C°** or **Cdim** | C diminished | C – E♭ – G♭ |
+| **C+** or **Caug** | C augmented | C – E – G♯ |
+| **Csus** or **Csus4** | C suspended 4 (4 replaces 3) | C – F – G |
+| **Csus2** | C suspended 2 (2 replaces 3) | C – D – G |
 
-**Extended chords (9ths, 11ths, 13ths):**
-- **C9**, C dominant 9: C-E-G-B♭-D
-- **C11**, C dominant 11 (often without the 3rd): C-F-G-B♭-D
-- **C13**, C dominant 13: C-E-G-B♭-D-F-A (often abbreviated without all notes)
-- **Cmaj9**, C major 9: C-E-G-B-D
-- **Cm9**, C minor 9: C-E♭-G-B♭-D
+**Seventh chords.**
 
-**Alterations:**
-- **C7♭9**, C dominant 7 with flat 9: C-E-G-B♭-D♭
-- **C7♯9**, C dominant 7 with sharp 9: C-E-G-B♭-D♯
-- **C7♯11**, C dominant 7 with sharp 11: C-E-G-B♭-F♯
-- **C7♭13**, C dominant 7 with flat 13: C-E-G-B♭-A♭
+| Symbol | Name | Notes (on C) |
+| --- | --- | --- |
+| **C7** | C dominant 7 | C – E – G – B♭ |
+| **Cmaj7** or **C△7** | C major 7 | C – E – G – B |
+| **Cm7** or **C-7** | C minor 7 | C – E♭ – G – B♭ |
+| **Cm7♭5** or **Cø7** | C half-diminished 7 | C – E♭ – G♭ – B♭ |
+| **C°7** or **Cdim7** | C fully diminished 7 | C – E♭ – G♭ – B♭♭ |
 
-**Slash chords (inversions or specific bass notes):**
-- **C/E**, C major with E in the bass (first inversion)
-- **C/G**, C major with G in the bass (second inversion)
-- **C/B♭**, C major with B♭ in the bass (C7 in third inversion, if you analyze it that way)
+**Extended chords.**
+
+| Symbol | Name | Notes (on C) |
+| --- | --- | --- |
+| **C9** | C dominant 9 | C – E – G – B♭ – D |
+| **C11** | C dominant 11 (often without the 3rd) | C – F – G – B♭ – D |
+| **C13** | C dominant 13 (often abbreviated) | C – E – G – B♭ – D – F – A |
+| **Cmaj9** | C major 9 | C – E – G – B – D |
+| **Cm9** | C minor 9 | C – E♭ – G – B♭ – D |
+
+**Alterations.**
+
+| Symbol | Name | Notes (on C) |
+| --- | --- | --- |
+| **C7♭9** | dom 7 with ♭9 | C – E – G – B♭ – D♭ |
+| **C7♯9** | dom 7 with ♯9 | C – E – G – B♭ – D♯ |
+| **C7♯11** | dom 7 with ♯11 | C – E – G – B♭ – F♯ |
+| **C7♭13** | dom 7 with ♭13 | C – E – G – B♭ – A♭ |
+
+**Slash chords (inversions or specific bass notes).**
+
+| Symbol | Meaning |
+| --- | --- |
+| **C/E** | C major with E in the bass (first inversion) |
+| **C/G** | C major with G in the bass (second inversion) |
+| **C/B♭** | C major with B♭ in the bass (analytically a C7 in 3rd inversion) |
 
 ## Reading a lead sheet
 

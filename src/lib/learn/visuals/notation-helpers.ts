@@ -88,27 +88,35 @@ export interface MeasuredElement {
 export function groupIntoMeasures(
   elements: MusicalElement[],
   ts: TimeSignature,
+  pickupBeats?: number,
 ): MeasuredElement[][] {
   const beatsPerMeasure = ts.numerator
   const measures: MeasuredElement[][] = []
   let current: MeasuredElement[] = []
   let cursor = 0
+  // For a pickup measure, the first measure caps at `pickupBeats` beats
+  // instead of the full `beatsPerMeasure`. Once we've closed it, all
+  // subsequent measures use the normal beat budget.
+  let pickupActive = pickupBeats !== undefined && pickupBeats > 1e-6
+  const currentCap = () => (pickupActive ? (pickupBeats as number) : beatsPerMeasure)
 
   elements.forEach((element, origIdx) => {
     const len = durationToBeats(element.duration, ts, element.tuplet)
-    if (cursor + len > beatsPerMeasure + 1e-6) {
+    if (cursor + len > currentCap() + 1e-6) {
       // Push the current measure and start a new one. Element starts the
       // new measure at beat 0.
       if (current.length > 0) measures.push(current)
       current = []
       cursor = 0
+      pickupActive = false
     }
     current.push({ element, origIdx, beatStart: cursor, beatLen: len })
     cursor += len
-    if (cursor >= beatsPerMeasure - 1e-6) {
+    if (cursor >= currentCap() - 1e-6) {
       measures.push(current)
       current = []
       cursor = 0
+      pickupActive = false
     }
   })
 
@@ -155,16 +163,42 @@ function beatBoundaries(ts: TimeSignature): number[] {
   return out
 }
 
+/** Beam-grouping mode. 'standard' is the only correct setting for real
+ *  music; 'all-together' and 'none' exist for ONE pedagogical demo on
+ *  the beaming-rules lesson and should never be used elsewhere. */
+export type BeamOverride = 'standard' | 'all-together' | 'none'
+
 /**
  * Identify beam groups within a single measure. Beamable durations
  * (eighths and sixteenths, dotted or not) that share a beat-group and are
  * adjacent get joined into one beam. Notes longer than an eighth, rests,
  * and beat boundaries terminate any in-progress group.
+ *
+ * `override`:
+ *   - 'standard' (default): the engraving rule above.
+ *   - 'all-together': beam ALL beamable elements as one group, ignoring
+ *     beat boundaries. (Wrong-on-purpose demo only.)
+ *   - 'none': no beam groups; every eighth/sixteenth gets a flag.
  */
 export function groupIntoBeams(
   measure: MeasuredElement[],
   ts: TimeSignature,
+  override: BeamOverride = 'standard',
 ): BeamGroup[] {
+  if (override === 'none') return []
+  if (override === 'all-together') {
+    const indices: number[] = []
+    const counts: number[] = []
+    measure.forEach((m, i) => {
+      const isNote = m.element.type === 'note'
+      const dur = m.element.duration
+      if (isNote && BEAMABLE.has(dur)) {
+        indices.push(i)
+        counts.push(dur.startsWith('s') ? 2 : 1)
+      }
+    })
+    return indices.length >= 2 ? [{ indices, beamCounts: counts }] : []
+  }
   const boundaries = beatBoundaries(ts)
   const groups: BeamGroup[] = []
   let current: { indices: number[]; counts: number[] } | null = null
@@ -330,6 +364,25 @@ function accToGlyph(
 }
 
 /**
+ * Map a pitch's literal modifier to an accidental glyph kind, regardless
+ * of measure context or key signature. Used for cautionary accidentals
+ * where the glyph must always render (F5 → 'natural', F#5 → 'sharp', etc).
+ */
+export function cautionaryAccidentalKind(
+  pitch: string,
+): 'sharp' | 'flat' | 'natural' | 'doubleSharp' | 'doubleFlat' {
+  const m = pitch.match(/^([A-G])(##|bb|#|b|n)?(-?\d+)$/)
+  if (!m) return 'natural'
+  const [, , accStr] = m
+  const acc = (accStr ?? '') as '' | '#' | 'b' | '##' | 'bb' | 'n'
+  if (acc === '#') return 'sharp'
+  if (acc === 'b') return 'flat'
+  if (acc === '##') return 'doubleSharp'
+  if (acc === 'bb') return 'doubleFlat'
+  return 'natural'
+}
+
+/**
  * Pitches of a note element as a uniform array. Handles both `pitch` and
  * `pitches` shapes.
  */
@@ -337,6 +390,18 @@ export function pitchesOf(n: MusicalNote): string[] {
   if (n.pitches && n.pitches.length > 0) return n.pitches
   if (n.pitch) return [n.pitch]
   return []
+}
+
+/**
+ * Audio-pitches for a note element. Falls back to the displayed pitch when
+ * no override is set, which is the case for almost every note. Used by the
+ * transposing-instruments lesson where the staff shows the written pitch
+ * but playback should produce the sounding pitch.
+ */
+export function playPitchesOf(n: MusicalNote): string[] {
+  if (n.playPitches && n.playPitches.length > 0) return n.playPitches
+  if (n.playPitch) return [n.playPitch]
+  return pitchesOf(n)
 }
 
 /**

@@ -1,5 +1,8 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
+import { DevelopmentStages } from '@/components/learn/visuals/DevelopmentStages'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -44,9 +47,70 @@ Melodic dictation is a centerpiece of traditional ear training curricula. Conser
 
 ## The visual
 
-<DiagramPlaceholder description="A short melody (4-8 measures) shown on a staff, with the staff blank below for the student to write, illustrating how dictation works as an exercise." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'h' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'G5', duration: 'h' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'h' },
+        ],
+      }],
+    }],
+  }}
+  bpm={100}
+  caption="A short 4-bar melody in C major. In a real dictation exercise, the student would hear this played 2-3 times and write down the notes from memory. The melody uses simple stepwise motion, typical of beginning dictation material."
+/>
 
-<DiagramPlaceholder description="A workflow showing the steps of melodic dictation, identify the key, identify the meter, write the rhythm, then fill in pitches." />
+<DevelopmentStages
+  stages={[
+    {
+      period: 'Step 1',
+      headline: 'Identify the key.',
+      skills: ['Listen for the tonic chord at the end of the phrase.', 'Hum the tonic to lock in the framework before anything else.'],
+      variant: 'tonic',
+    },
+    {
+      period: 'Step 2',
+      headline: 'Identify the meter and tempo.',
+      skills: ['Tap along: how many beats per bar?', 'Settle into the pulse before notating anything.'],
+      variant: 'tonic',
+    },
+    {
+      period: 'Step 3',
+      headline: 'Write the rhythm first.',
+      skills: ['Note durations only, no pitches yet.', 'Getting rhythm right early frees attention for pitches on the next playing.'],
+      variant: 'unstable',
+    },
+    {
+      period: 'Step 4',
+      headline: 'Fill in pitches.',
+      skills: ['Use solfège or scale degrees as your reading tool.', 'Anchor each note to a stable degree (1, 3, 5) when you can.'],
+      variant: 'unstable',
+    },
+    {
+      period: 'Step 5',
+      headline: 'Check your work.',
+      skills: ['Sing your transcription against the recording.', 'Discrepancies are usually pitch mistakes; rhythm errors are easier to catch.'],
+      variant: 'expert',
+    },
+  ]}
+  caption="The standard workflow for melodic dictation. Tackle the dimensions of music one at a time: key first (so you know the framework), then meter (so you know the framework's pulse), then rhythm (the easier task), then pitches (the harder task). Working in this order is dramatically faster than trying to capture everything at once."
+/>
 
 ## A strategy for melodic dictation
 
@@ -127,3 +191,12 @@ For learning purposes, approximations are fine early on. The goal is to get clos
 **How does this relate to sight-singing?**
 
 Sight-singing and dictation are complementary. Sight-singing goes from notation to sound (you read music and sing it). Dictation goes from sound to notation (you hear music and write it). Both involve understanding the same relationships (pitches, intervals, rhythms) from different directions. Strong sight-singers usually become strong dictators, and vice versa.
+
+<EarTrainingCTA
+  intro="Practice melodic patterns and the underlying ear-training skills:"
+  decks={[
+    { name: 'Melodic Patterns', slug: 'ear-melodic-patterns', cards: '12 cards', description: 'Identify short melodic fragments by pattern. A melodic-dictation MVP.' },
+    { name: 'Intervals I', slug: 'ear-intervals', cards: '12 cards', description: 'Hearing intervals between adjacent notes is the foundation of dictation.' },
+    { name: 'Solfège I: Scale Degrees', slug: 'ear-solfege-i', cards: '14 cards', description: 'Anchoring notes to scale degrees makes melodies rememberable.' },
+  ]}
+/>

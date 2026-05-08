@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -39,9 +40,78 @@ This page covers how transposition works, when it's needed, and the techniques f
 
 ## The visual
 
-<DiagramPlaceholder description="A melody in C major (original), the same melody transposed up a perfect fifth to G major (transposed version), showing how every note shifts by the same interval while the melodic and harmonic structure stays identical." />
+<figure style={{ margin: '24px auto' }}>
+  <div className="nl-comparison-pair">
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 0,
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'C5', duration: 'q' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'G5', duration: 'q' },
+              { type: 'note', pitch: 'E5', duration: 'q' },
+              { type: 'note', pitch: 'F5', duration: 'q' },
+              { type: 'note', pitch: 'D5', duration: 'q' },
+              { type: 'note', pitch: 'C5', duration: 'h' },
+            ],
+          }],
+        }],
+      }}
+      bpm={108}
+      caption="Original melody in C major."
+    />
+    <MusicalExample
+      score={{
+        timeSignature: { numerator: 4, denominator: 4 },
+        keySignature: 1,
+        staves: [{
+          clef: 'treble',
+          voices: [{
+            elements: [
+              { type: 'note', pitch: 'G5', duration: 'q' },
+              { type: 'note', pitch: 'B5', duration: 'q' },
+              { type: 'note', pitch: 'D6', duration: 'q' },
+              { type: 'note', pitch: 'B5', duration: 'q' },
+              { type: 'note', pitch: 'C6', duration: 'q' },
+              { type: 'note', pitch: 'A5', duration: 'q' },
+              { type: 'note', pitch: 'G5', duration: 'h' },
+            ],
+          }],
+        }],
+      }}
+      bpm={108}
+      caption="Same melody transposed up a perfect fifth to G major."
+    />
+  </div>
+  <figcaption style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', textAlign: 'center', marginTop: 12, color: '#5F5E5A' }}>Transposition: every note shifts by the same interval, so the melodic and harmonic structure stays identical — what changes is the pitch level (and the key signature). The melody sounds higher in G but feels exactly the same.</figcaption>
+</figure>
 
-<DiagramPlaceholder description="The same melody transposed down a minor third to A minor, showing how transposition works downward and into a minor key." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'A4', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'B4', duration: 'q' },
+          { type: 'note', pitch: 'A4', duration: 'h' },
+        ],
+      }],
+    }],
+  }}
+  bpm={108}
+  caption="The same melody transposed down a minor third — to A minor. Now the melody sits lower AND in a minor key, which gives it a different emotional color even though the structural intervals are unchanged."
+/>
 
 ## How transposition works
 

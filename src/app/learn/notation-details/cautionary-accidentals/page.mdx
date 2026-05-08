@@ -1,5 +1,6 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { MusicalExample } from '@/components/learn/visuals/MusicalExample'
 
 export const learnPage = {
   topic: 'notation-details',
@@ -39,9 +40,53 @@ But music is complex, and these rules can create ambiguity. What if a measure ha
 
 ## The visual
 
-<DiagramPlaceholder description="A measure with an F♯ on beat 1, a natural sign cautionary accidental restating F♯ later in the measure (or a natural canceling the F♯ even if the key signature already has no F♯)." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q', cautionary: true },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+        ],
+      }],
+    }],
+  }}
+  bpm={92}
+  caption="A passage showing accidental rules. In m. 1 beat 1, an F♯ raises the F. By beat 3, the engine emits an explicit natural to cancel the sharp. In m. 2, the F natural would automatically reset (accidentals last only one measure), but a cautionary natural — shown here in parentheses — is often added to reassure the performer."
+/>
 
-<DiagramPlaceholder description="A measure-end / measure-beginning transition showing a cautionary natural at the start of the new measure, even though the accidental from the previous measure would have ended anyway." />
+<MusicalExample
+  score={{
+    timeSignature: { numerator: 4, denominator: 4 },
+    keySignature: 0,
+    staves: [{
+      clef: 'treble',
+      voices: [{
+        elements: [
+          { type: 'note', pitch: 'C5', duration: 'q' },
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'A5', duration: 'q' },
+          { type: 'note', pitch: 'F#5', duration: 'q' },
+          { type: 'note', pitch: 'F5', duration: 'q', cautionary: true },
+          { type: 'note', pitch: 'E5', duration: 'q' },
+          { type: 'note', pitch: 'D5', duration: 'q' },
+          { type: 'note', pitch: 'C5', duration: 'q' },
+        ],
+      }],
+    }],
+  }}
+  bpm={92}
+  caption="Crossing the bar line. The F♯ in m. 1 is automatically cancelled at the bar line — by music theory, m. 2's F should be natural without any sign. But because the F♯ was prominent in the previous measure, many editors add a courtesy natural — shown in parentheses — to remove ambiguity for the player."
+/>
 
 ## When cautionary accidentals are used
 

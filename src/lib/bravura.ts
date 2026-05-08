@@ -25,11 +25,16 @@ export const B = {
   thirtySecondNoteDown: '\uE1DC',
 
   // ── Rests ──
-  wholeRest: '\uE4F4',
-  halfRest: '\uE4F5',
+  // SMuFL canonical: rests live at U+E4E3 (whole) onward. Earlier
+  // wholeRest / halfRest values (U+E4F4 / U+E4F5) were not allocated
+  // to rests in SMuFL; Rest.tsx always used the correct codepoints
+  // and this map now matches it.
+  wholeRest: '\uE4E3',
+  halfRest: '\uE4E4',
   quarterRest: '\uE4E5',
   eighthRest: '\uE4E6',
   sixteenthRest: '\uE4E7',
+  thirtySecondRest: '\uE4E8',
 
   // ── Accidentals ──
   flat: '\uE260',
@@ -92,6 +97,68 @@ export const B = {
   // ── Additional Articulations ──
   marcatoAbove: '\uE4AC',
   staccatissimoAbove: '\uE4A8',
+
+  // ── Pedal markings (Bravura keyboard range) ──
+  pedalPed: '\uE650',          // Ped. — sustain-pedal engage marking
+  pedalUp: '\uE655',           // ✱   — sustain-pedal release marking
 } as const
 
 export type BravuraSymbol = keyof typeof B
+
+// ── Articulation glyphs grouped by direction (above/below the staff) ───
+// Re-export of the inline ARTIC_GLYPHS map that used to live in
+// MusicalExample.tsx. The renderer picks above-vs-below per stem direction.
+export const ARTIC_GLYPHS = {
+  accent:        { above: '\uE4A0', below: '\uE4A1' },
+  staccato:      { above: '\uE4A2', below: '\uE4A3' },
+  tenuto:        { above: '\uE4A4', below: '\uE4A5' },
+  staccatissimo: { above: '\uE4A6', below: '\uE4A7' },
+  marcato:       { above: '\uE4AC', below: '\uE4AD' },
+  fermata:       { above: '\uE4C0', below: '\uE4C1' },
+} as const
+
+// ── Ornament glyphs ───────────────────────────────────────────────────
+// Common-practice ornaments. Glyphs sit ABOVE the notehead.
+export const ORNAMENT_GLYPHS = {
+  trill:           '\uE566',
+  mordent:         '\uE56C',
+  invertedMordent: '\uE56D',
+  turn:            '\uE567',
+} as const
+
+// ── Dynamic-letter glyphs ─────────────────────────────────────────────
+// Bravura supplies pre-composed combos (pp, mf, etc.) at distinct
+// codepoints — they're NOT regular text rendered with Bravura. Use
+// fontFamily=Bravura when rendering these.
+export const DYNAMIC_GLYPHS = {
+  pp:  '\uE52B',
+  p:   '\uE520',
+  mp:  '\uE52C',
+  mf:  '\uE52D',
+  f:   '\uE522',
+  ff:  '\uE52F',
+  sfz: '\uE539',
+  fz:  '\uE535',
+} as const
+
+// ── Pedal-marking glyphs ──────────────────────────────────────────────
+// Sustain-pedal engage / release glyphs. Sit BELOW the bass staff.
+export const PEDAL_GLYPHS = {
+  ped: '\uE650',
+  pedRelease: '\uE655',
+} as const
+
+// ── Metronome-mark glyphs ─────────────────────────────────────────────
+// SMuFL provides a dedicated range for inline metronome notation: note
+// glyphs sized to align with surrounding text. The full musical note
+// glyphs at U+E1D5+ are designed as standalone musical glyphs and are
+// too tall to sit inline with text — these met-range variants are the
+// correct choice for "♩ = 120" style markings.
+export const METRONOME_GLYPHS = {
+  half:            '\uECA0',  // metNoteHalfUp
+  quarter:         '\uECA2',  // metNoteQuarterUp
+  eighth:          '\uECA3',  // metNote8thUp
+  sixteenth:       '\uECA5',  // metNote16thUp
+  augmentationDot: '\uECB7',  // metAugmentationDot
+} as const
+

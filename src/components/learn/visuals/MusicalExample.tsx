@@ -17,13 +17,29 @@
  * share a time grid: all voices land on the same x for elements that begin
  * on the same beat.
  *
- * Limitations (filled in by later Phase work):
- *   - Phase 2: tuplets
- *   - Phase 3: slurs
- *   - Phase 4: articulations / dynamics / ornaments / grace notes
- *   - Phase 5: repeats, key/time changes mid-piece, cross-system ties
- *   - Phase 6: cross-staff stems, beam slope
- *   - Phase 7: optical / proportional spacing engine
+ * Score-marking annotations (added in Chapter IX infra):
+ *   voice.dynamics[]    DynamicMark { beat, level, modifier? } — Bravura
+ *                       glyph (pp/p/mp/mf/f/ff/sfz/fz) below treble or
+ *                       above bass at the resolved beat x.
+ *   voice.hairpins[]    Hairpin { startBeat, endBeat, direction, placement? }
+ *                       — two-line wedge (`<` cresc., `>` decresc.) split
+ *                       cleanly across systems.
+ *   voice.pedalMarks[]  PedalMark { startBeat, endBeat, style? } — 'text'
+ *                       renders Ped./✱ glyphs at endpoints; 'bracket'
+ *                       draws a continuous bracket below the bottom-most
+ *                       stave with end ticks.
+ *   score.tempoMarkings[]  TempoMarking { measureIdx, beat?, text?, metronome?,
+ *                       style?, endMeasureIdx? } — placed above the top
+ *                       staff. 'normal' = bold serif (Allegro); 'change'
+ *                       = italic (rit., a tempo); 'change-with-line' adds
+ *                       a dashed continuation line spanning to endMeasureIdx.
+ *
+ * Limitations still open:
+ *   - Grace notes (data field exists but renderer skips them)
+ *   - Tremolo, arpeggio sign
+ *   - Mid-piece key / time changes (data fields exist, no renderer)
+ *   - Cross-staff stems, asymmetric-meter beaming (5/4, 7/8)
+ *   - Audio velocity from dynamics (visual-only for now)
  *
  * Audio uses the shared Tone.js sampler. Each voice schedules its own
  * sequence on a common start time. Tied chains within a voice trigger one
@@ -46,7 +62,9 @@ import {
   computeStemDirection,
   accidentalsForKey,
   shouldRenderAccidental,
+  cautionaryAccidentalKind,
   pitchesOf,
+  playPitchesOf,
   tiedChainSeconds,
   type MeasuredElement,
   type BeamGroup,
@@ -62,6 +80,7 @@ import type {
   Voice,
   ClefName,
 } from '@/lib/learn/visuals/notation-types'
+import { ARTIC_GLYPHS, ORNAMENT_GLYPHS, DYNAMIC_GLYPHS, PEDAL_GLYPHS, METRONOME_GLYPHS } from '@/lib/bravura'
 
 interface MusicalExampleProps {
   /** v2 input: full Score. Takes precedence over `elements`+`clef`. */
@@ -85,8 +104,35 @@ interface MusicalExampleProps {
   systemBreaks?: number[]
   /** Annotations target the primary line (stave 0, voice 0). */
   annotations?: MusicalAnnotation[]
+  /**
+   * Beam-grouping override. Only useful for the beaming-rules lesson.
+   * 'standard' (default) follows engraving rules. 'all-together' beams
+   * every beamable note as one group (wrong on purpose). 'none' draws
+   * no beams (every eighth/sixteenth flagged). Don't use elsewhere.
+   */
+  beamOverride?: 'standard' | 'all-together' | 'none'
+  /** Suppress the Play button and click-to-play feedback. Default false. */
+  audio?: boolean
+  /** When true, every note renders in the highlight-accent color. Used by
+   *  external "play me" controls (e.g. TransposingDemo) that want the staff
+   *  to flash in sync with their own button state. */
+  highlightAll?: boolean
+  /**
+   * '5-line' (default) is normal pitched notation. '1-line' renders a
+   * single horizontal line, no clef, no key signature; pitch fields are
+   * IGNORED — every notehead sits on the line. For rhythmic-only
+   * notation. Audio plays each rhythmic note at a neutral fixed pitch.
+   */
+  staffType?: '5-line' | '1-line'
   showPlayButton?: boolean
   showMeasureNumbers?: boolean
+  /** Render every beat (1, 2, 3, …) below the staff, evenly spaced across each
+   *  measure. Useful for rhythmic-dictation lessons — beats appear even if no
+   *  note attacks there (mid-rest, mid-held-note). */
+  showBeatNumbers?: boolean
+  /** Play a metronome click on every beat during Play. Accents the downbeat
+   *  of each measure. Off by default. */
+  metronome?: boolean
   size?: LearnSize
   caption?: string
 }
@@ -104,34 +150,10 @@ const FLAG_DOWN_8 = ''
 const FLAG_DOWN_16 = ''
 const AUG_DOT = ''
 
-// SMuFL articulation glyphs (above/below variants). Codepoints per the
-// SMuFL standard articulation range U+E4A0–U+E4FF.
-const ARTIC_GLYPHS: Record<string, { above: string; below: string }> = {
-  accent:        { above: '', below: '' },
-  staccato:      { above: '', below: '' },
-  tenuto:        { above: '', below: '' },
-  staccatissimo: { above: '', below: '' },
-  marcato:       { above: '', below: '' },
-  fermata:       { above: '', below: '' },
-}
-// SMuFL ornament glyphs — common-practice ornaments.
-const ORNAMENT_GLYPHS: Record<string, string> = {
-  trill:           '',
-  mordent:         '',
-  invertedMordent: '',
-  turn:            '',
-}
-// SMuFL dynamics — used by Phase-4 dynamics rendering.
-const DYNAMIC_GLYPHS: Record<string, string> = {
-  pp:  '',
-  p:   '',
-  mp:  '',
-  mf:  '',
-  f:   '',
-  ff:  '',
-  sfz: '',
-  fz:  '',
-}
+// SMuFL glyph maps for articulations / ornaments / dynamics live in
+// '@/lib/bravura' so they can be reused by other primitives. The local
+// destructure below keeps the reference style of the rest of this file
+// unchanged.
 
 function isWhole(d: Duration): boolean {
   return d[0] === 'w'
@@ -211,6 +233,9 @@ interface PlacedElement {
     | 'sharp' | 'flat' | 'natural' | 'doubleSharp' | 'doubleFlat'
     | null
   >
+  /** Per-pitch parallel array: true → render the accidental in parens
+   *  (cautionary / courtesy marking). */
+  accidentalCautionary: boolean[]
   stemDir: 'up' | 'down'
   /** Beam-group index this note belongs to (per-voice within a measure). */
   beamGroupIdx: number | null
@@ -280,18 +305,29 @@ export function MusicalExample(props: MusicalExampleProps) {
   const {
     bpm = 80,
     systemBreaks,
-    annotations,
-    showPlayButton = true,
+    annotations: annotationsTopLevel,
+    beamOverride = 'standard',
+    audio = true,
+    highlightAll = false,
+    staffType = '5-line',
+    showPlayButton: showPlayButtonRaw = true,
     showMeasureNumbers = false,
+    showBeatNumbers = false,
+    metronome = false,
     size = 'inline',
     caption,
   } = props
+  const showPlayButton = audio && showPlayButtonRaw
+  const isOneLine = staffType === '1-line'
 
   const T = tokensFor(size)
   const sampler = useSampler()
 
   const score = React.useMemo(() => buildScoreFromProps(props), [props])
-  const { staves, timeSignature, keySignature = 0 } = score
+  const { staves, timeSignature, keySignature = 0, pickupBeats } = score
+  // Author-friendly fallback: some MDX pages nest `annotations` inside the
+  // `score` prop. Honor either form; top-level wins if both are provided.
+  const annotations = annotationsTopLevel ?? (score as Score & { annotations?: MusicalAnnotation[] }).annotations
 
   // Per-element flash state for click playback feedback. Keyed by composite
   // string `s{stave}v{voice}i{origIdx}` so multi-voice flashes don't collide.
@@ -339,9 +375,9 @@ export function MusicalExample(props: MusicalExampleProps) {
   // Per stave, per voice → measure list. measuresByVoice[s][v] = measures[]
   const measuresByVoice = React.useMemo(() => {
     return staves.map(stave =>
-      stave.voices.map(voice => groupIntoMeasures(voice.elements, timeSignature)),
+      stave.voices.map(voice => groupIntoMeasures(voice.elements, timeSignature, pickupBeats)),
     )
-  }, [staves, timeSignature])
+  }, [staves, timeSignature, pickupBeats])
 
   // Total measure count = max across all voices. Voices that fall short get
   // empty trailing measures (silent). v2 Phase 1 expects equal-length voices;
@@ -523,11 +559,55 @@ export function MusicalExample(props: MusicalExampleProps) {
 
   const headroom = Math.round(40 * T.scale + 16)
   const footroom = Math.round(48 * T.scale + 12)
+  // Above-position 'label' annotations render as chord-symbol style — bigger
+  // serif type, positioned above the actual stem-tip extent. Reserve extra
+  // headroom whenever any such label exists so it doesn't get clipped at
+  // the top of the SVG.
+  const hasAboveLabels = (annotations ?? []).some(
+    a => a.type === 'label' && (a.position ?? 'above') === 'above',
+  )
+  const hasBelowLabels = (annotations ?? []).some(
+    a => a.type === 'label' && a.position === 'below',
+  )
+  const hasAboveBrackets = (annotations ?? []).some(
+    a => (a.type === 'section' || a.type === 'bracket')
+      && (a.position ?? 'above') === 'above',
+  )
+  const hasChordSymbolsLocal = (props.score?.chordSymbols?.length ?? 0) > 0
   const annotationHeadroom = annotations && annotations.length > 0
-    ? Math.round(34 * T.scale + 10) : 0
+    ? Math.round(34 * T.scale + 10)
+      + (hasAboveLabels ? Math.round(40 * T.scale + 16) : 0)
+      + (hasAboveBrackets && hasChordSymbolsLocal ? Math.round(36 * T.scale + 16) : 0)
+    : 0
+  // Below labels need their own footroom budget so labels under low notes
+  // (e.g. C4 below the staff) don't run off the bottom of the SVG.
+  const annotationFootroom = hasBelowLabels ? Math.round(36 * T.scale + 12) : 0
+  const hasTempoMarkings = (score.tempoMarkings?.length ?? 0) > 0
+  const tempoHeadroom = hasTempoMarkings ? Math.round(58 * T.scale + 24) : 0
+  const hasChordSymbols = (score.chordSymbols?.length ?? 0) > 0
+  const chordSymbolHeadroom = hasChordSymbols ? Math.round(48 * T.scale + 28) : 0
+  const hasVoiceMarks = staves.some(stave =>
+    stave.voices.some(v =>
+      (v.dynamics?.length ?? 0) > 0
+      || (v.hairpins?.length ?? 0) > 0
+      || (v.pedalMarks?.length ?? 0) > 0,
+    ),
+  )
+  const voiceMarksFootroom = hasVoiceMarks ? Math.round(50 * T.scale + 18) : 0
   const measureNumberFootroom = showMeasureNumbers
     ? Math.round(20 * T.scale + 6) : 0
-  const systemSpacing = Math.round(60 * T.scale + 24)
+  // Per-system above-staff content (chord symbols, above-staff brackets,
+  // tempo markings) lives ABOVE system N's staffTop. Without extra spacing,
+  // it would overlap whatever system N-1 has BELOW its staff. Add the
+  // above-staff budget to systemSpacing so each system gets its own
+  // clearance.
+  const baseSystemSpacing = Math.round(60 * T.scale + 24)
+  const aboveStaffBudget =
+    chordSymbolHeadroom
+    + tempoHeadroom
+    + (hasAboveLabels ? Math.round(40 * T.scale + 16) : 0)
+    + (hasAboveBrackets && hasChordSymbolsLocal ? Math.round(36 * T.scale + 16) : 0)
+  const systemSpacing = baseSystemSpacing + aboveStaffBudget
 
   // Per-system flexible inter-staff distance: when notes between the staves
   // (low notes in upper stave, high notes in lower stave) need ledger-line
@@ -611,9 +691,85 @@ export function MusicalExample(props: MusicalExampleProps) {
     return Math.max(defaultInterStaffGap, upperOverhang + lowerOverhang + buffer)
   }
 
+  // Stem extent pre-pass. Forced-up stems on notes above the top line (or
+  // forced-down stems on notes below the bottom line, in multi-voice
+  // configs) can project beyond the default headroom/footroom. Pre-scan
+  // every voice on every stave to find the worst-case stem-tip distance
+  // ABOVE staffTop and BELOW staffBottom, then expand the global
+  // headroom/footroom so the SVG viewBox contains those tips.
+  let stemExtraHeadroom = 0
+  let stemExtraFootroom = 0
+  staves.forEach((stave, si) => {
+    const staveClef = stave.clef
+    stave.voices.forEach(voice => {
+      const policy = voice.stemPolicy ?? 'auto'
+      voice.elements.forEach(el => {
+        if (el.type !== 'note') return
+        const ps = pitchesOf(el)
+        if (ps.length === 0) return
+        const positions: number[] = []
+        for (const pitch of ps) {
+          const parsed = parsePitch(pitch)
+          if (!parsed) continue
+          positions.push(staffPosition(parsed, staveClef))
+        }
+        if (positions.length === 0) return
+        // Predict stem direction: explicit forceStem > policy > auto rule.
+        let dir: 'up' | 'down'
+        if ((el as MusicalNote).forceStem) {
+          dir = (el as MusicalNote).forceStem!
+        } else if (policy === 'up' || policy === 'down') {
+          dir = policy
+        } else {
+          dir = computeStemDirection(ps, staveClef)
+        }
+        if (dir === 'up') {
+          const topPos = Math.min(...positions)
+          // Stem tip y = staffTop + topPos*step - stemLength.
+          // Distance above staffTop = -topPos*step + stemLength (for topPos<0).
+          const above = -topPos * T.step + T.stemLength
+          if (above > stemExtraHeadroom) stemExtraHeadroom = above
+        } else {
+          const bottomPos = Math.max(...positions)
+          // Distance below the bottom staff line (which is at staffTop + 8*step).
+          const below = (bottomPos - 8) * T.step + T.stemLength
+          if (below > stemExtraFootroom) stemExtraFootroom = below
+        }
+        // Ornaments stack ABOVE the topmost notehead regardless of stem
+        // direction. For high notes (e.g. A5 with a mordent, or any note
+        // above the staff with a trill/turn), the ornament glyph can
+        // extend further above the staffTop than the stem ever would.
+        const ornCount = (el as MusicalNote).ornaments?.length ?? 0
+        if (ornCount > 0) {
+          const topPos = Math.min(...positions)
+          // Match the renderer's offset formula: notehead-half + base offset
+          // + per-glyph stack + glyph half-height.
+          const baseOffset = Math.round(10 * T.scale + 4)
+          const perGlyphStack = Math.round(T.noteheadFontSize * 0.36)
+          const glyphHalfHeight = Math.round(T.noteheadFontSize * 0.85 * 0.5)
+          const ornAbove = -topPos * T.step
+            + T.noteheadHalfHeight
+            + baseOffset
+            + (ornCount - 1) * perGlyphStack
+            + glyphHalfHeight
+          if (ornAbove > stemExtraHeadroom) stemExtraHeadroom = ornAbove
+        }
+      })
+    })
+  })
+  // Add a small breathing pad above stem tips. Extra headroom is only added
+  // when the pre-pass result exceeds the default headroom budget. When the
+  // score has volta brackets, reserve extra room for the bracket + label
+  // that sit ABOVE the topmost stem tip.
+  const stemPad = Math.round(8 * T.scale + 4)
+  const hasVoltaBracket = (score.measureMarks ?? []).some(m => !!m.voltaNumber)
+  const voltaPad = hasVoltaBracket ? Math.round(28 * T.scale + 12) : 0
+  const extraTop = Math.max(0, stemExtraHeadroom + stemPad + voltaPad - headroom)
+  const extraBottom = Math.max(0, stemExtraFootroom + stemPad - footroom)
+
   // Per-system layout.
   const systems: SystemLayout[] = []
-  let curSystemTop = headroom + annotationHeadroom
+  let curSystemTop = headroom + extraTop + annotationHeadroom + tempoHeadroom + chordSymbolHeadroom
 
   systemSlices.forEach(([sliceStart, sliceEnd], systemIdx) => {
     const showTimeSig = systemIdx === 0
@@ -679,7 +835,7 @@ export function MusicalExample(props: MusicalExampleProps) {
         const voiceLayouts: VoiceMeasureLayout[] = stave.voices.map((voice, vi) => {
           const voiceMeasure = measuresByVoice[si][vi][mi] ?? []
           const policy = effectiveStemPolicy(voice, vi, stave.voices.length)
-          const beamGroups = groupIntoBeams(voiceMeasure, timeSignature)
+          const beamGroups = groupIntoBeams(voiceMeasure, timeSignature, beamOverride)
           const placed: PlacedElement[] = []
 
           const accidentalsRunning = new Map<string, string>()
@@ -698,23 +854,53 @@ export function MusicalExample(props: MusicalExampleProps) {
               systemIdx,
               positions: [],
               accidentals: [],
+              accidentalCautionary: [],
               stemDir: 'up',
               beamGroupIdx: null,
               beamCount: beamCountForDuration(mEl.element.duration),
             }
             if (mEl.element.type === 'note') {
               const ps = pitchesOf(mEl.element)
+              const isCautionary = (mEl.element as MusicalNote).cautionary === true
+              if (isOneLine) {
+                // 1-line staff: every note sits on the single line.
+                // Pitches are ignored visually; positions = [4] (middle).
+                for (let pi = 0; pi < Math.max(1, ps.length); pi++) {
+                  entry.positions.push(4)
+                  entry.accidentals.push(null)
+                  entry.accidentalCautionary.push(false)
+                }
+                entry.stemDir = 'up'
+                beamGroups.forEach((bg, bgi) => {
+                  if (bg.indices.includes(idxInMeasure)) entry.beamGroupIdx = bgi
+                })
+                placed.push(entry)
+                return
+              }
               for (const pitch of ps) {
                 const parsed = parsePitch(pitch)
                 if (!parsed) {
                   entry.positions.push(4)
                   entry.accidentals.push(null)
+                  entry.accidentalCautionary.push(false)
                   continue
                 }
                 entry.positions.push(staffPosition(parsed, activeClef))
-                entry.accidentals.push(
-                  shouldRenderAccidental(pitch, accidentalsRunning, keyAlt),
-                )
+                if (isCautionary) {
+                  // Force the accidental glyph regardless of measure context;
+                  // mark for parenthetical rendering. Still update the running
+                  // accidentals map so the engraving rules stay consistent for
+                  // any later notes in this measure.
+                  const kind = cautionaryAccidentalKind(pitch)
+                  shouldRenderAccidental(pitch, accidentalsRunning, keyAlt)
+                  entry.accidentals.push(kind)
+                  entry.accidentalCautionary.push(true)
+                } else {
+                  entry.accidentals.push(
+                    shouldRenderAccidental(pitch, accidentalsRunning, keyAlt),
+                  )
+                  entry.accidentalCautionary.push(false)
+                }
               }
               // forceStem (from MusicXML <stem>) > voice policy > auto.
               const forced = (mEl.element as MusicalNote).forceStem
@@ -835,7 +1021,7 @@ export function MusicalExample(props: MusicalExampleProps) {
       bodyStartX,
     })
 
-    curSystemTop += oneSystemHeight + footroom + measureNumberFootroom + systemSpacing
+    curSystemTop += oneSystemHeight + footroom + voiceMarksFootroom + measureNumberFootroom + systemSpacing
   })
 
   // ── Equal-length system stretch (page-fill) ──
@@ -885,7 +1071,7 @@ export function MusicalExample(props: MusicalExampleProps) {
   }
 
   // Final SVG dimensions.
-  const totalH = curSystemTop - systemSpacing + footroom * 0.5 + measureNumberFootroom + 12
+  const totalH = curSystemTop - systemSpacing + footroom * 0.5 + extraBottom + measureNumberFootroom + annotationFootroom + 12
   const totalW = systems.reduce(
     (acc, s) => Math.max(acc, margin + s.staffWidth + margin),
     0,
@@ -912,6 +1098,75 @@ export function MusicalExample(props: MusicalExampleProps) {
     })
   })
 
+  // Per-(stave, voice) cumulative-beat → x lookup. Used to resolve
+  // dynamics / hairpins / pedal / tempo "beat" anchors to a screen x.
+  // beat 0 = downbeat of measure 0; beat == numerator = downbeat of measure 1.
+  // Mid-piece time-signature changes aren't yet honored here (the code
+  // assumes one constant time signature, matching the rest of v2).
+  interface TimingEntry {
+    cumBeat: number
+    beatLen: number
+    x: number
+    /** Right boundary of this element on the staff: the next element's x
+     *  in the same voice if there is one, otherwise the measure's right
+     *  edge. Used to anchor "end-of-span" markings (pedal release ✱,
+     *  bracket close, hairpin tail) at the actual end of the held note
+     *  rather than at its left attack point. */
+    endX: number
+    systemIdx: number
+    staffTop: number
+    measureRightX: number
+  }
+  const voiceTiming = new Map<string, TimingEntry[]>()
+  systems.forEach(sys => {
+    sys.measures.forEach(mLayout => {
+      const measureStart = mLayout.globalIdx * timeSignature.numerator
+      mLayout.staves.forEach(staveLayout => {
+        staveLayout.voices.forEach(voiceLayout => {
+          const key = `s${staveLayout.staveIdx}v${voiceLayout.voiceIdx}`
+          if (!voiceTiming.has(key)) voiceTiming.set(key, [])
+          const arr = voiceTiming.get(key)!
+          voiceLayout.placed.forEach(p => {
+            arr.push({
+              cumBeat: measureStart + p.measured.beatStart,
+              beatLen: p.measured.beatLen,
+              x: p.x,
+              endX: 0, // populated after sort
+              systemIdx: sys.systemIdx,
+              staffTop: staveLayout.staffTop,
+              measureRightX: mLayout.x0 + mLayout.width,
+            })
+          })
+        })
+      })
+    })
+  })
+  voiceTiming.forEach(arr => {
+    arr.sort((a, b) => a.cumBeat - b.cumBeat)
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].endX = i + 1 < arr.length ? arr[i + 1].x : arr[i].measureRightX
+    }
+  })
+
+  function resolveBeat(si: number, vi: number, beat: number): TimingEntry | null {
+    const arr = voiceTiming.get(`s${si}v${vi}`)
+    if (!arr || arr.length === 0) return null
+    // Prefer the entry whose [cumBeat, cumBeat+beatLen) contains `beat`.
+    for (const entry of arr) {
+      if (beat >= entry.cumBeat - 1e-6 && beat < entry.cumBeat + entry.beatLen - 1e-6) {
+        return entry
+      }
+    }
+    // Fall back: nearest by cumBeat distance (handles past-end beats).
+    let best = arr[0]
+    let bestDist = Math.abs(arr[0].cumBeat - beat)
+    for (const e of arr) {
+      const d = Math.abs(e.cumBeat - beat)
+      if (d < bestDist) { best = e; bestDist = d }
+    }
+    return best
+  }
+
   // ── Audio playback ────────────────────────────────────────────────────
   const handleNoteClick = async (
     staveIdx: number,
@@ -921,6 +1176,7 @@ export function MusicalExample(props: MusicalExampleProps) {
     duration: Duration,
     tuplet?: { actual: number; normal: number },
   ) => {
+    if (!audio) return
     flashCellByKey(`s${staveIdx}v${voiceIdx}i${origIdx}`)
     const seconds = durationToSeconds(duration, bpm, timeSignature, tuplet)
     await sampler.ensureReady()
@@ -930,56 +1186,145 @@ export function MusicalExample(props: MusicalExampleProps) {
   }
 
   const [playing, setPlaying] = React.useState(false)
+  // Holds the live Tone module reference + the scheduled Transport event
+  // ids for the current play session. Stop cancels every pending id so
+  // re-clicking Play doesn't layer the previous schedule on top.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const transportRef = React.useRef<{ Tone: any; ids: number[] } | null>(null)
+
+  const cancelTransportSchedule = React.useCallback(() => {
+    const ref = transportRef.current
+    if (!ref) return
+    try {
+      ref.ids.forEach(id => ref.Tone.Transport.clear(id))
+      ref.Tone.Transport.stop()
+      ref.Tone.Transport.cancel(0)
+    } catch {}
+    transportRef.current = null
+  }, [])
+
+  React.useEffect(() => cancelTransportSchedule, [cancelTransportSchedule])
+
   const handlePlayAll = async () => {
     if (playing) return
     setPlaying(true)
     clearPlayTimers()
+    cancelTransportSchedule()
     await sampler.ensureReady()
     const Tone = await import('tone')
-    const startTime = Tone.now() + 0.1
+    // Reset the Transport to a known state so per-session scheduling
+    // starts at transport time 0 every time.
+    Tone.Transport.stop()
+    Tone.Transport.cancel(0)
+    Tone.Transport.position = 0
+
+    const ids: number[] = []
     let maxEnd = 0
 
-    // Schedule each voice on each stave independently.
+    // Build the play order from measureMarks (start/end repeat barlines
+    // and volta brackets). Without marks, it's just every measure once.
+    const measureMarks = score.measureMarks ?? []
+    const playOrder = buildPlayOrder(measureMarks, totalMeasures)
+
+    // Schedule each voice on each stave, walking measures in playOrder so
+    // repeats and voltas produce the correct audible sequence.
     staves.forEach((stave, si) => {
       stave.voices.forEach((voice, vi) => {
+        const voiceMeasures = measuresByVoice[si][vi]
         let cursorSec = 0
-        const seenTied = new Set<number>()
-        voice.elements.forEach((el, idx) => {
-          if (el.type === 'rest') {
-            // Rests advance the playback cursor but don't flash — the
-            // visual highlight should track only what's actually sounding.
-            const sec = durationToSeconds(el.duration, bpm, timeSignature, el.tuplet)
-            cursorSec += sec
-            return
+        for (let p = 0; p < playOrder.length; p++) {
+          const playMeasureIdx = playOrder[p]
+          const measure = voiceMeasures[playMeasureIdx]
+          if (!measure) {
+            // Empty measure (voice shorter than the score) — advance by
+            // one measure of beats so other voices stay aligned.
+            cursorSec += (60 / bpm) * timeSignature.numerator
+            continue
           }
-          if (seenTied.has(idx)) return
-          const ps = pitchesOf(el)
-          const { totalSeconds, chainEnd } = tiedChainSeconds(voice.elements, idx, bpm, timeSignature)
-          for (let j = idx + 1; j <= chainEnd; j++) seenTied.add(j)
-          const t = startTime + cursorSec
-          ps.forEach(p => sampler.playAt(p, totalSeconds, t))
-          const flashTimer = setTimeout(
-            () => flashCellByKey(`s${si}v${vi}i${idx}`, totalSeconds * 1000),
-            (t - Tone.now()) * 1000,
-          )
-          playTimersRef.current.push(flashTimer)
-          cursorSec += totalSeconds
-        })
+          // Find ties that resolve WITHIN this measure only. Cross-bar
+          // ties on a repeated measure replay as fresh notes — acceptable
+          // for the repeat-demo case.
+          const seenInMeasure = new Set<number>()
+          measure.forEach((me, mi) => {
+            const el = me.element
+            if (el.type === 'rest') {
+              cursorSec += durationToSeconds(el.duration, bpm, timeSignature, el.tuplet)
+              return
+            }
+            if (seenInMeasure.has(mi)) return
+            const ps = playPitchesOf(el)
+            // Tie chain inside this measure: extend audio while only the
+            // first note triggers.
+            let totalSeconds = durationToSeconds(el.duration, bpm, timeSignature, el.tuplet)
+            if (el.tied) {
+              for (let k = mi + 1; k < measure.length; k++) {
+                seenInMeasure.add(k)
+                const next = measure[k].element
+                totalSeconds += durationToSeconds(next.duration, bpm, timeSignature, next.tuplet)
+                if (next.type === 'note' && !next.tied) break
+                if (next.type !== 'note') break
+              }
+            }
+            const transportTime = cursorSec
+            // Per-pass flash key so consecutive passes don't collide on
+            // the same React state slot.
+            const flashKey = `s${si}v${vi}p${p}i${me.origIdx}`
+            const playArtic = (el as MusicalNote).playArtic ?? 'normal'
+            const audioSeconds = playArtic === 'pluck'
+              ? Math.max(0.05, totalSeconds * 0.22)
+              : totalSeconds
+            const visualKey = `s${si}v${vi}i${me.origIdx}`
+            const id = Tone.Transport.scheduleOnce((time: number) => {
+              ps.forEach(pi => sampler.playAt(pi, audioSeconds, time))
+              flashCellByKey(visualKey, totalSeconds * 1000)
+            }, transportTime)
+            ids.push(id)
+            cursorSec += totalSeconds
+            void flashKey
+          })
+        }
         if (cursorSec > maxEnd) maxEnd = cursorSec
       })
     })
 
-    const stopTimer = setTimeout(
-      () => setPlaying(false),
-      (startTime + maxEnd - Tone.now()) * 1000 + 200,
-    )
-    playTimersRef.current.push(stopTimer)
+    if (metronome) {
+      const beatSec = 60 / bpm
+      const numerator = timeSignature.numerator
+      const totalBeats = Math.ceil(maxEnd / beatSec)
+      for (let i = 0; i < totalBeats; i++) {
+        const accent = i % numerator === 0
+        const id = Tone.Transport.scheduleOnce((time: number) => {
+          sampler.tickAt(accent, time)
+        }, i * beatSec)
+        ids.push(id)
+      }
+    }
+
+    // Schedule a final event to flip the playing flag back off when the
+    // last note has finished. Also added to ids so Stop can cancel it.
+    const endId = Tone.Transport.scheduleOnce(() => {
+      setPlaying(false)
+      transportRef.current = null
+    }, maxEnd + 0.1)
+    ids.push(endId)
+
+    transportRef.current = { Tone, ids }
+    // Small lead-in so the first event isn't clipped by the audio
+    // context's lookahead.
+    Tone.Transport.start('+0.05', 0)
+  }
+
+  const handleStop = () => {
+    cancelTransportSchedule()
+    sampler.stopAll()
+    clearPlayTimers()
+    setPlaying(false)
   }
 
   // ── Render ────────────────────────────────────────────────────────────
   const isGrandStaff = staves.length > 1
   return (
-    <figure style={{ margin: '24px auto', width: '100%' }}>
+    <figure style={{ margin: '24px auto 48px auto', width: '100%' }}>
       <svg
         viewBox={`0 0 ${totalW} ${totalH}`}
         width="100%"
@@ -993,8 +1338,20 @@ export function MusicalExample(props: MusicalExampleProps) {
             activeClefByStave[si]?.[sliceStart] ?? staves[si].clef
           return (
           <g key={`sys-${sys.systemIdx}`}>
-            {/* Staves: one per stave in the score, plus brace if multi. */}
-            {staves.map((_, si) => (
+            {/* Staves: one per stave in the score, plus brace if multi.
+                In 1-line mode, draw a single line at the staff middle and
+                skip the clef. */}
+            {isOneLine ? staves.map((_, si) => (
+              <line
+                key={`staff-${sys.systemIdx}-${si}`}
+                x1={margin}
+                x2={margin + sys.staffWidth}
+                y1={sys.staffTops[si] + 4 * T.step}
+                y2={sys.staffTops[si] + 4 * T.step}
+                stroke={T.staffLineColor}
+                strokeWidth={T.staffLineStroke}
+              />
+            )) : staves.map((_, si) => (
               <Staff
                 key={`staff-${sys.systemIdx}-${si}`}
                 clef={systemStartClef(si)}
@@ -1015,7 +1372,7 @@ export function MusicalExample(props: MusicalExampleProps) {
 
             {/* Per-stave key signature on every system. */}
             {staves.map((_, si) => {
-              if (ksCount === 0) return null
+              if (ksCount === 0 || isOneLine) return null
               const posMap = ksPosFor(systemStartClef(si))
               return (
                 <g key={`ks-${sys.systemIdx}-${si}`}>
@@ -1099,7 +1456,7 @@ export function MusicalExample(props: MusicalExampleProps) {
                       {staveLayout.voices.map(voiceLayout => (
                         <g key={`m-${sys.systemIdx}-${mi}-s${staveLayout.staveIdx}-v${voiceLayout.voiceIdx}`}>
                           {voiceLayout.placed.map(p =>
-                            renderPlaced(p, staveLayout, voiceLayout, T, flashKeys, handleNoteClick),
+                            renderPlaced(p, staveLayout, voiceLayout, T, flashKeys, handleNoteClick, isOneLine, highlightAll),
                           )}
                           {voiceLayout.beamGroups.map((bg, bgi) =>
                             renderBeam(bg, voiceLayout, staveLayout.staffTop, T),
@@ -1203,12 +1560,45 @@ export function MusicalExample(props: MusicalExampleProps) {
                     const mark = (score.measureMarks ?? []).find(mm => mm.measureIdx === m.globalIdx)
                     if (!mark?.voltaNumber) return null
                     const top = sys.staffTops[0]
-                    const labelY = top - Math.round(28 * T.scale + 8)
-                    const bracketY = top - Math.round(18 * T.scale + 4)
-                    const tickEnd = bracketY + Math.round(8 * T.scale + 3)
+                    // Find the topmost stem-tip / notehead extent across
+                    // ALL volta-bracketed measures in this system, so every
+                    // volta bracket sits at the SAME height (engraving
+                    // convention — voltas align as a row).
+                    let topExtent = top
+                    for (const sysM of sys.measures) {
+                      const sysMark = (score.measureMarks ?? []).find(mm => mm.measureIdx === sysM.globalIdx)
+                      if (!sysMark?.voltaNumber) continue
+                      for (const stave of sysM.staves) {
+                        for (const voice of stave.voices) {
+                          for (const pp of voice.placed) {
+                            if (pp.measured.element.type !== 'note') continue
+                            if (pp.positions.length === 0) continue
+                            const topPos = Math.min(...pp.positions)
+                            const noteY = stave.staffTop + topPos * T.step
+                            const stemTipY = pp.stemDir === 'up'
+                              ? noteY - T.stemLength
+                              : noteY - T.noteheadHalfHeight
+                            if (stemTipY < topExtent) topExtent = stemTipY
+                          }
+                        }
+                      }
+                    }
+                    // Bracket sits clearly ABOVE topExtent so stems don't
+                    // poke through. Tighter on baseline staves (no stems
+                    // up high), looser when notes reach above the staff.
+                    const bracketY = Math.min(
+                      top - Math.round(28 * T.scale + 8),
+                      topExtent - Math.round(14 * T.scale + 6),
+                    )
+                    const labelFont = T.size === 'small' ? 13 : T.size === 'hero' ? 17 : 15
+                    // Descender ticks at each end of the bracket span the
+                    // full vertical height of the volta number, so the
+                    // bracket visually "boxes" the label.
+                    const tickEnd = bracketY + Math.round(labelFont + 8)
+                    // Number sits centered between bracketY and tickEnd.
+                    const labelY = bracketY + Math.round((labelFont + 8) / 2 + 1)
                     const x1 = m.x0 + Math.round(4 * T.scale)
                     const x2 = barlineX - Math.round(4 * T.scale)
-                    const labelFont = T.size === 'small' ? 11 : T.size === 'hero' ? 14 : 12
                     return (
                       <g key={`volta-${m.globalIdx}`}>
                         <line x1={x1} y1={bracketY} x2={x2} y2={bracketY} stroke={T.ink} strokeWidth={1.4} />
@@ -1232,21 +1622,29 @@ export function MusicalExample(props: MusicalExampleProps) {
                     )
                   })()}
 
-                  {/* Measure number below the lowest stave. */}
-                  {showMeasureNumbers && (
-                    <text
-                      x={m.x0 + m.width / 2}
-                      y={sys.staffTops[sys.staffTops.length - 1]
-                        + staffHeight + Math.round(18 * T.scale + 6)}
-                      fontSize={T.smallLabelFontSize}
-                      fontFamily={T.fontLabel}
-                      fill={T.inkSubtle}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                    >
-                      {m.globalIdx + 1}
-                    </text>
-                  )}
+                  {/* Measure number below the lowest stave. With a pickup,
+                      the pickup itself is unnumbered and the first full bar
+                      is "1"; otherwise numbering starts at 1 from the first
+                      bar. */}
+                  {showMeasureNumbers && (() => {
+                    const hasPickup = pickupBeats !== undefined && pickupBeats > 1e-6
+                    if (hasPickup && m.globalIdx === 0) return null
+                    const displayNum = hasPickup ? m.globalIdx : m.globalIdx + 1
+                    return (
+                      <text
+                        x={m.x0 + m.width / 2}
+                        y={sys.staffTops[sys.staffTops.length - 1]
+                          + staffHeight + Math.round(18 * T.scale + 6)}
+                        fontSize={T.smallLabelFontSize}
+                        fontFamily={T.fontLabel}
+                        fill={T.inkSubtle}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                      >
+                        {displayNum}
+                      </text>
+                    )
+                  })()}
                 </g>
               )
             })}
@@ -1391,6 +1789,516 @@ export function MusicalExample(props: MusicalExampleProps) {
           return <g>{arcs}</g>
         })()}
 
+        {/* Dynamics — Bravura glyph below treble / above bass at the
+            anchored beat. Optional italic 'modifier' renders BEFORE the
+            glyph per engraving convention ("sub. f", "subito p"). */}
+        {staves.flatMap((stave, si) =>
+          stave.voices.flatMap((voice, vi) =>
+            (voice.dynamics ?? []).map((dyn, di) => {
+              const entry = resolveBeat(si, vi, dyn.beat)
+              if (!entry) return null
+              const above = stave.clef === 'bass'
+              const baseY = above
+                ? entry.staffTop - Math.round(14 * T.scale + 6)
+                : entry.staffTop + 8 * T.step + Math.round(36 * T.scale + 14)
+              const glyph = DYNAMIC_GLYPHS[dyn.level]
+              const dynFontSize = Math.round(T.noteheadFontSize * 0.85)
+              // Modifier ('subito', 'sub.', 'molto', etc.) sits to the
+              // LEFT of the glyph in italic serif. Read order matches
+              // pronunciation: "sub. f" → first the qualifier, then the
+              // dynamic level the qualifier applies to. Sized in line with
+              // the dynamic glyph's optical weight (italic Bodoni at the
+              // dynamic letter's cap-height reads as a pair).
+              const modifierFontSize = Math.round(T.labelFontSize + 10)
+              const modifierGap = Math.round(modifierFontSize * 0.45)
+              return (
+                <g key={`dyn-s${si}v${vi}-${di}`}>
+                  {dyn.modifier && (
+                    <text
+                      x={entry.x - Math.round(dynFontSize * 0.36) - modifierGap}
+                      y={baseY}
+                      fontSize={modifierFontSize}
+                      fontFamily={T.fontDisplay}
+                      fontStyle="italic"
+                      fill={T.ink}
+                      textAnchor="end"
+                      dominantBaseline="central"
+                    >
+                      {dyn.modifier}
+                    </text>
+                  )}
+                  <text
+                    x={entry.x}
+                    y={baseY}
+                    fontSize={dynFontSize}
+                    fontFamily={T.fontMusic}
+                    fill={T.ink}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                  >
+                    {glyph}
+                  </text>
+                </g>
+              )
+            }),
+          ),
+        )}
+
+        {/* Hairpins — two converging/diverging lines. Cross-system spans
+            split into per-system segments at the body edges of each system.
+            Endpoints clear adjacent dynamic glyphs by a small horizontal
+            gap so the wedge never collides with the dynamic letter. */}
+        {staves.flatMap((stave, si) =>
+          stave.voices.flatMap((voice, vi) =>
+            (voice.hairpins ?? []).flatMap((hp, hi) => {
+              const startEntry = resolveBeat(si, vi, hp.startBeat)
+              const endEntry = resolveBeat(si, vi, hp.endBeat)
+              if (!startEntry || !endEntry) return []
+              const placement = hp.placement
+                ?? (stave.clef === 'bass' ? 'above' : 'below')
+              const above = placement === 'above'
+              const aperture = Math.round(8 * T.scale + 4)
+              // Detect dynamic markings at the same beat on this voice;
+              // a hairpin tip touching a dynamic glyph is the most common
+              // overlap, so skirt past it by ~half a glyph + small gap.
+              const dynGap = Math.round(T.noteheadFontSize * 0.5 + 4)
+              const startHasDyn = (voice.dynamics ?? [])
+                .some(d => Math.abs(d.beat - hp.startBeat) < 1e-6)
+              const endHasDyn = (voice.dynamics ?? [])
+                .some(d => Math.abs(d.beat - hp.endBeat) < 1e-6)
+              // Detect another hairpin meeting this one at startBeat or
+              // endBeat (back-to-back cresc / decresc shapes). Add a small
+              // breathing gap so the two tips don't touch.
+              const hairpinGap = Math.round(6 * T.scale + 2)
+              const otherStartsAtMyEnd = (voice.hairpins ?? [])
+                .some((other, j) => j !== hi
+                  && Math.abs(other.startBeat - hp.endBeat) < 1e-6)
+              const otherEndsAtMyStart = (voice.hairpins ?? [])
+                .some((other, j) => j !== hi
+                  && Math.abs(other.endBeat - hp.startBeat) < 1e-6)
+              const segments: React.ReactNode[] = []
+              for (let s = startEntry.systemIdx; s <= endEntry.systemIdx; s++) {
+                const sys = systems[s]
+                const isStart = s === startEntry.systemIdx
+                const isEnd = s === endEntry.systemIdx
+                const last = sys.measures[sys.measures.length - 1]
+                const sysRight = last.x0 + last.width
+                const sysLeft = sys.bodyStartX
+                const startOffset = isStart
+                  ? (startHasDyn ? dynGap : 0)
+                    + (otherEndsAtMyStart ? hairpinGap : 0)
+                  : 0
+                const endOffset = isEnd
+                  ? (endHasDyn ? -dynGap : 0)
+                    + (otherStartsAtMyEnd ? -hairpinGap : 0)
+                  : 0
+                const x1 = isStart ? startEntry.x + startOffset : sysLeft
+                const x2 = isEnd ? endEntry.x + endOffset : sysRight
+                // Hairpin baseline matches the dynamic baseline so a
+                // 'p < f' pattern reads as one horizontal phrase.
+                const yBase = above
+                  ? sys.staffTops[si] - Math.round(14 * T.scale + 6)
+                  : sys.staffTops[si] + 8 * T.step + Math.round(36 * T.scale + 14)
+                // Compute apertures per system endpoint. Crescendo: tip on
+                // the LEFT only at the true start; right side opens.
+                // Decrescendo: opens at left, tip on the RIGHT only at end.
+                let leftAp: number, rightAp: number
+                if (hp.direction === 'cresc') {
+                  leftAp = isStart ? 0 : aperture * 0.9
+                  rightAp = isEnd ? aperture : aperture * 0.9
+                } else {
+                  leftAp = isStart ? aperture : aperture * 0.9
+                  rightAp = isEnd ? 0 : aperture * 0.9
+                }
+                segments.push(
+                  <g key={`hp-s${si}v${vi}-${hi}-sys${s}`}>
+                    <line
+                      x1={x1} y1={yBase - leftAp / 2}
+                      x2={x2} y2={yBase - rightAp / 2}
+                      stroke={T.ink} strokeWidth={1}
+                    />
+                    <line
+                      x1={x1} y1={yBase + leftAp / 2}
+                      x2={x2} y2={yBase + rightAp / 2}
+                      stroke={T.ink} strokeWidth={1}
+                    />
+                  </g>,
+                )
+              }
+              return segments
+            }),
+          ),
+        )}
+
+        {/* Pedal markings — typically attached to the bass-clef voice in
+            piano music. 'text' style: Ped./✱ glyphs at endpoints. 'bracket'
+            style: continuous bracket below the bottom-most stave. */}
+        {staves.flatMap((stave, si) =>
+          stave.voices.flatMap((voice, vi) =>
+            (voice.pedalMarks ?? []).flatMap((pm, pi) => {
+              const startEntry = resolveBeat(si, vi, pm.startBeat)
+              const endEntry = resolveBeat(si, vi, pm.endBeat)
+              if (!startEntry || !endEntry) return []
+              const style = pm.style ?? 'text'
+              const baseY = (sys: SystemLayout) =>
+                sys.staffTops[sys.staffTops.length - 1]
+                  + 8 * T.step + Math.round(34 * T.scale + 10)
+              if (style === 'text') {
+                const items: React.ReactNode[] = []
+                // ✱ placement: when the pedal spans multiple elements,
+                // the release glyph sits BENEATH the last held note
+                // (= endEntry.x). When the pedal sits on a single
+                // element, that would collide with Ped. — pull it to
+                // the right edge of the element, padded back from the
+                // barline.
+                const isSingleElement = startEntry === endEntry
+                const endPad = Math.round(14 * T.scale + 6)
+                const startX = startEntry.x
+                const endX = isSingleElement
+                  ? endEntry.measureRightX - endPad
+                  : endEntry.x
+                items.push(
+                  <text
+                    key={`ped-text-s${si}v${vi}-${pi}-start`}
+                    x={startX}
+                    y={baseY(systems[startEntry.systemIdx])}
+                    fontSize={Math.round(T.noteheadFontSize * 0.7)}
+                    fontFamily={T.fontMusic}
+                    fill={T.ink}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                  >{PEDAL_GLYPHS.ped}</text>,
+                )
+                items.push(
+                  <text
+                    key={`ped-text-s${si}v${vi}-${pi}-end`}
+                    x={endX}
+                    y={baseY(systems[endEntry.systemIdx])}
+                    fontSize={Math.round(T.noteheadFontSize * 0.65)}
+                    fontFamily={T.fontMusic}
+                    fill={T.ink}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                  >{PEDAL_GLYPHS.pedRelease}</text>,
+                )
+                return items
+              }
+              // bracket style — split by system
+              const segments: React.ReactNode[] = []
+              // Detect a pedal change: another mark in the same voice
+              // starts where this one ends (or its start matches our end's
+              // x). At the changeover x we draw a V-notch instead of a
+              // straight bracket-end tick.
+              const nextPm = (voice.pedalMarks ?? [])
+                .find((other, j) => j !== pi
+                  && Math.abs(other.startBeat - pm.endBeat - 1) < 1e-6)
+                ?? (voice.pedalMarks ?? [])
+                  .find((other, j) => j !== pi
+                    && other.startBeat > pm.endBeat
+                    && resolveBeat(si, vi, other.startBeat)?.x === endEntry.endX)
+              const hasChangeAtEnd = !!nextPm
+              const prevPm = (voice.pedalMarks ?? [])
+                .find((other, j) => j !== pi
+                  && Math.abs(pm.startBeat - other.endBeat - 1) < 1e-6)
+                ?? (voice.pedalMarks ?? [])
+                  .find((other, j) => j !== pi
+                    && other.endBeat < pm.startBeat
+                    && resolveBeat(si, vi, other.endBeat)?.endX === startEntry.x)
+              const hasChangeAtStart = !!prevPm
+              // When the pedal's end falls on the LAST element in its
+              // voice (no next element), endEntry.endX falls right at the
+              // measure's right barline. Pull it back a touch so the
+              // bracket doesn't visually merge with the final barline.
+              const endsAtMeasureEdge = endEntry.endX === endEntry.measureRightX
+              const finalPad = endsAtMeasureEdge ? Math.round(12 * T.scale + 4) : 0
+              for (let s = startEntry.systemIdx; s <= endEntry.systemIdx; s++) {
+                const sys = systems[s]
+                const isStart = s === startEntry.systemIdx
+                const isEnd = s === endEntry.systemIdx
+                const last = sys.measures[sys.measures.length - 1]
+                const x1 = isStart ? startEntry.x : sys.bodyStartX
+                const x2 = isEnd ? endEntry.endX - finalPad : (last.x0 + last.width)
+                const y = baseY(sys)
+                const tickH = Math.round(13 * T.scale + 4)
+                const notchH = Math.round(tickH * 0.85)
+                const notchHalfW = Math.round(8 * T.scale + 3)
+                segments.push(
+                  <g key={`ped-bracket-s${si}v${vi}-${pi}-sys${s}`}>
+                    {/* Main horizontal bracket line. When this segment
+                        terminates a pedal change, the V-notch dips into
+                        the bracket near the right edge — render the line
+                        only up to the start of the notch, then a slanted
+                        descent. Mirror logic at the start. */}
+                    {isStart && hasChangeAtStart ? (
+                      <>
+                        <line x1={x1} y1={y - notchH} x2={x1 + notchHalfW} y2={y}
+                          stroke={T.ink} strokeWidth={1.2} />
+                        <line x1={x1 + notchHalfW} y1={y} x2={isEnd && hasChangeAtEnd ? x2 - notchHalfW : x2} y2={y}
+                          stroke={T.ink} strokeWidth={1.2} />
+                      </>
+                    ) : (
+                      <line x1={x1} y1={y} x2={isEnd && hasChangeAtEnd ? x2 - notchHalfW : x2} y2={y}
+                        stroke={T.ink} strokeWidth={1.2} />
+                    )}
+                    {isEnd && hasChangeAtEnd && (
+                      <line x1={x2 - notchHalfW} y1={y} x2={x2} y2={y - notchH}
+                        stroke={T.ink} strokeWidth={1.2} />
+                    )}
+                    {/* Opening tick — straight up unless this is the
+                        receiving side of a pedal change (handled above). */}
+                    {isStart && !hasChangeAtStart && (
+                      <line x1={x1} y1={y} x2={x1} y2={y - tickH}
+                        stroke={T.ink} strokeWidth={1.2} />
+                    )}
+                    {/* Closing tick — straight up unless this is the
+                        releasing side of a pedal change (handled above). */}
+                    {isEnd && !hasChangeAtEnd && (
+                      <line x1={x2} y1={y} x2={x2} y2={y - tickH}
+                        stroke={T.ink} strokeWidth={1.2} />
+                    )}
+                  </g>,
+                )
+              }
+              return segments
+            }),
+          ),
+        )}
+
+        {/* Chord symbols — lead-sheet harmony names ('C', 'Am7', 'G/B')
+            anchored to a beat. Sit above the top staff in serif text,
+            below tempo markings. */}
+        {(score.chordSymbols ?? []).map((cs, ci) => {
+          const cumBeat = cs.beat
+          const entry = resolveBeat(0, 0, cumBeat)
+          if (!entry) return null
+          const sys = systems[entry.systemIdx]
+          const chordFont = T.size === 'small' ? 19 : T.size === 'hero' ? 26 : 22
+          // Position above the actual top extent of every note/stem in the
+          // system (not a fixed offset from the staff). This keeps the
+          // symbol clear of high noteheads + ledger lines + stem tips.
+          const sysTopExt = systemPrimaryTopExtent(sys, T)
+          const baseY = sysTopExt - Math.round(12 * T.scale + chordFont * 0.6)
+          return (
+            <text
+              key={`chord-${ci}`}
+              x={entry.x}
+              y={baseY}
+              fontSize={chordFont}
+              fontFamily={T.fontDisplay}
+              fontWeight={500}
+              fill={T.highlightAccent}
+              textAnchor="middle"
+              dominantBaseline="central"
+            >{cs.symbol}</text>
+          )
+        })}
+
+        {/* Tempo markings — above the topmost staff. Per engraving
+            convention:
+              - 'normal' tempo words (Allegro, Andante) are BOLD ROMAN
+                SERIF (Bodoni-family). For measure-0 normal markings the
+                anchor is the system's left edge so the word sits above
+                the system header (clef + ks + ts) rather than the first
+                note.
+              - 'change' (rit., a tempo, accel.) is ITALIC SERIF, regular
+                weight, anchored at the beat where the change starts.
+              - Metronome marks use the SMuFL met-range glyphs (designed
+                for inline text alignment, NOT the full-note glyphs at
+                U+E1D5+). When a tempo word is present the metronome is
+                parenthesized after it: "Allegro (♩ = 120)". */}
+        {(score.tempoMarkings ?? []).flatMap((tm, ti) => {
+          const cumBeat = tm.measureIdx * timeSignature.numerator + (tm.beat ?? 0)
+          const entry = resolveBeat(0, 0, cumBeat)
+          if (!entry) return []
+          const sys = systems[entry.systemIdx]
+          const baseY = sys.staffTops[0] - Math.round(40 * T.scale + 18)
+          const style = tm.style ?? 'normal'
+          const items: React.ReactNode[] = []
+          // For a 'normal' tempo at measure 0, sit above the system
+          // header — slightly indented from the absolute left margin so
+          // it visually sits over the music rather than the page edge.
+          const isMeasureZeroHeadline = style === 'normal' && tm.measureIdx === 0
+          // Anchor the headline tempo (Allegro, Andantino) directly above
+          // the time signature so it sits over the music's pulse, not the
+          // page edge.
+          const tempoTextX = isMeasureZeroHeadline
+            ? margin + clefReserve + clefGap + ksWidth + ksGap
+            : entry.x
+          const tempoTextAnchor: 'start' | 'middle' =
+            style === 'normal' ? 'start' : 'middle'
+          // Tempo headline (Allegro, Andante) prints at ~16-18pt in real
+          // engraved scores — large enough to read across the staff at a
+          // glance. Tempo changes (rit., a tempo) stay smaller.
+          const tempoFontSize = style === 'normal'
+            ? Math.round(T.labelFontSize + 12)
+            : Math.round(T.labelFontSize + 4)
+          if (tm.text) {
+            items.push(
+              <text
+                key={`tempo-${ti}-text`}
+                x={tempoTextX}
+                y={baseY}
+                fontSize={tempoFontSize}
+                fontFamily={T.fontDisplay}
+                fontStyle={style === 'normal' ? 'normal' : 'italic'}
+                fontWeight={style === 'normal' ? 600 : 400}
+                fill={T.ink}
+                textAnchor={tempoTextAnchor}
+                dominantBaseline="central"
+              >{tm.text}</text>,
+            )
+          }
+          if (tm.metronome) {
+            // SMuFL met-range glyph chosen by beat-note base. Dotted
+            // beat-notes get an augmentation-dot glyph appended.
+            const baseDur = tm.metronome.beatNote[0]
+            const dotted = tm.metronome.beatNote.endsWith('.')
+            const metGlyph = (() => {
+              if (baseDur === 'h') return METRONOME_GLYPHS.half
+              if (baseDur === 'e') return METRONOME_GLYPHS.eighth
+              if (baseDur === 's') return METRONOME_GLYPHS.sixteenth
+              return METRONOME_GLYPHS.quarter
+            })()
+            const noteWithDot = dotted
+              ? `${metGlyph} ${METRONOME_GLYPHS.augmentationDot}`
+              : metGlyph
+            // Right edge of the tempo word (rough estimate from char count
+            // × cap-height). When no tempo word, anchor at entry.x.
+            const charWidthEstimate = Math.round(tempoFontSize * 0.55)
+            const tempoWordRight = tm.text
+              ? tempoTextX
+                + (tempoTextAnchor === 'middle'
+                    ? Math.round(tm.text.length * charWidthEstimate * 0.5)
+                    : Math.round(tm.text.length * charWidthEstimate))
+              : entry.x
+            const xMetro = tm.text
+              ? tempoWordRight + Math.round(8 * T.scale + 4)
+              : entry.x
+            const metFontSize = Math.round(T.labelFontSize + 2)
+            items.push(
+              <g key={`tempo-${ti}-metro`}>
+                {tm.text && (
+                  <text
+                    x={xMetro - Math.round(metFontSize * 0.32)}
+                    y={baseY}
+                    fontSize={metFontSize}
+                    fontFamily={T.fontDisplay}
+                    fill={T.ink}
+                    textAnchor="end"
+                    dominantBaseline="central"
+                  >(</text>
+                )}
+                <text
+                  x={xMetro}
+                  y={baseY}
+                  fontSize={metFontSize}
+                  fontFamily={T.fontMusic}
+                  fill={T.ink}
+                  textAnchor="start"
+                  dominantBaseline="central"
+                >{noteWithDot}</text>
+                <text
+                  x={xMetro + Math.round(metFontSize * 0.95) + (dotted ? Math.round(metFontSize * 0.36) : 0)}
+                  y={baseY}
+                  fontSize={metFontSize}
+                  fontFamily={T.fontDisplay}
+                  fontStyle="italic"
+                  fill={T.ink}
+                  textAnchor="start"
+                  dominantBaseline="central"
+                >{` = ${tm.metronome.bpm}${tm.text ? ')' : ''}`}</text>
+              </g>,
+            )
+          }
+          if (style === 'change-with-line' && tm.endMeasureIdx !== undefined) {
+            const endCumBeat = (tm.endMeasureIdx + 1) * timeSignature.numerator - 0.0001
+            const endEntry = resolveBeat(0, 0, endCumBeat)
+            if (endEntry) {
+              for (let s = entry.systemIdx; s <= endEntry.systemIdx; s++) {
+                const sysS = systems[s]
+                const isStart = s === entry.systemIdx
+                const isEnd = s === endEntry.systemIdx
+                const last = sysS.measures[sysS.measures.length - 1]
+                const x1 = isStart
+                  ? entry.x + Math.round(40 * T.scale + 12)
+                  : sysS.bodyStartX
+                const x2 = isEnd ? endEntry.x : (last.x0 + last.width)
+                const y = sysS.staffTops[0] - Math.round(22 * T.scale + 8)
+                items.push(
+                  <line
+                    key={`tempo-${ti}-line-${s}`}
+                    x1={x1} y1={y} x2={x2} y2={y}
+                    stroke={T.ink}
+                    strokeWidth={1}
+                    strokeDasharray="4 3"
+                  />,
+                )
+              }
+            }
+          }
+          return items
+        })}
+
+        {/* Beat numbers — uniform grid below the staff, every beat in every
+            measure gets a number regardless of whether an element attacks
+            there. For rhythmic-dictation lessons. */}
+        {showBeatNumbers && (() => {
+          const numerator = timeSignature.numerator
+          const arr = voiceTiming.get('s0v0') ?? []
+          return systems.flatMap(sys =>
+            sys.measures.flatMap(m => {
+              const measureStart = m.globalIdx * numerator
+              const bottomY = sys.staffTops[sys.staffTops.length - 1] + staffHeight
+              const beatY = bottomY + Math.round(34 * T.scale + 10)
+              const measureRightX = m.x0 + m.width
+              return Array.from({ length: numerator }).map((_, b) => {
+                const cumBeat = measureStart + b
+                // Find the element whose [cumBeat, cumBeat+beatLen) contains
+                // this beat. Anchors the label to the note/rest sounding at
+                // that moment — even if it started earlier (held note).
+                const entry = arr.find(e =>
+                  cumBeat >= e.cumBeat - 1e-6 &&
+                  cumBeat < e.cumBeat + e.beatLen - 1e-6,
+                )
+                let x: number
+                if (!entry) {
+                  // Past the last element — fall back to even slot.
+                  x = m.x0 + (m.width / numerator) * (b + 0.5)
+                } else if (Math.abs(entry.cumBeat - cumBeat) < 1e-6) {
+                  // Beat aligns with element attack — center on the head.
+                  x = entry.x
+                } else {
+                  // Mid-element (held note or rest): interpolate between
+                  // this element's head x and the next element's head x
+                  // (or the measure's right edge if it's the last element).
+                  const nextEntry = arr.find(e =>
+                    e.cumBeat > entry.cumBeat + 1e-6 &&
+                    e.cumBeat <= entry.cumBeat + entry.beatLen + 1e-6,
+                  )
+                  const endX = nextEntry ? nextEntry.x : measureRightX
+                  const frac = (cumBeat - entry.cumBeat) / entry.beatLen
+                  x = entry.x + frac * (endX - entry.x)
+                }
+                return (
+                  <text
+                    key={`bn-${sys.systemIdx}-${m.globalIdx}-${b}`}
+                    x={x}
+                    y={beatY}
+                    fontSize={T.labelFontSize + 2}
+                    fontFamily={T.fontLabel}
+                    fontWeight={500}
+                    fill={T.highlightAccent}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                  >
+                    {b + 1}
+                  </text>
+                )
+              })
+            }),
+          )
+        })()}
+
         {/* Annotations target the primary line. */}
         {annotations && annotations.length > 0 && annotations.map((ann, ai) => (
           <AnnotationOverlay
@@ -1400,15 +2308,16 @@ export function MusicalExample(props: MusicalExampleProps) {
             systems={systems}
             T={T}
             staffHeight={staffHeight}
+            aboveStaffOffset={hasChordSymbols ? Math.round(34 * T.scale + 14) : 0}
+            hasPrimaryDynamics={(staves[0]?.voices[0]?.dynamics?.length ?? 0) > 0}
           />
         ))}
       </svg>
 
       {showPlayButton && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: -12 }}>
           <button
-            onClick={handlePlayAll}
-            disabled={playing}
+            onClick={playing ? handleStop : handlePlayAll}
             style={{
               fontFamily: T.fontLabel,
               fontSize: 12,
@@ -1417,12 +2326,11 @@ export function MusicalExample(props: MusicalExampleProps) {
               border: 'none',
               padding: '6px 14px',
               borderRadius: 4,
-              cursor: playing ? 'wait' : 'pointer',
+              cursor: 'pointer',
               letterSpacing: '0.04em',
-              opacity: playing ? 0.55 : 1,
             }}
           >
-            {playing ? 'Playing…' : 'Play'}
+            {playing ? '◼ Stop' : '▶ Play'}
           </button>
         </div>
       )}
@@ -1437,6 +2345,64 @@ function flashKeyFor(p: PlacedElement): string {
   return `s${p.staveIdx}v${p.voiceIdx}i${p.measured.origIdx}`
 }
 
+/**
+ * Walk the score's measureMarks and emit the actual sequence of measure
+ * indices the audio should play. Honours start/end repeat barlines and
+ * volta brackets:
+ *   - End-repeat sends playback back to the most-recent start-repeat
+ *     (or measure 0 if none) — but only ONCE per repeat block.
+ *   - Volta 1 is played on the FIRST pass; on subsequent passes the
+ *     player skips to volta 2 (the next measure with voltaNumber === 2).
+ */
+function buildPlayOrder(
+  measureMarks: ReadonlyArray<{
+    measureIdx: number
+    startRepeat?: boolean
+    endRepeat?: boolean
+    voltaNumber?: number
+  }>,
+  totalMeasures: number,
+): number[] {
+  if (totalMeasures <= 0) return []
+  const markFor = (idx: number) => measureMarks.find(m => m.measureIdx === idx)
+  const order: number[] = []
+  const passCount = new Map<number, number>()
+  let i = 0
+  // Bound the loop so a malformed measureMarks set can't infinite-loop.
+  let safety = totalMeasures * 8 + 16
+
+  while (i < totalMeasures && safety-- > 0) {
+    const mark = markFor(i)
+    // Volta 1: skip on subsequent passes (already played once). Look ahead
+    // for the next volta-2 measure and jump there. If none, end playback.
+    if (mark?.voltaNumber === 1 && (passCount.get(i) ?? 0) >= 1) {
+      const v2 = measureMarks.find(m => m.voltaNumber === 2 && m.measureIdx > i)
+      if (v2) {
+        i = v2.measureIdx
+        continue
+      }
+      break
+    }
+    order.push(i)
+    passCount.set(i, (passCount.get(i) ?? 0) + 1)
+    if (mark?.endRepeat) {
+      // Find the most recent start-repeat at or before i; default to 0.
+      let back = 0
+      for (const m of measureMarks) {
+        if (m.startRepeat && m.measureIdx <= i && m.measureIdx > back) {
+          back = m.measureIdx
+        }
+      }
+      if ((passCount.get(back) ?? 0) < 2) {
+        i = back
+        continue
+      }
+    }
+    i++
+  }
+  return order
+}
+
 function renderPlaced(
   p: PlacedElement,
   stave: StaveMeasureLayout,
@@ -1448,22 +2414,30 @@ function renderPlaced(
     pitches: string[], duration: Duration,
     tuplet?: { actual: number; normal: number },
   ) => void,
+  isOneLine: boolean,
+  highlightAll: boolean = false,
 ): React.ReactNode {
   const el = p.measured.element
-  const lit = flashKeys.has(flashKeyFor(p))
+  const lit = highlightAll || flashKeys.has(flashKeyFor(p))
   const staffTop = stave.staffTop
 
   if (el.type === 'rest') {
-    const restValue = restValueFor(el.duration)
-    const dotted = isDotted(el.duration)
+    // Per Gould: a rest representing an entire measure of silence is always
+    // notated with the whole-rest glyph hanging from line 4 — regardless of
+    // the actual meter (3/8, 6/8, etc.). The `wholeMeasureRest` flag
+    // overrides the per-duration glyph to make this happen.
+    const isWholeBar = el.wholeMeasureRest === true
+    const restValue = isWholeBar ? 'whole' : restValueFor(el.duration)
+    const dotted = !isWholeBar && isDotted(el.duration)
     const xCenter = p.x
     // Default rest position: middle line of the 5-line staff
     // (lineY n=2 → staffTop + 4*step). For multi-voice on the same stave,
     // stack voice 0 rests above the middle and voice 1 rests below — far
     // enough that the rest glyph doesn't touch the other voice's notes
-    // above or below the stave middle.
+    // above or below the stave middle. Whole-measure rests skip the
+    // multi-voice offset and stay at the conventional hanging position.
     let restY = staffTop + 4 * T.step
-    if (voice.multiVoice) {
+    if (voice.multiVoice && !isWholeBar) {
       const offset = 3 * T.step
       restY = voice.voiceIdx === 0 ? restY - offset : restY + offset
     }
@@ -1493,10 +2467,12 @@ function renderPlaced(
     )
   }
 
-  // Note (possibly chord).
+  // Note (possibly chord). `ps` is the displayed pitch set; `playPs` may
+  // override for transposing-instrument audio (defaults to ps).
   const ps = pitchesOf(el)
+  const playPs = playPitchesOf(el)
   const noteClickArg = () =>
-    onNoteClick(p.staveIdx, p.voiceIdx, p.measured.origIdx, ps, el.duration, el.tuplet)
+    onNoteClick(p.staveIdx, p.voiceIdx, p.measured.origIdx, playPs, el.duration, el.tuplet)
 
   const headDuration = (() => {
     const base = el.duration[0]
@@ -1521,7 +2497,37 @@ function renderPlaced(
   const flagGlyph = renderFlag ? flagFor(el.duration, stemUp) : null
 
   const accidentals = p.accidentals
-  const accidentalX = p.x - Math.round(T.accidentalKerning * 0.95)
+  // Per-accidental x. Single accidental → one column. Multiple accidentals
+  // close together (within 5 step-units) get staggered into a second column
+  // further left, alternating starting from the topmost — standard engraving
+  // rule to prevent overlap on chords like C-Eb-Gb.
+  const accidentalCol1X = p.x - Math.round(T.accidentalKerning * 0.95)
+  const accidentalCol2X = p.x - Math.round(T.accidentalKerning * 1.85)
+  const accidentalColumns: (0 | 1)[] = (() => {
+    const cols: (0 | 1)[] = accidentals.map(() => 0)
+    const indices = accidentals
+      .map((acc, i) => acc ? i : -1)
+      .filter(i => i >= 0)
+      .sort((a, b) => p.positions[a] - p.positions[b]) // top to bottom
+    let lastCol1Pos = -Infinity
+    let lastCol2Pos = -Infinity
+    for (const i of indices) {
+      const pos = p.positions[i]
+      // Try column 1 first; if too close to the last col-1 accidental,
+      // place in column 2.
+      if (pos - lastCol1Pos >= 5) {
+        cols[i] = 0
+        lastCol1Pos = pos
+      } else if (pos - lastCol2Pos >= 5) {
+        cols[i] = 1
+        lastCol2Pos = pos
+      } else {
+        cols[i] = 0
+        lastCol1Pos = pos
+      }
+    }
+    return cols
+  })()
 
   return (
     <g
@@ -1534,19 +2540,55 @@ function renderPlaced(
       {accidentals.map((acc, i) => {
         if (!acc) return null
         const noteY = staffTop + p.positions[i] * T.step
+        const isCautionary = p.accidentalCautionary[i] === true
+        // Parens use a serif (Cormorant) glyph at roughly half the SMuFL
+        // accidental's nominal fontSize — that matches the visible height
+        // of the accidental glyph itself. Offsets are tuned to sit just
+        // outside the glyph's visible left/right edges.
+        const parenFontSize = Math.round(T.accidentalFontSize * 0.42)
+        const parenOffset = Math.round(T.accidentalFontSize * 0.18)
+        // Cautionary parens project slightly to the right of the accidental
+        // glyph and would otherwise crowd the notehead. Shift the whole
+        // group further left so the right paren keeps a clear breathing gap.
+        const cautionaryShift = isCautionary ? Math.round(8 * T.scale) : 0
+        const baseX = accidentalColumns[i] === 1 ? accidentalCol2X : accidentalCol1X
+        const x = baseX - cautionaryShift
         return (
-          <text
-            key={`acc-${flashKeyFor(p)}-${i}`}
-            x={accidentalX}
-            y={noteY}
-            fontSize={T.accidentalFontSize}
-            fontFamily={T.fontMusic}
-            fill={lit ? T.highlightAccent : T.ink}
-            textAnchor="middle"
-            dominantBaseline="central"
-          >
-            {accGlyphFor(acc, T)}
-          </text>
+          <g key={`acc-${flashKeyFor(p)}-${i}`}>
+            {isCautionary && (
+              <text
+                x={x - parenOffset}
+                y={noteY}
+                fontSize={parenFontSize}
+                fontFamily={T.fontDisplay}
+                fill={lit ? T.highlightAccent : T.ink}
+                textAnchor="middle"
+                dominantBaseline="central"
+              >(</text>
+            )}
+            <text
+              x={x}
+              y={noteY}
+              fontSize={T.accidentalFontSize}
+              fontFamily={T.fontMusic}
+              fill={lit ? T.highlightAccent : T.ink}
+              textAnchor="middle"
+              dominantBaseline="central"
+            >
+              {accGlyphFor(acc, T)}
+            </text>
+            {isCautionary && (
+              <text
+                x={x + parenOffset}
+                y={noteY}
+                fontSize={parenFontSize}
+                fontFamily={T.fontDisplay}
+                fill={lit ? T.highlightAccent : T.ink}
+                textAnchor="middle"
+                dominantBaseline="central"
+              >)</text>
+            )}
+          </g>
         )
       })}
 
@@ -1561,6 +2603,7 @@ function renderPlaced(
           duration={headDuration}
           noStem
           noAccidental
+          posOverride={isOneLine ? p.positions[i] : undefined}
           highlight={lit}
         />
       ))}
@@ -1613,28 +2656,41 @@ function renderPlaced(
 
       {/* Articulations — placed on the side opposite the stem when
           possible (above for stem-down notes, below for stem-up). Fermata
-          always sits ABOVE regardless of stem direction. The glyph sits
-          flush against the notehead with only a hair of breathing room. */}
+          always sits ABOVE regardless of stem direction. Engraving rule:
+          a dot/wedge/bar should always sit in a STAFF SPACE (odd staff
+          position), not crossing a staff line. We compute the natural
+          offset position then snap to the next clean space if needed. */}
       {el.articulations && el.articulations.length > 0 && el.articulations.map((a, i) => {
         const glyphSet = ARTIC_GLYPHS[a]
         if (!glyphSet) return null
         const above = a === 'fermata' ? true : !stemUp
         const glyph = above ? glyphSet.above : glyphSet.below
-        // Glyph centre sits just past the notehead's outer edge. The visible
-        // glyph (especially the staccato dot) is small enough that minimal
-        // gap reads as "attached to the note" without overlap.
-        const baseGap = a === 'fermata'
-          ? Math.round(10 * T.scale + 4)
-          : 0
-        const offset = baseGap + i * Math.round(T.noteheadFontSize * 0.22)
         const refPos = above ? minPos : maxPos
-        const refY = staffTop + refPos * T.step
+        // Snap the articulation to the nearest STAFF SPACE outside the
+        // notehead. Staff positions: even = line, odd = space. For an
+        // articulation positioned ONE position past the notehead, if the
+        // notehead sits on a line (even), the next space is +/-1; if it
+        // sits in a space (odd), we need +/-2 to clear into the next space
+        // (otherwise the glyph straddles the immediate line).
+        // Notehead occupies ~1.6 staff-positions worth of vertical space,
+        // so we need at least 2 positions out, AND must land in a SPACE
+        // (odd staff position). Note-on-line: refPos±2 lands on another
+        // line — bump to ±3 (next space). Note-in-space: refPos±2 already
+        // lands in a space — use it directly.
+        const noteOnLine = refPos % 2 === 0
+        const stepOut = noteOnLine ? 3 : 2
+        const baseTargetPos = above ? refPos - stepOut : refPos + stepOut
+        // Stack additional articulations one space further out.
+        const targetPos = above ? baseTargetPos - 2 * i : baseTargetPos + 2 * i
+        // Fermata gets extra breathing room — engraved much further from
+        // the notehead than a tiny staccato dot.
+        const fermataExtra = a === 'fermata' ? Math.round(10 * T.scale + 4) : 0
         const y = above
-          ? refY - T.noteheadHalfHeight - offset
-          : refY + T.noteheadHalfHeight + offset
+          ? staffTop + targetPos * T.step - fermataExtra
+          : staffTop + targetPos * T.step + fermataExtra
         const fontSize = a === 'fermata'
-          ? Math.round(T.noteheadFontSize * 0.78)
-          : Math.round(T.noteheadFontSize * 0.62)
+          ? Math.round(T.noteheadFontSize * 0.95)
+          : Math.round(T.noteheadFontSize * 0.78)
         return (
           <text
             key={`art-${flashKeyFor(p)}-${i}`}
@@ -1655,7 +2711,7 @@ function renderPlaced(
       {el.ornaments && el.ornaments.length > 0 && el.ornaments.map((o, i) => {
         const glyph = ORNAMENT_GLYPHS[o]
         if (!glyph) return null
-        const offset = Math.round(18 * T.scale + 6) + i * Math.round(T.noteheadFontSize * 0.36)
+        const offset = Math.round(10 * T.scale + 4) + i * Math.round(T.noteheadFontSize * 0.36)
         const refY = staffTop + minPos * T.step
         return (
           <text
@@ -2071,6 +3127,83 @@ interface AnnotationOverlayProps {
   systems: SystemLayout[]
   T: LearnTokens
   staffHeight: number
+  /** Extra vertical offset above the staff to account for chord symbols /
+   *  tempo markings already occupying space — keeps section brackets above
+   *  them rather than colliding. */
+  aboveStaffOffset?: number
+  /** True when the primary voice has dynamics (rendered below the staff
+   *  for treble). Below-staff labels (solfège, beat counts, character
+   *  markings) need extra clearance so they don't overlap the dynamics. */
+  hasPrimaryDynamics?: boolean
+}
+
+/**
+ * Highest y-extent (notehead + stem-up tip) across the primary line of a
+ * single system. Used to place above-staff lead-sheet chord symbols on a
+ * single uniform baseline that clears the tallest stem in the system.
+ */
+function systemPrimaryTopExtent(system: SystemLayout, T: LearnTokens): number {
+  const topStaffTop = system.staffTops[0]
+  let top = topStaffTop
+  for (const m of system.measures) {
+    const primary = m.staves[0]?.voices[0]
+    if (!primary) continue
+    for (const p of primary.placed) {
+      if (p.measured.element.type !== 'note') continue
+      for (const pos of p.positions) {
+        const y = m.staves[0].staffTop + pos * T.step - T.noteheadHalfHeight
+        if (y < top) top = y
+      }
+      if (p.positions.length > 0 && p.stemDir === 'up') {
+        const topPos = Math.min(...p.positions)
+        const tipY = m.staves[0].staffTop + topPos * T.step - T.stemLength
+        if (tipY < top) top = tipY
+      }
+    }
+  }
+  return top
+}
+
+/**
+ * Lowest y-extent (notehead + stem-down tip) across the primary line of a
+ * single system. Used to place below-staff labels (solfège, beat counts)
+ * on a single uniform baseline so a row of labels reads as one horizontal
+ * line rather than tracking each note's height.
+ */
+function systemPrimaryBottomExtent(
+  system: SystemLayout,
+  T: LearnTokens,
+  hasPrimaryDynamics: boolean = false,
+): number {
+  const bottomStaffTop = system.staffTops[system.staffTops.length - 1]
+  let bottom = bottomStaffTop + 8 * T.step
+  for (const m of system.measures) {
+    const primary = m.staves[0]?.voices[0]
+    if (!primary) continue
+    for (const p of primary.placed) {
+      if (p.measured.element.type !== 'note') continue
+      for (const pos of p.positions) {
+        const y = m.staves[0].staffTop + pos * T.step + T.noteheadHalfHeight
+        if (y > bottom) bottom = y
+      }
+      if (p.positions.length > 0 && p.stemDir === 'down') {
+        const bottomPos = Math.max(...p.positions)
+        const tipY = m.staves[0].staffTop + bottomPos * T.step + T.stemLength
+        if (tipY > bottom) bottom = tipY
+      }
+    }
+  }
+  // When the primary voice has dynamics (rendered below the bottom stave
+  // for treble), reserve space so below-labels (solfège, beat counts,
+  // German/French character markings) sit BELOW the dynamic glyph rather
+  // than colliding with it.
+  if (hasPrimaryDynamics) {
+    const dynamicsBottom = bottomStaffTop + 8 * T.step
+      + Math.round(36 * T.scale + 14)
+      + Math.round(T.noteheadFontSize * 0.85 * 0.5)
+    if (dynamicsBottom > bottom) bottom = dynamicsBottom
+  }
+  return bottom
 }
 
 function noteheadVerticalExtent(
@@ -2096,6 +3229,21 @@ function noteheadVerticalExtent(
         const noteBottom = y + T.noteheadHalfHeight
         if (noteTop < top) top = noteTop
         if (noteBottom > bottom) bottom = noteBottom
+      }
+      // Stem reach — stems can extend well past the notehead bounds, so a
+      // bracket positioned above/below the staff must clear them. Stem
+      // origin is the extreme notehead in the stem direction; the tip is
+      // T.stemLength further along.
+      if (p.positions.length > 0) {
+        if (p.stemDir === 'up') {
+          const topPos = Math.min(...p.positions)
+          const stemTipY = m.staves[0].staffTop + topPos * T.step - T.stemLength
+          if (stemTipY < top) top = stemTipY
+        } else if (p.stemDir === 'down') {
+          const bottomPos = Math.max(...p.positions)
+          const stemTipY = m.staves[0].staffTop + bottomPos * T.step + T.stemLength
+          if (stemTipY > bottom) bottom = stemTipY
+        }
       }
     }
   }
@@ -2129,6 +3277,8 @@ function AnnotationOverlay({
   systems,
   T,
   staffHeight,
+  aboveStaffOffset = 0,
+  hasPrimaryDynamics = false,
 }: AnnotationOverlayProps) {
   const start = primaryElementMap.get(annotation.startIdx)
   const end = primaryElementMap.get(annotation.endIdx)
@@ -2145,17 +3295,67 @@ function AnnotationOverlay({
     const sys = systems[start.systemIdx]
     const topStaffTop = sys.staffTops[0]
     const bottomStaffBottom = sys.staffTops[sys.staffTops.length - 1] + staffHeight
-    const baseY = above
-      ? topStaffTop - Math.round(20 * T.scale + 6)
-      : bottomStaffBottom + Math.round(28 * T.scale + 8)
+    if (above) {
+      // Above-staff labels are typically chord symbols. Use serif (Bodoni)
+      // upright type matching standard chord-chart conventions, sized larger
+      // than below-staff pedagogical labels (solfège, beat counts).
+      // Position above the actual top extent of the placed element so labels
+      // never collide with stems on tall stems-up chords.
+      const placed = start.placed
+      const topPos = Math.min(...placed.positions)
+      const stemUp = placed.stemDir === 'up'
+      const topNoteY = topStaffTop + topPos * T.step
+      const stemTopY = stemUp ? topNoteY - T.stemLength : topNoteY
+      const ledgerY = topPos < 0 ? topStaffTop + topPos * T.step : topStaffTop
+      const elementTopY = Math.min(stemTopY, ledgerY, topStaffTop)
+      const chordFont = T.size === 'small' ? 17 : T.size === 'hero' ? 24 : 20
+      const baseY = elementTopY - Math.round(14 * T.scale + chordFont * 0.7)
+      return (
+        <text
+          x={start.placed.x}
+          y={baseY}
+          fontSize={chordFont}
+          fontFamily={T.fontDisplay}
+          fontWeight={500}
+          fill={T.ink}
+          textAnchor="middle"
+          dominantBaseline="central"
+        >
+          {annotation.label}
+        </text>
+      )
+    }
+    // Below-staff labels stay as pedagogical italics (solfège syllables,
+    // beat-counting labels, scale-degree numbers, character markings).
+    // Use the SYSTEM-wide lowest extent (across the whole primary line)
+    // so a row of labels sits on a uniform horizontal baseline rather
+    // than tracking each note's individual height.
+    // Special case: `dynamicLine` annotations (cresc., dim., poco a poco)
+    // sit at the SAME baseline as dynamic glyphs so they read inline
+    // with the dynamics row, not below it.
+    const dynamicLine = annotation.dynamicLine === true
+    let baseY: number
+    let belowFont: number
+    if (dynamicLine) {
+      // Match the dynamic glyph baseline + render slightly larger italic
+      // serif so 'cresc.' reads as a peer of 'p' / 'f' nearby.
+      baseY = sys.staffTops[sys.staffTops.length - 1] + 8 * T.step
+        + Math.round(36 * T.scale + 14)
+      belowFont = T.size === 'small' ? 18 : T.size === 'hero' ? 24 : 22
+    } else {
+      const sysExt = systemPrimaryBottomExtent(sys, T, hasPrimaryDynamics)
+      const elementBottomY = Math.max(sysExt, bottomStaffBottom)
+      belowFont = T.size === 'small' ? 15 : T.size === 'hero' ? 20 : 17
+      baseY = elementBottomY + Math.round(12 * T.scale + belowFont * 0.7)
+    }
     return (
       <text
         x={start.placed.x}
         y={baseY}
-        fontSize={labelFont}
-        fontFamily={T.fontLabel}
+        fontSize={belowFont}
+        fontFamily={dynamicLine ? T.fontDisplay : T.fontLabel}
         fontStyle="italic"
-        fill={T.inkMuted}
+        fill={dynamicLine ? T.ink : T.inkMuted}
         textAnchor="middle"
         dominantBaseline="central"
       >
@@ -2202,7 +3402,16 @@ function AnnotationOverlay({
   const strokeWidth = isSection ? 1.6 : 1.0
   const tickHeight = Math.round(8 * T.scale + 3)
   const padding = Math.max(Math.round(T.step * 3), Math.round(20 * T.scale + 6))
-  const labelOffset = labelFont + 4
+  // Brackets carry primary labels (interval names, section labels) — render
+  // them larger than the small pedagogical labelFont so they're legible at a
+  // glance. Section labels stay extra-prominent.
+  const bracketLabelFont = isSection
+    ? Math.round(labelFont + 6)
+    : (T.size === 'small' ? 13 : T.size === 'hero' ? 20 : 16)
+  const labelOffset = bracketLabelFont + 4
+  // Bracket reaches the OUTER edges of the first/last noteheads, not their
+  // centers — so it visually wraps the full extent of the interval.
+  const noteheadHalfWidth = Math.round(T.noteheadHalfHeight * 0.95)
 
   const segments: React.ReactNode[] = []
   for (let s = start.systemIdx; s <= end.systemIdx; s++) {
@@ -2223,18 +3432,18 @@ function AnnotationOverlay({
     if (isSingle) {
       const r = systemRangeXs(sys, annotation.startIdx, annotation.endIdx)
       if (!r) continue
-      x1 = r.firstX
-      x2 = r.lastX
+      x1 = r.firstX - noteheadHalfWidth
+      x2 = r.lastX + noteheadHalfWidth
     } else if (isStartSystem) {
       const r = systemRangeXs(sys, annotation.startIdx, annotation.endIdx)
       if (!r) continue
-      x1 = r.firstX
+      x1 = r.firstX - noteheadHalfWidth
       x2 = sysBodyRight
     } else if (isEndSystem) {
       const r = systemRangeXs(sys, annotation.startIdx, annotation.endIdx)
       if (!r) continue
       x1 = sysBodyLeft
-      x2 = r.lastX
+      x2 = r.lastX + noteheadHalfWidth
     } else {
       x1 = sysBodyLeft
       x2 = sysBodyRight
@@ -2244,7 +3453,7 @@ function AnnotationOverlay({
       ? { top: topStaffTop, bottom: bottomStaffBottom }
       : noteheadVerticalExtent(sys, annotation.startIdx, annotation.endIdx, T)
     const bracketY = above
-      ? Math.min(ext.top, topStaffTop) - padding
+      ? Math.min(ext.top, topStaffTop) - padding - aboveStaffOffset
       : Math.max(ext.bottom, bottomStaffBottom) + padding
     const tickEnd = above ? bracketY + tickHeight : bracketY - tickHeight
 
@@ -2267,7 +3476,7 @@ function AnnotationOverlay({
             <text
               x={(x1 + x2) / 2}
               y={labelY}
-              fontSize={labelFont}
+              fontSize={bracketLabelFont}
               fontFamily={T.fontLabel}
               fontWeight={isSection ? 600 : 500}
               fill={isSection ? T.highlightAccent : T.ink}

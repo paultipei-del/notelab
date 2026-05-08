@@ -1,5 +1,7 @@
 import LearnPageLayout from '@/components/learn/LearnPageLayout'
 import DiagramPlaceholder from '@/components/learn/DiagramPlaceholder'
+import { DevelopmentStages } from '@/components/learn/visuals/DevelopmentStages'
+import { EarTrainingCTA } from '@/components/learn/visuals/EarTrainingCTA'
 
 export const learnPage = {
   topic: 'aural-skills',
@@ -39,7 +41,45 @@ Ear training isn't a destination, you don't "complete" it. It's a practice that 
 
 ## The visual
 
-<DiagramPlaceholder description="A timeline showing typical progression, year 1: basic intervals, chord qualities, simple dictation. year 2-3: complex dictation, sight-singing, inversions. year 4+: advanced harmonic analysis, complex chromaticism, internal hearing without external sound." />
+<DevelopmentStages
+  stages={[
+    {
+      period: 'Year 1',
+      headline: 'Foundational vocabulary, the ear\'s alphabet.',
+      skills: [
+        'Basic interval recognition (3rds, 4ths, 5ths, octaves)',
+        'Major vs. minor chord qualities',
+        'Simple rhythmic patterns',
+        'Starting solfège',
+      ],
+      variant: 'tonic',
+    },
+    {
+      period: 'Years 2 to 3',
+      headline: 'Skills start integrating; dictation pulls them together.',
+      skills: [
+        'All intervals, ascending and descending',
+        'Chord inversions and seventh-chord qualities',
+        'Sight-singing with leaps and chromatic alterations',
+        'Melodic and rhythmic dictation in various keys',
+        'Modes and modulations',
+      ],
+      variant: 'unstable',
+    },
+    {
+      period: 'Year 4+',
+      headline: 'Active ear-training fades into musicianship.',
+      skills: [
+        'Advanced harmonic analysis and chromaticism',
+        'Polyphonic dictation (multiple voices at once)',
+        'Internal hearing: imagining a score without performance',
+        'Composition and improvisation in real time',
+      ],
+      variant: 'expert',
+    },
+  ]}
+  caption="A typical ear-training progression. Year 1 builds the foundational vocabulary. Years 2 to 3 add complexity and start integrating the skills (dictation requires hearing intervals AND meter AND key all at once). Year 4 and beyond is where active ear-training fades into musicianship. Eventually, you don't 'identify' an interval; you just hear it as the music it is."
+/>
 
 ## The typical progression
 
@@ -122,3 +162,17 @@ Progress in ear training is often non-linear. You might feel stuck for weeks, th
 **Can I develop ear training just by listening to a lot of music?**
 
 Partially. Extensive listening does develop ears, especially for recognizing styles and genres. But deliberate practice (actively identifying intervals, chords, and rhythms) produces specific, rapid improvement. Combine extensive listening (for exposure and enjoyment) with focused practice (for skill development). Both work together.
+
+<EarTrainingCTA
+  intro="The decks below are organized roughly by difficulty. Start where you're comfortable; move through them in any order:"
+  decks={[
+    { name: 'Intervals I', slug: 'ear-intervals', cards: '12 cards', description: 'Foundational. Start here if everything else is new.' },
+    { name: 'Triads', slug: 'ear-triads', cards: '8 cards', description: 'Major, minor, diminished, augmented.' },
+    { name: 'Cadences', slug: 'ear-cadences', cards: '4 cards', description: 'How phrases end: the four standard cadences.' },
+    { name: 'Scales', slug: 'ear-scales', cards: '4 cards', description: 'Major and the three minor variants.' },
+    { name: '7th Chords', slug: 'ear-seventh-chords', cards: '6 cards', description: 'The five most common 7th chords.' },
+    { name: 'Triads: Inversions', slug: 'ear-triads-inversions', cards: '12 cards', description: 'Hearing the difference between root position, 1st inv, 2nd inv.' },
+    { name: 'Intervals II', slug: 'ear-intervals-ii', cards: '12 cards', description: 'Compound intervals (m9 through double octave).' },
+    { name: 'Intervals III: Advanced', slug: 'ear-intervals-iii', cards: '48 cards', description: 'All intervals, ascending and descending, varied roots.' },
+  ]}
+/>
