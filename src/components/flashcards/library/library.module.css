@@ -48,36 +48,6 @@
   max-width: 540px; margin: 0;
 }
 
-/* Mini streak — right column of page head */
-.miniStreak {
-  display: flex; flex-direction: column;
-  align-items: flex-end; gap: 8px;
-  font-family: var(--font-jost), sans-serif;
-}
-.miniStreakLabel {
-  font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
-  text-transform: uppercase; color: #7A7060;
-}
-.miniStreakNum {
-  font-family: var(--font-cormorant), serif;
-  font-weight: 300; font-size: 36px;
-  color: #2A2318; line-height: 1;
-}
-.miniStreakNum em { font-style: italic; font-weight: 400; color: #B5402A; }
-.miniStreakStrip { display: flex; gap: 4px; margin-top: 4px; }
-.miniStreakDay {
-  width: 18px; height: 18px; border-radius: 3px; background: #EDE8DF;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 8px; font-weight: 500; letter-spacing: 0.05em;
-  color: #B8B5AD;
-}
-.miniStreakDay.l1 { background: rgba(186,117,23,0.28); color: #7A6020; }
-.miniStreakDay.l2 { background: rgba(186,117,23,0.55); color: #FDFAF5; }
-.miniStreakDay.l3 { background: rgba(181,64,42,0.85); color: #FDFAF5; }
-.miniStreakDay.now {
-  box-shadow: 0 0 0 2px #B5402A, 0 0 0 3px rgba(186,117,23,0.18);
-}
-
 /* ---------- Today strip (compact, single row) ---------- */
 .today {
   margin-top: 28px;
@@ -118,27 +88,52 @@
   font-family: var(--font-jost), sans-serif;
   font-size: 11px; color: #7A7060; margin-top: 1px;
 }
-.streakInline {
-  display: flex; align-items: center; gap: 10px;
-  padding: 0 14px; border-left: 1px solid #E5DCC0; height: 36px;
-  flex-shrink: 0;
+/* Typographic streak indicator — desktop badge variant */
+.streakTypoDesktop {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 0 4px 0 16px;
+  border-left: 1px solid rgba(139, 105, 20, 0.2);
+  flex: 0 0 auto;
 }
-.streakInlineNum {
+.streakTypoStack {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.streakTypoNum {
   font-family: var(--font-cormorant), serif;
-  font-weight: 400; font-size: 22px;
-  color: #2A2318; line-height: 1;
+  font-weight: 500; font-size: 26px;
+  color: #1a1208; line-height: 1;
+  letter-spacing: -0.02em;
 }
-.streakInlineNum em {
-  font-style: italic; color: #B5402A; font-size: 12px; margin-left: 2px;
+.streakTypoDay {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic; font-size: 14px;
+  color: #a0381c; line-height: 1;
 }
-.streakInlineStrip { display: flex; gap: 3px; }
-.streakInlineDay {
-  width: 14px; height: 14px; border-radius: 2px; background: #EDE8DF;
+.streakTypoLabel {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 8px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #8a7560;
+  font-weight: 600;
 }
-.streakInlineDay.l1 { background: rgba(186,117,23,0.30); }
-.streakInlineDay.l2 { background: rgba(186,117,23,0.55); }
-.streakInlineDay.l3 { background: rgba(181,64,42,0.85); }
-.streakInlineDay.now { box-shadow: 0 0 0 1.5px #B5402A; }
+
+/* Typographic streak indicator — mobile labeled row variant */
+.streakTypoMobile {
+  display: flex; align-items: baseline; justify-content: space-between;
+  width: 100%;
+  padding: 14px 0;
+  border-top: 1px solid rgba(139, 105, 20, 0.15);
+  border-bottom: 1px solid rgba(139, 105, 20, 0.15);
+}
+.streakTypoMobileLabel {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #a0381c;
+  font-weight: 700;
+}
+.streakTypoMobileVal {
+  display: flex; align-items: baseline; gap: 6px;
+}
+.streakTypoMobile .streakTypoNum { font-size: 22px; }
 .resume {
   padding: 0 14px; border-left: 1px solid #E5DCC0; height: 36px;
   display: flex; flex-direction: column; justify-content: center; gap: 1px;
@@ -219,28 +214,38 @@
   display: inline-flex; align-items: center; gap: 6px;
 }
 .viewToggle button.active {
-  background: #FDFAF5; color: #2A2318;
-  box-shadow: 0 1px 2px rgba(26,26,24,0.06);
+  background: #fffaf0; color: #2A2318;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 .viewToggleIc { font-size: 13px; line-height: 1; }
 
 .filterChip {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 14px; border-radius: 100px;
-  background: rgba(253,250,245,0.55);
-  border: 1px solid rgba(211,209,199,0.6);
-  font-family: var(--font-jost), sans-serif;
-  font-size: 12px; font-weight: 500;
-  color: #4A4540; cursor: pointer; letter-spacing: 0.02em;
+  flex: 0 0 auto;
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 6px 14px; border-radius: 16px;
+  background: rgba(255, 250, 238, 0.5);
+  border: 1px solid rgba(139, 105, 20, 0.25);
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px; color: #2a1f12;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
-.filterChip .ct { color: #B8B5AD; font-variant-numeric: tabular-nums; }
-.filterChip:hover { background: #FDFAF5; }
+.filterChip .ct {
+  font-size: 12px; font-style: italic;
+  color: rgba(42, 31, 18, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+.filterChip:hover { background: rgba(255, 250, 238, 0.9); }
 .filterChip.active {
-  background: #2A2318; color: #FDFAF5; border-color: #2A2318;
+  background: #1a1208; color: #f0e7d0; border-color: #1a1208;
 }
-.filterChip.active .ct { color: rgba(253,250,245,0.55); }
+.filterChip.active .ct { color: rgba(240, 231, 208, 0.7); }
 .filterDivider {
-  width: 1px; height: 22px; background: #D9CFAE;
+  flex: 0 0 auto;
+  width: 1px; height: 24px;
+  background: rgba(139, 105, 20, 0.25);
+  margin: 0 8px;
 }
 
 /* ---------- Shelves ---------- */
@@ -1017,10 +1022,19 @@
     padding: 14px 0 0; min-width: 0; width: 100%;
     height: auto;
   }
-  .streakInline {
+  .streakTypoDesktop {
     border-left: 0; border-top: 1px solid #E5DCC0;
-    padding: 14px 0 0; height: auto;
+    padding: 14px 0 0;
   }
+}
+
+/* Mobile/desktop visibility helpers — pure CSS so the right layout
+   shows immediately on first paint without waiting for JS hydration. */
+.desktopOnly { display: block; }
+.mobileOnly { display: none; }
+@media (max-width: 767.98px) {
+  .desktopOnly { display: none; }
+  .mobileOnly { display: block; }
 }
 
 /* ---------- Mobile (< 768px) ---------- */
@@ -1055,17 +1069,92 @@
     align-self: flex-start;
   }
   .todayInfo { width: 100%; }
-  .streakInline,
   .resume {
     width: 100%;
     margin: 0;
-  }
-  /* Filter pill row + search input — full-bleed with edge padding */
-  .toolbar {
-    padding: 0 20px;
+    border-top: 0;
+    padding: 0;
   }
   /* Empty-state copy stays centered but with mobile padding */
   .empty {
     padding: 0 20px;
   }
+}
+
+/* ---------- Toolbar (mobile branches) ---------- */
+.searchMobile {
+  width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 14px; height: 44px;
+  background: rgba(255, 250, 238, 0.7);
+  border: 1px solid rgba(139, 105, 20, 0.25);
+  border-radius: 12px;
+}
+.searchMobile input {
+  flex: 1; min-width: 0;
+  border: 0; outline: 0; background: transparent;
+  font-family: var(--font-cormorant), serif;
+  font-size: 15px; color: #2a1f12;
+}
+.searchMobile input::placeholder { color: rgba(42, 31, 18, 0.45); }
+
+.mobileSearchRow { padding: 40px 20px 14px; }
+.mobileViewRow   { padding: 0 20px 16px; }
+
+.mobileViewToggle {
+  display: flex; width: 100%;
+  background: rgba(255, 250, 238, 0.5);
+  border: 1px solid rgba(139, 105, 20, 0.25);
+  border-radius: 10px;
+  padding: 3px;
+}
+.mobileViewToggle button {
+  flex: 1;
+  padding: 10px 0;
+  background: transparent;
+  border: 0; border-radius: 7px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px; font-weight: 400;
+  color: #2a1f12; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+.mobileViewToggle button.active {
+  background: #1a1208; color: #f0e7d0; font-weight: 500;
+}
+
+/* Filter row — horizontal scroll, full-bleed, with edge fades */
+.mobileFilterScrollWrap {
+  position: relative;
+  margin-bottom: 24px;
+}
+.mobileFilterScroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 4px 20px;
+}
+.mobileFilterScroll::-webkit-scrollbar { display: none; }
+.mobileFilterRow {
+  display: flex; align-items: center;
+  gap: 8px;
+  width: max-content;
+}
+.mobileFilterRow .filterDivider { margin: 0 4px; }
+.filterEdgeFade {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 28px;
+  pointer-events: none;
+}
+.filterEdgeFadeLeft {
+  left: 0;
+  background: linear-gradient(90deg, #EFE8D2 0%, rgba(239, 232, 210, 0) 100%);
+}
+.filterEdgeFadeRight {
+  right: 0;
+  background: linear-gradient(270deg, #EFE8D2 0%, rgba(239, 232, 210, 0) 100%);
 }

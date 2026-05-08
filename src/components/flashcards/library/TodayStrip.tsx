@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import s from './library.module.css'
-import { StreakLevel } from './MiniStreak'
 
 export interface TodayStripProps {
   dueCount: number
@@ -10,26 +9,19 @@ export interface TodayStripProps {
   overdueCount: number
   estMinutes: number
   streakCurrent: number
-  streakDays: StreakLevel[]
-  streakTodayIndex: number
   resumeName?: string
   resumeAgo?: string
   startHref: string
 }
 
-function levelClass(l: StreakLevel): string | null {
-  if (l === 1) return s.l1
-  if (l === 2) return s.l2
-  if (l === 3) return s.l3
-  return null
-}
-
 export default function TodayStrip(props: TodayStripProps) {
   const {
     dueCount, setCount, overdueCount, estMinutes,
-    streakCurrent, streakDays, streakTodayIndex,
+    streakCurrent,
     resumeName, resumeAgo, startHref,
   } = props
+  const dayWord = streakCurrent === 1 ? 'day' : 'days'
+  const ariaLabel = `${streakCurrent} ${dayWord} streak`
 
   return (
     <section className={s.today}>
@@ -43,19 +35,25 @@ export default function TodayStrip(props: TodayStripProps) {
         <div className={s.todayMeta}>est. {estMinutes} minutes</div>
       </div>
 
-      <div className={s.streakInline} aria-label="7-day streak">
-        <div className={s.streakInlineNum}>
-          {streakCurrent}<em>d streak</em>
+      {/* Desktop streak — small typographic badge with left divider */}
+      <div className={s.desktopOnly}>
+        <div className={s.streakTypoDesktop} aria-label={ariaLabel}>
+          <div className={s.streakTypoNum}>{streakCurrent}</div>
+          <div className={s.streakTypoStack}>
+            <div className={s.streakTypoDay}>{dayWord}</div>
+            <div className={s.streakTypoLabel}>streak</div>
+          </div>
         </div>
-        <div className={s.streakInlineStrip}>
-          {streakDays.map((l, i) => {
-            const cls = [
-              s.streakInlineDay,
-              levelClass(l),
-              i === streakTodayIndex ? s.now : null,
-            ].filter(Boolean).join(' ')
-            return <div key={i} className={cls} />
-          })}
+      </div>
+
+      {/* Mobile streak — full-width labeled row */}
+      <div className={s.mobileOnly}>
+        <div className={s.streakTypoMobile} aria-label={ariaLabel}>
+          <div className={s.streakTypoMobileLabel}>Streak</div>
+          <div className={s.streakTypoMobileVal}>
+            <div className={s.streakTypoNum}>{streakCurrent}</div>
+            <div className={s.streakTypoDay}>{dayWord}</div>
+          </div>
         </div>
       </div>
 
