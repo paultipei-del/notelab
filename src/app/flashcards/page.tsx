@@ -13,9 +13,7 @@ import Shelf from '@/components/flashcards/library/Shelf'
 import MobileShelf from '@/components/flashcards/library/MobileShelf'
 import ExaminationHall from '@/components/flashcards/library/ExaminationHall'
 import MobileExaminationHall from '@/components/flashcards/library/MobileExaminationHall'
-import { useIsMobile } from '@/hooks/useMediaQuery'
 import TodayStrip from '@/components/flashcards/library/TodayStrip'
-import MiniStreak, { StreakLevel } from '@/components/flashcards/library/MiniStreak'
 import Toolbar, { LibraryView, FilterChipDef } from '@/components/flashcards/library/Toolbar'
 import {
   deckToBookProps, summarize, DeckProgressSummary,
@@ -46,11 +44,7 @@ interface DeckWithSummary {
   summary: DeckProgressSummary
 }
 
-function buildStreak(decks: DeckWithSummary[]): {
-  current: number
-  days: StreakLevel[]
-  todayIndex: number
-} {
+function buildStreak(decks: DeckWithSummary[]): number {
   const buckets: number[] = [0, 0, 0, 0, 0, 0, 0]
   const now = new Date()
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
@@ -61,32 +55,13 @@ function buildStreak(decks: DeckWithSummary[]): {
     if (days < 0) buckets[6]++
     else if (days < 7) buckets[6 - days]++
   }
-  // Mon..Sun layout — todayIndex is JS day-of-week (0 Sun .. 6 Sat) mapped to Mon-first
-  const jsDow = now.getDay() // 0 Sun ... 6 Sat
-  const todayIndex = (jsDow + 6) % 7 // 0 Mon ... 6 Sun
-  // We populated bucket[6] = today, [5] = yesterday, etc. Re-index so the last
-  // entry is "today" sitting at todayIndex.
-  const days: StreakLevel[] = []
-  for (let i = 0; i < 7; i++) {
-    // Position i in week. Distance from today = todayIndex - i (positive past).
-    const past = todayIndex - i
-    const count = past >= 0 && past < 7 ? buckets[6 - past] : 0
-    days.push(toLevel(count))
-  }
   // Current streak: walk back from today until a 0
   let current = 0
   for (let back = 0; back < 7; back++) {
     if (buckets[6 - back] > 0) current++
     else break
   }
-  return { current, days, todayIndex }
-}
-
-function toLevel(count: number): StreakLevel {
-  if (count <= 0) return 0
-  if (count < 4) return 1
-  if (count < 10) return 2
-  return 3
+  return current
 }
 
 function relTimeShort(ms: number): string {
@@ -144,7 +119,6 @@ export default function FlashcardsPage() {
   const [query, setQuery] = useState('')
   const [view, setView] = useState<LibraryView>('shelves')
   const [filter, setFilter] = useState('all')
-  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (!authLoading && !user) window.location.href = '/landing'
@@ -242,7 +216,7 @@ export default function FlashcardsPage() {
     ? `/study/${resumeCandidate.deck.id}`
     : `/study/${allDecks[0]?.deck.id ?? ''}`
 
-  const streak = useMemo(() => buildStreak(allDecks), [allDecks])
+  const streakCurrent = useMemo(() => buildStreak(allDecks), [allDecks])
 
   if (authLoading || !user) {
     return <div className={s.page} />
@@ -263,11 +237,6 @@ export default function FlashcardsPage() {
               explore the rest at your own pace.
             </p>
           </div>
-          <MiniStreak
-            current={streak.current}
-            days={streak.days}
-            todayIndex={streak.todayIndex}
-          />
         </section>
 
         {progressLoaded && totalDue > 0 && (
@@ -276,9 +245,7 @@ export default function FlashcardsPage() {
             setCount={setsDue}
             overdueCount={overdue}
             estMinutes={estMinutes}
-            streakCurrent={streak.current}
-            streakDays={streak.days}
-            streakTodayIndex={streak.todayIndex}
+            streakCurrent={streakCurrent}
             resumeName={resumeName}
             resumeAgo={resumeAgo}
             startHref={resumeHref}
@@ -298,41 +265,42 @@ export default function FlashcardsPage() {
         <main className={s.shelves}>
           {view === 'shelves' && (
             <>
-              {isMobile ? (
-                <>
-                  <MobileShelf
-                    title="Currently reading"
-                    count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
-                    books={activeBooks}
-                  />
-                  {topicShelves.map(t => (
-                    <MobileShelf
-                      key={t.id}
-                      title={t.label}
-                      count={`${t.books.length} volumes · ${t.subtitle}`}
-                      books={t.books}
-                    />
-                  ))}
-                  <MobileExaminationHall books={practiceBooks} />
-                </>
-              ) : (
-                <>
+              {/* Desktop layout — hidden below 768px via CSS */}
+              <div className={s.desktopOnly}>
+                <Shelf
+                  title="Currently reading"
+                  count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
+                  books={activeBooks}
+                />
+                {topicShelves.map(t => (
                   <Shelf
-                    title="Currently reading"
-                    count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
-                    books={activeBooks}
+                    key={t.id}
+                    title={t.label}
+                    count={`${t.books.length} volumes · ${t.subtitle}`}
+                    books={t.books}
                   />
-                  {topicShelves.map(t => (
-                    <Shelf
-                      key={t.id}
-                      title={t.label}
-                      count={`${t.books.length} volumes · ${t.subtitle}`}
-                      books={t.books}
-                    />
-                  ))}
-                  <ExaminationHall books={practiceBooks} />
-                </>
-              )}
+                ))}
+                <ExaminationHall books={practiceBooks} />
+              </div>
+
+              {/* Mobile layout — hidden at and above 768px via CSS */}
+              <div className={s.mobileOnly}>
+                <MobileShelf
+                  title="Currently reading"
+                  count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
+                  books={activeBooks}
+                />
+                {topicShelves.map(t => (
+                  <MobileShelf
+                    key={t.id}
+                    title={t.label}
+                    count={`${t.books.length} volumes · ${t.subtitle}`}
+                    books={t.books}
+                  />
+                ))}
+                <MobileExaminationHall books={practiceBooks} />
+              </div>
+
               {visible.length === 0 && (
                 <p className={s.empty}>No volumes match this view.</p>
               )}
