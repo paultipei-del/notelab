@@ -91,7 +91,12 @@ export default function Shelf({ title, count, seeAllHref = '#', books }: ShelfPr
         marginBottom: 64,
       }}
     >
-      <SectionCard label={title} sublabel={count} seeAllHref={seeAllHref} />
+      <SectionCard
+        label={title}
+        sublabel={count}
+        seeAllHref={seeAllHref}
+        floorOffset={16}
+      />
 
       {/* Right-hand container: owns the placard's coordinate space and the
           scroll-button absolute positioning. minWidth: 0 is critical — it
