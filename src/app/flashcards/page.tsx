@@ -10,7 +10,7 @@ import { Deck, ProgressStore } from '@/lib/types'
 
 import s from '@/components/flashcards/library/library.module.css'
 import Shelf from '@/components/flashcards/library/Shelf'
-import { PracticeShelf } from '@/components/flashcards/library/PracticeTome'
+import ExaminationHall from '@/components/flashcards/library/ExaminationHall'
 import TodayStrip from '@/components/flashcards/library/TodayStrip'
 import MiniStreak, { StreakLevel } from '@/components/flashcards/library/MiniStreak'
 import Toolbar, { LibraryView, FilterChipDef } from '@/components/flashcards/library/Toolbar'
@@ -307,11 +307,7 @@ export default function FlashcardsPage() {
                   books={t.books}
                 />
               ))}
-              <PracticeShelf
-                title="Practice & Review"
-                count={`${practiceBooks.length} workbooks · cross-concept challenges`}
-                books={practiceBooks}
-              />
+              <ExaminationHall books={practiceBooks} />
               {visible.length === 0 && (
                 <p className={s.empty}>No volumes match this view.</p>
               )}
