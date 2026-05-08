@@ -367,8 +367,6 @@ export default function ExaminationHall({ books }: ExaminationHallProps) {
         alignItems: 'flex-end',
         gap: 28,
         marginBottom: 64,
-        contentVisibility: 'auto',
-        containIntrinsicSize: '0 360px',
       }}
     >
       <SectionCard
