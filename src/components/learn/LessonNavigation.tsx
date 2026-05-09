@@ -42,6 +42,7 @@ function NavCard({ href, direction, title, showChapter }: CardProps) {
       }}
     >
       <div
+        className="nl-lesson-nav-card__kicker"
         style={{
           fontFamily: F,
           fontSize: 11,
@@ -55,6 +56,7 @@ function NavCard({ href, direction, title, showChapter }: CardProps) {
         {isPrev ? '← Previous' : 'Next →'}
       </div>
       <div
+        className="nl-lesson-nav-card__title"
         style={{
           fontFamily: SERIF,
           fontWeight: 500,
@@ -68,6 +70,7 @@ function NavCard({ href, direction, title, showChapter }: CardProps) {
       </div>
       {showChapter && (
         <div
+          className="nl-lesson-nav-card__chapter"
           style={{
             fontFamily: F,
             fontSize: 12,
@@ -137,9 +140,30 @@ export function LessonNavigation({ topic, slug }: LessonNavigationProps) {
           background: #F5EFDF !important;
           border-color: #C9C0AE !important;
         }
+        /* Side-by-side at all widths. On phones the geometry tightens
+           so titles fit two-up at 390px without forcing the previous
+           single-column stack — that stack felt like a redundant scroll
+           below the lesson body. */
         @media (max-width: 600px) {
           .nl-lesson-nav {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+          }
+          .nl-lesson-nav-card {
+            padding: 14px 14px !important;
+            border-radius: 10px !important;
+          }
+          .nl-lesson-nav-card .nl-lesson-nav-card__title {
+            font-size: 15px !important;
+            line-height: 1.25 !important;
+          }
+          .nl-lesson-nav-card .nl-lesson-nav-card__kicker {
+            font-size: 10px !important;
+            margin-bottom: 4px !important;
+            letter-spacing: 0.12em !important;
+          }
+          .nl-lesson-nav-card .nl-lesson-nav-card__chapter {
+            display: none;
           }
         }
       `}</style>

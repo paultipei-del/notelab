@@ -20,8 +20,12 @@ export interface HomepageHeroProps {
  * Top-level homepage dispatcher. All four states (`flashcards-only`,
  * `program-only`, `both`, `new`) now have specialized heroes. The
  * `fallback` (legacy homepage) is reachable only as a last-resort
- * safety net for the `loading` state and any future state mismatches —
- * scheduled for removal one ship cycle after Phase 4 lands cleanly.
+ * safety net for any future state mismatches — scheduled for removal
+ * one ship cycle after Phase 4 lands cleanly.
+ *
+ * The `loading` state renders an empty placeholder rather than the
+ * legacy fallback, so a 200-500ms progress/program fetch doesn't flash
+ * the old homepage before the specialized hero lands.
  */
 export default function HomepageHero({ fallback }: HomepageHeroProps) {
   const { user } = useAuth()
@@ -30,6 +34,14 @@ export default function HomepageHero({ fallback }: HomepageHeroProps) {
   const displayName: string =
     (user?.user_metadata?.display_name as string | undefined)?.split(' ')[0] ??
     (user?.email ? user.email.split('@')[0] : 'there')
+
+  if (state === 'loading') {
+    // Empty placeholder during auth + progress + program load. The
+    // page's cream gradient and SiteHeader are already painted, so a
+    // brief blank reads as "still loading" rather than as a different
+    // page about to swap.
+    return <div style={{ minHeight: '60vh' }} aria-hidden />
+  }
 
   if (state === 'flashcards-only' && ctx.featured) {
     return (
