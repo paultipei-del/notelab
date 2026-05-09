@@ -97,6 +97,33 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal, mobi
         </div>
       )
     }
+    if (mobile) {
+      // Mobile: Jost sans (non-italic, more weight) — Cormorant 300 at
+      // 14-20px against the cream gradient on iPhone 11 read too thin.
+      // Adaptive size still scales down with prompt length so very long
+      // lesson questions don't overflow.
+      const len = card.front.length
+      const cap = len < 50 ? 22 : len < 100 ? 19 : len < 200 ? 17 : 15.5
+      return (
+        <p
+          style={{
+            fontFamily: 'var(--font-jost), sans-serif',
+            fontWeight: 400,
+            fontSize: `${cap}px`,
+            textAlign: 'center',
+            color: '#1a1208',
+            lineHeight: 1.4,
+            letterSpacing: '0.005em',
+            maxWidth: '100%',
+            wordBreak: 'break-word',
+            hyphens: 'auto',
+            margin: 0,
+          }}
+        >
+          {card.front}
+        </p>
+      )
+    }
     return (
       <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300,
         fontSize: (() => {
@@ -149,13 +176,14 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal, mobi
             <span
               style={{
                 position: 'absolute',
-                top: 14,
+                top: 12,
                 left: 0,
                 right: 0,
                 textAlign: 'center',
-                fontSize: 9,
+                fontFamily: 'var(--font-jost), sans-serif',
+                fontSize: 10.5,
                 fontWeight: 600,
-                letterSpacing: '0.18em',
+                letterSpacing: '0.16em',
                 textTransform: 'uppercase',
                 color: '#a0381c',
               }}

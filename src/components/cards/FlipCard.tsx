@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { QueueCard } from '@/lib/types'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import StaffCard from './StaffCard'
 
 interface FlipCardProps {
@@ -25,6 +26,8 @@ function capForLength(text: string, baseMax: number): number {
 }
 
 export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
+  const isMobile = useIsMobile()
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === ' ' || e.key === 'Enter') {
@@ -82,10 +85,35 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
         What note is this?
       </p>
     </div>
+  ) : isMobile ? (
+    // Mobile: Jost sans (non-italic) for legibility on phone — italic
+    // Cormorant at 18-22px against the cream gradient on iPhone 11
+    // read too soft. Editorial italic stays on desktop where the
+    // larger size carries it.
+    <p style={{
+      fontFamily: 'var(--font-jost), sans-serif',
+      fontStyle: 'normal',
+      fontWeight: 400,
+      fontSize: (() => {
+        const len = card.front.length
+        const cap = len < 50 ? 22 : len < 100 ? 19 : len < 200 ? 17 : 15.5
+        return `${cap}px`
+      })(),
+      textAlign: 'center',
+      color: '#1a1208',
+      letterSpacing: '0.005em',
+      lineHeight: 1.4,
+      margin: 0,
+      maxWidth: '100%',
+      wordBreak: 'break-word',
+      hyphens: 'auto',
+    }}>
+      {card.front}
+    </p>
   ) : (
-    // Italic serif mirrors the classical score convention for Italian
-    // tempo terms, dynamic markings, and directives (dolce, poco a
-    // poco, etc.). Floor bumped to 22 so short prompts feel substantial.
+    // Desktop: italic serif mirrors the classical score convention for
+    // Italian tempo terms, dynamic markings, and directives (dolce,
+    // poco a poco, etc.). Floor 22 so short prompts feel substantial.
     <p style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic',
       fontWeight: 400, fontSize: `clamp(22px, 4.5vw, ${frontCap}px)`, textAlign: 'center',
       color: '#2A2318', letterSpacing: '0.01em', lineHeight: 1.3,
@@ -103,9 +131,31 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
         {card.back}
       </p>
     </div>
+  ) : isMobile ? (
+    <p style={{
+      fontFamily: 'var(--font-jost), sans-serif',
+      fontStyle: 'normal',
+      fontWeight: 400,
+      fontSize: (() => {
+        const len = card.back.length
+        const cap = len < 50 ? 19 : len < 100 ? 17 : len < 200 ? 15.5 : 14.5
+        return `${cap}px`
+      })(),
+      textAlign: 'center',
+      color: '#1a1208',
+      letterSpacing: '0.005em',
+      lineHeight: 1.5,
+      margin: 0,
+      padding: '0 4px',
+      maxWidth: '100%',
+      wordBreak: 'break-word',
+      hyphens: 'auto',
+    }}>
+      {card.back}
+    </p>
   ) : (
-    // Upright (non-italic) on the answer side reads as definitional —
-    // Q is a directive, A is a fact. Floor bumped to 18 so short
+    // Desktop: upright Cormorant on the answer side reads as
+    // definitional — Q is a directive, A is a fact. Floor 18 so short
     // answers feel substantial.
     <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400,
       fontSize: `clamp(18px, 3.5vw, ${backCap}px)`, textAlign: 'center',
@@ -144,12 +194,13 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
               style={{
                 position: 'absolute',
                 bottom: 18,
-                fontFamily: 'var(--font-cormorant), serif',
-                fontStyle: 'italic',
-                fontSize: 12,
+                fontFamily: isMobile ? 'var(--font-jost), sans-serif' : 'var(--font-cormorant), serif',
+                fontStyle: isMobile ? 'normal' : 'italic',
+                fontSize: isMobile ? 11 : 12,
                 color: '#5a4028',
                 opacity: 0.6,
-                letterSpacing: '0.02em',
+                letterSpacing: isMobile ? '0.06em' : '0.02em',
+                textTransform: isMobile ? 'uppercase' : 'none',
               }}
             >
               Tap to flip

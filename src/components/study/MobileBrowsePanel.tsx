@@ -76,9 +76,9 @@ export default function MobileBrowsePanel({ cards, expandedId, onToggle }: Mobil
                           <span
                             style={{
                               fontFamily: 'var(--font-jost), sans-serif',
-                              fontSize: 14,
-                              fontWeight: 400,
-                              color: '#7A7060',
+                              fontSize: 14.5,
+                              fontWeight: 500,
+                              color: '#1a1208',
                               marginLeft: 10,
                             }}
                           >
@@ -89,12 +89,14 @@ export default function MobileBrowsePanel({ cards, expandedId, onToggle }: Mobil
                       {isExpanded && (
                         <p
                           style={{
+                            fontFamily: 'var(--font-jost), sans-serif',
                             fontSize: 14,
                             fontWeight: 400,
-                            color: '#7A7060',
+                            color: '#5a4028',
                             lineHeight: 1.5,
                             borderTop: '1px solid #EDE8DF',
                             paddingTop: 8,
+                            margin: 0,
                           }}
                         >
                           {card.back}
@@ -105,12 +107,14 @@ export default function MobileBrowsePanel({ cards, expandedId, onToggle }: Mobil
                     <>
                       <p
                         style={{
-                          fontFamily: 'var(--font-cormorant), serif',
-                          fontWeight: 400,
-                          fontSize: 15,
-                          color: '#2A2318',
+                          fontFamily: 'var(--font-jost), sans-serif',
+                          fontWeight: 500,
+                          fontSize: 14.5,
+                          color: '#1a1208',
+                          marginTop: 0,
                           marginBottom: isExpanded ? 8 : 0,
-                          lineHeight: 1.35,
+                          lineHeight: 1.4,
+                          letterSpacing: '0.005em',
                         }}
                       >
                         {card.front}
@@ -118,12 +122,14 @@ export default function MobileBrowsePanel({ cards, expandedId, onToggle }: Mobil
                       {isExpanded && (
                         <p
                           style={{
-                            fontSize: 13,
+                            fontFamily: 'var(--font-jost), sans-serif',
+                            fontSize: 14,
                             fontWeight: 400,
-                            color: '#7A7060',
+                            color: '#5a4028',
                             lineHeight: 1.5,
                             borderTop: '1px solid #EDE8DF',
                             paddingTop: 8,
+                            marginTop: 8,
                           }}
                         >
                           {card.back}

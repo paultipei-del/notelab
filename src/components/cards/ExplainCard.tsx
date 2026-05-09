@@ -95,10 +95,11 @@ export default function ExplainCard({ card, onAnswer, onReveal, mobile = false }
         }}
       >
         <span style={{
-          position: 'absolute', top: mobile ? 14 : 22, left: 0, right: 0, textAlign: 'center',
-          fontSize: mobile ? 9 : 'var(--nl-text-badge)',
+          position: 'absolute', top: mobile ? 12 : 22, left: 0, right: 0, textAlign: 'center',
+          fontFamily: mobile ? 'var(--font-jost), sans-serif' : undefined,
+          fontSize: mobile ? 10.5 : 'var(--nl-text-badge)',
           fontWeight: mobile ? 600 : 400,
-          letterSpacing: '0.18em',
+          letterSpacing: mobile ? '0.16em' : '0.18em',
           textTransform: 'uppercase',
           color: mobile ? '#a0381c' : '#7A7060',
         }}>
@@ -106,28 +107,34 @@ export default function ExplainCard({ card, onAnswer, onReveal, mobile = false }
         </span>
 
         {card.type === 'symbol' && (
-          <div style={{ fontFamily: 'Bravura, serif', fontSize: '80px', lineHeight: 1.4, color: '#2A2318', marginBottom: '8px' }}>
+          <div style={{ fontFamily: 'Bravura, serif', fontSize: mobile ? '60px' : '80px', lineHeight: 1.4, color: '#2A2318', marginBottom: '8px' }}>
             {card.front}
           </div>
         )}
 
         <p style={{
-          fontFamily: 'var(--font-cormorant), serif',
-          fontWeight: 300,
+          fontFamily: mobile ? 'var(--font-jost), sans-serif' : 'var(--font-cormorant), serif',
+          fontWeight: mobile ? 400 : 300,
           fontSize: (() => {
-            if (card.type === 'symbol') return '20px'
-            // Adaptive sizing for long lesson-deck questions so they don't
-            // overflow the term card (matches FlipCard / MultipleChoice).
+            if (card.type === 'symbol') return mobile ? '17px' : '20px'
             const len = term.length
+            if (mobile) {
+              // Mobile: Jost sans (non-italic), bigger floor than the
+              // serif version so question text reads at iPhone-11 scale.
+              const cap = len < 50 ? 22 : len < 100 ? 19 : len < 200 ? 17 : 15.5
+              return `${cap}px`
+            }
+            // Desktop: Cormorant adaptive sizing (matches FlipCard / MC).
             const cap = len < 50 ? 36 : len < 100 ? 28 : len < 200 ? 22 : len < 300 ? 18 : 16
             return `clamp(15px, 3vw, ${cap}px)`
           })(),
-          color: '#2A2318',
-          letterSpacing: '0.02em',
+          color: mobile ? '#1a1208' : '#2A2318',
+          letterSpacing: mobile ? '0.005em' : '0.02em',
           lineHeight: 1.4,
           maxWidth: '100%',
           wordBreak: 'break-word',
           hyphens: 'auto',
+          margin: 0,
         }}>
           {term}
         </p>
