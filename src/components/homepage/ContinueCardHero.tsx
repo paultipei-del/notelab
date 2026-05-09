@@ -230,7 +230,7 @@ function ContinueCard({
           style={{
             display: 'inline-flex',
             alignSelf: 'flex-start',
-            padding: '11px 16px',
+            padding: '12px 16px',
             marginTop: 6,
             borderRadius: 6,
             background: '#1a1208',
@@ -239,9 +239,10 @@ function ContinueCard({
             fontSize: 13,
             minHeight: 44,
             alignItems: 'center',
+            whiteSpace: 'nowrap',
           }}
         >
-          Continue →
+          Continue reading →
         </div>
       </div>
     </Link>
