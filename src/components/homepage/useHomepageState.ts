@@ -8,6 +8,8 @@ import { readDeckActivity, DeckActivityMap } from '@/lib/deckActivity'
 import type { Deck, ProgressStore } from '@/lib/types'
 import { summarize, deckToBookProps } from '@/components/flashcards/library/deckToBook'
 import type { DeckWithSummary } from '@/components/flashcards/library/sectionGrouping'
+import { useEnrolledPrograms } from './useEnrolledPrograms'
+import type { ProgramHeroData } from './programAdapters/types'
 
 export type HomepageState =
   | 'loading'
@@ -28,6 +30,8 @@ export interface HomepageContext {
   totalDue: number
   /** Estimated minutes of review (~15 sec / card). */
   estMinutes: number
+  /** Most-recently-touched enrolled program, or null. */
+  program: ProgramHeroData | null
 }
 
 const TIERED_DECKS: Deck[] = DECKS.filter(d => !!d.tier)
@@ -50,6 +54,7 @@ export function useHomepageState(user: User | null | undefined): Result {
   const [progress, setProgress] = useState<ProgressStore>({})
   const [deckActivity, setDeckActivity] = useState<DeckActivityMap>({})
   const [progressLoaded, setProgressLoaded] = useState(false)
+  const { program, loaded: programsLoaded } = useEnrolledPrograms()
 
   useEffect(() => {
     if (!user) return
@@ -94,15 +99,19 @@ export function useHomepageState(user: User | null | undefined): Result {
 
   const featured = activeDecks[0] ?? null
 
+  const hasFlashcards = activeDecks.length > 0
+  const hasProgram = program != null
+
   let state: HomepageState
   if (!user) {
     state = 'loading'
-  } else if (!progressLoaded) {
+  } else if (!progressLoaded || !programsLoaded) {
     state = 'loading'
-  } else if (activeDecks.length > 0) {
-    // Phase 1: any active flashcards → State 3, regardless of programs
-    // (program-enrollment isn't detectable yet). When Phase 2 ships, also
-    // check hasProgram and split into 'flashcards-only' vs 'both'.
+  } else if (hasProgram && hasFlashcards) {
+    state = 'both'
+  } else if (hasProgram) {
+    state = 'program-only'
+  } else if (hasFlashcards) {
     state = 'flashcards-only'
   } else {
     state = 'new'
@@ -110,6 +119,6 @@ export function useHomepageState(user: User | null | undefined): Result {
 
   return {
     state,
-    ctx: { featured, allDecks, activeDecks, totalDue, estMinutes },
+    ctx: { featured, allDecks, activeDecks, totalDue, estMinutes, program },
   }
 }

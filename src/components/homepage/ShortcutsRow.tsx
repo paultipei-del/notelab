@@ -7,6 +7,11 @@ import type { HomepageState } from './useHomepageState'
 interface Shortcut {
   href: string
   label: string
+  /**
+   * Shorter eyebrow used on mobile only (the 2-col grid is tighter
+   * than the 4-col desktop one). Falls back to `label` when absent.
+   */
+  mobileLabel?: string
   name: string
   meta: string
   emphasize?: boolean
@@ -23,6 +28,7 @@ const STATE_3_SHORTCUTS: Shortcut[] = [
   {
     href: '/flashcards',
     label: 'All flashcards',
+    mobileLabel: 'Flashcards',
     name: 'Library',
     meta: '37 sets · browse all',
   },
@@ -40,12 +46,96 @@ const STATE_3_SHORTCUTS: Shortcut[] = [
   },
 ]
 
+const STATE_2_SHORTCUTS: Shortcut[] = [
+  {
+    href: '/flashcards',
+    label: 'Practice',
+    name: 'Flashcards',
+    meta: '37 sets · 168 cards',
+  },
+  {
+    href: '/ear-training',
+    label: 'Listening',
+    name: 'Ear Training',
+    meta: 'Real piano audio',
+  },
+  {
+    href: '/learn',
+    label: 'Reference',
+    name: 'Learn',
+    meta: '11-part guide',
+  },
+  {
+    href: '/programs',
+    label: 'All programs',
+    mobileLabel: 'Programs',
+    name: 'Browse curriculum',
+    meta: 'CM, Reading, Rhythm',
+  },
+]
+
+const STATE_1_SHORTCUTS: Shortcut[] = [
+  {
+    href: '/flashcards',
+    label: 'Practice',
+    name: 'Flashcards',
+    meta: '37 sets, no commitment',
+  },
+  {
+    href: '/ear-training',
+    label: 'Listening',
+    name: 'Ear Training',
+    meta: 'Real piano audio',
+  },
+  {
+    href: '/learn',
+    label: 'Reference',
+    name: 'Learn',
+    meta: '11-part guide',
+  },
+  {
+    href: '/tools',
+    label: 'Utilities',
+    name: 'Tools',
+    meta: 'Metronome & more',
+  },
+]
+
+const STATE_4_SHORTCUTS: Shortcut[] = [
+  {
+    href: '/ear-training',
+    label: 'Listening',
+    name: 'Ear Training',
+    meta: 'Real piano audio',
+  },
+  {
+    href: '/learn',
+    label: 'Reference',
+    name: 'Learn',
+    meta: '11-part guide',
+  },
+  {
+    href: '/flashcards',
+    label: 'All flashcards',
+    mobileLabel: 'Flashcards',
+    name: 'Library',
+    meta: '37 sets · browse all',
+  },
+  {
+    href: '/programs',
+    label: 'All programs',
+    mobileLabel: 'Programs',
+    name: 'Other tracks',
+    meta: 'Note Reading, Rhythm',
+  },
+]
+
 const SHORTCUTS_BY_STATE: Record<HomepageState, Shortcut[]> = {
-  loading: STATE_3_SHORTCUTS,
-  new: STATE_3_SHORTCUTS,
+  loading: STATE_1_SHORTCUTS,
+  new: STATE_1_SHORTCUTS,
   'flashcards-only': STATE_3_SHORTCUTS,
-  'program-only': STATE_3_SHORTCUTS,
-  both: STATE_3_SHORTCUTS,
+  'program-only': STATE_2_SHORTCUTS,
+  both: STATE_4_SHORTCUTS,
 }
 
 export interface ShortcutsRowProps {
@@ -97,7 +187,7 @@ export default function ShortcutsRow({ state }: ShortcutsRowProps) {
           }}
         >
           {shortcuts.map(sc => (
-            <ShortcutCard key={sc.href} shortcut={sc} />
+            <ShortcutCard key={sc.href} shortcut={sc} compact={false} />
           ))}
         </div>
       </div>
@@ -113,7 +203,7 @@ export default function ShortcutsRow({ state }: ShortcutsRowProps) {
           }}
         >
           {shortcuts.map(sc => (
-            <ShortcutCard key={sc.href} shortcut={sc} />
+            <ShortcutCard key={sc.href} shortcut={sc} compact={true} />
           ))}
         </div>
       </div>
@@ -121,7 +211,15 @@ export default function ShortcutsRow({ state }: ShortcutsRowProps) {
   )
 }
 
-function ShortcutCard({ shortcut }: { shortcut: Shortcut }) {
+function ShortcutCard({
+  shortcut,
+  compact,
+}: {
+  shortcut: Shortcut
+  compact: boolean
+}) {
+  const eyebrow =
+    compact && shortcut.mobileLabel ? shortcut.mobileLabel : shortcut.label
   return (
     <Link
       href={shortcut.href}
@@ -153,7 +251,7 @@ function ShortcutCard({ shortcut }: { shortcut: Shortcut }) {
           opacity: shortcut.emphasize ? 1 : 0.9,
         }}
       >
-        {shortcut.label}
+        {eyebrow}
       </div>
       <div
         style={{
