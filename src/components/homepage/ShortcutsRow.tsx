@@ -15,7 +15,7 @@ interface Shortcut {
 const STATE_3_SHORTCUTS: Shortcut[] = [
   {
     href: '/programs',
-    label: 'Curriculum · Try one',
+    label: 'Try a program',
     name: 'Programs',
     meta: 'CM, Reading, Rhythm',
     emphasize: true,
