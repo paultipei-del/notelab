@@ -110,7 +110,7 @@ export default function ProgramTile({ tile }: ProgramTileProps) {
             color: '#8a7560',
           }}
         >
-          {tile.meta}
+          {renderMetaWithDuration(tile.meta)}
         </div>
         <div
           style={{
@@ -124,5 +124,39 @@ export default function ProgramTile({ tile }: ProgramTileProps) {
         </div>
       </div>
     </Link>
+  )
+}
+
+/**
+ * Split a meta string like "10 levels · ~6 months" so the tilde-prefixed
+ * duration segment renders in Jost sans. Cormorant Garamond italic
+ * draws the tilde glyph as a long horizontal stroke that reads as a
+ * dash; switching just that segment to sans keeps the tilde
+ * unambiguous while the prefix stays in the editorial italic.
+ *
+ * Inline helper rather than a shared <DurationLabel> for now —
+ * ProgramCard's duration label is structurally different (no prefix
+ * to preserve), so abstracting now would force one of them into a
+ * shape that doesn't fit. Revisit if a third "~" usage appears.
+ */
+function renderMetaWithDuration(meta: string): React.ReactNode {
+  const tildeIdx = meta.indexOf('~')
+  if (tildeIdx === -1) return meta
+  const prefix = meta.slice(0, tildeIdx)
+  const duration = meta.slice(tildeIdx)
+  return (
+    <>
+      {prefix}
+      <span
+        style={{
+          fontFamily: 'var(--font-jost), system-ui, sans-serif',
+          fontStyle: 'normal',
+          fontSize: 12,
+          letterSpacing: '0.02em',
+        }}
+      >
+        {duration}
+      </span>
+    </>
   )
 }
