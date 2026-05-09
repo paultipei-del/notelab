@@ -7,6 +7,9 @@ interface ExplainCardProps {
   card: QueueCard
   onAnswer: (correct: boolean) => void
   onReveal: () => void
+  /** Mobile layout: term card sits compact at top, textarea fills the
+   *  remaining vertical space, Submit anchors at the bottom. */
+  mobile?: boolean
 }
 
 type GradeResult = {
@@ -14,7 +17,7 @@ type GradeResult = {
   feedback: string
 }
 
-export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardProps) {
+export default function ExplainCard({ card, onAnswer, onReveal, mobile = false }: ExplainCardProps) {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<GradeResult | null>(null)
@@ -56,7 +59,21 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '640px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div
+      style={
+        mobile
+          ? {
+              width: '100%',
+              maxWidth: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: '1 1 auto',
+              minHeight: 0,
+              gap: 10,
+            }
+          : { width: '100%', maxWidth: '640px', display: 'flex', flexDirection: 'column', gap: '16px' }
+      }
+    >
 
       {/* Term card — matches MC/Flip sizing so switching modes feels
           continuous (no card width or min-height jumps). */}
@@ -65,11 +82,12 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
         style={{
           position: 'relative',
           background: '#ECE3CC',
-          borderRadius: '20px',
+          borderRadius: mobile ? 14 : 20,
           border: '1px solid #D9CFAE',
-          padding: '56px 32px 32px',
+          padding: mobile ? '38px 22px 22px' : '56px 32px 32px',
           textAlign: 'center',
-          minHeight: 'clamp(220px, 28dvh, 300px)',
+          minHeight: mobile ? undefined : 'clamp(220px, 28dvh, 300px)',
+          flex: mobile ? '0 0 auto' : undefined,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -77,9 +95,12 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
         }}
       >
         <span style={{
-          position: 'absolute', top: 22, left: 0, right: 0, textAlign: 'center',
-          fontSize: 'var(--nl-text-badge)', fontWeight: 400, letterSpacing: '0.18em',
-          textTransform: 'uppercase', color: '#7A7060',
+          position: 'absolute', top: mobile ? 14 : 22, left: 0, right: 0, textAlign: 'center',
+          fontSize: mobile ? 9 : 'var(--nl-text-badge)',
+          fontWeight: mobile ? 600 : 400,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: mobile ? '#a0381c' : '#7A7060',
         }}>
           Explain this term
         </span>
@@ -118,10 +139,12 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
           display: 'grid',
           gridTemplateColumns: '1fr',
           gridTemplateRows: '1fr',
-          alignItems: 'start',
+          alignItems: 'stretch',
           width: '100%',
           minWidth: 0,
-          minHeight: 'clamp(200px, 26vh, 300px)',
+          ...(mobile
+            ? { flex: '1 1 auto', minHeight: 0 }
+            : { minHeight: 'clamp(200px, 26vh, 300px)' }),
         }}
       >
         <div
@@ -132,10 +155,13 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
             pointerEvents: result ? 'none' : 'auto',
             width: '100%',
             minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            ...(mobile ? { minHeight: 0 } : {}),
           }}
           aria-hidden={!!result}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: mobile ? '1 1 auto' : undefined, minHeight: mobile ? 0 : undefined }}>
             <textarea
               ref={textareaRef}
               value={input}
@@ -144,21 +170,23 @@ export default function ExplainCard({ card, onAnswer, onReveal }: ExplainCardPro
                 if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSubmit()
               }}
               placeholder="Explain this concept in your own words…"
-              rows={3}
+              rows={mobile ? 2 : 3}
               style={{
                 width: '100%',
                 background: '#ECE3CC',
                 border: '1px solid #D9CFAE',
-                borderRadius: '14px',
-                padding: '16px 18px',
+                borderRadius: mobile ? '10px' : '14px',
+                padding: mobile ? '12px 14px' : '16px 18px',
                 fontFamily: 'var(--font-jost), sans-serif',
-                fontSize: 'var(--nl-text-body)',
+                fontSize: mobile ? '14px' : 'var(--nl-text-body)',
                 fontWeight: 300,
                 color: '#2A2318',
-                lineHeight: 1.6,
+                lineHeight: 1.5,
                 resize: 'none',
                 outline: 'none',
                 boxSizing: 'border-box',
+                flex: mobile ? '1 1 auto' : undefined,
+                minHeight: mobile ? 0 : undefined,
               }}
               autoFocus
             />

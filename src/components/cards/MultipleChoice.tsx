@@ -9,6 +9,9 @@ interface MultipleChoiceProps {
   options: string[]
   onAnswer: (correct: boolean) => void
   onReveal: () => void
+  /** When true, render the 1-column stacked-options layout that lives
+   *  inside an internal scroll container (no page scroll). */
+  mobile?: boolean
 }
 
 // Clefs and other tall Bravura glyphs need a smaller render size than the
@@ -20,7 +23,7 @@ function pickGlyphSize(text: string): string {
   return 'clamp(68px, 12vw, 96px)'
 }
 
-export default function MultipleChoice({ card, options, onAnswer, onReveal }: MultipleChoiceProps) {
+export default function MultipleChoice({ card, options, onAnswer, onReveal, mobile = false }: MultipleChoiceProps) {
   const [chosen, setChosen] = useState<string | null>(null)
 
   // Reset when card changes
@@ -108,6 +111,88 @@ export default function MultipleChoice({ card, options, onAnswer, onReveal }: Mu
         maxWidth: '100%', wordBreak: 'break-word', hyphens: 'auto' }}>
         {card.front}
       </p>
+    )
+  }
+
+  // Mobile: 1-column stacked options inside an internal scroll container
+  // (no page scroll) with pill labels (A/B/C/D) and a fade mask at the
+  // bottom. Question card sits at the top, options take remaining height.
+  if (mobile) {
+    return (
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: '1 1 auto',
+          minHeight: 0,
+          gap: 10,
+        }}
+      >
+        {card.type !== 'audio' && (
+          <div
+            className="nl-study-card-hover"
+            style={{
+              position: 'relative',
+              background: '#ECE3CC',
+              borderRadius: 14,
+              border: '1px solid #D9CFAE',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '38px 22px 22px',
+              flex: '0 0 auto',
+            }}
+          >
+            <span
+              style={{
+                position: 'absolute',
+                top: 14,
+                left: 0,
+                right: 0,
+                textAlign: 'center',
+                fontSize: 9,
+                fontWeight: 600,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: '#a0381c',
+              }}
+            >
+              Choose the correct answer
+            </span>
+            {questionContent()}
+          </div>
+        )}
+
+        <div className="nl-study-mobile-options">
+          {options.map((option, i) => {
+            const colorOverride = !chosen
+              ? null
+              : option === correct
+              ? { background: '#EAF3DE', borderColor: '#97C459', color: '#3B6D11' }
+              : option === chosen
+              ? { background: '#FCEBEB', borderColor: '#F09595', color: '#A32D2D' }
+              : { background: 'rgba(255, 250, 238, 0.4)', borderColor: 'rgba(139, 105, 20, 0.12)', color: '#a89a85' }
+            return (
+              <button
+                key={i}
+                type="button"
+                className="nl-study-mobile-mc-opt"
+                onClick={() => handleChoice(option)}
+                disabled={!!chosen}
+                style={colorOverride ?? undefined}
+              >
+                <span className="nl-study-mobile-mc-opt__label">
+                  {String.fromCharCode(65 + i)}
+                </span>
+                <span className="nl-study-mobile-mc-opt__text">{option}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
     )
   }
 

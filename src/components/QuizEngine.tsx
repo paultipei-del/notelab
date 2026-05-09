@@ -1,15 +1,20 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Deck } from '@/lib/types'
+import { Deck, StudyMode } from '@/lib/types'
 import { useQuizSession } from '@/hooks/useQuizSession'
 import AudioCard from '@/components/cards/AudioCard'
 import SymbolCard from '@/components/cards/SymbolCard'
 import { useRouter } from 'next/navigation'
+import { useIsMobile } from '@/hooks/useMediaQuery'
+import MobileStudyChrome, { MobileTab, MobileTabMode } from '@/components/study/MobileStudyChrome'
 
 interface QuizEngineProps {
   deck: Deck
-  onExit: () => void
+  /** Exits Quiz back to StudyEngine. The optional target is set by
+   *  mobile tab clicks from inside Quiz (user picks Flip / MC / Browse
+   *  mid-quiz) — page.tsx forwards it to StudyEngine via pendingMode. */
+  onExit: (target?: StudyMode | 'browse') => void
 }
 
 // Format quiz duration as "M:SS" for anything ≥ 10s, "Ns" below that.
@@ -24,6 +29,7 @@ function formatQuizTime(ms: number): string {
 
 export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
   const router = useRouter()
+  const isMobile = useIsMobile()
   const {
     currentCard,
     index,
@@ -38,6 +44,33 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
   } = useQuizSession(deck)
 
   const [showMissed, setShowMissed] = useState(false)
+
+  // Same deck-feature flags StudyEngine uses, to build a consistent
+  // mobile tab list — so switching out of Quiz mid-session lands the
+  // user on a tab that's actually valid for this deck.
+  const isAudioDeck = deck.cards.every(c => c.type === 'audio')
+  const isStaffDeck = deck.cards.some(c => c.type === 'staff')
+
+  const mobileTabs = useMemo<MobileTab[]>(() => {
+    const tabs: MobileTab[] = [
+      { id: 'flip', label: 'Flip' },
+      { id: 'mc', label: 'Choice' },
+    ]
+    if (!isAudioDeck) tabs.push({ id: 'explain', label: 'Explain' })
+    if (isStaffDeck && !isAudioDeck) tabs.push({ id: 'play', label: '✦', iconOnly: true })
+    tabs.push({ id: 'quiz', label: 'Quiz', quizStyle: true })
+    tabs.push({ id: 'browse', label: 'Browse' })
+    return tabs
+  }, [isAudioDeck, isStaffDeck])
+
+  function handleMobileTabClick(target: MobileTabMode) {
+    if (target === 'quiz') return
+    if (target === 'browse') {
+      onExit('browse')
+      return
+    }
+    onExit(target as StudyMode)
+  }
 
   // ── RESULTS SCREEN ──
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,7 +118,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
 
           {/* Actions */}
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button onClick={onExit}
+            <button onClick={() => onExit()}
               style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, letterSpacing: '0.06em', cursor: 'pointer' }}>
               Back to Deck
             </button>
@@ -137,106 +170,171 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
   const answeredSoFar = chosen ? index + 1 : index
 
   return (
-    <div className="nl-study-viewport">
-      {/* Topbar — mirrors StudyEngine so Quiz reads as the same surface */}
-      <header className="nl-study-topbar">
-        <div className="nl-study-topbar__row1">
-          <div className="nl-study-topbar__back">
-            <button type="button" onClick={onExit} className="nl-study-back-btn">
-              ← Back
-            </button>
-          </div>
-          <div className="nl-study-topbar__metrics nl-study-topbar__metrics--pair">
-            <div>
-              <span className="nl-study-topbar__metric-label">Answered</span>
-              <span className="nl-study-topbar__metric-value">{index + 1} / {total}</span>
+    <div className={`nl-study-viewport${isMobile ? ' nl-study-mobile-shell' : ''}`}>
+      {isMobile ? (
+        <MobileStudyChrome
+          activeTab="quiz"
+          tabs={mobileTabs}
+          onTabClick={handleMobileTabClick}
+          onBack={() => onExit()}
+          deckName={deck.title}
+          meta={
+            <>
+              {index + 1}/{total}<b>·</b>
+              <b className="nl-study-mobile-strip__score">
+                {answeredSoFar > 0 ? `${score}/${answeredSoFar}` : '—'}
+              </b>
+            </>
+          }
+        />
+      ) : (
+        <header className="nl-study-topbar">
+          <div className="nl-study-topbar__row1">
+            <div className="nl-study-topbar__back">
+              <button type="button" onClick={() => onExit()} className="nl-study-back-btn">
+                ← Back
+              </button>
             </div>
-            <div>
-              <span className="nl-study-topbar__metric-label">Score</span>
-              <span className="nl-study-topbar__metric-value">
-                {score} / {answeredSoFar > 0 ? answeredSoFar : '—'}
-              </span>
+            <div className="nl-study-topbar__metrics nl-study-topbar__metrics--pair">
+              <div>
+                <span className="nl-study-topbar__metric-label">Answered</span>
+                <span className="nl-study-topbar__metric-value">{index + 1} / {total}</span>
+              </div>
+              <div>
+                <span className="nl-study-topbar__metric-label">Score</span>
+                <span className="nl-study-topbar__metric-value">
+                  {score} / {answeredSoFar > 0 ? answeredSoFar : '—'}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <p style={{
-          fontFamily: 'var(--font-cormorant), serif',
-          fontSize: 'var(--nl-text-compact)',
-          fontStyle: 'italic',
-          color: '#9A9081',
-          letterSpacing: '0.03em',
-          margin: 0,
-          textAlign: 'center',
-        }}>
-          {deck.title}
-        </p>
-        <div className="nl-study-progress-rail" aria-hidden>
-          <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
-        </div>
-      </header>
+          <p style={{
+            fontFamily: 'var(--font-cormorant), serif',
+            fontSize: 'var(--nl-text-compact)',
+            fontStyle: 'italic',
+            color: '#9A9081',
+            letterSpacing: '0.03em',
+            margin: 0,
+            textAlign: 'center',
+          }}>
+            {deck.title}
+          </p>
+          <div className="nl-study-progress-rail" aria-hidden>
+            <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
+          </div>
+        </header>
+      )}
 
       <div className="nl-study-main">
-        <div className="nl-study-mc-stack">
+        <div className="nl-study-mc-stack" style={isMobile ? { display: 'flex', flexDirection: 'column' } : undefined}>
           {/* Question */}
           {currentCard.type === 'audio' ? (
             <AudioCard card={currentCard} revealed={false} onReveal={() => {}} hideReveal />
           ) : currentCard.type === 'symbol' ? (
-            <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }}>
-              <div style={{ fontFamily: 'Bravura, serif', fontSize: '96px', lineHeight: 1.4, color: '#2A2318' }}>
+            <div
+              className={isMobile ? 'nl-study-card-hover' : ''}
+              style={isMobile
+                ? { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: 14, padding: '24px 22px', textAlign: 'center', flex: '0 0 auto' }
+                : { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }
+              }
+            >
+              <div style={{ fontFamily: 'Bravura, serif', fontSize: isMobile ? 64 : '96px', lineHeight: 1.4, color: '#2A2318' }}>
                 {currentCard.front}
               </div>
               {currentCard.symbolLabel && (
-                <p style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '8px' }}>{currentCard.symbolLabel}</p>
+                <p style={{ fontSize: isMobile ? 11 : 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '6px' }}>{currentCard.symbolLabel}</p>
               )}
             </div>
           ) : (
-            <div style={{ background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }}>
-              <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(20px, 4vw, 32px)', color: '#2A2318', lineHeight: 1.4 }}>
+            <div
+              className={isMobile ? 'nl-study-card-hover' : ''}
+              style={isMobile
+                ? { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: 14, padding: '22px 22px', textAlign: 'center', flex: '0 0 auto' }
+                : { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }
+              }
+            >
+              <p style={{
+                fontFamily: 'var(--font-cormorant), serif',
+                fontWeight: 300,
+                fontSize: isMobile ? 'clamp(15px, 4.2vw, 20px)' : 'clamp(20px, 4vw, 32px)',
+                color: '#2A2318',
+                lineHeight: 1.4,
+                margin: 0,
+              }}>
                 {currentCard.front}
               </p>
             </div>
           )}
 
           {/* Answer options */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
-            {options.map((opt, i) => {
-              let bg = 'white'
-              let border = '#D9CFAE'
-              let color = '#1A1A18'
-              if (chosen) {
-                if (opt === correctAnswer) { bg = '#EAF3DE'; border = '#C0DD97'; color = '#3B6D11' }
-                else if (opt === chosen) { bg = '#FCEBEB'; border = '#F09595'; color = '#A32D2D' }
-                else { color = '#D9CFAE'; border = '#EDE8DF' }
-              }
-              return (
-                <button
-                  key={i}
-                  onClick={() => !chosen && answer(opt)}
-                  disabled={!!chosen}
-                  style={{
-                    background: bg,
-                    border: `1.5px solid ${border}`,
-                    borderRadius: '12px',
-                    padding: '14px 20px',
-                    textAlign: 'left',
-                    fontFamily: 'var(--font-jost), sans-serif',
-                    fontSize: 'var(--nl-text-ui)',
-                    fontWeight: 300,
-                    color,
-                    cursor: chosen ? 'default' : 'pointer',
-                    transition: 'all 0.15s',
-                    letterSpacing: '0.02em',
-                    lineHeight: 1.5,
-                  }}
-                >
-                  <span style={{ fontWeight: 400, marginRight: '10px', color: chosen ? color : '#7A7060' }}>
-                    {['A', 'B', 'C', 'D'][i]}.
-                  </span>
-                  {opt}
-                </button>
-              )
-            })}
-          </div>
+          {isMobile ? (
+            <div className="nl-study-mobile-options">
+              {options.map((opt, i) => {
+                const colorOverride = !chosen
+                  ? null
+                  : opt === correctAnswer
+                  ? { background: '#EAF3DE', borderColor: '#97C459', color: '#3B6D11' }
+                  : opt === chosen
+                  ? { background: '#FCEBEB', borderColor: '#F09595', color: '#A32D2D' }
+                  : { background: 'rgba(255, 255, 255, 0.5)', borderColor: 'rgba(139, 105, 20, 0.12)', color: '#a89a85' }
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    className="nl-study-mobile-quiz-opt"
+                    onClick={() => !chosen && answer(opt)}
+                    disabled={!!chosen}
+                    style={colorOverride ?? undefined}
+                  >
+                    <span className="nl-study-mobile-quiz-opt__label">
+                      {['A', 'B', 'C', 'D'][i]}
+                    </span>
+                    <span style={{ flex: 1, minWidth: 0 }}>{opt}</span>
+                  </button>
+                )
+              })}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
+              {options.map((opt, i) => {
+                let bg = 'white'
+                let border = '#D9CFAE'
+                let color = '#1A1A18'
+                if (chosen) {
+                  if (opt === correctAnswer) { bg = '#EAF3DE'; border = '#C0DD97'; color = '#3B6D11' }
+                  else if (opt === chosen) { bg = '#FCEBEB'; border = '#F09595'; color = '#A32D2D' }
+                  else { color = '#D9CFAE'; border = '#EDE8DF' }
+                }
+                return (
+                  <button
+                    key={i}
+                    onClick={() => !chosen && answer(opt)}
+                    disabled={!!chosen}
+                    style={{
+                      background: bg,
+                      border: `1.5px solid ${border}`,
+                      borderRadius: '12px',
+                      padding: '14px 20px',
+                      textAlign: 'left',
+                      fontFamily: 'var(--font-jost), sans-serif',
+                      fontSize: 'var(--nl-text-ui)',
+                      fontWeight: 300,
+                      color,
+                      cursor: chosen ? 'default' : 'pointer',
+                      transition: 'all 0.15s',
+                      letterSpacing: '0.02em',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    <span style={{ fontWeight: 400, marginRight: '10px', color: chosen ? color : '#7A7060' }}>
+                      {['A', 'B', 'C', 'D'][i]}.
+                    </span>
+                    {opt}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
