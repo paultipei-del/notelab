@@ -5,6 +5,9 @@ import s from '@/components/flashcards/library/library.module.css'
 import { useAuth } from '@/hooks/useAuth'
 import ShelfHero from './ShelfHero'
 import ContinueCardHero from './ContinueCardHero'
+import ProgramHero from './ProgramHero'
+import TwoPaneHero from './TwoPaneHero'
+import NewUserHero from './NewUserHero'
 import ShortcutsRow from './ShortcutsRow'
 import { useHomepageState } from './useHomepageState'
 
@@ -14,17 +17,16 @@ export interface HomepageHeroProps {
 }
 
 /**
- * Top-level homepage dispatcher. Phase 1 specializes only the
- * `flashcards-only` state — all others (and the loading transition)
- * fall through to `fallback` (the legacy homepage). Subsequent phases
- * will branch on `program-only`, `both`, and `new`.
+ * Top-level homepage dispatcher. All four states (`flashcards-only`,
+ * `program-only`, `both`, `new`) now have specialized heroes. The
+ * `fallback` (legacy homepage) is reachable only as a last-resort
+ * safety net for the `loading` state and any future state mismatches —
+ * scheduled for removal one ship cycle after Phase 4 lands cleanly.
  */
 export default function HomepageHero({ fallback }: HomepageHeroProps) {
   const { user } = useAuth()
   const { state, ctx } = useHomepageState(user)
 
-  // displayName mirrors the legacy homepage's derivation so the
-  // greeting reads identically when we swap layouts.
   const displayName: string =
     (user?.user_metadata?.display_name as string | undefined)?.split(' ')[0] ??
     (user?.email ? user.email.split('@')[0] : 'there')
@@ -38,6 +40,33 @@ export default function HomepageHero({ fallback }: HomepageHeroProps) {
         <div className={s.mobileOnly}>
           <ContinueCardHero ctx={ctx} displayName={displayName} />
         </div>
+        <ShortcutsRow state={state} />
+      </>
+    )
+  }
+
+  if (state === 'program-only' && ctx.program) {
+    return (
+      <>
+        <ProgramHero ctx={ctx} displayName={displayName} />
+        <ShortcutsRow state={state} />
+      </>
+    )
+  }
+
+  if (state === 'both' && ctx.program && ctx.featured) {
+    return (
+      <>
+        <TwoPaneHero ctx={ctx} displayName={displayName} />
+        <ShortcutsRow state={state} />
+      </>
+    )
+  }
+
+  if (state === 'new') {
+    return (
+      <>
+        <NewUserHero displayName={displayName} />
         <ShortcutsRow state={state} />
       </>
     )
