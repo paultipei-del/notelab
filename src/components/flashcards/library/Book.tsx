@@ -306,4 +306,24 @@ const Book = React.forwardRef<HTMLDivElement, ShelfBookProps>(function Book(
   )
 })
 
-export default Book
+/**
+ * Custom comparator: skip handler identity (Shelf passes inline arrows
+ * that close over the book's index, so they're new each render and would
+ * defeat the default shallow compare). Only the props that actually
+ * affect rendering trigger a re-render. With ~20 books per shelf, this
+ * cuts hover-transition reconciliation from O(n) to O(1) — only the
+ * book entering hover and the book leaving hover re-render.
+ */
+function bookPropsEqual(prev: ShelfBookProps, next: ShelfBookProps): boolean {
+  return (
+    prev.isHovered === next.isHovered &&
+    prev.title === next.title &&
+    prev.dueCount === next.dueCount &&
+    prev.href === next.href &&
+    prev.state === next.state
+  )
+}
+
+const MemoBook = React.memo(Book, bookPropsEqual)
+
+export default MemoBook
