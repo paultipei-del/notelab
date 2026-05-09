@@ -27,10 +27,15 @@ export default function ContinueCardHero({
   const eyebrow = dayPartLabel()
   const pct = Math.round(featured.summary.pctMastered * 100)
   const dueCount = featured.summary.dueCount
-  const totalDueLabel =
-    totalDue === 1 ? '1 card due' : `${totalDue} cards due`
-  const minutesLabel = estMinutes === 1 ? '1 minute' : `${estMinutes} minutes`
+  // Per-book scope (matches the Continue card and the Continue → button
+  // destination, which goes to this single deck).
+  const bookEstMinutes = Math.max(1, Math.round(dueCount * 0.25))
+  const dueLabel = dueCount === 1 ? '1 card due' : `${dueCount} cards due`
+  const minutesLabel =
+    bookEstMinutes === 1 ? '1 minute' : `${bookEstMinutes} minutes`
   const featuredHref = `/study/${featured.deck.id}`
+  void totalDue
+  void estMinutes
 
   return (
     <section style={{ padding: '28px 0 24px' }}>
@@ -76,14 +81,14 @@ export default function ContinueCardHero({
             margin: '0 0 20px 0',
           }}
         >
-          You&rsquo;re partway through{' '}
+          {pct === 0 ? <>You&rsquo;ve started </> : <>You&rsquo;re partway through </>}
           <strong style={{ fontWeight: 600, color: '#1a1208' }}>
             {featured.deck.title}
           </strong>
           .{' '}
-          {totalDue > 0 ? (
+          {dueCount > 0 ? (
             <>
-              {totalDueLabel} &mdash; about {minutesLabel}.
+              {dueLabel} &mdash; about {minutesLabel}.
             </>
           ) : (
             <>You&rsquo;re caught up &mdash; come back when more cards are ready.</>

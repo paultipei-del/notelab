@@ -41,15 +41,22 @@ interface ShelfBookProps extends BookProps {
   onHoverStart: () => void
   onHoverEnd: () => void
   onClick?: () => void
+  /**
+   * Show the small red due-count badge in the top-right corner.
+   * Defaults to true (the /flashcards behavior). Pass false on hosts
+   * like the homepage hero where the badge would duplicate a placard's
+   * signal.
+   */
+  showDueBadges?: boolean
 }
 
 const Book = React.forwardRef<HTMLDivElement, ShelfBookProps>(function Book(
-  { title, dueCount, href, isHovered, onHoverStart, onHoverEnd, onClick },
+  { title, dueCount, href, isHovered, onHoverStart, onHoverEnd, onClick, showDueBadges = true },
   ref,
 ) {
   const router = useRouter()
   const { binding, height, width, pushBack } = useBookProfile(title)
-  const badge = dueCount > 0 ? dueCount : null
+  const badge = showDueBadges && dueCount > 0 ? dueCount : null
 
   return (
     <div
@@ -320,7 +327,8 @@ function bookPropsEqual(prev: ShelfBookProps, next: ShelfBookProps): boolean {
     prev.title === next.title &&
     prev.dueCount === next.dueCount &&
     prev.href === next.href &&
-    prev.state === next.state
+    prev.state === next.state &&
+    (prev.showDueBadges ?? true) === (next.showDueBadges ?? true)
   )
 }
 

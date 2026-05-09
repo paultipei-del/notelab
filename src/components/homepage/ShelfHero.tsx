@@ -55,9 +55,20 @@ export default function ShelfHero({ ctx, displayName }: ShelfHeroProps) {
   const featuredHref = `/study/${featured.deck.id}`
   const pct = Math.round(featured.summary.pctMastered * 100)
   const dueCount = featured.summary.dueCount
-  const totalDueLabel =
-    totalDue === 1 ? '1 card is due' : `${totalDue} cards are due`
-  const minutesLabel = estMinutes === 1 ? '1 minute' : `${estMinutes} minutes`
+  // Hero context describes the featured book — Continue reading → goes
+  // to that single deck, so library-wide totals would be misleading.
+  // Estimate ~15s/card for this deck specifically.
+  const bookEstMinutes = Math.max(1, Math.round(dueCount * 0.25))
+  const dueLabel =
+    dueCount === 1 ? '1 card is due' : `${dueCount} cards are due`
+  const minutesLabel =
+    bookEstMinutes === 1 ? '1 minute' : `${bookEstMinutes} minutes`
+  // Phrasing nuance: a freshly-opened deck (0% through) shouldn't read
+  // "You're partway through" — it hasn't been started in any meaningful
+  // sense. Use the totalDue as a separate library-side stat below if we
+  // ever want to surface it.
+  void totalDue
+  void estMinutes
 
   return (
     <section
@@ -114,15 +125,14 @@ export default function ShelfHero({ ctx, displayName }: ShelfHeroProps) {
             margin: '0 0 24px 0',
           }}
         >
-          You&rsquo;re partway through{' '}
+          {pct === 0 ? <>You&rsquo;ve started </> : <>You&rsquo;re partway through </>}
           <strong style={{ fontWeight: 600, color: '#1a1208' }}>
             {featured.deck.title}
           </strong>
           .{' '}
-          {totalDue > 0 ? (
+          {dueCount > 0 ? (
             <>
-              {totalDueLabel} &mdash; about {minutesLabel} if you keep your
-              pace.
+              {dueLabel} &mdash; about {minutesLabel} if you keep your pace.
             </>
           ) : (
             <>You&rsquo;re caught up &mdash; come back when more cards are ready.</>
@@ -190,6 +200,7 @@ export default function ShelfHero({ ctx, displayName }: ShelfHeroProps) {
               isHovered={false}
               onHoverStart={() => {}}
               onHoverEnd={() => {}}
+              showDueBadges={false}
             />
           ))}
         </div>
