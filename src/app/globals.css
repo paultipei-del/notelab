@@ -674,12 +674,16 @@ body:has(.nl-study-viewport) {
   border-bottom: 1px solid rgba(139, 105, 20, 0.1);
 }
 
+/* Strip text uses Jost sans (matching the flip-nav Prev/Next buttons)
+   for legibility — earlier italic Cormorant was too soft to read at
+   12-14px against the cream gradient. */
 .nl-study-mobile-strip__back {
   flex: 0 0 auto;
-  font-family: var(--font-cormorant), serif;
-  font-size: 14px;
-  font-style: italic;
-  color: #5a4028;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  color: #4a4540;
   background: none;
   border: none;
   padding: 4px 6px;
@@ -691,10 +695,12 @@ body:has(.nl-study-viewport) {
   flex: 1 1 auto;
   min-width: 0;
   text-align: center;
-  font-family: var(--font-cormorant), serif;
-  font-size: 13px;
-  font-style: italic;
-  color: #8a7560;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  color: #5a4028;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -702,21 +708,21 @@ body:has(.nl-study-viewport) {
 
 .nl-study-mobile-strip__meta {
   flex: 0 0 auto;
-  font-family: var(--font-jost), system-ui, sans-serif;
-  font-size: 10px;
-  color: #8a7560;
-  letter-spacing: 0.04em;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1208;
+  letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
 }
 
 .nl-study-mobile-strip__meta b {
   color: #1a1208;
-  font-family: var(--font-cormorant), serif;
+  font-family: var(--font-jost), sans-serif;
   font-style: normal;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   margin-left: 4px;
-  vertical-align: -1px;
 }
 
 .nl-study-mobile-strip__meta b.nl-study-mobile-strip__score {
@@ -734,15 +740,15 @@ body:has(.nl-study-viewport) {
 .nl-study-mobile-tab {
   flex: 1 1 0;
   min-width: 0;
-  padding: 9px 3px;
+  padding: 11px 3px;
   min-height: 44px;
-  font-family: var(--font-cormorant), serif;
-  font-size: 11.5px;
+  font-family: var(--font-jost), sans-serif;
+  font-size: 12px;
   font-weight: 500;
-  color: #5a4028;
-  background: transparent;
-  border: 1px solid rgba(139, 105, 20, 0.18);
-  border-radius: 999px;
+  color: #4a3a26;
+  background: rgba(255, 250, 238, 0.5);
+  border: 1.5px solid rgba(139, 105, 20, 0.3);
+  border-radius: 10px;
   text-align: center;
   cursor: pointer;
   display: flex;
@@ -750,7 +756,7 @@ body:has(.nl-study-viewport) {
   justify-content: center;
   line-height: 1;
   white-space: nowrap;
-  letter-spacing: 0.005em;
+  letter-spacing: 0.01em;
   box-sizing: border-box;
   transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
@@ -763,7 +769,7 @@ body:has(.nl-study-viewport) {
 
 .nl-study-mobile-tab--quiz {
   color: #a0381c;
-  border-color: rgba(160, 56, 28, 0.4);
+  border-color: rgba(160, 56, 28, 0.5);
 }
 
 .nl-study-mobile-tab--quiz.nl-study-mobile-tab--active {
@@ -792,12 +798,14 @@ body:has(.nl-study-viewport) {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0 4px 0 0;
+  gap: 7px;
+  padding: 0 4px 4px 0;
   -webkit-overflow-scrolling: touch;
-  /* Soft fade at the bottom hints there's more to scroll into. */
-  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 18px), transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 18px), transparent 100%);
+  /* No mask-fade here — earlier 18px fade was clipping option D on
+     iPhone 11 even when the 4 options should otherwise fit. If a deck
+     has options long enough to overflow, the bottom of the last
+     option simply clips at the container edge, which is a clearer
+     scroll cue than a confusing cream-tint fade. */
 }
 
 .nl-study-mobile-options::-webkit-scrollbar {
@@ -814,15 +822,15 @@ body:has(.nl-study-viewport) {
   background: rgba(255, 250, 238, 0.6);
   border: 1px solid rgba(139, 105, 20, 0.18);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   font-family: var(--font-cormorant), serif;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.35;
   color: #2a1f12;
   cursor: pointer;
   display: flex;
   align-items: flex-start;
-  gap: 11px;
+  gap: 10px;
   text-align: left;
   width: 100%;
   box-sizing: border-box;
@@ -957,29 +965,40 @@ body:has(.nl-study-viewport) {
   }
 
   /* MC + Explain card-hover (the question/term card at the top of
-     the mode content) can be a bit shorter on phones since the mode
-     bar already burns vertical space. */
+     the mode content) takes a tighter slice of vertical budget so
+     the 4 MC options + streak + rate-footer all fit on iPhone 11
+     without options scrolling. Min 110px floor still gives short
+     prompts a substantial frame. */
   .nl-study-viewport.nl-study-mobile-shell .nl-study-card-hover {
-    min-height: clamp(140px, 22dvh, 200px) !important;
-    padding: 38px 22px 22px !important;
+    min-height: clamp(110px, 16dvh, 160px) !important;
+    padding: 28px 20px 18px !important;
     flex: 0 0 auto;
   }
 
   /* Streak + rate-footer keep their existing classes but compact
      padding on mobile so the options scroll has room. */
   .nl-study-viewport.nl-study-mobile-shell .nl-study-streak {
-    padding: 6px 14px 4px;
+    padding: 4px 14px 2px;
   }
 
   .nl-study-viewport.nl-study-mobile-shell .nl-study-rate-footer {
     margin-top: 0;
-    min-height: 60px;
-    padding: 6px max(10px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-right));
+    min-height: 0;
+    padding: 4px max(10px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-right));
+  }
+
+  /* When the rate buttons are hidden (pre-reveal), collapse the
+     footer to zero so options claim its space. The 0.15s fade keeps
+     the transition gentle when the buttons appear after answering. */
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-rate-footer:has(.nl-study-rate-inner[aria-hidden='true']) {
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
   }
 
   .nl-study-viewport.nl-study-mobile-shell .nl-study-rate-btn {
-    min-height: 56px;
-    padding: 8px 6px;
+    min-height: 50px;
+    padding: 6px 6px;
   }
 
   .nl-study-viewport.nl-study-mobile-shell .nl-study-flip-nav {
