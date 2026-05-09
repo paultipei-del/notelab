@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Book, { BookProps } from './Book'
+import WoodPlank from './WoodPlank'
 
 const TAP_DISMISS_MS = 4000
 
@@ -222,31 +223,7 @@ export default function MobileShelf({ title, count, seeAllHref = '#', books }: M
             </div>
 
             {/* Wood plank — same as desktop, scrolls with the books */}
-            <div style={{ position: 'relative', height: 18, marginTop: -2, width: '100%' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 4,
-                  background: 'linear-gradient(180deg, #8a6840 0%, #6e5230 50%, #5a4226 100%)',
-                  boxShadow: 'inset 0 1px 0 rgba(255,220,160,0.3)',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 4,
-                  left: 0,
-                  right: 0,
-                  height: 14,
-                  background: 'linear-gradient(180deg, #6e5230 0%, #5a4226 40%, #4a361e 100%)',
-                  backgroundImage:
-                    'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 100%), repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, transparent 2px, transparent 50px, rgba(0,0,0,0.05) 51px)',
-                }}
-              />
-            </div>
+            <WoodPlank />
           </div>
         </div>
 

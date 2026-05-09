@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import type { User } from '@supabase/supabase-js'
 import { useAuth } from '@/hooks/useAuth'
 import { useFeatureAccess } from '@/hooks/useFeatureAccess'
 import GlyphBackdrop from '@/components/marketing/GlyphBackdrop'
+import HomepageHero from '@/components/homepage/HomepageHero'
 import { computeRetentionSummary, type RetentionSummary } from '@/lib/programs/note-reading/progress'
 
 const F = 'var(--font-jost), sans-serif'
@@ -275,8 +277,6 @@ function ExploreTile({ label, title, body, href }: TileProps) {
 
 export default function Home() {
   const { user, loading } = useAuth()
-  const [g, setG] = useState('')
-  const [retention, setRetention] = useState<RetentionSummary | null>(null)
 
   // Redirect logged-out users to landing page.
   useEffect(() => {
@@ -284,6 +284,26 @@ export default function Home() {
       window.location.href = '/landing'
     }
   }, [loading, user])
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: F, fontWeight: 300, color: '#7A7060' }}>Loading…</p>
+      </div>
+    )
+  }
+  if (!user) return null
+
+  // Phase 1 dispatcher: specialized hero for active-flashcards users,
+  // legacy homepage for everyone else.
+  return (
+    <HomepageHero fallback={<LegacyHome user={user} />} />
+  )
+}
+
+function LegacyHome({ user }: { user: User }) {
+  const [g, setG] = useState('')
+  const [retention, setRetention] = useState<RetentionSummary | null>(null)
 
   // Avoid SSR hydration mismatch on the time-of-day greeting.
   useEffect(() => {
@@ -298,21 +318,10 @@ export default function Home() {
   // to show the upgrade strip. Once gating activates, this will map to
   // the user's actual plan.
   const plusCheck = useFeatureAccess('flashcards:intermediate')
-  // If requiredPlan === 'free', user wouldn't need Plus. If it's 'plus',
-  // upgrade strip shows. Logic below.
   const showUpgradeStrip = plusCheck.requiredPlan === 'plus'
 
-  const displayName: string = (user?.user_metadata?.display_name as string | undefined)?.split(' ')[0]
-    ?? (user?.email ? user.email.split('@')[0] : 'there')
-
-  if (loading) {
-    return (
-      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: F, fontWeight: 300, color: '#7A7060' }}>Loading…</p>
-      </div>
-    )
-  }
-  if (!user) return null
+  const displayName: string = (user.user_metadata?.display_name as string | undefined)?.split(' ')[0]
+    ?? (user.email ? user.email.split('@')[0] : 'there')
 
   return (
     <div style={{ minHeight: '100vh', background: 'transparent', position: 'relative' }}>

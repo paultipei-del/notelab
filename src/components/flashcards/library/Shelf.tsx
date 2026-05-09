@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion'
 import Book, { BookProps } from './Book'
 import { MuseumPlacard } from './MuseumPlacard'
 import { SectionCard } from './SectionCard'
+import WoodPlank from './WoodPlank'
 
 export interface ShelfProps {
   title: string
@@ -161,54 +162,9 @@ export default function Shelf({ title, count, seeAllHref = '#', books }: ShelfPr
               ))}
             </div>
 
-            {/* Wood plank — fills the wrapper, which is sized to the books,
-                so the plank scrolls in lockstep with the books and never
-                cuts off mid-shelf. */}
-            <div
-              style={{
-                position: 'relative',
-                height: 18,
-                marginTop: -2,
-                zIndex: 1,
-                width: '100%',
-              }}
-            >
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 4,
-                background: 'linear-gradient(180deg, #8a6840 0%, #6e5230 50%, #5a4226 100%)',
-                boxShadow: 'inset 0 1px 0 rgba(255,220,160,0.3)',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: 4,
-                left: 0,
-                right: 0,
-                height: 14,
-                background: 'linear-gradient(180deg, #6e5230 0%, #5a4226 40%, #4a361e 100%)',
-                backgroundImage:
-                  'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 100%), repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, transparent 2px, transparent 50px, rgba(0,0,0,0.05) 51px)',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: 18,
-                left: 8,
-                right: 8,
-                height: 14,
-                background:
-                  'radial-gradient(ellipse at center top, rgba(40,25,10,0.35) 0%, transparent 70%)',
-                filter: 'blur(2px)',
-              }}
-            />
-            </div>
+            {/* Wood plank — fills the wrapper, sized to the books, so it
+                scrolls in lockstep with them and never cuts off mid-shelf. */}
+            <WoodPlank />
           </div>
         </div>
 
