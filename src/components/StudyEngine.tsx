@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Deck, StudyMode } from '@/lib/types'
 import { useStudySession } from '@/hooks/useStudySession'
+import { useIsMobile } from '@/hooks/useMediaQuery'
 import FlipCard from '@/components/cards/FlipCard'
 import MultipleChoice from '@/components/cards/MultipleChoice'
 import SymbolCard from '@/components/cards/SymbolCard'
@@ -10,6 +11,8 @@ import AudioCard from '@/components/cards/AudioCard'
 import AudioBrowseRow from '@/components/cards/AudioBrowseRow'
 import ExplainCard from '@/components/cards/ExplainCard'
 import ChallengeCard from '@/components/cards/ChallengeCard'
+import MobileStudyChrome, { MobileTab, MobileTabMode } from '@/components/study/MobileStudyChrome'
+import MobileBrowsePanel from '@/components/study/MobileBrowsePanel'
 
 // Application & Review decks use multi-part challenge cards that need a
 // dedicated reading-column UI. These deck IDs get:
@@ -26,7 +29,17 @@ import { stopMic } from '@/components/cards/PlayItCard2'
 import PlayItCard2 from '@/components/cards/PlayItCard2'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-interface StudyEngineProps { deck: Deck; userId: string | null; onQuiz: () => void }
+interface StudyEngineProps {
+  deck: Deck
+  userId: string | null
+  onQuiz: () => void
+  /** Mode requested by an external caller (mobile QuizEngine exiting
+   *  with a target tab). 'browse' switches viewMode; other values set
+   *  the study mode. Applied via effect, then cleared via
+   *  onPendingHandled so a stale value doesn't re-fire later. */
+  pendingMode?: StudyMode | 'browse' | null
+  onPendingHandled?: () => void
+}
 type ViewMode = 'study' | 'browse'
 const STUDY_MODES: { id: StudyMode; label: string }[] = [
   { id: 'flip', label: 'Flip' }, { id: 'mc', label: 'Multiple Choice' },
@@ -51,9 +64,10 @@ function formatTopbarTime(ms: number, isPlay: boolean): string {
   return minutes < 1 ? '<1m' : `${minutes}m`
 }
 
-export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) {
+export default function StudyEngine({ deck, userId, onQuiz, pendingMode, onPendingHandled }: StudyEngineProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const isMobile = useIsMobile()
   const isSightReadDeckInit = deck.id.startsWith('sight-read-')
   const [viewMode, setViewMode] = useState<ViewMode>('study')
   const [showIntro, setShowIntro] = useState(deck.id.startsWith('sight-read-'))
@@ -108,6 +122,53 @@ export default function StudyEngine({ deck, userId, onQuiz }: StudyEngineProps) 
     const isEarTraining = deck.id.startsWith('ear-') && !deck.tier
     const target = isEarTraining ? '/ear-training' : '/flashcards'
     router.push(target)
+  }
+
+  // External mode request from mobile QuizEngine exit — apply once,
+  // then signal back so the parent can clear the request.
+  useEffect(() => {
+    if (!pendingMode) return
+    if (pendingMode === 'browse') {
+      setViewMode('browse')
+    } else {
+      if (viewMode === 'browse') setViewMode('study')
+      setMode(pendingMode)
+      if (pendingMode !== 'flip') resetSession()
+    }
+    onPendingHandled?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingMode])
+
+  // Mobile tab list — same deck-filtered modes as visibleModes plus
+  // 'quiz' and 'browse' as first-class tabs (so the user is never
+  // trapped inside one engine on mobile). Play uses an icon-only pill
+  // so the five primary mode labels keep their full text at 11.5px.
+  const mobileTabs = useMemo<MobileTab[]>(() => {
+    const tabs: MobileTab[] = []
+    if (visibleModes.find(m => m.id === 'flip')) tabs.push({ id: 'flip', label: 'Flip' })
+    if (visibleModes.find(m => m.id === 'mc')) tabs.push({ id: 'mc', label: 'Choice' })
+    if (visibleModes.find(m => m.id === 'explain')) tabs.push({ id: 'explain', label: 'Explain' })
+    if (visibleModes.find(m => m.id === 'play')) tabs.push({ id: 'play', label: '✦', iconOnly: true })
+    if (!isChallengeDeck && !isSightReadDeck) tabs.push({ id: 'quiz', label: 'Quiz', quizStyle: true })
+    tabs.push({ id: 'browse', label: 'Browse' })
+    return tabs
+  }, [visibleModes, isChallengeDeck, isSightReadDeck])
+
+  const mobileActiveTab: MobileTabMode = viewMode === 'browse' ? 'browse' : mode
+
+  function handleMobileTabClick(target: MobileTabMode) {
+    stopMic()
+    if (target === 'quiz') {
+      onQuiz()
+      return
+    }
+    if (target === 'browse') {
+      setViewMode('browse')
+      return
+    }
+    if (viewMode === 'browse') setViewMode('study')
+    setMode(target as StudyMode)
+    if (target !== 'flip') resetSession()
   }
 
   const isPlayMode = mode === 'play'
@@ -202,7 +263,7 @@ return (
         </div>
       )}
 
-      {!isComplete && viewMode === 'browse' && (
+      {!isComplete && viewMode === 'browse' && !isMobile && (
         <div className="nl-study-viewport">
           {/* Header and mode switcher match the study-mode topbar's
               centered-column geometry so the page width stays the same
@@ -245,8 +306,31 @@ return (
         </div>
       )}
 
-      {!(isComplete && viewMode === 'study') && viewMode !== 'browse' && (
-        <div className="nl-study-viewport">
+      {!(isComplete && viewMode === 'study') && (viewMode !== 'browse' || isMobile) && (
+        <div className={`nl-study-viewport${isMobile ? ' nl-study-mobile-shell' : ''}`}>
+          {isMobile ? (
+            <MobileStudyChrome
+              activeTab={mobileActiveTab}
+              tabs={mobileTabs}
+              onTabClick={handleMobileTabClick}
+              onBack={goBack}
+              deckName={deck.title}
+              meta={
+                stats.total > 0 ? (
+                  <>
+                    {formatTopbarTime(elapsedMs, isPlayMode)}<b>·</b>
+                    <b>{stats.correct}/{stats.total}</b>
+                  </>
+                ) : (
+                  <>
+                    {formatTopbarTime(elapsedMs, isPlayMode)}<b>·</b>
+                    <b>{queue.length > 0 ? `${sessionCardIndex}/${queue.length}` : '—'}</b>
+                  </>
+                )
+              }
+            />
+          ) : (
+            <>
           <header className="nl-study-topbar">
             <div className="nl-study-topbar__row1">
               <div className="nl-study-topbar__back">
@@ -334,9 +418,11 @@ return (
               </div>
             </div>
           )}
+            </>
+          )}
           <div
             className="nl-study-main"
-            style={isChallengeDeck ? {
+            style={isChallengeDeck && !isMobile ? {
               // Challenge cards are prose — center them vertically inside
               // the available space instead of anchoring to the top.
               display: 'flex',
@@ -346,25 +432,34 @@ return (
               padding: '24px 24px',
             } : undefined}
           >
-            {isFlipMode ? flipCardEl : (mode === 'mc' || mode === 'explain') && currentCard ? (
+            {isMobile && viewMode === 'browse' ? (
+              <MobileBrowsePanel
+                cards={deck.browseCards ?? deck.cards}
+                expandedId={browseExpanded}
+                onToggle={id => setBrowseExpanded(prev => (prev === id ? null : id))}
+              />
+            ) : isFlipMode ? flipCardEl : (mode === 'mc' || mode === 'explain') && currentCard ? (
               <div className="nl-study-mc-stack">
                 {/* Streak moved out of the stack so MC/Explain's question
                     card starts at the same Y as the FlipCard. The global
                     streak row below the main area now shows in every mode. */}
                 {mode === 'mc' && currentCard.type === 'audio' && <AudioCard key={currentCard.id + '-audio'} card={currentCard} revealed={false} onReveal={() => {}} compact hideReveal />}
                 {mode === 'mc' ? (
-                  <MultipleChoice key={currentCard.id} card={currentCard} options={mcOptions} onAnswer={recordAnswer} onReveal={reveal} />
+                  <MultipleChoice key={currentCard.id} card={currentCard} options={mcOptions} onAnswer={recordAnswer} onReveal={reveal} mobile={isMobile} />
                 ) : (
-                  <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} />
+                  <ExplainCard key={currentCard.id} card={currentCard} onAnswer={recordAnswer} onReveal={reveal} mobile={isMobile} />
                 )}
               </div>
             ) : mode === 'play' && currentCard ? (
               <PlayItCard2 key={currentCard.id} card={currentCard} onCorrect={(firstTry: boolean) => { recordAnswer(firstTry); rate(3) }} onWrong={() => {}} />
             ) : null}
           </div>
+          {viewMode !== 'browse' && (
+            <>
           <div
             role="group"
             aria-label="Last ten answers in this session"
+            className="nl-study-streak"
             style={{
               display: 'flex',
               justifyContent: 'center',
@@ -416,6 +511,13 @@ return (
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+            </>
+          )}
+          {viewMode === 'browse' && isMobile && (
+            <div className="nl-study-mobile-browse-footer">
+              {(deck.browseCards ?? deck.cards).length} cards in this deck
             </div>
           )}
         </div>

@@ -5,7 +5,7 @@ import { loadUserDecks } from '@/lib/userDecks'
 import StudyEngine from '@/components/StudyEngine'
 import QuizEngine from '@/components/QuizEngine'
 import { useAuth } from '@/hooks/useAuth'
-import { Deck } from '@/lib/types'
+import { Deck, StudyMode } from '@/lib/types'
 
 interface Props {
   params: Promise<{ deckId: string }>
@@ -18,6 +18,7 @@ export default function StudyPage({ params }: Props) {
   const [deckLoading, setDeckLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [quizMode, setQuizMode] = useState(false)
+  const [pendingStudyMode, setPendingStudyMode] = useState<StudyMode | 'browse' | null>(null)
 
   useEffect(() => {
     if (loading) return
@@ -58,10 +59,26 @@ export default function StudyPage({ params }: Props) {
   return (
     <>
       <div key="quiz" style={{ display: quizMode ? 'contents' : 'none' }}>
-        <QuizEngine deck={deck} onExit={() => setQuizMode(false)} />
+        <QuizEngine
+          deck={deck}
+          onExit={target => {
+            // Mobile tab clicks from inside Quiz pass a target mode/view;
+            // forward it to StudyEngine via pendingStudyMode so the user
+            // lands on the tab they actually picked, not the previous
+            // study mode.
+            if (target) setPendingStudyMode(target)
+            setQuizMode(false)
+          }}
+        />
       </div>
       <div key="study" style={{ display: quizMode ? 'none' : 'contents' }}>
-        <StudyEngine deck={deck} userId={user?.id ?? null} onQuiz={() => setQuizMode(true)} />
+        <StudyEngine
+          deck={deck}
+          userId={user?.id ?? null}
+          onQuiz={() => setQuizMode(true)}
+          pendingMode={pendingStudyMode}
+          onPendingHandled={() => setPendingStudyMode(null)}
+        />
       </div>
     </>
   )

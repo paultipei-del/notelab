@@ -51,25 +51,29 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
     width: '100%',
     minHeight: 'inherit',
     boxSizing: 'border-box',
+    // Subtle bound-book spine hairline on the left edge — nods at the
+    // book metaphor without literalising it.
+    boxShadow: 'inset 1px 0 0 rgba(139, 105, 20, 0.15)',
   }
 
-  // Pin "Question" / "Answer" labels to the top of each face so they don't
-  // drift up/down as the glyph or text content changes height.
-  const labelStyle: React.CSSProperties = {
+  // Pin "Question" / "Answer" labels to the top of each face so they
+  // don't drift as content height changes. Faces use distinct eyebrow
+  // colors: brick red on the question side draws attention to the
+  // prompt; muted brown on the answer side reads as definitional.
+  const labelBase: React.CSSProperties = {
     position: 'absolute',
     top: 22,
     left: 0,
     right: 0,
     fontSize: 'var(--nl-text-badge)',
-    fontWeight: 400,
+    fontWeight: 600,
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
-    color: '#7A7060',
     textAlign: 'center',
   }
 
-  const frontCap = capForLength(card.front, 52)
-  const backCap  = capForLength(card.back, 40)
+  const frontCap = capForLength(card.front, 56)
+  const backCap  = capForLength(card.back, 44)
 
   const frontContent = card.type === 'staff' && card.note && card.clef ? (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
@@ -79,10 +83,11 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
       </p>
     </div>
   ) : (
-    // Italic serif mirrors the classical score convention for Italian tempo
-    // terms, dynamic markings, and directives (dolce, poco a poco, etc.).
+    // Italic serif mirrors the classical score convention for Italian
+    // tempo terms, dynamic markings, and directives (dolce, poco a
+    // poco, etc.). Floor bumped to 22 so short prompts feel substantial.
     <p style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic',
-      fontWeight: 400, fontSize: `clamp(20px, 4.5vw, ${frontCap}px)`, textAlign: 'center',
+      fontWeight: 400, fontSize: `clamp(22px, 4.5vw, ${frontCap}px)`, textAlign: 'center',
       color: '#2A2318', letterSpacing: '0.01em', lineHeight: 1.3,
       maxWidth: '100%', wordBreak: 'break-word', hyphens: 'auto' }}>
       {card.front}
@@ -99,8 +104,11 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
       </p>
     </div>
   ) : (
-    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300,
-      fontSize: `clamp(16px, 3.5vw, ${backCap}px)`, textAlign: 'center',
+    // Upright (non-italic) on the answer side reads as definitional —
+    // Q is a directive, A is a fact. Floor bumped to 18 so short
+    // answers feel substantial.
+    <p style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400,
+      fontSize: `clamp(18px, 3.5vw, ${backCap}px)`, textAlign: 'center',
       color: '#2A2318', lineHeight: 1.4, padding: '0 4px',
       maxWidth: '100%', wordBreak: 'break-word', hyphens: 'auto' }}>
       {card.back}
@@ -129,18 +137,29 @@ export default function FlipCard({ card, revealed, onReveal }: FlipCardProps) {
       >
         {/* Front */}
         <div className="nl-flip-face" style={{ ...faceStyle, position: 'relative' }}>
-          <span style={labelStyle}>Question</span>
+          <span style={{ ...labelBase, color: '#a0381c' }}>Question</span>
           {frontContent}
           {!revealed && (
-            <span style={{ position: 'absolute', bottom: '20px', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', color: '#D9CFAE', textTransform: 'uppercase' }}>
-              tap to reveal
+            <span
+              style={{
+                position: 'absolute',
+                bottom: 18,
+                fontFamily: 'var(--font-cormorant), serif',
+                fontStyle: 'italic',
+                fontSize: 12,
+                color: '#5a4028',
+                opacity: 0.6,
+                letterSpacing: '0.02em',
+              }}
+            >
+              Tap to flip
             </span>
           )}
         </div>
 
         {/* Back */}
         <div className="nl-flip-face" style={{ ...faceStyle, position: 'relative', transform: 'rotateY(180deg)' }}>
-          <span style={labelStyle}>Answer</span>
+          <span style={{ ...labelBase, color: '#5a4028' }}>Answer</span>
           {backContent}
         </div>
       </div>

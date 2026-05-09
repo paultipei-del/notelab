@@ -656,6 +656,359 @@ body:has(.nl-study-viewport) {
   }
 }
 
+/* ── Mobile study shell (≤ 767.98px) ─────────────────────────────────────
+   Replaces the desktop two-row topbar + two-row mode toolbar with a
+   single compact session strip + single-row 6-tab bar. Honors the
+   no-page-scroll rule across every mode by giving each mode's content
+   area an internal scroll container with min-height: 0 all the way up.
+   Rendered conditionally via useIsMobile(); not gated by media query
+   alone so JS branching can also adjust labels (e.g. play → ✦).        */
+
+.nl-study-mobile-strip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px max(12px, env(safe-area-inset-left)) 8px max(12px, env(safe-area-inset-right));
+  border-bottom: 1px solid rgba(139, 105, 20, 0.1);
+}
+
+.nl-study-mobile-strip__back {
+  flex: 0 0 auto;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #5a4028;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+
+.nl-study-mobile-strip__deck {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--font-cormorant), serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #8a7560;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nl-study-mobile-strip__meta {
+  flex: 0 0 auto;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  color: #8a7560;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.nl-study-mobile-strip__meta b {
+  color: #1a1208;
+  font-family: var(--font-cormorant), serif;
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 4px;
+  vertical-align: -1px;
+}
+
+.nl-study-mobile-strip__meta b.nl-study-mobile-strip__score {
+  color: #a0381c;
+}
+
+.nl-study-mobile-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 5px;
+  padding: 8px max(10px, env(safe-area-inset-left)) 8px max(10px, env(safe-area-inset-right));
+  border-bottom: 1px solid rgba(139, 105, 20, 0.06);
+}
+
+.nl-study-mobile-tab {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 9px 3px;
+  min-height: 44px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #5a4028;
+  background: transparent;
+  border: 1px solid rgba(139, 105, 20, 0.18);
+  border-radius: 999px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: 0.005em;
+  box-sizing: border-box;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.nl-study-mobile-tab--active {
+  background: #1a1208;
+  color: #f0e7d0;
+  border-color: #1a1208;
+}
+
+.nl-study-mobile-tab--quiz {
+  color: #a0381c;
+  border-color: rgba(160, 56, 28, 0.4);
+}
+
+.nl-study-mobile-tab--quiz.nl-study-mobile-tab--active {
+  background: #a0381c;
+  color: #f0e7d0;
+  border-color: #a0381c;
+}
+
+/* Play mode is sight-read mic detection — icon-only on mobile so the
+   five primary mode labels can keep their full names at 11.5px. */
+.nl-study-mobile-tab--play {
+  flex: 0 0 36px;
+  font-size: 16px;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+/* MC + Quiz: 1-col stacked options with internal scroll. The flex chain
+   from .nl-study-viewport → .nl-study-main → .nl-study-mc-stack → MC
+   root → this container must all be flex-column with min-height: 0 for
+   the scroll to land here instead of bubbling to the page. Mobile-only
+   overrides on the parent links live in the @media block below. */
+.nl-study-mobile-options {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 4px 0 0;
+  -webkit-overflow-scrolling: touch;
+  /* Soft fade at the bottom hints there's more to scroll into. */
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 18px), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 18px), transparent 100%);
+}
+
+.nl-study-mobile-options::-webkit-scrollbar {
+  width: 3px;
+}
+
+.nl-study-mobile-options::-webkit-scrollbar-thumb {
+  background: rgba(160, 56, 28, 0.25);
+  border-radius: 2px;
+}
+
+.nl-study-mobile-mc-opt {
+  flex: 0 0 auto;
+  background: rgba(255, 250, 238, 0.6);
+  border: 1px solid rgba(139, 105, 20, 0.18);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #2a1f12;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.nl-study-mobile-mc-opt:disabled {
+  cursor: default;
+}
+
+.nl-study-mobile-mc-opt__label {
+  flex: 0 0 auto;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: #a0381c;
+  background: rgba(160, 56, 28, 0.08);
+  padding: 4px 7px;
+  border-radius: 3px;
+  margin-top: 2px;
+  letter-spacing: 0.08em;
+}
+
+.nl-study-mobile-mc-opt__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Quiz uses circle labels + whiter card backgrounds, intentionally
+   distinct from MC so the two modes don't read as the same screen. */
+.nl-study-mobile-quiz-opt {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(139, 105, 20, 0.2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #1a1208;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.nl-study-mobile-quiz-opt__label {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(160, 56, 28, 0.35);
+  color: #a0381c;
+  font-family: var(--font-cormorant), serif;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(160, 56, 28, 0.05);
+  margin-top: 1px;
+}
+
+/* Browse on mobile: list lives inside the same shell as the modes
+   (decoupled from its viewport-owning desktop layout). */
+.nl-study-mobile-browse-hint {
+  flex: 0 0 auto;
+  text-align: center;
+  font-family: var(--font-cormorant), serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #8a7560;
+  padding: 6px 14px 0;
+}
+
+.nl-study-mobile-browse-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 14px 0;
+  -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 18px), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 18px), transparent 100%);
+}
+
+.nl-study-mobile-browse-list::-webkit-scrollbar {
+  width: 3px;
+}
+
+.nl-study-mobile-browse-list::-webkit-scrollbar-thumb {
+  background: rgba(160, 56, 28, 0.25);
+  border-radius: 2px;
+}
+
+.nl-study-mobile-browse-footer {
+  flex: 0 0 auto;
+  text-align: center;
+  font-family: var(--font-cormorant), serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #8a7560;
+  padding: 10px 14px max(14px, env(safe-area-inset-bottom));
+}
+
+/* ── Mobile flex-chain audit — these overrides ensure the parent links
+      from .nl-study-viewport down to the per-mode scroll container all
+      cooperate. Without these, the scroll bubbles to the page (which
+      is locked to overflow: hidden, so content silently clips). */
+@media (max-width: 767.98px) {
+  /* Main area gives all available height to the mode content; no
+     internal padding so the per-mode container owns its margins. */
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-main {
+    align-items: stretch;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-mc-stack {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    gap: 10px;
+    padding: 10px 14px 0;
+    box-sizing: border-box;
+  }
+
+  /* MC + Explain card-hover (the question/term card at the top of
+     the mode content) can be a bit shorter on phones since the mode
+     bar already burns vertical space. */
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-card-hover {
+    min-height: clamp(140px, 22dvh, 200px) !important;
+    padding: 38px 22px 22px !important;
+    flex: 0 0 auto;
+  }
+
+  /* Streak + rate-footer keep their existing classes but compact
+     padding on mobile so the options scroll has room. */
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-streak {
+    padding: 6px 14px 4px;
+  }
+
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-rate-footer {
+    margin-top: 0;
+    min-height: 60px;
+    padding: 6px max(10px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-right));
+  }
+
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-rate-btn {
+    min-height: 56px;
+    padding: 8px 6px;
+  }
+
+  .nl-study-viewport.nl-study-mobile-shell .nl-study-flip-nav {
+    padding: 6px max(12px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-right));
+  }
+
+  /* FlipCard fills the available vertical space, matching MC/Explain.
+     Without these, the inner grid stack respects its inline min-height
+     clamp and the card sits compact with empty cream below it. The
+     wrapper becomes a flex column; the grid stack claims remaining
+     height; min-height: 0 prevents it from refusing to shrink. */
+  .nl-study-viewport.nl-study-mobile-shell .nl-flip-card {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    margin: 12px 14px 0;
+  }
+
+  .nl-study-viewport.nl-study-mobile-shell .nl-flip-card > div:first-of-type {
+    flex: 1 1 auto;
+    min-height: clamp(180px, 38dvh, 280px) !important;
+  }
+
+  .nl-study-viewport.nl-study-mobile-shell .nl-flip-face {
+    padding: 38px 18px 20px !important;
+    border-radius: 10px !important;
+  }
+}
+
 /* ── Sight-reading hub & clef level lists — fit viewport, scroll levels only when needed ─ */
 .nl-sight-read-hub {
   min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
