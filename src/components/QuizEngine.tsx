@@ -254,12 +254,16 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
               }
             >
               <p style={{
-                fontFamily: 'var(--font-cormorant), serif',
-                fontWeight: 300,
-                fontSize: isMobile ? 'clamp(15px, 4.2vw, 20px)' : 'clamp(20px, 4vw, 32px)',
-                color: '#2A2318',
+                fontFamily: isMobile ? 'var(--font-jost), sans-serif' : 'var(--font-cormorant), serif',
+                fontWeight: isMobile ? 400 : 300,
+                fontSize: isMobile ? (() => {
+                  const len = currentCard.front.length
+                  return `${len < 50 ? 22 : len < 100 ? 19 : len < 200 ? 17 : 15.5}px`
+                })() : 'clamp(20px, 4vw, 32px)',
+                color: isMobile ? '#1a1208' : '#2A2318',
                 lineHeight: 1.4,
                 margin: 0,
+                letterSpacing: isMobile ? '0.005em' : undefined,
               }}>
                 {currentCard.front}
               </p>
