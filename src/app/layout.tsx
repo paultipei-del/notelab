@@ -3,7 +3,6 @@ import { Cormorant_Garamond, Jost } from 'next/font/google'
 import './globals.css'
 import SiteHeader from '@/components/SiteHeader'
 import SiteFooter from '@/components/SiteFooter'
-import ParticleCanvasConditional from '@/components/ParticleCanvasConditional'
 import { Analytics } from '@vercel/analytics/next'
 
 const cormorant = Cormorant_Garamond({
@@ -80,7 +79,15 @@ export default function RootLayout({
         `}</style>
       </head>
       <body className={`${cormorant.variable} ${jost.variable}`}>
-        <ParticleCanvasConditional />
+        {/* ParticleCanvas removed site-wide — it painted a subtle
+            dark perlin-noise overlay (rgb(42,35,24) at up to 9%
+            opacity) over the cream gradient on every page except
+            /programs, which made /programs read significantly
+            brighter than the rest of the site. The cleaner solution
+            is a uniformly darker html cream (#E1D9C5) that matches
+            the iOS status-bar themeColor — same darker character
+            without the texture artifacts, and consistent across
+            every route. Files kept in repo for easy revert. */}
         <SiteHeader />
         {/* All page content scrolls inside this wrapper, which is
             anchored below the SiteHeader. The body itself doesn't

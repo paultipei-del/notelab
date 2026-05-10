@@ -212,6 +212,12 @@ export type CMBundle = {
   /** Short contents line shown on the bundle card. */
   contentsSummary: string
   tagline: string
+  /** Bundle-specific CTA copy. Earlier all four cards said "Buy bundle →"
+   *  which read repetitive. Each bundle gets its own short label. */
+  ctaLabel: string
+  /** Render at full grid width as the marquee upsell card instead of
+   *  occupying one cell of the bundle grid. Currently CM Full only. */
+  wide?: boolean
 }
 
 export const CM_BUNDLES: CMBundle[] = [
@@ -224,6 +230,7 @@ export const CM_BUNDLES: CMBundle[] = [
     savings: 18,
     contentsSummary: '3 levels included',
     tagline: 'Start here if you’re new to CM.',
+    ctaLabel: 'Buy Elementary →',
   },
   {
     id: 'cm-intermediate',
@@ -234,6 +241,7 @@ export const CM_BUNDLES: CMBundle[] = [
     savings: 17,
     contentsSummary: '4 levels included',
     tagline: 'Build your core theory.',
+    ctaLabel: 'Buy Intermediate →',
   },
   {
     id: 'cm-advanced',
@@ -244,6 +252,7 @@ export const CM_BUNDLES: CMBundle[] = [
     savings: 17,
     contentsSummary: '4 levels included',
     tagline: 'Exam-ready prep.',
+    ctaLabel: 'Buy Advanced →',
   },
   {
     id: 'cm-full',
@@ -252,8 +261,14 @@ export const CM_BUNDLES: CMBundle[] = [
     levelSlugs: CM_LEVELS.map(l => l.slug),
     price: 199,
     savings: 120,
-    contentsSummary: '11 levels · lifetime access',
+    // Earlier this read "11 levels · lifetime access" which combined
+    // with the "All 11 levels" subtitle rendered as
+    // "All 11 levels · 11 levels · lifetime access" — the level count
+    // was duplicated. Drop the redundant fragment.
+    contentsSummary: 'lifetime access',
     tagline: 'Lifetime access to everything.',
+    ctaLabel: 'Buy Full Program →',
+    wide: true,
   },
 ]
 
