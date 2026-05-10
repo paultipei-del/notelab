@@ -234,7 +234,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
             <div
               className={isMobile ? 'nl-study-card-hover' : ''}
               style={isMobile
-                ? { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: 14, padding: '24px 22px', textAlign: 'center', flex: '0 0 auto' }
+                ? { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: 14, padding: '24px 22px', textAlign: 'center', flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }
                 : { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }
               }
             >
@@ -249,7 +249,7 @@ export default function QuizEngine({ deck, onExit }: QuizEngineProps) {
             <div
               className={isMobile ? 'nl-study-card-hover' : ''}
               style={isMobile
-                ? { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: 14, padding: '22px 22px', textAlign: 'center', flex: '0 0 auto' }
+                ? { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: 14, padding: '22px 22px', textAlign: 'center', flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }
                 : { background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '20px', padding: '40px 32px', textAlign: 'center', boxShadow: '0 4px 24px rgba(26,26,24,0.08)' }
               }
             >
