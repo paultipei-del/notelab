@@ -186,69 +186,97 @@ function LevelCard({ level }: { level: CMLevel }) {
 
 function BundleCard({ bundle }: { bundle: (typeof CM_BUNDLES)[number] }) {
   const checkoutHref = `/checkout?item=${encodeURIComponent(bundle.title)}&price=${bundle.price}`
+  const isWide = !!bundle.wide
+
   return (
     <div
-      className="nl-tile-hover"
+      className={`nl-tile-hover nl-cm-bundle${isWide ? ' is-wide' : ''}`}
       style={{
+        position: 'relative',
         background: '#ECE3CC',
         border: `2px solid ${ACCENT}`,
         borderRadius: '16px',
         padding: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
         boxShadow: '0 4px 16px rgba(186,117,23,0.08)',
       }}
     >
-      <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '22px', color: '#1A1A18', margin: 0, letterSpacing: '0.01em' }}>
-        {bundle.title}
-      </h3>
-      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#4A4540', lineHeight: 1.6, margin: 0 }}>
-        {bundle.subtitle} · {bundle.contentsSummary}
-      </p>
-      <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, fontStyle: 'italic', color: '#7A7060', margin: 0 }}>
-        {bundle.tagline}
-      </p>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginTop: '6px' }}>
-        <span style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#2A2318', letterSpacing: '-0.01em' }}>
-          ${bundle.price}
+      {isWide && (
+        // Anchor at top-right so the eye lands on the value signal
+        // before the price. Same red-on-tint pill style used by
+        // FEATURED / NEW elsewhere on /programs.
+        <span
+          style={{
+            position: 'absolute',
+            top: '14px',
+            right: '14px',
+            fontFamily: F,
+            fontSize: '9px',
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: '#a0381c',
+            background: 'rgba(160, 56, 28, 0.1)',
+            padding: '4px 8px',
+            borderRadius: '3px',
+          }}
+        >
+          Best Value
         </span>
-        <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: ACCENT }}>
-          save ${bundle.savings}
-        </span>
+      )}
+
+      <div className="nl-cm-bundle__content">
+        <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '22px', color: '#1A1A18', margin: 0, letterSpacing: '0.01em' }}>
+          {bundle.title}
+        </h3>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#4A4540', lineHeight: 1.6, margin: '8px 0 0 0' }}>
+          {bundle.subtitle} · {bundle.contentsSummary}
+        </p>
+        <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, fontStyle: 'italic', color: '#7A7060', margin: '8px 0 0 0' }}>
+          {bundle.tagline}
+        </p>
       </div>
-      <Link
-        href={checkoutHref}
-        style={{
-          display: 'block',
-          textAlign: 'center',
-          padding: '10px',
-          borderRadius: '10px',
-          background: '#1A1A18',
-          color: 'white',
-          textDecoration: 'none',
-          fontFamily: F,
-          fontSize: '14px',
-          fontWeight: 500,
-          marginTop: '4px',
-        }}
-      >
-        Buy bundle →
-      </Link>
-      <Link
-        href="/pricing"
-        style={{
-          fontFamily: F,
-          fontSize: '12px',
-          fontWeight: 400,
-          color: '#7A7060',
-          textDecoration: 'none',
-          textAlign: 'center',
-          marginTop: '2px',
-        }}
-      >
-        Or get it free with NoteLab Plus →
-      </Link>
+
+      <div className="nl-cm-bundle__cta">
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+          <span style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#2A2318', letterSpacing: '-0.01em' }}>
+            ${bundle.price}
+          </span>
+          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: ACCENT }}>
+            save ${bundle.savings}
+          </span>
+        </div>
+        <Link
+          href={checkoutHref}
+          style={{
+            display: 'block',
+            textAlign: 'center',
+            padding: '10px',
+            borderRadius: '10px',
+            background: '#1A1A18',
+            color: 'white',
+            textDecoration: 'none',
+            fontFamily: F,
+            fontSize: '14px',
+            fontWeight: 500,
+          }}
+        >
+          {bundle.ctaLabel}
+        </Link>
+        <Link
+          href="/pricing"
+          style={{
+            fontFamily: F,
+            fontSize: '12px',
+            fontWeight: 400,
+            color: '#7A7060',
+            textDecoration: 'none',
+            textAlign: 'center',
+            display: 'block',
+          }}
+        >
+          Or get it free with NoteLab Plus →
+        </Link>
+      </div>
     </div>
   )
 }
@@ -310,11 +338,7 @@ export default function CMProgramPage() {
               {TIER_DESCRIPTION[tier]}
             </p>
             <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-                gap: '12px',
-              }}
+              className={`nl-cm-tier-grid is-${levelsByTier[tier].length}`}
             >
               {levelsByTier[tier].map(level => (
                 <LevelCard key={level.slug} level={level} />
@@ -331,13 +355,7 @@ export default function CMProgramPage() {
           <p style={{ fontFamily: F, fontSize: '13px', fontWeight: 300, color: '#7A7060', lineHeight: 1.65, margin: '0 0 20px 0', maxWidth: '640px' }}>
             Buy a tier-wide bundle or the full program and save vs. purchasing levels individually.
           </p>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '14px',
-            }}
-          >
+          <div className="nl-cm-bundle-grid">
             {CM_BUNDLES.map(b => (
               <BundleCard key={b.id} bundle={b} />
             ))}

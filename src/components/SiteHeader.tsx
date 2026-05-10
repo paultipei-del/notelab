@@ -221,7 +221,10 @@ export default function SiteHeader() {
                 {showUserMenu && (
                   <div style={{
                     position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                    background: '#ECE3CC', border: '1px solid #D9CFAE',
+                    background: 'rgba(255, 250, 238, 0.92)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
+                    border: '1px solid #D9CFAE',
                     borderRadius: '12px', padding: '8px',
                     boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                     minWidth: '200px', zIndex: 100,
@@ -292,7 +295,10 @@ export default function SiteHeader() {
             {showMobileMenu && (
               <div style={{
                 position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                background: '#ECE3CC', border: '1px solid #D9CFAE',
+                background: 'rgba(255, 250, 238, 0.92)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: '1px solid #D9CFAE',
                 borderRadius: '14px', padding: '8px',
                 boxShadow: '0 4px 24px rgba(26,26,24,0.12)',
                 minWidth: '220px', zIndex: 100,

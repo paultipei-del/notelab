@@ -29,27 +29,33 @@
    take up most of the screen and produce visible bands between header,
    body, and footer. A single cream reads as one continuous paper. */
 html {
-  background: #EFE8D2;
+  /* Slightly darker cream than before (#EFE8D2 → #E1D9C5) so the
+     site reads as the same paper as the iOS status bar themeColor
+     (#E0D9C4) and feels more substantial without needing a particle
+     overlay to "darken" it. Status-bar boundary now reads as a
+     seamless transition. */
+  background: #E1D9C5;
   min-height: 100vh;
 }
 
 /* Desktop (matches the desktop-nav breakpoint): vignette with warm
    shoulders pinned to the document. Bottom shoulder sits at the
    document end — see iOS-Safari note about background-attachment:
-   fixed. */
+   fixed. Stops shifted to match the new mobile base color while
+   keeping the same vignette character. */
 @media (min-width: 769px) {
   html {
     /* Background-color paints the canvas (incl. overscroll bounce zone);
        the gradient draws within the html box on top. Without an explicit
        color the gradient shorthand resets bg-color to transparent and
        Safari's bounce shows white. */
-    background-color: #E9E3CE;
+    background-color: #DBD3BE;
     background-image: linear-gradient(
       to bottom,
-      #EEE6CD 0px,
-      #F2EDDF 200px,
-      #F2EDDF calc(100% - 220px),
-      #ECE4CC 100%
+      #E0D8C0 0px,
+      #E4DFCF 200px,
+      #E4DFCF calc(100% - 220px),
+      #DED6BE 100%
     );
     background-repeat: no-repeat;
   }
@@ -3102,16 +3108,23 @@ button:not(:disabled):active {
    per-page workarounds we used on /learn. */
 html {
   overflow: hidden;
-  height: 100vh;
+  /* 100vh on iOS Safari sizes against the LARGEST viewport (toolbar
+     hidden), so any element pinned to "100vh - chrome" lands behind
+     the bottom toolbar when it's visible. dvh = dynamic viewport
+     height; tracks the visible region as the toolbar shows/hides. */
+  height: 100vh; /* fallback for browsers without dvh */
+  height: 100dvh;
   max-width: 100vw;
 }
 body {
   overflow: hidden;
   height: 100vh;
+  height: 100dvh;
   max-width: 100vw;
 }
 .nl-page-scroll {
   height: calc(100vh - var(--nl-site-header-h));
+  height: calc(100dvh - var(--nl-site-header-h));
   overflow-y: auto;
   overflow-x: clip;
   -webkit-overflow-scrolling: touch;
@@ -3988,4 +4001,67 @@ svg:not(.nl-notation-staff) {
   line-height: 1.5;
   margin: 0;
   max-width: 320px;
+}
+
+/* ── /programs/cm — tier and bundle grids ─────────────────────────
+   Tier grids: explicit column counts per tier so a tier with 4 levels
+   (Intermediate, Advanced) doesn't dangle a single card on row 2 with
+   two empty slots. Mobile stacks single-column. */
+.nl-cm-tier-grid {
+  display: grid;
+  gap: 12px;
+}
+.nl-cm-tier-grid.is-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.nl-cm-tier-grid.is-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 767.98px) {
+  .nl-cm-tier-grid,
+  .nl-cm-tier-grid.is-3,
+  .nl-cm-tier-grid.is-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bundle grid: 3 across with the wide Full CM card spanning all
+   columns of its row. Earlier this was auto-fit, which left the
+   4th bundle alone in row 2 with two empty cells beside it. */
+.nl-cm-bundle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 767.98px) {
+  .nl-cm-bundle-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nl-cm-bundle {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* The wide variant (Full CM Program) spans every column of its row
+   and arranges its content + price/CTA block in a 2-col layout. On
+   mobile it collapses back to a single stacked column so the price
+   sits below the description, not crammed into a narrow side rail. */
+.nl-cm-bundle.is-wide {
+  grid-column: 1 / -1;
+}
+@media (min-width: 768px) {
+  .nl-cm-bundle.is-wide {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 28px;
+    align-items: center;
+    padding: 28px 32px;
+  }
+}
+.nl-cm-bundle__cta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
