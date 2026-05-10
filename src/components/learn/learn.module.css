@@ -436,18 +436,23 @@
 
 /* ============== Lesson page ============== */
 
-/* Unified sticky chrome — the global SiteHeader is transparent (sits at top:0),
-   so we keep the chrome transparent too: no fill seam between the two strips.
-   The backdrop-blur kicks in only as content scrolls underneath, giving the
-   prev/next line legibility without painting a visible band over the header. */
+/* Unified sticky chrome — pinned to the top of the .nl-page-scroll
+   wrapper (which itself starts below the SiteHeader). Earlier this
+   used `top: var(--nl-site-header-h)` because body was the scroll
+   context; now the wrapper is, so a header-sized offset would stack
+   60px below the wrapper top and leave a gap where content shows. */
 .chrome {
   position: sticky;
-  top: var(--nl-site-header-h, 60px);
+  top: 0;
   z-index: 40;
-  background: transparent;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(211,209,199,0.4);
+  /* Opaque page-cream — content scrolling beneath can't bleed
+     through. Same color as the html bg (#E1D9C5) so the chrome
+     reads as the page paper itself, not a tinted band. No border:
+     a hairline against the same color reads as a faint seam, which
+     looks like the chrome is "different" even when its fill matches
+     the page exactly. Backdrop blur isn't enough on iOS Safari
+     with a transparent bg. */
+  background: #E1D9C5;
 }
 .chromeTop {
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px;
