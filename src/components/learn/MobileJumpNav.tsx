@@ -40,9 +40,19 @@ export function MobileJumpNav({ parts, activeIndex, onJump }: MobileJumpNavProps
   function handleClick(i: number) {
     userTappedRef.current = true
     onJump(i)
-    document
-      .getElementById(`part-${i}`)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // Direct scrollTop on the .nl-page-scroll wrapper instead of
+    // scrollIntoView — on iOS Safari, scrollIntoView triggers a
+    // visual-viewport adjustment that pushes the SiteHeader up under
+    // the status bar even though body has overflow: hidden. scrollTo
+    // on a specific scroll container doesn't trigger that.
+    const part = document.getElementById(`part-${i}`)
+    const scrollEl = document.querySelector<HTMLElement>('.nl-page-scroll')
+    if (!part || !scrollEl) return
+    const partRect = part.getBoundingClientRect()
+    const scrollRect = scrollEl.getBoundingClientRect()
+    // 70px clearance for the sticky pill nav at the top of the wrapper.
+    const target = partRect.top - scrollRect.top + scrollEl.scrollTop - 70
+    scrollEl.scrollTo({ top: Math.max(0, target), behavior: 'smooth' })
   }
 
   return (
