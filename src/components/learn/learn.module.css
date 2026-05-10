@@ -11,6 +11,11 @@
   --tan-line: #EDE8DF;
   --accent: #B5402A;
   --gold: #BA7517;
+  /* Active state for the scroll-spy actives (sticky CONTENTS sidebar
+     desktop, horizontal pill nav mobile). Distinct from --accent so the
+     scroll-spy highlight reads as a navigation cue, not just "any red". */
+  --learn-active: #a0381c;
+  --learn-active-tint: rgba(160, 56, 28, 0.06);
 
   /* No `background` override — page inherits the site-wide warm-cream
      vignette from html (defined in globals.css). */
@@ -123,7 +128,25 @@
 }
 
 /* TOC rail */
-.toc { position: sticky; top: 92px; align-self: start; }
+.toc {
+  /* IMPORTANT: align-self: start is required here. Without it, CSS
+     Grid stretches the toc to match its tallest sibling (.ledger,
+     ~8600px), which gives the sticky element no headroom to operate —
+     the box already fills its container vertically, so sticky never
+     engages. With align-self: start the toc sizes to its content,
+     leaving room inside .body for the sticky offset to work. */
+  align-self: start;
+  position: sticky;
+  /* 24px below the global SiteHeader, per the spec. Using a calc so
+     bumping --nl-site-header-h doesn't desync the sidebar offset. */
+  top: calc(var(--nl-site-header-h) + 24px);
+  max-height: calc(100vh - var(--nl-site-header-h) - 100px);
+  overflow-y: auto;
+  /* Subtle scrollbar so a tall part list doesn't paint a heavy gutter. */
+  scrollbar-width: thin;
+}
+.toc::-webkit-scrollbar { width: 4px; }
+.toc::-webkit-scrollbar-thumb { background: rgba(139, 105, 20, 0.18); border-radius: 2px; }
 .tocLabel { font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-quiet); margin-bottom: 14px; }
 .tocList { list-style: none; padding: 0; margin: 0; }
 .tocItem {
@@ -132,18 +155,74 @@
   grid-template-columns: 32px 1fr auto;
   gap: 9px;
   align-items: baseline;
-  padding: 7px 8px;
+  padding: 7px 8px 7px 10px;
   cursor: pointer;
   border-radius: 4px;
-  transition: background 0.15s;
+  /* Reserve the active-state left border so the row doesn't shift on
+     activation. Inactive uses transparent; active swaps to learn-active. */
+  border-left: 2px solid transparent;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .tocItem + .tocItem { border-top: 1px dashed var(--tan-soft); }
-.tocItemActive { background: linear-gradient(90deg, rgba(186,117,23,0.06), transparent); }
+.tocItemActive {
+  background: var(--learn-active-tint);
+  border-left-color: var(--learn-active);
+}
 .tocNum { font-family: var(--font-cormorant), 'Cormorant Garamond', serif; font-size: 18px; color: var(--ink-quiet); }
-.tocItemActive .tocNum { color: var(--accent); }
+.tocItemActive .tocNum { color: var(--learn-active); }
 .tocTitle { font-size: 13px; color: var(--ink-soft); line-height: 1.35; }
-.tocItemActive .tocTitle { color: var(--accent); }
+.tocItemActive .tocTitle { color: var(--learn-active); }
 .tocPage { font-size: 11px; color: var(--ink-faded); font-variant-numeric: tabular-nums; }
+.tocItemActive .tocPage { color: var(--learn-active); }
+
+/* Mobile horizontal jump nav — sticks below the global SiteHeader.
+   Twelve pills don't fit at 390px viewport so the row scrolls
+   horizontally; the active pill auto-centers via JS. */
+.mobileJumpNav {
+  display: none;
+  position: sticky;
+  top: var(--nl-site-header-h);
+  z-index: 5;
+  margin: 0 -32px;
+  padding: 10px 16px;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline: 16px;
+  background: rgba(253, 250, 245, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--tan-soft);
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+.mobileJumpNav::-webkit-scrollbar { display: none; }
+.mobilePill {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--tan);
+  background: transparent;
+  color: #5a4028;
+  font-family: var(--font-cormorant), 'Cormorant Garamond', serif;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.mobilePillActive {
+  background: var(--learn-active);
+  color: #f0e7d0;
+  border-color: var(--learn-active);
+  font-weight: 600;
+}
 
 /* Ledger */
 .ledger { position: relative; }
@@ -163,7 +242,13 @@
 }
 
 /* Part block */
-.part { padding: 36px 0; position: relative; }
+.part {
+  padding: 36px 0;
+  position: relative;
+  /* Header (~60) + breathing (~36) so jump-clicks land below the
+     SiteHeader instead of clipping under it. Mobile override below. */
+  scroll-margin-top: 96px;
+}
 .part + .part { border-top: 1px solid var(--tan-soft); }
 .frontispiece {
   display: grid;
@@ -205,7 +290,42 @@
   max-width: 480px;
   margin: 0 0 14px 0;
 }
-.partProgress { display: flex; align-items: center; gap: 10px; margin-top: 14px; font-size: 12px; color: var(--ink-quiet); }
+/* Per-part progress: thin gold bar ABOVE the "N of M read" text.
+   Distinct from the page-level red→gold accents on the ledger so the
+   per-part marker reads as gilt-on-cream, like a printed gauge. */
+.partProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--ink-quiet);
+  max-width: 240px;
+}
+.partProgressBar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: rgba(139, 105, 20, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.partProgressFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(to right, #f4e5a1 0%, #d4af37 55%, #8b6914 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.partProgressText {
+  font-size: 12px;
+  color: var(--ink-quiet);
+  letter-spacing: 0.01em;
+}
+/* Legacy flex-row aliases used elsewhere on the page (lesson page
+   chrome, etc.) — keep the names but anchor them to the new layout
+   so unrelated callers don't break. */
 .progressBar { flex: 1; max-width: 160px; height: 2px; background: var(--tan-soft); border-radius: 2px; overflow: hidden; }
 .progressFill { height: 100%; background: linear-gradient(to right, var(--accent), var(--gold)); }
 
@@ -286,12 +406,21 @@
 
 @media (max-width: 900px) {
   .body { grid-template-columns: 1fr; }
-  .toc { position: static; }
+  /* Desktop sidebar hides; the horizontal pill nav above the body
+     takes over. Earlier `position: static` left the sidebar stacked
+     above the ledger, which felt redundant once we added pills. */
+  .toc { display: none; }
+  .mobileJumpNav { display: flex; }
   .frontispiece { grid-template-columns: 80px 1fr; }
   .motif { display: none; }
   .header { grid-template-columns: 1fr; }
   .partNum { font-size: 72px; }
   .headerLeft h1 { font-size: 44px; }
+  /* Sticky pill nav (~58px tall) sits below the SiteHeader, so jump
+     anchors clear both. Smaller breathing than desktop since vertical
+     space is tighter. */
+  .part { scroll-margin-top: 60px; }
+  .partProgressBar { height: 2px; }
 }
 
 /* ============== Lesson page ============== */

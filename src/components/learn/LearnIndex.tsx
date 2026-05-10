@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from 'react'
 import type { Part } from '@/app/learn/_data/parts'
+import { useScrollSpy } from '@/hooks/useScrollSpy'
 import { LearnHeader } from './LearnHeader'
 import { ResumeStrip, type ResumeData } from './ResumeStrip'
 import { TocRail } from './TocRail'
+import { MobileJumpNav } from './MobileJumpNav'
 import { PartFrontispiece } from './PartFrontispiece'
 import { LessonRow } from './LessonRow'
 import styles from './learn.module.css'
@@ -49,6 +51,15 @@ export function LearnIndex({ parts, resume, read, currentSlug }: Props) {
 
   const isFiltering = query.trim().length > 0
 
+  // Scroll-spy across visible parts. IDs match the section ids rendered
+  // below (`part-${i}`); the hook recomputes when filtering changes the
+  // visible set, since indices shift.
+  const partIds = useMemo(
+    () => filteredParts.map((_, i) => `part-${i}`),
+    [filteredParts],
+  )
+  const { activeIndex, setActiveIndex } = useScrollSpy(partIds)
+
   return (
     <div className={styles.page}>
       <main className={styles.container}>
@@ -59,8 +70,20 @@ export function LearnIndex({ parts, resume, read, currentSlug }: Props) {
           onQueryChange={setQuery}
         />
 
+        {filteredParts.length > 0 && (
+          <MobileJumpNav
+            parts={filteredParts}
+            activeIndex={activeIndex}
+            onJump={setActiveIndex}
+          />
+        )}
+
         <section className={styles.body}>
-          <TocRail parts={filteredParts} />
+          <TocRail
+            parts={filteredParts}
+            activeIndex={activeIndex}
+            onJump={setActiveIndex}
+          />
 
           <div className={styles.ledger}>
             {!isFiltering && (
