@@ -2732,12 +2732,9 @@ button:not(:disabled):active {
   -webkit-user-select: none;
 }
 
-/* /learn uses a fixed-position scroll container (.page) starting
-   below the SiteHeader, so content physically can't enter the
-   header zone — the header stays as page paper, transparent and
-   seam-free. The SiteFooter route-checks itself out on /learn paths
-   to avoid displacing into body's flow; LearnIndex renders its own
-   <SiteFooter forceShow /> inside .page. */
+/* (No /learn-specific rules here. The site-wide .nl-page-scroll
+   wrapper in layout.tsx now handles "content can't scroll under the
+   header" for every route, replacing the per-page workarounds.) */
 
 @media (min-width: 720px) {
   .site-header {
@@ -3097,22 +3094,27 @@ button:not(:disabled):active {
   box-sizing: border-box;
 }
 
-/* Belt-and-suspenders against accidental horizontal scroll. Note the
-   asymmetry: html uses `overflow-x: hidden` (the conventional fix);
-   body uses `overflow-x: clip`. Why? Setting `overflow-x: hidden` on
-   body implicitly forces `overflow-y: auto`, which makes <body> a
-   scroll container — and that breaks `position: sticky` everywhere on
-   the site (sidebar on /learn, any other sticky chrome) because sticky
-   needs the viewport (i.e. <html>) as its scrolling ancestor. `clip`
-   suppresses horizontal overflow without establishing a scrolling
-   context, so sticky keeps working. */
+/* Site-wide scroll model: body and html are locked to the viewport
+   (no scroll); a single fixed-height wrapper (.nl-page-scroll) that
+   sits below the SiteHeader is the scroll container for every page.
+   Content can't scroll under the header anywhere because it's
+   physically constrained to the wrapper's height. This replaces the
+   per-page workarounds we used on /learn. */
 html {
-  overflow-x: hidden;
+  overflow: hidden;
+  height: 100vh;
   max-width: 100vw;
 }
 body {
-  overflow-x: clip;
+  overflow: hidden;
+  height: 100vh;
   max-width: 100vw;
+}
+.nl-page-scroll {
+  height: calc(100vh - var(--nl-site-header-h));
+  overflow-y: auto;
+  overflow-x: clip;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Prevent iOS zoom on input focus */
@@ -3167,6 +3169,9 @@ svg:not(.nl-notation-staff) {
   box-shadow: 0 2px 8px rgba(26, 26, 24, 0.06);
   border-color: rgba(181, 64, 42, 0.35);
 }
+
+/* (Old .nl-programs-* rules replaced by the .nl-program-* marketplace
+   redesign — see further down this file.) */
 
 /* ── Scroll-reveal ───────────────────────────────────────────── */
 .nl-reveal {
@@ -3332,4 +3337,655 @@ svg:not(.nl-notation-staff) {
   .nl-tile-hover:hover {
     transform: none;
   }
+}
+
+/* ── /programs marketplace redesign ─────────────────────────────────
+   Concept 1: featured hero card + 2-col grid of program/placeholder
+   tiles. nl-program-* (singular) namespace; replaces the older
+   .nl-programs-* set. */
+
+.nl-program-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+  background: transparent;
+}
+
+/* ── Page hero ── */
+.nl-program-page-hero {
+  margin-bottom: 36px;
+  max-width: 720px;
+}
+.nl-program-page-hero__eyebrow {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7a7060;
+  margin: 0 0 12px 0;
+}
+.nl-program-page-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: clamp(32px, 4.5vw, 48px);
+  color: #1a1208;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin: 0 0 14px 0;
+}
+.nl-program-page-hero__title em {
+  font-style: italic;
+  color: #5a4028;
+}
+.nl-program-page-hero__intro {
+  font-family: var(--font-cormorant), serif;
+  font-size: 17px;
+  color: #2a1f12;
+  line-height: 1.55;
+  max-width: 560px;
+  margin: 0;
+}
+
+/* ── Featured (CM) hero card ── */
+.nl-program-hero {
+  position: relative;
+  margin-bottom: 32px;
+  background: rgba(255, 250, 238, 0.85);
+  border: 1px solid rgba(139, 105, 20, 0.18);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(139, 105, 20, 0.08);
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .nl-program-hero {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+.nl-program-hero::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, #7a2228 0%, #5c1a1f 100%);
+  z-index: 1;
+}
+@media (min-width: 768px) {
+  .nl-program-hero::before {
+    width: 6px;
+  }
+}
+
+.nl-program-hero__content {
+  padding: 22px 22px 22px 26px;
+}
+@media (min-width: 768px) {
+  .nl-program-hero__content {
+    padding: 36px 40px 36px 48px;
+  }
+}
+
+.nl-program-hero__tags {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.nl-program-hero__tag-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.nl-program-hero__tag {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+.nl-program-hero__tag.is-featured {
+  color: #a0381c;
+  background: rgba(160, 56, 28, 0.1);
+}
+.nl-program-hero__tag.is-flagship {
+  color: #7a2228;
+  background: rgba(122, 34, 40, 0.08);
+}
+.nl-program-hero__tag.is-type {
+  color: #5a4028;
+  background: rgba(139, 105, 20, 0.08);
+}
+
+/* Status pill — same component used by ProgramCard, two visual
+   variants for the same logical states. */
+.nl-program-hero__status-pill,
+.nl-program-card__status-pill {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nl-program-hero__status-pill.is-owned,
+.nl-program-card__status-pill.is-owned {
+  color: #2d5a3e;
+  background: rgba(45, 90, 62, 0.1);
+}
+.nl-program-hero__status-pill.is-free,
+.nl-program-card__status-pill.is-free {
+  color: #5a4028;
+  background: rgba(139, 105, 20, 0.08);
+}
+.nl-program-hero__status-pill.is-price,
+.nl-program-card__status-pill.is-price {
+  color: #7a2228;
+  background: rgba(122, 34, 40, 0.08);
+}
+.nl-program-hero__status-pill.is-new,
+.nl-program-card__status-pill.is-new {
+  color: #7a2228;
+  background: rgba(122, 34, 40, 0.1);
+}
+
+.nl-program-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 500;
+  color: #1a1208;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  margin: 0 0 12px 0;
+}
+.nl-program-hero__pitch {
+  font-family: var(--font-cormorant), serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #2a1f12;
+  margin: 0 0 16px 0;
+}
+
+.nl-program-hero__bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nl-program-hero__bullets li {
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  color: #2a1f12;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  line-height: 1.45;
+}
+.nl-program-hero__bullets li::before {
+  content: '✦';
+  color: #a0381c;
+  font-size: 11px;
+  flex: 0 0 auto;
+}
+
+.nl-program-hero__author {
+  font-family: var(--font-cormorant), serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #5a4028;
+  line-height: 1.45;
+  margin: 0 0 18px 0;
+  padding: 12px 0;
+  border-top: 1px solid rgba(139, 105, 20, 0.12);
+  border-bottom: 1px solid rgba(139, 105, 20, 0.12);
+}
+.nl-program-hero__author b {
+  color: #1a1208;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.nl-program-hero__cta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.nl-program-hero__price-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.nl-program-hero__price-from,
+.nl-program-hero__price-unit {
+  font-family: var(--font-cormorant), serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #8a7560;
+}
+.nl-program-hero__price-amt {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #1a1208;
+  letter-spacing: -0.005em;
+}
+.nl-program-hero__price-full {
+  font-family: var(--font-cormorant), serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #5a4028;
+  margin-left: auto;
+}
+.nl-program-hero__price-full b {
+  font-style: normal;
+  color: #1a1208;
+  font-weight: 500;
+}
+
+.nl-program-hero__cta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.nl-program-hero__cta-primary {
+  background: #1a1208;
+  color: #f0e7d0;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  transition: background 0.15s;
+  letter-spacing: 0.01em;
+}
+.nl-program-hero__cta-primary:hover {
+  background: #2a1f12;
+}
+.nl-program-hero__cta-secondary {
+  background: transparent;
+  color: #5a4028;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  font-style: italic;
+  text-decoration: none;
+  padding: 12px 18px;
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  border-radius: 4px;
+  transition: border-color 0.15s, color 0.15s;
+}
+.nl-program-hero__cta-secondary:hover {
+  border-color: rgba(139, 105, 20, 0.5);
+  color: #2a1f12;
+}
+
+/* ── Featured preview pane ── */
+.nl-program-hero__preview {
+  padding: 22px;
+  background: rgba(245, 239, 223, 0.5);
+  border-top: 1px solid rgba(139, 105, 20, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+@media (min-width: 768px) {
+  .nl-program-hero__preview {
+    padding: 36px 32px;
+    border-top: none;
+    border-left: 1px solid rgba(139, 105, 20, 0.1);
+  }
+}
+.nl-program-hero__preview-label {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a0381c;
+  margin: 0 0 4px 0;
+}
+.nl-program-hero__minishelf {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nl-program-hero__mini-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: rgba(255, 250, 238, 0.7);
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+.nl-program-hero__mini-num {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #8a7560;
+  flex: 0 0 auto;
+  min-width: 14px;
+}
+.nl-program-hero__mini-title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  color: #1a1208;
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.35;
+  /* Lesson titles can wrap to 2 lines — full title is more useful
+     than a truncated one (e.g. "Major Key Signatures"). */
+  overflow-wrap: break-word;
+}
+.nl-program-hero__mini-count {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #8a7560;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.nl-program-hero__preview-more {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #a0381c;
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+.nl-program-hero__preview-more:hover {
+  color: #7a2228;
+}
+
+.nl-program-hero__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(139, 105, 20, 0.1);
+  margin-top: 4px;
+}
+.nl-program-hero__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.nl-program-hero__stat-value {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #1a1208;
+  line-height: 1;
+}
+.nl-program-hero__stat-label {
+  font-family: var(--font-cormorant), serif;
+  font-size: 11px;
+  font-style: italic;
+  color: #8a7560;
+  margin-top: 2px;
+}
+
+/* ── Section header ── */
+.nl-program-section-header {
+  margin: 32px 0 12px 0;
+}
+.nl-program-section-header__title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: #1a1208;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+/* ── Filter chips ── */
+.nl-program-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+@media (max-width: 767.98px) {
+  .nl-program-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-left: -32px;
+    margin-right: -32px;
+    padding: 0 32px;
+  }
+  .nl-program-filters::-webkit-scrollbar {
+    display: none;
+  }
+}
+.nl-program-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 500;
+  color: #5a4028;
+  background: rgba(255, 250, 238, 0.5);
+  border: 1px solid rgba(139, 105, 20, 0.18);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.nl-program-filter:hover {
+  border-color: rgba(139, 105, 20, 0.35);
+}
+.nl-program-filter.is-active {
+  background: #1a1208;
+  color: #f0e7d0;
+  border-color: #1a1208;
+  font-style: normal;
+  font-weight: 500;
+}
+.nl-program-filter__count {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  font-style: normal;
+  color: inherit;
+  opacity: 0.7;
+}
+
+/* ── Other-programs grid ── */
+.nl-program-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .nl-program-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+/* ── Standard program card ── */
+.nl-program-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.nl-program-card {
+  position: relative;
+  background: rgba(255, 250, 238, 0.85);
+  border: 1px solid rgba(139, 105, 20, 0.18);
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 22px 22px 0 26px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(139, 105, 20, 0.06);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.nl-program-card:hover {
+  border-color: rgba(139, 105, 20, 0.3);
+  box-shadow: 0 4px 14px rgba(139, 105, 20, 0.1);
+  transform: translateY(-1px);
+}
+.nl-program-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+.nl-program-card.is-foundation::before {
+  background: #2d5a3e;
+}
+.nl-program-card.is-reading::before {
+  background: #2a4470;
+}
+.nl-program-card.is-theory::before {
+  background: #6b4423;
+}
+.nl-program-card.is-aural::before {
+  background: #8a3a55;
+}
+.nl-program-card__tags {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.nl-program-card__type-tag {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5a4028;
+  background: rgba(139, 105, 20, 0.08);
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+.nl-program-card__title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #1a1208;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+  margin: 0 0 10px 0;
+}
+.nl-program-card__pitch {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14.5px;
+  color: #2a1f12;
+  line-height: 1.45;
+  margin: 0 0 14px 0;
+  flex: 1 1 auto;
+}
+.nl-program-card__includes {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: #5a4028;
+  background: rgba(245, 239, 223, 0.6);
+  padding: 10px 12px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+.nl-program-card__includes-label {
+  font-style: normal;
+  font-weight: 500;
+  color: #1a1208;
+}
+.nl-program-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0 16px 0;
+  border-top: 1px solid rgba(139, 105, 20, 0.1);
+  margin-top: auto;
+}
+.nl-program-card__price-info {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #5a4028;
+}
+.nl-program-card__cta {
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #a0381c;
+  letter-spacing: 0.01em;
+}
+
+/* ── Placeholder card (Coming Soon / Suggest) ── */
+.nl-program-placeholder {
+  background: transparent;
+  border: 1px dashed rgba(139, 105, 20, 0.25);
+  border-radius: 10px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 200px;
+}
+.nl-program-placeholder__eyebrow {
+  font-family: var(--font-jost), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a7560;
+  margin: 0 0 10px 0;
+}
+.nl-program-placeholder.is-suggest .nl-program-placeholder__eyebrow {
+  color: #a0381c;
+}
+.nl-program-placeholder__title {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 500;
+  color: #1a1208;
+  letter-spacing: -0.005em;
+  line-height: 1.15;
+  margin: 0 0 10px 0;
+}
+.nl-program-placeholder__body {
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  color: #5a4028;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 320px;
 }

@@ -82,8 +82,17 @@ export default function RootLayout({
       <body className={`${cormorant.variable} ${jost.variable}`}>
         <ParticleCanvasConditional />
         <SiteHeader />
-        {children}
-        <SiteFooter />
+        {/* All page content scrolls inside this wrapper, which is
+            anchored below the SiteHeader. The body itself doesn't
+            scroll (overflow: hidden in globals.css), so content
+            physically can't enter the header zone — the header stays
+            transparent and seam-free against the page paper without
+            any overlay or backdrop trickery. SiteFooter sits inside
+            so it scrolls naturally to the bottom. */}
+        <div className="nl-page-scroll">
+          {children}
+          <SiteFooter />
+        </div>
         <Analytics />
       </body>
     </html>
