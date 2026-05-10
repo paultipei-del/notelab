@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react'
 import type { Part } from '@/app/learn/_data/parts'
 import { useScrollSpy } from '@/hooks/useScrollSpy'
-import SiteFooter from '@/components/SiteFooter'
 import { LearnHeader } from './LearnHeader'
 import { ResumeStrip, type ResumeData } from './ResumeStrip'
 import { TocRail } from './TocRail'
@@ -137,10 +136,6 @@ export function LearnIndex({ parts, resume, read, currentSlug }: Props) {
           </div>
         </section>
       </main>
-      {/* Footer rendered INSIDE .page so it scrolls with the content.
-          The layout's SiteFooter suppresses itself on /learn paths;
-          forceShow bypasses that check for this rendered copy. */}
-      <SiteFooter forceShow />
     </div>
   )
 }

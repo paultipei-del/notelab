@@ -81,14 +81,26 @@ export function useScrollSpy(
   // for the last section (e.g. a short final part whose top has left
   // the active zone), the IO callback fires with isIntersecting: false
   // and the active highlight would otherwise drop to whatever the
-  // previous section was. Force the last index active when the viewport
-  // bottom is within `bottomThreshold` px of the document end.
+  // previous section was. Force the last index active when the scroll
+  // container is within `bottomThreshold` px of its scroll end.
+  //
+  // The scroll container is .nl-page-scroll (layout-level wrapper),
+  // not the window — body is locked to viewport height. Fall back to
+  // window scroll for routes that don't render inside the wrapper.
   useEffect(() => {
     if (typeof window === 'undefined') return
     if (ids.length === 0) return
     const bottomThreshold = options.bottomThreshold ?? 80
 
+    const scrollEl = document.querySelector<HTMLElement>('.nl-page-scroll')
+
     function checkBottom() {
+      if (scrollEl) {
+        if (scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - bottomThreshold) {
+          setActiveIndex(ids.length - 1)
+        }
+        return
+      }
       const scrollPos = window.scrollY + window.innerHeight
       const docHeight = document.documentElement.scrollHeight
       if (scrollPos >= docHeight - bottomThreshold) {
@@ -96,10 +108,10 @@ export function useScrollSpy(
       }
     }
 
-    window.addEventListener('scroll', checkBottom, { passive: true })
-    // Run once on mount in case the page is already scrolled.
+    const target: EventTarget = scrollEl ?? window
+    target.addEventListener('scroll', checkBottom, { passive: true })
     checkBottom()
-    return () => window.removeEventListener('scroll', checkBottom)
+    return () => target.removeEventListener('scroll', checkBottom)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsKey, options.bottomThreshold])
 

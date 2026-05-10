@@ -1,194 +1,121 @@
 'use client'
 
-import Link from 'next/link'
-import { DECKS, CM_BUNDLE_PRICE_ID } from '@/lib/decks'
+import { useState, useMemo } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { usePurchases } from '@/hooks/usePurchases'
+import {
+  PROGRAMS_CATALOG,
+  FILTER_ORDER,
+  type ProgramCategory,
+  type ProgramEntry,
+} from '@/lib/programsCatalog'
+import ProgramsHero from '@/components/programs/ProgramsHero'
+import FeaturedProgramCard from '@/components/programs/FeaturedProgramCard'
+import ProgramCard from '@/components/programs/ProgramCard'
+import PlaceholderCard from '@/components/programs/PlaceholderCard'
+import ProgramFilters from '@/components/programs/ProgramFilters'
 
-const F = 'var(--font-jost), sans-serif'
-const SERIF = 'var(--font-cormorant), serif'
-
-const cmDecks = DECKS.filter(d => d.tag === 'cm')
-
-const PROGRAMS = [
-  {
-    id: 'cm',
-    href: '/programs/cm',
-    title: 'Certificate of Merit',
-    subtitle: 'CM — California',
-    description: 'Complete theory exam preparation from Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training.',
-    priceLine: '11 levels · From $29 per level · Full program $199',
-    levels: `${cmDecks.length} levels`,
-    priceId: CM_BUNDLE_PRICE_ID,
-    glyph: 'CM',
-    accent: { bg: 'rgba(186,117,23,0.2)', text: '#E8A84A', border: 'rgba(186,117,23,0.3)', ctaBg: 'rgba(186,117,23,0.15)', gradientGlyphColor: 'rgba(186,117,23,0.14)', gradient: 'linear-gradient(145deg, #0A0A08 0%, #1E1A10 50%, #2E2618 100%)' },
-  },
-  {
-    id: 'note-reading',
-    href: '/programs/note-reading',
-    title: 'Note Reading',
-    subtitle: 'Staff & Sight-Reading',
-    description: 'Nine modules — single-pitch recognition through intervallic and rhythmic reading — built for college music students and serious adult learners. Pairs note identification with pitch detection.',
-    priceLine: '9 modules · $29 — lifetime access',
-    levels: '9 modules',
-    priceId: null,
-    glyph: '𝄞',
-    accent: { bg: 'rgba(59,109,17,0.22)', text: '#7DC44E', border: 'rgba(59,109,17,0.35)', ctaBg: 'rgba(59,109,17,0.15)', gradientGlyphColor: 'rgba(59,109,17,0.14)', gradient: 'linear-gradient(145deg, #060A04 0%, #101A08 50%, #182510 100%)' },
-  },
-  {
-    id: 'rhythm',
-    href: '/programs/rhythm',
-    title: 'Rhythm Reading',
-    subtitle: 'Three structured programs',
-    description: 'Fundamentals, Personal Practice, and Conservatory Prep — 356 progressive exercises from basic note values through mixed meter and polyrhythm. Tap along with the metronome.',
-    priceLine: '356 progressive exercises · Free forever',
-    levels: '356 exercises',
-    priceId: null,
-    free: true,
-    glyph: '𝄩',
-    accent: { bg: 'rgba(59,97,181,0.22)', text: '#7DA8E8', border: 'rgba(59,97,181,0.35)', ctaBg: 'rgba(59,97,181,0.15)', gradientGlyphColor: 'rgba(59,97,181,0.14)', gradient: 'linear-gradient(145deg, #040610 0%, #080E1E 50%, #101828 100%)' },
-  },
-]
+/**
+ * Derive the right-side status pill for a program (CTA-equivalent
+ * info: ownership, free, or starting price). Owner-aware via
+ * usePurchases, falls back to the catalog's `priceFrom`.
+ */
+function deriveStatus(
+  program: ProgramEntry,
+  hasSubscription: () => boolean,
+  hasPurchased: (priceId: string) => boolean,
+): { statusLabel: string; statusVariant: 'owned' | 'free' | 'price' | 'new' } {
+  if (program.free) {
+    return { statusLabel: 'Free', statusVariant: 'free' }
+  }
+  const owned =
+    hasSubscription() || (program.priceId ? hasPurchased(program.priceId) : false)
+  if (owned) {
+    return { statusLabel: '✓ Owned', statusVariant: 'owned' }
+  }
+  return { statusLabel: program.priceFrom ?? 'View', statusVariant: 'price' }
+}
 
 export default function ProgramsPage() {
   const { user } = useAuth()
   const { hasPurchased, hasSubscription } = usePurchases(user?.id ?? null)
 
+  // v1: filter state lives here but doesn't filter — chips render
+  // pressed/unpressed and "All" stays the active default. Hooked up
+  // for the follow-up that wires actual filtering.
+  const [activeFilter, setActiveFilter] = useState<ProgramCategory | 'all'>('all')
+
+  // Featured (CM) renders in its own slot above the grid; everything
+  // else (programs + placeholders) flows into the 2-col grid.
+  const featured = useMemo(
+    () =>
+      PROGRAMS_CATALOG.find(
+        (e): e is ProgramEntry => e.kind === 'program' && !!e.featured,
+      ),
+    [],
+  )
+  const gridEntries = useMemo(
+    () => PROGRAMS_CATALOG.filter(e => e.kind !== 'program' || !e.featured),
+    [],
+  )
+
+  // Counts per filter chip — total catalog count split by category.
+  // Placeholders don't have a category and are excluded from category
+  // counts, but counted in "All" so the All chip shows the full
+  // visible-tile count.
+  const counts = useMemo(() => {
+    const c: Record<ProgramCategory | 'all', number> = {
+      all: 0,
+      foundation: 0,
+      reading: 0,
+      theory: 0,
+      aural: 0,
+    }
+    for (const entry of PROGRAMS_CATALOG) {
+      c.all += 1
+      if (entry.kind === 'program') {
+        c[entry.category] += 1
+      }
+    }
+    return c
+  }, [])
+
+  // Touch FILTER_ORDER so the import isn't unused — type-only use.
+  void FILTER_ORDER
+
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 80px' }}>
+    <div className="nl-program-page">
+      <ProgramsHero />
 
-        <div style={{ marginBottom: '40px' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Programs</p>
-          <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(28px, 4vw, 44px)', color: '#2A2318', marginBottom: '10px', letterSpacing: '0.02em' }}>
-            Curriculum-aligned programs
-          </h1>
-          <p style={{ fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060', maxWidth: '480px', lineHeight: 1.7 }}>
-            Complete flashcard programs built around real curricula — Certificate of Merit and college first-year music theory, each self-contained with everything you need.
-          </p>
-        </div>
+      {featured && (
+        <FeaturedProgramCard
+          program={featured}
+          {...deriveStatus(featured, hasSubscription, hasPurchased)}
+        />
+      )}
 
-        <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '14px' }}>
-          {PROGRAMS.map(prog => {
-            const isFree = !!(prog as { free?: boolean }).free
-            const owned = isFree
-              ? false
-              : hasSubscription() || (prog.priceId ? hasPurchased(prog.priceId) : false)
-            // Starting-price fallback per-program. Rhythm is free and is
-            // handled above; CM and NR fall back to "From $29" until a
-            // per-program price ID is wired through.
-            const fromPrice = prog.id === 'cm' ? 'From $29' : '$29'
-            // Consistent vocabulary: ownership-aware chip across all three
-            // programs. OWNED > FREE > FROM $X.
-            const tagLabel = owned ? '✓ Owned' : isFree ? 'Free' : fromPrice
-            const tagPalette = owned
-              ? { bg: '#E6F0D6', color: '#3B6D11' }
-              : isFree
-                ? { bg: '#EDE8DF', color: '#7A7060' }
-                : { bg: '#FAEEDA', color: '#B5402A' }
-            // Right-side decorative glyph.
-            const glyph = prog.id === 'cm' ? '♫♪'
-              : prog.id === 'note-reading' ? '𝄞'
-              : '♩♪♩♬'
-            const cta = 'View program →'
+      <div className="nl-program-section-header">
+        <h2 className="nl-program-section-header__title">Other programs</h2>
+      </div>
 
-            return (
-              <Link key={prog.id} href={prog.href} style={{ textDecoration: 'none', borderRadius: '16px', display: 'block' }}>
-                <div
-                  className="nl-tile-hover"
-                  style={{
-                    background: '#ECE3CC',
-                    border: '1px solid #D9CFAE',
-                    borderRadius: '16px',
-                    display: 'grid',
-                    gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 320px)',
-                    minHeight: '240px',
-                    overflow: 'hidden',
-                    boxShadow: '0 1px 0 rgba(255,255,255,0.65) inset, 0 2px 6px rgba(26,26,24,0.05), 0 10px 28px rgba(26,26,24,0.07)',
-                  }}
-                >
-                  {/* Text side */}
-                  <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' }}>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        fontFamily: F,
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        letterSpacing: '0.12em',
-                        textTransform: 'uppercase' as const,
-                        color: tagPalette.color,
-                        background: tagPalette.bg,
-                        borderRadius: '20px',
-                        padding: '3px 10px',
-                        marginBottom: '10px',
-                        width: 'fit-content',
-                      }}
-                    >
-                      {tagLabel}
-                    </span>
-                    <h2 style={{ fontFamily: SERIF, fontWeight: 400, fontSize: 'clamp(26px, 3vw, 34px)', color: '#1A1A18', marginBottom: '10px', letterSpacing: '0.01em', lineHeight: 1.1 }}>
-                      {prog.title}
-                    </h2>
-                    <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 400, color: '#4A4540', lineHeight: 1.65, marginBottom: (prog as { priceLine?: string }).priceLine ? '8px' : '18px', maxWidth: '420px' }}>
-                      {prog.description}
-                    </p>
-                    {(prog as { priceLine?: string }).priceLine && (
-                      <p style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: '#7A7060', letterSpacing: '0.02em', marginBottom: '18px' }}>
-                        {(prog as { priceLine?: string }).priceLine}
-                      </p>
-                    )}
-                    <span
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        fontFamily: F,
-                        fontSize: '13px',
-                        fontWeight: 500,
-                        color: 'white',
-                        background: '#1A1A18',
-                        padding: '9px 18px',
-                        borderRadius: '10px',
-                        width: 'fit-content',
-                      }}
-                    >
-                      {cta}
-                    </span>
-                  </div>
+      <ProgramFilters
+        active={activeFilter}
+        counts={counts}
+        onChange={setActiveFilter}
+      />
 
-                  {/* Decorative side — same cream background, single faint glyph */}
-                  <div
-                    style={{
-                      position: 'relative',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <span
-                      aria-hidden="true"
-                      style={{
-                        fontFamily: prog.id === 'note-reading' ? SERIF : 'Bravura, serif',
-                        fontSize: prog.id === 'note-reading' ? '180px' : '120px',
-                        fontWeight: 300,
-                        color: '#2A2318',
-                        opacity: 0.08,
-                        lineHeight: 1,
-                        userSelect: 'none' as const,
-                        pointerEvents: 'none' as const,
-                        letterSpacing: '-0.04em',
-                      }}
-                    >
-                      {glyph}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
-
+      <div className="nl-program-grid">
+        {gridEntries.map(entry =>
+          entry.kind === 'program' ? (
+            <ProgramCard
+              key={entry.id}
+              program={entry}
+              {...deriveStatus(entry, hasSubscription, hasPurchased)}
+            />
+          ) : (
+            <PlaceholderCard key={entry.id} placeholder={entry} />
+          ),
+        )}
       </div>
     </div>
   )

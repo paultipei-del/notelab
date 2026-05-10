@@ -22,20 +22,13 @@
   --learn-active-tint: rgba(160, 56, 28, 0.06);
 
   /* No `background` override — page inherits the site-wide warm-cream
-     vignette from html (defined in globals.css). */
+     vignette from html (defined in globals.css). The site-wide
+     .nl-page-scroll wrapper (in layout.tsx) handles the scroll
+     container concern, so this page just flows normally. */
+  min-height: 100%;
   color: var(--ink);
   font-family: var(--font-jost), 'Jost', sans-serif;
   -webkit-font-smoothing: antialiased;
-  /* Fixed-position scroll container starting below the SiteHeader.
-     Content scrolls inside this region and physically cannot enter
-     the y=0..site-header zone, so the SiteHeader has nothing to hide
-     and stays as page paper (no fill, no overlay, no seam). The
-     SiteFooter is rendered INSIDE .page (at the bottom of the
-     scroll content) so it doesn't displace into body's flow. */
-  position: fixed;
-  inset: var(--nl-site-header-h) 0 0 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .container { max-width: 1140px; margin: 0 auto; padding: 0 32px; }
