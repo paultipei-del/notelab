@@ -2739,8 +2739,11 @@ button:not(:disabled):active {
      as part of the same paper as the body — no fill, no rule. */
   border-bottom: none;
   background: transparent;
-  position: sticky;
-  top: 0;
+  /* Anchored by layout (body is flex column with header as the first
+     fixed-height child). No sticky/fixed positioning needed; iOS
+     visual-viewport shifts can't move a static flex item. */
+  flex: 0 0 auto;
+  position: relative;
   z-index: 100;
   user-select: none;
   -webkit-user-select: none;
@@ -3129,13 +3132,20 @@ body {
   height: 100vh;
   height: 100dvh;
   max-width: 100vw;
+  /* Flex column so the SiteHeader is a static flex child (anchored
+     by layout, not by `position: sticky`). Sticky on a non-scrolling
+     ancestor degrades to static on most browsers, but iOS Safari
+     can still shift the layout viewport on scrollIntoView and push
+     a sticky header off-screen. Static-via-flex never moves. */
+  display: flex;
+  flex-direction: column;
 }
 .nl-page-scroll {
-  /* Subtract both the chrome content height (60px) AND the iOS
-     safe-area inset, since SiteHeader's total height now includes
-     that inset so its content can clear the status bar. */
-  height: calc(100vh - var(--nl-site-header-h) - env(safe-area-inset-top, 0));
-  height: calc(100dvh - var(--nl-site-header-h) - env(safe-area-inset-top, 0));
+  /* Body is a flex column; .nl-page-scroll takes whatever vertical
+     space remains after the SiteHeader. min-height: 0 lets it
+     shrink below content size so its inner overflow scroll engages. */
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: clip;
   -webkit-overflow-scrolling: touch;
