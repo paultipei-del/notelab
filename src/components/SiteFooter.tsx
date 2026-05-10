@@ -7,10 +7,23 @@ const F = 'var(--font-jost), sans-serif'
 
 const HIDDEN_ON = ['/unlock', '/landing']
 
-export default function SiteFooter() {
+interface SiteFooterProps {
+  /** Skip the route-based hide checks. Used by /learn which renders
+   *  SiteFooter inside its fixed-position scroll container; without
+   *  this the conditional below would suppress the rendered copy too. */
+  forceShow?: boolean
+}
+
+export default function SiteFooter({ forceShow = false }: SiteFooterProps = {}) {
   const pathname = usePathname()
-  if (HIDDEN_ON.includes(pathname)) return null
-  if (pathname.startsWith('/study')) return null
+  if (!forceShow) {
+    if (HIDDEN_ON.includes(pathname)) return null
+    if (pathname.startsWith('/study')) return null
+    // /learn uses a fixed-position scroll container that displaces the
+    // layout footer. LearnIndex renders its own SiteFooter (with
+    // forceShow) inside the scroll container so it scrolls with content.
+    if (pathname === '/learn' || pathname.startsWith('/learn/')) return null
+  }
 
   return (
     <footer style={{

@@ -2732,55 +2732,12 @@ button:not(:disabled):active {
   -webkit-user-select: none;
 }
 
-/* /learn — content fades out before reaching the header.
-   Approach: a fixed-position overlay covers y=0..60 (header zone)
-   with the same cream color the page shows there (so it's visually
-   indistinguishable from the page paper, no seam, no tint stripe),
-   then fades to transparent over y=60..84. As content scrolls up,
-   it transitions from fully visible (below y=84) to fully hidden
-   (above y=60), with a smooth 24px feather where it dissolves.
-   The SiteHeader itself stays transparent — its interactive content
-   sits at z=100, the overlay sits at z=50, scrolling content sits
-   below at the default stack level. html is viewport-pinned so the
-   page-top color stays constant as the user scrolls. */
-html:has(.is-learn-page) {
-  background-attachment: fixed;
-}
-body:has(.is-learn-page)::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 84px;
-  /* Mobile: html bg is solid #EFE8D2 — overlay matches that. */
-  background: linear-gradient(
-    to bottom,
-    #EFE8D2 0,
-    #EFE8D2 60px,
-    rgba(239, 232, 210, 0.7) 68px,
-    transparent 84px
-  );
-  pointer-events: none;
-  z-index: 50;
-}
-@media (min-width: 769px) {
-  /* Desktop: html gradient at viewport-top is #EEE6CD, transitioning
-     to #EFE8D2 by y=60. Overlay tracks that exactly so the header
-     zone reads as the same paper as the page top. */
-  body:has(.is-learn-page)::before {
-    background: linear-gradient(
-      to bottom,
-      #EEE6CD 0,
-      #EFE8D2 60px,
-      rgba(239, 232, 210, 0.7) 68px,
-      transparent 84px
-    );
-  }
-}
-body:has(.is-learn-page) .site-header {
-  background: transparent;
-}
+/* /learn uses a fixed-position scroll container (.page) starting
+   below the SiteHeader, so content physically can't enter the
+   header zone — the header stays as page paper, transparent and
+   seam-free. The SiteFooter route-checks itself out on /learn paths
+   to avoid displacing into body's flow; LearnIndex renders its own
+   <SiteFooter forceShow /> inside .page. */
 
 @media (min-width: 720px) {
   .site-header {
