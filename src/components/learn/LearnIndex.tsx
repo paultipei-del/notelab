@@ -61,7 +61,12 @@ export function LearnIndex({ parts, resume, read, currentSlug }: Props) {
   const { activeIndex, setActiveIndex } = useScrollSpy(partIds)
 
   return (
-    <div className={styles.page}>
+    // is-learn-page is a stable, non-module class used by globals.css
+    // (body:has(.is-learn-page) .site-header) to paint the SiteHeader
+    // opaque on this route, so content doesn't bleed under it as the
+    // user scrolls. CSS module class names are hashed and can't be
+    // targeted from outside the module.
+    <div className={`${styles.page} is-learn-page`}>
       <main className={styles.container}>
         <ResumeStrip resume={resume} />
         <LearnHeader
