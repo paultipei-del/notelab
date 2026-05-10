@@ -22,9 +22,14 @@ export function PartFrontispiece({ part, readCount }: { part: Part; readCount: n
         <h2 className={styles.partTitle}>{part.title}</h2>
         <p className={styles.epigraph}>{part.epigraph}</p>
         <div className={styles.partProgress}>
-          <span>{readCount} of {part.lessons.length} read</span>
-          <span className={styles.progressBar}>
-            <span className={styles.progressFill} style={{ width: `${pct}%` }} />
+          <span className={styles.partProgressBar} aria-hidden>
+            <span
+              className={styles.partProgressFill}
+              style={{ width: `${pct}%` }}
+            />
+          </span>
+          <span className={styles.partProgressText}>
+            {readCount} of {part.lessons.length} read
           </span>
         </div>
       </div>

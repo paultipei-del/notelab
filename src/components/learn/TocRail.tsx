@@ -1,11 +1,15 @@
 'use client'
 
-import { useState } from 'react'
 import type { Part } from '@/app/learn/_data/parts'
 import styles from './learn.module.css'
 
-export function TocRail({ parts }: { parts: Part[] }) {
-  const [active, setActive] = useState(0)
+interface TocRailProps {
+  parts: Part[]
+  activeIndex: number
+  onJump: (i: number) => void
+}
+
+export function TocRail({ parts, activeIndex, onJump }: TocRailProps) {
   let cumPage = 1
 
   return (
@@ -15,14 +19,18 @@ export function TocRail({ parts }: { parts: Part[] }) {
         {parts.map((p, i) => {
           const pageStart = cumPage
           cumPage += p.lessons.length + 1
+          const isActive = activeIndex === i
           return (
             <li
               key={p.slug}
-              className={`${styles.tocItem} ${active === i ? styles.tocItemActive : ''}`}
+              className={`${styles.tocItem} ${isActive ? styles.tocItemActive : ''}`}
               onClick={() => {
-                setActive(i)
-                document.getElementById(`part-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                onJump(i)
+                document
+                  .getElementById(`part-${i}`)
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
               }}
+              aria-current={isActive ? 'true' : undefined}
             >
               <span className={styles.tocNum}>{p.num}.</span>
               <span className={styles.tocTitle}>{p.title}</span>

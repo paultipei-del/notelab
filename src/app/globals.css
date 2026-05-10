@@ -3090,8 +3090,21 @@ button:not(:disabled):active {
   box-sizing: border-box;
 }
 
-html, body {
+/* Belt-and-suspenders against accidental horizontal scroll. Note the
+   asymmetry: html uses `overflow-x: hidden` (the conventional fix);
+   body uses `overflow-x: clip`. Why? Setting `overflow-x: hidden` on
+   body implicitly forces `overflow-y: auto`, which makes <body> a
+   scroll container — and that breaks `position: sticky` everywhere on
+   the site (sidebar on /learn, any other sticky chrome) because sticky
+   needs the viewport (i.e. <html>) as its scrolling ancestor. `clip`
+   suppresses horizontal overflow without establishing a scrolling
+   context, so sticky keeps working. */
+html {
   overflow-x: hidden;
+  max-width: 100vw;
+}
+body {
+  overflow-x: clip;
   max-width: 100vw;
 }
 
