@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import type { Part } from '@/app/learn/_data/parts'
 import { useScrollSpy } from '@/hooks/useScrollSpy'
+import SiteFooter from '@/components/SiteFooter'
 import { LearnHeader } from './LearnHeader'
 import { ResumeStrip, type ResumeData } from './ResumeStrip'
 import { TocRail } from './TocRail'
@@ -67,6 +68,13 @@ export function LearnIndex({ parts, resume, read, currentSlug }: Props) {
     // user scrolls. CSS module class names are hashed and can't be
     // targeted from outside the module.
     <div className={`${styles.page} is-learn-page`}>
+      {/* Fixed-position overlay covering viewport y=0..site-header.
+          Renders the SAME gradient html uses with the SAME
+          background-attachment: fixed, so they paint identical
+          pixels at every scroll position — no visible boundary.
+          A real DOM element rather than a body::before so iOS
+          Safari renders it reliably. */}
+      <div className={styles.headerFade} aria-hidden="true" />
       <main className={styles.container}>
         <ResumeStrip resume={resume} />
         <LearnHeader
@@ -129,6 +137,10 @@ export function LearnIndex({ parts, resume, read, currentSlug }: Props) {
           </div>
         </section>
       </main>
+      {/* Footer rendered INSIDE .page so it scrolls with the content.
+          The layout's SiteFooter suppresses itself on /learn paths;
+          forceShow bypasses that check for this rendered copy. */}
+      <SiteFooter forceShow />
     </div>
   )
 }

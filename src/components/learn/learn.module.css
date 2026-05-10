@@ -1,3 +1,7 @@
+/* (.headerFade removed — .page is now a fixed-position scroll
+   container that physically prevents content from entering the
+   header zone, so no overlay is needed.) */
+
 /* Color tokens, scoped to this page */
 .page {
   --paper: #ECE3CC;
@@ -19,10 +23,19 @@
 
   /* No `background` override — page inherits the site-wide warm-cream
      vignette from html (defined in globals.css). */
-  min-height: 100vh;
   color: var(--ink);
   font-family: var(--font-jost), 'Jost', sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* Fixed-position scroll container starting below the SiteHeader.
+     Content scrolls inside this region and physically cannot enter
+     the y=0..site-header zone, so the SiteHeader has nothing to hide
+     and stays as page paper (no fill, no overlay, no seam). The
+     SiteFooter is rendered INSIDE .page (at the bottom of the
+     scroll content) so it doesn't displace into body's flow. */
+  position: fixed;
+  inset: var(--nl-site-header-h) 0 0 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .container { max-width: 1140px; margin: 0 auto; padding: 0 32px; }
@@ -131,18 +144,14 @@
 .toc {
   /* IMPORTANT: align-self: start is required here. Without it, CSS
      Grid stretches the toc to match its tallest sibling (.ledger,
-     ~8600px), which gives the sticky element no headroom to operate —
-     the box already fills its container vertically, so sticky never
-     engages. With align-self: start the toc sizes to its content,
-     leaving room inside .body for the sticky offset to work. */
+     ~8600px), which gives the sticky element no headroom to operate. */
   align-self: start;
   position: sticky;
-  /* 24px below the global SiteHeader, per the spec. Using a calc so
-     bumping --nl-site-header-h doesn't desync the sidebar offset. */
-  top: calc(var(--nl-site-header-h) + 24px);
+  /* Sticky relative to .page (the scroll container). 24px breathing
+     from the top of .page = 24px below the SiteHeader. */
+  top: 24px;
   max-height: calc(100vh - var(--nl-site-header-h) - 100px);
   overflow-y: auto;
-  /* Subtle scrollbar so a tall part list doesn't paint a heavy gutter. */
   scrollbar-width: thin;
 }
 .toc::-webkit-scrollbar { width: 4px; }
@@ -181,7 +190,10 @@
 .mobileJumpNav {
   display: none;
   position: sticky;
-  top: var(--nl-site-header-h);
+  /* Sticks to the top of .page (the scroll container). .page itself
+     starts below the SiteHeader, so top:0 here = right below the
+     SiteHeader visually. */
+  top: 0;
   z-index: 5;
   margin: 0 -32px;
   padding: 10px 16px;
@@ -189,9 +201,13 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-padding-inline: 16px;
-  background: rgba(253, 250, 245, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  /* Near-opaque cream so content scrolling beneath dissolves cleanly,
+     and the pill nav reads as its own visual layer rather than a
+     translucent strip blending with the header above. */
+  background: rgba(245, 239, 223, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(139, 105, 20, 0.08);
   border-bottom: 1px solid var(--tan-soft);
   white-space: nowrap;
   scrollbar-width: none;
@@ -245,9 +261,10 @@
 .part {
   padding: 36px 0;
   position: relative;
-  /* Header (~60) + breathing (~36) so jump-clicks land below the
-     SiteHeader instead of clipping under it. Mobile override below. */
-  scroll-margin-top: 96px;
+  /* Scroll-margin is relative to .page (the scroll container), not
+     the viewport. Desktop only needs breathing room from the top of
+     .page. Mobile override adds clearance for the sticky pill nav. */
+  scroll-margin-top: 24px;
 }
 .part + .part { border-top: 1px solid var(--tan-soft); }
 .frontispiece {
@@ -416,10 +433,11 @@
   .header { grid-template-columns: 1fr; }
   .partNum { font-size: 72px; }
   .headerLeft h1 { font-size: 44px; }
-  /* Sticky pill nav (~58px tall) sits below the SiteHeader, so jump
-     anchors clear both. Smaller breathing than desktop since vertical
-     space is tighter. */
-  .part { scroll-margin-top: 60px; }
+  /* Pill nav (~62px tall) sticks at top of .page, so jump-clicks
+     need 70-ish px of clearance for the part's "III · FOUNDATIONS"
+     line to land cleanly below it. SiteHeader is outside .page so
+     it doesn't factor in. */
+  .part { scroll-margin-top: 70px; }
   .partProgressBar { height: 2px; }
 }
 
