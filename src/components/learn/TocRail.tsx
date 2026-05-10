@@ -26,9 +26,18 @@ export function TocRail({ parts, activeIndex, onJump }: TocRailProps) {
               className={`${styles.tocItem} ${isActive ? styles.tocItemActive : ''}`}
               onClick={() => {
                 onJump(i)
-                document
-                  .getElementById(`part-${i}`)
-                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                // Direct scrollTo on .nl-page-scroll instead of
+                // scrollIntoView — avoids iOS Safari's visual-viewport
+                // adjustment that can shift the SiteHeader. On
+                // desktop the chrome offset is smaller (no pill nav),
+                // so 24px clearance matches scroll-margin-top on .part.
+                const part = document.getElementById(`part-${i}`)
+                const scrollEl = document.querySelector<HTMLElement>('.nl-page-scroll')
+                if (!part || !scrollEl) return
+                const partRect = part.getBoundingClientRect()
+                const scrollRect = scrollEl.getBoundingClientRect()
+                const target = partRect.top - scrollRect.top + scrollEl.scrollTop - 24
+                scrollEl.scrollTo({ top: Math.max(0, target), behavior: 'smooth' })
               }}
               aria-current={isActive ? 'true' : undefined}
             >
