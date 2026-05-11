@@ -3128,15 +3128,18 @@ html {
   max-width: 100vw;
 }
 body {
+  /* Pin body to the viewport with position: fixed. On iOS Safari,
+     back-navigation can preserve a visual-viewport offset from the
+     previous route, which would shift body up so the SiteHeader
+     appears partially under the status bar. position: fixed anchors
+     body to the viewport's initial containing block — no offset can
+     persist across navigation. */
+  position: fixed;
+  inset: 0;
   overflow: hidden;
-  height: 100vh;
-  height: 100dvh;
   max-width: 100vw;
   /* Flex column so the SiteHeader is a static flex child (anchored
-     by layout, not by `position: sticky`). Sticky on a non-scrolling
-     ancestor degrades to static on most browsers, but iOS Safari
-     can still shift the layout viewport on scrollIntoView and push
-     a sticky header off-screen. Static-via-flex never moves. */
+     by layout, not by `position: sticky`). */
   display: flex;
   flex-direction: column;
 }
