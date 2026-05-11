@@ -2,11 +2,11 @@
 
 import {
   CM_LEVEL1_LESSONS,
-} from '@/lib/programs/cm/l1/lessons'
+} from '@/lib/programs/cm-level1/lessons'
 import {
   loadCMLevel1Progress,
   type CMLevel1ProgressStore,
-} from '@/lib/programs/cm/l1/progress'
+} from '@/lib/programs/cm-level1/progress'
 import type {
   ProgramHeroData,
   ProgramHeroModule,
