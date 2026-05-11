@@ -4027,6 +4027,17 @@ svg:not(.nl-notation-staff) {
   max-width: 320px;
 }
 
+/* InfoTip popover — on mobile the InfoTip sits at the right edge of
+   a full-width section title. Anchoring the popover at left:0 of the
+   trigger overflows the viewport's right edge. Flip to right:0 on
+   small screens so it grows leftward back into the title area. */
+@media (max-width: 767.98px) {
+  .nl-infotip-popover {
+    left: auto !important;
+    right: 0 !important;
+  }
+}
+
 /* ── /programs/cm — tier and bundle grids ─────────────────────────
    Tier grids: explicit column counts per tier so a tier with 4 levels
    (Intermediate, Advanced) doesn't dangle a single card on row 2 with
