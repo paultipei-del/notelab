@@ -1,10 +1,10 @@
 'use client'
 
-import { CM_PREP_LESSONS } from '@/lib/programs/cm-prep/lessons'
+import { CM_PREP_LESSONS } from '@/lib/programs/cm/prep/lessons'
 import {
   loadCMPrepProgress,
   type CMPrepProgressStore,
-} from '@/lib/programs/cm-prep/progress'
+} from '@/lib/programs/cm/prep/progress'
 import type {
   ProgramHeroData,
   ProgramHeroModule,
@@ -33,7 +33,7 @@ export function loadCMPrepHero(): ProgramHeroData | null {
     return {
       id: lesson.slug,
       title: `Lesson ${lesson.number} — ${lesson.title}`,
-      href: `/programs/cm-prep/${lesson.slug}`,
+      href: `/programs/cm/prep/${lesson.slug}`,
       status: done ? 'done' : 'future',
     }
   })
