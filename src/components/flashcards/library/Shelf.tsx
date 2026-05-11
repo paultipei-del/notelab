@@ -12,6 +12,9 @@ export interface ShelfProps {
   count: string
   seeAllHref?: string
   books: BookProps[]
+  /** Optional inline info-tip body, rendered as an "i" button beside
+   *  the title. */
+  info?: string
 }
 
 const ROW_PADDING_LEFT = 24
@@ -22,7 +25,7 @@ const ENDPOINT_THRESHOLD = 4
 // gradient swatch.
 const PAGE_BG = '#EFE8D2'
 
-export default function Shelf({ title, count, seeAllHref = '#', books }: ShelfProps) {
+export default function Shelf({ title, count, seeAllHref = '#', books, info }: ShelfProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   // containerRef is the right-hand parent of the section. The placard's
   // coordinate space is here, NOT inside the scroll container, so it
@@ -97,6 +100,7 @@ export default function Shelf({ title, count, seeAllHref = '#', books }: ShelfPr
         sublabel={count}
         seeAllHref={seeAllHref}
         floorOffset={16}
+        info={info}
       />
 
       {/* Right-hand container: owns the placard's coordinate space and the

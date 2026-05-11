@@ -259,6 +259,7 @@ export default function FlashcardsPage() {
                   title="Currently reading"
                   count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
                   books={activeBooks}
+                  info="A deck stays on this shelf until every card is mastered. Mastery means at least 2 successful reviews and a current spacing interval of 21 days or more — the threshold the spaced-repetition system uses to consider a card stable in long-term memory."
                 />
                 {topicShelves.map(t => (
                   <LazyMount key={t.id} minHeight={360}>
@@ -280,6 +281,7 @@ export default function FlashcardsPage() {
                   title="Currently reading"
                   count={`${activeBooks.length} volumes · ${activeBooks.reduce((n, b) => n + b.dueCount, 0)} due`}
                   books={activeBooks}
+                  info="A deck stays on this shelf until every card is mastered. Mastery means at least 2 successful reviews and a current spacing interval of 21 days or more — the threshold the spaced-repetition system uses to consider a card stable in long-term memory."
                 />
                 {topicShelves.map(t => (
                   <LazyMount key={t.id} minHeight={460}>

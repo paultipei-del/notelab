@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Book, { BookProps } from './Book'
 import WoodPlank from './WoodPlank'
+import InfoTip from './InfoTip'
 
 const TAP_DISMISS_MS = 4000
 
@@ -13,6 +14,9 @@ export interface MobileShelfProps {
   count: string
   seeAllHref?: string
   books: BookProps[]
+  /** Optional inline info-tip body, rendered as an "i" button beside
+   *  the title. */
+  info?: string
 }
 
 /**
@@ -28,7 +32,7 @@ export interface MobileShelfProps {
  *  - State machine is selection-driven (tap), not hover-driven.
  *  - No 3D pickup physics on books — flat lift only.
  */
-export default function MobileShelf({ title, count, seeAllHref = '#', books }: MobileShelfProps) {
+export default function MobileShelf({ title, count, seeAllHref = '#', books, info }: MobileShelfProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const bookRefs = useRef<Array<HTMLDivElement | null>>([])
@@ -141,6 +145,7 @@ export default function MobileShelf({ title, count, seeAllHref = '#', books }: M
             }}
           >
             {title}
+            {info && <InfoTip text={info} size={16} />}
           </h2>
           <a
             href={seeAllHref}
