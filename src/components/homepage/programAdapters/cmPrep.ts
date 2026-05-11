@@ -1,10 +1,10 @@
 'use client'
 
-import { CM_PREP_LESSONS } from '@/lib/programs/cm/prep/lessons'
+import { CM_PREP_LESSONS } from '@/lib/programs/cm-prep/lessons'
 import {
   loadCMPrepProgress,
   type CMPrepProgressStore,
-} from '@/lib/programs/cm/prep/progress'
+} from '@/lib/programs/cm-prep/progress'
 import type {
   ProgramHeroData,
   ProgramHeroModule,
