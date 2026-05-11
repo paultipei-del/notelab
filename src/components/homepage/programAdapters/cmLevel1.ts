@@ -2,11 +2,11 @@
 
 import {
   CM_LEVEL1_LESSONS,
-} from '@/lib/programs/cm-level1/lessons'
+} from '@/lib/programs/cm/l1/lessons'
 import {
   loadCMLevel1Progress,
   type CMLevel1ProgressStore,
-} from '@/lib/programs/cm-level1/progress'
+} from '@/lib/programs/cm/l1/progress'
 import type {
   ProgramHeroData,
   ProgramHeroModule,
@@ -38,7 +38,7 @@ export function loadCMLevel1Hero(): ProgramHeroData | null {
     return {
       id: lesson.slug,
       title: `Lesson ${lesson.number} — ${lesson.title}`,
-      href: `/programs/cm-level1/${lesson.slug}`,
+      href: `/programs/cm/l1/${lesson.slug}`,
       status: done ? 'done' : 'future',
     }
   })
