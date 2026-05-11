@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import InfoTip from './InfoTip'
 
 /**
  * Editorial sidebar card. Used by both the bookshelf sections and the
@@ -19,13 +20,10 @@ interface SectionCardProps {
   seeAllHref?: string
   eyebrow?: string
   linkText?: string
-  /**
-   * Push the card (and its brass rule) up by this many pixels via
-   * `margin-bottom`. Used by bookshelves to lift the brass rule from
-   * below the wood plank up to the level of the plank's top edge so it
-   * reads as a continuation of the shelf line. ExaminationHall passes 0.
-   */
   floorOffset?: number
+  /** Optional explanatory body rendered behind an "i" info button
+   *  inline next to the section label. */
+  info?: string
 }
 
 export function SectionCard({
@@ -35,6 +33,7 @@ export function SectionCard({
   eyebrow = 'Section',
   linkText = 'See all →',
   floorOffset = 0,
+  info,
 }: SectionCardProps) {
   return (
     <div
@@ -70,6 +69,7 @@ export function SectionCard({
         }}
       >
         {label}
+        {info && <InfoTip text={info} size={18} />}
       </h2>
       <div
         style={{
