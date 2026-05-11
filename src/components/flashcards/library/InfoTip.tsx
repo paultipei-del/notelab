@@ -78,13 +78,17 @@ export default function InfoTip({ text, size = 16 }: InfoTipProps) {
       {open && (
         <div
           role="tooltip"
+          className="nl-infotip-popover"
           style={{
             position: 'absolute',
             top: 'calc(100% + 8px)',
             left: 0,
             zIndex: 50,
+            /* Cap width to viewport minus a 32px breathing margin so
+               the popover never overflows the right edge on phones. */
+            width: 'max-content',
             minWidth: 220,
-            maxWidth: 320,
+            maxWidth: 'min(320px, calc(100vw - 32px))',
             padding: '12px 14px',
             background: 'rgba(255, 250, 238, 0.96)',
             backdropFilter: 'blur(12px)',
