@@ -4027,14 +4027,25 @@ svg:not(.nl-notation-staff) {
   max-width: 320px;
 }
 
-/* InfoTip popover — on mobile the InfoTip sits at the right edge of
-   a full-width section title. Anchoring the popover at left:0 of the
-   trigger overflows the viewport's right edge. Flip to right:0 on
-   small screens so it grows leftward back into the title area. */
+/* InfoTip popover on mobile — switch from absolute-to-trigger to
+   fixed-to-viewport with 16px insets on each side. The trigger button
+   sits at unpredictable x positions inside a flex title row, so any
+   absolute anchor (left:0 or right:0 of trigger) can overflow one
+   edge. position: fixed with left+right insets guarantees the popover
+   always fits within the viewport regardless of trigger position. */
 @media (max-width: 767.98px) {
   .nl-infotip-popover {
-    left: auto !important;
-    right: 0 !important;
+    position: fixed !important;
+    /* --nl-infotip-top is set inline by the component to the trigger
+       button's bottom-y + 8px so the popover lands directly below it.
+       Falls back to 80px if the JS measurement hasn't run yet. */
+    top: var(--nl-infotip-top, 80px) !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: auto !important;
+    max-width: none !important;
+    width: auto !important;
+    margin-top: 0 !important;
   }
 }
 

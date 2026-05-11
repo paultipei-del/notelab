@@ -19,7 +19,9 @@ interface InfoTipProps {
  */
 export default function InfoTip({ text, size = 16 }: InfoTipProps) {
   const [open, setOpen] = useState(false)
+  const [popTop, setPopTop] = useState<number | null>(null)
   const ref = useRef<HTMLSpanElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!open) return
@@ -49,10 +51,17 @@ export default function InfoTip({ text, size = 16 }: InfoTipProps) {
       }}
     >
       <button
+        ref={buttonRef}
         type="button"
         aria-label="More information"
         aria-expanded={open}
-        onClick={() => setOpen(v => !v)}
+        onClick={() => {
+          if (!open && buttonRef.current) {
+            const r = buttonRef.current.getBoundingClientRect()
+            setPopTop(r.bottom + 8)
+          }
+          setOpen(v => !v)
+        }}
         style={{
           width: size,
           height: size,
@@ -80,6 +89,11 @@ export default function InfoTip({ text, size = 16 }: InfoTipProps) {
           role="tooltip"
           className="nl-infotip-popover"
           style={{
+            // --nl-infotip-top is consumed by the mobile media query
+            // in globals.css when the popover switches to fixed
+            // positioning. Falls back to 80px if popTop hasn't been
+            // measured yet (first paint).
+            ['--nl-infotip-top' as string]: popTop != null ? `${popTop}px` : '80px',
             position: 'absolute',
             top: 'calc(100% + 8px)',
             left: 0,
