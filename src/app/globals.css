@@ -4124,3 +4124,484 @@ svg:not(.nl-notation-staff) {
   flex-direction: column;
   gap: 10px;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   /tools — category-striped sections + instrument-panel dashboard
+   ════════════════════════════════════════════════════════════════
+   Naming: nl-tool-* (singular), matching nl-program-* / nl-cm-*.
+   Category colours live as CSS custom properties so the colour
+   threads through eyebrows, card stripes, and CTA arrows from a
+   single source. */
+:root {
+  --tool-drills: #7a2228;
+  --tool-theory: #2a4470;
+  --tool-practice: #2d5a3e;
+  --tool-reference: #6b4423;
+  --tool-ink: #1a1208;
+  --tool-muted: #5a4028;
+  --tool-soft: rgba(139, 105, 20, 0.18);
+  --tool-cream: rgba(255, 250, 238, 0.85);
+}
+
+.nl-tool-page {
+  min-height: calc(var(--nl-viewport-h, 100dvh) - var(--nl-site-header-h, 60px));
+  background: transparent;
+}
+.nl-tool-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+@media (max-width: 767.98px) {
+  .nl-tool-wrap {
+    padding: 28px 20px 48px;
+    gap: 40px;
+  }
+}
+
+/* ── Hero ── */
+.nl-tool-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.nl-tool-hero__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #a0381c;
+}
+.nl-tool-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--tool-ink);
+  margin: 0;
+}
+.nl-tool-hero__title em {
+  color: #a0381c;
+  font-style: italic;
+  font-weight: 500;
+}
+.nl-tool-hero__lead {
+  font-family: var(--font-cormorant), serif;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--tool-muted);
+  max-width: 640px;
+  margin: 0;
+}
+.nl-tool-hero__meta {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(90, 64, 40, 0.7);
+  margin: 4px 0 0 0;
+}
+@media (max-width: 767.98px) {
+  .nl-tool-hero__meta {
+    font-size: 12px;
+  }
+}
+
+/* ── Section headers (shared by Dashboard, CategorySection, Reference) ── */
+.nl-tool-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.nl-tool-section-head__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--tool-muted);
+}
+.nl-tool-section-head__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  color: var(--tool-ink);
+  margin: 0;
+}
+.nl-tool-section-head__blurb {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--tool-muted);
+  margin: 2px 0 0 0;
+}
+
+/* Section roots receive `is-${cat}` — paint the eyebrow with the
+   category accent for that section. */
+.nl-tool-section.is-drills .nl-tool-section-head__eyebrow { color: var(--tool-drills); }
+.nl-tool-section.is-theory .nl-tool-section-head__eyebrow { color: var(--tool-theory); }
+.nl-tool-section.is-practice .nl-tool-section-head__eyebrow { color: var(--tool-practice); }
+.nl-tool-section.is-reference .nl-tool-section-head__eyebrow { color: var(--tool-reference); }
+
+/* ── Dashboard strip (always at hand) ── */
+.nl-tool-dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media (max-width: 900px) {
+  .nl-tool-dashboard__grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+.nl-tool-dashcard {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(139, 105, 20, 0.25);
+  background: linear-gradient(180deg, rgba(255, 250, 238, 0.9) 0%, rgba(240, 231, 208, 0.7) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 2px 6px rgba(40, 20, 8, 0.04);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+.nl-tool-dashcard::before {
+  /* Soft instrument-panel highlight in the top-right corner — reads
+     as a light glancing off a brass dial. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.4) 0%, transparent 30%);
+  pointer-events: none;
+}
+.nl-tool-dashcard:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 6px 14px rgba(40, 20, 8, 0.1);
+  border-color: rgba(139, 105, 20, 0.4);
+}
+@media (max-width: 767.98px) {
+  .nl-tool-dashcard {
+    padding: 18px 20px;
+  }
+}
+.nl-tool-dashcard__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.nl-tool-dashcard__label {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 11px;
+  color: rgba(90, 64, 40, 0.65);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  text-transform: lowercase;
+}
+.nl-tool-dashcard__name {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--tool-ink);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+}
+@media (max-width: 767.98px) {
+  .nl-tool-dashcard__name { font-size: 20px; }
+}
+.nl-tool-dashcard__note {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 12px;
+  color: rgba(90, 64, 40, 0.7);
+  margin-top: 4px;
+}
+.nl-tool-dashcard__gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 14px;
+  min-width: 90px;
+  background: rgba(26, 18, 8, 0.04);
+  border: 1px solid rgba(139, 105, 20, 0.15);
+  border-radius: 6px;
+  position: relative;
+  z-index: 1;
+}
+.nl-tool-dashcard__value {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--tool-ink);
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  line-height: 1;
+}
+.nl-tool-dashcard__value--emphatic {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 26px;
+  color: #a0381c;
+  font-weight: 400;
+}
+.nl-tool-dashcard__unit {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(90, 64, 40, 0.75);
+}
+.nl-tool-dashcard__caption {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 10px;
+  color: rgba(90, 64, 40, 0.6);
+  letter-spacing: 0.02em;
+}
+
+/* ── Category section grids ── */
+.nl-tool-section__grid {
+  display: grid;
+  gap: 14px;
+}
+.nl-tool-section__grid.is-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.nl-tool-section__grid.is-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 900px) {
+  .nl-tool-section__grid.is-cols-2,
+  .nl-tool-section__grid.is-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* ── Tool card (with category colour stripe) ── */
+.nl-tool-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px 22px;
+  padding-left: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--tool-soft);
+  background: var(--tool-cream);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+.nl-tool-card::before {
+  /* 4px coloured stripe down the left edge, picking up the section's
+     category accent via the inherited custom property. */
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--nl-tool-stripe, var(--tool-muted));
+}
+.nl-tool-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(139, 105, 20, 0.35);
+  box-shadow: 0 6px 14px rgba(40, 20, 8, 0.08);
+}
+.nl-tool-section.is-drills    { --nl-tool-stripe: var(--tool-drills); }
+.nl-tool-section.is-theory    { --nl-tool-stripe: var(--tool-theory); }
+.nl-tool-section.is-practice  { --nl-tool-stripe: var(--tool-practice); }
+.nl-tool-section.is-reference { --nl-tool-stripe: var(--tool-reference); }
+
+.nl-tool-card__tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+.nl-tool-card__pill {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(139, 105, 20, 0.1);
+  color: var(--tool-muted);
+}
+.nl-tool-card__pill.is-pro {
+  background: rgba(160, 56, 28, 0.12);
+  color: #a0381c;
+}
+.nl-tool-card__name {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.005em;
+  color: var(--tool-ink);
+  margin: 0;
+  line-height: 1.15;
+}
+.nl-tool-card__pitch {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--tool-muted);
+  margin: 0;
+}
+.nl-tool-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 8px;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 16px;
+  color: #a0381c;
+}
+.nl-tool-card__cta-arrow {
+  font-style: normal;
+  transition: margin-left 150ms ease;
+}
+.nl-tool-card:hover .nl-tool-card__cta-arrow {
+  margin-left: 4px;
+}
+
+/* ── Reference shelf ── */
+.nl-tool-shelf {
+  position: relative;
+  padding: 24px 28px 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(107, 68, 35, 0.18);
+  background: linear-gradient(180deg, rgba(107, 68, 35, 0.06) 0%, rgba(107, 68, 35, 0.02) 100%);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+.nl-tool-shelf::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 3px;
+  background: linear-gradient(90deg, #6b4423 0%, #8b5a30 50%, #6b4423 100%);
+  border-radius: 1px;
+  box-shadow: 0 1px 0 rgba(40, 20, 8, 0.18);
+}
+@media (max-width: 767.98px) {
+  .nl-tool-shelf {
+    grid-template-columns: 1fr;
+    padding: 20px 20px 26px;
+    gap: 14px;
+  }
+}
+
+.nl-tool-refbook {
+  position: relative;
+  display: grid;
+  grid-template-columns: 8px 1fr;
+  background: rgba(255, 250, 238, 0.85);
+  border: 1px solid rgba(107, 68, 35, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.nl-tool-refbook:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(40, 20, 8, 0.1);
+}
+.nl-tool-refbook__spine {
+  display: block;
+}
+.nl-tool-refbook__spine.is-light {
+  background: linear-gradient(180deg, #6b4423 0%, #8b5a30 50%, #6b4423 100%);
+}
+.nl-tool-refbook__spine.is-dark {
+  background: linear-gradient(180deg, #4d3018 0%, #6b4423 50%, #4d3018 100%);
+}
+.nl-tool-refbook__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 22px;
+}
+.nl-tool-refbook__pill {
+  align-self: flex-start;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(107, 68, 35, 0.1);
+  color: var(--tool-reference);
+}
+.nl-tool-refbook__pill.is-pro {
+  background: rgba(160, 56, 28, 0.12);
+  color: #a0381c;
+}
+.nl-tool-refbook__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.005em;
+  color: var(--tool-ink);
+  margin: 0;
+  line-height: 1.15;
+}
+.nl-tool-refbook__pitch {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--tool-muted);
+  margin: 0;
+}
+.nl-tool-refbook__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 15px;
+  color: #a0381c;
+}
+.nl-tool-refbook__cta-arrow {
+  font-style: normal;
+  transition: margin-left 150ms ease;
+}
+.nl-tool-refbook:hover .nl-tool-refbook__cta-arrow {
+  margin-left: 4px;
+}

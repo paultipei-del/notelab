@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { STORAGE_KEYS } from "@/lib/toolsCatalog";
 
 // =====================================================================
 // Italian tempo lookup, ordered so each BPM maps to a single best-fit name.
@@ -155,6 +156,34 @@ export default function MetronomePage() {
   }, [bpm, playing]);
 
   useEffect(() => () => { if (timerRef.current !== null) clearInterval(timerRef.current); }, []);
+
+  // ──────────────────────────────────────────────────────────────────
+  // localStorage persistence — feeds the /tools dashboard gauge.
+  // Reads the last-known BPM on mount so users return to their tempo,
+  // and writes (debounced 300ms) on every change so the dashboard
+  // panel reflects reality. Do not remove without also removing the
+  // gauge readout in DashboardStrip.tsx.
+  // ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEYS.metronomeBpm);
+      if (!saved) return;
+      const n = parseInt(saved, 10);
+      if (!Number.isNaN(n)) setBpmState(clampBpm(n));
+    } catch {
+      // localStorage unavailable (private mode, etc.) — ignore.
+    }
+  }, []);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      try {
+        window.localStorage.setItem(STORAGE_KEYS.metronomeBpm, String(bpm));
+      } catch {
+        // ignore quota / privacy errors
+      }
+    }, 300);
+    return () => window.clearTimeout(t);
+  }, [bpm]);
 
   // ---------- tap tempo ----------
   const tap = useCallback(() => {

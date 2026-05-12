@@ -2,7 +2,11 @@
 
 import { useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import ToolsHub from '@/components/ToolsHub'
+import ToolsHero from '@/components/tools/ToolsHero'
+import DashboardStrip from '@/components/tools/DashboardStrip'
+import CategorySection from '@/components/tools/CategorySection'
+import ReferenceShelf from '@/components/tools/ReferenceShelf'
+import { CATEGORY_META } from '@/lib/toolsCatalog'
 
 export default function ToolsPage() {
   const { user, loading } = useAuth()
@@ -11,10 +15,19 @@ export default function ToolsPage() {
     if (!loading && !user) window.location.href = '/landing'
   }, [loading, user])
 
+  if (loading || !user) {
+    return <div className="nl-tool-page" />
+  }
+
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 32px 64px' }}>
-        <ToolsHub headingVariant="page" />
+    <div className="nl-tool-page">
+      <div className="nl-tool-wrap">
+        <ToolsHero />
+        <DashboardStrip />
+        {CATEGORY_META.map(cat => (
+          <CategorySection key={cat.id} category={cat} />
+        ))}
+        <ReferenceShelf />
       </div>
     </div>
   )

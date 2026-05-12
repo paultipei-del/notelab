@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { STORAGE_KEYS } from '@/lib/toolsCatalog'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -202,6 +203,39 @@ export default function ClickCounterPage() {
       releaseWakeLock()
     }
   }, [releaseWakeLock])
+
+  // ──────────────────────────────────────────────────────────────────
+  // localStorage persistence — feeds the /tools dashboard gauge.
+  // Reads last-known count + rep target on mount; writes on every
+  // count/target change. Do not remove without also removing the gauge
+  // readout in DashboardStrip.tsx. Count increments are discrete so
+  // no debounce is needed (unlike the metronome slider).
+  // ──────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEYS.clickCounterState)
+      if (!saved) return
+      const parsed = JSON.parse(saved) as { count?: number; target?: number }
+      if (typeof parsed.count === 'number') setCount(parsed.count)
+      if (typeof parsed.target === 'number' && parsed.target > 0) {
+        setRepsTarget(parsed.target)
+      }
+    } catch {
+      // ignore parse / privacy errors
+    }
+  }, [])
+  useEffect(() => {
+    try {
+      const target =
+        typeof repsTarget === 'number' && repsTarget > 0 ? repsTarget : 0
+      window.localStorage.setItem(
+        STORAGE_KEYS.clickCounterState,
+        JSON.stringify({ count, target }),
+      )
+    } catch {
+      // ignore quota errors
+    }
+  }, [count, repsTarget])
 
   const overlaySub = useMemo(() => {
     if (repsGoal && setsGoal) return `${sets.length} sets × ${repsGoal} reps`
