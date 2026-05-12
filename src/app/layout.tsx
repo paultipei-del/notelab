@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Cormorant_Garamond, Jost } from 'next/font/google'
+import { Cormorant_Garamond, Jost, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import SiteHeader from '@/components/SiteHeader'
 import SiteFooter from '@/components/SiteFooter'
@@ -15,6 +15,12 @@ const jost = Jost({
   subsets: ['latin'],
   weight: ['300', '400', '500'],
   variable: '--font-jost',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-jetbrains-mono',
 })
 
 // viewport-fit=cover lets the page render under the iOS safe areas
@@ -78,7 +84,7 @@ export default function RootLayout({
           }
         `}</style>
       </head>
-      <body className={`${cormorant.variable} ${jost.variable}`}>
+      <body className={`${cormorant.variable} ${jost.variable} ${jetbrainsMono.variable}`}>
         {/* ParticleCanvas removed site-wide — it painted a subtle
             dark perlin-noise overlay (rgb(42,35,24) at up to 9%
             opacity) over the cream gradient on every page except
