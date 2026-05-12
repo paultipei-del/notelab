@@ -3146,12 +3146,25 @@ body {
 .nl-page-scroll {
   /* Body is a flex column; .nl-page-scroll takes whatever vertical
      space remains after the SiteHeader. min-height: 0 lets it
-     shrink below content size so its inner overflow scroll engages. */
+     shrink below content size so its inner overflow scroll engages.
+     We also make it a flex column so .nl-page-main can expand to fill
+     remaining height when page content is short — the classic
+     sticky-footer pattern. Without this, short pages (homepage hero
+     on a tall desktop) leave the footer floating partway down. */
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overflow-x: clip;
   -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+.nl-page-main {
+  /* Grow to fill remaining height inside .nl-page-scroll so the
+     footer is pushed to the bottom even when content is shorter than
+     the viewport. `0 auto` for flex-shrink/flex-basis means we never
+     squash content that's naturally taller. */
+  flex: 1 0 auto;
 }
 
 /* Prevent iOS zoom on input focus */

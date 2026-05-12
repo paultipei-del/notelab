@@ -97,7 +97,7 @@ export default function RootLayout({
             any overlay or backdrop trickery. SiteFooter sits inside
             so it scrolls naturally to the bottom. */}
         <div className="nl-page-scroll">
-          {children}
+          <div className="nl-page-main">{children}</div>
           <SiteFooter />
         </div>
         <Analytics />
