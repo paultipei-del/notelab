@@ -103,6 +103,17 @@ function CustomNoteIDInner() {
   const stopMode = searchParams.get('stopMode') ?? 'exercises'
   const stopValue = parseInt(searchParams.get('stopValue') ?? '10')
 
+  // Honor ?from=<path> for the back button (same convention as
+  // StudyEngine + /note-id/[deckId]).
+  function goBack() {
+    const from = searchParams.get('from')
+    if (from && from.startsWith('/') && !from.startsWith('//')) {
+      router.push(from)
+      return
+    }
+    router.back()
+  }
+
   const [group, setGroup] = useState<NoteState[]>([])
   const [activeIdx, setActiveIdx] = useState(0)
   const [correct, setCorrect] = useState(0)
@@ -324,7 +335,7 @@ function CustomNoteIDInner() {
     return (
       <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px' }}>
         <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 300, color: '#7A7060' }}>No notes match your selection.</p>
-        <button onClick={() => router.push('/note-id')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>← Back</button>
+        <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', color: '#7A7060' }}>← Back</button>
       </div>
     )
   }
@@ -368,7 +379,7 @@ function CustomNoteIDInner() {
               style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               Again
             </button>
-            <button onClick={() => router.push('/note-id')}
+            <button onClick={goBack}
               style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               Back
             </button>
@@ -382,7 +393,7 @@ function CustomNoteIDInner() {
     <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: 'transparent', display: 'flex', flexDirection: 'column' }}>
       {/* Utility bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>← Back</button>
+        <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>← Back</button>
         <div style={{ display: 'flex', gap: '16px' }}>
           {stopMode === 'exercises'
             ? <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>Round {rounds + 1} / {stopValue}</span>

@@ -84,6 +84,18 @@ function NoteIDExerciseInner() {
   const inputMode = (searchParams.get('input') ?? 'letters') as 'letters' | 'keyboard' | 'keyboard-full'
   const groupSize = parseInt(searchParams.get('group') ?? '1')
 
+  // Honor ?from=<path> for the back button (same convention as
+  // StudyEngine). Falls back to router.back() history navigation
+  // for direct-URL visitors who don't have a from hint.
+  function goBack() {
+    const from = searchParams.get('from')
+    if (from && from.startsWith('/') && !from.startsWith('//')) {
+      router.push(from)
+      return
+    }
+    router.back()
+  }
+
   const [deck, setDeck] = useState<Deck | null>(null)
   const [group, setGroup] = useState<NoteState[]>([])
   const [activeIdx, setActiveIdx] = useState(0)
@@ -238,7 +250,7 @@ function NoteIDExerciseInner() {
               style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               Again
             </button>
-            <button onClick={() => router.push('/note-id')}
+            <button onClick={goBack}
               style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
               Back
             </button>
@@ -255,7 +267,7 @@ function NoteIDExerciseInner() {
     <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: 'transparent', display: 'flex', flexDirection: 'column' }}>
       {/* Utility bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>← Back</button>
+        <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>← Back</button>
         <div style={{ display: 'flex', gap: '16px' }}>
           <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>Round {rounds + 1} / {stopRounds}</span>
           <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{pct}%</span>

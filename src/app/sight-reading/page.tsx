@@ -30,17 +30,24 @@ export default function SightReadingPage() {
 
   function handleLevelClick(level: SightReadingLevel) {
     const deckId = levelDeckId(clef, level)
+    // ?from=/sight-reading ensures Back/Pick-another from the play
+    // engine returns to this hub instead of the legacy default
+    // (/flashcards for sight-read, router.back() for /note-id).
     if (answerMode === 'real-piano') {
-      router.push(`/study/${deckId}`)
+      router.push(`/study/${deckId}?from=/sight-reading`)
       return
     }
     const input = answerMode === 'full-piano' ? 'keyboard-full' : 'letters'
-    router.push(`/note-id/${deckId}?input=${input}`)
+    router.push(`/note-id/${deckId}?input=${input}&from=/sight-reading`)
   }
 
   function handleCustomStart(url: string) {
     setCustomOpen(false)
-    router.push(url)
+    // Append from=/sight-reading to the custom-session URL too. The
+    // CustomSessionPanel builds /note-id/custom?... — we glue from
+    // on the end so the same back-button convention applies there.
+    const sep = url.includes('?') ? '&' : '?'
+    router.push(`${url}${sep}from=/sight-reading`)
   }
 
   return (
