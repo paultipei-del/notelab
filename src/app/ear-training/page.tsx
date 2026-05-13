@@ -1,18 +1,45 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { DECKS } from '@/lib/decks'
+import { readDeckActivity, type DeckActivityMap } from '@/lib/deckActivity'
+import { relTimeLong } from '@/lib/relativeTime'
 
-const F = 'var(--font-jost), sans-serif'
-const SERIF = 'var(--font-cormorant), serif'
+const RECENT_MS = 14 * 86_400_000 // 14 days
+const PRACTICE_SECONDS_PER_CARD = 30
+const CONTINUE_LIMIT = 3
+
+function minutesEstimate(cardCount: number): string {
+  const min = Math.max(
+    1,
+    Math.round((cardCount * PRACTICE_SECONDS_PER_CARD) / 60),
+  )
+  return `~${min} min`
+}
 
 export default function EarTrainingPage() {
-  // Real ear-training decks have an `id` prefixed with `ear-` AND no `tier`.
-  // Application & Review decks (e.g. `ear-to-paper`) also start with `ear-`
-  // but live on /flashcards via their tier — exclude them.
+  // localStorage only readable client-side; defer to mount so we
+  // render predictable HTML on the server first.
+  const [activity, setActivity] = useState<DeckActivityMap>({})
+  useEffect(() => {
+    setActivity(readDeckActivity())
+  }, [])
+
+  // Real ear-training decks have `id` prefixed with `ear-` AND no
+  // `tier`. The tier'd `ear-to-paper` deck lives on /flashcards.
   const decks = DECKS.filter(d => d.id.startsWith('ear-') && !d.tier)
 
-  // Group decks by their `group` label (Intervals, Chords & Harmony, Scales).
+  // Continue strip: top 3 ear-decks touched in the last 14 days.
+  const now = Date.now()
+  const recent = decks
+    .map(d => ({ deck: d, ts: activity[d.id] ?? 0 }))
+    .filter(x => x.ts > 0 && now - x.ts < RECENT_MS)
+    .sort((a, b) => b.ts - a.ts)
+    .slice(0, CONTINUE_LIMIT)
+
+  // Group by `deck.group` label, preserving the order decks appear
+  // in the registry.
   const groups: { label: string; decks: typeof decks }[] = []
   decks.forEach(deck => {
     const label = deck.group ?? 'Other'
@@ -22,131 +49,85 @@ export default function EarTrainingPage() {
   })
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ padding: '24px 32px 32px', maxWidth: '960px', margin: '0 auto' }}>
-        <h1
-          style={{
-            fontFamily: SERIF,
-            fontWeight: 300,
-            fontSize: 'clamp(28px, 4vw, 44px)',
-            color: '#2A2318',
-            marginBottom: '12px',
-            letterSpacing: '0.02em',
-          }}
-        >
-          Ear Training
-        </h1>
-        <p
-          style={{
-            fontFamily: F,
-            fontSize: 'var(--nl-text-body)',
-            fontWeight: 400,
-            color: '#7A7060',
-            maxWidth: '560px',
-            lineHeight: 1.7,
-            marginBottom: '32px',
-          }}
-        >
-          Train your ear with real piano audio. Listen to intervals, triads, cadences, and scales — then identify what you heard. Go back and forth freely to compare examples.
-        </p>
-      </div>
+    <div className="nl-ear-page">
+      <div className="nl-ear-wrap">
+        <header className="nl-ear-hero">
+          <h1 className="nl-ear-hero__title">Ear Training</h1>
+          <p className="nl-ear-hero__sub">Listen, identify, repeat.</p>
+        </header>
 
-      <div style={{ padding: '0 32px 64px', maxWidth: '960px', margin: '0 auto' }}>
-        {groups.map(({ label, decks: groupDecks }) => (
-          <div key={label} style={{ marginBottom: '40px' }}>
-            <h2
-              style={{
-                fontFamily: F,
-                fontSize: 'var(--nl-text-compact)',
-                fontWeight: 400,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                color: '#7A7060',
-                marginBottom: '16px',
-              }}
-            >
-              {label}
-            </h2>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                gap: '12px',
-                alignItems: 'stretch',
-              }}
-            >
-              {groupDecks.map(deck => (
+        <section className="nl-ear-continue">
+          <div className="nl-ear-continue__head">
+            <span className="nl-ear-continue__eyebrow">Continue practicing</span>
+            {recent.length > 0 && (
+              <span className="nl-ear-continue__hint">
+                <span className="nl-ear-continue__hint--desktop">
+                  your three most recent
+                </span>
+                <span className="nl-ear-continue__hint--mobile">swipe →</span>
+              </span>
+            )}
+          </div>
+          {recent.length > 0 ? (
+            <div className="nl-ear-continue__grid">
+              {recent.map(({ deck, ts }) => (
                 <Link
                   key={deck.id}
                   href={`/study/${deck.id}`}
-                  style={{ textDecoration: 'none', display: 'flex', height: '100%' }}
+                  className="nl-ear-continue__card"
                 >
-                  <div
-                    className="nl-card-surface"
-                    style={{
-                      padding: '24px',
-                      cursor: 'pointer',
-                      width: '100%',
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                        width: '100%',
-                        marginBottom: '10px',
-                      }}
-                    >
-                      <span style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>
-                        {deck.cards.length} cards
-                      </span>
-                    </div>
-                    <h3
-                      style={{
-                        fontFamily: SERIF,
-                        fontWeight: 500,
-                        fontSize: '24px',
-                        color: '#1A1A18',
-                        marginBottom: '8px',
-                        width: '100%',
-                        letterSpacing: '0.01em',
-                      }}
-                    >
-                      {deck.title}
-                    </h3>
-                    <p
-                      style={{
-                        fontSize: 'var(--nl-text-meta)',
-                        fontWeight: 400,
-                        color: '#7A7060',
-                        lineHeight: 1.55,
-                        margin: '0 0 14px',
-                        flex: 1,
-                        width: '100%',
-                      }}
-                    >
-                      {deck.description}
-                    </p>
-                    <span
-                      style={{
-                        fontSize: 'var(--nl-text-compact)',
-                        fontWeight: 500,
-                        color: '#B5402A',
-                        alignSelf: 'flex-end',
-                      }}
-                    >
-                      Start →
+                  <span className="nl-ear-continue__age">{relTimeLong(ts)}</span>
+                  <div className="nl-ear-continue__title">{deck.title}</div>
+                  <div className="nl-ear-continue__footer">
+                    <span className="nl-ear-continue__meta">
+                      {minutesEstimate(deck.cards.length)} ·{' '}
+                      {deck.cards.length} cards
                     </span>
+                    <span className="nl-ear-continue__resume">Resume →</span>
                   </div>
                 </Link>
               ))}
             </div>
-          </div>
+          ) : (
+            <div className="nl-ear-continue__empty">
+              Nothing recent — pick a deck below to begin.
+            </div>
+          )}
+        </section>
+
+        {groups.map(({ label, decks: groupDecks }) => (
+          <section key={label} className="nl-ear-category">
+            <span className="nl-ear-category__eyebrow">{label}</span>
+            <div className="nl-ear-category__grid">
+              {groupDecks.map(deck => {
+                const ts = activity[deck.id] ?? 0
+                const hasActivity = ts > 0
+                return (
+                  <Link
+                    key={deck.id}
+                    href={`/study/${deck.id}`}
+                    className="nl-ear-deck"
+                  >
+                    <div className="nl-ear-deck__meta">
+                      <span className="nl-ear-deck__time">
+                        {minutesEstimate(deck.cards.length)}
+                      </span>
+                      <span
+                        className={
+                          'nl-ear-deck__status' +
+                          (hasActivity ? '' : ' is-new')
+                        }
+                      >
+                        {hasActivity ? relTimeLong(ts) : 'new'}
+                      </span>
+                    </div>
+                    <h3 className="nl-ear-deck__title">{deck.title}</h3>
+                    <span className="nl-ear-deck__start">Start →</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
         ))}
       </div>
     </div>

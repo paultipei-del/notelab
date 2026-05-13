@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { DECKS } from '@/lib/decks'
 import { loadProgress } from '@/lib/progressSync'
 import { readDeckActivity, DeckActivityMap } from '@/lib/deckActivity'
+import { relTimeShort } from '@/lib/relativeTime'
 import { Deck, ProgressStore } from '@/lib/types'
 
 import s from '@/components/flashcards/library/library.module.css'
@@ -46,18 +47,8 @@ function buildStreak(decks: DeckWithSummary[]): number {
   return current
 }
 
-function relTimeShort(ms: number): string {
-  const diff = Date.now() - ms
-  if (diff < 0) return 'soon'
-  const min = Math.floor(diff / 60000)
-  if (min < 60) return `${Math.max(1, min)}m ago`
-  const hr = Math.floor(min / 60)
-  if (hr < 24) return `${hr}h ago`
-  const d = Math.floor(hr / 24)
-  if (d === 1) return 'yesterday'
-  if (d < 7) return `${d}d ago`
-  return 'last week'
-}
+// relTimeShort moved to src/lib/relativeTime.ts so /ear-training can
+// share the same family of formatters.
 
 const FILTERS: FilterChipDef[] = [
   { id: 'all',         label: 'All',          count: 0, group: 'status' },

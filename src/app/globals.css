@@ -6372,3 +6372,261 @@ svg:not(.nl-notation-staff) {
   .nl-cc-popover__stepper-label--mobile { display: inline; }
   .nl-cc-kbd { font-size: 9px; padding: 1px 5px; }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   /ear-training — free-browsing library page
+   ════════════════════════════════════════════════════════════════
+   Hero → "Continue practicing" strip (top 3 recent within 14 days)
+   → 5 coloured-by-category-eyebrow deck grids. Page scrolls (footer
+   stays). Naming: nl-ear-* singular, matching other tool/page
+   namespaces. */
+
+.nl-ear-page {
+  background: transparent;
+  min-height: 100%;
+}
+.nl-ear-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+  color: #1a1208;
+}
+@media (max-width: 767.98px) {
+  .nl-ear-wrap {
+    padding: 24px 22px 48px;
+  }
+}
+
+/* ── Hero ── */
+.nl-ear-hero {
+  margin-bottom: 32px;
+}
+.nl-ear-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1.1;
+  color: #1a1208;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px 0;
+}
+.nl-ear-hero__sub {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 16px;
+  color: #5a4028;
+  margin: 0;
+}
+@media (max-width: 767.98px) {
+  .nl-ear-hero { margin-bottom: 24px; }
+  .nl-ear-hero__title { font-size: 36px; margin-bottom: 4px; }
+  .nl-ear-hero__sub { font-size: 13px; }
+}
+
+/* ── Continue practicing strip ── */
+.nl-ear-continue {
+  margin-bottom: 32px;
+}
+.nl-ear-continue__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.nl-ear-continue__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #1a1208;
+}
+.nl-ear-continue__hint {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #8a7560;
+}
+.nl-ear-continue__hint--mobile { display: none; }
+.nl-ear-continue__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.nl-ear-continue__card {
+  background: rgba(255, 250, 238, 0.7);
+  border: 1px solid rgba(139, 105, 20, 0.18);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+.nl-ear-continue__card:hover {
+  border-color: rgba(160, 56, 28, 0.4);
+  background: rgba(255, 250, 238, 0.9);
+}
+.nl-ear-continue__age {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 11px;
+  color: #a0381c;
+}
+.nl-ear-continue__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  font-size: 17px;
+  color: #1a1208;
+  line-height: 1.2;
+}
+.nl-ear-continue__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+.nl-ear-continue__meta {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-ear-continue__resume {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a0381c;
+}
+.nl-ear-continue__empty {
+  padding: 14px 18px;
+  background: rgba(255, 250, 238, 0.3);
+  border: 1px dashed rgba(139, 105, 20, 0.3);
+  border-radius: 8px;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #8a7560;
+  text-align: center;
+}
+@media (max-width: 767.98px) {
+  .nl-ear-continue { margin-bottom: 24px; }
+  /* Horizontal scroll with snap-to-card; hide the native scrollbar. */
+  .nl-ear-continue__grid {
+    display: flex;
+    grid-template-columns: none;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nl-ear-continue__grid::-webkit-scrollbar { display: none; }
+  .nl-ear-continue__card {
+    min-width: 220px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+  .nl-ear-continue__hint--desktop { display: none; }
+  .nl-ear-continue__hint--mobile { display: inline; }
+}
+
+/* ── Category sections + deck cards ── */
+.nl-ear-category {
+  margin-bottom: 32px;
+}
+.nl-ear-category__eyebrow {
+  display: block;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #1a1208;
+  margin-bottom: 12px;
+}
+.nl-ear-category__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 767.98px) {
+  .nl-ear-category { margin-bottom: 24px; }
+  .nl-ear-category__grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.nl-ear-deck {
+  background: rgba(255, 250, 238, 0.5);
+  border: 1px solid rgba(139, 105, 20, 0.15);
+  border-radius: 10px;
+  padding: 16px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 130px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+.nl-ear-deck:hover {
+  border-color: rgba(160, 56, 28, 0.3);
+  background: rgba(255, 250, 238, 0.75);
+}
+.nl-ear-deck__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.nl-ear-deck__time {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-ear-deck__status {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 11px;
+  color: #a0381c;
+}
+.nl-ear-deck__status.is-new {
+  color: #c0b696;
+}
+.nl-ear-deck__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #1a1208;
+  line-height: 1.2;
+  margin: 0 0 6px 0;
+  flex: 1;
+}
+.nl-ear-deck__start {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a0381c;
+  align-self: flex-end;
+}
+@media (max-width: 767.98px) {
+  .nl-ear-deck {
+    min-height: 110px;
+    padding: 14px 16px 12px;
+  }
+  .nl-ear-deck__title { font-size: 17px; }
+}
