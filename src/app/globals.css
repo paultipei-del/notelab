@@ -6740,12 +6740,21 @@ svg:not(.nl-notation-staff) {
 .nl-sr-seg__opt:last-child { border-right: none; }
 .nl-sr-seg__opt:hover { background: rgba(160, 56, 28, 0.06); }
 .nl-sr-seg__opt.is-active {
-  background: #1a1208;
+  background: #a0381c;
   color: #f0e7d0;
 }
-.nl-sr-seg__opt.is-active:hover { background: #1a1208; }
+.nl-sr-seg__opt.is-active:hover { background: #a0381c; }
 
-/* Info icon inside the Real Piano segment */
+/* Seg wrapper — pairs the seg control with the info icon as
+   siblings. Avoids the invalid <button>-in-<button> nesting that
+   used to swallow the info icon's click in Chrome. */
+.nl-sr-seg-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Info icon next to the segment (sibling, not nested) */
 .nl-sr-info-icon {
   display: inline-flex;
   align-items: center;
@@ -7058,8 +7067,8 @@ svg:not(.nl-notation-staff) {
 }
 .nl-sr-custom-chip:hover { border-color: #a0381c; }
 .nl-sr-custom-chip.is-on {
-  background: #1a1208;
-  border-color: #1a1208;
+  background: #a0381c;
+  border-color: #a0381c;
   color: #f0e7d0;
 }
 .nl-sr-custom-seg {
@@ -7082,7 +7091,7 @@ svg:not(.nl-notation-staff) {
   transition: background 120ms ease, color 120ms ease;
 }
 .nl-sr-custom-seg__opt:last-child { border-right: none; }
-.nl-sr-custom-seg__opt.is-active { background: #1a1208; color: #f0e7d0; }
+.nl-sr-custom-seg__opt.is-active { background: #a0381c; color: #f0e7d0; }
 .nl-sr-custom-stepper {
   display: flex;
   align-items: center;
@@ -7140,27 +7149,62 @@ svg:not(.nl-notation-staff) {
 /* ─── Mobile (< 768px) ─── */
 
 @media (max-width: 767.98px) {
-  .nl-sr-wrap { gap: 14px; }
-  .nl-sr-hero__title { font-size: 28px; }
-  .nl-sr-hero__sub { font-size: 12px; }
-  .nl-sr-opt-row { flex-direction: column; align-items: stretch; gap: 12px; }
-  .nl-sr-opt-group { align-items: stretch; }
+  /* Tighten everything aggressively to fit the 11-level grid +
+     hero + options + custom row inside an iPhone-class viewport
+     (414×896 with browser chrome eating ~150px of usable height).
+     QA target: no vertical overflow at 414×896 without Real Piano
+     strip; minimal scroll when strip is shown. */
+  .nl-sr-page { padding: 14px 14px; }
+  .nl-sr-wrap { gap: 10px; }
+  .nl-sr-hero__title { font-size: 24px; }
+  .nl-sr-hero__sub { font-size: 11px; }
+  .nl-sr-opt-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding-bottom: 10px;
+  }
+  .nl-sr-opt-group { align-items: stretch; gap: 4px; }
+  .nl-sr-seg-wrap { justify-content: space-between; }
   .nl-sr-seg { width: 100%; }
-  .nl-sr-seg__opt { flex: 1; justify-content: center; padding: 8px 8px; }
+  .nl-sr-seg__opt { flex: 1; justify-content: center; padding: 7px 8px; font-size: 11px; }
+  .nl-sr-mode-strip { padding: 8px 12px; }
+  .nl-sr-mode-strip__desc { font-size: 11px; }
+  .nl-sr-levels { gap: 12px; }
+  .nl-sr-phase-section { gap: 6px; }
+  .nl-sr-phase-eyebrow { font-size: 9px; }
+  .nl-sr-phase-hint { font-size: 11px; }
+  .nl-sr-lvl-grid { gap: 6px; }
   .nl-sr-phase-section--range-expansion .nl-sr-lvl-grid {
     grid-template-columns: repeat(3, 1fr);
   }
   .nl-sr-phase-section--with-accidentals .nl-sr-lvl-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .nl-sr-lvl-card { min-height: 70px; padding: 10px 12px 9px; }
-  .nl-sr-lvl-card__title { font-size: 15px; }
-  .nl-sr-lvl-card__range { font-size: 11px; }
-  .nl-sr-phase-section--full-chromatic .nl-sr-lvl-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+  .nl-sr-lvl-card {
+    min-height: 0;
+    padding: 7px 9px 7px;
+    gap: 2px;
   }
+  .nl-sr-lvl-card__num { font-size: 8px; letter-spacing: 0.18em; }
+  .nl-sr-lvl-card__title { font-size: 13px; line-height: 1.1; }
+  .nl-sr-lvl-card__range { font-size: 10px; }
+  .nl-sr-phase-section--full-chromatic .nl-sr-lvl-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .nl-sr-phase-section--full-chromatic .nl-sr-lvl-card__title {
+    font-size: 15px;
+  }
+  .nl-sr-custom-row {
+    padding-top: 8px;
+    margin-top: 0;
+  }
+  .nl-sr-custom-link { font-size: 13px; }
+  .nl-sr-custom-hint { font-size: 11px; }
   .nl-sr-info-pop {
     right: auto;
     left: 0;

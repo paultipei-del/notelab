@@ -70,34 +70,38 @@ export default function SightReadingPage() {
 
           <div className="nl-sr-opt-group">
             <span className="nl-sr-opt-label">Answer with</span>
-            <div className="nl-sr-seg">
-              {ANSWER_MODES.map(m => (
-                <button
-                  key={m}
-                  type="button"
-                  className={
-                    'nl-sr-seg__opt' + (answerMode === m ? ' is-active' : '')
-                  }
-                  onClick={() => setAnswerMode(m)}
-                >
-                  {ANSWER_MODE_META[m].label}
-                  {m === 'real-piano' && (
-                    <button
-                      type="button"
-                      ref={infoTriggerRef}
-                      className="nl-sr-info-icon"
-                      aria-label="About Real Piano mode"
-                      onClick={e => {
-                        e.stopPropagation()
-                        setAnswerMode('real-piano')
-                        setInfoOpen(v => !v)
-                      }}
-                    >
-                      ⓘ
-                    </button>
-                  )}
-                </button>
-              ))}
+            {/* Wrapper holds the seg + info icon as siblings —
+                nesting <button> in <button> is invalid HTML and
+                Chrome collapses the inner one, swallowing its
+                onClick. Sibling layout preserves the visual
+                attachment via CSS without the DOM violation. */}
+            <div className="nl-sr-seg-wrap">
+              <div className="nl-sr-seg">
+                {ANSWER_MODES.map(m => (
+                  <button
+                    key={m}
+                    type="button"
+                    className={
+                      'nl-sr-seg__opt' + (answerMode === m ? ' is-active' : '')
+                    }
+                    onClick={() => setAnswerMode(m)}
+                  >
+                    {ANSWER_MODE_META[m].label}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                ref={infoTriggerRef}
+                className="nl-sr-info-icon"
+                aria-label="About Real Piano mode"
+                onClick={e => {
+                  e.stopPropagation()
+                  setInfoOpen(v => !v)
+                }}
+              >
+                ⓘ
+              </button>
             </div>
             <RealPianoInfoPopover
               open={infoOpen}
