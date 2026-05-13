@@ -7,16 +7,7 @@ import { readDeckActivity, type DeckActivityMap } from '@/lib/deckActivity'
 import { relTimeLong } from '@/lib/relativeTime'
 
 const RECENT_MS = 14 * 86_400_000 // 14 days
-const PRACTICE_SECONDS_PER_CARD = 30
 const CONTINUE_LIMIT = 3
-
-function minutesEstimate(cardCount: number): string {
-  const min = Math.max(
-    1,
-    Math.round((cardCount * PRACTICE_SECONDS_PER_CARD) / 60),
-  )
-  return `~${min} min`
-}
 
 export default function EarTrainingPage() {
   // localStorage only readable client-side; defer to mount so we
@@ -80,7 +71,6 @@ export default function EarTrainingPage() {
                   <div className="nl-ear-continue__title">{deck.title}</div>
                   <div className="nl-ear-continue__footer">
                     <span className="nl-ear-continue__meta">
-                      {minutesEstimate(deck.cards.length)} ·{' '}
                       {deck.cards.length} cards
                     </span>
                     <span className="nl-ear-continue__resume">Resume →</span>
@@ -110,7 +100,7 @@ export default function EarTrainingPage() {
                   >
                     <div className="nl-ear-deck__meta">
                       <span className="nl-ear-deck__time">
-                        {minutesEstimate(deck.cards.length)}
+                        {deck.cards.length} cards
                       </span>
                       <span
                         className={
