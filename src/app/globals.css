@@ -7578,3 +7578,160 @@ svg:not(.nl-notation-staff) {
   }
   .nl-sr-complete-btn { padding: 12px 18px; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Real Piano play screen — header + staff + feedback block.
+   Cream-on-cream treatment: no white card, hairline borders only,
+   feedback ✓/✗ rendered BELOW the staff in a reserved-height block.
+   ───────────────────────────────────────────────────────────────── */
+
+.nl-sr-play-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(154, 124, 80, 0.18);
+}
+.nl-sr-play-header__back {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #5a4028;
+  transition: color 120ms ease;
+}
+.nl-sr-play-header__back:hover { color: #a0381c; }
+.nl-sr-play-header__meta {
+  display: flex;
+  gap: 28px;
+}
+.nl-sr-play-header__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.nl-sr-play-header__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-sr-play-header__value {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: #1a1208;
+}
+.nl-sr-play-header__value.is-green { color: #2d5a3e; }
+
+/* Play card — wraps eyebrow + staff + feedback block. No bg/border
+   so the staff renders directly on the page's cream gradient. */
+.nl-sr-play-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 36px 24px 18px;
+  text-align: center;
+}
+.nl-sr-play-eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+  margin: 0;
+}
+.nl-sr-play-staff {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Subtle color shift on the notehead when the answer is judged.
+     The actual SVG color shift would require deeper StaffCard
+     changes; for now the staff container telegraphs the state via
+     opacity / filter only. */
+  transition: filter 200ms ease;
+}
+.nl-sr-play-staff.is-correct { filter: hue-rotate(-15deg) saturate(1.1); }
+.nl-sr-play-staff.is-wrong   { filter: hue-rotate(355deg) saturate(1.0); }
+
+/* Feedback block — reserved min-height so layout doesn't jump
+   between rounds. Renders ✓ / ✗ / waveform + status copy. */
+.nl-sr-feedback-block {
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin-top: 4px;
+}
+.nl-sr-feedback-mark {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
+  font-size: 28px;
+  line-height: 1;
+  animation: nl-sr-feedback-pop 300ms ease-out;
+}
+.nl-sr-feedback-mark.is-correct { color: #2d5a3e; }
+.nl-sr-feedback-mark.is-wrong { color: #a0381c; }
+@keyframes nl-sr-feedback-pop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+.nl-sr-feedback-text {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #5a4028;
+}
+.nl-sr-feedback-text b {
+  font-style: normal;
+  font-weight: 500;
+}
+.nl-sr-feedback-text.is-correct { color: #2d5a3e; }
+.nl-sr-feedback-text.is-wrong   { color: #a0381c; }
+.nl-sr-feedback-text.is-listening { color: #8a7560; font-size: 12px; }
+.nl-sr-feedback-text.is-error { color: #a0381c; }
+
+/* Waveform — five tiny bars pulsing while the mic is listening. */
+.nl-sr-waveform {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 16px;
+}
+.nl-sr-waveform > span {
+  display: inline-block;
+  width: 3px;
+  border-radius: 2px;
+  background: rgba(90, 64, 40, 0.55);
+  animation: nl-sr-wave 900ms ease-in-out infinite;
+}
+.nl-sr-waveform > span:nth-child(1) { height: 6px;  animation-delay: 0ms;   }
+.nl-sr-waveform > span:nth-child(2) { height: 12px; animation-delay: 90ms;  }
+.nl-sr-waveform > span:nth-child(3) { height: 16px; animation-delay: 180ms; }
+.nl-sr-waveform > span:nth-child(4) { height: 12px; animation-delay: 270ms; }
+.nl-sr-waveform > span:nth-child(5) { height: 8px;  animation-delay: 360ms; }
+.nl-sr-waveform.is-wrong > span { background: rgba(160, 56, 28, 0.55); }
+@keyframes nl-sr-wave {
+  0%, 100% { transform: scaleY(0.4); }
+  50%      { transform: scaleY(1.0); }
+}
+
+@media (max-width: 767.98px) {
+  .nl-sr-play-header { padding: 10px 14px; }
+  .nl-sr-play-header__meta { gap: 18px; }
+  .nl-sr-play-header__value { font-size: 13px; }
+  .nl-sr-play-card { padding: 20px 14px 10px; gap: 12px; }
+  .nl-sr-feedback-block { min-height: 40px; }
+  .nl-sr-feedback-mark { font-size: 22px; }
+  .nl-sr-feedback-text { font-size: 12px; }
+}

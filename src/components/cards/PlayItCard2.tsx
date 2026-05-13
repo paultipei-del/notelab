@@ -365,29 +365,65 @@ export default function PlayItCard2({ card, onCorrect, onWrong }: Props) {
     rafHandle = requestAnimationFrame(tick)
   }
 
-  const bgColor = status === 'correct' ? '#EAF3DE' : status === 'wrong' ? '#FCEBEB' : 'white'
-  const borderColor = status === 'correct' ? '#7EC86E' : status === 'wrong' ? '#F09595' : '#D9CFAE'
   const F = 'var(--font-jost), sans-serif'
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: '40px 32px', transition: 'all 0.15s', textAlign: 'center' as const }}>
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '24px' }}>
-          {status === 'starting' ? 'Starting mic…' : status === 'correct' ? '✓ Correct' : 'Play this note'}
-        </p>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-          {card.note && card.clef
-            ? card.clef === 'grand'
-              ? <GrandStaffCard note={card.note} />
-              : <StaffCard note={card.note} clef={card.clef} />
-            : null}
-        </div>
-        {detected && status !== 'correct' && (
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: status === 'wrong' ? '#E53935' : '#7A7060' }}>
-            {status === 'wrong' ? `Heard: ${detected} — try ${targetNoteRef.current}` : `Heard: ${detected}`}
-          </p>
+    <div className="nl-sr-play-card">
+      <p className="nl-sr-play-eyebrow">
+        {status === 'starting' ? 'Starting mic…' : 'Play this note on your piano'}
+      </p>
+      <div
+        className={
+          'nl-sr-play-staff' +
+          (status === 'correct' ? ' is-correct' : '') +
+          (status === 'wrong' ? ' is-wrong' : '')
+        }
+      >
+        {card.note && card.clef
+          ? card.clef === 'grand'
+            ? <GrandStaffCard note={card.note} />
+            : <StaffCard note={card.note} clef={card.clef} />
+          : null}
+      </div>
+      {/* Feedback lives in a dedicated block BELOW the staff with
+          reserved min-height so the layout doesn't jump between
+          rounds. Three states: listening (waveform + italic
+          "listening…"), wrong (italic "Heard E♭ — try F" + waveform
+          + "still listening…"), correct (green ✓ + "Heard F"). */}
+      <div className="nl-sr-feedback-block">
+        {status === 'correct' && (
+          <>
+            <span className="nl-sr-feedback-mark is-correct" aria-hidden>✓</span>
+            <span className="nl-sr-feedback-text is-correct">
+              Heard <b>{detected ?? targetNoteRef.current}</b>
+            </span>
+          </>
         )}
-        {error && <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#E53935' }}>{error}</p>}
+        {status === 'wrong' && (
+          <>
+            <span className="nl-sr-feedback-text is-wrong">
+              Heard <b>{detected ?? '—'}</b> — try <b>{targetNoteRef.current}</b>
+            </span>
+            <span
+              className="nl-sr-waveform is-wrong"
+              aria-hidden
+            >
+              <span /><span /><span /><span /><span />
+            </span>
+            <span className="nl-sr-feedback-text is-listening">still listening…</span>
+          </>
+        )}
+        {status === 'listening' && (
+          <>
+            <span className="nl-sr-waveform" aria-hidden>
+              <span /><span /><span /><span /><span />
+            </span>
+            <span className="nl-sr-feedback-text is-listening">listening…</span>
+          </>
+        )}
+        {error && (
+          <span className="nl-sr-feedback-text is-error">{error}</span>
+        )}
       </div>
 
       {/* ── Diagnostic overlay ── */}

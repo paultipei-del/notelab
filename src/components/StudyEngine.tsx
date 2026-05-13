@@ -354,48 +354,75 @@ return (
             />
           ) : (
             <>
-          <header className="nl-study-topbar">
-            <div className="nl-study-topbar__row1">
-              <div className="nl-study-topbar__back">
-                <button type="button" onClick={goBack} className="nl-study-back-btn">← Back</button>
-              </div>
-              <div className={`nl-study-topbar__metrics${stats.total > 0 ? '' : ' nl-study-topbar__metrics--pair'}`}>
-                <div>
-                  <span className="nl-study-topbar__metric-label">Session time</span>
-                  <span className="nl-study-topbar__metric-value">{formatTopbarTime(elapsedMs, isPlayMode)}</span>
-                </div>
-                <div>
-                  <span className="nl-study-topbar__metric-label">Answered</span>
-                  <span className="nl-study-topbar__metric-value">
+          {isSightReadDeck ? (
+            /* Sight-read header — End session + Round + Accuracy.
+               Cleaner than the flashcard topbar; accuracy renders in
+               forest green per the v2.1 design spec. */
+            <header className="nl-sr-play-header">
+              <button type="button" onClick={goBack} className="nl-sr-play-header__back">
+                ← End session
+              </button>
+              <div className="nl-sr-play-header__meta">
+                <div className="nl-sr-play-header__stat">
+                  <span className="nl-sr-play-header__label">Round</span>
+                  <span className="nl-sr-play-header__value">
                     {queue.length > 0 ? `${sessionCardIndex} / ${queue.length}` : '—'}
                   </span>
                 </div>
-                {stats.total > 0 && (
-                  <div>
-                    <span className="nl-study-topbar__metric-label">Score</span>
-                    <span className="nl-study-topbar__metric-value">{stats.correct} / {stats.total}</span>
-                  </div>
-                )}
+                <div className="nl-sr-play-header__stat">
+                  <span className="nl-sr-play-header__label">Accuracy</span>
+                  <span className="nl-sr-play-header__value is-green">
+                    {stats.total > 0
+                      ? `${Math.round((stats.correct / stats.total) * 100)}%`
+                      : '—'}
+                  </span>
+                </div>
               </div>
-            </div>
-            {/* Subtle deck-title caption — low-contrast, centered, so the
-                student always knows which deck they're in without the title
-                competing with the metrics. */}
-            <p style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontSize: 'var(--nl-text-compact)',
-              fontStyle: 'italic',
-              color: '#9A9081',
-              letterSpacing: '0.03em',
-              margin: 0,
-              textAlign: 'center',
-            }}>
-              {deck.title}
-            </p>
-            <div className="nl-study-progress-rail" aria-hidden>
-              <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
-            </div>
-          </header>
+            </header>
+          ) : (
+            <header className="nl-study-topbar">
+              <div className="nl-study-topbar__row1">
+                <div className="nl-study-topbar__back">
+                  <button type="button" onClick={goBack} className="nl-study-back-btn">← Back</button>
+                </div>
+                <div className={`nl-study-topbar__metrics${stats.total > 0 ? '' : ' nl-study-topbar__metrics--pair'}`}>
+                  <div>
+                    <span className="nl-study-topbar__metric-label">Session time</span>
+                    <span className="nl-study-topbar__metric-value">{formatTopbarTime(elapsedMs, isPlayMode)}</span>
+                  </div>
+                  <div>
+                    <span className="nl-study-topbar__metric-label">Answered</span>
+                    <span className="nl-study-topbar__metric-value">
+                      {queue.length > 0 ? `${sessionCardIndex} / ${queue.length}` : '—'}
+                    </span>
+                  </div>
+                  {stats.total > 0 && (
+                    <div>
+                      <span className="nl-study-topbar__metric-label">Score</span>
+                      <span className="nl-study-topbar__metric-value">{stats.correct} / {stats.total}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Subtle deck-title caption — low-contrast, centered, so the
+                  student always knows which deck they're in without the title
+                  competing with the metrics. */}
+              <p style={{
+                fontFamily: 'var(--font-cormorant), serif',
+                fontSize: 'var(--nl-text-compact)',
+                fontStyle: 'italic',
+                color: '#9A9081',
+                letterSpacing: '0.03em',
+                margin: 0,
+                textAlign: 'center',
+              }}>
+                {deck.title}
+              </p>
+              <div className="nl-study-progress-rail" aria-hidden>
+                <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
+              </div>
+            </header>
+          )}
           {!isSightReadDeck && (
             <div className="nl-study-mode-toolbar">
               <div
