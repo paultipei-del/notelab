@@ -3126,6 +3126,10 @@ html {
   height: 100vh; /* fallback for browsers without dvh */
   height: 100dvh;
   max-width: 100vw;
+  /* NoteLab designs its own tap feedback (the brick-red disc on
+     /tap-tempo, button hover states elsewhere). Kill the OS-default
+     blue flash globally so it never competes with our own visuals. */
+  -webkit-tap-highlight-color: transparent;
 }
 body {
   /* Pin body to the viewport with position: fixed. On iOS Safari,
@@ -5303,4 +5307,363 @@ svg:not(.nl-notation-staff) {
   .nl-met-note__label { font-size: 9px; line-height: 1.1; }
   .nl-met-note__label--desktop { display: none; }
   .nl-met-note__label--mobile { display: block; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   /tap-tempo — sibling of /metronome
+   ════════════════════════════════════════════════════════════════
+   No-scroll layout matching /metronome's architecture. Stage in the
+   centre, read-only reference strip pinned to the bottom. Whole stage
+   is a tap target; the strip is inert. Naming: nl-tap-* singular. */
+
+.nl-page-main:has(.nl-tap-page) {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.nl-tap-page {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #1a1208;
+  user-select: none;
+}
+
+/* ── Stage ── */
+.nl-tap-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px 16px;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  cursor: pointer;
+  /* Suppress the iOS long-press callout (text-select / share menu)
+     on the BPM number so a long press on the stage is interpreted
+     purely as a tap, not as text-selection. */
+  -webkit-touch-callout: none;
+}
+
+.nl-tap-stage__marking {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: clamp(22px, 3vw, 32px);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  min-height: 32px;
+  margin-bottom: 24px;
+  transition: color 200ms ease;
+}
+.nl-tap-stage__marking.is-empty { color: #c0b696; }
+.nl-tap-stage__marking.is-partial { color: #8a7560; }
+.nl-tap-stage__marking.is-stable { color: #5a4028; }
+
+.nl-tap-stage__bpm-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 14px;
+}
+.nl-tap-stage__pulse {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #a0381c;
+  opacity: 0.35;
+  flex-shrink: 0;
+}
+.nl-tap-stage__pulse.is-firing {
+  /* Fires once per tap via React `key={tapCount}` retriggering the
+     animation. Keyframes scale 0.85→1.2→1, opacity 0.2→1→0.4. */
+  animation: nl-tap-pulse 200ms ease-out;
+}
+.nl-tap-stage__pulse--ghost {
+  visibility: hidden;
+}
+@keyframes nl-tap-pulse {
+  0%   { transform: scale(0.85); opacity: 0.2; }
+  40%  { transform: scale(1.2);  opacity: 1; }
+  100% { transform: scale(1);    opacity: 0.4; }
+}
+
+.nl-tap-stage__bpm {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: clamp(80px, 12vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  transition: color 200ms ease;
+}
+.nl-tap-stage__bpm.is-empty {
+  color: #c0b696;
+  font-style: italic;
+  font-weight: 300;
+}
+.nl-tap-stage__bpm.is-partial { color: #5a4028; }
+.nl-tap-stage__bpm.is-stable { color: #1a1208; }
+
+.nl-tap-stage__unit {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8a7560;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+/* ── 6-dot counter ── */
+.nl-tap-counter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+.nl-tap-counter__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(139, 105, 20, 0.15);
+  transition: background 150ms ease-out, transform 150ms ease-out;
+}
+.nl-tap-counter__dot.is-on {
+  background: #a0381c;
+  transform: scale(1.15);
+}
+
+/* ── Instruction ── */
+.nl-tap-instruction {
+  margin: 0 0 22px 0;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #5a4028;
+  text-align: center;
+  min-height: 1.4em;
+}
+.nl-tap-instruction.is-empty { color: rgba(90, 64, 40, 0.65); }
+.nl-tap-instruction.is-partial em {
+  font-style: italic;
+  color: #a0381c;
+  font-weight: 500;
+}
+.nl-tap-instruction.is-stable { color: #2d5a3e; }
+.nl-tap-instruction__or { color: rgba(90, 64, 40, 0.65); }
+.nl-tap-instruction__mobile { display: none; }
+.nl-tap-kbd {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  margin: 0 2px;
+  background: rgba(139, 105, 20, 0.12);
+  border: 1px solid rgba(139, 105, 20, 0.25);
+  border-radius: 3px;
+  color: #1a1208;
+  letter-spacing: 0;
+  vertical-align: 1px;
+}
+
+/* ── Actions ── */
+.nl-tap-actions {
+  display: flex;
+  gap: 14px;
+}
+.nl-tap-actions__reset,
+.nl-tap-actions__send {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 12px 26px;
+  min-width: 140px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+.nl-tap-actions__reset {
+  background: transparent;
+  color: #1a1208;
+  border: 1px solid #1a1208;
+}
+.nl-tap-actions__reset:hover { transform: translateY(-1px); }
+.nl-tap-actions__send {
+  background: #a0381c;
+  color: #f0e7d0;
+  border: 1px solid #a0381c;
+}
+.nl-tap-actions__send:hover { transform: translateY(-1px); }
+.nl-tap-actions__send:disabled {
+  background: rgba(160, 56, 28, 0.18);
+  color: rgba(240, 231, 208, 0.55);
+  border-color: rgba(160, 56, 28, 0.25);
+  cursor: not-allowed;
+  transform: none;
+}
+.nl-tap-actions__send-mobile { display: none; }
+
+/* ── Tap-driven disc ── Solid brick-red impact point that fades +
+   scales up. One disc per tap, spawned imperatively by spawnDisc()
+   in page.tsx and appended to <body>; the `forwards` fill keeps the
+   final state until the setTimeout removes the node. */
+.nl-tap-disc {
+  position: fixed;
+  background: #a0381c;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  width: 16px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+  animation: nl-tap-disc-fade 400ms ease-out forwards;
+}
+@keyframes nl-tap-disc-fade {
+  0%   { width: 16px;  height: 16px;  opacity: 0.85; }
+  30%  {                                opacity: 0.6; }
+  100% { width: 140px; height: 140px; opacity: 0; }
+}
+
+/* ── Reference strip (read-only) ── */
+.nl-tap-strip {
+  flex: 0 0 auto;
+  padding: 14px 36px 16px;
+  border-top: 1px solid rgba(139, 105, 20, 0.2);
+  background: rgba(255, 250, 238, 0.4);
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  transition: opacity 200ms ease, background 200ms ease;
+}
+.nl-tap-strip.is-empty {
+  background: rgba(255, 250, 238, 0.2);
+}
+.nl-tap-strip.is-empty .nl-tap-strip__eyebrow { color: #8a7560; }
+.nl-tap-strip.is-empty .nl-tap-strip__word {
+  color: rgba(160, 56, 28, 0.45);
+  font-style: italic;
+}
+.nl-tap-strip.is-empty .nl-tap-strip__bounds { color: rgba(90, 64, 40, 0.45); }
+.nl-tap-strip.is-empty .nl-tap-strip__labels { color: rgba(90, 64, 40, 0.4); }
+.nl-tap-strip__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #1a1208;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.nl-tap-strip__head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+.nl-tap-strip__word {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 22px;
+  color: #a0381c;
+  line-height: 1;
+}
+.nl-tap-strip__bounds {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: #5a4028;
+}
+.nl-tap-strip__bar {
+  position: relative;
+  height: 4px;
+  background: rgba(139, 105, 20, 0.1);
+  border-radius: 2px;
+}
+.nl-tap-strip__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(160, 56, 28, 0.12) 0%, rgba(160, 56, 28, 0.35) 100%);
+  transition: width 180ms ease;
+}
+.nl-tap-strip__dot {
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #a0381c;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 3px rgba(40, 20, 8, 0.25);
+  transition: left 180ms ease;
+}
+.nl-tap-strip__labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: rgba(90, 64, 40, 0.65);
+}
+
+@media (max-width: 767.98px) {
+  .nl-tap-stage {
+    padding: 18px 18px 10px;
+  }
+  .nl-tap-stage__marking {
+    font-size: clamp(20px, 5.5vw, 26px);
+    min-height: 26px;
+    margin-bottom: 18px;
+  }
+  .nl-tap-stage__bpm-row { gap: 16px; margin-bottom: 12px; }
+  .nl-tap-stage__pulse { width: 12px; height: 12px; }
+  .nl-tap-stage__bpm { font-size: clamp(72px, 22vw, 96px); }
+  .nl-tap-stage__unit { font-size: 9px; margin-bottom: 24px; }
+  .nl-tap-counter { gap: 8px; margin-bottom: 22px; }
+  .nl-tap-counter__dot { width: 7px; height: 7px; }
+  .nl-tap-instruction {
+    font-size: 12px;
+    margin-bottom: 18px;
+  }
+  .nl-tap-instruction__desktop { display: none; }
+  .nl-tap-instruction__mobile { display: inline; }
+  .nl-tap-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .nl-tap-actions__reset,
+  .nl-tap-actions__send {
+    min-width: 0;
+    padding: 11px 16px;
+  }
+  .nl-tap-actions__send-desktop { display: none; }
+  .nl-tap-actions__send-mobile { display: inline; }
+  .nl-tap-strip {
+    padding: 12px 22px 14px;
+  }
+  .nl-tap-strip__head { gap: 10px; margin-bottom: 4px; }
+  .nl-tap-strip__word { font-size: 18px; }
+  .nl-tap-strip__bounds { font-size: 11px; }
+  .nl-tap-strip__labels { font-size: 9px; margin-top: 2px; }
 }
