@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 
 const F = 'var(--font-jost), sans-serif'
 
-const HIDDEN_ON = ['/unlock', '/landing']
+const HIDDEN_ON = ['/unlock', '/landing', '/metronome']
 
 export default function SiteFooter() {
   const pathname = usePathname()
