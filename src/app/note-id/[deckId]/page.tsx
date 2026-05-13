@@ -8,6 +8,8 @@ import GrandStaffCard from '@/components/cards/GrandStaffCard'
 import MultiNoteStaff from '@/components/cards/MultiNoteStaff'
 import { getDeckById } from '@/lib/decks'
 import { Deck } from '@/lib/types'
+import SightReadingSessionComplete from '@/components/sight-reading/SightReadingSessionComplete'
+import { SIGHT_READING_LEVELS, type AnswerMode, type Clef } from '@/lib/sightReadingLevels'
 
 const NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
@@ -221,42 +223,50 @@ function NoteIDExerciseInner() {
   const clef = (deck.cards[0]?.clef ?? 'treble') as 'treble' | 'bass' | 'grand'
 
   if (done) {
-    const finalTime = ((Date.now() - startTimeRef.current) / 1000).toFixed(2)
+    const finalTimeMs = Date.now() - startTimeRef.current
+    const finalTimeSec = finalTimeMs / 1000
     const bestKey = 'notelab-note-id-best-' + deckId
     const prevBest = typeof window !== 'undefined' ? parseFloat(localStorage.getItem(bestKey) ?? '0') : 0
-    const currentTimeSec = parseFloat(finalTime)
-    const isNewBest = prevBest === 0 || currentTimeSec < prevBest
-    if (typeof window !== 'undefined' && isNewBest) localStorage.setItem(bestKey, finalTime)
+    const isNewBest = prevBest === 0 || finalTimeSec < prevBest
+    if (typeof window !== 'undefined' && isNewBest) localStorage.setItem(bestKey, finalTimeSec.toString())
+
+    // Parse clef + level from the sight-read deck id (defensive
+    // defaults for hand-typed URLs that don't match the pattern).
+    const m = deckId.match(/^sight-read-(treble|bass|grand)-(.+)$/)
+    const sightClef = (m?.[1] ?? 'treble') as Clef
+    const suffix = m?.[2] ?? 'free'
+    const level = SIGHT_READING_LEVELS[sightClef].find(l => l.deckSuffix === suffix)
+    const levelLabel = level?.num ?? 'Custom'
+    // input=keyboard-full → Full Piano badge; legacy keyboard maps
+    // to Letters since Mini Piano is going away (Phase 2.3).
+    const answerMode: AnswerMode =
+      inputMode === 'keyboard-full' ? 'full-piano' : 'letters'
+
+    function playAgain() {
+      setRounds(0); setCorrect(0); setTotal(0); setDone(false)
+      processingRef.current = false
+      startTimeRef.current = Date.now()
+      const notes = buildGroup(pool, groupSize)
+      setGroup(notes.map((note, i) => ({
+        note,
+        status: (i === 0 ? 'active' : 'pending') as NoteStatus,
+      })))
+      setActiveIdx(0)
+    }
 
     return (
-      <div style={{ minHeight: '100vh', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px,2vh,24px)' }}>
-        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '56px 48px', maxWidth: '420px', width: '100%', textAlign: 'center' }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '12px' }}>Session Complete</p>
-          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', color: '#2A2318', marginBottom: '32px' }}>{deck.title}</h2>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '36px' }}>
-            {[
-              { num: Math.round((correct / total) * 100) + '%', label: 'Score' },
-              { num: finalTime + 's', label: 'Time' },
-              { num: prevBest > 0 ? (isNewBest ? finalTime : prevBest.toFixed(2)) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' },
-            ].map(({ num, label }) => (
-              <div key={label}>
-                <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '32px', fontWeight: 300, color: '#2A2318' }}>{num}</p>
-                <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>{label}</p>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-            <button onClick={() => { setRounds(0); setCorrect(0); setTotal(0); setDone(false); processingRef.current = false; startTimeRef.current = Date.now(); const notes = buildGroup(pool, groupSize); setGroup(notes.map((note, i) => ({ note, status: (i === 0 ? 'active' : 'pending') as NoteStatus }))); setActiveIdx(0) }}
-              style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
-              Again
-            </button>
-            <button onClick={goBack}
-              style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '10px', padding: '12px 28px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>
-              Back
-            </button>
-          </div>
-        </div>
-      </div>
+      <SightReadingSessionComplete
+        score={total > 0 ? correct / total : 0}
+        correct={correct}
+        total={total}
+        elapsed={finalTimeMs}
+        prevBest={prevBest}
+        isNewBest={isNewBest}
+        mode={answerMode}
+        clef={sightClef}
+        levelLabel={levelLabel}
+        onPlayAgain={playAgain}
+      />
     )
   }
 

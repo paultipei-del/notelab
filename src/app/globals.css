@@ -7432,3 +7432,149 @@ svg:not(.nl-notation-staff) {
   .nl-sr-preroll__desc { font-size: 13px; }
   .nl-sr-preroll__denied-actions { flex-direction: column; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Unified SessionComplete — shared by /note-id and /study sight-read
+   plays. Replaces each engine's bespoke complete screen.
+   ───────────────────────────────────────────────────────────────── */
+
+.nl-sr-complete-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(120% 90% at 50% 30%, #f8f0d8 0%, #ede0bd 100%);
+}
+.nl-sr-complete-card {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+.nl-sr-complete-badge {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-sr-complete-title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 300;
+  font-size: 36px;
+  color: #1a1208;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.nl-sr-complete-sub {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #5a4028;
+  margin: 0 0 8px;
+}
+
+/* Stats grid — three columns */
+.nl-sr-complete-stats {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
+  margin: 4px 0 14px;
+}
+.nl-sr-complete-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 84px;
+}
+.nl-sr-complete-stat__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-sr-complete-stat__value {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 300;
+  font-size: 32px;
+  line-height: 1;
+  color: #1a1208;
+}
+/* New-best treatment — oxblood value + oxblood dot in eyebrow */
+.nl-sr-complete-stat.is-new-best .nl-sr-complete-stat__value {
+  color: #a0381c;
+}
+.nl-sr-complete-stat.is-new-best .nl-sr-complete-stat__label {
+  color: #a0381c;
+}
+.nl-sr-complete-stat__newdot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a0381c;
+}
+
+/* Action buttons */
+.nl-sr-complete-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+.nl-sr-complete-btn {
+  padding: 12px 22px;
+  border-radius: 6px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.nl-sr-complete-btn--primary {
+  background: #a0381c;
+  color: #f0e7d0;
+  border: 1px solid #a0381c;
+}
+.nl-sr-complete-btn--primary:hover { background: #872f17; border-color: #872f17; }
+.nl-sr-complete-btn--secondary {
+  background: transparent;
+  color: #5a4028;
+  border: 1px solid rgba(154, 124, 80, 0.4);
+}
+.nl-sr-complete-btn--secondary:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+
+@media (max-width: 767.98px) {
+  .nl-sr-complete-overlay { padding: 16px; }
+  .nl-sr-complete-title { font-size: 28px; }
+  .nl-sr-complete-stats { gap: 18px; margin: 2px 0 10px; }
+  .nl-sr-complete-stat { min-width: 64px; }
+  .nl-sr-complete-stat__value { font-size: 24px; }
+  .nl-sr-complete-actions {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+  }
+  .nl-sr-complete-btn { padding: 12px 18px; }
+}

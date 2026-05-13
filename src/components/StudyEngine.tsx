@@ -28,6 +28,8 @@ const CHALLENGE_DECK_IDS = new Set([
 import { stopMic } from '@/components/cards/PlayItCard2'
 import PlayItCard2 from '@/components/cards/PlayItCard2'
 import RealPianoPreroll from '@/components/sight-reading/RealPianoPreroll'
+import SightReadingSessionComplete from '@/components/sight-reading/SightReadingSessionComplete'
+import { SIGHT_READING_LEVELS, type Clef } from '@/lib/sightReadingLevels'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 interface StudyEngineProps {
@@ -236,18 +238,39 @@ export default function StudyEngine({ deck, userId, onQuiz, pendingMode, onPendi
 
 return (
     <>
-      {isComplete && viewMode === 'study' && (
+      {/* Sight-read decks use the unified SightReadingSessionComplete
+          overlay. Non-sight-read decks (flashcard sessions) keep the
+          original beige-card complete screen below. */}
+      {isComplete && viewMode === 'study' && isSightReadDeck && (() => {
+        const m = deck.id.match(/^sight-read-(treble|bass|grand)-(.+)$/)
+        const clef = (m?.[1] ?? 'treble') as Clef
+        const suffix = m?.[2] ?? 'free'
+        const level = SIGHT_READING_LEVELS[clef].find(l => l.deckSuffix === suffix)
+        const levelLabel = level?.num ?? 'Custom'
+        return (
+          <SightReadingSessionComplete
+            score={stats.total > 0 ? stats.correct / stats.total : 0}
+            correct={stats.correct}
+            total={stats.total}
+            elapsed={elapsedMs}
+            prevBest={prevBest}
+            isNewBest={isNewBest}
+            mode="real-piano"
+            clef={clef}
+            levelLabel={levelLabel}
+            onPlayAgain={() => { resetSession(); resetTimer(); setViewMode('study') }}
+            onBrowse={() => { stopMic(); setViewMode('browse') }}
+          />
+        )
+      })()}
+      {isComplete && viewMode === 'study' && !isSightReadDeck && (
         <div className="nl-study-viewport nl-study-scroll" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '64px 56px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.10)' }}>
-            {isSightReadDeck && isNewBest && typeof window !== 'undefined' && (() => { localStorage.setItem(bestTimeKey, currentTime.toString()); return null })()}
         <div style={{ fontSize: '48px', marginBottom: '24px' }}>♩</div>
             <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '36px', letterSpacing: '0.02em', marginBottom: '12px' }}>Session Complete</h2>
             <p style={{ fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#7A7060', marginBottom: '36px', lineHeight: 1.7 }}>You reviewed {stats.total} card{stats.total !== 1 ? 's' : ''}. {sessionMsg}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '40px' }}>
-              {(isSightReadDeck
-              ? [{ num: stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) + '%' : '—', label: 'Score' }, { num: `${stats.correct}/${stats.total}`, label: 'Notes' }, { num: elapsedDisplay, label: 'Time' }, { num: prevBest > 0 ? prevBest.toFixed(2) + 's' : '—', label: isNewBest ? '🏆 Best' : 'Best' }]
-              : [{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }]
-            ).map(({ num, label }) => (
+              {[{ num: stats.correct, label: 'Correct' }, { num: stats.bestStreak, label: 'Best Streak' }, { num: elapsedDisplay, label: elapsedLabel }].map(({ num, label }) => (
                 <div key={label} style={{ textAlign: 'center' }}>
                   <div style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '40px', color: '#2A2318', lineHeight: 1 }}>{num}</div>
                   <div style={{ fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7A7060', marginTop: '4px' }}>{label}</div>
@@ -256,8 +279,7 @@ return (
             </div>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={() => { resetSession(); resetTimer(); setViewMode('study') }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '14px 32px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Study Again</button>
-              {isSightReadDeck && prevBest > 0 && <button onClick={() => { localStorage.removeItem(bestTimeKey); window.location.reload() }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Reset Best</button>}
-              {!isSightReadDeck && <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Browse Cards</button>}
+              <button onClick={() => { stopMic(); setViewMode('browse') }} style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '14px 24px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, cursor: 'pointer' }}>Browse Cards</button>
               <button onClick={goBack} className="nl-study-back-btn" style={{ padding: '12px 22px', fontSize: 'var(--nl-text-meta)' }}>← Back</button>
             </div>
           </div>
