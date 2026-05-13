@@ -4667,6 +4667,10 @@ svg:not(.nl-notation-staff) {
   align-items: center;
   justify-content: center;
   gap: 22px;
+  /* line-height: 1.3 on the BPM digit (see below) leaves ~7px of
+     glyph descender beyond the line box; +14px margin-bottom
+     bridges it so the digit ink doesn't overlap the "Beats per
+     minute" caption. */
   margin-bottom: 14px;
 }
 .nl-met-stage__pulse {
@@ -4693,7 +4697,11 @@ svg:not(.nl-notation-staff) {
   font-family: var(--font-cormorant), serif;
   font-weight: 400;
   font-size: clamp(80px, 12vw, 120px);
-  line-height: 1;
+  /* Cormorant digits at 120px extend ~25px below a line-height: 1
+     baseline. 1.3 reserves ~18px below the baseline; the row's
+     +14px margin-bottom (above) bridges the remaining gap. Same
+     pattern as .nl-cc-rep__count. */
+  line-height: 1.3;
   color: #1a1208;
   letter-spacing: -0.04em;
   background: transparent;
@@ -4835,9 +4843,9 @@ svg:not(.nl-notation-staff) {
     font-size: clamp(20px, 5.5vw, 26px);
     margin-bottom: 16px;
   }
-  .nl-met-stage__bpm-row { gap: 16px; }
+  .nl-met-stage__bpm-row { gap: 16px; margin-bottom: 10px; }
   .nl-met-stage__pulse { width: 12px; height: 12px; }
-  .nl-met-stage__bpm { font-size: clamp(72px, 22vw, 96px); }
+  .nl-met-stage__bpm { font-size: clamp(72px, 22vw, 96px); line-height: 1.25; }
   .nl-met-stage__unit { margin-bottom: 20px; font-size: 9px; }
   .nl-met-stage__controls {
     grid-template-columns: 32px 1fr 32px;
@@ -5192,17 +5200,14 @@ svg:not(.nl-notation-staff) {
 .nl-met-note.is-active .nl-met-note__glyph {
   color: #1a1208;
 }
-.nl-met-note.is-ref-flash {
-  /* Dotted note clicked — brown border highlight (color only). */
-  border-color: #6b4423;
-  background: rgba(107, 68, 35, 0.08);
-}
 .nl-met-note__glyph {
   /* Bravura note glyphs at font-size 20 render ~30px tall (notehead +
-     upward stem). Allocate enough vertical space + anchor the
-     notehead to the bottom of the cell so the stem rises up into the
-     container instead of overshooting the card top. */
-  min-height: 32px;
+     upward stem). Triplet figures need a few extra pixels of
+     headroom for the bracket/beam and the "3" above. Allocate 36px
+     and anchor content to the bottom of the cell — non-triplet
+     glyphs sit on the same baseline and just leave extra space
+     above. */
+  min-height: 36px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -5214,18 +5219,6 @@ svg:not(.nl-notation-staff) {
   font-size: 20px;
   line-height: 1;
 }
-.nl-met-note.is-triplet .nl-met-note__glyph::after {
-  content: '3';
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  font-family: var(--font-jost), system-ui, sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  color: #a0381c;
-  line-height: 1;
-}
-
 /* Dotted notes — the augmentation dot is the second char of the
    parent's `.glyph-char` string. The dot lands cleanly to the right
    of the notehead via Bravura's own spacing; no inline margin needed. */
@@ -5233,43 +5226,88 @@ svg:not(.nl-notation-staff) {
   letter-spacing: 2px;
 }
 
-/* Transient "reference value" tooltip shown when a dotted card is
-   clicked. Fades in/out, anchored just above the card. */
-.nl-met-note__tooltip {
+/* ── Composite triplet figures ── Both triplets share the same
+   three-quarter-glyph base (U+E1D5 with built-in stems). The only
+   difference is what sits above:
+   - eighth-triplet → solid beam line (no end-ticks)
+   - quarter-triplet → thinner bracket with downward end-ticks
+   "3" sits above with clearance from the line/bracket; the line/
+   bracket sits above the stems with its own clearance. */
+.nl-met-note__triplet {
+  position: relative;
+  width: 46px;
+  height: 36px;
+}
+.nl-met-note__triplet-3 {
   position: absolute;
-  bottom: calc(100% + 6px);
+  top: -3px;
   left: 50%;
   transform: translateX(-50%);
-  white-space: nowrap;
-  padding: 5px 12px;
-  background: #1a1208;
-  color: #f0e7d0;
-  border-radius: 4px;
   font-family: var(--font-cormorant), serif;
   font-style: italic;
   font-size: 11px;
-  letter-spacing: 0.02em;
-  pointer-events: none;
-  z-index: 15;
-  box-shadow: 0 4px 12px rgba(40, 20, 8, 0.3), 0 1px 3px rgba(40, 20, 8, 0.18);
-  animation: nl-met-tooltip-fade 1500ms ease forwards;
+  font-weight: 600;
+  color: #a0381c;
+  line-height: 1;
 }
-.nl-met-note__tooltip::after {
-  /* Small arrow pointing down to the card. */
+.nl-met-note__triplet-quarters {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1px;
+  font-family: 'Bravura', 'Bravura Text', serif;
+  font-size: 16px;
+  line-height: 1;
+  color: #1a1208;
+}
+/* Quarter-triplet bracket: thin 1px line extending past the outer
+   stems on both sides (symmetric overshoot, ~5px past each stem),
+   with short downward end-ticks. Sits with ~6px of clearance above
+   the stem tops so it never touches the notation. Right padding is
+   smaller than left because Bravura's quarter glyph places the stem
+   near the right edge of its advance width — the right stem sits
+   closer to the container's right edge than the left stem sits to
+   the left edge. */
+.nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket {
+  position: absolute;
+  top: 10px;
+  left: 2px;
+  right: -2px;
+  height: 2px;
+  border-top: 1px solid #1a1208;
+}
+.nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket::before,
+.nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket::after {
   content: '';
   position: absolute;
-  bottom: -4px;
-  left: 50%;
-  width: 8px;
-  height: 8px;
+  top: 0;
+  width: 1px;
+  height: 2px;
   background: #1a1208;
-  transform: translateX(-50%) rotate(45deg);
 }
-@keyframes nl-met-tooltip-fade {
-  0%   { opacity: 0; transform: translate(-50%, 4px); }
-  10%  { opacity: 1; transform: translate(-50%, 0); }
-  85%  { opacity: 1; transform: translate(-50%, 0); }
-  100% { opacity: 0; transform: translate(-50%, -2px); }
+.nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket::before { left: 0; }
+.nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket::after { right: 0; }
+/* Eighth-triplet beam: ends precisely at the outer stem positions
+   (no overshoot like the bracket) and sits AT the stem tops so the
+   stems visually connect into the beam. Same right-edge-bias as the
+   bracket since stems share the same x-positions. */
+.nl-met-note__triplet.is-eighth .nl-met-note__triplet-beam {
+  position: absolute;
+  /* Stem positions derived from Bravura's noteQuarterUp metrics
+     (bBoxNE.x = 1.18 staff-spaces = 4.72px at 16px font). With the
+     three glyphs distributed via `justify-content: space-between`
+     and 1px padding on each side, stems land at approximately:
+       left  stem: x ≈ 6
+       right stem: x ≈ 45 (1px from container right edge)
+     Beam ends exactly at those stem positions. */
+  top: 14px;
+  left: 6px;
+  right: 1px;
+  height: 2px;
+  background: #1a1208;
 }
 .nl-met-note__bpm {
   font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
@@ -5292,15 +5330,40 @@ svg:not(.nl-notation-staff) {
 .nl-met-note__label--mobile { display: none; }
 @media (max-width: 767.98px) {
   .nl-met-note { padding: 3px 1px; gap: 0; }
-  .nl-met-note__glyph { min-height: 28px; }
+  .nl-met-note__glyph { min-height: 32px; }
   .nl-met-note__glyph-char { font-size: 16px; }
-  .nl-met-note.is-triplet .nl-met-note__glyph::after {
-    font-size: 8px;
-    top: 3px;
-    right: 4px;
-  }
   .nl-met-note.is-dotted .nl-met-note__glyph-char {
     letter-spacing: 1px;
+  }
+  /* Composite triplet figures — proportionally compressed for the
+     narrower mobile cards. */
+  .nl-met-note__triplet {
+    width: 40px;
+    height: 32px;
+  }
+  .nl-met-note__triplet-3 { font-size: 9px; top: -2px; }
+  .nl-met-note__triplet-quarters {
+    font-size: 13px;
+    padding: 0;
+  }
+  .nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket {
+    top: 8px;
+    left: 1px;
+    right: -2px;
+    height: 2px;
+  }
+  .nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket::before,
+  .nl-met-note__triplet.is-quarter .nl-met-note__triplet-bracket::after {
+    height: 2px;
+  }
+  .nl-met-note__triplet.is-eighth .nl-met-note__triplet-beam {
+    /* Same stem-position math at 13px font: advance ≈ 3.83px. With
+       1px padding and space-between in 40px container, stems land
+       at x ≈ 5 (left) and x ≈ 39 (right). */
+    top: 12px;
+    left: 5px;
+    right: 1px;
+    height: 2px;
   }
   .nl-met-note__bpm { font-size: 11px; line-height: 1.1; }
   .nl-met-note.is-active .nl-met-note__bpm { font-size: 12px; }
@@ -5371,6 +5434,10 @@ svg:not(.nl-notation-staff) {
   align-items: center;
   justify-content: center;
   gap: 22px;
+  /* See note on .nl-met-stage__bpm-row — line-height: 1.3 on the
+     BPM digit leaves ~7px of descender beyond the line box; +14px
+     margin-bottom bridges it so the digit doesn't overlap the
+     caption. */
   margin-bottom: 14px;
 }
 .nl-tap-stage__pulse {
@@ -5399,7 +5466,10 @@ svg:not(.nl-notation-staff) {
   font-family: var(--font-cormorant), serif;
   font-weight: 400;
   font-size: clamp(80px, 12vw, 120px);
-  line-height: 1;
+  /* Cormorant digits at 120px extend ~25px below a line-height: 1
+     baseline. 1.3 reserves ~18px below; the row's +14px
+     margin-bottom bridges the rest. Mirrors .nl-met-stage__bpm. */
+  line-height: 1.3;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
   transition: color 200ms ease;
@@ -5442,20 +5512,25 @@ svg:not(.nl-notation-staff) {
 
 /* ── Instruction ── */
 .nl-tap-instruction {
+  /* Match the metronome keyboard-hint line (.nl-met-stage__hint):
+     Jost / system-ui, not italic Cormorant. */
   margin: 0 0 22px 0;
-  font-family: var(--font-cormorant), serif;
-  font-style: italic;
-  font-size: 14px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
   line-height: 1.4;
-  color: #5a4028;
+  color: rgba(90, 64, 40, 0.65);
   text-align: center;
   min-height: 1.4em;
 }
 .nl-tap-instruction.is-empty { color: rgba(90, 64, 40, 0.65); }
+.nl-tap-instruction.is-partial { color: rgba(90, 64, 40, 0.85); }
 .nl-tap-instruction.is-partial em {
-  font-style: italic;
+  /* Jost is loaded without italic — keep emphasis via color + weight
+     and drop the italic to avoid the synthesized-slant fallback. */
+  font-style: normal;
   color: #a0381c;
-  font-weight: 500;
+  font-weight: 600;
 }
 .nl-tap-instruction.is-stable { color: #2d5a3e; }
 .nl-tap-instruction__or { color: rgba(90, 64, 40, 0.65); }
@@ -5633,14 +5708,14 @@ svg:not(.nl-notation-staff) {
     min-height: 26px;
     margin-bottom: 18px;
   }
-  .nl-tap-stage__bpm-row { gap: 16px; margin-bottom: 12px; }
+  .nl-tap-stage__bpm-row { gap: 16px; margin-bottom: 10px; }
   .nl-tap-stage__pulse { width: 12px; height: 12px; }
-  .nl-tap-stage__bpm { font-size: clamp(72px, 22vw, 96px); }
+  .nl-tap-stage__bpm { font-size: clamp(72px, 22vw, 96px); line-height: 1.25; }
   .nl-tap-stage__unit { font-size: 9px; margin-bottom: 24px; }
   .nl-tap-counter { gap: 8px; margin-bottom: 22px; }
   .nl-tap-counter__dot { width: 7px; height: 7px; }
   .nl-tap-instruction {
-    font-size: 12px;
+    font-size: 10px;
     margin-bottom: 18px;
   }
   .nl-tap-instruction__desktop { display: none; }
@@ -5666,4 +5741,634 @@ svg:not(.nl-notation-staff) {
   .nl-tap-strip__word { font-size: 18px; }
   .nl-tap-strip__bounds { font-size: 11px; }
   .nl-tap-strip__labels { font-size: 9px; margin-top: 2px; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   /click-counter — centered streak counter
+   ════════════════════════════════════════════════════════════════
+   Same no-scroll architecture as /metronome and /tap-tempo. Stage in
+   the centre is the increment tap target; ConfigStrip + popovers
+   stopPropagation so they don't fire increments. Naming: nl-cc-*. */
+
+.nl-page-main:has(.nl-cc-page) {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.nl-cc-page {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #1a1208;
+  user-select: none;
+  position: relative;
+}
+
+/* ── Stage ── */
+.nl-cc-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px 16px;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+
+/* ── SetsRow ── */
+.nl-cc-sets {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.nl-cc-sets__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8a7560;
+  font-weight: 600;
+}
+.nl-cc-sets__dots {
+  display: flex;
+  gap: 10px;
+}
+.nl-cc-sets__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+.nl-cc-sets__dot.is-filled {
+  background: #a0381c;
+  border-color: #a0381c;
+  transform: scale(1.15);
+}
+.nl-cc-sets__dot.is-celebrating {
+  animation: nl-cc-dot-celebrate 600ms ease-out;
+}
+@keyframes nl-cc-dot-celebrate {
+  0%   { transform: scale(1);    box-shadow: 0 0 0 0 rgba(160, 56, 28, 0.4); }
+  30%  { transform: scale(1.35); box-shadow: 0 0 0 6px rgba(160, 56, 28, 0.15); }
+  100% { transform: scale(1.15); box-shadow: 0 0 0 0 rgba(160, 56, 28, 0); }
+}
+
+/* ── RepDisplay ── */
+.nl-cc-rep-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nl-cc-rep {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-family: var(--font-cormorant), serif;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  transition: transform 200ms ease, color 200ms ease, opacity 200ms ease;
+}
+.nl-cc-rep__count {
+  font-size: 144px;
+  font-weight: 400;
+  color: #1a1208;
+  font-variant-numeric: tabular-nums;
+  /* Cormorant glyphs at 144px extend ~30px below a line-height: 1
+     box (rendered ink height 174.5 vs box 144). line-height 1.3
+     adds ~21.6px below the baseline; the caption's positive
+     margin-top below bridges the remaining gap so the descender
+     of digits like 3/4/5/7/9 fully clears the caption. */
+  line-height: 1.35;
+  transition: color 200ms ease;
+}
+.nl-cc-rep__sep {
+  font-style: italic;
+  font-size: 52px;
+  color: #c0b696;
+  letter-spacing: 0;
+}
+.nl-cc-rep__target {
+  font-size: 52px;
+  color: #5a4028;
+  letter-spacing: 0;
+  border-bottom: 1px dashed rgba(139, 105, 20, 0.3);
+  padding-bottom: 1px;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+.nl-cc-rep__target:hover {
+  color: #a0381c;
+  border-color: rgba(160, 56, 28, 0.6);
+}
+.nl-cc-rep.is-celebrating .nl-cc-rep__count {
+  color: #a0381c;
+  animation: nl-cc-rep-celebrate 600ms ease-out;
+}
+@keyframes nl-cc-rep-celebrate {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.nl-cc-rep.is-dissolving {
+  animation: nl-cc-rep-dissolve 400ms ease-out forwards;
+}
+@keyframes nl-cc-rep-dissolve {
+  0%   { transform: scale(1);    opacity: 1; }
+  40%  { transform: scale(1.05); opacity: 0.5; }
+  100% { transform: scale(0.7);  opacity: 0; }
+}
+
+.nl-cc-rep__caption {
+  /* line-height: 1.3 on .nl-cc-rep__count leaves ~9px of glyph
+     descender still beyond the line box; +10px margin-top bridges
+     it so the caption sits cleanly below the digit ink. */
+  margin-top: 14px;
+  margin-bottom: 12px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #8a7560;
+  transition: color 200ms ease;
+}
+.nl-cc-rep__caption.is-celebrating {
+  color: #a0381c;
+}
+
+/* ── BestLine ── */
+.nl-cc-best {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #8a7560;
+  margin-bottom: 24px;
+  min-height: 18px;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+.nl-cc-best.is-visible { opacity: 1; }
+.nl-cc-best__num {
+  color: #a0381c;
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* ── RepActions ── */
+.nl-cc-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.nl-cc-actions__btn {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 4px;
+  background: transparent;
+  color: #5a4028;
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.nl-cc-actions__btn:hover:not(:disabled) {
+  color: #1a1208;
+  border-color: #1a1208;
+}
+.nl-cc-actions__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.nl-cc-actions__btn--reset:hover:not(:disabled) {
+  color: #a0381c;
+  border-color: #a0381c;
+}
+
+/* ── RepInstruction ── */
+.nl-cc-instruction {
+  /* Match the metronome keyboard-hint line (.nl-met-stage__hint):
+     Jost / system-ui, not italic Cormorant. */
+  margin: 0;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(90, 64, 40, 0.65);
+  text-align: center;
+  min-height: 1.4em;
+  line-height: 1.4;
+  transition: color 200ms ease;
+}
+.nl-cc-instruction.is-celebrating { color: #2d5a3e; }
+.nl-cc-instruction__mobile { display: none; }
+.nl-cc-kbd {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  margin: 0 2px;
+  background: rgba(139, 105, 20, 0.12);
+  border: 1px solid rgba(139, 105, 20, 0.25);
+  border-radius: 3px;
+  color: #1a1208;
+  letter-spacing: 0;
+  vertical-align: 1px;
+}
+
+/* ── ConfigStrip ── */
+.nl-cc-strip {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  padding: 14px 36px 16px;
+  border-top: 1px solid rgba(139, 105, 20, 0.2);
+  background: rgba(255, 250, 238, 0.4);
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  cursor: default;
+}
+.nl-cc-cfg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: default;
+}
+.nl-cc-cfg__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-cc-cfg__eyebrow--mobile { display: none; }
+.nl-cc-cfg__value {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-cormorant), serif;
+  font-size: 18px;
+  color: #1a1208;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed rgba(139, 105, 20, 0.3);
+  padding: 0 1px 1px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+.nl-cc-cfg__value:hover {
+  color: #a0381c;
+  border-bottom-color: rgba(160, 56, 28, 0.6);
+}
+.nl-cc-strip__end {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 4px;
+  background: #1a1208;
+  color: #f0e7d0;
+  border: 1px solid #1a1208;
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+.nl-cc-strip__end:hover { transform: translateY(-1px); }
+.nl-cc-strip__end-mobile { display: none; }
+
+/* ── TargetPopover ── */
+.nl-cc-popover {
+  position: absolute;
+  z-index: 25;
+  width: 280px;
+  padding: 16px;
+  background: #f8f0d8;
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(40, 20, 8, 0.18), 0 2px 6px rgba(40, 20, 8, 0.1);
+  cursor: default;
+}
+.nl-cc-popover.is-align-above {
+  bottom: calc(100% + 8px);
+  left: 0;
+}
+.nl-cc-popover.is-align-below {
+  top: calc(100% + 8px);
+  left: 0;
+}
+.nl-cc-popover__head {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #1a1208;
+  margin-bottom: 12px;
+}
+/* Segmented control — replaces the old chip pills with one unified
+   bordered widget. Inner buttons share borders (no gaps) so it reads
+   as a single component. Tapping a segment sets the value; the
+   active segment is derived from `value === preset` per render. */
+.nl-cc-popover__segmented {
+  display: flex;
+  width: 100%;
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: rgba(255, 250, 238, 0.4);
+}
+.nl-cc-popover__segment {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 10px 4px;
+  background: transparent;
+  border: 0;
+  border-right: 1px solid rgba(139, 105, 20, 0.2);
+  font-family: var(--font-cormorant), serif;
+  font-size: 16px;
+  color: #5a4028;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: background 120ms ease, color 120ms ease;
+}
+.nl-cc-popover__segment:last-child {
+  border-right: 0;
+}
+.nl-cc-popover__segment:hover:not(.is-active) {
+  background: rgba(139, 105, 20, 0.08);
+}
+.nl-cc-popover__segment.is-active {
+  background: #a0381c;
+  color: #f0e7d0;
+}
+/* Mobile-only sheet affordances — hidden on desktop. */
+.nl-cc-popover-backdrop { display: none; }
+.nl-cc-popover__grabber { display: none; }
+.nl-cc-popover__done { display: none; }
+.nl-cc-popover__stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(139, 105, 20, 0.2);
+}
+.nl-cc-popover__stepper-label {
+  flex: 1;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #8a7560;
+}
+.nl-cc-popover__stepper-label--mobile { display: none; }
+.nl-cc-popover__step {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 16px;
+  color: #5a4028;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+.nl-cc-popover__step:hover {
+  border-color: #1a1208;
+  color: #1a1208;
+}
+.nl-cc-popover__stepper-value {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1208;
+  min-width: 2.5ch;
+  text-align: center;
+}
+
+/* ── SessionCompleteScreen overlay ── */
+.nl-cc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(242, 237, 223, 0.97);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  gap: 1.2rem;
+}
+.nl-cc-overlay__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 300;
+  font-size: 2.4rem;
+  letter-spacing: 0.04em;
+  color: #2a2318;
+  line-height: 1.1;
+  margin: 0;
+}
+.nl-cc-overlay__summary {
+  font-family: var(--font-cormorant), serif;
+  font-size: 1rem;
+  color: #7a7060;
+  margin: 0;
+}
+.nl-cc-overlay__time {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7a7060;
+  margin: -0.4rem 0 0 0;
+}
+.nl-cc-overlay__stats {
+  display: flex;
+  gap: 2.5rem;
+  margin: 0.5rem 0;
+}
+.nl-cc-overlay__stat {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+.nl-cc-overlay__stat-value {
+  font-family: var(--font-cormorant), serif;
+  font-size: 1.5rem;
+  color: #2a2318;
+}
+.nl-cc-overlay__stat-label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7a7060;
+}
+.nl-cc-overlay__btn {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #2a2318;
+  background: transparent;
+  border: 1px solid rgba(42, 35, 24, 0.4);
+  padding: 0.7rem 1.8rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.nl-cc-overlay__btn:hover {
+  background: #1a1208;
+  color: #f0e7d0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 767.98px) {
+  .nl-cc-stage {
+    padding: 18px 18px 10px;
+  }
+  .nl-cc-sets { gap: 10px; margin-bottom: 14px; }
+  .nl-cc-sets__label { font-size: 8px; letter-spacing: 0.26em; }
+  .nl-cc-sets__dots { gap: 8px; }
+  .nl-cc-sets__dot { width: 8px; height: 8px; }
+  .nl-cc-rep { gap: 10px; }
+  .nl-cc-rep__count { font-size: 112px; line-height: 1.3; }
+  .nl-cc-rep__sep { font-size: 40px; }
+  .nl-cc-rep__target { font-size: 40px; }
+  .nl-cc-rep__caption { font-size: 9px; margin-top: 12px; margin-bottom: 10px; }
+  .nl-cc-best {
+    font-size: 12px;
+    margin-bottom: 18px;
+    min-height: 14px;
+  }
+  .nl-cc-actions { gap: 10px; margin-bottom: 18px; }
+  .nl-cc-instruction { font-size: 11px; }
+  .nl-cc-instruction__desktop { display: none; }
+  .nl-cc-instruction__mobile { display: inline; }
+  .nl-cc-strip {
+    padding: 12px 22px 14px;
+    gap: 20px;
+  }
+  .nl-cc-cfg__eyebrow--desktop { display: none; }
+  .nl-cc-cfg__eyebrow--mobile { display: inline; }
+  .nl-cc-cfg__value { font-size: 16px; }
+  .nl-cc-strip__end {
+    padding: 10px 16px;
+    font-size: 10px;
+  }
+  .nl-cc-strip__end-desktop { display: none; }
+  .nl-cc-strip__end-mobile { display: inline; }
+  /* ── TargetPopover as bottom sheet ── Anchored popovers clip at
+     the bottom of the screen when triggered from the ConfigStrip
+     (which sits at the bottom of the viewport). Switch to a
+     fixed-bottom sheet with a backdrop and a Done button. */
+  .nl-cc-popover-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 24;
+    animation: nl-cc-backdrop-fade 200ms ease-out;
+  }
+  @keyframes nl-cc-backdrop-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .nl-cc-popover {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: auto;
+    max-width: none;
+    padding: 12px 22px 28px;
+    border: 0;
+    border-top: 1px solid rgba(139, 105, 20, 0.3);
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -8px 24px rgba(40, 20, 8, 0.12);
+    z-index: 25;
+    animation: nl-cc-sheet-rise 200ms ease-out;
+  }
+  @keyframes nl-cc-sheet-rise {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .nl-cc-popover.is-align-above,
+  .nl-cc-popover.is-align-below {
+    /* Overrides for the desktop anchor variants — mobile ignores
+       them and always uses the bottom sheet. */
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+  }
+  .nl-cc-popover__grabber {
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(139, 105, 20, 0.35);
+    margin: 0 auto 14px;
+  }
+  .nl-cc-popover__head {
+    text-align: center;
+    font-size: 10px;
+    margin-bottom: 16px;
+  }
+  .nl-cc-popover__segmented {
+    margin-bottom: 16px;
+  }
+  .nl-cc-popover__segment {
+    padding: 14px 6px;
+    font-size: 18px;
+  }
+  .nl-cc-popover__stepper {
+    margin-bottom: 18px;
+    justify-content: center;
+    padding-top: 16px;
+  }
+  .nl-cc-popover__done {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    background: #1a1208;
+    color: #f0e7d0;
+    border: 0;
+    border-radius: 6px;
+    font-family: var(--font-jost), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .nl-cc-popover__stepper-label--desktop { display: none; }
+  .nl-cc-popover__stepper-label--mobile { display: inline; }
+  .nl-cc-kbd { font-size: 9px; padding: 1px 5px; }
 }

@@ -69,9 +69,9 @@ export function rangeFor(bpm: number): { range: StripRange; position: number } {
 }
 
 /** Identifier for the active beat-subdivision. `quarter` is the
- *  neutral default (one click per beat, no in-beat ticks). Dotted
- *  variants are reference-only — they appear in the grid but click
- *  doesn't change the audio. */
+ *  neutral default (one click per beat, no in-beat ticks). All other
+ *  entries — including dotted notes and triplets — are audible
+ *  subdivisions that retune the audio scheduler. */
 export type SubdivisionId =
   | 'half'
   | 'quarter'
@@ -102,14 +102,13 @@ export interface NoteValueDef {
   glyph: string
   /** Multiplier applied to the BPM to derive the displayed rate. */
   multiplier: number
-  /** Triplet — render parent glyph + small "3" superscript via ::after. */
+  /** Triplet — render as a composite figure (three notes + bracket
+   *  or beam + "3" marker) rather than the single parent glyph. The
+   *  composite is built in NoteValue.tsx based on the `id`. */
   isTriplet?: boolean
-  /** Dotted — render parent glyph + augmentation dot inline. Dotted
-   *  notes are reference-only; clicking them flashes a tooltip but
-   *  does not change audio. */
+  /** Dotted — render parent glyph + augmentation dot inline. Fully
+   *  audible like any other subdivision. */
   isDotted?: boolean
-  /** Reference-only entries are not audible subdivisions. */
-  isReferenceOnly?: boolean
   label: string
   mobileLabel: string
 }
@@ -133,7 +132,6 @@ export const MODIFIED_NOTE_VALUES: NoteValueDef[] = [
     glyph: '',
     multiplier: 2 / 3, // dotted quarter = 1.5 quarter-note durations → 2/3 the rate
     isDotted: true,
-    isReferenceOnly: true,
     label: 'dot. quarter',
     mobileLabel: '·qtr',
   },
@@ -142,7 +140,6 @@ export const MODIFIED_NOTE_VALUES: NoteValueDef[] = [
     glyph: '',
     multiplier: 4 / 3,
     isDotted: true,
-    isReferenceOnly: true,
     label: 'dot. eighth',
     mobileLabel: '·8th',
   },
@@ -166,15 +163,17 @@ export const MODIFIED_NOTE_VALUES: NoteValueDef[] = [
 
 /** Number of clicks per accented "downbeat" for each subdivision.
  *  Used by the audio scheduler to attenuate non-downbeat ticks. For
- *  reference-only entries (dotted notes) and 'quarter' / 'half' the
- *  value is 1 — every click is a downbeat. */
+ *  values of 1 every click is a downbeat (full gain). For dotted
+ *  notes the dotted-pulse itself IS the beat, so there are no
+ *  in-beat ticks — every click is a downbeat. */
 export const SUBDIVISIONS_PER_DOWNBEAT: Record<SubdivisionId, number> = {
   half: 1,
   quarter: 1,
   eighth: 2,
   sixteenth: 4,
-  // dotted-* are reference-only (no audio change); value is unused
+  // dotted-quarter: 0.667 clicks per beat → no subdivision ticks
   'dotted-quarter': 1,
+  // dotted-eighth: 1.333 clicks per beat → no subdivision ticks
   'dotted-eighth': 1,
   // quarter-triplet = 3 clicks per 2 beats → accent every 3rd
   'quarter-triplet': 3,
@@ -190,7 +189,6 @@ export const SUBDIVISION_RATE: Record<SubdivisionId, number> = {
   quarter: 1.0,
   eighth: 2.0,
   sixteenth: 4.0,
-  // reference-only — unused by the scheduler but kept symmetric
   'dotted-quarter': 2 / 3,
   'dotted-eighth': 4 / 3,
   'quarter-triplet': 1.5,
