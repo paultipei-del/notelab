@@ -7228,3 +7228,207 @@ svg:not(.nl-notation-staff) {
     to   { transform: translateY(0); }
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Real Piano pre-roll — shown by StudyEngine for sight-read decks
+   before the round starts. Replaces the prior beige-card intro.
+   ───────────────────────────────────────────────────────────────── */
+
+.nl-sr-preroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 32px;
+}
+.nl-sr-preroll__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(154, 124, 80, 0.18);
+}
+.nl-sr-preroll__back {
+  background: none;
+  border: none;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(90, 64, 40, 0.7);
+  cursor: pointer;
+  padding: 0;
+  transition: color 120ms ease;
+}
+.nl-sr-preroll__back:hover { color: #1a1208; }
+.nl-sr-preroll__meta {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-sr-preroll__center {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+.nl-sr-preroll__clef {
+  font-family: 'Bravura', serif;
+  font-size: 72px;
+  line-height: 1;
+  color: #1a1208;
+  transition: opacity 200ms ease;
+}
+.nl-sr-preroll__clef.is-dim { opacity: 0.4; }
+.nl-sr-preroll__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 300;
+  font-size: 26px;
+  color: #1a1208;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.nl-sr-preroll__desc {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #5a4028;
+  margin: 0;
+  max-width: 440px;
+}
+
+/* Mic status — pill with dot + label */
+.nl-sr-preroll__mic {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(154, 124, 80, 0.25);
+  background: rgba(248, 240, 216, 0.4);
+  margin-top: 4px;
+}
+.nl-sr-preroll__mic.is-ready {
+  background: rgba(67, 120, 65, 0.08);
+  border-color: rgba(67, 120, 65, 0.35);
+}
+.nl-sr-preroll__mic-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(90, 64, 40, 0.4);
+  flex-shrink: 0;
+}
+.nl-sr-preroll__mic.is-ready .nl-sr-preroll__mic-dot {
+  background: #2d5a3e;
+}
+.nl-sr-preroll__mic-dot.is-pulse {
+  animation: nl-sr-mic-pulse 1800ms ease-in-out infinite;
+}
+@keyframes nl-sr-mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45, 90, 62, 0.45); }
+  50%      { box-shadow: 0 0 0 6px rgba(45, 90, 62, 0); }
+}
+.nl-sr-preroll__mic-label {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #5a4028;
+}
+.nl-sr-preroll__mic.is-ready .nl-sr-preroll__mic-label {
+  color: #2d5a3e;
+}
+
+/* Denied block — brick-red tinted card with switch-mode actions */
+.nl-sr-preroll__denied {
+  margin-top: 4px;
+  padding: 16px 18px;
+  background: rgba(160, 56, 28, 0.06);
+  border: 1px solid rgba(160, 56, 28, 0.25);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 440px;
+  width: 100%;
+}
+.nl-sr-preroll__denied-title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #a0381c;
+}
+.nl-sr-preroll__denied-desc {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #5a4028;
+  margin: 0;
+}
+.nl-sr-preroll__denied-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.nl-sr-preroll__switch {
+  flex: 1;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(160, 56, 28, 0.4);
+  border-radius: 6px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #a0381c;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.nl-sr-preroll__switch:hover {
+  background: rgba(160, 56, 28, 0.08);
+  border-color: #a0381c;
+}
+
+/* Begin button — oxblood primary */
+.nl-sr-preroll__begin {
+  margin-top: 8px;
+  padding: 12px 28px;
+  background: #a0381c;
+  color: #f0e7d0;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+.nl-sr-preroll__begin:hover { background: #872f17; }
+.nl-sr-preroll__begin:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #a0381c;
+}
+
+@media (max-width: 767.98px) {
+  .nl-sr-preroll { padding: 14px 16px 20px; }
+  .nl-sr-preroll__center { gap: 10px; padding: 16px 0; }
+  .nl-sr-preroll__clef { font-size: 56px; }
+  .nl-sr-preroll__title { font-size: 22px; }
+  .nl-sr-preroll__desc { font-size: 13px; }
+  .nl-sr-preroll__denied-actions { flex-direction: column; }
+}

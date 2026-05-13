@@ -27,6 +27,7 @@ const CHALLENGE_DECK_IDS = new Set([
 ])
 import { stopMic } from '@/components/cards/PlayItCard2'
 import PlayItCard2 from '@/components/cards/PlayItCard2'
+import RealPianoPreroll from '@/components/sight-reading/RealPianoPreroll'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 interface StudyEngineProps {
@@ -215,21 +216,21 @@ export default function StudyEngine({ deck, userId, onQuiz, pendingMode, onPendi
   const elapsedLabel = isPlayMode ? 'Time' : 'Minutes'
   const sessionMsg = stats.correct === stats.total ? 'Perfect session!' : stats.correct > stats.total * 0.8 ? 'Great work!' : 'Keep practicing!'
 
-    if (showIntro) {
+  if (showIntro) {
     return (
-      <div className="nl-study-viewport nl-study-scroll" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ background: '#ECE3CC', borderRadius: '20px', border: '1px solid #D9CFAE', padding: '56px 48px', maxWidth: '480px', width: '100%', textAlign: 'center', boxShadow: '0 4px 32px rgba(26,26,24,0.08)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '24px' }}>𝄞</div>
-          <h2 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: '32px', color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em' }}>{deck.title}</h2>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-ui)', color: '#7A7060', lineHeight: 1.8, marginBottom: '8px' }}>A note will appear on the staff.</p>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-ui)', color: '#7A7060', lineHeight: 1.8, marginBottom: '36px' }}>Play it on your piano — the mic will detect the correct note and move to the next one automatically.</p>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontWeight: 400, fontSize: 'var(--nl-text-compact)', color: '#D9CFAE', marginBottom: '28px', letterSpacing: '0.05em' }}>Make sure your microphone is enabled.</p>
-          <button onClick={() => { navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {}); resetTimer(); setShowIntro(false) }} style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '14px 40px', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, letterSpacing: '0.08em', cursor: 'pointer' }}>Begin →</button>
-          <div style={{ marginTop: '20px' }}>
-            <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#D9CFAE' }}>← Back</button>
-          </div>
-        </div>
-      </div>
+      <RealPianoPreroll
+        deckId={deck.id}
+        deckTitle={deck.title}
+        onBegin={() => {
+          // RealPianoPreroll has already acquired mic access by this
+          // point. We don't hold the stream here — PlayItCard2 calls
+          // getUserMedia again on mount, which succeeds without a
+          // second prompt now that permission is granted.
+          resetTimer()
+          setShowIntro(false)
+        }}
+        onBack={goBack}
+      />
     )
   }
 
