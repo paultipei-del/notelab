@@ -8119,9 +8119,10 @@ svg:not(.nl-notation-staff) {
 .nl-glossary-rail {
   position: fixed;
   right: 24px;
-  /* site header (~68px) + toolbar (~56px) + 24px breathing = 148px */
-  top: 148px;
-  bottom: 24px;
+  /* site header (68px) + sticky toolbar (~56px) + 28px breathing
+     = 152px. Clears the toolbar's sticky-bottom edge with margin. */
+  top: 152px;
+  bottom: 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
