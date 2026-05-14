@@ -8363,3 +8363,660 @@ svg:not(.nl-notation-staff) {
   .nl-glossary-term { font-size: 17px; }
   .nl-glossary-def { font-size: 15px; line-height: 1.5; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   /repertoire — full rebuild. Hero + sticky toolbar (source +
+   search) + CM Syllabus view (levels / summary / subtabs / table)
+   + Magrath Guide view (gated behind a secret unlock). Mirrors
+   the design language of /glossary and /sight-reading.
+   ───────────────────────────────────────────────────────────────── */
+
+.nl-repertoire-page {
+  background: transparent;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Hero ── */
+
+.nl-repertoire-hero {
+  text-align: center;
+  padding: 36px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.nl-repertoire-hero__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a0381c;
+}
+.nl-repertoire-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1.05;
+  color: #1a1208;
+  margin: 0;
+  letter-spacing: 0.005em;
+}
+.nl-repertoire-hero__sub {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.45;
+  color: #5a4028;
+  max-width: 620px;
+  margin: 0;
+}
+/* Secret unlock target — the period after "Browser". Styled to be
+   visually identical to the title text so it's not discoverable,
+   but cursor stays default and it absorbs clicks. */
+.nl-repertoire-secret {
+  cursor: default;
+  user-select: none;
+}
+
+/* Pro gate */
+.nl-repertoire-pro-gate {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+.nl-repertoire-pro-gate__cta {
+  padding: 12px 28px;
+  background: #a0381c;
+  color: #f0e7d0;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.nl-repertoire-pro-gate__cta:hover { background: #872f17; }
+
+/* ── Sticky toolbar ── */
+
+.nl-repertoire-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 32px;
+  background: rgba(240, 231, 208, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(90, 64, 40, 0.18);
+  border-bottom: 1px solid rgba(90, 64, 40, 0.18);
+}
+.nl-repertoire-source-switcher {
+  display: inline-flex;
+  gap: 6px;
+}
+.nl-repertoire-source-pill {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: rgba(248, 240, 216, 0.55);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #5a4028;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  white-space: nowrap;
+  animation: nl-rep-pill-fade-in 200ms ease;
+}
+.nl-repertoire-source-pill:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+.nl-repertoire-source-pill.is-active {
+  background: #a0381c;
+  border-color: #a0381c;
+  color: #f0e7d0;
+}
+.nl-repertoire-source-pill.is-active:hover {
+  background: #a0381c;
+  color: #f0e7d0;
+}
+@keyframes nl-rep-pill-fade-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.nl-repertoire-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(248, 240, 216, 0.55);
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  border-radius: 999px;
+  height: 38px;
+  padding: 0 14px 0 36px;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+.nl-repertoire-search:focus-within {
+  border-color: #a0381c;
+  background: rgba(248, 240, 216, 0.85);
+}
+.nl-repertoire-search__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8a7560;
+  pointer-events: none;
+}
+.nl-repertoire-search:focus-within .nl-repertoire-search__icon {
+  color: #a0381c;
+}
+.nl-repertoire-search__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 15px;
+  color: #1a1208;
+  outline: none;
+  padding: 0;
+  min-width: 0;
+}
+.nl-repertoire-search__input::placeholder {
+  color: #8a7560;
+  font-style: italic;
+}
+.nl-repertoire-search__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* ── Level chip strip (CM Syllabus) ── */
+
+.nl-repertoire-levels {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 16px 32px 0;
+}
+.nl-repertoire-level-chip {
+  flex: 0 0 auto;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: rgba(248, 240, 216, 0.55);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #5a4028;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  white-space: nowrap;
+}
+.nl-repertoire-level-chip:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+.nl-repertoire-level-chip.is-active {
+  background: #a0381c;
+  border-color: #a0381c;
+  color: #f0e7d0;
+}
+
+/* ── Per-level summary card ── */
+
+.nl-repertoire-level-summary {
+  margin: 16px 32px 0;
+  padding: 22px 28px;
+  background: rgba(248, 240, 216, 0.55);
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 28px;
+  align-items: flex-start;
+}
+.nl-repertoire-level-summary__stat,
+.nl-repertoire-level-summary__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.nl-repertoire-level-summary__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-repertoire-level-summary__value {
+  font-family: var(--font-cormorant), serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #1a1208;
+  line-height: 1;
+}
+.nl-repertoire-level-summary__notes p {
+  margin: 0;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #5a4028;
+}
+
+/* ── Subtabs (Single Composers / Anthologies / …) ── */
+
+.nl-repertoire-subtabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 16px 32px 0;
+}
+.nl-repertoire-subtab {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: rgba(248, 240, 216, 0.55);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #5a4028;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.nl-repertoire-subtab em {
+  font-style: normal;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+.nl-repertoire-subtab:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+.nl-repertoire-subtab.is-active {
+  background: #a0381c;
+  border-color: #a0381c;
+  color: #f0e7d0;
+}
+
+/* ── Magrath attribution + filters ── */
+
+.nl-repertoire-magrath-attribution {
+  margin: 16px 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nl-repertoire-magrath-attribution__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-repertoire-magrath-attribution__body {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #8a7560;
+  margin: 0;
+}
+
+.nl-repertoire-periods {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 14px 32px 0;
+}
+.nl-repertoire-period-chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: rgba(248, 240, 216, 0.55);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #5a4028;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  white-space: nowrap;
+}
+.nl-repertoire-period-chip em {
+  font-style: normal;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+.nl-repertoire-period-chip:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+.nl-repertoire-period-chip.is-active {
+  background: #a0381c;
+  border-color: #a0381c;
+  color: #f0e7d0;
+}
+
+.nl-repertoire-level-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 32px 0;
+  flex-wrap: wrap;
+}
+.nl-repertoire-level-pills-row__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-repertoire-level-pills {
+  display: inline-flex;
+  gap: 4px;
+}
+.nl-repertoire-level-pill {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: rgba(248, 240, 216, 0.55);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #5a4028;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.nl-repertoire-level-pill:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+.nl-repertoire-level-pill.is-active {
+  background: #a0381c;
+  border-color: #a0381c;
+  color: #f0e7d0;
+}
+.nl-repertoire-level-pills-row__count {
+  margin-left: auto;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #1a1208;
+}
+
+/* ── Entries table ── */
+
+.nl-repertoire-table {
+  margin: 16px 32px 32px;
+  display: flex;
+  flex-direction: column;
+}
+.nl-repertoire-table__header {
+  display: grid;
+  grid-template-columns: minmax(180px, 280px) 1fr minmax(160px, 240px) 24px;
+  gap: 28px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(154, 124, 80, 0.28);
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8a7560;
+}
+.nl-repertoire-table--magrath .nl-repertoire-table__header {
+  grid-template-columns: 56px minmax(180px, 240px) minmax(220px, 320px) 1fr 24px;
+}
+.nl-repertoire-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 280px) 1fr minmax(160px, 240px) 24px;
+  gap: 28px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  align-items: baseline;
+  text-decoration: none;
+  color: inherit;
+  transition: background 120ms ease;
+}
+.nl-repertoire-table--magrath .nl-repertoire-row {
+  grid-template-columns: 56px minmax(180px, 240px) minmax(220px, 320px) 1fr 24px;
+}
+.nl-repertoire-row:nth-of-type(odd) {
+  background: rgba(248, 240, 216, 0.35);
+}
+.nl-repertoire-row:hover {
+  background: rgba(248, 240, 216, 0.65);
+}
+.nl-repertoire-row:hover .nl-repertoire-row__arrow {
+  color: #a0381c;
+  opacity: 1;
+}
+.nl-repertoire-row__level {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #5a4028;
+}
+.nl-repertoire-row__composer {
+  font-family: var(--font-cormorant), serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1208;
+}
+.nl-repertoire-row__title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 16px;
+  color: #1a1208;
+  font-style: italic;
+}
+.nl-repertoire-row__title em {
+  color: #5a4028;
+}
+.nl-repertoire-row__restrictions {
+  font-style: italic;
+  color: #a0381c;
+  font-size: 13px;
+}
+.nl-repertoire-row__publisher,
+.nl-repertoire-row__description {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #5a4028;
+}
+.nl-repertoire-row__description {
+  /* 2-line clamp for the Magrath description so rows don't blow up
+     when entries have multi-paragraph blurbs. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.nl-repertoire-row__arrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 14px;
+  color: #8a7560;
+  opacity: 0.5;
+  align-self: center;
+  transition: color 120ms ease, opacity 120ms ease;
+}
+
+/* ── Empty state ── */
+
+.nl-repertoire-empty {
+  margin: 32px 32px;
+  text-align: center;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.nl-repertoire-empty__title {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 22px;
+  color: #5a4028;
+  margin: 0;
+}
+.nl-repertoire-empty__sub {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #8a7560;
+  margin: 0 0 8px;
+}
+.nl-repertoire-empty__reset {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #a0381c;
+}
+.nl-repertoire-empty__reset:hover {
+  text-decoration: underline;
+}
+
+/* ── Unlock toast ── */
+
+.nl-repertoire-unlock-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1208;
+  color: #f0e7d0;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 14px;
+  z-index: 80;
+  box-shadow: 0 10px 24px rgba(40, 20, 8, 0.32);
+  animation: nl-rep-toast-in 220ms ease;
+}
+@keyframes nl-rep-toast-in {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ─── Mobile (< 768px) ─── */
+
+@media (max-width: 767.98px) {
+  .nl-repertoire-hero { padding: 22px 16px 16px; }
+  .nl-repertoire-hero__title { font-size: 32px; }
+  .nl-repertoire-hero__sub { font-size: 14px; }
+
+  .nl-repertoire-toolbar {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .nl-repertoire-source-switcher {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nl-repertoire-source-switcher::-webkit-scrollbar { display: none; }
+  .nl-repertoire-source-pill { font-size: 10px; padding: 6px 12px; }
+
+  .nl-repertoire-levels,
+  .nl-repertoire-periods {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 14px 16px 0;
+    margin: 0 -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scrollbar-width: none;
+  }
+  .nl-repertoire-levels::-webkit-scrollbar,
+  .nl-repertoire-periods::-webkit-scrollbar { display: none; }
+  .nl-repertoire-level-chip,
+  .nl-repertoire-period-chip { font-size: 10px; padding: 6px 12px; }
+
+  .nl-repertoire-level-summary {
+    margin: 14px 16px 0;
+    padding: 18px 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .nl-repertoire-level-summary__notes {
+    grid-column: 1 / -1;
+  }
+  .nl-repertoire-level-summary__value { font-size: 24px; }
+
+  .nl-repertoire-subtabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 14px 16px 0;
+    scrollbar-width: none;
+  }
+  .nl-repertoire-subtabs::-webkit-scrollbar { display: none; }
+  .nl-repertoire-subtab { font-size: 10px; padding: 6px 12px; flex: 0 0 auto; }
+
+  .nl-repertoire-magrath-attribution { margin: 14px 16px 0; }
+
+  .nl-repertoire-level-pills-row {
+    padding: 14px 16px 0;
+    gap: 8px;
+  }
+  .nl-repertoire-level-pill { width: 26px; height: 26px; font-size: 11px; }
+  .nl-repertoire-level-pills-row__count {
+    margin-left: 0;
+    width: 100%;
+    font-size: 10px;
+  }
+
+  .nl-repertoire-table { margin: 14px 16px 60px; }
+  .nl-repertoire-table__header { display: none; }
+  .nl-repertoire-row {
+    grid-template-columns: 1fr auto;
+    gap: 6px 10px;
+    padding: 12px 14px;
+  }
+  .nl-repertoire-table--magrath .nl-repertoire-row {
+    grid-template-columns: 56px 1fr auto;
+  }
+  /* Mobile: composer + title stack as a header row; publisher /
+     description span all columns below. Arrow stays in the corner. */
+  .nl-repertoire-row__composer,
+  .nl-repertoire-row__title {
+    /* allow stacking */
+  }
+  .nl-repertoire-row__publisher,
+  .nl-repertoire-row__description {
+    grid-column: 1 / -1;
+    font-size: 13px;
+  }
+  .nl-repertoire-row__arrow { font-size: 13px; }
+
+  .nl-repertoire-empty { margin: 24px 16px; }
+}
