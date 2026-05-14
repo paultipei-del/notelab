@@ -1309,7 +1309,6 @@ body:has(.nl-study-viewport) {
 /* ── Key signatures explorer (/key-signatures) ─ */
 .nl-key-sig-page {
   min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
-  background: #F2EDDF;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
