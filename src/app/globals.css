@@ -2126,6 +2126,341 @@ body:has(.nl-study-viewport) {
   margin: 4px 0 12px;
 }
 
+/* ── Scale builder (/scale-builder) ─ */
+
+.nl-scale-builder-page {
+  min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.nl-scale-builder-inner {
+  flex: 1;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 20px 24px max(40px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.nl-scale-builder-back {
+  display: inline-block;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  color: #5a4028;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+.nl-scale-builder-back:hover { color: #a0381c; }
+
+/* Hero */
+.nl-scale-builder-hero {
+  margin-top: 18px;
+  margin-bottom: 28px;
+}
+.nl-scale-builder-hero__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #a0381c;
+  margin: 0 0 10px;
+}
+.nl-scale-builder-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.1;
+  color: #1a1208;
+  margin: 0;
+}
+.nl-scale-builder-hero__title em {
+  font-style: italic;
+  color: #a0381c;
+}
+@media (max-width: 640px) {
+  .nl-scale-builder-hero__title { font-size: 28px; }
+}
+
+/* Selectors */
+.nl-scale-builder-selectors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+@media (max-width: 768px) {
+  .nl-scale-builder-selectors { grid-template-columns: 1fr; }
+}
+
+.nl-scale-builder-select-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.nl-scale-builder-select-shell__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a7560;
+  margin-bottom: 6px;
+}
+.nl-scale-builder-select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(248, 240, 216, 0.85);
+  color: #1a1208;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  border-radius: 10px;
+  padding: 13px 38px 13px 16px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.nl-scale-builder-select:focus {
+  border-color: #a0381c;
+  box-shadow: 0 0 0 3px rgba(160, 56, 28, 0.10);
+}
+.nl-scale-builder-select-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  margin-top: 4px;
+  pointer-events: none;
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  color: #8a7560;
+}
+
+/* Staff card */
+.nl-scale-builder-staff-card {
+  background: #F2EDDF;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.nl-scale-builder-staff-card.is-correct { border-color: #276840; }
+.nl-scale-builder-staff-card.is-wrong { border-color: #a0381c; }
+
+.nl-scale-builder-staff-svg-wrap {
+  padding: 16px 20px 0;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nl-scale-builder-staff-svg { display: block; }
+
+.nl-scale-builder-staff-divider {
+  height: 1px;
+  background: rgba(154, 124, 80, 0.18);
+  margin-top: 12px;
+}
+
+.nl-scale-builder-status {
+  padding: 14px 20px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nl-scale-builder-status__body { display: flex; flex-direction: column; gap: 6px; }
+.nl-scale-builder-status__text {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #5a4028;
+  margin: 0;
+}
+.nl-scale-builder-status__step {
+  font-weight: 600;
+  color: #a0381c;
+}
+.nl-scale-builder-status__from {
+  font-family: var(--font-cormorant), serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #1a1208;
+}
+.nl-scale-builder-hint {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #8a7560;
+  margin: 0;
+}
+.nl-scale-builder-feedback {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #a0381c;
+  margin: 0;
+}
+
+.nl-scale-builder-complete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.nl-scale-builder-complete__title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #276840;
+  margin: 0;
+}
+.nl-scale-builder-complete__actions {
+  display: inline-flex;
+  gap: 8px;
+}
+.nl-scale-builder-complete-btn {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: transparent;
+  color: #5a4028;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.nl-scale-builder-complete-btn:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+.nl-scale-builder-complete-btn.is-primary {
+  background: #a0381c;
+  border-color: #a0381c;
+  color: #f0e7d0;
+}
+.nl-scale-builder-complete-btn.is-primary:hover {
+  background: #8a2f17;
+  border-color: #8a2f17;
+  color: #f0e7d0;
+}
+
+/* Piano card */
+.nl-scale-builder-piano-card {
+  background: #F2EDDF;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  border-radius: 16px;
+  padding: 16px 20px;
+  overflow: hidden;
+}
+
+.nl-scale-builder-piano-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.nl-scale-builder-piano-label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a7560;
+  margin: 0;
+}
+
+.nl-scale-builder-piano-tools {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nl-scale-builder-tool-btn {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: transparent;
+  color: #5a4028;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.nl-scale-builder-tool-btn:hover {
+  border-color: #a0381c;
+  color: #a0381c;
+}
+.nl-scale-builder-tool-btn.is-active {
+  background: #a0381c;
+  border-color: #a0381c;
+  color: #f0e7d0;
+}
+
+.nl-scale-builder-keyboard-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nl-scale-builder-keyboard {
+  position: relative;
+}
+
+.nl-scale-builder-key-white {
+  position: absolute;
+  top: 0;
+  background: #ffffff;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 0 6px;
+  transition: background 0.1s ease;
+}
+.nl-scale-builder-key-white.is-root { background: #f8e5cd; }
+.nl-scale-builder-key-white.is-played { background: #d8e8de; }
+.nl-scale-builder-key-white.is-next { background: #f3e0db; }
+.nl-scale-builder-key-white__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  color: #8a7560;
+}
+
+.nl-scale-builder-key-black {
+  position: absolute;
+  top: 0;
+  background: #1a1208;
+  border: none;
+  border-radius: 0 0 4px 4px;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.1s ease;
+}
+.nl-scale-builder-key-black.is-root { background: #a0381c; }
+.nl-scale-builder-key-black.is-played { background: #276840; }
+.nl-scale-builder-key-black.is-next { background: #c87a64; }
+
 /* ── Key signatures — drill tab (KeyDrill) ─ */
 .nl-key-drill {
   display: flex;

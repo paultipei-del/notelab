@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import * as Tone from 'tone'
-import { useRef, useEffect } from 'react'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Step = 'W' | 'H' | 'A'  // Whole, Half, Augmented
@@ -331,7 +330,6 @@ const ACC_MAP: Record<string, 'sharp' | 'flat' | 'double_sharp' | 'double_flat'>
 
 // ── Main Component ─────────────────────────────────────────────────────────
 export default function ScaleBuilder() {
-  const router = useRouter()
   const [scaleType, setScaleType] = useState<ScaleType>('major')
   const [selectedRoot, setSelectedRoot] = useState<string | null>(null)
   const [showHint, setShowHint] = useState(false)
@@ -453,60 +451,57 @@ if (newNotes.length === expectedLength) {
     setFlash(null)
   }
 
-  const F = 'var(--font-jost), sans-serif'
-  const SERIF = 'var(--font-cormorant), serif'
-
-  // Key color logic
-  function keyBg(key: PianoKey): string {
-    const isBuilt = builtNotes.some(n => n.midiNum === key.midi)
+  // Key visual state helpers
+  function whiteKeyState(key: PianoKey): string {
     const isRoot = builtNotes[0]?.midiNum === key.midi
+    const isBuilt = builtNotes.some(n => n.midiNum === key.midi)
     const isNext = expectedNextMidi === key.midi && phase === 'play_note'
-
-    if (key.black) {
-      if (isRoot) return '#B5402A'
-      if (isBuilt) return '#276840'
-      if (isNext && showHint) return '#6B8FD4'
-      return '#1A1A18'
-    } else {
-      if (isRoot) return '#FAEEDA'
-      if (isBuilt) return '#E0EDE6'
-      if (isNext && showHint) return '#E8EEF9'
-      return 'white'
-    }
+    const cls = ['nl-scale-builder-key-white']
+    if (isRoot) cls.push('is-root')
+    else if (isBuilt) cls.push('is-played')
+    if (isNext && showHint) cls.push('is-next')
+    return cls.join(' ')
+  }
+  function blackKeyState(key: PianoKey): string {
+    const isRoot = builtNotes[0]?.midiNum === key.midi
+    const isBuilt = builtNotes.some(n => n.midiNum === key.midi)
+    const isNext = expectedNextMidi === key.midi && phase === 'play_note'
+    const cls = ['nl-scale-builder-key-black']
+    if (isRoot) cls.push('is-root')
+    else if (isBuilt) cls.push('is-played')
+    if (isNext && showHint) cls.push('is-next')
+    return cls.join(' ')
   }
 
-  // Staff rendering
+  // Staff geometry
   const step = 6
   const staffTop = 40
   const staffLeft = 20
   const noteSpacing = 54
-  const staffWidth = 520           // fixed — accommodates all scale types
-  const svgW = staffLeft * 2 + staffWidth   // 560
-  const noteNameY = staffTop + 9 * step + 28   // generous gap below staff
-  const stepY     = noteNameY + 20             // step/degree row below note names
+  const staffWidth = 520
+  const svgW = staffLeft * 2 + staffWidth
+  const noteNameY = staffTop + 9 * step + 28
+  const stepY = noteNameY + 20
   const svgH = stepY + 16
 
-  const selectBase: React.CSSProperties = {
-    width: '100%', appearance: 'none', WebkitAppearance: 'none',
-    background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '12px',
-    padding: '11px 36px 11px 16px',
-    fontFamily: F, fontSize: 'var(--nl-text-ui)', fontWeight: 400, color: '#2A2318',
-    cursor: 'pointer', outline: 'none',
-  }
-
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ maxWidth: '860px', margin: '0 auto', padding: '20px 16px 80px' }}>
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
+    <div className="nl-scale-builder-page">
+      <div className="nl-scale-builder-inner">
+        <Link href="/tools" className="nl-scale-builder-back">← Back to tools</Link>
 
-        {/* ── Selectors row ── */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-          {/* Scale type */}
-          <div style={{ position: 'relative', flex: 2 }}>
+        <header className="nl-scale-builder-hero">
+          <p className="nl-scale-builder-hero__eyebrow">Scale Builder</p>
+          <h1 className="nl-scale-builder-hero__title">Follow the <em>pattern.</em></h1>
+        </header>
+
+        {/* ── Selectors ── */}
+        <div className="nl-scale-builder-selectors">
+          <div className="nl-scale-builder-select-shell">
+            <span className="nl-scale-builder-select-shell__label">Scale</span>
             <select
+              className="nl-scale-builder-select"
               value={scaleType}
               onChange={e => { setScaleType(e.target.value as ScaleType); reset() }}
-              style={selectBase}
             >
               {SCALE_GROUPS.map(group => (
                 <optgroup key={group.label} label={group.label}>
@@ -516,12 +511,13 @@ if (newNotes.length === expectedLength) {
                 </optgroup>
               ))}
             </select>
-            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: 'var(--nl-text-compact)' }}>▾</span>
+            <span className="nl-scale-builder-select-chevron" aria-hidden>▾</span>
           </div>
 
-          {/* Root note */}
-          <div style={{ position: 'relative', flex: 1 }}>
+          <div className="nl-scale-builder-select-shell">
+            <span className="nl-scale-builder-select-shell__label">Root</span>
             <select
+              className="nl-scale-builder-select"
               value={selectedRoot ?? ''}
               onChange={e => {
                 const note = e.target.value
@@ -534,37 +530,28 @@ if (newNotes.length === expectedLength) {
                 setFlash(null)
                 playNote(midi)
               }}
-              style={selectBase}
             >
               <option value="" disabled>Root…</option>
               {['C','C#','Db','D','D#','Eb','E','F','F#','Gb','G','G#','Ab','A','A#','Bb','B'].map(note => (
                 <option key={note} value={note}>{note}</option>
               ))}
             </select>
-            <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A7060', fontSize: 'var(--nl-text-compact)' }}>▾</span>
+            <span className="nl-scale-builder-select-chevron" aria-hidden>▾</span>
           </div>
         </div>
 
-        {/* ── Unified card: Staff + Pattern + Status ── */}
-        <div style={{
-          background: '#ECE3CC', borderRadius: '16px', marginBottom: '16px',
-          border: '1px solid ' + (flash === 'correct' ? '#276840' : flash === 'wrong' ? '#C0392B' : '#D9CFAE'),
-          transition: 'border-color 0.15s', overflow: 'hidden',
-        }}>
-
-          {/* Staff + embedded note names + step labels */}
-          <div style={{ padding: '16px 20px 0', display: 'flex', justifyContent: 'center', overflowX: 'auto' }}>
-            <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
-              {/* Staff lines */}
+        {/* ── Staff card ── */}
+        <div
+          className={'nl-scale-builder-staff-card' + (flash === 'correct' ? ' is-correct' : flash === 'wrong' ? ' is-wrong' : '')}
+        >
+          <div className="nl-scale-builder-staff-svg-wrap">
+            <svg className="nl-scale-builder-staff-svg" width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
               {[0,2,4,6,8].map(p => (
                 <line key={p} x1={staffLeft} y1={staffTop + p*step} x2={staffLeft + staffWidth} y2={staffTop + p*step} stroke="#1A1A18" strokeWidth="1.2" />
               ))}
-              {/* Barline */}
               <line x1={staffLeft + staffWidth} y1={staffTop} x2={staffLeft + staffWidth} y2={staffTop + 8*step} stroke="#1A1A18" strokeWidth="2" />
-              {/* Treble clef */}
               <text x={staffLeft} y={staffTop + 32} fontSize="50" fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">𝄞</text>
 
-              {/* Notes */}
               {builtNotes.map((note, i) => {
                 const key = note.name + note.octave
                 const pos = TREBLE_POS[key] ?? TREBLE_POS[note.name.replace('b','') + note.octave]
@@ -574,7 +561,7 @@ if (newNotes.length === expectedLength) {
                 const stemUp = pos >= 4
                 const notePitchClass = note.name.replace(/\d+$/, '')
                 const acc = ACC_MAP[notePitchClass]
-                const color = i === 0 ? '#B5720F' : '#276840'
+                const color = i === 0 ? '#a0381c' : '#276840'
                 const ledgers = []
                 for (let p = 10; p <= pos; p += 2) ledgers.push(<line key={'lb'+p} x1={nx-10} y1={staffTop+p*step} x2={nx+10} y2={staffTop+p*step} stroke="#1A1A18" strokeWidth="1.2" />)
                 for (let p = -2; p >= pos; p -= 2) ledgers.push(<line key={'la'+p} x1={nx-10} y1={staffTop+p*step} x2={nx+10} y2={staffTop+p*step} stroke="#1A1A18" strokeWidth="1.2" />)
@@ -589,11 +576,9 @@ if (newNotes.length === expectedLength) {
                     }</text>}
                     <text x={nx} y={ny} fontSize="46" fontFamily="Bravura, serif" fill={color} textAnchor="middle" dominantBaseline="central">{String.fromCodePoint(0xE0A4)}</text>
                     <line x1={stemUp ? nx+6 : nx-6} y1={ny} x2={stemUp ? nx+6 : nx-6} y2={stemUp ? ny-38 : ny+38} stroke={color} strokeWidth="1.5" />
-                    {/* Note name — aligned directly below note head */}
-                    <text x={nx} y={noteNameY} fontSize="22" fontFamily="var(--font-cormorant), serif" fill={color} textAnchor="middle" dominantBaseline="middle" fontWeight="400">
+                    <text x={nx} y={noteNameY} fontSize="22" fontFamily="var(--font-cormorant), serif" fill={color} textAnchor="middle" dominantBaseline="middle" fontWeight="500">
                       {note.name}
                     </text>
-                    {/* Degree label (degree-based scales only) */}
                     {(DEGREE_LABELS[scaleType] ?? []).length > 0 && DEGREE_LABELS[scaleType]![i] && (
                       <text x={nx} y={stepY} fontSize="12" fontFamily="var(--font-jost), sans-serif" fill={color} fillOpacity="0.65" textAnchor="middle" dominantBaseline="middle" letterSpacing="0.04em">
                         {DEGREE_LABELS[scaleType]![i]}
@@ -603,18 +588,15 @@ if (newNotes.length === expectedLength) {
                 )
               })}
 
-              {/* Step labels + connecting lines between notes (normal scales) */}
               {(DEGREE_LABELS[scaleType] ?? []).length === 0 && pattern.map((st, i) => {
-                const cx = staffLeft + 68 + i * noteSpacing        // left note center
-                const cx2 = staffLeft + 68 + (i + 1) * noteSpacing  // right note center
+                const cx = staffLeft + 68 + i * noteSpacing
+                const cx2 = staffLeft + 68 + (i + 1) * noteSpacing
                 const mx = (cx + cx2) / 2
-                const x1 = cx + 22   // clear of note name text
-                const x2 = cx2 - 22
                 const isDone = builtNotes.length > i + 1
                 const isActive = builtNotes.length === i + 1 && phase !== 'select_root'
-                const color = isDone ? '#276840' : isActive ? '#1A1A18' : '#C8C4BA'
+                const color = isDone ? '#276840' : isActive ? '#1a1208' : '#C8C4BA'
                 return (
-                  <text key={'st'+i} x={mx} y={stepY} fontSize="12" fontFamily="var(--font-jost), sans-serif" fill={color} textAnchor="middle" dominantBaseline="middle" fontWeight={isActive ? '500' : '300'} letterSpacing="0.06em">
+                  <text key={'st'+i} x={mx} y={stepY} fontSize="12" fontFamily="var(--font-jost), sans-serif" fill={color} textAnchor="middle" dominantBaseline="middle" fontWeight={isActive ? '600' : '500'} letterSpacing="0.06em">
                     {st}
                   </text>
                 )
@@ -622,37 +604,31 @@ if (newNotes.length === expectedLength) {
             </svg>
           </div>
 
-          {/* Divider */}
-          <div style={{ height: '1px', background: '#EDE8DF' }} />
+          <div className="nl-scale-builder-staff-divider" aria-hidden />
 
-          {/* Status / Instruction */}
-          <div style={{ padding: '14px 20px', minHeight: '52px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="nl-scale-builder-status">
             {phase === 'select_root' && (
-              <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#B0ACA4' }}>Choose a scale type and root note above, or click any key below.</p>
+              <p className="nl-scale-builder-hint">Choose a scale type and root note above, or click any key below.</p>
             )}
             {phase === 'play_note' && currentStep && (
-              <div>
-                <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400, color: '#7A7060' }}>
-                  Play a{' '}
-                  <span style={{ fontWeight: 500, color: '#B5720F' }}>{STEP_LABELS[currentStep]}</span>
-                  {' '}above{' '}
-                  <span style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: '#2A2318' }}>{builtNotes[builtNotes.length-1].name}</span>
+              <div className="nl-scale-builder-status__body">
+                <p className="nl-scale-builder-status__text">
+                  Play a <span className="nl-scale-builder-status__step">{STEP_LABELS[currentStep]}</span>
+                  {' '}above <span className="nl-scale-builder-status__from">{builtNotes[builtNotes.length-1].name}</span>
                 </p>
-                {error && <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#C0392B', marginTop: '6px' }}>✗ {error}</p>}
+                {error && <p className="nl-scale-builder-feedback">✗ {error}</p>}
               </div>
             )}
             {phase === 'complete' && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <p style={{ fontFamily: SERIF, fontSize: '22px', fontWeight: 300, color: '#276840' }}>
+              <div className="nl-scale-builder-complete">
+                <p className="nl-scale-builder-complete__title">
                   {builtNotes[0]?.name} {SCALE_LABELS[scaleType]} ✓
                 </p>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => playScale(builtNotes)}
-                    style={{ background: 'transparent', color: '#2A2318', border: '1px solid #D9CFAE', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
+                <div className="nl-scale-builder-complete__actions">
+                  <button type="button" className="nl-scale-builder-complete-btn" onClick={() => playScale(builtNotes)}>
                     ▶ Play
                   </button>
-                  <button onClick={reset}
-                    style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '8px', padding: '7px 16px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
+                  <button type="button" className="nl-scale-builder-complete-btn is-primary" onClick={reset}>
                     New Scale
                   </button>
                 </div>
@@ -662,36 +638,50 @@ if (newNotes.length === expectedLength) {
         </div>
 
         {/* ── Piano ── */}
-        <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '16px 20px', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#7A7060' }}>Piano</p>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <button onClick={() => setShowHint(!showHint)}
-                style={{ background: showHint ? '#1A1A18' : 'transparent', color: showHint ? 'white' : '#7A7060', border: '1px solid ' + (showHint ? '#1A1A18' : '#D9CFAE'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
+        <div className="nl-scale-builder-piano-card">
+          <div className="nl-scale-builder-piano-head">
+            <p className="nl-scale-builder-piano-label">Piano</p>
+            <div className="nl-scale-builder-piano-tools">
+              <button
+                type="button"
+                className={'nl-scale-builder-tool-btn' + (showHint ? ' is-active' : '')}
+                onClick={() => setShowHint(!showHint)}
+              >
                 Hint {showHint ? 'on' : 'off'}
               </button>
-              <button onClick={() => setShowNoteNames(!showNoteNames)}
-                style={{ background: showNoteNames ? '#1A1A18' : 'transparent', color: showNoteNames ? 'white' : '#7A7060', border: '1px solid ' + (showNoteNames ? '#1A1A18' : '#D9CFAE'), borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
+              <button
+                type="button"
+                className={'nl-scale-builder-tool-btn' + (showNoteNames ? ' is-active' : '')}
+                onClick={() => setShowNoteNames(!showNoteNames)}
+              >
                 Note names
               </button>
-              <button onClick={reset}
-                style={{ background: 'transparent', color: '#7A7060', border: '1px solid #D9CFAE', borderRadius: '6px', padding: '4px 10px', fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, cursor: 'pointer' }}>
+              <button type="button" className="nl-scale-builder-tool-btn" onClick={reset}>
                 Reset
               </button>
             </div>
           </div>
-          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const }}>
-            <div style={{ position: 'relative', height: KH + 'px', width: WHITE_KEYS.length * KW + 'px' }}>
+          <div className="nl-scale-builder-keyboard-scroll">
+            <div className="nl-scale-builder-keyboard" style={{ height: KH + 'px', width: WHITE_KEYS.length * KW + 'px' }}>
               {WHITE_KEYS.map((key, i) => (
-                <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
-                  style={{ position: 'absolute', left: i * KW, top: 0, width: KW - 1, height: KH, background: keyBg(key), border: '1px solid #D9CFAE', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 1, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '6px', transition: 'background 0.1s' }}>
-                  {showNoteNames && <span style={{ fontSize: '9px', color: '#7A7060', fontFamily: F }}>{key.name}{key.octave}</span>}
+                <button
+                  key={key.name+key.octave}
+                  type="button"
+                  className={whiteKeyState(key)}
+                  onClick={() => handleKeyClick(key)}
+                  style={{ left: i * KW, width: KW - 1, height: KH }}
+                >
+                  {showNoteNames && <span className="nl-scale-builder-key-white__label">{key.name}{key.octave}</span>}
                 </button>
               ))}
               {BLACK_KEYS.map(key => (
-                <button key={key.name+key.octave} onClick={() => handleKeyClick(key)}
-                  style={{ position: 'absolute', left: key.whiteIndex * KW + KW - BW/2, top: 0, width: BW, height: BH, background: keyBg(key), borderRadius: '0 0 4px 4px', cursor: 'pointer', zIndex: 2, border: 'none', transition: 'background 0.1s' }}>
-                </button>
+                <button
+                  key={key.name+key.octave}
+                  type="button"
+                  className={blackKeyState(key)}
+                  onClick={() => handleKeyClick(key)}
+                  style={{ left: key.whiteIndex * KW + KW - BW/2, width: BW, height: BH }}
+                />
               ))}
             </div>
           </div>
