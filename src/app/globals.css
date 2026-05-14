@@ -7821,3 +7821,79 @@ svg:not(.nl-notation-staff) {
   .nl-sr-ltr-btn--natural { height: 42px; font-size: 16px; border-radius: 8px; }
   .nl-sr-ltr-btn--accidental { height: 28px; font-size: 12px; border-radius: 6px; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   Full Piano (2-octave) — cream-on-cream keyboard for the
+   ?input=keyboard-full mode on /note-id play. Middle C labeled in
+   oxblood. Hover-tint to oxblood on both white and black keys.
+   Mobile horizontally scrolls (14 white keys × 52px = 728px > viewport).
+   ───────────────────────────────────────────────────────────────── */
+
+.nl-sr-piano-scroller {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* Hide scrollbar visually; users can swipe-pan instead. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nl-sr-piano-scroller::-webkit-scrollbar { display: none; }
+
+.nl-sr-piano {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.nl-sr-piano-key {
+  position: absolute;
+  top: 0;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.nl-sr-piano-key--white {
+  background: rgba(248, 240, 216, 0.6);
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  border-radius: 0 0 6px 6px;
+  z-index: 1;
+}
+.nl-sr-piano-key--white:hover {
+  background: rgba(160, 56, 28, 0.15);
+  border-color: rgba(160, 56, 28, 0.55);
+}
+.nl-sr-piano-key--black {
+  background: #1a1208;
+  border: none;
+  border-radius: 0 0 5px 5px;
+  z-index: 2;
+}
+.nl-sr-piano-key--black:hover {
+  background: #a0381c;
+}
+.nl-sr-piano-key__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8px;
+  text-align: center;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #a0381c;
+  pointer-events: none;
+}
+
+@media (max-width: 767.98px) {
+  .nl-sr-piano-scroller {
+    /* Left-align so the keyboard starts at the viewport edge —
+       centered keyboards with overflow can clip the leftmost keys
+       in the initial scroll position. */
+    justify-content: flex-start;
+    padding: 0 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+}
