@@ -2,7 +2,7 @@
 import KeyDrill from '@/components/KeyDrill'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import * as Tone from 'tone'
 
 // ── Key Signature Data ─────────────────────────────────────────────────────
@@ -465,7 +465,6 @@ function KeyPiano({ keyInfo, showScale, highlightOneOctave, isRelativeMinor, rel
 
 // ── Main Component ─────────────────────────────────────────────────────────
 export default function KeySignatures() {
-  const router = useRouter()
   const [selectedKey, setSelectedKey] = useState('C')
   const [clef, setClef] = useState<'treble' | 'bass' | 'both'>('both')
   const [showScale, setShowScale] = useState(true)
@@ -540,12 +539,29 @@ export default function KeySignatures() {
   return (
     <div className="nl-key-sig-page">
       <div className="nl-key-sig-inner">
-        <button type="button" className="nl-key-sig-back" onClick={() => router.push('/tools')}>
-          ← Back
-        </button>
+        <header className="nl-key-sig-hero">
+          <Link href="/tools" className="nl-key-sig-hero__back">← Back to tools</Link>
+          <div className="nl-key-sig-hero__row">
+            <div className="nl-key-sig-hero__text">
+              <span className="nl-key-sig-hero__eyebrow">Key Signatures</span>
+              <h1 className="nl-key-sig-hero__title">The shape of <em>tonality.</em></h1>
+              <p className="nl-key-sig-hero__sub">
+                Explore the circle of fifths, see how sharps and flats build a key&apos;s character, and study the historical Affekt of each major and minor.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="nl-key-sig-hero__cta"
+              onClick={() => setActiveTab('drill')}
+            >
+              <span className="nl-key-sig-hero__cta-full">Study mode →</span>
+              <span className="nl-key-sig-hero__cta-short">Study →</span>
+            </button>
+          </div>
+        </header>
 
         <div className="nl-key-sig-panel">
-          <aside className="nl-key-sig-panel__viz">
+          <aside className="nl-key-sig-circle-panel">
             <p className="nl-key-sig-eyebrow">Circle of fifths</p>
             <div className="nl-key-sig-cof-frame">
               <CircleOfFifths selected={selectedKey} onSelect={setSelectedKey} />
@@ -554,10 +570,10 @@ export default function KeySignatures() {
             <div className="nl-key-sig-viz-spacer" aria-hidden="true" />
           </aside>
 
-          <div className="nl-key-sig-panel__main">
-            <header className="nl-key-sig-keyhead">
-              <h1 className="nl-key-sig-title">{selectedKey} Major</h1>
-              <p className="nl-key-sig-acc-badge">
+          <div className="nl-key-sig-info-panel">
+            <header className="nl-key-sig-info__head">
+              <h2 className="nl-key-sig-info__key">{selectedKey} Major</h2>
+              <p className="nl-key-sig-info__summary">
                 {keyInfo.sharps > 0
                   ? `${keyInfo.sharps} sharp${keyInfo.sharps > 1 ? 's' : ''}`
                   : keyInfo.flats > 0
@@ -566,181 +582,175 @@ export default function KeySignatures() {
               </p>
             </header>
 
-            <div className="nl-key-sig-meta-row">
+            <div className="nl-key-sig-info__meta">
               <div>
-                <p className="nl-key-sig-meta-label">Relative minor</p>
-                <p className="nl-key-sig-meta-value">{keyInfo.relativeMinor} minor</p>
+                <p className="nl-key-sig-info__meta-label">Relative minor</p>
+                <p className="nl-key-sig-info__meta-value">{keyInfo.relativeMinor} minor</p>
               </div>
               <div>
-                <p className="nl-key-sig-meta-label">
+                <p className="nl-key-sig-info__meta-label">
                   {keyInfo.sharps > 0 ? 'Sharps' : keyInfo.flats > 0 ? 'Flats' : 'Notes'}
                 </p>
-                <p className="nl-key-sig-meta-value-sm">
+                <p className="nl-key-sig-info__meta-notes">
                   {keyInfo.sharps > 0
-                    ? keyInfo.sharpNames.join(' · ')
+                    ? keyInfo.sharpNames.join(' ')
                     : keyInfo.flats > 0
-                      ? keyInfo.flatNames.join(' · ')
+                      ? keyInfo.flatNames.join(' ')
                       : 'C D E F G A B'}
                 </p>
               </div>
             </div>
 
             <div className="nl-key-sig-tabs" role="tablist" aria-label="Key tools">
-              <div className="nl-key-sig-tabs__primary">
-                {(['signature', 'affekt'] as const).map(tab => (
-                  <button
-                    key={tab}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeTab === tab}
-                    className={'nl-key-sig-tab' + (activeTab === tab ? ' nl-key-sig-tab--active' : '')}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab === 'signature' ? 'Signature' : 'Affekt'}
-                  </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === 'drill'}
-                className={
-                  'nl-key-sig-tab nl-key-sig-tab--study' + (activeTab === 'drill' ? ' nl-key-sig-tab--active' : '')
-                }
-                onClick={() => setActiveTab('drill')}
-              >
-                Study
-              </button>
+              {(['signature', 'affekt'] as const).map(tab => (
+                <button
+                  key={tab}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === tab}
+                  className={'nl-key-sig-tab' + (activeTab === tab ? ' is-active' : '')}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab === 'signature' ? 'Signature' : 'Affekt'}
+                </button>
+              ))}
             </div>
 
-            {activeTab === 'signature' && (
-              <div className="nl-key-sig-tab-body nl-key-sig-tab-body--signature">
-                <div className="nl-key-sig-card">
-                  <div className="nl-key-sig-card__head">
-                    <span className="nl-key-sig-card__label">Staff</span>
-                    <div className="nl-key-sig-clef-toggles">
-                      {(['treble', 'bass', 'both'] as const).map(c => (
+            <div className="nl-key-sig-info__body">
+              {activeTab === 'signature' && (
+                <div className="nl-key-sig-stage">
+                  <div className="nl-key-sig-staff-panel">
+                    <div className="nl-key-sig-staff-panel__head">
+                      <span className="nl-key-sig-card__label">Staff</span>
+                      <div className="nl-key-sig-staff-panel__toggle">
+                        {(['treble', 'bass', 'both'] as const).map(c => (
+                          <button
+                            key={c}
+                            type="button"
+                            className={'nl-key-sig-staff-btn' + (clef === c ? ' is-active' : '')}
+                            onClick={() => setClef(c)}
+                          >
+                            {c === 'both' ? 'Grand' : c.charAt(0).toUpperCase() + c.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="nl-key-sig-staff-grid">
+                      {(clef === 'treble' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="treble" width={320} />}
+                      {(clef === 'bass' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="bass" width={320} />}
+                    </div>
+                  </div>
+
+                  <div className="nl-key-sig-piano-panel">
+                    <div className="nl-key-sig-piano-panel__head">
+                      <span className="nl-key-sig-card__label">Piano</span>
+                      <div className="nl-key-sig-piano-panel__play-row">
                         <button
-                          key={c}
                           type="button"
-                          className={'nl-key-sig-mini-btn' + (clef === c ? ' nl-key-sig-mini-btn--on' : '')}
-                          onClick={() => setClef(c)}
+                          className={'nl-key-sig-piano-play-btn' + (!showRelativeOnPiano && showScale ? ' is-active' : '')}
+                          onClick={() => {
+                            setShowScale(true)
+                            setShowRelativeOnPiano(false)
+                            playScale()
+                          }}
                         >
-                          {c === 'both' ? 'Grand' : c.charAt(0).toUpperCase() + c.slice(1)}
+                          <span className="nl-key-sig-piano-play-btn__icon">▶</span>
+                          {' '}{selectedKey} major
                         </button>
-                      ))}
+                        <button
+                          type="button"
+                          className={'nl-key-sig-piano-play-btn' + (showRelativeOnPiano ? ' is-active' : '')}
+                          onClick={() => {
+                            setShowScale(true)
+                            setShowRelativeOnPiano(true)
+                            playRelativeMinor()
+                          }}
+                        >
+                          <span className="nl-key-sig-piano-play-btn__icon">▶</span>
+                          {' '}{keyInfo.relativeMinor} minor
+                        </button>
+                      </div>
+                    </div>
+                    <div className="nl-key-sig-piano-scroll">
+                      <KeyPiano
+                        keyInfo={keyInfo}
+                        showScale={showScale}
+                        highlightOneOctave={true}
+                        isRelativeMinor={showRelativeOnPiano}
+                        relativeMinorName={keyInfo.relativeMinor}
+                      />
                     </div>
                   </div>
-                  <div className="nl-key-sig-staff-grid">
-                    {(clef === 'treble' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="treble" width={320} />}
-                    {(clef === 'bass' || clef === 'both') && <KeyStaff keyInfo={keyInfo} clef="bass" width={320} />}
-                  </div>
                 </div>
+              )}
 
-                <div className="nl-key-sig-card">
-                  <div className="nl-key-sig-card__head">
-                    <span className="nl-key-sig-card__label">Piano</span>
-                    <div className="nl-key-sig-clef-toggles">
-                      <button
-                        type="button"
-                        className={'nl-key-sig-mini-btn' + (!showRelativeOnPiano && showScale ? ' nl-key-sig-mini-btn--on' : '')}
-                        onClick={() => {
-                          setShowScale(true)
-                          setShowRelativeOnPiano(false)
-                          playScale()
-                        }}
-                      >
-                        ▶ {selectedKey} major
-                      </button>
-                      <button
-                        type="button"
-                        className={'nl-key-sig-mini-btn' + (showRelativeOnPiano ? ' nl-key-sig-mini-btn--on' : '')}
-                        onClick={() => {
-                          setShowScale(true)
-                          setShowRelativeOnPiano(true)
-                          playRelativeMinor()
-                        }}
-                      >
-                        ▶ {keyInfo.relativeMinor} minor
-                      </button>
-                      <button type="button" className="nl-key-sig-mini-btn nl-key-sig-mini-btn--ghost" onClick={() => setShowScale(!showScale)}>
-                        {showScale ? 'Hide' : 'Show'}
-                      </button>
-                    </div>
-                  </div>
-                  <div className="nl-key-sig-piano-scroll">
-                    <KeyPiano
-                      keyInfo={keyInfo}
-                      showScale={showScale}
-                      highlightOneOctave={true}
-                      isRelativeMinor={showRelativeOnPiano}
-                      relativeMinorName={keyInfo.relativeMinor}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'affekt' && (() => {
-              const major = getAffekt(selectedKey, false)
-              const minor = getAffekt(keyInfo.relativeMinor, true)
-              return (
-                <div className="nl-key-sig-tab-body nl-key-sig-affekt">
-                  <div className="nl-key-sig-affekt-source">
-                    <p className="nl-key-sig-affekt-source__p">
-                      Based on C.F.D. Schubart&apos;s <em>Ideen zu einer Aestetik der Tonkunst</em> (1784) and Francesco
+              {activeTab === 'affekt' && (() => {
+                const major = getAffekt(selectedKey, false)
+                const minor = getAffekt(keyInfo.relativeMinor, true)
+                return (
+                  <div className="nl-key-sig-affekt">
+                    <p className="nl-key-sig-affekt-intro">
+                      Based on C.F.D. Schubart&apos;s <em>Ideen zu einer Aesthetik der Tonkunst</em> (1784) and Francesco
                       Galeazzi&apos;s <em>Elementi teorico-pratici di musica</em> (1791). Expressive character in the Baroque
                       and Classical eras.
                     </p>
+                    <div className="nl-key-sig-affekt__card">
+                      <p className="nl-key-sig-affekt__key">{selectedKey} major</p>
+                      {major?.schubart && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Schubart</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{major.schubart}&rdquo;</p>
+                        </div>
+                      )}
+                      {major?.galeazzi && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Galeazzi</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{major.galeazzi}&rdquo;</p>
+                        </div>
+                      )}
+                      {!major?.schubart && !major?.galeazzi && (
+                        <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
+                      )}
+                    </div>
+                    <div className="nl-key-sig-affekt__card">
+                      <p className="nl-key-sig-affekt__key">{keyInfo.relativeMinor} minor (relative)</p>
+                      {minor?.schubart && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Schubart</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{minor.schubart}&rdquo;</p>
+                        </div>
+                      )}
+                      {minor?.galeazzi && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Galeazzi</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{minor.galeazzi}&rdquo;</p>
+                        </div>
+                      )}
+                      {!minor?.schubart && !minor?.galeazzi && (
+                        <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
+                      )}
+                    </div>
                   </div>
-                  <div className="nl-key-sig-card nl-key-sig-card--tight">
-                    <p className="nl-key-sig-affekt-block-title">{selectedKey} major</p>
-                    {major?.schubart && (
-                      <div className="nl-key-sig-affekt-quote-block">
-                        <p className="nl-key-sig-affekt-author">Schubart</p>
-                        <p className="nl-key-sig-affekt-quote">&ldquo;{major.schubart}&rdquo;</p>
-                      </div>
-                    )}
-                    {major?.galeazzi && (
-                      <div className="nl-key-sig-affekt-quote-block">
-                        <p className="nl-key-sig-affekt-author nl-key-sig-affekt-author--muted">Galeazzi</p>
-                        <p className="nl-key-sig-affekt-quote nl-key-sig-affekt-quote--muted">&ldquo;{major.galeazzi}&rdquo;</p>
-                      </div>
-                    )}
-                    {!major?.schubart && !major?.galeazzi && (
-                      <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
-                    )}
-                  </div>
-                  <div className="nl-key-sig-card nl-key-sig-card--tight">
-                    <p className="nl-key-sig-affekt-block-title">{keyInfo.relativeMinor} minor (relative)</p>
-                    {minor?.schubart && (
-                      <div className="nl-key-sig-affekt-quote-block">
-                        <p className="nl-key-sig-affekt-author">Schubart</p>
-                        <p className="nl-key-sig-affekt-quote">&ldquo;{minor.schubart}&rdquo;</p>
-                      </div>
-                    )}
-                    {minor?.galeazzi && (
-                      <div className="nl-key-sig-affekt-quote-block">
-                        <p className="nl-key-sig-affekt-author nl-key-sig-affekt-author--muted">Galeazzi</p>
-                        <p className="nl-key-sig-affekt-quote nl-key-sig-affekt-quote--muted">&ldquo;{minor.galeazzi}&rdquo;</p>
-                      </div>
-                    )}
-                    {!minor?.schubart && !minor?.galeazzi && (
-                      <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
-                    )}
+                )
+              })()}
+
+              {activeTab === 'drill' && (
+                <div className="nl-key-sig-tab-body nl-key-sig-tab-body--drill">
+                  <div className="nl-key-drill-embed">
+                    <KeyDrill />
                   </div>
                 </div>
-              )
-            })()}
+              )}
+            </div>
 
-            {activeTab === 'drill' && (
-              <div className="nl-key-sig-tab-body nl-key-sig-tab-body--drill">
-                <div className="nl-key-drill-embed">
-                  <KeyDrill />
-                </div>
-              </div>
-            )}
-
+            <aside className="nl-key-sig-teach">
+              <p className="nl-key-sig-teach__text">
+                Want to practice reading this key? Try sight-reading drills with <em>{selectedKey} Major</em> selected.
+              </p>
+              <Link href="/sight-reading" className="nl-key-sig-teach__link">
+                Practice in Sight Reading →
+              </Link>
+            </aside>
           </div>
         </div>
       </div>
