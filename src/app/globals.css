@@ -8614,7 +8614,6 @@ svg:not(.nl-notation-staff) {
 .nl-repertoire-level-summary__notes p {
   margin: 0;
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
   font-size: 14px;
   line-height: 1.5;
   color: #5a4028;
@@ -8830,9 +8829,9 @@ svg:not(.nl-notation-staff) {
   font-family: var(--font-cormorant), serif;
   font-size: 16px;
   color: #1a1208;
-  font-style: italic;
 }
 .nl-repertoire-row__title em {
+  font-style: italic;
   color: #5a4028;
 }
 .nl-repertoire-row__restrictions {
@@ -8840,10 +8839,14 @@ svg:not(.nl-notation-staff) {
   color: #a0381c;
   font-size: 13px;
 }
-.nl-repertoire-row__publisher,
+.nl-repertoire-row__publisher {
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #5a4028;
+}
 .nl-repertoire-row__description {
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
   font-size: 14px;
   line-height: 1.45;
   color: #5a4028;
