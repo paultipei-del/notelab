@@ -250,17 +250,15 @@ export default function GlossaryPage() {
               <h2 className="nl-glossary-letter-mark" aria-hidden>{letter}</h2>
               {entries.map((entry, i) => (
                 <article key={`${letter}-${i}`} className="nl-glossary-entry">
-                  <div className="nl-glossary-entry__term-col">
-                    <span className="nl-glossary-term">{entry.term}</span>
-                    <span
-                      className={
-                        'nl-glossary-tag nl-glossary-tag--' +
-                        TAG_CLASS_MAP[entry.language]
-                      }
-                    >
-                      {entry.language}
-                    </span>
-                  </div>
+                  <span className="nl-glossary-term">{entry.term}</span>
+                  <span
+                    className={
+                      'nl-glossary-tag nl-glossary-tag--' +
+                      TAG_CLASS_MAP[entry.language]
+                    }
+                  >
+                    {entry.language}
+                  </span>
                   <p className="nl-glossary-def">{entry.definition}</p>
                 </article>
               ))}

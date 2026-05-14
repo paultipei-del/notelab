@@ -8154,8 +8154,11 @@ svg:not(.nl-notation-staff) {
 }
 .nl-glossary-entry {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) 1fr;
-  gap: 32px;
+  /* Three columns: term, tag, definition. Tag gets its own
+     dedicated column so the eye can scan categories vertically
+     without bouncing between term + tag positions row to row. */
+  grid-template-columns: minmax(180px, 220px) 110px 1fr;
+  gap: 8px 28px;
   padding: 14px 16px;
   align-items: baseline;
   border-radius: 8px;
@@ -8163,17 +8166,10 @@ svg:not(.nl-notation-staff) {
 .nl-glossary-entry:nth-child(odd of .nl-glossary-entry) {
   background: rgba(248, 240, 216, 0.35);
 }
-.nl-glossary-entry__term-col {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  flex-wrap: wrap;
-}
 .nl-glossary-term {
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 500;
   color: #1a1208;
 }
 .nl-glossary-def {
@@ -8287,9 +8283,14 @@ svg:not(.nl-notation-staff) {
   .nl-glossary-letter-section { scroll-margin-top: 140px; }
   .nl-glossary-letter-mark { font-size: 36px; margin: 0 0 4px; }
   .nl-glossary-entry {
-    grid-template-columns: 1fr;
-    gap: 4px;
+    /* Mobile: term + tag on row 1 (term left, tag right),
+       definition spans both columns on row 2. */
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
     padding: 12px 14px;
+  }
+  .nl-glossary-entry .nl-glossary-def {
+    grid-column: 1 / -1;
   }
   .nl-glossary-term { font-size: 17px; }
   .nl-glossary-def { font-size: 15px; line-height: 1.5; }
