@@ -152,13 +152,14 @@ export default function RepertoirePage() {
   const [magrathPeriod, setMagrathPeriod] = useState('baroque')
   const [magrathLevels, setMagrathLevels] = useState<Set<number>>(new Set())
 
-  // Secret unlock
+  // Secret unlock/lock toggle
   const [magrathUnlocked, setMagrathUnlocked] = useState(false)
-  const [showToast, setShowToast] = useState(false)
+  const [toastMsg, setToastMsg] = useState<string | null>(null)
   const keyBufferRef = useRef('')
   const keyBufferTimerRef = useRef<number | null>(null)
   const clickCountRef = useRef(0)
   const clickTimerRef = useRef<number | null>(null)
+  const toastTimerRef = useRef<number | null>(null)
 
   // Load unlock state from localStorage
   useEffect(() => {
@@ -184,26 +185,38 @@ export default function RepertoirePage() {
     return () => window.clearTimeout(id)
   }, [query])
 
-  // Unlock helper — wraps both paths so the toast + persistence is
-  // identical regardless of trigger.
-  function unlockMagrath() {
-    if (magrathUnlocked) return
-    setMagrathUnlocked(true)
+  // Toggle helper — wraps both unlock + lock paths so toast +
+  // persistence is identical regardless of trigger (keyboard or
+  // period click).
+  function toggleMagrath() {
+    const nowUnlocked = !magrathUnlocked
+    setMagrathUnlocked(nowUnlocked)
     if (typeof window !== 'undefined') {
-      localStorage.setItem(MAGRATH_UNLOCK_KEY, '1')
+      if (nowUnlocked) {
+        localStorage.setItem(MAGRATH_UNLOCK_KEY, '1')
+      } else {
+        localStorage.removeItem(MAGRATH_UNLOCK_KEY)
+      }
     }
-    setShowToast(true)
-    window.setTimeout(() => setShowToast(false), 3000)
-    // Reset the keyboard buffer so we don't accidentally re-fire.
+    // If locking while viewing Magrath, snap back to CM so the
+    // pill disappearing doesn't leave the user staring at a view
+    // they can no longer access.
+    if (!nowUnlocked && source === 'magrath') {
+      setSource('cm')
+    }
+    setToastMsg(nowUnlocked ? 'Magrath Guide unlocked.' : 'Magrath Guide locked.')
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current)
+    toastTimerRef.current = window.setTimeout(() => setToastMsg(null), 3000)
+    // Reset the keyboard buffer so the same word can fire again
+    // (re-unlock after lock, or re-lock after unlock).
     keyBufferRef.current = ''
   }
 
-  // Keyboard sequence detector. Listens everywhere on the page —
-  // including form inputs. "magrath" is uncommon enough that
-  // accidental matches in the search field aren't a real concern,
-  // and users intuitively try the search field as an unlock path.
+  // Keyboard sequence detector — toggles unlock/lock. Listens
+  // everywhere on the page including form inputs. "magrath" is
+  // uncommon enough that accidental matches in the search field
+  // aren't a real concern.
   useEffect(() => {
-    if (magrathUnlocked) return
     function onKey(e: KeyboardEvent) {
       // Only track plain letter keys; any non-letter (Tab, Enter,
       // Backspace, modifier combos, arrows) resets the buffer.
@@ -217,7 +230,7 @@ export default function RepertoirePage() {
         keyBufferRef.current = ''
       }, SECRET_RESET_MS)
       if (keyBufferRef.current === SECRET_WORD) {
-        unlockMagrath()
+        toggleMagrath()
       }
     }
     window.addEventListener('keydown', onKey)
@@ -225,17 +238,22 @@ export default function RepertoirePage() {
       window.removeEventListener('keydown', onKey)
       if (keyBufferTimerRef.current) window.clearTimeout(keyBufferTimerRef.current)
     }
-  }, [magrathUnlocked])
+    // toggleMagrath reads magrathUnlocked + source via closure; both
+    // are state vars so the effect re-runs as they change. Explicit
+    // deps would also work but the listener attach/detach cycle is
+    // cheap so we recreate it on each toggle.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [magrathUnlocked, source])
 
-  // Period-click detector — 5 clicks within 1s windows of each other.
+  // Period-click detector — 5 clicks within 1s windows of each
+  // other. Same as keyboard: toggles unlock/lock.
   function handleSecretClick(e: React.MouseEvent) {
     e.stopPropagation()
-    if (magrathUnlocked) return
     clickCountRef.current += 1
     if (clickTimerRef.current) window.clearTimeout(clickTimerRef.current)
     if (clickCountRef.current >= SECRET_CLICKS_REQUIRED) {
       clickCountRef.current = 0
-      unlockMagrath()
+      toggleMagrath()
       return
     }
     clickTimerRef.current = window.setTimeout(() => {
@@ -623,9 +641,9 @@ export default function RepertoirePage() {
         </>
       )}
 
-      {showToast && (
+      {toastMsg && (
         <div className="nl-repertoire-unlock-toast" role="status">
-          Magrath Guide unlocked.
+          {toastMsg}
         </div>
       )}
     </div>
