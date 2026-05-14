@@ -439,7 +439,10 @@ if (newNotes.length === expectedLength) {
         setTimeout(() => setFlash(null), 400)
         const semitonesDiff = key.midi - builtNotes[builtNotes.length - 1].midiNum
         const expectedSemitones = STEP_SEMITONES[currentStep!]
-        if (semitonesDiff === expectedSemitones - 1) {
+        const expectedNote = expectedNotes[builtNotes.length]
+        if (expectedNote && key.midi % 12 === expectedNextMidi % 12) {
+          setError(`Right note, wrong octave. Try ${expectedNote.name}${expectedNote.octave}.`)
+        } else if (semitonesDiff === expectedSemitones - 1) {
           setError(`Too close — that's a half step. You need a ${STEP_LABELS[currentStep!]}.`)
         } else if (semitonesDiff === expectedSemitones + 1) {
           setError(`Too far — that's a whole step. You need a ${STEP_LABELS[currentStep!]}.`)
