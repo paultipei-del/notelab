@@ -75,6 +75,20 @@ body {
   --nl-site-header-h: 60px; /* keep in sync with .site-header height */
   /* Smallest viewport metric so study height never exceeds visible area (avoids 1–2px body scroll) */
   --nl-viewport-h: min(100svh, 100dvh);
+
+  /* Design-system palette tokens (used by /scale-fingerings, /scale-builder, etc.) */
+  --bg: #dbd3be;
+  --ink: #1a1208;
+  --brown: #5a4028;
+  --brown-muted: #8a7560;
+  --brown-faint: rgba(154, 124, 80, 0.32);
+  --hairline: rgba(90, 64, 40, 0.18);
+  --oxblood: #a0381c;
+  --oxblood-soft: rgba(160, 56, 28, 0.10);
+  --cream-card: rgba(248, 240, 216, 0.55);
+  --cream-card-strong: rgba(248, 240, 216, 0.85);
+  --cream-key: #fdf8ea;
+  --scale-key-tint: rgba(154, 124, 80, 0.14);
 }
 
 /* ── Study / quiz — fill viewport *below* global SiteHeader (footer hidden on /study) ─ */
@@ -2465,7 +2479,270 @@ body:has(.nl-study-viewport) {
 .nl-scale-builder-key-black.is-played { background: #276840; }
 .nl-scale-builder-key-black.is-next { background: #c87a64; }
 
-/* ── Key signatures — drill tab (KeyDrill) ─ */
+/* ── Scale fingerings (/scale-fingerings) ─ */
+
+.nl-scale-fingerings-page {
+  min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.nl-scale-fingerings-inner {
+  flex: 1;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 32px) clamp(16px, 4vw, 32px) max(40px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.nl-scale-fingerings-back {
+  display: inline-block;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  color: var(--brown);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+.nl-scale-fingerings-back:hover { color: var(--oxblood); }
+
+.nl-scale-fingerings-hero {
+  margin-top: 18px;
+  margin-bottom: 28px;
+}
+.nl-scale-fingerings-hero__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  margin: 0 0 10px;
+}
+.nl-scale-fingerings-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.nl-scale-fingerings-hero__title em {
+  font-style: italic;
+  color: var(--oxblood);
+}
+.nl-scale-fingerings-hero__sub {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--brown);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Scale-type tabs row */
+.nl-scale-fingerings-tabs-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.nl-scale-fingerings-tabs {
+  display: inline-flex;
+}
+
+/* Pill button short label only shows on mobile */
+.nl-sliding-pill-btn__short { display: none; }
+
+/* Chip frame (desktop) */
+.nl-scale-fingerings-chip-frame {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+  margin-bottom: 28px;
+}
+.nl-scale-fingerings-flats-label,
+.nl-scale-fingerings-sharps-label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+  white-space: nowrap;
+}
+.nl-scale-fingerings-flats-label__glyph,
+.nl-scale-fingerings-sharps-label__glyph {
+  font-family: var(--font-cormorant), serif;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0 1px;
+}
+
+.nl-scale-fingerings-chips {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 6px;
+}
+
+.nl-scale-fingerings-chip {
+  background: var(--cream-card-strong);
+  border: 1px solid var(--brown-faint);
+  border-radius: 8px;
+  padding: 8px 0;
+  font-family: var(--font-cormorant), serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  line-height: 1;
+}
+.nl-scale-fingerings-chip:hover { border-color: var(--brown-muted); }
+.nl-scale-fingerings-chip.is-active {
+  background: var(--oxblood);
+  color: #fff;
+  border-color: var(--oxblood);
+}
+.nl-scale-fingerings-chip.is-spacer {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+.nl-scale-fingerings-chip__accidental {
+  font-size: 14px;
+  margin-left: 1px;
+}
+
+/* Mobile chip rows — hidden on desktop */
+.nl-scale-fingerings-chip-frame--mobile { display: none; }
+
+.nl-scale-fingerings-mobile-strip {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 2px 4px;
+}
+.nl-scale-fingerings-mobile-strip__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+}
+.nl-scale-fingerings-mobile-strip__glyph {
+  font-family: var(--font-cormorant), serif;
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0 1px;
+}
+
+.nl-scale-fingerings-chips--mobile {
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+/* Scale title + direction toggle */
+.nl-scale-fingerings-title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.nl-scale-fingerings-scale-name {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 30px;
+  color: var(--ink);
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.nl-scale-fingerings-meta {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--brown-muted);
+  margin: 0 0 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nl-scale-fingerings-meta__sep { color: var(--brown-muted); }
+.nl-scale-fingerings-meta__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--oxblood);
+}
+
+/* Hand cards */
+.nl-scale-fingerings-hand-card {
+  background: var(--cream-card);
+  border: 1px solid var(--brown-faint);
+  border-radius: 14px;
+  padding: 20px 24px 22px;
+  margin-bottom: 18px;
+}
+.nl-scale-fingerings-hand-label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+  margin: 0 0 14px;
+}
+.nl-scale-fingerings-keyboard-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nl-scale-fingerings-keyboard-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ── Mobile (<768px) ── */
+@media (max-width: 768px) {
+  .nl-scale-fingerings-hero__title { font-size: 28px; }
+  .nl-scale-fingerings-hero__sub { font-size: 14px; }
+
+  .nl-scale-fingerings-tabs-row { justify-content: stretch; }
+  .nl-scale-fingerings-tabs { display: flex !important; width: 100%; }
+  .nl-scale-fingerings-tabs .nl-sliding-pill-btn { flex: 1; padding: 6px 4px !important; font-size: 10px !important; }
+  .nl-sliding-pill-btn__full { display: none; }
+  .nl-sliding-pill-btn__short { display: inline; }
+
+  /* Hide desktop chip row, show mobile two-row layout */
+  .nl-scale-fingerings-chip-frame { display: none; }
+  .nl-scale-fingerings-chip-frame--mobile {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 24px;
+  }
+  .nl-scale-fingerings-chips--mobile .nl-scale-fingerings-chip {
+    font-size: 13px;
+    padding: 5px 0;
+    border-radius: 6px;
+  }
+
+  .nl-scale-fingerings-scale-name { font-size: 26px; }
+  .nl-scale-fingerings-hand-card { padding: 14px 14px 16px; }
+}
+
 .nl-key-drill {
   display: flex;
   flex-direction: column;

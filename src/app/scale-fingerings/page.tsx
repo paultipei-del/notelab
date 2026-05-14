@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import React from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import SlidingPills from '@/components/SlidingPills'
 import {
   MAJOR_FINGERINGS, MAJOR_SCALE_NOTES,
@@ -11,8 +11,7 @@ import {
   type Fingering,
 } from '@/lib/scale-fingerings'
 
-const F = 'var(--font-jost), sans-serif'
-const SERIF = 'var(--font-cormorant), serif'
+const MONO = 'var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace'
 
 // ── Piano keyboard constants ────────────────────────────────────────────────
 const WW = 28   // white key width
@@ -20,79 +19,36 @@ const WH = 90   // white key height
 const BW = 18   // black key width
 const BH = 56   // black key height
 
-// White key indices within octave: C=0,D=1,E=2,F=3,G=4,A=5,B=6
-const WHITE_INDICES = [0,2,4,5,7,9,11]  // semitone offsets of white keys
-const BLACK_OFFSETS: Record<number, number> = { 1:0.6, 3:1.6, 6:3.6, 8:4.6, 10:5.6 }
-
-function isBlack(semi: number) { return [1,3,6,8,10].includes(semi % 12) }
-
-function midiToKeyX(midi: number, startMidi: number): number {
-  const diff = midi - startMidi
-  const octave = Math.floor(diff / 12)
-  const semi = diff % 12
-  if (isBlack(semi)) {
-    const blackOffset = BLACK_OFFSETS[semi] ?? 0
-    return (octave * 7 + blackOffset) * WW - BW / 2
-  }
-  const whiteIdx = WHITE_INDICES.indexOf(semi)
-  return (octave * 7 + whiteIdx) * WW
-}
-
-// Count white keys in a scale
-function countWhiteKeys(notes: number[], startMidi: number): number {
-  const endMidi = notes[notes.length - 1]
-  let count = 0
-  for (let m = startMidi; m <= endMidi; m++) {
-    if (!isBlack(m)) count++
-  }
-  return count
-}
+function isBlackMidi(m: number) { return [1,3,6,8,10].includes(m % 12) }
 
 // ── Keyboard SVG ─────────────────────────────────────────────────────────────
-function KeyboardSVG({ notes, fingering, hand, displayFrom, displayTo }: {
+function KeyboardSVG({ notes, fingering, displayFrom, displayTo }: {
   notes: number[]
   fingering: Fingering
-  hand: 'rh' | 'lh'
   displayFrom?: number
   displayTo?: number
 }) {
   const startMidi = notes[0]
   const endMidi = notes[notes.length - 1]
-  // Extend display to nearest C below start and C above end for context
   const displayStart = displayFrom ?? (startMidi - (startMidi % 12))
   const displayEnd   = displayTo   ?? (endMidi + (12 - (endMidi % 12)) % 12)
-  // whiteCount calculated after allKeys is built below
-  const H = WH + 32  // extra space for finger numbers
+  const H = WH + 32
 
-  // Build all keys between start and end
   const allKeys: number[] = []
   for (let m = displayStart; m <= displayEnd; m++) allKeys.push(m)
-  const whiteCount = allKeys.filter(m => !isBlackMidi(m)).length
-  const W = whiteCount * WW + 4
-  const whiteKeys = allKeys.filter(m => !isBlack(m - startMidi + (startMidi % 12 === 0 ? 0 : 0)))
-  
-  // Simpler: track white/black based on chromatic position
   const chrWhite = allKeys.filter(m => !isBlackMidi(m))
   const chrBlack = allKeys.filter(m => isBlackMidi(m))
-
-  function isBlackMidi(m: number) { return [1,3,6,8,10].includes(m % 12) }
 
   const noteSet = new Set(notes)
   const noteFingerMap: Record<number, number> = {}
   notes.forEach((m, i) => { noteFingerMap[m] = fingering[i] ?? 0 })
 
-  // x position per midi
   function keyX(midi: number): number {
-    const diff = midi - displayStart
-    // count white keys before this
     let whites = 0
     for (let m = displayStart; m < midi; m++) {
       if (!isBlackMidi(m)) whites++
     }
-    if (isBlackMidi(midi)) {
-      // position between surrounding white keys
-      return whites * WW - BW / 2
-    }
+    if (isBlackMidi(midi)) return whites * WW - BW / 2
     return whites * WW
   }
 
@@ -100,23 +56,33 @@ function KeyboardSVG({ notes, fingering, hand, displayFrom, displayTo }: {
   const svgW = totalWhites * WW + 4
 
   return (
-    <svg width="100%" viewBox={`0 0 ${svgW} ${H}`} style={{ display: 'block' }} preserveAspectRatio="xMinYMin meet">
+    <svg width="100%" viewBox={`0 0 ${svgW} ${H}`} className="nl-scale-fingerings-keyboard-svg" preserveAspectRatio="xMinYMin meet">
       {/* White keys */}
       {chrWhite.map(m => {
         const x = keyX(m)
         const active = noteSet.has(m)
         const finger = noteFingerMap[m]
         const isThumb = finger === 1
+        const fill = active ? (isThumb ? 'var(--oxblood)' : 'var(--scale-key-tint)') : 'var(--cream-key)'
+        const textFill = isThumb ? '#fff' : 'var(--ink)'
         return (
           <g key={m}>
-            <rect x={x + 1} y={0} width={WW - 2} height={WH} rx={3}
-              fill={active ? (isThumb ? '#B5402A' : '#E8F0FB') : '#FAFAF8'}
-              stroke="#D9CFAE" strokeWidth={1} />
+            <rect
+              x={x + 1} y={0} width={WW - 2} height={WH} rx={3}
+              fill={fill}
+              stroke="var(--brown-faint)"
+              strokeWidth={1}
+            />
             {active && finger && (
-              <text x={x + WW / 2} y={WH - 10} textAnchor="middle" dominantBaseline="middle"
-                fontSize={isThumb ? 13 : 12} fontFamily={F}
-                fontWeight={isThumb ? '500' : '400'}
-                fill={isThumb ? 'white' : '#1A1A18'}>
+              <text
+                x={x + WW / 2} y={WH - 10}
+                textAnchor="middle" dominantBaseline="middle"
+                fontSize={11}
+                fontFamily={MONO}
+                fontWeight={isThumb ? 600 : 500}
+                fill={textFill}
+                className="nl-scale-fingerings-finger"
+              >
                 {finger}
               </text>
             )}
@@ -129,140 +95,27 @@ function KeyboardSVG({ notes, fingering, hand, displayFrom, displayTo }: {
         const active = noteSet.has(m)
         const finger = noteFingerMap[m]
         const isThumb = finger === 1
+        const fill = isThumb ? 'var(--oxblood)' : 'var(--ink)'
+        const stroke = active && !isThumb ? 'var(--scale-key-tint)' : 'var(--ink)'
+        const strokeWidth = active && !isThumb ? 2.5 : 1
         return (
           <g key={m}>
-            <rect x={x} y={0} width={BW} height={BH} rx={2}
-              fill={active ? (isThumb ? '#B5402A' : '#3A5A9B') : '#1A1A18'}
-              stroke="#1A1A18" strokeWidth={1} />
+            <rect
+              x={x} y={0} width={BW} height={BH} rx={2}
+              fill={fill}
+              stroke={stroke}
+              strokeWidth={strokeWidth}
+            />
             {active && finger && (
-              <text x={x + BW / 2} y={BH - 10} textAnchor="middle" dominantBaseline="middle"
-                fontSize={11} fontFamily={F} fontWeight={isThumb ? '500' : '400'}
-                fill="white">
-                {finger}
-              </text>
-            )}
-          </g>
-        )
-      })}
-    </svg>
-  )
-}
-
-// ── Staff positions (matches StaffCard.tsx exactly) ──────────────────────────
-const step = 6
-
-// Treble: pos 0 = F5 (top line), pos 8 = E4 (bottom line)
-const TREBLE_POS: Record<string, number> = {
-  'C7':-12,'B6':-11,'A6':-10,'G6':-9,'F6':-8,'E6':-7,'D6':-6,'C6':-5,'B5':-4,'A5':-3,'G5':-2,'F5':-1,
-  'E5':0,'D5':1,'C5':2,'B4':3,'A4':4,'G4':5,'F4':6,'E4':7,'D4':8,'C4':9,'B3':10,'A3':11,'G3':12,'F3':13,'E3':14,'D3':15,'C3':16,
-}
-const BASS_POS: Record<string, number> = {
-  'E4':-4,'D4':-3,'C4':-2,'B3':-1,
-  'A3':0,'G3':1,'F3':2,'E3':3,'D3':4,'C3':5,'B2':6,'A2':7,'G2':8,'F2':9,'E2':10,'D2':11,'C2':12,
-  'B1':13,'A1':14,
-}
-
-const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
-const FLAT_NAMES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
-
-function midiToNoteName(midi: number): string {
-  const oct = Math.floor(midi / 12) - 1
-  return NOTE_NAMES[midi % 12] + oct
-}
-
-function midiToPos(midi: number, clef: 'treble' | 'bass'): number | undefined {
-  const name = midiToNoteName(midi)
-  const pos = clef === 'treble' ? TREBLE_POS[name] : BASS_POS[name]
-  if (pos !== undefined) return pos
-  // Try flat enharmonic
-  const flatName = FLAT_NAMES[midi % 12] + Math.floor(midi / 12 - 1)
-  return clef === 'treble' ? TREBLE_POS[flatName] : BASS_POS[flatName]
-}
-
-function isBlackMidi(m: number) { return [1,3,6,8,10].includes(m % 12) }
-
-const ACCIDENTAL_MAP_MIDI: Record<string, string> = {
-  'C#':'sharp','Db':'flat','D#':'sharp','Eb':'flat',
-  'F#':'sharp','Gb':'flat','G#':'sharp','Ab':'flat','A#':'sharp','Bb':'flat',
-}
-
-function StaffView({ notes, fingering, clef, hand }: {
-  notes: number[]
-  fingering: Fingering
-  clef: 'treble' | 'bass'
-  hand: 'rh' | 'lh'
-}) {
-  const staffTop = 72
-  const noteSpacing = 40
-  const leftPad = 60
-  const W = leftPad + notes.length * noteSpacing + 24
-  const svgH = staffTop + 8 * step + 72
-  const showAbove = hand === 'rh'
-
-  const clefY = clef === 'treble' ? staffTop + 36 : staffTop + 12
-
-  return (
-    <svg width={W} height={svgH} style={{ maxWidth: '100%', display: 'block' }}>
-      {/* Staff lines */}
-      {[0,2,4,6,8].map(p => (
-        <line key={p} x1={8} y1={staffTop + p * step} x2={W - 4} y2={staffTop + p * step}
-          stroke="#D9CFAE" strokeWidth={1} />
-      ))}
-      {/* Clef */}
-      <text x={10} y={clefY} fontSize={clef === 'treble' ? 52 : 50}
-        fontFamily="Bravura, serif" fill="#1A1A18" dominantBaseline="auto">
-        {clef === 'treble' ? '𝄞' : '𝄢'}
-      </text>
-      {/* Notes */}
-      {notes.map((midi, i) => {
-        const x = leftPad + i * noteSpacing
-        const pos = midiToPos(midi, clef)
-        if (pos === undefined) return null
-        const noteY = staffTop + pos * step
-        const stemUp = pos >= 4
-        const finger = fingering[i]
-        const isThumb = finger === 1
-        const noteColor = isThumb ? '#B5402A' : '#1A1A18'
-        const fingerY = showAbove ? noteY - 28 : noteY + 28
-
-        // Accidental
-        const noteName = NOTE_NAMES[midi % 12]
-        const accType = ACCIDENTAL_MAP_MIDI[noteName]
-        const accGlyph = accType === 'sharp' ? String.fromCodePoint(0xE262) : accType === 'flat' ? String.fromCodePoint(0xE260) : null
-
-        // Ledger lines
-        const ledgers: number[] = []
-        if (pos < 0) for (let p = -2; p >= pos - (pos % 2); p -= 2) if (p % 2 === 0) ledgers.push(p)
-        if (pos > 8) for (let p = 10; p <= pos + (pos % 2); p += 2) if (p % 2 === 0) ledgers.push(p)
-
-        return (
-          <g key={i}>
-            {ledgers.map(p => (
-              <line key={p} x1={x - 12} y1={staffTop + p * step} x2={x + 12} y2={staffTop + p * step}
-                stroke="#1A1A18" strokeWidth={1.2} />
-            ))}
-            {accGlyph && (
-              <text x={x - 16} y={noteY} fontSize={36} fontFamily="Bravura, serif"
-                fill={noteColor} textAnchor="middle" dominantBaseline="central">
-                {accGlyph}
-              </text>
-            )}
-            {/* Note head — Bravura filled notehead U+E0A4 */}
-            <text x={x} y={noteY} fontSize={46} fontFamily="Bravura, serif"
-              fill={noteColor} textAnchor="middle" dominantBaseline="central">
-              {String.fromCodePoint(0xE0A4)}
-            </text>
-            {/* Stem */}
-            <line
-              x1={stemUp ? x + 6 : x - 6} y1={noteY}
-              x2={stemUp ? x + 6 : x - 6} y2={stemUp ? noteY - 38 : noteY + 38}
-              stroke={noteColor} strokeWidth={1.6} />
-            {/* Finger number */}
-            {finger && (
-              <text x={x} y={fingerY} textAnchor="middle" dominantBaseline="middle"
-                fontSize={12} fontFamily={F}
-                fontWeight={isThumb ? '600' : '400'}
-                fill={isThumb ? '#B5402A' : '#1A1A18'}>
+              <text
+                x={x + BW / 2} y={BH - 10}
+                textAnchor="middle" dominantBaseline="middle"
+                fontSize={11}
+                fontFamily={MONO}
+                fontWeight={isThumb ? 600 : 500}
+                fill="#fff"
+                className="nl-scale-fingerings-finger"
+              >
                 {finger}
               </text>
             )}
@@ -274,50 +127,38 @@ function StaffView({ notes, fingering, clef, hand }: {
 }
 
 // ── Hand Panel ────────────────────────────────────────────────────────────────
-function HandPanel({ label, notes, fingering, clef, displayFrom, displayTo }: {
+function HandPanel({ label, notes, fingering, displayFrom, displayTo }: {
   label: string
   notes: number[]
   fingering: Fingering
-  clef: 'treble' | 'bass'
   displayFrom?: number
   displayTo?: number
 }) {
-  const hand = clef === 'treble' ? 'rh' : 'lh'
   return (
-    <div style={{ background: '#ECE3CC', borderRadius: '16px', border: '1px solid #D9CFAE', padding: '24px', marginBottom: '16px' }}>
-      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '16px' }}>{label}</p>
-      <div style={{ overflowX: 'auto' }}>
-        <KeyboardSVG notes={notes} fingering={fingering} hand={hand} displayFrom={displayFrom} displayTo={displayTo} />
+    <section className="nl-scale-fingerings-hand-card">
+      <p className="nl-scale-fingerings-hand-label">{label}</p>
+      <div className="nl-scale-fingerings-keyboard-scroll">
+        <KeyboardSVG notes={notes} fingering={fingering} displayFrom={displayFrom} displayTo={displayTo} />
       </div>
-    </div>
+    </section>
   )
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 type ScaleType = 'major' | 'natural_minor' | 'harmonic_minor' | 'melodic_minor'
 
-// Circle of fifths order: flats ← C → sharps
-// Major: Gb - Db - Ab - Eb - Bb - F - C - G - D - A - E - B - Fs
 const MAJOR_COF = ['Gb','Db','Ab','Eb','Bb','F','C','G','D','A','E','B','Fs']
-// Minor: Ebm - Bbm - Fm - Cm - Gm - Dm - Am - Em - Bm - Fsm - Csm - Gsm - Dsm
 const MINOR_COF = ['Ebm','Bbm','Fm','Cm','Gm','Dm','Am','Em','Bm','Fsm','Csm','Gsm','Dsm']
 
-// Dsm (D♯m) is enharmonic to Ebm — resolve to Ebm for all data lookups
 const KEY_ALIAS: Record<string, string> = { Dsm: 'Ebm' }
 
-// Single-name display (no enharmonic slash combos)
 const MAJOR_DISPLAY: Record<string, string> = {
   Gb:'G♭', Db:'D♭', Ab:'A♭', Eb:'E♭', Bb:'B♭',
   F:'F', C:'C', G:'G', D:'D', A:'A', E:'E', B:'B', Fs:'F♯',
 }
 const MINOR_DISPLAY: Record<string, string> = { ...MINOR_SCALE_DISPLAY, Dsm: 'D♯' }
 
-// Center key for each type
-const MAJOR_CENTER = 'C'
-const MINOR_CENTER = 'Am'
-
 export default function ScaleFingeringsPage() {
-  const router = useRouter()
   const [scaleType, setScaleType] = useState<ScaleType>('major')
   const [selectedKey, setSelectedKey] = useState('C')
   const [direction, setDirection] = useState<'asc'|'desc'>('asc')
@@ -326,12 +167,9 @@ export default function ScaleFingeringsPage() {
   const showDirection = scaleType === 'melodic_minor'
   const displayMap = isMajor ? MAJOR_DISPLAY : MINOR_DISPLAY
   const cofKeys = isMajor ? MAJOR_COF : MINOR_COF
-  const centerKey = isMajor ? MAJOR_CENTER : MINOR_CENTER
 
-  // Resolve enharmonic aliases (e.g. Dsm → Ebm) for data lookups
   const dataKey = KEY_ALIAS[selectedKey] ?? selectedKey
 
-  // Resolve raw fingering
   const fingeringRaw = isMajor
     ? MAJOR_FINGERINGS[dataKey]
     : scaleType === 'harmonic_minor'
@@ -340,14 +178,11 @@ export default function ScaleFingeringsPage() {
         ? MELODIC_MINOR_FINGERINGS[dataKey]
         : NATURAL_MINOR_FINGERINGS[dataKey]
 
-  // Natural minor descending = ascending reversed (same scale, played downward)
-  // Melodic minor descending = natural minor ascending (the classical rule)
   const fingering: { rh: Fingering; lh: Fingering } | null = (() => {
     if (!fingeringRaw) return null
     if (scaleType === 'melodic_minor') {
-      const f = fingeringRaw as any
+      const f = fingeringRaw as { rh_asc: Fingering; lh_asc: Fingering }
       if (direction === 'asc') return { rh: f.rh_asc, lh: f.lh_asc }
-      // Descending = natural minor ascending fingering
       const nat = NATURAL_MINOR_FINGERINGS[dataKey]
       return nat ? { rh: nat.rh, lh: nat.lh } : { rh: f.rh_asc, lh: f.lh_asc }
     }
@@ -361,45 +196,29 @@ export default function ScaleFingeringsPage() {
 
   const ascNotes = isMajor ? MAJOR_SCALE_NOTES[dataKey] : MINOR_SCALE_NOTES[dataKey]
 
-  // Melodic minor ascending: raise 6th (idx 5,12) and 7th (idx 6,13) by one semitone
-  // Melodic minor descending: natural minor ascending (unchanged)
   const notes = (scaleType === 'melodic_minor' && direction === 'asc' && ascNotes)
     ? ascNotes.map((n, i) => ([5, 6, 12, 13].includes(i) ? n + 1 : n))
     : ascNotes
   const rhNotes = notes
   const lhNotes = notes?.map(m => m - 12)
 
-  if (!fingering || !notes) return null
+  if (!fingering || !notes || !lhNotes) return null
 
-  // C major/minor start at C4 (60) and end at C6 (84) — add cushion: F3 (53) to F6 (89)
-  // LH is one octave lower: F2 (41) to F5 (77)
   const needsCushion = (isMajor && dataKey === 'C') || (!isMajor && dataKey === 'Cm')
-  const rhDisplayFrom = needsCushion ? 53 : undefined  // F3
-  const rhDisplayTo   = needsCushion ? 89 : undefined  // F6
-  const lhDisplayFrom = needsCushion ? 41 : undefined  // F2
-  const lhDisplayTo   = needsCushion ? 77 : undefined  // F5
+  const rhDisplayFrom = needsCushion ? 53 : undefined
+  const rhDisplayTo   = needsCushion ? 89 : undefined
+  const lhDisplayFrom = needsCushion ? 41 : undefined
+  const lhDisplayTo   = needsCushion ? 77 : undefined
 
   const scaleLabel = scaleType === 'major' ? 'Major'
     : scaleType === 'natural_minor' ? 'Natural Minor'
     : scaleType === 'harmonic_minor' ? 'Harmonic Minor'
     : 'Melodic Minor'
 
-
-  const keyBtn = (active: boolean, isCenter: boolean): React.CSSProperties => ({
-    width: '46px', flexShrink: 0, padding: '6px 0', borderRadius: '8px',
-    border: '1px solid ' + (active ? '#1A1A18' : isCenter ? '#7A7060' : '#D9CFAE'),
-    background: active ? '#2A2318' : 'white',
-    color: active ? '#ECE3CC' : '#2A2318',
-    fontFamily: SERIF, fontSize: '17px', fontWeight: isCenter ? 400 : 300,
-    cursor: 'pointer', textAlign: 'center' as const,
-    transition: 'all 0.15s',
-  })
-
-  // Render a key label with accidentals sized to match capital-letter height
-  function renderKeyLabel(name: string, accSize = '0.72em'): React.ReactNode {
+  function renderKeyLabel(name: string, accSize = '0.78em'): React.ReactNode {
     return name.split(/(♭|♯)/).map((part, i) =>
       (part === '♭' || part === '♯')
-        ? <span key={i} style={{ fontSize: accSize, lineHeight: 1, verticalAlign: 'baseline' }}>{part}</span>
+        ? <span key={i} className="nl-scale-fingerings-chip__accidental" style={{ fontSize: accSize }}>{part}</span>
         : <React.Fragment key={i}>{part}</React.Fragment>
     )
   }
@@ -410,78 +229,134 @@ export default function ScaleFingeringsPage() {
     setSelectedKey(t === 'major' ? 'C' : 'Am')
   }
 
+  // Mobile chip split: flats territory + naturals on row 1; naturals + sharps on row 2.
+  // 13 chips total. Row 1 = first 7 of cofKeys, Row 2 = remaining 6 + one empty slot.
+  const mobileRow1 = cofKeys.slice(0, 7)
+  const mobileRow2 = cofKeys.slice(7)
+
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ maxWidth: '820px', margin: '0 auto', padding: 'clamp(24px,4vw,40px) clamp(16px,4vw,32px) 80px' }}>
+    <div className="nl-scale-fingerings-page">
+      <div className="nl-scale-fingerings-inner">
+        <Link href="/tools" className="nl-scale-fingerings-back">← Back to tools</Link>
 
-        {/* Back + title */}
-        <button onClick={() => router.push('/tools')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', padding: 0, marginBottom: '24px', display: 'block' }}>← Back</button>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '36px', color: '#2A2318', marginBottom: '6px' }}>Scale Fingerings</h1>
-        <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060', margin: '0 0 28px', lineHeight: 1.6 }}>
-          Two-octave piano fingerings for both hands. Thumb crossings highlighted in amber.
-        </p>
+        <header className="nl-scale-fingerings-hero">
+          <p className="nl-scale-fingerings-hero__eyebrow">Scale Fingerings</p>
+          <h1 className="nl-scale-fingerings-hero__title">The <em>standard</em> fingerings.</h1>
+          <p className="nl-scale-fingerings-hero__sub">
+            Two-octave piano fingerings for both hands. Thumb crossings in red.
+          </p>
+        </header>
 
-        {/* Scale type — centered segmented control */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+        {/* Scale type segmented control */}
+        <div className="nl-scale-fingerings-tabs-row">
           <SlidingPills
+            className="nl-scale-fingerings-tabs"
             options={[
-              { value: 'major' as ScaleType, label: 'Major' },
-              { value: 'natural_minor' as ScaleType, label: 'Natural Minor' },
-              { value: 'harmonic_minor' as ScaleType, label: 'Harmonic Minor' },
-              { value: 'melodic_minor' as ScaleType, label: 'Melodic Minor' },
+              { value: 'major' as ScaleType, label: 'Major', shortLabel: 'Major' },
+              { value: 'natural_minor' as ScaleType, label: 'Natural Minor', shortLabel: 'Nat. Min' },
+              { value: 'harmonic_minor' as ScaleType, label: 'Harmonic Minor', shortLabel: 'Harm. Min' },
+              { value: 'melodic_minor' as ScaleType, label: 'Melodic Minor', shortLabel: 'Mel. Min' },
             ]}
             value={scaleType}
             onChange={changeScaleType}
           />
         </div>
 
-        {/* Circle of fifths key selector */}
-        <div style={{ marginBottom: '28px' }}>
-          {/* ♭ / ♯ edge labels */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>♭ Flats</span>
-            <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#555350', letterSpacing: '0.04em' }}>Sharps ♯</span>
+        {/* Root chip row */}
+        <div className="nl-scale-fingerings-chip-frame">
+          <span className="nl-scale-fingerings-flats-label" aria-hidden>
+            <span className="nl-scale-fingerings-flats-label__glyph">♭</span> Flats
+          </span>
+          <div className="nl-scale-fingerings-chips">
+            {cofKeys.map(k => (
+              <button
+                key={k}
+                type="button"
+                className={'nl-scale-fingerings-chip' + (selectedKey === k ? ' is-active' : '')}
+                onClick={() => setSelectedKey(k)}
+              >
+                {renderKeyLabel(displayMap[k])}
+              </button>
+            ))}
           </div>
-          {/* Fixed 13-slot row — C (major) and Am (minor) sit at slot 6 (center) */}
-          <div style={{ overflowX: 'auto' }}>
-            <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'nowrap' as const }}>
-              {cofKeys.map(k => (
-                <button key={k} onClick={() => setSelectedKey(k)} style={keyBtn(selectedKey === k, k === centerKey)}>
-                  {renderKeyLabel(displayMap[k], '0.75em')}
-                </button>
-              ))}
-            </div>
+          <span className="nl-scale-fingerings-sharps-label" aria-hidden>
+            Sharps <span className="nl-scale-fingerings-sharps-label__glyph">♯</span>
+          </span>
+        </div>
+
+        {/* Mobile chip rows (two-row layout) */}
+        <div className="nl-scale-fingerings-chip-frame--mobile">
+          <div className="nl-scale-fingerings-mobile-strip">
+            <span className="nl-scale-fingerings-mobile-strip__label nl-scale-fingerings-mobile-strip__label--start">
+              <span className="nl-scale-fingerings-mobile-strip__glyph">♭</span> Flats
+            </span>
+            <span className="nl-scale-fingerings-mobile-strip__label nl-scale-fingerings-mobile-strip__label--end">
+              Naturals
+            </span>
+          </div>
+          <div className="nl-scale-fingerings-chips nl-scale-fingerings-chips--mobile">
+            {mobileRow1.map(k => (
+              <button
+                key={k}
+                type="button"
+                className={'nl-scale-fingerings-chip' + (selectedKey === k ? ' is-active' : '')}
+                onClick={() => setSelectedKey(k)}
+              >
+                {renderKeyLabel(displayMap[k])}
+              </button>
+            ))}
+          </div>
+          <div className="nl-scale-fingerings-mobile-strip">
+            <span className="nl-scale-fingerings-mobile-strip__label nl-scale-fingerings-mobile-strip__label--start">
+              Naturals
+            </span>
+            <span className="nl-scale-fingerings-mobile-strip__label nl-scale-fingerings-mobile-strip__label--end">
+              Sharps <span className="nl-scale-fingerings-mobile-strip__glyph">♯</span>
+            </span>
+          </div>
+          <div className="nl-scale-fingerings-chips nl-scale-fingerings-chips--mobile">
+            {mobileRow2.map(k => (
+              <button
+                key={k}
+                type="button"
+                className={'nl-scale-fingerings-chip' + (selectedKey === k ? ' is-active' : '')}
+                onClick={() => setSelectedKey(k)}
+              >
+                {renderKeyLabel(displayMap[k])}
+              </button>
+            ))}
+            {mobileRow2.length < 7 && Array.from({ length: 7 - mobileRow2.length }).map((_, i) => (
+              <span key={`spacer-${i}`} className="nl-scale-fingerings-chip is-spacer" aria-hidden />
+            ))}
           </div>
         </div>
 
         {/* Scale title + direction toggle */}
-        <div style={{ marginBottom: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' as const }}>
-            <h2 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '30px', color: '#2A2318', margin: 0, lineHeight: 1.2 }}>
-              {renderKeyLabel(displayMap[selectedKey])} {scaleLabel}
-            </h2>
-            {showDirection && (
-              <SlidingPills
-                options={[
-                  { value: 'asc' as const, label: '↑ Ascending' },
-                  { value: 'desc' as const, label: '↓ Descending' },
-                ]}
-                value={direction}
-                onChange={setDirection}
-                fontSize="12px"
-              />
-            )}
-          </div>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060', marginTop: '6px' }}>
-            2 octaves · <span style={{ color: '#B5402A', fontWeight: 400 }}>●</span> thumb (1)
-          </p>
+        <div className="nl-scale-fingerings-title-row">
+          <h2 className="nl-scale-fingerings-scale-name">
+            {renderKeyLabel(displayMap[selectedKey])} {scaleLabel}
+          </h2>
+          {showDirection && (
+            <SlidingPills
+              options={[
+                { value: 'asc' as const, label: '↑ Ascending' },
+                { value: 'desc' as const, label: '↓ Descending' },
+              ]}
+              value={direction}
+              onChange={setDirection}
+              fontSize="12px"
+            />
+          )}
         </div>
+        <p className="nl-scale-fingerings-meta">
+          2 octaves
+          <span className="nl-scale-fingerings-meta__sep" aria-hidden>·</span>
+          <span className="nl-scale-fingerings-meta__dot" aria-hidden />
+          thumb (1)
+        </p>
 
-        {/* Right Hand */}
-        <HandPanel label="Right Hand" notes={rhNotes} fingering={fingering.rh} clef="treble" displayFrom={rhDisplayFrom} displayTo={rhDisplayTo} />
-
-        {/* Left Hand */}
-        <HandPanel label="Left Hand" notes={lhNotes} fingering={fingering.lh} clef="bass" displayFrom={lhDisplayFrom} displayTo={lhDisplayTo} />
+        <HandPanel label="Right Hand" notes={rhNotes} fingering={fingering.rh} displayFrom={rhDisplayFrom} displayTo={rhDisplayTo} />
+        <HandPanel label="Left Hand" notes={lhNotes} fingering={fingering.lh} displayFrom={lhDisplayFrom} displayTo={lhDisplayTo} />
 
       </div>
     </div>
