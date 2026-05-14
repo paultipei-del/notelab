@@ -8674,7 +8674,6 @@ svg:not(.nl-notation-staff) {
 }
 .nl-repertoire-magrath-attribution__body {
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
   font-size: 13px;
   color: #8a7560;
   margin: 0;
@@ -8850,6 +8849,7 @@ svg:not(.nl-notation-staff) {
 }
 .nl-repertoire-row__description {
   font-family: var(--font-cormorant), serif;
+  font-style: normal;
   font-size: 14px;
   line-height: 1.45;
   color: #5a4028;
@@ -8884,14 +8884,12 @@ svg:not(.nl-notation-staff) {
 }
 .nl-repertoire-empty__title {
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
   font-size: 22px;
   color: #5a4028;
   margin: 0;
 }
 .nl-repertoire-empty__sub {
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
   font-size: 14px;
   color: #8a7560;
   margin: 0 0 8px;

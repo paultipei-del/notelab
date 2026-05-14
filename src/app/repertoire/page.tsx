@@ -624,9 +624,7 @@ export default function RepertoirePage() {
                       <span className="nl-repertoire-row__level">{entry.level}</span>
                       <span className="nl-repertoire-row__composer">{entry.composer}</span>
                       <span className="nl-repertoire-row__title">
-                        {entry.title || (
-                          <em>{entry.description.slice(0, 60)}…</em>
-                        )}
+                        {entry.title || `${entry.description.slice(0, 60)}…`}
                       </span>
                       <span className="nl-repertoire-row__description">
                         {entry.description}
