@@ -216,50 +216,29 @@ export default function GlossaryPage() {
         </span>
       </div>
 
-      {/* Vertical alphabet rail — fixed to the left edge of the
-          viewport so it stays visible throughout the 25k+ px corpus
-          scroll. Hidden on mobile via media query. Letters with no
-          entries under the current filter render disabled so the
-          rail's length and visual rhythm stay constant. */}
-      <nav className="nl-glossary-rail" aria-label="Jump to letter">
-        {ALPHABET.map(L => {
-          const available = availableLetters.has(L)
-          return (
-            <button
-              key={L}
-              type="button"
-              className={
-                'nl-glossary-rail__letter' +
-                (currentLetter === L && available ? ' is-current' : '') +
-                (available ? '' : ' is-disabled')
-              }
-              onClick={() => available && scrollToLetter(L)}
-              aria-label={`Jump to ${L}`}
-              aria-disabled={!available}
-              tabIndex={available ? 0 : -1}
-            >
-              {L}
-            </button>
-          )
-        })}
-      </nav>
-
-      {grouped.length === 0 ? (
-        <div className="nl-glossary-empty">
-          <p className="nl-glossary-empty__title">No terms match.</p>
-          <p className="nl-glossary-empty__sub">
-            Try a different search or reset the filter.
-          </p>
-          <button
-            type="button"
-            className="nl-glossary-empty__reset"
-            onClick={resetFilters}
-          >
-            Reset filters
-          </button>
-        </div>
-      ) : (
-        <div className="nl-glossary-entries">
+      {/* Body wraps the main content + rail into a 2-column grid
+          so the rail can use position: sticky and live in the DOM
+          flow next to entries. Sticky needs a scrolling ancestor
+          that doesn't have overflow: hidden — the body inherits
+          html scrolling, which is what we want. */}
+      <div className="nl-glossary-body">
+        <div className="nl-glossary-body__main">
+          {grouped.length === 0 ? (
+            <div className="nl-glossary-empty">
+              <p className="nl-glossary-empty__title">No terms match.</p>
+              <p className="nl-glossary-empty__sub">
+                Try a different search or reset the filter.
+              </p>
+              <button
+                type="button"
+                className="nl-glossary-empty__reset"
+                onClick={resetFilters}
+              >
+                Reset filters
+              </button>
+            </div>
+          ) : (
+            <div className="nl-glossary-entries">
           {grouped.map(([letter, entries]) => (
             <section
               key={letter}
@@ -285,6 +264,36 @@ export default function GlossaryPage() {
           ))}
         </div>
       )}
+        </div>
+
+        {/* Vertical alphabet rail. position: sticky relative to
+            .nl-glossary-body; at scroll-top it sits at the top of
+            its grid cell (inline with entries), then pins to
+            top: 152px once scrolled past. Hidden on mobile +
+            short viewports via media query. */}
+        <nav className="nl-glossary-rail" aria-label="Jump to letter">
+          {ALPHABET.map(L => {
+            const available = availableLetters.has(L)
+            return (
+              <button
+                key={L}
+                type="button"
+                className={
+                  'nl-glossary-rail__letter' +
+                  (currentLetter === L && available ? ' is-current' : '') +
+                  (available ? '' : ' is-disabled')
+                }
+                onClick={() => available && scrollToLetter(L)}
+                aria-label={`Jump to ${L}`}
+                aria-disabled={!available}
+                tabIndex={available ? 0 : -1}
+              >
+                {L}
+              </button>
+            )
+          })}
+        </nav>
+      </div>
     </div>
   )
 }

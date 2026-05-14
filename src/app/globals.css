@@ -8107,22 +8107,40 @@ svg:not(.nl-notation-staff) {
   color: #1a1208;
 }
 
-/* Vertical alphabet rail — fixed to the right edge of the
-   viewport, contained between the sticky toolbar's bottom edge
-   and the viewport bottom. justify-content: center clusters the
-   26 letters vertically in whatever space is available, so the
-   rail never extends into the header/hero/toolbar zone above and
-   never overruns the viewport bottom. Below the toolbar's
-   z-index so the brief moment they meet prefers the toolbar.
-   Hidden on short viewports (< 720px tall) and mobile-width
-   viewports (< 900px wide) where the rail won't fit cleanly. */
+/* Two-column body grid: main content + alphabet rail. Lets the
+   rail use position: sticky inside the DOM flow alongside the
+   entries instead of floating as a fixed overlay. At scroll-top
+   the rail rests at the top of its grid cell (below the toolbar);
+   once the user scrolls enough that the rail's top reaches y=152
+   from the viewport top, sticky pins it there. */
+.nl-glossary-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  padding-right: 24px;
+}
+.nl-glossary-body__main {
+  min-width: 0;
+}
+
+/* Vertical alphabet rail. position: sticky tracks the page
+   scroll naturally — rests at the top of its grid cell, pins at
+   top: 152px when scrolled past the toolbar. justify-content:
+   center keeps the 26 letters vertically grouped within the
+   available height. Hidden on short viewports (< 720px tall)
+   and mobile-width viewports (< 900px wide) where the rail
+   won't fit cleanly. */
 .nl-glossary-rail {
-  position: fixed;
-  right: 24px;
+  position: sticky;
   /* site header (68px) + sticky toolbar (~56px) + 28px breathing
      = 152px. Clears the toolbar's sticky-bottom edge with margin. */
   top: 152px;
-  bottom: 32px;
+  align-self: start;
+  /* Constrain height when pinned so letters don't overflow the
+     viewport bottom — center justification clips evenly top + bottom
+     when content exceeds the box (only happens on tight viewports
+     where the media query below already hides the rail). */
+  max-height: calc(100vh - 184px);
   display: flex;
   flex-direction: column;
   justify-content: center;
