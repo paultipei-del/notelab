@@ -2271,10 +2271,14 @@ body:has(.nl-study-viewport) {
 
 .nl-scale-builder-status {
   padding: 14px 20px;
-  min-height: 52px;
+  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .nl-scale-builder-status { min-height: 120px; }
 }
 .nl-scale-builder-status__body { display: flex; flex-direction: column; gap: 6px; }
 .nl-scale-builder-status__text {

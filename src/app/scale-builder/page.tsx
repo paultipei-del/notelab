@@ -89,8 +89,14 @@ const STEP_LABELS: Record<Step, string> = {
 const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 const FLAT_NAMES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
 
-// Prefer flats for certain keys
-const FLAT_KEYS = new Set(['F','Bb','Eb','Ab','Db','Gb','D','G','A','E','B','Bb'])
+// When a user clicks a piano key as the first note without picking a Root
+// from the dropdown, pick the enharmonic spelling that produces the fewest
+// accidentals in the resulting scale's key signature. F# is the sharp-side
+// default; everything else (Db, Eb, Ab, Bb) is flat-side.
+const DEFAULT_ROOT_SPELLING: Record<number, string> = {
+  0: 'C', 1: 'Db', 2: 'D', 3: 'Eb', 4: 'E', 5: 'F',
+  6: 'F#', 7: 'G', 8: 'Ab', 9: 'A', 10: 'Bb', 11: 'B',
+}
 
 function midiToNote(midi: number, preferFlats: boolean): { name: string, octave: number } {
   const pc = midi % 12
@@ -399,10 +405,13 @@ export default function ScaleBuilder() {
     setError(null)
 
     if (phase === 'select_root') {
-      const note = midiToNote(key.midi, FLAT_KEYS.has(key.name))
-      setBuiltNotes([{ name: note.name, octave: note.octave, midiNum: key.midi }])
+      const pc = key.midi % 12
+      const octave = Math.floor(key.midi / 12) - 1
+      const spelling = DEFAULT_ROOT_SPELLING[pc]
+      setSelectedRoot(spelling)
+      setBuiltNotes([{ name: spelling, octave, midiNum: key.midi }])
       setPhase('play_note')
-            playNote(key.midi)
+      playNote(key.midi)
       return
     }
 
@@ -445,10 +454,16 @@ if (newNotes.length === expectedLength) {
   }, [phase, expectedNextMidi, builtNotes, currentStep, expectedLength, expectedNotes, scaleType])
 
   function reset() {
-    setBuiltNotes([])
-    setPhase('select_root')
-        setError(null)
+    setError(null)
     setFlash(null)
+    if (selectedRoot) {
+      const midi = noteToMidi(selectedRoot, 4)
+      setBuiltNotes([{ name: selectedRoot, octave: 4, midiNum: midi }])
+      setPhase('play_note')
+    } else {
+      setBuiltNotes([])
+      setPhase('select_root')
+    }
   }
 
   // Key visual state helpers
