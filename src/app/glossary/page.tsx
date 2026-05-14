@@ -152,6 +152,13 @@ export default function GlossaryPage() {
   const totalCount = GLOSSARY.length
   const filterLabel = filter === 'All' ? 'all categories' : filter
 
+  // Which letters have entries under the current filter+search. Used
+  // to disable rail letters that would scroll to an empty section.
+  const availableLetters = useMemo(
+    () => new Set(grouped.map(([letter]) => letter)),
+    [grouped],
+  )
+
   return (
     <div className="nl-glossary-page">
       <header className="nl-glossary-hero">
@@ -207,23 +214,35 @@ export default function GlossaryPage() {
         <span className="nl-glossary-result-meta__count">
           <b>{results.length} of {totalCount}</b>, {filterLabel}
         </span>
-        <nav className="nl-glossary-jump" aria-label="Jump to letter">
-          {ALPHABET.map(L => (
+      </div>
+
+      {/* Vertical alphabet rail — fixed to the left edge of the
+          viewport so it stays visible throughout the 25k+ px corpus
+          scroll. Hidden on mobile via media query. Letters with no
+          entries under the current filter render disabled so the
+          rail's length and visual rhythm stay constant. */}
+      <nav className="nl-glossary-rail" aria-label="Jump to letter">
+        {ALPHABET.map(L => {
+          const available = availableLetters.has(L)
+          return (
             <button
               key={L}
               type="button"
               className={
-                'nl-glossary-jump__letter' +
-                (currentLetter === L ? ' is-current' : '')
+                'nl-glossary-rail__letter' +
+                (currentLetter === L && available ? ' is-current' : '') +
+                (available ? '' : ' is-disabled')
               }
-              onClick={() => scrollToLetter(L)}
+              onClick={() => available && scrollToLetter(L)}
               aria-label={`Jump to ${L}`}
+              aria-disabled={!available}
+              tabIndex={available ? 0 : -1}
             >
               {L}
             </button>
-          ))}
-        </nav>
-      </div>
+          )
+        })}
+      </nav>
 
       {grouped.length === 0 ? (
         <div className="nl-glossary-empty">

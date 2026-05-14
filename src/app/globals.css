@@ -8088,7 +8088,6 @@ svg:not(.nl-notation-staff) {
 
 .nl-glossary-result-meta {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
   padding: 14px 32px 0;
   gap: 16px;
@@ -8107,27 +8106,60 @@ svg:not(.nl-notation-staff) {
   letter-spacing: 0.05em;
   color: #1a1208;
 }
-.nl-glossary-jump {
+
+/* Vertical alphabet rail — fixed to the left edge of the viewport
+   so it stays visible while the user scrolls through the 25k+ px
+   corpus. Below the sticky toolbar's z-index so they don't fight
+   at the brief moment the rail's top edge meets the toolbar.
+   Hidden below 900px so the page reverts to no-rail behaviour. */
+.nl-glossary-rail {
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 4;
 }
-.nl-glossary-jump__letter {
-  background: none;
+.nl-glossary-rail__letter {
+  width: 24px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
   border: none;
-  padding: 2px 4px;
+  background: none;
+  padding: 0;
   font-family: var(--font-jost), system-ui, sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
   color: #8a7560;
   cursor: pointer;
-  transition: color 120ms ease, font-weight 120ms ease;
+  user-select: none;
+  transition: color 120ms ease, background 120ms ease, font-weight 120ms ease;
 }
-.nl-glossary-jump__letter:hover { color: #a0381c; }
-.nl-glossary-jump__letter.is-current {
+.nl-glossary-rail__letter:hover {
+  color: #a0381c;
+  background: rgba(160, 56, 28, 0.08);
+}
+.nl-glossary-rail__letter.is-current {
   color: #a0381c;
   font-weight: 500;
+}
+.nl-glossary-rail__letter.is-disabled {
+  color: rgba(138, 117, 96, 0.35);
+  cursor: default;
+  pointer-events: none;
+}
+.nl-glossary-rail__letter.is-disabled:hover {
+  background: none;
+  color: rgba(138, 117, 96, 0.35);
+}
+@media (max-width: 900px) {
+  .nl-glossary-rail { display: none; }
 }
 
 /* ── Entries ── */
@@ -8282,7 +8314,8 @@ svg:not(.nl-notation-staff) {
 
   .nl-glossary-result-meta { padding: 12px 20px 0; }
   .nl-glossary-result-meta__count { font-size: 12px; }
-  .nl-glossary-jump { display: none; }
+  /* Vertical rail is already hidden below 900px (see .nl-glossary-rail);
+     no horizontal jump strip exists anymore. */
 
   .nl-glossary-entries { padding: 8px 20px 60px; }
   .nl-glossary-letter-section { scroll-margin-top: 140px; }
