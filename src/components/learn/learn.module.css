@@ -445,14 +445,12 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  /* Opaque page-cream — content scrolling beneath can't bleed
-     through. Same color as the html bg (#E1D9C5) so the chrome
-     reads as the page paper itself, not a tinted band. No border:
-     a hairline against the same color reads as a faint seam, which
-     looks like the chrome is "different" even when its fill matches
-     the page exactly. Backdrop blur isn't enough on iOS Safari
-     with a transparent bg. */
-  background: #E1D9C5;
+  /* Explicitly transparent so the chrome inherits the page paper
+     directly. Previously this was a solid #E1D9C5 to match the html
+     bg — visually identical in practice but a fill-on-fill claim is
+     fragile (subpixel banding, backdrop-filter quirks). Transparent
+     is honest. */
+  background: transparent;
 }
 .chromeTop {
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px;
@@ -469,21 +467,21 @@
   text-decoration: none;
   display: inline-flex; align-items: center; gap: 10px;
   padding: 8px 14px;
-  /* Stamped-paper treatment matching the active nav pill in SiteHeader:
-     pressed into the page, not lifted off it. */
-  background: linear-gradient(180deg, #E2D8BC 0%, #ECE3CC 100%);
-  border: 1px solid #C7BC9B;
+  /* Flat cream-tinted fill + brown hairline — same vocabulary as
+     /repertoire and /glossary level chips so the lesson chrome
+     reads as part of the design system family. Dropped the two-stop
+     gradient and inset stamped-paper shadow that previously made
+     the buttons read as a distinct tonal band against the page. */
+  background: rgba(248, 240, 216, 0.55);
+  border: 1px solid rgba(154, 124, 80, 0.32);
   border-radius: 10px;
   color: #4A4540;
   max-width: 280px;
-  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
-  box-shadow:
-    inset 0 1px 2px rgba(42,35,24,0.10),
-    inset 0 -1px 0 rgba(255,248,230,0.4);
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
 }
 .posLink:hover {
-  background: linear-gradient(180deg, #DCD0AE 0%, #E5DCC0 100%);
-  border-color: #B6AB85;
+  background: rgba(248, 240, 216, 0.85);
+  border-color: #a0381c;
   color: #2A2318;
 }
 .posLink:active {
