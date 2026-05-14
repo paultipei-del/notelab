@@ -445,15 +445,30 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  /* Solid fill matching the html bg exactly. 100% opacity occludes
-     scrolling lesson text cleanly; matching #E1D9C5 means there's
-     no tonal-shift band between the chrome region and the content
-     below it. Translucent + backdrop-filter (the /glossary +
-     /repertoire pattern) was the wrong tool here because those
-     toolbars use a different bg color from the page and need the
-     blur to soften a visible boundary. /learn wants no boundary at
-     all — solid matching color does that more reliably. */
-  background: rgb(225, 217, 197);
+  /* Mirror the html bg exactly so the chrome melts into the page
+     paper at any scroll position. On mobile that's a flat #E1D9C5.
+     On desktop the html has a top→bottom gradient (see globals.css
+     html rule) — single-color chrome there shows as a band at the
+     y where the chrome color stops matching the gradient stop.
+     background-attachment: fixed anchors the chrome gradient to
+     the viewport, so the chrome's color at viewport y=68 always
+     equals the html's color at viewport y=68. 100% opaque, fully
+     occludes scrolling text, no perceived boundary. */
+  background: #E1D9C5;
+}
+@media (min-width: 769px) {
+  .chrome {
+    background-color: #DBD3BE;
+    background-image: linear-gradient(
+      to bottom,
+      #E0D8C0 0px,
+      #E4DFCF 200px,
+      #E4DFCF calc(100% - 220px),
+      #DED6BE 100%
+    );
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
 }
 .chromeTop {
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px;
