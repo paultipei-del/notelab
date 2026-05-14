@@ -331,7 +331,34 @@ return (
 
       {!(isComplete && viewMode === 'study') && (viewMode !== 'browse' || isMobile) && (
         <div className={`nl-study-viewport${isMobile ? ' nl-study-mobile-shell' : ''}`}>
-          {isMobile ? (
+          {isSightReadDeck ? (
+            /* Sight-read header — End session + Round + Accuracy.
+               Used for BOTH mobile and desktop. The legacy
+               MobileStudyChrome was overlaying this on mobile
+               before, restoring flashcard mode chips and a
+               Browse button that don't apply to sight-read. */
+            <header className="nl-sr-play-header">
+              <button type="button" onClick={goBack} className="nl-sr-play-header__back">
+                ← End session
+              </button>
+              <div className="nl-sr-play-header__meta">
+                <div className="nl-sr-play-header__stat">
+                  <span className="nl-sr-play-header__label">Round</span>
+                  <span className="nl-sr-play-header__value">
+                    {queue.length > 0 ? `${sessionCardIndex} / ${queue.length}` : '—'}
+                  </span>
+                </div>
+                <div className="nl-sr-play-header__stat">
+                  <span className="nl-sr-play-header__label">Accuracy</span>
+                  <span className="nl-sr-play-header__value is-green">
+                    {stats.total > 0
+                      ? `${Math.round((stats.correct / stats.total) * 100)}%`
+                      : '—'}
+                  </span>
+                </div>
+              </div>
+            </header>
+          ) : isMobile ? (
             <MobileStudyChrome
               activeTab={mobileActiveTab}
               tabs={mobileTabs}
@@ -354,32 +381,6 @@ return (
             />
           ) : (
             <>
-          {isSightReadDeck ? (
-            /* Sight-read header — End session + Round + Accuracy.
-               Cleaner than the flashcard topbar; accuracy renders in
-               forest green per the v2.1 design spec. */
-            <header className="nl-sr-play-header">
-              <button type="button" onClick={goBack} className="nl-sr-play-header__back">
-                ← End session
-              </button>
-              <div className="nl-sr-play-header__meta">
-                <div className="nl-sr-play-header__stat">
-                  <span className="nl-sr-play-header__label">Round</span>
-                  <span className="nl-sr-play-header__value">
-                    {queue.length > 0 ? `${sessionCardIndex} / ${queue.length}` : '—'}
-                  </span>
-                </div>
-                <div className="nl-sr-play-header__stat">
-                  <span className="nl-sr-play-header__label">Accuracy</span>
-                  <span className="nl-sr-play-header__value is-green">
-                    {stats.total > 0
-                      ? `${Math.round((stats.correct / stats.total) * 100)}%`
-                      : '—'}
-                  </span>
-                </div>
-              </div>
-            </header>
-          ) : (
             <header className="nl-study-topbar">
               <div className="nl-study-topbar__row1">
                 <div className="nl-study-topbar__back">
@@ -422,8 +423,6 @@ return (
                 <div className="nl-study-progress-fill" style={{ width: `${progressPct}%` }} />
               </div>
             </header>
-          )}
-          {!isSightReadDeck && (
             <div className="nl-study-mode-toolbar">
               <div
                 className="nl-study-mode-row nl-study-mode-row--modes"
@@ -467,7 +466,6 @@ return (
                 </button>
               </div>
             </div>
-          )}
             </>
           )}
           <div
