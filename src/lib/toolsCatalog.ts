@@ -13,7 +13,7 @@ export type ToolCategory =
   | 'practice'
   | 'reference'
 
-export type ToolStatus = 'free' | 'pro' | 'free-pro'
+export type ToolStatus = 'free' | 'pro' | 'free-pro' | 'none'
 
 export interface Tool {
   id: string
@@ -66,22 +66,16 @@ export const TOOLS: Tool[] = [
   },
 
   // ─────────────── DRILLS ───────────────
+  // Staff Recognition + Note Identification were consolidated into
+  // /sight-reading during the Phase 1-2 rebuild — both old hubs now
+  // redirect there. One card replaces both.
   {
-    id: 'staff-recognition',
-    href: '/sight-read',
+    id: 'sight-reading',
+    href: '/sight-reading',
     category: 'drills',
-    status: 'free-pro',
-    name: 'Staff Recognition',
-    pitch: 'Play notes on your piano as they appear — treble, bass, grand staff.',
-    ctaVerb: 'Practice',
-  },
-  {
-    id: 'note-identification',
-    href: '/note-id',
-    category: 'drills',
-    status: 'free-pro',
-    name: 'Note Identification',
-    pitch: 'Identify notes by name using letter buttons or a piano keyboard.',
+    status: 'none',
+    name: 'Sight Reading',
+    pitch: 'Read notes one at a time — letters, full piano, or real piano via mic.',
     ctaVerb: 'Practice',
   },
   {
