@@ -445,18 +445,15 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  /* Translucent fill matching the html bg + backdrop blur — same
-     pattern used by /glossary and /repertoire toolbars. The earlier
-     transparent fix removed the band perception but let lesson
-     body text scroll visibly through the bar. 92% opacity occludes
-     scrolling content cleanly; the 8% transparency + blur gives a
-     subtle frosted-glass feel that fits the design-system family.
-     The two contributors to the previous "band" perception (button
-     gradient + border-bottom) are already gone, so the bg can
-     safely return without re-introducing the band. */
-  background: rgba(225, 217, 197, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* Solid fill matching the html bg exactly. 100% opacity occludes
+     scrolling lesson text cleanly; matching #E1D9C5 means there's
+     no tonal-shift band between the chrome region and the content
+     below it. Translucent + backdrop-filter (the /glossary +
+     /repertoire pattern) was the wrong tool here because those
+     toolbars use a different bg color from the page and need the
+     blur to soften a visible boundary. /learn wants no boundary at
+     all — solid matching color does that more reliably. */
+  background: rgb(225, 217, 197);
 }
 .chromeTop {
   display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px;
