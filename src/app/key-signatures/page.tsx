@@ -113,12 +113,16 @@ function KeyStaff({ keyInfo, clef, width = 300 }: KeyStaffProps) {
 }
 
 // ── Circle of Fifths (vector viewBox 360×360; size from CSS frame) ───────────
+const TALLY_LABELS = ['0', '1♯', '2♯', '3♯', '4♯', '5♯', '6', '5♭', '4♭', '3♭', '2♭', '1♭']
+const MONO = 'var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace'
+
 function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k: string) => void }) {
   const [hoverPair, setHoverPair] = useState<number | null>(null)
   const size = 360
   const cx = size / 2, cy = size / 2
   const outerR = 155, innerR = 100, minorR = 65
   const outerTextR = 128, innerTextR = 80
+  const rimR = outerR + 14
 
   const r = (v: number) => Math.round(v * 100) / 100
 
@@ -136,6 +140,11 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
     { major: 'Bb', minor: 'Gm'  },
     { major: 'F',  minor: 'Dm'  },
   ]
+
+  function sideFor(i: number): 'sharp' | 'flat' | 'neutral' {
+    if (i === 0 || i === 6) return 'neutral'
+    return i <= 5 ? 'sharp' : 'flat'
+  }
 
   function wedgePath(r1: number, r2: number, i: number) {
     const a1 = ((i - 0.5) * 30 - 90) * Math.PI / 180
@@ -177,17 +186,29 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
         const majorSelected = selected === k.major
         const altSelected = !!(k.alt && selected === k.alt)
         const isHover = hoverPair === i
+        const side = sideFor(i)
+
+        const majorRestFill = side === 'neutral'
+          ? '#F2EDDF'
+          : side === 'sharp'
+            ? 'rgba(160, 56, 28, 0.06)'
+            : 'rgba(45, 90, 62, 0.06)'
+        const minorRestFill = side === 'neutral'
+          ? '#EDE8DF'
+          : side === 'sharp'
+            ? 'rgba(160, 56, 28, 0.04)'
+            : 'rgba(45, 90, 62, 0.04)'
 
         const innerFill = pairSelected
-          ? '#3A3A38'
+          ? 'rgba(160, 56, 28, 0.65)'
           : isHover
-            ? '#D8D0C2'
-            : '#EDE8DF'
+            ? 'rgba(160, 56, 28, 0.14)'
+            : minorRestFill
         const outerFill = majorSelected || altSelected
-          ? '#1A1A18'
+          ? '#a0381c'
           : isHover
-            ? '#E8E0D2'
-            : '#F2EDDF'
+            ? 'rgba(160, 56, 28, 0.18)'
+            : majorRestFill
 
         const displayMinor = altSelected ? k.altMinor! : k.minor
         const angle = (i * 30 - 90) * Math.PI / 180
@@ -195,6 +216,11 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
         const mty = r(cy + innerTextR * Math.sin(angle))
         const otx = r(cx + outerTextR * Math.cos(angle))
         const oty = r(cy + outerTextR * Math.sin(angle))
+        const rtx = r(cx + rimR * Math.cos(angle))
+        const rty = r(cy + rimR * Math.sin(angle))
+
+        const minorTextFill = pairSelected ? '#f0e7d0' : '#7A7060'
+        const majorTextFill = (majorSelected || altSelected) ? '#f0e7d0' : '#1A1A18'
 
         return (
           <g
@@ -226,10 +252,11 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
               y={mty}
               textAnchor="middle"
               dominantBaseline="middle"
-              fontSize="10"
+              fontSize="11.5"
               fontFamily={F}
-              fill={pairSelected ? 'white' : '#7A7060'}
-              fontWeight="300"
+              fill={minorTextFill}
+              fontWeight="500"
+              style={{ letterSpacing: '0.3px' }}
               onClick={() => onSelect(k.major)}
             >
               {displayMinor}
@@ -241,10 +268,10 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
                   y={oty - 7}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize="12"
+                  fontSize="13"
                   fontFamily={SERIF}
-                  fill={majorSelected || altSelected ? 'white' : '#1A1A18'}
-                  fontWeight="300"
+                  fill={majorTextFill}
+                  fontWeight="500"
                   onClick={() => onSelect(k.major)}
                 >
                   F#
@@ -254,7 +281,7 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
                   y1={oty}
                   x2={otx + 8}
                   y2={oty}
-                  stroke={majorSelected || altSelected ? 'rgba(255,255,255,0.4)' : '#D9CFAE'}
+                  stroke={majorSelected || altSelected ? 'rgba(240, 231, 208, 0.4)' : '#D9CFAE'}
                   strokeWidth="0.5"
                 />
                 <text
@@ -262,10 +289,10 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
                   y={oty + 7}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize="12"
+                  fontSize="13"
                   fontFamily={SERIF}
-                  fill={majorSelected || altSelected ? 'white' : '#1A1A18'}
-                  fontWeight="300"
+                  fill={majorTextFill}
+                  fontWeight="500"
                   onClick={() => onSelect(k.alt!)}
                 >
                   Gb
@@ -277,15 +304,28 @@ function CircleOfFifths({ selected, onSelect }: { selected: string; onSelect: (k
                 y={oty}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fontSize="13"
+                fontSize="16"
                 fontFamily={SERIF}
-                fill={majorSelected ? 'white' : '#1A1A18'}
-                fontWeight={majorSelected ? '400' : '300'}
+                fill={majorTextFill}
+                fontWeight="500"
                 onClick={() => onSelect(k.major)}
               >
                 {k.major}
               </text>
             )}
+            <text
+              x={rtx}
+              y={rty}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize="9.5"
+              fontFamily={MONO}
+              fill={(majorSelected || altSelected) ? '#a0381c' : '#8a7560'}
+              fontWeight={(majorSelected || altSelected) ? '700' : '500'}
+              style={{ pointerEvents: 'none' }}
+            >
+              {TALLY_LABELS[i]}
+            </text>
           </g>
         )
       })}
