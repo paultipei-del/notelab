@@ -974,7 +974,7 @@ export default function KeySignatures() {
   }
 
   return (
-    <div className="nl-key-sig-page">
+    <div className={`nl-key-sig-page is-${mode}-mode`}>
       <div className="nl-key-sig-inner">
         <header className="nl-key-sig-hero">
           <Link href="/tools" className="nl-key-sig-hero__back">← Back to tools</Link>
@@ -1285,18 +1285,23 @@ export default function KeySignatures() {
                         Restart session
                       </button>
                       <div className="nl-key-sig-study-panel__filter" role="group" aria-label="Question pool">
-                        {(['majors', 'minors', 'both'] as const).map(f => (
-                          <button
-                            key={f}
-                            type="button"
-                            className={'nl-key-sig-study-panel__filter-chip' + (filter === f ? ' is-active' : '')}
-                            onClick={() => handleFilterChange(f)}
-                            disabled={drill === 'order'}
-                            title={drill === 'order' ? 'Order drill uses sharps and flats only' : undefined}
-                          >
-                            {f === 'majors' ? 'Majors only' : f === 'minors' ? 'Minors only' : 'Both'}
-                          </button>
-                        ))}
+                        {(['majors', 'minors', 'both'] as const).map(f => {
+                          const longLabel = f === 'majors' ? 'Majors only' : f === 'minors' ? 'Minors only' : 'Both'
+                          const shortLabel = f === 'majors' ? 'Majors' : f === 'minors' ? 'Minors' : 'Both'
+                          return (
+                            <button
+                              key={f}
+                              type="button"
+                              className={'nl-key-sig-study-panel__filter-chip' + (filter === f ? ' is-active' : '')}
+                              onClick={() => handleFilterChange(f)}
+                              disabled={drill === 'order'}
+                              title={drill === 'order' ? 'Order drill uses sharps and flats only' : undefined}
+                            >
+                              <span className="nl-key-sig-study-panel__filter-chip-full">{longLabel}</span>
+                              <span className="nl-key-sig-study-panel__filter-chip-short">{shortLabel}</span>
+                            </button>
+                          )
+                        })}
                       </div>
                     </div>
                   )}

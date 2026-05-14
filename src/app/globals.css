@@ -1821,6 +1821,27 @@ body:has(.nl-study-viewport) {
     border-bottom: 1px solid rgba(26, 26, 24, 0.08);
     padding-bottom: 16px;
   }
+
+  /* Study mode on mobile: put the drill panel above the circle so
+     the prompt is visible without scrolling past the reference chart.
+     Circle remains visible below as both reference + answer surface. */
+  .nl-key-sig-page.is-study-mode .nl-key-sig-info-panel { order: 1; }
+  .nl-key-sig-page.is-study-mode .nl-key-sig-circle-panel {
+    order: 2;
+    border-bottom: none;
+    border-top: 1px solid rgba(26, 26, 24, 0.08);
+  }
+}
+
+@media (max-width: 480px) {
+  .nl-key-sig-study-panel__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .nl-key-sig-study-panel__stats {
+    align-self: flex-end;
+  }
 }
 
 /* ── Study panel ── */
@@ -2065,6 +2086,13 @@ body:has(.nl-study-viewport) {
 .nl-key-sig-study-panel__filter-chip:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.nl-key-sig-study-panel__filter-chip-short { display: none; }
+
+@media (max-width: 480px) {
+  .nl-key-sig-study-panel__filter-chip-full { display: none; }
+  .nl-key-sig-study-panel__filter-chip-short { display: inline; }
 }
 
 .nl-key-sig-study-panel__summary {
