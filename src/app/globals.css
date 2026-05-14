@@ -8854,8 +8854,8 @@ svg:not(.nl-notation-staff) {
   font-family: var(--font-cormorant), serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.55;
   color: #5a4028;
   /* No line clamp — show the full description. Rows become
      variable-height; that's the tradeoff for not hiding text the
@@ -9018,7 +9018,7 @@ svg:not(.nl-notation-staff) {
   .nl-repertoire-row__publisher,
   .nl-repertoire-row__description {
     grid-column: 1 / -1;
-    font-size: 13px;
+    font-size: 14px;
   }
   .nl-repertoire-row__arrow { font-size: 13px; }
 
