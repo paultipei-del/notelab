@@ -8107,14 +8107,18 @@ svg:not(.nl-notation-staff) {
   color: #1a1208;
 }
 
-/* Vertical alphabet rail — fixed to the left edge of the viewport
-   so it stays visible while the user scrolls through the 25k+ px
-   corpus. Below the sticky toolbar's z-index so they don't fight
-   at the brief moment the rail's top edge meets the toolbar.
-   Hidden below 900px so the page reverts to no-rail behaviour. */
+/* Vertical alphabet rail — fixed to the right edge of the
+   viewport so it stays visible while the user scrolls through
+   the 25k+ px corpus. Left-aligned felt visually busy against
+   the entry rows; the right gutter is empty space so the rail
+   reads as a navigation accessory rather than competing with
+   the term column. Below the sticky toolbar's z-index so they
+   don't fight at the brief moment the rail's top edge meets the
+   toolbar. Hidden below 900px so the page reverts to no-rail
+   behaviour. */
 .nl-glossary-rail {
   position: fixed;
-  left: 24px;
+  right: 24px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
