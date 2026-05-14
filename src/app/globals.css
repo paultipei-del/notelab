@@ -8615,9 +8615,10 @@ svg:not(.nl-notation-staff) {
   margin: 0;
   font-family: var(--font-cormorant), serif;
   font-style: normal;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 15px;
   line-height: 1.5;
-  color: #5a4028;
+  color: #2a1a08;
 }
 
 /* ── Subtabs (Single Composers / Anthologies / …) ── */
@@ -8819,8 +8820,8 @@ svg:not(.nl-notation-staff) {
 }
 .nl-repertoire-row__level {
   font-family: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
-  font-size: 12px;
-  color: #5a4028;
+  font-size: 13px;
+  color: #2a1a08;
 }
 .nl-repertoire-row__composer {
   font-family: var(--font-cormorant), serif;
@@ -8832,6 +8833,7 @@ svg:not(.nl-notation-staff) {
   font-family: var(--font-cormorant), serif;
   font-style: normal;
   font-size: 16px;
+  font-weight: 500;
   color: #1a1208;
 }
 .nl-repertoire-row__title em {
@@ -8846,17 +8848,18 @@ svg:not(.nl-notation-staff) {
 .nl-repertoire-row__publisher {
   font-family: var(--font-cormorant), serif;
   font-style: normal;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 15px;
   line-height: 1.45;
-  color: #5a4028;
+  color: #2a1a08;
 }
 .nl-repertoire-row__description {
   font-family: var(--font-cormorant), serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 16px;
   line-height: 1.55;
-  color: #5a4028;
+  color: #2a1a08;
   /* No line clamp — show the full description. Rows become
      variable-height; that's the tradeoff for not hiding text the
      user can't otherwise reach (the row itself is an IMSLP link,
