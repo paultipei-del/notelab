@@ -1,7 +1,6 @@
 'use client'
-import KeyDrill from '@/components/KeyDrill'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import * as Tone from 'tone'
 
@@ -371,6 +370,218 @@ function getAffekt(keyName: string, isMinor: boolean): AffektEntry | undefined {
   return AFFEKT.find(a => a.key === k)
 }
 
+// ── Study mode constants ───────────────────────────────────────────────────
+type Mode = 'signature' | 'affekt' | 'study'
+type Drill = 'recognize' | 'recall' | 'order'
+type Filter = 'majors' | 'minors' | 'both'
+
+const STORAGE_MODE = 'notelab-key-sig-mode'
+const STORAGE_STUDY = 'notelab-key-sig-study'
+
+const SHARP_ORDER = ['F#', 'C#', 'G#', 'D#', 'A#', 'E#', 'B#']
+const FLAT_ORDER  = ['Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Cb', 'Fb']
+
+interface StudyKey {
+  name: string
+  shortName: string
+  isMajor: boolean
+  accidentalCount: number
+  side: 'sharps' | 'flats' | 'natural'
+  signatureSource: string // major key name in KEYS that defines this signature
+  wedgeKey: string        // string returned by Circle onSelect when this key is the answer
+}
+
+const STUDY_KEYS: StudyKey[] = [
+  // Majors
+  { name: 'C Major',  shortName: 'C',  isMajor: true,  accidentalCount: 0, side: 'natural', signatureSource: 'C',  wedgeKey: 'C'  },
+  { name: 'G Major',  shortName: 'G',  isMajor: true,  accidentalCount: 1, side: 'sharps',  signatureSource: 'G',  wedgeKey: 'G'  },
+  { name: 'D Major',  shortName: 'D',  isMajor: true,  accidentalCount: 2, side: 'sharps',  signatureSource: 'D',  wedgeKey: 'D'  },
+  { name: 'A Major',  shortName: 'A',  isMajor: true,  accidentalCount: 3, side: 'sharps',  signatureSource: 'A',  wedgeKey: 'A'  },
+  { name: 'E Major',  shortName: 'E',  isMajor: true,  accidentalCount: 4, side: 'sharps',  signatureSource: 'E',  wedgeKey: 'E'  },
+  { name: 'B Major',  shortName: 'B',  isMajor: true,  accidentalCount: 5, side: 'sharps',  signatureSource: 'B',  wedgeKey: 'B'  },
+  { name: 'F# Major', shortName: 'F#', isMajor: true,  accidentalCount: 6, side: 'sharps',  signatureSource: 'F#', wedgeKey: 'F#' },
+  { name: 'Gb Major', shortName: 'Gb', isMajor: true,  accidentalCount: 6, side: 'flats',   signatureSource: 'Gb', wedgeKey: 'Gb' },
+  { name: 'Db Major', shortName: 'Db', isMajor: true,  accidentalCount: 5, side: 'flats',   signatureSource: 'Db', wedgeKey: 'Db' },
+  { name: 'Ab Major', shortName: 'Ab', isMajor: true,  accidentalCount: 4, side: 'flats',   signatureSource: 'Ab', wedgeKey: 'Ab' },
+  { name: 'Eb Major', shortName: 'Eb', isMajor: true,  accidentalCount: 3, side: 'flats',   signatureSource: 'Eb', wedgeKey: 'Eb' },
+  { name: 'Bb Major', shortName: 'Bb', isMajor: true,  accidentalCount: 2, side: 'flats',   signatureSource: 'Bb', wedgeKey: 'Bb' },
+  { name: 'F Major',  shortName: 'F',  isMajor: true,  accidentalCount: 1, side: 'flats',   signatureSource: 'F',  wedgeKey: 'F'  },
+  // Minors (the relative minor of each major). When the circle wedge is clicked,
+  // it returns the major's name — minors are answered indirectly via that mapping.
+  { name: 'A minor',  shortName: 'Am',  isMajor: false, accidentalCount: 0, side: 'natural', signatureSource: 'C',  wedgeKey: 'C'  },
+  { name: 'E minor',  shortName: 'Em',  isMajor: false, accidentalCount: 1, side: 'sharps',  signatureSource: 'G',  wedgeKey: 'G'  },
+  { name: 'B minor',  shortName: 'Bm',  isMajor: false, accidentalCount: 2, side: 'sharps',  signatureSource: 'D',  wedgeKey: 'D'  },
+  { name: 'F# minor', shortName: 'F#m', isMajor: false, accidentalCount: 3, side: 'sharps',  signatureSource: 'A',  wedgeKey: 'A'  },
+  { name: 'C# minor', shortName: 'C#m', isMajor: false, accidentalCount: 4, side: 'sharps',  signatureSource: 'E',  wedgeKey: 'E'  },
+  { name: 'G# minor', shortName: 'G#m', isMajor: false, accidentalCount: 5, side: 'sharps',  signatureSource: 'B',  wedgeKey: 'B'  },
+  { name: 'D# minor', shortName: 'D#m', isMajor: false, accidentalCount: 6, side: 'sharps',  signatureSource: 'F#', wedgeKey: 'F#' },
+  { name: 'Bb minor', shortName: 'Bbm', isMajor: false, accidentalCount: 5, side: 'flats',   signatureSource: 'Db', wedgeKey: 'Db' },
+  { name: 'F minor',  shortName: 'Fm',  isMajor: false, accidentalCount: 4, side: 'flats',   signatureSource: 'Ab', wedgeKey: 'Ab' },
+  { name: 'C minor',  shortName: 'Cm',  isMajor: false, accidentalCount: 3, side: 'flats',   signatureSource: 'Eb', wedgeKey: 'Eb' },
+  { name: 'G minor',  shortName: 'Gm',  isMajor: false, accidentalCount: 2, side: 'flats',   signatureSource: 'Bb', wedgeKey: 'Bb' },
+  { name: 'D minor',  shortName: 'Dm',  isMajor: false, accidentalCount: 1, side: 'flats',   signatureSource: 'F',  wedgeKey: 'F'  },
+]
+
+interface RecognizeQuestion {
+  kind: 'recognize'
+  prompt: string
+  target: StudyKey
+  options: StudyKey[]   // 4 options
+  correctIndex: number  // index into options
+}
+
+interface RecallQuestion {
+  kind: 'recall'
+  prompt: string
+  target: StudyKey
+  options: { label: string; count: number; side: 'sharps' | 'flats' | 'natural' }[]
+  correctIndex: number
+}
+
+interface OrderQuestion {
+  kind: 'order'
+  prompt: string
+  variant: 'sharp' | 'flat'
+  position: number     // 1-based
+  options: string[]    // note names like 'F#'
+  correctIndex: number
+}
+
+type StudyQuestion = RecognizeQuestion | RecallQuestion | OrderQuestion
+
+interface BestRecord {
+  score: number
+  of: number
+  date: string
+}
+
+type Bests = Record<string, BestRecord>
+
+function pickFilteredKeys(filter: Filter): StudyKey[] {
+  if (filter === 'majors') return STUDY_KEYS.filter(k => k.isMajor)
+  if (filter === 'minors') return STUDY_KEYS.filter(k => !k.isMajor)
+  return STUDY_KEYS
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = arr.slice()
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+function genRecognize(filter: Filter, lastShortName?: string): RecognizeQuestion {
+  const pool = pickFilteredKeys(filter).filter(k => k.shortName !== lastShortName)
+  const target = pool[Math.floor(Math.random() * pool.length)]
+  const sameTypePool = STUDY_KEYS.filter(k =>
+    k.isMajor === target.isMajor && k.shortName !== target.shortName
+  )
+  // Sort distractor candidates by accidental-count proximity (close = more plausible)
+  const ranked = sameTypePool
+    .map(k => ({ k, dist: Math.abs(k.accidentalCount - target.accidentalCount) + (k.side !== target.side ? 0.5 : 0) }))
+    .sort((a, b) => a.dist - b.dist)
+  // Take top 6 closest, shuffle, pick 3
+  const distractors = shuffle(ranked.slice(0, 6).map(r => r.k)).slice(0, 3)
+  const options = shuffle([target, ...distractors])
+  return {
+    kind: 'recognize',
+    prompt: 'Which key has this signature?',
+    target,
+    options,
+    correctIndex: options.findIndex(o => o.shortName === target.shortName),
+  }
+}
+
+function genRecall(filter: Filter, lastShortName?: string): RecallQuestion {
+  const pool = pickFilteredKeys(filter).filter(k => k.shortName !== lastShortName)
+  const target = pool[Math.floor(Math.random() * pool.length)]
+  const correctLabel = target.accidentalCount === 0
+    ? 'No sharps or flats'
+    : `${target.accidentalCount} ${target.side === 'sharps' ? 'sharp' : 'flat'}${target.accidentalCount > 1 ? 's' : ''}`
+  // Build 3 plausible distractor counts (off-by-1 on each side, plus a different-side same-count)
+  const candidates: { label: string; count: number; side: 'sharps' | 'flats' | 'natural' }[] = []
+  for (const delta of [-2, -1, 1, 2]) {
+    const c = target.accidentalCount + delta
+    if (c >= 1 && c <= 7 && target.side !== 'natural') {
+      candidates.push({
+        label: `${c} ${target.side === 'sharps' ? 'sharp' : 'flat'}${c > 1 ? 's' : ''}`,
+        count: c,
+        side: target.side,
+      })
+    }
+  }
+  // Opposite-side same-count for variety
+  if (target.side !== 'natural') {
+    const other = target.side === 'sharps' ? 'flats' : 'sharps'
+    candidates.push({
+      label: `${target.accidentalCount} ${other === 'sharps' ? 'sharp' : 'flat'}${target.accidentalCount > 1 ? 's' : ''}`,
+      count: target.accidentalCount,
+      side: other,
+    })
+  }
+  // "No sharps or flats" as a perpetual distractor when target has any accidentals
+  if (target.accidentalCount > 0) {
+    candidates.push({ label: 'No sharps or flats', count: 0, side: 'natural' })
+  } else {
+    // target is C/Am — distractors are 1/2/3 sharps or flats
+    candidates.push({ label: '1 sharp',  count: 1, side: 'sharps' })
+    candidates.push({ label: '1 flat',   count: 1, side: 'flats'  })
+    candidates.push({ label: '2 sharps', count: 2, side: 'sharps' })
+  }
+  const distractors = shuffle(candidates).slice(0, 3)
+  const correct = { label: correctLabel, count: target.accidentalCount, side: target.side }
+  const options = shuffle([correct, ...distractors])
+  return {
+    kind: 'recall',
+    prompt: `What is the key signature of ${target.name}?`,
+    target,
+    options,
+    correctIndex: options.findIndex(o => o.count === correct.count && o.side === correct.side),
+  }
+}
+
+function genOrder(): OrderQuestion {
+  const variant: 'sharp' | 'flat' = Math.random() < 0.5 ? 'sharp' : 'flat'
+  const order = variant === 'sharp' ? SHARP_ORDER : FLAT_ORDER
+  const position = 1 + Math.floor(Math.random() * 7)
+  const correctNote = order[position - 1]
+  const pool = order.filter(n => n !== correctNote)
+  const distractors = shuffle(pool).slice(0, 3)
+  const options = shuffle([correctNote, ...distractors])
+  const ordinal = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th'][position - 1]
+  return {
+    kind: 'order',
+    prompt: `What is the ${ordinal} ${variant === 'sharp' ? 'sharp' : 'flat'} in the order of ${variant === 'sharp' ? 'sharps' : 'flats'}?`,
+    variant,
+    position,
+    options,
+    correctIndex: options.findIndex(o => o === correctNote),
+  }
+}
+
+function generateQuestion(drill: Drill, filter: Filter, last?: StudyQuestion): StudyQuestion {
+  if (drill === 'recognize') {
+    const lastShort = last && last.kind === 'recognize' ? last.target.shortName : undefined
+    return genRecognize(filter, lastShort)
+  }
+  if (drill === 'recall') {
+    const lastShort = last && last.kind === 'recall' ? last.target.shortName : undefined
+    return genRecall(filter, lastShort)
+  }
+  return genOrder()
+}
+
+function bestKeyFor(drill: Drill, filter: Filter): string {
+  if (drill === 'order') return `order-both` // order ignores filter
+  return `${drill}-${filter}`
+}
+
+function todayISO(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
 // ── Piano with highlighted notes ───────────────────────────────────────────
 const NOTE_NAMES_S = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 const NOTE_NAMES_F = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
@@ -508,9 +719,195 @@ export default function KeySignatures() {
   const [selectedKey, setSelectedKey] = useState('C')
   const [clef, setClef] = useState<'treble' | 'bass' | 'both'>('both')
   const [showScale, setShowScale] = useState(true)
-  const [activeTab, setActiveTab] = useState<'signature' | 'affekt' | 'drill'>('signature')
+  const [mode, setMode] = useState<Mode>('signature')
   const [showRelativeOnPiano, setShowRelativeOnPiano] = useState(false)
   const samplerRef = useRef<Tone.Sampler | null>(null)
+
+  // ── Study mode state ────────────────────────────────────────────────────
+  const [drill, setDrill] = useState<Drill>('recognize')
+  const [filter, setFilter] = useState<Filter>('both')
+  const [question, setQuestion] = useState<StudyQuestion | null>(null)
+  const [questionIndex, setQuestionIndex] = useState(0)
+  const [score, setScore] = useState(0)
+  const [streak, setStreak] = useState(0)
+  const [feedback, setFeedback] = useState<'idle' | 'correct' | 'incorrect'>('idle')
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
+  const [sessionComplete, setSessionComplete] = useState(false)
+  const [bests, setBests] = useState<Bests>({})
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const SESSION_LENGTH = 10
+
+  // ── localStorage load (mount only) ──────────────────────────────────────
+  useEffect(() => {
+    try {
+      const rawMode = localStorage.getItem(STORAGE_MODE)
+      if (rawMode) {
+        const parsed = JSON.parse(rawMode) as { mode?: Mode }
+        if (parsed.mode === 'signature' || parsed.mode === 'affekt' || parsed.mode === 'study') {
+          setMode(parsed.mode)
+        }
+      }
+      const rawStudy = localStorage.getItem(STORAGE_STUDY)
+      if (rawStudy) {
+        const parsed = JSON.parse(rawStudy) as { lastDrill?: Drill; lastFilter?: Filter; bests?: Bests }
+        if (parsed.lastDrill) setDrill(parsed.lastDrill)
+        if (parsed.lastFilter) setFilter(parsed.lastFilter)
+        if (parsed.bests) setBests(parsed.bests)
+      }
+    } catch {
+      // ignore corrupt state
+    }
+  }, [])
+
+  // ── Persist mode + drill/filter selections ──────────────────────────────
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_MODE, JSON.stringify({ mode }))
+    } catch {}
+  }, [mode])
+
+  const persistStudy = useCallback((patch: Partial<{ lastDrill: Drill; lastFilter: Filter; bests: Bests }>) => {
+    try {
+      const current = (() => {
+        try {
+          const raw = localStorage.getItem(STORAGE_STUDY)
+          if (raw) return JSON.parse(raw) as { lastDrill?: Drill; lastFilter?: Filter; bests?: Bests }
+        } catch {}
+        return {}
+      })()
+      const next = { ...current, ...patch }
+      localStorage.setItem(STORAGE_STUDY, JSON.stringify(next))
+    } catch {}
+  }, [])
+
+  // ── Session lifecycle ───────────────────────────────────────────────────
+  const startNewSession = useCallback((d: Drill = drill, f: Filter = filter) => {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+    setQuestion(generateQuestion(d, f))
+    setQuestionIndex(0)
+    setScore(0)
+    setStreak(0)
+    setFeedback('idle')
+    setSelectedAnswer(null)
+    setSessionComplete(false)
+  }, [drill, filter])
+
+  useEffect(() => {
+    if (mode !== 'study') return
+    if (question === null && !sessionComplete) {
+      startNewSession(drill, filter)
+    }
+  }, [mode, question, sessionComplete, drill, filter, startNewSession])
+
+  useEffect(() => {
+    return () => {
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+    }
+  }, [])
+
+  function handleDrillChange(d: Drill) {
+    setDrill(d)
+    persistStudy({ lastDrill: d })
+    startNewSession(d, filter)
+  }
+
+  function handleFilterChange(f: Filter) {
+    setFilter(f)
+    persistStudy({ lastFilter: f })
+    startNewSession(drill, f)
+  }
+
+  function recordBest(finalScore: number) {
+    const key = bestKeyFor(drill, filter)
+    const prev = bests[key]
+    if (!prev || finalScore > prev.score) {
+      const next = { ...bests, [key]: { score: finalScore, of: SESSION_LENGTH, date: todayISO() } }
+      setBests(next)
+      persistStudy({ bests: next })
+    }
+  }
+
+  function advanceQuestion(currentScore: number, currentStreak: number) {
+    const nextIndex = questionIndex + 1
+    if (nextIndex >= SESSION_LENGTH) {
+      setSessionComplete(true)
+      setQuestion(null)
+      recordBest(currentScore)
+      return
+    }
+    setQuestionIndex(nextIndex)
+    setFeedback('idle')
+    setSelectedAnswer(null)
+    setQuestion(generateQuestion(drill, filter, question ?? undefined))
+  }
+
+  function submitAnswer(answerIndex: number) {
+    if (!question || feedback !== 'idle') return
+    setSelectedAnswer(answerIndex)
+    const correct = answerIndex === question.correctIndex
+    if (correct) {
+      const newScore = score + 1
+      const newStreak = streak + 1
+      setScore(newScore)
+      setStreak(newStreak)
+      setFeedback('correct')
+      advanceTimerRef.current = setTimeout(() => advanceQuestion(newScore, newStreak), 600)
+    } else {
+      setStreak(0)
+      setFeedback('incorrect')
+      advanceTimerRef.current = setTimeout(() => advanceQuestion(score, 0), 1200)
+    }
+  }
+
+  function submitWedgeAnswer(wedgeKey: string) {
+    if (!question || feedback !== 'idle') return
+    if (question.kind === 'order') return // wedges don't validate order drill
+    setSelectedKey(wedgeKey)
+    let answerIndex = -1
+    if (question.kind === 'recognize') {
+      answerIndex = question.options.findIndex(o => o.wedgeKey === wedgeKey)
+    } else if (question.kind === 'recall') {
+      const wedgeKeyInfo = KEYS.find(k => k.name === wedgeKey)
+      if (!wedgeKeyInfo) return
+      const wedgeCount = wedgeKeyInfo.sharps + wedgeKeyInfo.flats
+      const wedgeSide: 'sharps' | 'flats' | 'natural' = wedgeKeyInfo.sharps > 0
+        ? 'sharps'
+        : wedgeKeyInfo.flats > 0 ? 'flats' : 'natural'
+      answerIndex = question.options.findIndex(o => o.count === wedgeCount && o.side === wedgeSide)
+    }
+    if (answerIndex >= 0) submitAnswer(answerIndex)
+  }
+
+  const handleWedgeClick = (key: string) => {
+    if (mode === 'study') {
+      submitWedgeAnswer(key)
+    } else {
+      setSelectedKey(key)
+    }
+  }
+
+  function changeMode(next: Mode) {
+    setMode(next)
+    if (next !== 'study') {
+      // discard any in-progress session silently
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+      setQuestion(null)
+      setSessionComplete(false)
+      setQuestionIndex(0)
+      setScore(0)
+      setStreak(0)
+      setFeedback('idle')
+      setSelectedAnswer(null)
+    }
+  }
+
+  const currentBest = useMemo(() => bests[bestKeyFor(drill, filter)], [bests, drill, filter])
+
+  const hintCopy = mode === 'study'
+    ? 'Click a wedge or pill to answer.'
+    : mode === 'affekt'
+      ? 'Click a wedge to read the character of a different key.'
+      : 'Click a wedge to update the staff and details.'
 
   useEffect(() => {
     const sampler = new Tone.Sampler({
@@ -589,14 +986,20 @@ export default function KeySignatures() {
                 Explore the circle of fifths, see how sharps and flats build a key&apos;s character, and study the historical Affekt of each major and minor.
               </p>
             </div>
-            <button
-              type="button"
-              className="nl-key-sig-hero__cta"
-              onClick={() => setActiveTab('drill')}
-            >
-              <span className="nl-key-sig-hero__cta-full">Study mode →</span>
-              <span className="nl-key-sig-hero__cta-short">Study →</span>
-            </button>
+            <div className="nl-key-sig-mode-switcher" role="tablist" aria-label="Page mode">
+              {(['signature', 'affekt', 'study'] as const).map(m => (
+                <button
+                  key={m}
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === m}
+                  className={'nl-key-sig-mode-switcher__btn' + (mode === m ? ' is-active' : '')}
+                  onClick={() => changeMode(m)}
+                >
+                  {m === 'signature' ? 'Signature' : m === 'affekt' ? 'Affekt' : 'Study'}
+                </button>
+              ))}
+            </div>
           </div>
         </header>
 
@@ -604,60 +1007,99 @@ export default function KeySignatures() {
           <aside className="nl-key-sig-circle-panel">
             <p className="nl-key-sig-eyebrow">Circle of fifths</p>
             <div className="nl-key-sig-cof-frame">
-              <CircleOfFifths selected={selectedKey} onSelect={setSelectedKey} />
+              <CircleOfFifths selected={selectedKey} onSelect={handleWedgeClick} />
             </div>
-            <p className="nl-key-sig-viz-hint">Select a key to update the staff and details.</p>
+            <p className="nl-key-sig-viz-hint">{hintCopy}</p>
             <div className="nl-key-sig-viz-spacer" aria-hidden="true" />
           </aside>
 
           <div className="nl-key-sig-info-panel">
-            <header className="nl-key-sig-info__head">
-              <h2 className="nl-key-sig-info__key">{selectedKey} Major</h2>
-              <p className="nl-key-sig-info__summary">
-                {keyInfo.sharps > 0
-                  ? `${keyInfo.sharps} sharp${keyInfo.sharps > 1 ? 's' : ''}`
-                  : keyInfo.flats > 0
-                    ? `${keyInfo.flats} flat${keyInfo.flats > 1 ? 's' : ''}`
-                    : 'No sharps or flats'}
-              </p>
-            </header>
+            {mode !== 'study' && (
+              <>
+                <header className="nl-key-sig-info__head">
+                  <h2 className="nl-key-sig-info__key">{selectedKey} Major</h2>
+                  <p className="nl-key-sig-info__summary">
+                    {keyInfo.sharps > 0
+                      ? `${keyInfo.sharps} sharp${keyInfo.sharps > 1 ? 's' : ''}`
+                      : keyInfo.flats > 0
+                        ? `${keyInfo.flats} flat${keyInfo.flats > 1 ? 's' : ''}`
+                        : 'No sharps or flats'}
+                  </p>
+                </header>
 
-            <div className="nl-key-sig-info__meta">
-              <div>
-                <p className="nl-key-sig-info__meta-label">Relative minor</p>
-                <p className="nl-key-sig-info__meta-value">{keyInfo.relativeMinor} minor</p>
-              </div>
-              <div>
-                <p className="nl-key-sig-info__meta-label">
-                  {keyInfo.sharps > 0 ? 'Sharps' : keyInfo.flats > 0 ? 'Flats' : 'Notes'}
-                </p>
-                <p className="nl-key-sig-info__meta-notes">
-                  {keyInfo.sharps > 0
-                    ? keyInfo.sharpNames.join(' ')
-                    : keyInfo.flats > 0
-                      ? keyInfo.flatNames.join(' ')
-                      : 'C D E F G A B'}
-                </p>
-              </div>
-            </div>
-
-            <div className="nl-key-sig-tabs" role="tablist" aria-label="Key tools">
-              {(['signature', 'affekt'] as const).map(tab => (
-                <button
-                  key={tab}
-                  type="button"
-                  role="tab"
-                  aria-selected={activeTab === tab}
-                  className={'nl-key-sig-tab' + (activeTab === tab ? ' is-active' : '')}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab === 'signature' ? 'Signature' : 'Affekt'}
-                </button>
-              ))}
-            </div>
+                <div className="nl-key-sig-info__meta">
+                  <div>
+                    <p className="nl-key-sig-info__meta-label">Relative minor</p>
+                    <p className="nl-key-sig-info__meta-value">{keyInfo.relativeMinor} minor</p>
+                  </div>
+                  <div>
+                    <p className="nl-key-sig-info__meta-label">
+                      {keyInfo.sharps > 0 ? 'Sharps' : keyInfo.flats > 0 ? 'Flats' : 'Notes'}
+                    </p>
+                    <p className="nl-key-sig-info__meta-notes">
+                      {keyInfo.sharps > 0
+                        ? keyInfo.sharpNames.join(' ')
+                        : keyInfo.flats > 0
+                          ? keyInfo.flatNames.join(' ')
+                          : 'C D E F G A B'}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="nl-key-sig-info__body">
-              {activeTab === 'signature' && (
+              {mode === 'affekt' && (() => {
+                const major = getAffekt(selectedKey, false)
+                const minor = getAffekt(keyInfo.relativeMinor, true)
+                return (
+                  <div className="nl-key-sig-affekt" key={selectedKey}>
+                    <p className="nl-key-sig-affekt-intro">
+                      Based on C.F.D. Schubart&apos;s <em>Ideen zu einer Aesthetik der Tonkunst</em> (1784) and Francesco
+                      Galeazzi&apos;s <em>Elementi teorico-pratici di musica</em> (1791). Expressive character in the Baroque
+                      and Classical eras.
+                    </p>
+                    <div className="nl-key-sig-affekt__card">
+                      <p className="nl-key-sig-affekt__key">{selectedKey} major</p>
+                      {major?.schubart && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Schubart</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{major.schubart}&rdquo;</p>
+                        </div>
+                      )}
+                      {major?.galeazzi && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Galeazzi</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{major.galeazzi}&rdquo;</p>
+                        </div>
+                      )}
+                      {!major?.schubart && !major?.galeazzi && (
+                        <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
+                      )}
+                    </div>
+                    <div className="nl-key-sig-affekt__card">
+                      <p className="nl-key-sig-affekt__key">{keyInfo.relativeMinor} minor (relative)</p>
+                      {minor?.schubart && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Schubart</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{minor.schubart}&rdquo;</p>
+                        </div>
+                      )}
+                      {minor?.galeazzi && (
+                        <div className="nl-key-sig-affekt__quote">
+                          <p className="nl-key-sig-affekt__source">Galeazzi</p>
+                          <p className="nl-key-sig-affekt__text">&ldquo;{minor.galeazzi}&rdquo;</p>
+                        </div>
+                      )}
+                      {!minor?.schubart && !minor?.galeazzi && (
+                        <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
+                      )}
+                    </div>
+                  </div>
+                )
+              })()}
+
+              {(mode === 'signature' || mode === 'affekt') && (
                 <div className="nl-key-sig-stage">
                   <div className="nl-key-sig-staff-panel">
                     <div className="nl-key-sig-staff-panel__head">
@@ -724,61 +1166,140 @@ export default function KeySignatures() {
                 </div>
               )}
 
-              {activeTab === 'affekt' && (() => {
-                const major = getAffekt(selectedKey, false)
-                const minor = getAffekt(keyInfo.relativeMinor, true)
-                return (
-                  <div className="nl-key-sig-affekt" key={selectedKey}>
-                    <p className="nl-key-sig-affekt-intro">
-                      Based on C.F.D. Schubart&apos;s <em>Ideen zu einer Aesthetik der Tonkunst</em> (1784) and Francesco
-                      Galeazzi&apos;s <em>Elementi teorico-pratici di musica</em> (1791). Expressive character in the Baroque
-                      and Classical eras.
-                    </p>
-                    <div className="nl-key-sig-affekt__card">
-                      <p className="nl-key-sig-affekt__key">{selectedKey} major</p>
-                      {major?.schubart && (
-                        <div className="nl-key-sig-affekt__quote">
-                          <p className="nl-key-sig-affekt__source">Schubart</p>
-                          <p className="nl-key-sig-affekt__text">&ldquo;{major.schubart}&rdquo;</p>
-                        </div>
-                      )}
-                      {major?.galeazzi && (
-                        <div className="nl-key-sig-affekt__quote">
-                          <p className="nl-key-sig-affekt__source">Galeazzi</p>
-                          <p className="nl-key-sig-affekt__text">&ldquo;{major.galeazzi}&rdquo;</p>
-                        </div>
-                      )}
-                      {!major?.schubart && !major?.galeazzi && (
-                        <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
-                      )}
+              {mode === 'study' && (
+                <div className="nl-key-sig-study-panel">
+                  <div className="nl-key-sig-study-panel__head">
+                    <div className="nl-key-sig-study-panel__drill-tabs" role="tablist" aria-label="Drill type">
+                      {(['recognize', 'recall', 'order'] as const).map(d => (
+                        <button
+                          key={d}
+                          type="button"
+                          role="tab"
+                          aria-selected={drill === d}
+                          className={'nl-key-sig-study-panel__drill-tab' + (drill === d ? ' is-active' : '')}
+                          onClick={() => handleDrillChange(d)}
+                        >
+                          {d === 'recognize' ? 'Recognize' : d === 'recall' ? 'Recall' : 'Order'}
+                        </button>
+                      ))}
                     </div>
-                    <div className="nl-key-sig-affekt__card">
-                      <p className="nl-key-sig-affekt__key">{keyInfo.relativeMinor} minor (relative)</p>
-                      {minor?.schubart && (
-                        <div className="nl-key-sig-affekt__quote">
-                          <p className="nl-key-sig-affekt__source">Schubart</p>
-                          <p className="nl-key-sig-affekt__text">&ldquo;{minor.schubart}&rdquo;</p>
-                        </div>
-                      )}
-                      {minor?.galeazzi && (
-                        <div className="nl-key-sig-affekt__quote">
-                          <p className="nl-key-sig-affekt__source">Galeazzi</p>
-                          <p className="nl-key-sig-affekt__text">&ldquo;{minor.galeazzi}&rdquo;</p>
-                        </div>
-                      )}
-                      {!minor?.schubart && !minor?.galeazzi && (
-                        <p className="nl-key-sig-affekt-empty">No historical description for this key.</p>
+                    <div className="nl-key-sig-study-panel__stats">
+                      <span className="nl-key-sig-study-panel__score">{sessionComplete ? score : score} / {SESSION_LENGTH}</span>
+                      <span className="nl-key-sig-study-panel__streak" aria-label={`${streak} streak`}>
+                        <span aria-hidden>🔥</span> {streak}
+                      </span>
+                      {currentBest && (
+                        <span className="nl-key-sig-study-panel__best">best {currentBest.score}/{currentBest.of}</span>
                       )}
                     </div>
                   </div>
-                )
-              })()}
 
-              {activeTab === 'drill' && (
-                <div className="nl-key-sig-tab-body nl-key-sig-tab-body--drill">
-                  <div className="nl-key-drill-embed">
-                    <KeyDrill />
+                  <div className="nl-key-sig-study-panel__body" key={`${drill}-${questionIndex}-${sessionComplete}`}>
+                    {sessionComplete ? (
+                      <div className="nl-key-sig-study-panel__summary">
+                        <p className="nl-key-sig-study-panel__summary-title">Session complete</p>
+                        <p className="nl-key-sig-study-panel__summary-score">You got {score} out of {SESSION_LENGTH}.</p>
+                        {currentBest && (
+                          <p className="nl-key-sig-study-panel__summary-best">
+                            Personal best: {currentBest.score} out of {currentBest.of}
+                          </p>
+                        )}
+                        <button
+                          type="button"
+                          className="nl-key-sig-study-panel__restart"
+                          onClick={() => startNewSession(drill, filter)}
+                        >
+                          New session
+                        </button>
+                      </div>
+                    ) : question ? (
+                      <>
+                        <div className="nl-key-sig-study-panel__prompt">
+                          <p className="nl-key-sig-study-panel__prompt-text">{question.prompt}</p>
+                          {question.kind === 'recognize' && (() => {
+                            const sigInfo = KEYS.find(k => k.name === question.target.signatureSource) ?? KEYS[0]
+                            return (
+                              <div className="nl-key-sig-study-panel__prompt-staff">
+                                <KeyStaff keyInfo={sigInfo} clef="treble" width={300} />
+                              </div>
+                            )
+                          })()}
+                        </div>
+
+                        <div className="nl-key-sig-study-panel__answer-pills" role="group" aria-label="Answer choices">
+                          {question.options.map((opt, i) => {
+                            const label = question.kind === 'recognize'
+                              ? (opt as StudyKey).name
+                              : question.kind === 'recall'
+                                ? (opt as { label: string }).label
+                                : (opt as string)
+                            const stateClass = selectedAnswer === null
+                              ? ''
+                              : i === question.correctIndex
+                                ? ' is-correct'
+                                : i === selectedAnswer
+                                  ? ' is-incorrect'
+                                  : ''
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                className={'nl-key-sig-study-panel__answer-pill' + stateClass}
+                                onClick={() => submitAnswer(i)}
+                                disabled={feedback !== 'idle'}
+                              >
+                                {label}
+                              </button>
+                            )
+                          })}
+                        </div>
+
+                        {feedback !== 'idle' && (
+                          <div className={'nl-key-sig-study-panel__feedback is-' + feedback}>
+                            {feedback === 'correct' ? (
+                              <span>Correct!</span>
+                            ) : (
+                              <span>
+                                The answer was{' '}
+                                {question.kind === 'recognize'
+                                  ? (question.options[question.correctIndex] as StudyKey).name
+                                  : question.kind === 'recall'
+                                    ? (question.options[question.correctIndex] as { label: string }).label
+                                    : (question.options[question.correctIndex] as string)}
+                                .
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </>
+                    ) : null}
                   </div>
+
+                  {!sessionComplete && (
+                    <div className="nl-key-sig-study-panel__footer">
+                      <button
+                        type="button"
+                        className="nl-key-sig-study-panel__restart"
+                        onClick={() => startNewSession(drill, filter)}
+                      >
+                        Restart session
+                      </button>
+                      <div className="nl-key-sig-study-panel__filter" role="group" aria-label="Question pool">
+                        {(['majors', 'minors', 'both'] as const).map(f => (
+                          <button
+                            key={f}
+                            type="button"
+                            className={'nl-key-sig-study-panel__filter-chip' + (filter === f ? ' is-active' : '')}
+                            onClick={() => handleFilterChange(f)}
+                            disabled={drill === 'order'}
+                            title={drill === 'order' ? 'Order drill uses sharps and flats only' : undefined}
+                          >
+                            {f === 'majors' ? 'Majors only' : f === 'minors' ? 'Minors only' : 'Both'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
