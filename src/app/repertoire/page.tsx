@@ -198,17 +198,15 @@ export default function RepertoirePage() {
     keyBufferRef.current = ''
   }
 
-  // Keyboard sequence detector. Listens at document level, ignores
-  // keys while a form input is focused (so the search field can
-  // accept "magrath" without unlocking).
+  // Keyboard sequence detector. Listens everywhere on the page —
+  // including form inputs. "magrath" is uncommon enough that
+  // accidental matches in the search field aren't a real concern,
+  // and users intuitively try the search field as an unlock path.
   useEffect(() => {
     if (magrathUnlocked) return
     function onKey(e: KeyboardEvent) {
-      const target = e.target as Element | null
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || (target as HTMLElement).isContentEditable)) {
-        return
-      }
-      // Only track plain letter keys.
+      // Only track plain letter keys; any non-letter (Tab, Enter,
+      // Backspace, modifier combos, arrows) resets the buffer.
       if (e.key.length !== 1 || !/[a-zA-Z]/.test(e.key)) {
         keyBufferRef.current = ''
         return
