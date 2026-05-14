@@ -8108,23 +8108,23 @@ svg:not(.nl-notation-staff) {
 }
 
 /* Vertical alphabet rail — fixed to the right edge of the
-   viewport. Top-anchored just below the sticky toolbar's bottom
-   edge so the rail starts where entries start, never overlapping
-   the hero or sliding behind the search input. (Center-anchored
-   was wrong: on tall viewports it crept up into the hero zone
-   and on the way down it went behind the toolbar.) Below the
-   toolbar's z-index so the brief moment they meet at narrow
-   viewports prefers the toolbar on top. Hidden below 900px so
-   the page reverts to no-rail behaviour. */
+   viewport, contained between the sticky toolbar's bottom edge
+   and the viewport bottom. justify-content: center clusters the
+   26 letters vertically in whatever space is available, so the
+   rail never extends into the header/hero/toolbar zone above and
+   never overruns the viewport bottom. Below the toolbar's
+   z-index so the brief moment they meet prefers the toolbar.
+   Hidden on short viewports (< 720px tall) and mobile-width
+   viewports (< 900px wide) where the rail won't fit cleanly. */
 .nl-glossary-rail {
   position: fixed;
   right: 24px;
-  /* Toolbar height ~68px + result-meta strip ~36px + a bit of
-     breathing room. Lines the rail's top up with the start of
-     the entries column. */
-  top: 120px;
+  /* site header (~68px) + toolbar (~56px) + 24px breathing = 148px */
+  top: 148px;
+  bottom: 24px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 2px;
   z-index: 4;
 }
@@ -8164,7 +8164,12 @@ svg:not(.nl-notation-staff) {
   background: none;
   color: rgba(138, 117, 96, 0.35);
 }
-@media (max-width: 900px) {
+/* Hide on viewports that can't accommodate the rail cleanly:
+   - max-width 900px: mobile + narrow tablet, where the right
+     gutter doesn't exist as empty space
+   - max-height 720px: short viewports where 26 letters × ~22px
+     ≈ 570px won't fit between top: 148px and bottom: 24px */
+@media (max-height: 720px), (max-width: 900px) {
   .nl-glossary-rail { display: none; }
 }
 
