@@ -48,7 +48,7 @@ export const TOOLS: Tool[] = [
     category: 'dashboard',
     status: 'free',
     name: 'Tap Tempo Finder',
-    pitch: 'Tap in time — read the BPM and Italian marking instantly.',
+    pitch: 'Tap in time. Read the BPM and Italian marking instantly.',
     ctaVerb: 'Tap',
     gaugeLabel: 'tap to start',
     gaugeNote: 'find a tempo',
@@ -75,7 +75,7 @@ export const TOOLS: Tool[] = [
     category: 'drills',
     status: 'none',
     name: 'Sight Reading',
-    pitch: 'Read notes one at a time — letters, full piano, or real piano via mic.',
+    pitch: 'Read notes one at a time. Letters, full piano, or real piano via mic.',
     ctaVerb: 'Practice',
   },
   {
@@ -144,7 +144,7 @@ export const TOOLS: Tool[] = [
     category: 'reference',
     status: 'free',
     name: 'Glossary',
-    pitch: 'Searchable reference of musical terms — French, German, Italian, abbreviations.',
+    pitch: 'Searchable reference of musical terms. French, German, Italian, abbreviations.',
     ctaVerb: 'Browse',
   },
   {
@@ -153,7 +153,7 @@ export const TOOLS: Tool[] = [
     category: 'reference',
     status: 'pro',
     name: 'Repertoire Browser',
-    pitch: 'Browse graded repertoire by level and exam board — CM, RCM, and more.',
+    pitch: 'Browse graded repertoire by level and exam board. CM, RCM, and more.',
     ctaVerb: 'Browse',
   },
 ]
@@ -176,19 +176,19 @@ export const CATEGORY_META: CategoryMeta[] = [
   {
     id: 'drills',
     label: 'Drills',
-    blurb: 'Identify, respond, and stay sharp — real-time exercises.',
+    blurb: 'Identify, respond, and stay sharp. Real-time exercises.',
     cssVar: '--tool-drills',
   },
   {
     id: 'theory',
     label: 'Theory',
-    blurb: 'Build the structures — key signatures, scales, and the rules behind them.',
+    blurb: 'Build the structures. Key signatures, scales, and the rules behind them.',
     cssVar: '--tool-theory',
   },
   {
     id: 'practice',
     label: 'Practice',
-    blurb: 'Utilities for the practice room — work fingerings, run cycles, drill order.',
+    blurb: 'Utilities for the practice room. Work fingerings, run cycles, drill order.',
     cssVar: '--tool-practice',
   },
 ]

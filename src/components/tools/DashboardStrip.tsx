@@ -29,7 +29,7 @@ export default function DashboardStrip() {
         <span className="nl-tool-section-head__eyebrow">Always at hand</span>
         <h2 className="nl-tool-section-head__title">Practice-room dashboard</h2>
         <p className="nl-tool-section-head__blurb">
-          Tempo, taps, and reps — three readouts you keep within reach.
+          Tempo, taps, and reps. Three readouts you keep within reach.
         </p>
       </header>
       <div className="nl-tool-dashboard__grid">

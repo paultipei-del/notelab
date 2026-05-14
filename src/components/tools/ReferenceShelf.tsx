@@ -17,7 +17,7 @@ export default function ReferenceShelf() {
         <span className="nl-tool-section-head__eyebrow">Reference</span>
         <h2 className="nl-tool-section-head__title">Look it up</h2>
         <p className="nl-tool-section-head__blurb">
-          Terms, repertoire — the two volumes you reach for between sessions.
+          Terms, repertoire. The two volumes you reach for between sessions.
         </p>
       </header>
       <div className="nl-tool-shelf">

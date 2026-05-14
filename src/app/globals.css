@@ -4473,7 +4473,8 @@ svg:not(.nl-notation-staff) {
 }
 .nl-tool-card__pitch {
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
+  font-style: normal;
+  font-weight: 500;
   font-size: 14px;
   line-height: 1.5;
   color: var(--tool-muted);
@@ -4486,7 +4487,8 @@ svg:not(.nl-notation-staff) {
   margin-top: auto;
   padding-top: 8px;
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
+  font-style: normal;
+  font-weight: 500;
   font-size: 16px;
   color: #a0381c;
 }
