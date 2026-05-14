@@ -728,7 +728,7 @@ export default function KeySignatures() {
                 const major = getAffekt(selectedKey, false)
                 const minor = getAffekt(keyInfo.relativeMinor, true)
                 return (
-                  <div className="nl-key-sig-affekt">
+                  <div className="nl-key-sig-affekt" key={selectedKey}>
                     <p className="nl-key-sig-affekt-intro">
                       Based on C.F.D. Schubart&apos;s <em>Ideen zu einer Aesthetik der Tonkunst</em> (1784) and Francesco
                       Galeazzi&apos;s <em>Elementi teorico-pratici di musica</em> (1791). Expressive character in the Baroque
