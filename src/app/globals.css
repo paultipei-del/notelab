@@ -7735,3 +7735,89 @@ svg:not(.nl-notation-staff) {
   .nl-sr-feedback-mark { font-size: 22px; }
   .nl-sr-feedback-text { font-size: 12px; }
 }
+
+/* ─────────────────────────────────────────────────────────────────
+   /note-id play wrapper — full-viewport flex column so the header
+   pins to the top and the card content fills the rest. The /study
+   route doesn't need this because StudyEngine has its own
+   .nl-study-viewport flex shell. /note-id is a standalone page.
+   ───────────────────────────────────────────────────────────────── */
+
+.nl-sr-play-page {
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+/* Letter input — Cormorant naturals + Cormorant accidentals.
+   Naturals: cream-tinted with hairline brown border. Accidentals:
+   dark-ink with cream text. Hover lifts both by 2px; naturals get
+   an oxblood border on hover for the click affordance. */
+
+.nl-sr-ltr-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.nl-sr-ltr-row {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
+}
+.nl-sr-ltr-spacer {
+  flex: 1;
+  max-width: 56px;
+}
+.nl-sr-ltr-btn {
+  flex: 1;
+  max-width: 56px;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    transform 120ms ease,
+    color 120ms ease;
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  text-align: center;
+}
+.nl-sr-ltr-btn--natural {
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid rgba(154, 124, 80, 0.32);
+  background: rgba(248, 240, 216, 0.55);
+  font-size: 18px;
+  color: #1a1208;
+}
+.nl-sr-ltr-btn--natural:hover {
+  background: rgba(248, 240, 216, 0.85);
+  border-color: #a0381c;
+  transform: translateY(-2px);
+}
+.nl-sr-ltr-btn--accidental {
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #1a1208;
+  background: #1a1208;
+  color: #f0e7d0;
+  font-size: 14px;
+}
+.nl-sr-ltr-btn--accidental:hover {
+  background: #a0381c;
+  border-color: #a0381c;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 767.98px) {
+  .nl-sr-ltr-row { gap: 4px; }
+  .nl-sr-ltr-btn--natural { height: 42px; font-size: 16px; border-radius: 8px; }
+  .nl-sr-ltr-btn--accidental { height: 28px; font-size: 12px; border-radius: 6px; }
+}

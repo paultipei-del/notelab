@@ -270,93 +270,111 @@ function NoteIDExerciseInner() {
     )
   }
 
-  const bgColor = group[activeIdx]?.status === 'wrong' ? '#FFF0F0' : 'white'
-  const borderColor = group[activeIdx]?.status === 'wrong' ? '#F09595' : '#D9CFAE'
+  const activeStatus = group[activeIdx]?.status
 
   return (
-    <div style={{ height: '100dvh', maxHeight: '100dvh', overflow: 'hidden', background: 'transparent', display: 'flex', flexDirection: 'column' }}>
-      {/* Utility bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 24px' }}>
-        <button onClick={goBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-meta)', fontWeight: 400, color: '#7A7060' }}>← Back</button>
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>Round {rounds + 1} / {stopRounds}</span>
-          <span style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, color: '#7A7060' }}>{pct}%</span>
+    <div className="nl-sr-play-page">
+      <header className="nl-sr-play-header">
+        <button onClick={goBack} className="nl-sr-play-header__back">
+          ← End session
+        </button>
+        <div className="nl-sr-play-header__meta">
+          <div className="nl-sr-play-header__stat">
+            <span className="nl-sr-play-header__label">Round</span>
+            <span className="nl-sr-play-header__value">
+              {rounds + 1} / {stopRounds}
+            </span>
+          </div>
+          <div className="nl-sr-play-header__stat">
+            <span className="nl-sr-play-header__label">Accuracy</span>
+            <span className="nl-sr-play-header__value is-green">
+              {total > 0 ? `${pct}%` : '—'}
+            </span>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Progress bar */}
-      <div style={{ height: '2px', background: '#EDE8DF' }}>
-        <div style={{ height: '100%', background: '#1A1A18', width: (rounds / stopRounds * 100) + '%', transition: 'width 0.3s' }} />
-      </div>
+      <div className="nl-sr-play-card">
+        <p className="nl-sr-play-eyebrow">
+          {inputMode === 'keyboard-full' || inputMode === 'keyboard'
+            ? 'Play this note on the piano'
+            : 'What note is this?'}
+        </p>
 
-      {/* Card */}
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(4px,1vh,12px)', overflow: 'hidden' }}>
-        <div style={{ background: bgColor, border: '1px solid ' + borderColor, borderRadius: '20px', padding: 'clamp(6px,1.2vh,20px) clamp(10px,2vw,24px)', maxWidth: '720px', width: '100%', textAlign: 'center', transition: 'all 0.15s', boxShadow: '0 2px 20px rgba(26,26,24,0.06)', overflow: 'hidden', display: 'flex', flexDirection: 'column' as const, minHeight: 0 }}>
-          <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: 'clamp(4px,1vh,12px)' }}>
-            What note is this?
-          </p>
+        <div
+          className={
+            'nl-sr-play-staff' +
+            (activeStatus === 'correct' ? ' is-correct' : '') +
+            (activeStatus === 'wrong' ? ' is-wrong' : '')
+          }
+        >
+          {groupSize === 1 ? (
+            clef === 'grand'
+              ? <GrandStaffCard note={currentNote} />
+              : <StaffCard note={currentNote} clef={clef} />
+          ) : (
+            <MultiNoteStaff notes={group} clef={clef} />
+          )}
+        </div>
 
-          {/* Staff */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'clamp(4px,1vh,16px)', overflowX: 'auto', flex: '0 1 auto', minHeight: 0 }}>
-            {groupSize === 1 ? (
-              clef === 'grand'
-                ? <GrandStaffCard note={currentNote} />
-                : <StaffCard note={currentNote} clef={clef} />
-            ) : (
-              <MultiNoteStaff notes={group} clef={clef} />
+        {/* Feedback block below the staff — reserved min-height so
+            the staff stays anchored between rounds. Single-note
+            mode only; multi-note hides feedback per the legacy
+            behaviour. */}
+        {groupSize === 1 && (
+          <div className="nl-sr-feedback-block">
+            {activeStatus === 'correct' && (
+              <span className="nl-sr-feedback-mark is-correct" aria-hidden>✓</span>
+            )}
+            {activeStatus === 'wrong' && (
+              <>
+                <span className="nl-sr-feedback-mark is-wrong" aria-hidden>✗</span>
+                <span className="nl-sr-feedback-text is-wrong">
+                  Correct answer was <b>{notePitchClass(currentNote)}</b>
+                </span>
+              </>
             )}
           </div>
+        )}
 
-          {/* Feedback indicator + correct answer for single note */}
-          {groupSize === 1 && (
-            <div style={{ textAlign: 'center' as const, marginBottom: '8px', height: '88px', flexShrink: 0, overflow: 'visible', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center' }}>
-              {group[activeIdx]?.status === 'correct' && (
-                <span style={{ fontSize: '36px', color: '#4CAF50', lineHeight: 1 }}>✓</span>
-              )}
-              {group[activeIdx]?.status === 'wrong' && (
-                <>
-                  <span style={{ fontSize: '36px', color: '#E53935', lineHeight: 1, marginBottom: '4px' }}>✗</span>
-                  <p style={{ fontFamily: 'var(--font-jost), sans-serif', fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E53935', marginBottom: '2px' }}>Correct answer</p>
-                  <p style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '28px', fontWeight: 300, color: '#2A2318' }}>
-                    {notePitchClass(currentNote)}
-                  </p>
-                </>
-              )}
+        {/* Input */}
+        {inputMode === 'letters' ? (
+          <div className="nl-sr-ltr-grid">
+            <div className="nl-sr-ltr-row">
+              {SHARP_ROW.map((note, i) => note ? (
+                <button
+                  key={note}
+                  onClick={() => handleAnswer(note)}
+                  className="nl-sr-ltr-btn nl-sr-ltr-btn--accidental"
+                >
+                  {note}
+                </button>
+              ) : <div key={i} className="nl-sr-ltr-spacer" />)}
             </div>
-          )}
-
-          {/* Input */}
-          {inputMode === 'letters' ? (
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 'clamp(2px,0.5vh,4px)' }}>
-              {/* Sharps row */}
-              <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
-                {SHARP_ROW.map((note, i) => note ? (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D9CFAE', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
-                    {note}
-                  </button>
-                ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
-              </div>
-              {/* Naturals row */}
-              <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
-                {NOTE_LETTERS.map(letter => (
-                  <button key={letter} onClick={() => handleAnswer(letter)}
-                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(32px,6vh,48px)', borderRadius: '10px', border: '1px solid #D9CFAE', background: '#ECE3CC', fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(16px,2.5vh,22px)', fontWeight: 400, color: '#2A2318', cursor: 'pointer', boxShadow: '0 2px 6px rgba(26,26,24,0.06)' }}>
-                    {letter}
-                  </button>
-                ))}
-              </div>
-              {/* Flats row */}
-              <div style={{ display: 'flex', gap: '4px', width: '100%', justifyContent: 'center' }}>
-                {FLAT_ROW.map((note, i) => note ? (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ flex: 1, maxWidth: '52px', height: 'clamp(22px,4vh,34px)', borderRadius: '8px', border: '1px solid #D9CFAE', background: '#F2EDDF', fontFamily: 'var(--font-jost), sans-serif', fontSize: 'clamp(9px,1.5vh,11px)', fontWeight: 300, color: '#7A7060', cursor: 'pointer' }}>
-                    {note}
-                  </button>
-                ) : <div key={i} style={{ flex: 1, maxWidth: '52px' }} />)}
-              </div>
+            <div className="nl-sr-ltr-row nl-sr-ltr-row--naturals">
+              {NOTE_LETTERS.map(letter => (
+                <button
+                  key={letter}
+                  onClick={() => handleAnswer(letter)}
+                  className="nl-sr-ltr-btn nl-sr-ltr-btn--natural"
+                >
+                  {letter}
+                </button>
+              ))}
             </div>
-          ) : (
+            <div className="nl-sr-ltr-row">
+              {FLAT_ROW.map((note, i) => note ? (
+                <button
+                  key={note}
+                  onClick={() => handleAnswer(note)}
+                  className="nl-sr-ltr-btn nl-sr-ltr-btn--accidental"
+                >
+                  {note}
+                </button>
+              ) : <div key={i} className="nl-sr-ltr-spacer" />)}
+            </div>
+          </div>
+        ) : (
             <div style={{ width: '100%', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
               <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px',
                 transformOrigin: 'top left',
@@ -381,7 +399,6 @@ function NoteIDExerciseInner() {
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   )
