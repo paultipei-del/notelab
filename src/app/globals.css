@@ -1732,7 +1732,7 @@ body:has(.nl-study-viewport) {
 
 .nl-key-sig-affekt-intro {
   font-family: var(--font-cormorant), serif;
-  font-style: italic;
+  font-style: normal;
   font-size: 13px;
   color: #8a7560;
   line-height: 1.45;
@@ -1740,7 +1740,7 @@ body:has(.nl-study-viewport) {
 }
 
 .nl-key-sig-affekt-intro em {
-  font-style: italic;
+  font-style: normal;
 }
 
 .nl-key-sig-affekt__card {
@@ -1786,9 +1786,9 @@ body:has(.nl-study-viewport) {
 .nl-key-sig-affekt__text {
   font-family: var(--font-cormorant), serif;
   font-size: 15px;
-  font-style: italic;
-  font-weight: 400;
-  color: #2a2318;
+  font-style: normal;
+  font-weight: 500;
+  color: #1a1208;
   line-height: 1.5;
   margin: 0 0 8px;
 }
