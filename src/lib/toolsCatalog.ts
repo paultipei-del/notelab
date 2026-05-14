@@ -153,7 +153,7 @@ export const TOOLS: Tool[] = [
     category: 'reference',
     status: 'pro',
     name: 'Repertoire Browser',
-    pitch: 'Browse graded repertoire by level and exam board. CM, RCM, and more.',
+    pitch: 'Graded piano repertoire by level. Search composer and title across the full CM Syllabus catalog.',
     ctaVerb: 'Browse',
   },
 ]

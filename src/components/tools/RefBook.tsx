@@ -20,11 +20,6 @@ export default function RefBook({ tool, spine }: RefBookProps) {
     <Link href={tool.href} className="nl-tool-refbook">
       <span className={`nl-tool-refbook__spine is-${spine}`} aria-hidden />
       <div className="nl-tool-refbook__body">
-        <span
-          className={`nl-tool-refbook__pill is-${tool.status === 'pro' ? 'pro' : 'free'}`}
-        >
-          {tool.status === 'pro' ? 'Pro' : 'Free'}
-        </span>
         <h3 className="nl-tool-refbook__title">{tool.name}</h3>
         <p className="nl-tool-refbook__pitch">{tool.pitch}</p>
         <span className="nl-tool-refbook__cta">
