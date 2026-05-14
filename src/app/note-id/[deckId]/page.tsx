@@ -9,49 +9,14 @@ import MultiNoteStaff from '@/components/cards/MultiNoteStaff'
 import { getDeckById } from '@/lib/decks'
 import { Deck } from '@/lib/types'
 import SightReadingSessionComplete from '@/components/sight-reading/SightReadingSessionComplete'
+import SightReadingFullPiano from '@/components/sight-reading/SightReadingFullPiano'
 import { SIGHT_READING_LEVELS, type AnswerMode, type Clef } from '@/lib/sightReadingLevels'
 
 const NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
-const WHITE_KEY_NOTES = ['C','D','E','F','G','A','B']
-const BLACK_KEY_NOTES = [
-  { note: 'C#', afterWhite: 0 },
-  { note: 'D#', afterWhite: 1 },
-  { note: 'F#', afterWhite: 3 },
-  { note: 'G#', afterWhite: 4 },
-  { note: 'A#', afterWhite: 5 },
-]
-const KEY_W = 52
-const KEY_H = 120
-const BLACK_W = 32
-const BLACK_H = 76
-
-// Full Piano (keyboard-full) — 2 octaves, C4 through B5, with the
-// Middle-C key labeled in oxblood. Black-key afterWhite positions
-// extend through both octaves; both octaves' keys answer with the
-// same pitch class (handleAnswer is pitch-class agnostic).
-const FULL_WHITE_KEYS = [
-  'C','D','E','F','G','A','B',
-  'C','D','E','F','G','A','B',
-]
-const FULL_BLACK_KEYS = [
-  // Octave 1 (C4–B4)
-  { note: 'C#', afterWhite: 0 },
-  { note: 'D#', afterWhite: 1 },
-  { note: 'F#', afterWhite: 3 },
-  { note: 'G#', afterWhite: 4 },
-  { note: 'A#', afterWhite: 5 },
-  // Octave 2 (C5–B5)
-  { note: 'C#', afterWhite: 7 },
-  { note: 'D#', afterWhite: 8 },
-  { note: 'F#', afterWhite: 10 },
-  { note: 'G#', afterWhite: 11 },
-  { note: 'A#', afterWhite: 12 },
-]
-const FULL_KEY_W = 52
-const FULL_KEY_H = 144
-const FULL_BLACK_W = 32
-const FULL_BLACK_H = 90
+// Piano key constants moved to SightReadingFullPiano component.
+// The Mini Piano (1-octave) is gone; everything routes through the
+// 2-octave Full Piano.
 
 // 3-row accidental button layout
 // Top row: sharps, Middle: naturals, Bottom: flats
@@ -110,7 +75,13 @@ function NoteIDExerciseInner() {
   const params = useParams()
   const searchParams = useSearchParams()
   const deckId = params.deckId as string
-  const inputMode = (searchParams.get('input') ?? 'letters') as 'letters' | 'keyboard' | 'keyboard-full'
+  // Normalize legacy ?input=keyboard (Mini Piano, removed in Phase
+  // 2.3b.3) to keyboard-full so hand-typed/bookmarked URLs still
+  // land users on the Full Piano keyboard instead of an empty
+  // input region.
+  const rawInputMode = searchParams.get('input') ?? 'letters'
+  const inputMode: 'letters' | 'keyboard-full' =
+    rawInputMode === 'letters' ? 'letters' : 'keyboard-full'
   const groupSize = parseInt(searchParams.get('group') ?? '1')
 
   // Honor ?from=<path> for the back button (same convention as
@@ -323,7 +294,7 @@ function NoteIDExerciseInner() {
 
       <div className="nl-sr-play-card">
         <p className="nl-sr-play-eyebrow">
-          {inputMode === 'keyboard-full' || inputMode === 'keyboard'
+          {inputMode === 'keyboard-full'
             ? 'Play this note on the piano'
             : 'What note is this?'}
         </p>
@@ -401,79 +372,13 @@ function NoteIDExerciseInner() {
               ) : <div key={i} className="nl-sr-ltr-spacer" />)}
             </div>
           </div>
-        ) : inputMode === 'keyboard-full' ? (
-            // Full Piano — 2 octaves, C4 labeled in oxblood. Cream
-            // styling + horizontal scroll wrapper for mobile (the
-            // 728px keyboard won't fit a 414px viewport).
-            <div className="nl-sr-piano-scroller">
-              <div
-                className="nl-sr-piano"
-                style={{
-                  width: FULL_WHITE_KEYS.length * FULL_KEY_W + 'px',
-                  height: FULL_KEY_H + 'px',
-                }}
-              >
-                {FULL_WHITE_KEYS.map((note, i) => (
-                  <button
-                    key={`w-${i}`}
-                    type="button"
-                    onClick={() => handleAnswer(note)}
-                    className={
-                      'nl-sr-piano-key nl-sr-piano-key--white' +
-                      (i === 0 ? ' nl-sr-piano-key--c4' : '')
-                    }
-                    style={{
-                      left: i * FULL_KEY_W + 'px',
-                      width: (FULL_KEY_W - 2) + 'px',
-                      height: FULL_KEY_H + 'px',
-                    }}
-                  >
-                    {i === 0 && <span className="nl-sr-piano-key__label">C4</span>}
-                  </button>
-                ))}
-                {FULL_BLACK_KEYS.map(({ note, afterWhite }, i) => (
-                  <button
-                    key={`b-${i}`}
-                    type="button"
-                    onClick={() => handleAnswer(note)}
-                    className="nl-sr-piano-key nl-sr-piano-key--black"
-                    style={{
-                      left: ((afterWhite + 1) * FULL_KEY_W - FULL_BLACK_W / 2) + 'px',
-                      width: FULL_BLACK_W + 'px',
-                      height: FULL_BLACK_H + 'px',
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          ) : (
-            // Mini Piano (?input=keyboard) — single-octave inline
-            // JSX. Slated for removal in Phase 2.3b.3; reachable
-            // only via hand-edited URL since the new /sight-reading
-            // hub no longer routes here.
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
-              <div style={{ position: 'relative', height: KEY_H + 'px', width: WHITE_KEY_NOTES.length * KEY_W + 'px',
-                transformOrigin: 'top left',
-                transform: `scale(${1})`,
-                maxWidth: '100%',
-              }} ref={(el) => {
-                if (!el) return
-                const parent = el.parentElement
-                if (!parent) return
-                const scale = Math.min(1, parent.offsetWidth / (WHITE_KEY_NOTES.length * KEY_W))
-                el.style.transform = `scale(${scale})`
-                el.parentElement!.style.height = (KEY_H * scale) + 'px'
-              }}>
-                {WHITE_KEY_NOTES.map((note, i) => (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ position: 'absolute', left: i * KEY_W, top: 0, width: KEY_W - 2, height: KEY_H, background: '#ECE3CC', border: '1px solid #D9CFAE', borderRadius: '0 0 8px 8px', cursor: 'pointer', zIndex: 1, boxShadow: '0 3px 6px rgba(26,26,24,0.08)' }} />
-                ))}
-                {BLACK_KEY_NOTES.map(({ note, afterWhite }) => (
-                  <button key={note} onClick={() => handleAnswer(note)}
-                    style={{ position: 'absolute', left: (afterWhite + 1) * KEY_W - BLACK_W / 2, top: 0, width: BLACK_W, height: BLACK_H, background: '#1A1A18', borderRadius: '0 0 6px 6px', cursor: 'pointer', zIndex: 2, border: 'none', boxShadow: '0 4px 8px rgba(26,26,24,0.3)' }} />
-                ))}
-              </div>
-            </div>
+        ) : (
+            // Full Piano — 2-octave cream keyboard with C4 label.
+            // Extracted to SightReadingFullPiano so /note-id/custom
+            // shares the same rendering. The Mini Piano branch was
+            // deleted in this phase; input=keyboard normalizes to
+            // keyboard-full at the top of the file.
+            <SightReadingFullPiano onAnswer={handleAnswer} />
           )}
       </div>
     </div>
