@@ -8184,6 +8184,11 @@ svg:not(.nl-notation-staff) {
 /* ── Tag palette ── */
 
 .nl-glossary-tag {
+  /* justify-self: start keeps the pill hugging its text inside
+     the grid cell. Without this, the grid item stretches to the
+     column width and the rounded-pill background spans the whole
+     cell. */
+  justify-self: start;
   display: inline-block;
   font-family: var(--font-jost), system-ui, sans-serif;
   font-size: 9.5px;
