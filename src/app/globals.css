@@ -1818,50 +1818,6 @@ body:has(.nl-study-viewport) {
   margin: 0;
 }
 
-.nl-key-sig-teach {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 14px 18px;
-  background: rgba(248, 240, 216, 0.55);
-  border: 1px solid rgba(154, 124, 80, 0.32);
-  border-radius: 12px;
-  margin-top: 4px;
-}
-
-.nl-key-sig-teach__text {
-  font-family: var(--font-cormorant), serif;
-  font-style: italic;
-  font-size: 14px;
-  color: #5a4028;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.nl-key-sig-teach__text em {
-  font-style: italic;
-  color: #1a1208;
-}
-
-.nl-key-sig-teach__link {
-  font-family: var(--font-jost), sans-serif;
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #a0381c;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(160, 56, 28, 0.32);
-  padding-bottom: 1px;
-  transition: border-bottom-color 150ms ease;
-  white-space: nowrap;
-}
-
-.nl-key-sig-teach__link:hover {
-  border-bottom-color: #a0381c;
-}
-
 @media (max-width: 860px) {
   .nl-key-sig-panel {
     grid-template-columns: 1fr;

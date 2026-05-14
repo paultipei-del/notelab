@@ -783,14 +783,6 @@ export default function KeySignatures() {
               )}
             </div>
 
-            <aside className="nl-key-sig-teach">
-              <p className="nl-key-sig-teach__text">
-                Want to practice reading this key? Try sight-reading drills with <em>{selectedKey} Major</em> selected.
-              </p>
-              <Link href="/sight-reading" className="nl-key-sig-teach__link">
-                Practice in Sight Reading →
-              </Link>
-            </aside>
           </div>
         </div>
       </div>
