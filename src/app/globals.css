@@ -8673,8 +8673,11 @@ svg:not(.nl-notation-staff) {
   color: #8a7560;
 }
 .nl-repertoire-magrath-attribution__body {
-  font-family: var(--font-cormorant), serif;
-  font-size: 13px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: #8a7560;
   margin: 0;
 }
@@ -8848,10 +8851,12 @@ svg:not(.nl-notation-staff) {
   color: #5a4028;
 }
 .nl-repertoire-row__description {
-  font-family: var(--font-cormorant), serif;
+  font-family: var(--font-jost), system-ui, sans-serif;
   font-style: normal;
-  font-size: 14px;
-  line-height: 1.45;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
   color: #5a4028;
 }
 .nl-repertoire-row__description {
