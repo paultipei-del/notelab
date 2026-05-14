@@ -8922,9 +8922,10 @@ svg:not(.nl-notation-staff) {
   color: #f0e7d0;
   padding: 12px 18px;
   border-radius: 8px;
-  font-family: var(--font-cormorant), serif;
-  font-style: italic;
-  font-size: 14px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   z-index: 80;
   box-shadow: 0 10px 24px rgba(40, 20, 8, 0.32);
   animation: nl-rep-toast-in 220ms ease;
