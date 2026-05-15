@@ -331,22 +331,11 @@ export default function ScaleFingeringsPage() {
           </div>
         </div>
 
-        {/* Scale title + direction toggle */}
+        {/* Scale title */}
         <div className="nl-scale-fingerings-title-row">
           <h2 className="nl-scale-fingerings-scale-name">
             {renderKeyLabel(displayMap[selectedKey])} {scaleLabel}
           </h2>
-          {showDirection && (
-            <SlidingPills
-              options={[
-                { value: 'asc' as const, label: '↑ Ascending' },
-                { value: 'desc' as const, label: '↓ Descending' },
-              ]}
-              value={direction}
-              onChange={setDirection}
-              fontSize="12px"
-            />
-          )}
         </div>
         <p className="nl-scale-fingerings-meta">
           2 octaves
@@ -354,6 +343,35 @@ export default function ScaleFingeringsPage() {
           <span className="nl-scale-fingerings-meta__dot" aria-hidden />
           thumb (1)
         </p>
+
+        {showDirection && (
+          <div
+            className="nl-scale-fingerings-direction"
+            role="group"
+            aria-label="Scale direction"
+            data-direction={direction === 'asc' ? 'ascending' : 'descending'}
+          >
+            <span className="nl-scale-fingerings-direction__pill" aria-hidden />
+            <button
+              type="button"
+              className={'nl-scale-fingerings-direction__btn' + (direction === 'asc' ? ' is-active' : '')}
+              aria-pressed={direction === 'asc'}
+              onClick={() => setDirection('asc')}
+            >
+              <span className="nl-scale-fingerings-direction__arrow" aria-hidden>↑</span>
+              Ascending
+            </button>
+            <button
+              type="button"
+              className={'nl-scale-fingerings-direction__btn' + (direction === 'desc' ? ' is-active' : '')}
+              aria-pressed={direction === 'desc'}
+              onClick={() => setDirection('desc')}
+            >
+              <span className="nl-scale-fingerings-direction__arrow" aria-hidden>↓</span>
+              Descending
+            </button>
+          </div>
+        )}
 
         <HandPanel label="Right Hand" notes={rhNotes} fingering={fingering.rh} displayFrom={rhDisplayFrom} displayTo={rhDisplayTo} />
         <HandPanel label="Left Hand" notes={lhNotes} fingering={fingering.lh} displayFrom={lhDisplayFrom} displayTo={lhDisplayTo} />

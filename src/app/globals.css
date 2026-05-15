@@ -2688,6 +2688,88 @@ body:has(.nl-study-viewport) {
   background: var(--oxblood);
 }
 
+/* Melodic minor direction toggle */
+.nl-scale-fingerings-direction {
+  display: inline-flex;
+  gap: 0;
+  position: relative;
+  padding: 3px;
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  background: var(--cream-card);
+  margin: 0 0 22px 0;
+  box-sizing: border-box;
+}
+.nl-scale-fingerings-direction__pill {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 110px;
+  height: 28px;
+  background: var(--oxblood);
+  border-radius: 100px;
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+.nl-scale-fingerings-direction[data-direction="descending"] .nl-scale-fingerings-direction__pill {
+  left: 113px;
+}
+.nl-scale-fingerings-direction__btn {
+  background: transparent;
+  border: none;
+  width: 110px;
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: var(--brown);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  transition: color 0.2s ease;
+  box-sizing: border-box;
+}
+.nl-scale-fingerings-direction__btn:hover {
+  color: var(--ink);
+}
+.nl-scale-fingerings-direction__btn.is-active {
+  color: #fff;
+}
+.nl-scale-fingerings-direction__btn:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 2px;
+}
+.nl-scale-fingerings-direction__arrow {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  margin-right: 4px;
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  .nl-scale-fingerings-direction {
+    padding: 2px;
+    margin: 0 0 18px 0;
+  }
+  .nl-scale-fingerings-direction__pill {
+    top: 2px;
+    left: 2px;
+    width: 92px;
+    height: 24px;
+  }
+  .nl-scale-fingerings-direction[data-direction="descending"] .nl-scale-fingerings-direction__pill {
+    left: 94px;
+  }
+  .nl-scale-fingerings-direction__btn {
+    width: 92px;
+    padding: 4px 12px;
+    font-size: 10px;
+  }
+}
+
 /* Hand cards */
 .nl-scale-fingerings-hand-card {
   background: var(--cream-card);
