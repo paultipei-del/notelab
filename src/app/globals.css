@@ -5894,7 +5894,7 @@ svg:not(.nl-notation-staff) {
 .nl-program-hero__author {
   font-family: var(--font-cormorant), serif;
   font-size: 13px;
-  font-style: italic;
+  font-style: normal;
   color: #5a4028;
   line-height: 1.45;
   margin: 0 0 18px 0;
