@@ -2725,7 +2725,10 @@ body:has(.nl-study-viewport) {
 
   .nl-order-of-practice-hero { margin-bottom: 18px; }
   .nl-order-of-practice-hero__title { font-size: 26px; margin: 0 0 6px; }
-  .nl-order-of-practice-hero__sub { font-size: 13px; max-width: 320px; }
+  .nl-order-of-practice-hero__title em { font-style: normal; }
+  .nl-order-of-practice-hero__sub { font-size: 13px; max-width: 320px; font-style: normal; }
+  .nl-order-of-practice-vseq__title em { font-style: normal; }
+  .nl-order-of-practice-callout--mobile { font-style: normal; }
 
   .nl-order-of-practice-config { display: none; }
   .nl-order-of-practice-sequence { display: none; }
