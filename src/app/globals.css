@@ -5852,53 +5852,53 @@ svg:not(.nl-notation-staff) {
 
 .nl-program-hero__title {
   font-family: var(--font-cormorant), serif;
-  font-size: clamp(28px, 4vw, 36px);
+  font-size: clamp(32px, 4.4vw, 42px);
   font-weight: 500;
   color: #1a1208;
   letter-spacing: -0.01em;
   line-height: 1.05;
-  margin: 0 0 12px 0;
+  margin: 0 0 14px 0;
 }
 .nl-program-hero__pitch {
   font-family: var(--font-cormorant), serif;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.5;
   color: #2a1f12;
-  margin: 0 0 16px 0;
+  margin: 0 0 18px 0;
 }
 
 .nl-program-hero__bullets {
   list-style: none;
   padding: 0;
-  margin: 0 0 16px 0;
+  margin: 0 0 18px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .nl-program-hero__bullets li {
   font-family: var(--font-cormorant), serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #2a1f12;
   display: flex;
   align-items: baseline;
-  gap: 9px;
+  gap: 10px;
   line-height: 1.45;
 }
 .nl-program-hero__bullets li::before {
   content: '✦';
   color: #a0381c;
-  font-size: 11px;
+  font-size: 13px;
   flex: 0 0 auto;
 }
 
 .nl-program-hero__author {
   font-family: var(--font-cormorant), serif;
-  font-size: 13px;
+  font-size: 15px;
   font-style: normal;
   color: #5a4028;
   line-height: 1.45;
-  margin: 0 0 18px 0;
-  padding: 12px 0;
+  margin: 0 0 20px 0;
+  padding: 14px 0;
   border-top: 1px solid rgba(139, 105, 20, 0.12);
   border-bottom: 1px solid rgba(139, 105, 20, 0.12);
 }
@@ -5922,20 +5922,20 @@ svg:not(.nl-notation-staff) {
 .nl-program-hero__price-from,
 .nl-program-hero__price-unit {
   font-family: var(--font-cormorant), serif;
-  font-size: 12px;
+  font-size: 14px;
   font-style: italic;
   color: #8a7560;
 }
 .nl-program-hero__price-amt {
   font-family: var(--font-cormorant), serif;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 500;
   color: #1a1208;
   letter-spacing: -0.005em;
 }
 .nl-program-hero__price-full {
   font-family: var(--font-cormorant), serif;
-  font-size: 12px;
+  font-size: 14px;
   font-style: italic;
   color: #5a4028;
   margin-left: auto;
@@ -5955,10 +5955,10 @@ svg:not(.nl-notation-staff) {
   background: #1a1208;
   color: #f0e7d0;
   font-family: var(--font-cormorant), serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   text-decoration: none;
-  padding: 12px 20px;
+  padding: 14px 22px;
   border-radius: 4px;
   transition: background 0.15s;
   letter-spacing: 0.01em;
@@ -5970,10 +5970,10 @@ svg:not(.nl-notation-staff) {
   background: transparent;
   color: #5a4028;
   font-family: var(--font-cormorant), serif;
-  font-size: 14px;
+  font-size: 16px;
   font-style: italic;
   text-decoration: none;
-  padding: 12px 18px;
+  padding: 14px 20px;
   border: 1px solid rgba(139, 105, 20, 0.3);
   border-radius: 4px;
   transition: border-color 0.15s, color 0.15s;
@@ -6001,7 +6001,7 @@ svg:not(.nl-notation-staff) {
 }
 .nl-program-hero__preview-label {
   font-family: var(--font-jost), sans-serif;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -6027,26 +6027,26 @@ svg:not(.nl-notation-staff) {
 .nl-program-hero__mini-num {
   font-family: var(--font-cormorant), serif;
   font-style: italic;
-  font-size: 13px;
+  font-size: 15px;
   color: #8a7560;
   flex: 0 0 auto;
-  min-width: 14px;
+  min-width: 16px;
 }
 .nl-program-hero__mini-title {
   font-family: var(--font-cormorant), serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #1a1208;
   flex: 1 1 auto;
   min-width: 0;
   line-height: 1.35;
-  /* Lesson titles can wrap to 2 lines — full title is more useful
+  /* Lesson titles can wrap to 2 lines, full title is more useful
      than a truncated one (e.g. "Major Key Signatures"). */
   overflow-wrap: break-word;
 }
 .nl-program-hero__mini-count {
   font-family: var(--font-cormorant), serif;
   font-style: italic;
-  font-size: 12px;
+  font-size: 14px;
   color: #8a7560;
   flex: 0 0 auto;
   white-space: nowrap;
@@ -6054,7 +6054,7 @@ svg:not(.nl-notation-staff) {
 .nl-program-hero__preview-more {
   font-family: var(--font-cormorant), serif;
   font-style: italic;
-  font-size: 13px;
+  font-size: 15px;
   color: #a0381c;
   text-decoration: none;
   padding: 4px 0;
@@ -6080,17 +6080,17 @@ svg:not(.nl-notation-staff) {
 }
 .nl-program-hero__stat-value {
   font-family: var(--font-cormorant), serif;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 500;
   color: #1a1208;
   line-height: 1;
 }
 .nl-program-hero__stat-label {
   font-family: var(--font-cormorant), serif;
-  font-size: 11px;
+  font-size: 13px;
   font-style: italic;
   color: #8a7560;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 /* ── Section header ── */

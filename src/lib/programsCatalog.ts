@@ -125,7 +125,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
     priceFrom: '$29',
     priceFull: '$199',
     pitch:
-      'Complete theory exam preparation from Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training — aligned to the May 2026 MTAC exam.',
+      'Complete theory exam preparation from Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training, aligned to the May 2026 MTAC exam.',
     includes: '11 levels · 168 decks · ~6 mo to complete',
     features: [
       'Signs, terms, intervals, scales, chords across all 11 CM levels',
@@ -156,7 +156,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
     priceId: null,
     priceFrom: '$29',
     pitch:
-      'Nine modules — single-pitch recognition through intervallic and rhythmic reading — for college music students and serious adult learners.',
+      'Nine modules covering single-pitch recognition through intervallic and rhythmic reading. Built for college music students and serious adult learners.',
     includes: '9 modules · audio-paired drills · grand staff to ledger lines',
   },
   {
@@ -169,7 +169,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
     free: true,
     priceId: null,
     pitch:
-      'Three structured programs — Fundamentals, Personal Practice, Conservatory Prep — 356 progressive exercises from basic note values through mixed meter and polyrhythm.',
+      'Three structured programs (Fundamentals, Personal Practice, Conservatory Prep) with 356 progressive exercises from basic note values through mixed meter and polyrhythm.',
     includes: '356 exercises · metronome-paced · tap-along audio',
   },
   // ── Placeholders ──
@@ -203,7 +203,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
     variant: 'suggest',
     eyebrow: 'Help us build',
     title: "What's missing?",
-    body: 'Tell us what curriculum or skill you’d like to see next — every request is read.',
+    body: 'Tell us what curriculum or skill you’d like to see next. Every request is read.',
   },
 ]
 
