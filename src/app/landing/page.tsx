@@ -565,7 +565,7 @@ export default function LandingPage() {
           fontFamily: F, fontSize: '11px', fontWeight: 400, color: '#8A8378',
           lineHeight: 1.5, margin: '24px 0 0', maxWidth: '720px',
         }}>
-          NoteLab is an independent study tool. Not affiliated with, endorsed by, or sponsored by the Music Teachers&apos; Association of California® or its Certificate of Merit® program. Certificate of Merit® and MTAC® are registered trademarks of the Music Teachers&apos; Association of California, Inc.
+          NoteLab is an independent study tool. Not affiliated with, endorsed by, or sponsored by the Music Teachers&apos; Association of California® or its Certificate of Merit® program. Certificate of Merit® and MTAC® are registered trademarks of the Music Teachers&apos; Association of California, Inc. All other trademarks are the property of their respective owners.
         </p>
       </footer>
 
