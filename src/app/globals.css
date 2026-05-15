@@ -2479,6 +2479,344 @@ body:has(.nl-study-viewport) {
 .nl-scale-builder-key-black.is-played { background: #276840; }
 .nl-scale-builder-key-black.is-next { background: #c87a64; }
 
+/* ── Order of practice (/order-of-practice) ─ */
+
+.nl-order-of-practice-page {
+  min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.nl-order-of-practice-inner {
+  flex: 1;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 32px) clamp(16px, 4vw, 32px) max(40px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.nl-order-of-practice-back {
+  display: inline-block;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  color: var(--brown);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+.nl-order-of-practice-back:hover { color: var(--oxblood); }
+
+.nl-order-of-practice-hero {
+  margin-top: 18px;
+  margin-bottom: 36px;
+}
+.nl-order-of-practice-hero__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  margin: 0 0 10px;
+}
+.nl-order-of-practice-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.nl-order-of-practice-hero__title em {
+  font-style: italic;
+  color: var(--oxblood);
+}
+.nl-order-of-practice-hero__sub {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--brown);
+  max-width: 640px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Desktop config bar */
+.nl-order-of-practice-config {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 14px 24px;
+  background: var(--cream-card);
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  margin: 0 auto 40px;
+  max-width: 800px;
+  box-sizing: border-box;
+}
+.nl-order-of-practice-config__group {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.nl-order-of-practice-config__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+}
+.nl-order-of-practice-config__divider {
+  display: inline-block;
+  width: 1px;
+  height: 24px;
+  background: var(--brown-faint);
+}
+
+.nl-order-of-practice-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--brown-muted) 50%),
+    linear-gradient(135deg, var(--brown-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  padding: 6px 30px 6px 14px;
+  font-family: var(--font-cormorant), serif;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.nl-order-of-practice-select:focus {
+  border-color: var(--oxblood);
+  box-shadow: 0 0 0 3px var(--oxblood-soft);
+}
+
+/* Direction toggle */
+.nl-order-of-practice-direction {
+  display: inline-flex;
+  position: relative;
+  padding: 3px;
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  background: rgba(248, 240, 216, 0.5);
+  box-sizing: border-box;
+}
+.nl-order-of-practice-direction__pill {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 96px;
+  height: 26px;
+  background: var(--oxblood);
+  border-radius: 100px;
+  transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+.nl-order-of-practice-direction[data-direction="reverse"] .nl-order-of-practice-direction__pill {
+  left: 99px;
+}
+.nl-order-of-practice-direction__btn {
+  background: transparent;
+  border: none;
+  width: 96px;
+  padding: 4px 14px;
+  border-radius: 100px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--brown);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  transition: color 0.2s ease;
+  box-sizing: border-box;
+}
+.nl-order-of-practice-direction__btn:hover { color: var(--ink); }
+.nl-order-of-practice-direction__btn.is-active { color: #fff; }
+.nl-order-of-practice-direction__btn:focus-visible {
+  outline: 2px solid var(--oxblood);
+  outline-offset: 2px;
+}
+.nl-order-of-practice-direction__arrow {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  margin-right: 3px;
+}
+
+/* Desktop horizontal sequence */
+.nl-order-of-practice-sequence {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  row-gap: 14px;
+  column-gap: 12px;
+  padding: 30px 20px;
+}
+.nl-order-of-practice-sequence__note {
+  font-family: var(--font-cormorant), serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1;
+}
+.nl-order-of-practice-sequence__note.is-anchor { color: var(--oxblood); }
+.nl-order-of-practice-sequence__sep {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
+  color: var(--brown-muted);
+  position: relative;
+  top: -8px;
+}
+
+/* Mobile summary card — hidden on desktop */
+.nl-order-of-practice-summary { display: none; }
+
+/* Mobile vertical list — hidden on desktop */
+.nl-order-of-practice-vlist { display: none; }
+
+/* ── Mobile (<768px) ── */
+@media (max-width: 768px) {
+  .nl-order-of-practice-hero { margin-bottom: 24px; }
+  .nl-order-of-practice-hero__title { font-size: 28px; }
+  .nl-order-of-practice-hero__sub { font-size: 14px; }
+
+  .nl-order-of-practice-config { display: none; }
+  .nl-order-of-practice-sequence { display: none; }
+
+  /* Summary card */
+  .nl-order-of-practice-summary {
+    display: block;
+    background: var(--cream-card);
+    border: 1px solid var(--brown-faint);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+  .nl-order-of-practice-summary__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    position: relative;
+    cursor: pointer;
+  }
+  .nl-order-of-practice-summary__row + .nl-order-of-practice-summary__row {
+    border-top: 1px solid var(--hairline);
+  }
+  .nl-order-of-practice-summary__label {
+    font-family: var(--font-jost), system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brown-muted);
+  }
+  .nl-order-of-practice-summary__value {
+    font-family: var(--font-cormorant), serif;
+    font-size: 15px;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nl-order-of-practice-summary__chev {
+    font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--brown-muted);
+  }
+  .nl-order-of-practice-summary__native {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font: inherit;
+  }
+
+  /* Vertical list */
+  .nl-order-of-practice-vlist {
+    display: block;
+    background: var(--cream-card);
+    border: 1px solid var(--brown-faint);
+    border-radius: 14px;
+    padding: 16px 18px 18px;
+  }
+  .nl-order-of-practice-vlist__head {
+    margin-bottom: 12px;
+  }
+  .nl-order-of-practice-vlist__title {
+    font-family: var(--font-cormorant), serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    margin: 0 0 4px;
+  }
+  .nl-order-of-practice-vlist__title em {
+    font-style: italic;
+    color: var(--oxblood);
+  }
+  .nl-order-of-practice-vlist__meta {
+    font-family: var(--font-jost), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--brown-muted);
+    margin: 0;
+    text-transform: lowercase;
+  }
+  .nl-order-of-practice-vlist__rows {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .nl-order-of-practice-vlist__row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 10px 0;
+    border-top: 1px solid var(--hairline);
+  }
+  .nl-order-of-practice-vlist__row:first-child { border-top: none; }
+  .nl-order-of-practice-vlist__num {
+    font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--brown-muted);
+    width: 24px;
+  }
+  .nl-order-of-practice-vlist__note {
+    font-family: var(--font-cormorant), serif;
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .nl-order-of-practice-vlist__row.is-anchor .nl-order-of-practice-vlist__note {
+    color: var(--oxblood);
+  }
+}
+
 /* ── Scale fingerings (/scale-fingerings) ─ */
 
 .nl-scale-fingerings-page {
