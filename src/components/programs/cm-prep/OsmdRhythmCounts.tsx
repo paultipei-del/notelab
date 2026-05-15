@@ -11,8 +11,8 @@ import { useEffect, useId, useRef, useState, useCallback } from 'react'
 const F       = 'var(--font-jost), sans-serif'
 const DARK    = '#1A1A18'
 const GREY    = '#B0ACA4'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 
 interface NoteSlot {
   measureIdx:   number
@@ -303,7 +303,7 @@ export default function OsmdRhythmCounts({
       })}
       </div>
 
-      {/* Count palette — sits BELOW the wrapper, so it flows after the staff
+      {/* Count palette · sits BELOW the wrapper, so it flows after the staff
           + dashes instead of overlapping them. */}
       {!disabled && (
         <div style={{ marginTop: 12 }}>

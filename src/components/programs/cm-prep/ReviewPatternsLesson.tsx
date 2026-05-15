@@ -13,8 +13,8 @@ const GREY    = '#B0ACA4'
 const ACCENT  = '#BA7517'   // amber (matches review accent in the page chrome)
 const MAJ_C   = '#2A5C0A'
 const MIN_C   = '#3B6DB5'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry (standard CM Prep card dimensions) ───────────────────────
@@ -220,7 +220,7 @@ function NamePatternEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Name each pattern
+        Exercise 1 · Name each pattern
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -488,13 +488,13 @@ function WritePatternEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 2 — Write the pattern + triad
+        Exercise 2 · Write the pattern + triad
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '10px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — write the{' '}
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · write the{' '}
         <strong style={{ color: ACCENT }}>{item.key} {item.mode}{' '}
         {subStep === 'pattern' ? 'pattern (5 notes)' : 'triad (3 notes, stacked)'}</strong>
       </p>
@@ -585,7 +585,7 @@ function WritePatternEx({
         Tap the staff to place a notehead. Pick an accidental, then tap a note to apply it.
       </p>
 
-      {/* Keyboard reference — shows the target pattern + triad lit up */}
+      {/* Keyboard reference · shows the target pattern + triad lit up */}
       <KeyboardReference
         key={`kb-${item.key}-${item.mode}`}
         keyProp={item.key} modeProp={item.mode}
@@ -594,9 +594,9 @@ function WritePatternEx({
 
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: '10px 0 0', minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
-        {feedback !== null && feedback.ok && subStep === 'pattern' && '✓ Pattern correct — now write the triad.'}
+        {feedback !== null && feedback.ok && subStep === 'pattern' && '✓ Pattern correct · now write the triad.'}
         {feedback !== null && feedback.ok && subStep === 'triad' && '✓ Triad correct.'}
-        {feedback !== null && !feedback.ok && 'Not quite — the correct answer is shown in green.'}
+        {feedback !== null && !feedback.ok && 'Not quite · the correct answer is shown in green.'}
       </p>
     </div>
   )

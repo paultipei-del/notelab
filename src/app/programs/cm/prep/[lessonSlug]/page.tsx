@@ -128,18 +128,18 @@ export default function CMPrepLessonPage({ params }: Props) {
         {/* Previous session summary */}
         {!practicing && (completed || (progress?.sessions.length ?? 0) > 0) && !sessionDone && (
           <div style={{
-            background: completed ? '#F0F7E8' : '#ECE3CC',
-            border: `1px solid ${completed ? '#C0DD97' : '#D9CFAE'}`,
+            background: completed ? 'var(--forest-soft)' : '#ECE3CC',
+            border: `1px solid ${completed ? 'rgba(45, 90, 62, 0.24)' : '#D9CFAE'}`,
             borderRadius: '14px', padding: '16px 20px', marginBottom: '24px',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              {completed && <span style={{ color: ACCENT, fontSize: '13px' }}>✓</span>}
-              <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 400, color: completed ? ACCENT : '#2A2318', margin: 0 }}>
+              {completed && <span style={{ color: 'var(--forest)', fontSize: '13px' }}>✓</span>}
+              <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 500, color: completed ? 'var(--forest)' : '#2A2318', margin: 0 }}>
                 {completed ? 'Completed' : 'In progress'}
               </p>
             </div>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>
-              Best score: <strong style={{ color: '#2A2318' }}>{Math.round((progress?.bestScore ?? 0) * 100)}%</strong>
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: 'var(--brown)', margin: 0 }}>
+              Best score: <strong style={{ color: 'var(--ink)' }}>{Math.round((progress?.bestScore ?? 0) * 100)}%</strong>
               {' · '}
               {progress?.sessions.length ?? 0} session{(progress?.sessions.length ?? 0) !== 1 ? 's' : ''}
             </p>
@@ -149,23 +149,23 @@ export default function CMPrepLessonPage({ params }: Props) {
         {/* Session result */}
         {sessionDone && (
           <div style={{
-            background: nowCompleted ? '#EAF3DE' : '#ECE3CC',
-            border: `1px solid ${nowCompleted ? '#C0DD97' : '#D9CFAE'}`,
+            background: nowCompleted ? 'var(--forest-soft)' : '#ECE3CC',
+            border: `1px solid ${nowCompleted ? 'rgba(45, 90, 62, 0.24)' : '#D9CFAE'}`,
             borderRadius: '14px', padding: '20px 24px', marginBottom: '24px',
           }}>
-            <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 400, color: nowCompleted ? '#2A5C0A' : '#2A2318', marginBottom: '6px' }}>
+            <p style={{ fontFamily: SERIF, fontSize: '18px', fontWeight: 500, color: nowCompleted ? 'var(--forest)' : '#2A2318', marginBottom: '6px' }}>
               {nowCompleted ? 'Lesson complete' : 'Session finished'}
             </p>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', marginBottom: nowCompleted && next ? '16px' : 0 }}>
-              Score: <strong style={{ color: '#2A2318' }}>{Math.round(sessionScore * 100)}%</strong>
-              {' — '}
+            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: 'var(--brown)', marginBottom: nowCompleted && next ? '16px' : 0 }}>
+              Score: <strong style={{ color: 'var(--ink)' }}>{Math.round(sessionScore * 100)}%</strong>
+              {' · '}
               {Math.round(sessionScore * sessionTotal)} / {sessionTotal} correct
             </p>
             {nowCompleted && next && (
               <Link href={`/programs/cm/prep/${next.slug}`} style={{ textDecoration: 'none' }}>
                 <span style={{
                   display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-compact)',
-                  background: '#1A1A18', color: 'white', borderRadius: '10px', padding: '10px 20px',
+                  background: 'var(--oxblood)', color: '#fff', borderRadius: '10px', padding: '10px 20px',
                 }}>
                   Next: {next.title} →
                 </span>
@@ -175,7 +175,7 @@ export default function CMPrepLessonPage({ params }: Props) {
               <Link href="/programs/cm/prep" style={{ textDecoration: 'none' }}>
                 <span style={{
                   display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-compact)',
-                  background: '#1A1A18', color: 'white', borderRadius: '10px', padding: '10px 20px',
+                  background: 'var(--oxblood)', color: '#fff', borderRadius: '10px', padding: '10px 20px',
                 }}>
                   Back to program →
                 </span>
@@ -223,7 +223,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                 <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
                   textTransform: 'uppercase', color: '#3B6DB5', margin: '0 0 4px' }}>F major</p>
                 <p style={{ fontFamily: SERIF, fontSize: 15, color: '#1A1A18', margin: 0 }}>
-                  One flat — B♭
+                  One flat · B♭
                 </p>
               </div>
               <div style={{
@@ -233,7 +233,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                 <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
                   textTransform: 'uppercase', color: '#2A5C0A', margin: '0 0 4px' }}>G major</p>
                 <p style={{ fontFamily: SERIF, fontSize: 15, color: '#1A1A18', margin: 0 }}>
-                  One sharp — F♯
+                  One sharp · F♯
                 </p>
               </div>
             </div>
@@ -346,13 +346,13 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'signs-terms-lesson' && 'Four exercises: match signs with definitions, identify the sign, play a memory-match pair game, and group each sign by category.'}
                   {lesson.tool === 'review-10-13-lesson' && 'Five exercises drawn from Lessons 10–13: write counts and place accents, match terms to definitions, complete scales with sharps or flats, identify keys from key signatures, and identify signs and terms.'}
                   {lesson.tool === 'review-test-lesson' && 'A comprehensive preparatory-level test modelled on the Certificate of Merit Practice Theory Test. Name notes on the grand staff, complete Major scales, identify key signatures, name notes and rests, recognize signs and terms, and label parts of the grand staff.'}
-                  {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it — review the ones you missed.'}
+                  {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it. Review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
                 <button
                   onClick={() => { setPracticing(true); setSessionDone(false) }}
                   style={{
-                    background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px',
+                    background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
                     padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
                   }}
                 >

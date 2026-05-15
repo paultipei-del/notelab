@@ -11,9 +11,9 @@ const F       = 'var(--font-jost), sans-serif'
 const SERIF   = 'var(--font-cormorant), serif'
 const DARK    = '#1A1A18'
 const GREY    = '#B0ACA4'
-const ACCENT  = '#3B6DB5'   // blue — matches MIN_C in PatternDiagrams
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const ACCENT  = '#3B6DB5'   // blue · matches MIN_C in PatternDiagrams
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry (standard CM Prep card dimensions) ───────────────────────
@@ -164,7 +164,7 @@ function BuildKeyboardEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Build the minor pattern and triad
+        Exercise 1 · Build the minor pattern and triad
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -200,7 +200,7 @@ function BuildKeyboardEx({
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok  && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
-          <>Not quite — take another look and try again.</>
+          <>Not quite · take another look and try again.</>
         )}
       </p>
     </div>
@@ -245,7 +245,7 @@ function MatchPatternEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 2 — Match the five-finger pattern
+        Exercise 2 · Match the five-finger pattern
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -329,7 +329,7 @@ function MatchTriadEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 5 — Match the minor triad
+        Exercise 5 · Match the minor triad
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -532,13 +532,13 @@ function PlaceTriadEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 6 — Place the minor triad
+        Exercise 6 · Place the minor triad
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '10px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place the{' '}
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · place the{' '}
         <strong style={{ color: ACCENT }}>{item.rootKey} minor triad</strong>
       </p>
 
@@ -613,7 +613,7 @@ function PlaceTriadEx({
         color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
         {submitted && isCorrect && '✓ Correct'}
         {submitted && !isCorrect && (
-          <>Correct triad shown in green — tap again on the next one.</>
+          <>Correct triad shown in green · tap again on the next one.</>
         )}
       </p>
     </div>
@@ -789,7 +789,7 @@ function ConvertEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise {direction === 'toMinor' ? '3' : '4'} — Make it {targetModeLabel}
+        Exercise {direction === 'toMinor' ? '3' : '4'} · Make it {targetModeLabel}
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -868,9 +868,9 @@ function ConvertEx({
 
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
-        {feedback !== null && feedback.ok  && `✓ Correct — this is now ${targetLabel}`}
+        {feedback !== null && feedback.ok  && `✓ Correct · this is now ${targetLabel}`}
         {feedback !== null && !feedback.ok && (
-          <>Not quite — only the 3rd note needs a change. Give it another try.</>
+          <>Not quite · only the 3rd note needs a change. Give it another try.</>
         )}
       </p>
     </div>

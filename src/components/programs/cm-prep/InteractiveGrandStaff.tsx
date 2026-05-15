@@ -8,8 +8,8 @@ const DARK = '#1A1A18'
 const GREY = '#7A7060'
 const LIGHT_BG = '#F7F4ED'
 const ACCENT = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG = '#a0381c'
 const STROKE_W = 1.3
 
 const ELEMENTS = [
@@ -17,37 +17,37 @@ const ELEMENTS = [
     id: 1 as const,
     label: 'Brace',
     shortDesc: 'The curved bracket on the far left',
-    fullDesc: 'The brace is the ornamental curved bracket that joins the treble and bass staves on the left side. It tells the performer both staves are played simultaneously — two staves, one instrument. On the piano, the treble staff is typically played by the right hand, the bass staff by the left.',
+    fullDesc: 'The brace is the ornamental curved bracket that joins the treble and bass staves on the left side. It tells the performer both staves are played simultaneously: two staves, one instrument. On the piano, the treble staff is typically played by the right hand, the bass staff by the left.',
   },
   {
     id: 2 as const,
     label: 'Treble clef',
-    shortDesc: 'G clef — anchors G on the second line of the upper staff',
-    fullDesc: 'The treble clef spirals around the second line, permanently naming it G4. From that single anchor, every other note position follows by counting up or down the alphabet (A through G, repeating). The treble clef is used for higher-pitched notes — it is also called the G clef.',
+    shortDesc: 'G clef · anchors G on the second line of the upper staff',
+    fullDesc: 'The treble clef spirals around the second line, permanently naming it G4. From that single anchor, every other note position follows by counting up or down the alphabet (A through G, repeating). The treble clef is used for higher-pitched notes. It is also called the G clef.',
   },
   {
     id: 3 as const,
     label: 'Bass clef',
-    shortDesc: 'F clef — anchors F on the fourth line of the lower staff',
-    fullDesc: 'The two dots of the bass clef sit above and below the fourth line, naming it F3. All other bass staff notes follow from that anchor. The bass clef is used for lower-pitched notes and is also called the F clef. Middle C sits one ledger line above this staff — it is shared between both staves.',
+    shortDesc: 'F clef · anchors F on the fourth line of the lower staff',
+    fullDesc: 'The two dots of the bass clef sit above and below the fourth line, naming it F3. All other bass staff notes follow from that anchor. The bass clef is used for lower-pitched notes and is also called the F clef. Middle C sits one ledger line above this staff. It is shared between both staves.',
   },
   {
     id: 4 as const,
     label: 'Bar line',
     shortDesc: 'Vertical line dividing the music into measures',
-    fullDesc: 'A bar line is a vertical line that runs through both staves from top to bottom, marking the boundary between measures. It is purely an organizational tool — it does not create a pause, an accent, or any change in sound. Music flows continuously through bar lines.',
+    fullDesc: 'A bar line is a vertical line that runs through both staves from top to bottom, marking the boundary between measures. It is purely an organizational tool. It does not create a pause, an accent, or any change in sound. Music flows continuously through bar lines.',
   },
   {
     id: 5 as const,
     label: 'Measure',
     shortDesc: 'The space between two bar lines',
-    fullDesc: 'A measure (also called a bar) is the musical space between two bar lines. It holds a fixed number of beats determined by the time signature at the start of the piece. Every measure in a piece contains exactly the same number of beats — this regularity is what gives music its rhythmic structure.',
+    fullDesc: 'A measure (also called a bar) is the musical space between two bar lines. It holds a fixed number of beats determined by the time signature at the start of the piece. Every measure in a piece contains exactly the same number of beats. This regularity is what gives music its rhythmic structure.',
   },
   {
     id: 6 as const,
     label: 'Double bar',
     shortDesc: 'Thin + thick line marking the end of a section or piece',
-    fullDesc: 'The double bar line consists of a thin line followed by a thick line. It appears at the end of a section, a movement, or the entire piece. The thick bar signals finality — this is where the music ends. A double bar with repeat dots has a different meaning (go back and play again), but the plain double bar always means the end.',
+    fullDesc: 'The double bar line consists of a thin line followed by a thick line. It appears at the end of a section, a movement, or the entire piece. The thick bar signals finality. This is where the music ends. A double bar with repeat dots has a different meaning (go back and play again), but the plain double bar always means the end.',
   },
 ] as const
 
@@ -184,7 +184,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
   const sL = 76      // staffLeft: gives room for numbers + brace on left
   const sR = 480
   const tTop = 34    // treble top line
-  const bTop = tTop + 8 * step + 72  // bass top line — more space between staffs
+  const bTop = tTop + 8 * step + 72  // bass top line · more space between staffs
   const bBot = bTop + 8 * step
 
   const numX = 28    // x for line number badges
@@ -216,10 +216,11 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               key={m}
               onClick={() => m === 'quiz' ? startQuiz() : (setMode('explore'), setActive(null), setActiveLine(null))}
               style={{
-                padding: '9px 22px', borderRadius: '20px', border: 'none', cursor: 'pointer',
+                padding: '9px 22px', borderRadius: '20px', cursor: 'pointer',
                 fontFamily: F, fontSize: 14, fontWeight: mode === m ? 600 : 400,
-                background: mode === m ? DARK : '#EDE8DF',
-                color: mode === m ? 'white' : GREY,
+                background: mode === m ? 'var(--oxblood)' : 'var(--cream-card-strong)',
+                color: mode === m ? '#fff' : 'var(--brown)',
+                border: mode === m ? '1px solid var(--oxblood)' : '1px solid var(--brown-faint)',
                 transition: 'background 0.15s',
               }}
             >
@@ -266,13 +267,13 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
                   {lastCorrect ? '✓' : '✗'}
                 </span>
                 <p style={{ fontFamily: F, fontSize: 14, color: lastCorrect ? CORRECT : WRONG, margin: 0, fontWeight: 600 }}>
-                  {lastCorrect ? 'Correct!' : `Not quite — ${quizTarget.label} is highlighted in green`}
+                  {lastCorrect ? 'Correct!' : `Not quite · ${quizTarget.label} is highlighted in green`}
                 </p>
               </div>
               <button
                 onClick={nextQuestion}
                 style={{
-                  background: DARK, color: 'white', border: 'none', borderRadius: '10px',
+                  background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
                   padding: '10px 22px', fontFamily: F, fontSize: 14, cursor: 'pointer',
                 }}
               >
@@ -290,7 +291,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
           width="100%"
           style={{ maxWidth: W, display: 'block', margin: '0 auto', cursor: 'default' }}
         >
-          {/* Staff lines — colored when a line number is active */}
+          {/* Staff lines · colored when a line number is active */}
           {[0, 2, 4, 6, 8].map((p, i) => {
             const n = 5 - i
             return (
@@ -342,7 +343,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               fontFamily="Bravura, serif" fill={elFill(1)} textAnchor="middle" dominantBaseline="auto">
               {'\uE000'}
             </text>
-            {/* Hit zone — extends to left edge so badge 1 is clickable */}
+            {/* Hit zone · extends to left edge so badge 1 is clickable */}
             <rect x={2} y={tTop - 10} width={sL - 4} height={bBot - tTop + 20} fill="transparent" />
           </g>
 
@@ -414,7 +415,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
             <rect x={barX + 18} y={tTop - 8} width={sR - barX - 40} height={bBot - tTop + 16} fill="transparent" />
           </g>
 
-          {/* Callout badges — explore mode only */}
+          {/* Callout badges · explore mode only */}
           {mode === 'explore' && ELEMENTS.map(el => {
             const positions: Record<number, [number, number]> = {
               1: [43, tTop + (bBot - tTop) / 2],          // brace: between line circles and brace glyph
@@ -442,7 +443,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
             )
           })}
 
-          {/* ── Line number badges — rendered last so they sit above brace hit zone ── */}
+          {/* ── Line number badges · rendered last so they sit above brace hit zone ── */}
           {/* Treble lines */}
           {[0, 2, 4, 6, 8].map((p, i) => {
             const num = 5 - i
@@ -515,13 +516,13 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
           ) : activeLineEl ? (
             <>
               <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 400, color: ACCENT, margin: '0 0 6px' }}>
-                Line {activeLineEl.num} — {activeLineEl.staff === 'treble' ? 'Treble' : 'Bass'} Staff
+                Line {activeLineEl.num} · {activeLineEl.staff === 'treble' ? 'Treble' : 'Bass'} Staff
               </p>
               <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
                 {activeLineEl.staff === 'treble' ? (
                   <>
-                    {activeLineEl.num === 1 && 'Line 1 (bottom): E4 — just below middle C on the treble staff.'}
-                    {activeLineEl.num === 2 && 'Line 2: G4 — the treble clef spirals around this line, permanently anchoring G.'}
+                    {activeLineEl.num === 1 && 'Line 1 (bottom): E4, just below middle C on the treble staff.'}
+                    {activeLineEl.num === 2 && 'Line 2: G4. The treble clef spirals around this line, permanently anchoring G.'}
                     {activeLineEl.num === 3 && 'Line 3 (middle): B4.'}
                     {activeLineEl.num === 4 && 'Line 4: D5.'}
                     {activeLineEl.num === 5 && 'Line 5 (top): F5. Mnemonic for all five treble lines: Every Good Boy Does Fine (E G B D F).'}
@@ -531,7 +532,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
                     {activeLineEl.num === 1 && 'Line 1 (bottom): G2. Mnemonic for all five bass lines: Good Boys Do Fine Always (G B D F A).'}
                     {activeLineEl.num === 2 && 'Line 2: B2.'}
                     {activeLineEl.num === 3 && 'Line 3 (middle): D3.'}
-                    {activeLineEl.num === 4 && 'Line 4: F3 — the bass clef dots bracket this line, permanently anchoring F.'}
+                    {activeLineEl.num === 4 && 'Line 4: F3. The bass clef dots bracket this line, permanently anchoring F.'}
                     {activeLineEl.num === 5 && 'Line 5 (top): A3.'}
                   </>
                 )}
@@ -567,7 +568,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
           </p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={startQuiz} style={{
-              background: DARK, color: 'white', border: 'none', borderRadius: '10px',
+              background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
               padding: '11px 24px', fontFamily: F, fontSize: 14, cursor: 'pointer',
             }}>
               Try again →

@@ -44,7 +44,7 @@ const GLYPH = {
 // ── Common staff helpers ──────────────────────────────────────────────────
 const BOX_W    = 180
 const BOX_H    = 120
-const STEP     = 6                // line-to-line = 12px — matches Lesson 1 grand staff (gStep=6)
+const STEP     = 6                // line-to-line = 12px · matches Lesson 1 grand staff (gStep=6)
 const CENTER_Y = 56
 const SLX1     = 14
 const SLX2     = BOX_W - 14
@@ -234,7 +234,7 @@ function GrandStaffDiagram({ showClefs = true, width = 190 }:
 // ── Individual symbol components ───────────────────────────────────────────
 
 export function AccentSymbol() {
-  const pos = 4                           // G4, line 2 — stem up
+  const pos = 4                           // G4, line 2 · stem up
   const cx = BOX_W / 2
   const cy = trebleY(pos)
   return (
@@ -446,7 +446,7 @@ export function StaccatoSymbol() {
     <Frame>
       <Staff />
       <QuarterUp cx={cx} pos={pos} />
-      {/* Use a filled circle directly — crisper than scaling up a Bravura dot. */}
+      {/* Use a filled circle directly · crisper than scaling up a Bravura dot. */}
       <circle cx={cx} cy={cy + 14} r={2.2} fill={DARK} />
     </Frame>
   )

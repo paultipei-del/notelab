@@ -45,8 +45,8 @@ export default function GrandStaffExplorePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' }}>
             {[
               { n: 1, label: 'Brace', desc: 'Joins treble + bass staves' },
-              { n: 2, label: 'Treble clef', desc: 'G clef — anchors G, line 2' },
-              { n: 3, label: 'Bass clef', desc: 'F clef — anchors F, line 4' },
+              { n: 2, label: 'Treble clef', desc: 'G clef · anchors G, line 2' },
+              { n: 3, label: 'Bass clef', desc: 'F clef · anchors F, line 4' },
               { n: 4, label: 'Bar line', desc: 'Divides into measures' },
               { n: 5, label: 'Measure', desc: 'Space between bar lines' },
             ].map(item => (

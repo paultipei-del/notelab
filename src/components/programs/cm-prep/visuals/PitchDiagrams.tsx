@@ -84,9 +84,9 @@ export function AccidentalsDiagram() {
   const [mode, setMode] = useState<PianoMode>('sharps')
 
   const tabs: { mode: PianoMode; symbol: string; label: string; color: string; desc: string }[] = [
-    { mode: 'sharps',   symbol: '♯', label: 'Sharp',   color: SHARP_C, desc: 'Raises the note by one half step — one key to the right' },
-    { mode: 'flats',    symbol: '♭', label: 'Flat',    color: FLAT_C,  desc: 'Lowers the note by one half step — one key to the left'  },
-    { mode: 'naturals', symbol: '♮', label: 'Natural', color: NAT_C,   desc: 'Cancels any sharp or flat — returns to the white key'    },
+    { mode: 'sharps',   symbol: '♯', label: 'Sharp',   color: SHARP_C, desc: 'Raises the note by one half step · one key to the right' },
+    { mode: 'flats',    symbol: '♭', label: 'Flat',    color: FLAT_C,  desc: 'Lowers the note by one half step · one key to the left'  },
+    { mode: 'naturals', symbol: '♮', label: 'Natural', color: NAT_C,   desc: 'Cancels any sharp or flat · returns to the white key'    },
   ]
 
   const active = tabs.find(t => t.mode === mode)!
@@ -138,7 +138,7 @@ export function StepsDiagram() {
   const [mode, setMode] = useState<PianoMode>('half-steps')
 
   const tabs: { mode: PianoMode; symbol: string; label: string; color: string; desc: string }[] = [
-    { mode: 'half-steps',  symbol: 'H', label: 'Half Step',  color: SHARP_C, desc: 'Adjacent keys — no key between. The smallest distance in music.' },
+    { mode: 'half-steps',  symbol: 'H', label: 'Half Step',  color: SHARP_C, desc: 'Adjacent keys · no key between. The smallest distance in music.' },
     { mode: 'whole-steps', symbol: 'W', label: 'Whole Step', color: FLAT_C,  desc: 'Skips exactly one key. Equal to two half steps.' },
   ]
 
@@ -313,8 +313,8 @@ function IntervalsKeyboardVisual() {
                 onClick={() => {
                   setDirection(dir)
                   // Reset to a starting note that keeps the interval in range
-                  if (dir === 'down') setFromIdx(9)    // E5 — room below for 5ths
-                  else                setFromIdx(2)    // E4 — room above
+                  if (dir === 'down') setFromIdx(9)    // E5 · room below for 5ths
+                  else                setFromIdx(2)    // E4 · room above
                 }}
                 style={{
                   padding: '6px 10px', borderRadius: 8,
@@ -338,7 +338,7 @@ function IntervalsKeyboardVisual() {
         }}>
           {inRange
             ? `${NAMES[fromIdx].replace(/\d/, '')} → ${NAMES[toIdx].replace(/\d/, '')}  (${sizeLabel(size)})`
-            : `Out of range — pick a ${direction === 'up' ? 'lower' : 'higher'} starting note`}
+            : `Out of range · pick a ${direction === 'up' ? 'lower' : 'higher'} starting note`}
         </span>
       </div>
 
@@ -450,7 +450,7 @@ function IntervalsKeyboardVisual() {
             )
           })}
 
-          {/* Black keys (decorative — not clickable since this lesson has no accidentals) */}
+          {/* Black keys (decorative · not clickable since this lesson has no accidentals) */}
           {BLACK_KEYS.map((bk, i) => (
             <g key={i} filter="url(#ikv-bShadow)">
               <rect x={bk.x} y={KEY_Y} width={BK_W} height={BK_H} fill="url(#ikv-bDark)" rx={7} />

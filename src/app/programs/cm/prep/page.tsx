@@ -52,7 +52,7 @@ export default function CMPrepHubPage() {
             Fundamentals of Music Theory
           </h1>
           <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', color: '#7A7060', lineHeight: 1.7, maxWidth: '500px', marginBottom: '20px' }}>
-            Thirteen lessons — from reading notes on the grand staff through major scales, key signatures, and musical vocabulary. Each lesson introduces concepts and ends with interactive practice.
+            Thirteen lessons, from reading notes on the grand staff through major scales, key signatures, and musical vocabulary. Each lesson introduces concepts and ends with interactive practice.
           </p>
 
           {/* Overall progress */}
@@ -114,7 +114,7 @@ export default function CMPrepHubPage() {
                 >
                   <div style={{
                     width: '28px', height: '28px', borderRadius: '50%',
-                    background: completed ? ACCENT : '#1A1A18',
+                    background: completed ? 'var(--forest)' : '#1A1A18',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                   }}>
                     {completed

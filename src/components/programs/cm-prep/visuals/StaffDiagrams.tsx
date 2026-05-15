@@ -51,10 +51,10 @@ export function GrandStaffDiagram() {
 
   const entries = [
     { n: 1, label: 'Brace', detail: 'Curved bracket that joins the treble and bass staves into a grand staff' },
-    { n: 2, label: 'Treble clef (G clef)', detail: 'Anchors G on the second line — used for higher-pitched notes' },
-    { n: 3, label: 'Bass clef (F clef)', detail: 'Anchors F on the fourth line — used for lower-pitched notes' },
+    { n: 2, label: 'Treble clef (G clef)', detail: 'Anchors G on the second line · used for higher-pitched notes' },
+    { n: 3, label: 'Bass clef (F clef)', detail: 'Anchors F on the fourth line · used for lower-pitched notes' },
     { n: 4, label: 'Bar line', detail: 'Vertical line that divides the staff into measures' },
-    { n: 5, label: 'Measure', detail: 'The section of music between two bar lines — one unit of beats' },
+    { n: 5, label: 'Measure', detail: 'The section of music between two bar lines · one unit of beats' },
   ]
 
   return (
@@ -326,18 +326,18 @@ export function LabeledTrebleStaff() {
           )
         })}
 
-        {/* Mnemonic pills — offset below the lowest note label (C4 at y≈152) */}
+        {/* Mnemonic pills · offset below the lowest note label (C4 at y≈152) */}
         <rect x={sL} y={lineBot + 44} width={(sR - sL) * 0.50} height={34} rx={7}
           fill="rgba(42,92,154,0.08)" stroke="rgba(42,92,154,0.25)" strokeWidth={1} />
         <text x={sL + 10} y={lineBot + 58} fontFamily={F} fontSize={12}
-          fill={LINE_C} fontWeight="700">Lines — C E G B D F A</text>
+          fill={LINE_C} fontWeight="700">Lines · C E G B D F A</text>
         <text x={sL + 10} y={lineBot + 72} fontFamily={F} fontSize={10.5}
           fill={LINE_C} fontStyle="italic">"Can Every Good Boy Do Fine Always"</text>
 
         <rect x={sL + (sR - sL) * 0.52} y={lineBot + 44} width={(sR - sL) * 0.48} height={34} rx={7}
           fill="rgba(139,58,139,0.08)" stroke="rgba(139,58,139,0.2)" strokeWidth={1} />
         <text x={sL + (sR - sL) * 0.52 + 10} y={lineBot + 58} fontFamily={F} fontSize={12}
-          fill={SPACE_C} fontWeight="700">Spaces — D F A C E G</text>
+          fill={SPACE_C} fontWeight="700">Spaces · D F A C E G</text>
         <text x={sL + (sR - sL) * 0.52 + 10} y={lineBot + 72} fontFamily={F} fontSize={10.5}
           fill={SPACE_C} fontStyle="italic">"Do Funny Animals Come Every Game"</text>
       </svg>
@@ -450,14 +450,14 @@ export function LabeledBassStaff() {
         <rect x={sL} y={lineBot + 44} width={(sR - sL) * 0.50} height={34} rx={7}
           fill="rgba(42,92,154,0.08)" stroke="rgba(42,92,154,0.25)" strokeWidth={1} />
         <text x={sL + 10} y={lineBot + 58} fontFamily={F} fontSize={12}
-          fill={LINE_C} fontWeight="700">Lines — E G B D F A C</text>
+          fill={LINE_C} fontWeight="700">Lines · E G B D F A C</text>
         <text x={sL + 10} y={lineBot + 72} fontFamily={F} fontSize={10.5}
           fill={LINE_C} fontStyle="italic">"Every Good Boy Deserves Fudge And Candy"</text>
 
         <rect x={sL + (sR - sL) * 0.52} y={lineBot + 44} width={(sR - sL) * 0.48} height={34} rx={7}
           fill="rgba(139,58,139,0.08)" stroke="rgba(139,58,139,0.2)" strokeWidth={1} />
         <text x={sL + (sR - sL) * 0.52 + 10} y={lineBot + 58} fontFamily={F} fontSize={12}
-          fill={SPACE_C} fontWeight="700">Spaces — F A C E G B</text>
+          fill={SPACE_C} fontWeight="700">Spaces · F A C E G B</text>
         <text x={sL + (sR - sL) * 0.52 + 10} y={lineBot + 72} fontFamily={F} fontSize={10.5}
           fill={SPACE_C} fontStyle="italic">"Fat Alligators Can Eat Giant Bugs"</text>
       </svg>
@@ -486,7 +486,7 @@ export function ReviewLetterNamesDiagram() {
         borderRadius: '12px', padding: '14px 18px',
       }}>
         <p style={{ fontFamily: F, fontSize: 13, color: '#4A4540', margin: 0, lineHeight: 1.6 }}>
-          <strong style={{ color: ACCENT }}>Middle C</strong> is the same pitch on both staves — written one ledger line below the treble staff and one ledger line above the bass staff.
+          <strong style={{ color: ACCENT }}>Middle C</strong> is the same pitch on both staves · written one ledger line below the treble staff and one ledger line above the bass staff.
         </p>
       </div>
     </div>

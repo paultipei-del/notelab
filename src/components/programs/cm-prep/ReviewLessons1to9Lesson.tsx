@@ -11,8 +11,8 @@ const F       = 'var(--font-jost), sans-serif'
 const DARK    = '#1A1A18'
 const GREY    = '#B0ACA4'
 const ACCENT  = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry (standard CM Prep card) ──────────────────────────────────
@@ -192,7 +192,7 @@ function CompleteStaffEx({ onDone }: { onDone: (correct: number, total: number) 
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Complete the grand staff
+        Exercise 1 · Complete the grand staff
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -330,7 +330,7 @@ function NameNoteEx({ onDone }: { onDone: (correct: number, total: number) => vo
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 2 — Name the note
+        Exercise 2 · Name the note
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -462,7 +462,7 @@ function StepsEx({ onDone }: { onDone: (correct: number, total: number) => void 
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 3 — Whole step or half step?
+        Exercise 3 · Whole step or half step?
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -590,7 +590,7 @@ function IntervalEx({ onDone }: { onDone: (correct: number, total: number) => vo
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 4 — Name the interval
+        Exercise 4 · Name the interval
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -736,7 +736,7 @@ function PatternNameEx({ onDone }: { onDone: (correct: number, total: number) =>
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 5 — Name the five-finger pattern
+        Exercise 5 · Name the five-finger pattern
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 

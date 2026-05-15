@@ -68,10 +68,11 @@ export default function LineSpaceQuiz({
       <div style={{ textAlign: 'center', padding: '40px 0' }}>
         <div style={{
           width: '80px', height: '80px', borderRadius: '50%',
-          background: passed ? '#EAF3DE' : '#FDF3ED',
-          border: `2px solid ${passed ? '#C0DD97' : '#F0C4A8'}`,
+          background: passed ? 'var(--forest-soft)' : '#FDF3ED',
+          border: `2px solid ${passed ? 'rgba(45, 90, 62, 0.32)' : '#F0C4A8'}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           margin: '0 auto 20px', fontSize: '32px',
+          color: passed ? 'var(--forest)' : '#B5402A',
         }}>
           {passed ? '✓' : '→'}
         </div>
@@ -79,7 +80,7 @@ export default function LineSpaceQuiz({
           {passed ? 'Well done' : 'Keep going'}
         </p>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '6px' }}>
-          {correct} / {total} correct — {pct}%
+          {correct} / {total} correct · {pct}%
         </p>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', marginBottom: '28px' }}>
           {passed ? `Passing score: ${Math.round(passingScore * 100)}% ✓` : `Passing score: ${Math.round(passingScore * 100)}%`}
@@ -87,7 +88,7 @@ export default function LineSpaceQuiz({
         {!passed && (
           <button
             onClick={() => { setItems(buildItems()); setIdx(0); setSelected(null); setConfirmed(false); setCorrect(0); setDone(false) }}
-            style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+            style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
           >Try again →</button>
         )}
       </div>
@@ -98,20 +99,20 @@ export default function LineSpaceQuiz({
 
   function choiceBg(choice: 'line' | 'space') {
     if (!confirmed) return selected === choice ? '#F7F4ED' : 'white'
-    if (choice === correctChoice) return '#EAF3DE'
-    if (selected === choice && choice !== correctChoice) return '#FDF3ED'
+    if (choice === correctChoice) return 'var(--forest-soft)'
+    if (selected === choice && choice !== correctChoice) return 'var(--oxblood-tint)'
     return 'white'
   }
   function choiceBorder(choice: 'line' | 'space') {
     if (!confirmed) return selected === choice ? '#1A1A18' : '#D9CFAE'
-    if (choice === correctChoice) return '#C0DD97'
-    if (selected === choice && choice !== correctChoice) return '#F0C4A8'
+    if (choice === correctChoice) return 'var(--forest)'
+    if (selected === choice && choice !== correctChoice) return 'var(--oxblood)'
     return '#D9CFAE'
   }
   function choiceColor(choice: 'line' | 'space') {
     if (!confirmed) return '#2A2318'
-    if (choice === correctChoice) return '#2A5C0A'
-    if (selected === choice && choice !== correctChoice) return '#B5402A'
+    if (choice === correctChoice) return 'var(--forest)'
+    if (selected === choice && choice !== correctChoice) return 'var(--oxblood)'
     return '#2A2318'
   }
 
@@ -126,7 +127,7 @@ export default function LineSpaceQuiz({
       </div>
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        Treble clef — is this note on a line or in a space?
+        Treble clef · is this note on a line or in a space?
       </p>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
@@ -154,30 +155,32 @@ export default function LineSpaceQuiz({
         ))}
       </div>
 
+      {/* Explanation slot — always rendered to keep card height stable */}
+      <div style={{ minHeight: '24px', marginBottom: '12px' }}>
+        {confirmed && selected !== correctChoice && (
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: 'var(--oxblood)', margin: 0 }}>
+            ✗ This note is on a <strong>{correctChoice}</strong>
+          </p>
+        )}
+      </div>
+
       {!confirmed ? (
         <button
           onClick={handleConfirm}
           disabled={!selected}
           style={{
-            background: selected ? '#1A1A18' : '#EDE8DF', color: selected ? 'white' : '#B0ACA4',
-            border: 'none', borderRadius: '10px', padding: '12px 28px',
+            background: selected ? 'var(--oxblood)' : '#EDE8DF', color: selected ? '#fff' : '#B0ACA4',
+            border: selected ? '1px solid var(--oxblood)' : 'none', borderRadius: '10px', padding: '12px 28px',
             fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: selected ? 'pointer' : 'default',
           }}
         >Check answer</button>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {selected !== correctChoice && (
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>
-              This note is on a <strong style={{ color: '#2A5C0A' }}>{correctChoice}</strong>
-            </p>
-          )}
-          <button
-            onClick={handleNext}
-            style={{ background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
-          >
-            {idx + 1 >= total ? 'See results' : 'Next →'}
-          </button>
-        </div>
+        <button
+          onClick={handleNext}
+          style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+        >
+          {idx + 1 >= total ? 'See results' : 'Next →'}
+        </button>
       )}
     </div>
   )

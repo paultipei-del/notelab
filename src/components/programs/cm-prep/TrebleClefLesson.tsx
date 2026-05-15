@@ -8,8 +8,8 @@ const SERIF = 'var(--font-cormorant), serif'
 const DARK = '#1A1A18'
 const GREY = '#7A7060'
 const ACCENT = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG = '#a0381c'
 const SPACE_C = '#8B3A8B'
 const LINE_C  = '#2A5C9A'
 const STROKE  = 1.3
@@ -92,9 +92,9 @@ function LedgerLine({ cx, cy, color = DARK, hw = 14, sw = STROKE }: {
 function PrimaryBtn({ label, onClick, disabled = false }: { label: string; onClick: () => void; disabled?: boolean }) {
   return (
     <button onClick={onClick} disabled={disabled} style={{
-      background: disabled ? '#EDE8DF' : DARK,
-      color: disabled ? '#B0ACA4' : 'white',
-      border: 'none', borderRadius: 10,
+      background: disabled ? '#EDE8DF' : 'var(--oxblood)',
+      color: disabled ? '#B0ACA4' : '#fff',
+      border: disabled ? 'none' : '1px solid var(--oxblood)', borderRadius: 10,
       padding: '10px 24px', fontFamily: F, fontSize: 14,
       cursor: disabled ? 'default' : 'pointer',
     }}>{label}</button>
@@ -197,7 +197,7 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
         Space notes
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
-        The treble staff has <strong>six space notes</strong> — four inside the staff, plus one space
+        The treble staff has <strong>six space notes</strong> · four inside the staff, plus one space
         just below line 1 and one space just above line 5. Every space note spells part of <strong style={{ color: SPACE_C }}>D F A C E G</strong>.
       </p>
 
@@ -247,10 +247,10 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
           D F A C E G
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px' }}>
-          "Do Funny Animals Come Every Game?" — bottom to top, D through G
+          "Do Funny Animals Come Every Game?" · bottom to top, D through G
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0 }}>
-          The four inner spaces spell <strong style={{ color: SPACE_C }}>FACE</strong> — F A C E from bottom to top.
+          The four inner spaces spell <strong style={{ color: SPACE_C }}>FACE</strong> · F A C E from bottom to top.
         </p>
       </div>
 
@@ -274,8 +274,8 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
         Line notes
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
-        Five lines, five line notes — <strong style={{ color: LINE_C }}>E G B D F</strong> from bottom to top.
-        Add middle C below on its own ledger line, and A5 above on another — seven line notes in all.
+        Five lines, five line notes · <strong style={{ color: LINE_C }}>E G B D F</strong> from bottom to top.
+        Add middle C below on its own ledger line, and A5 above on another · seven line notes in all.
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '12px 0 16px', marginBottom: 20 }}>
@@ -318,7 +318,7 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
           Watch out: C4 and A5
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.6 }}>
-          Both sit on a ledger line — C4 below the staff, A5 above.
+          Both sit on a ledger line · C4 below the staff, A5 above.
           Students often confuse them. Remember: C (Middle C) is <em>below</em>, A is <em>above</em>.
         </p>
       </div>
@@ -332,10 +332,10 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
           C E G B D F A
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px' }}>
-          "Can Every Good Boy Do Fine Always?" — all 7 line notes, bottom to top
+          "Can Every Good Boy Do Fine Always?" · all 7 line notes, bottom to top
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0 }}>
-          The five staff lines spell <strong style={{ color: LINE_C }}>E G B D F</strong> — "Every Good Boy Does Fine"
+          The five staff lines spell <strong style={{ color: LINE_C }}>E G B D F</strong> · "Every Good Boy Does Fine"
         </p>
       </div>
 
@@ -537,8 +537,8 @@ function PlaceNoteEx({
       {/* Notice */}
       <p style={{ fontFamily: F, fontSize: 11, color: '#B0ACA4', marginBottom: 8, fontStyle: 'italic' }}>
         {spaceOnly
-          ? 'We are focusing on space notes in this exercise. You may click anywhere — the answer snaps to a space.'
-          : 'We are focusing on line notes. You may click anywhere — aim for the correct line.'}
+          ? 'We are focusing on space notes in this exercise. You may click anywhere · the answer snaps to a space.'
+          : 'We are focusing on line notes. You may click anywhere · aim for the correct line.'}
       </p>
 
       {/* Target name */}
@@ -547,7 +547,7 @@ function PlaceNoteEx({
           {item.letter}
         </span>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
-          <strong>{octaveLabel(item.pos)}</strong> — place <strong>{item.name}</strong> on the staff
+          <strong>{octaveLabel(item.pos)}</strong> · place <strong>{item.name}</strong> on the staff
         </p>
       </div>
 
@@ -601,26 +601,26 @@ interface WordItem { word: string; notes: number[] }  // notes = pos[]
 
 const WORDS: WordItem[] = [
   // 3-letter
-  { word: 'BAG',   notes: [6, 5, 4]         },  // B4 A4 G4 — descending
-  { word: 'ACE',   notes: [5, 7, 9]         },  // A4 C5 E5 — ascending
+  { word: 'BAG',   notes: [6, 5, 4]         },  // B4 A4 G4 · descending
+  { word: 'ACE',   notes: [5, 7, 9]         },  // A4 C5 E5 · ascending
   { word: 'EGG',   notes: [2, 4, 4]         },  // E4 G4 G4
   { word: 'FAD',   notes: [3, 5, 8]         },  // F4 A4 D5
-  { word: 'GAB',   notes: [4, 5, 6]         },  // G4 A4 B4 — ascending step
+  { word: 'GAB',   notes: [4, 5, 6]         },  // G4 A4 B4 · ascending step
   { word: 'CAB',   notes: [7, 5, 6]         },  // C5 A4 B4
   // 4-letter
-  { word: 'CAFE',  notes: [7, 5, 3, 2]      },  // C5 A4 F4 E4 — descending
-  { word: 'FACE',  notes: [3, 5, 7, 9]      },  // F4 A4 C5 E5 — ascending
-  { word: 'CAGE',  notes: [7, 5, 4, 2]      },  // C5 A4 G4 E4 — descending
+  { word: 'CAFE',  notes: [7, 5, 3, 2]      },  // C5 A4 F4 E4 · descending
+  { word: 'FACE',  notes: [3, 5, 7, 9]      },  // F4 A4 C5 E5 · ascending
+  { word: 'CAGE',  notes: [7, 5, 4, 2]      },  // C5 A4 G4 E4 · descending
   { word: 'BEAD',  notes: [6, 9, 5, 8]      },  // B4 E5 A4 D5
   { word: 'BEEF',  notes: [6, 9, 9, 10]     },  // B4 E5 E5 F5
   { word: 'AGED',  notes: [5, 4, 2, 8]      },  // A4 G4 E4 D5
   // 5-letter
-  { word: 'DECAF', notes: [8, 9, 7, 5, 3]   },  // D5 E5 C5 A4 F4 — descending
-  { word: 'FACED', notes: [3, 5, 7, 9, 8]   },  // F4 A4 C5 E5 D5 — up then down
+  { word: 'DECAF', notes: [8, 9, 7, 5, 3]   },  // D5 E5 C5 A4 F4 · descending
+  { word: 'FACED', notes: [3, 5, 7, 9, 8]   },  // F4 A4 C5 E5 D5 · up then down
   { word: 'GAFFE', notes: [4, 5, 3, 3, 2]   },  // G4 A4 F4 F4 E4
   { word: 'FADED', notes: [3, 5, 8, 9, 8]   },  // F4 A4 D5 E5 D5
   { word: 'BADGE', notes: [6, 5, 8, 4, 2]   },  // B4 A4 D5 G4 E4
-  { word: 'CAGED', notes: [7, 5, 4, 2, 1]   },  // C5 A4 G4 E4 D4 — descending
+  { word: 'CAGED', notes: [7, 5, 4, 2, 1]   },  // C5 A4 G4 E4 D4 · descending
 ]
 
 const WORDS_3 = WORDS.slice(0, 6)
@@ -757,7 +757,7 @@ function WordRound({
         }}>Submit</button>
       </div>
 
-      {/* Letter pad — tap to append, backspace to remove. Useful on mobile. */}
+      {/* Letter pad · tap to append, backspace to remove. Useful on mobile. */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 6,
         maxWidth: 440, margin: '0 auto 16px' }}>
         {NOTE_LETTERS.map(letter => (
@@ -917,7 +917,7 @@ export default function TrebleClefLesson({ passingScore, previouslyCompleted = f
         <NameNoteEx
           key={key}
           pool={SPACE_NOTE_POOL} total={18}
-          label="Exercise 1 — Name the space note"
+          label="Exercise 1 · Name the space note"
           color={SPACE_C}
           onDone={scored}
         />
@@ -926,7 +926,7 @@ export default function TrebleClefLesson({ passingScore, previouslyCompleted = f
         <PlaceNoteEx
           key={key}
           pool={SPACE_NOTE_POOL} total={12}
-          label="Exercise 2 — Place the space note"
+          label="Exercise 2 · Place the space note"
           color={SPACE_C}
           spaceOnly
           onDone={scored}
@@ -939,7 +939,7 @@ export default function TrebleClefLesson({ passingScore, previouslyCompleted = f
         <NameNoteEx
           key={key}
           pool={LINE_NOTE_POOL} total={21}
-          label="Exercise 3 — Name the line note"
+          label="Exercise 3 · Name the line note"
           color={LINE_C}
           onDone={scored}
         />
@@ -948,7 +948,7 @@ export default function TrebleClefLesson({ passingScore, previouslyCompleted = f
         <PlaceNoteEx
           key={key}
           pool={LINE_NOTE_POOL} total={14}
-          label="Exercise 4 — Place the line note"
+          label="Exercise 4 · Place the line note"
           color={LINE_C}
           spaceOnly={false}
           onDone={scored}

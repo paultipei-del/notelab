@@ -80,7 +80,7 @@ export default function FlashSession({ cards, passingScore, accentColor = '#B540
           {passed ? 'Well done' : 'Keep reviewing'}
         </p>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '6px' }}>
-          {correct} / {total} known — {pct}%
+          {correct} / {total} known · {pct}%
         </p>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', marginBottom: '28px' }}>
           {passed ? `Passing score: ${Math.round(passingScore * 100)}% ✓` : `Passing score: ${Math.round(passingScore * 100)}%`}
@@ -127,7 +127,7 @@ export default function FlashSession({ cards, passingScore, accentColor = '#B540
         <span style={{ fontFamily: F, fontSize: 'var(--nl-text-badge)', color: '#B0ACA4', whiteSpace: 'nowrap' }}>{idx + 1} / {total}</span>
       </div>
 
-      {/* Flippable card — matches FlipCard's geometry (maxWidth 680,
+      {/* Flippable card · matches FlipCard's geometry (maxWidth 680,
           minHeight clamp(200, 42dvh, 340), 0.5s cubic-bezier flip) so the
           look & feel is identical to the study engine's flashcards. */}
       <div className="nl-flip-card" style={{ width: '100%', maxWidth: '680px', margin: '0 auto 22px' }}>

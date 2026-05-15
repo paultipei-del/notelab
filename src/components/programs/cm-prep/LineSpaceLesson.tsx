@@ -8,8 +8,8 @@ const SERIF = 'var(--font-cormorant), serif'
 const DARK = '#1A1A18'
 const GREY = '#7A7060'
 const ACCENT = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG = '#a0381c'
 const LINE_C  = '#2A5C9A'
 const SPACE_C = '#8B3A8B'
 const STROKE  = 1.3
@@ -27,7 +27,7 @@ function spaceY(n: number) { return tTop + (4 - n) * 2 * step + step }
 
 // Treble clef at GrandStaffLesson proportions
 const TCX = sL + 4    // 36
-const TCY = lineY(2)  // 102 — G line
+const TCY = lineY(2)  // 102 · G line
 const TCFS = 62
 
 // Bass clef
@@ -65,7 +65,7 @@ const HEAD: Record<NoteVal, string> = {
 const FLAG_UP   = '\uE240'   // flag8thUp
 const FLAG_DOWN = '\uE241'   // flag8thDown
 
-const NH_FS   = 60   // notehead fontSize — matches BravuraWhole in GrandStaffLesson
+const NH_FS   = 60   // notehead fontSize · matches BravuraWhole in GrandStaffLesson
 const NH_OFF  = 8    // stem x offset from notehead center
 const STEM_LEN = 47  // stem length px
 
@@ -80,7 +80,7 @@ function BravuraNote({
 
   return (
     <g>
-      {/* Notehead — Bravura glyph, centred on (cx, cy) */}
+      {/* Notehead · Bravura glyph, centred on (cx, cy) */}
       <text x={cx} y={cy} fontFamily="Bravura, serif" fontSize={NH_FS}
         fill={color} textAnchor="middle" dominantBaseline="central">
         {HEAD[val]}
@@ -92,7 +92,7 @@ function BravuraNote({
         <line x1={stemX} y1={cy} x2={stemX} y2={stemY2}
           stroke={color} strokeWidth={STROKE} />
       )}
-      {/* Flag — Bravura glyph at stem tip; stem-down flag offset down so it clears notehead */}
+      {/* Flag · Bravura glyph at stem tip; stem-down flag offset down so it clears notehead */}
       {hasFlag && (
         <text x={stemX - 0.5} y={stemUp ? stemY2 : stemY2 + 10} fontFamily="Bravura, serif" fontSize={NH_FS * 0.9}
           fill={color} dominantBaseline="auto" textAnchor="start">
@@ -158,8 +158,8 @@ function ExLabel({ children }: { children: React.ReactNode }) {
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: DARK, color: 'white', border: 'none', borderRadius: 10,
-      padding: '10px 24px', fontFamily: F, fontSize: 14, cursor: 'pointer',
+      background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
+      padding: '11px 26px', fontFamily: F, fontSize: 14, cursor: 'pointer',
     }}>{label}</button>
   )
 }
@@ -251,7 +251,7 @@ function LineNoteStaff() {
       })}
 
       <text x={lW / 2} y={H - 4} fontFamily={F} fontSize={11} fontWeight="600" fill={LINE_C} textAnchor="middle">
-        Line notes — a staff line passes through the note head
+        Line notes · a staff line passes through the note head
       </text>
     </svg>
   )
@@ -295,7 +295,7 @@ function SpaceNoteStaff() {
       })}
 
       <text x={lW / 2} y={H - 6} fontFamily={F} fontSize={11} fontWeight="600" fill={SPACE_C} textAnchor="middle">
-        Space notes — the head sits between two staff lines
+        Space notes · the head sits between two staff lines
       </text>
     </svg>
   )
@@ -408,8 +408,8 @@ function GrandStaffEx({
       <ExLabel>Highlight the {targetLine ? 'line' : 'space'} notes</ExLabel>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 6, lineHeight: 1.6 }}>
         {targetLine
-          ? 'Tap each line note — a staff line runs through its head.'
-          : 'Tap each space note — its head rests between two lines.'}
+          ? 'Tap each line note · a staff line runs through its head.'
+          : 'Tap each space note · its head rests between two lines.'}
       </p>
       <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', marginBottom: 16 }}>
         Focus on the note head, not the stem.
@@ -465,7 +465,7 @@ function GrandStaffEx({
 
             return (
               <g key={n.id}>
-                {/* Highlight — glowing rect behind notehead */}
+                {/* Highlight · glowing rect behind notehead */}
                 {sel && (
                   <rect x={n.x - 16} y={cy - 12} width={32} height={24} rx={12}
                     fill={ACCENT} opacity={0.25} filter="url(#glow-accent)" />
@@ -570,7 +570,7 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
 
   return (
     <div>
-      <ExLabel>Exercise 3 — Line or space?</ExLabel>
+      <ExLabel>Exercise 3 · Line or space?</ExLabel>
       <ProgressDots total={EX3_TOTAL} current={idx} results={results} />
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.6, textAlign: 'center' }}>
         Is this a <strong>Line</strong> note or a <strong>Space</strong> note?
@@ -677,7 +677,7 @@ function DrawNotes({
           Round {round} of {totalRounds}
         </span>
       </div>
-      <ExLabel>Exercise {exNum} — Draw a note on each {targetLine ? 'line' : 'space'}</ExLabel>
+      <ExLabel>Exercise {exNum} · Draw a note on each {targetLine ? 'line' : 'space'}</ExLabel>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 8, lineHeight: 1.6 }}>
         {allFilled
           ? `All ${total} notes placed.`
@@ -699,7 +699,7 @@ function DrawNotes({
           <line x1={sR + 6} y1={tTop} x2={sR + 6} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
           <TrebleClef />
 
-          {/* Ghost note at next slot — greyed if that line/space is already used */}
+          {/* Ghost note at next slot · greyed if that line/space is already used */}
           {!allFilled && hoverPos !== null && (() => {
             const taken = placed.includes(hoverPos)
             return (
@@ -777,7 +777,7 @@ function LineNoteIntro({ onNext }: { onNext: () => void }) {
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>Line notes</p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
         A <strong style={{ color: LINE_C }}>line note</strong> has a staff line running directly through its head.
-        Any note value can sit on a line — look at the head position, not the stem.
+        Any note value can sit on a line · look at the head position, not the stem.
       </p>
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <LineNoteStaff />
@@ -792,7 +792,7 @@ function SpaceNoteIntro({ onNext }: { onNext: () => void }) {
     <div>
       <p style={{ fontFamily: SERIF, fontSize: 20, fontWeight: 300, color: DARK, marginBottom: 4 }}>Space notes</p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
-        A <strong style={{ color: SPACE_C }}>space note</strong> has its head between two staff lines —
+        A <strong style={{ color: SPACE_C }}>space note</strong> has its head between two staff lines:
         no line passes through it. Space notes can also appear above the top line or below the bottom line.
       </p>
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>

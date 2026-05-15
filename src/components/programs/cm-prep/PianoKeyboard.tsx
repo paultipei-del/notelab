@@ -53,12 +53,12 @@ const SHARP_TARGET: Record<string, { note: string; isBlack: boolean } | null> = 
   G: { note: 'G#', isBlack: true  },
   A: { note: 'A#', isBlack: true  },
   B: { note: 'C5', isBlack: false },  // B♯ = C (the C above)
-  C5: null,                            // C5♯ = C#5 in next octave — out of range
+  C5: null,                            // C5♯ = C#5 in next octave · out of range
 }
 
 // Flat of each white key (within this octave)
 const FLAT_TARGET: Record<string, { note: string; isBlack: boolean } | null> = {
-  C: null,                             // C♭ = B in prev octave — out of range
+  C: null,                             // C♭ = B in prev octave · out of range
   D: { note: 'C#', isBlack: true  },  // D♭ = C#
   E: { note: 'D#', isBlack: true  },  // E♭ = D#
   F: { note: 'E',  isBlack: false },  // F♭ = E (enharmonic)
@@ -84,8 +84,8 @@ const WHOLE_TARGET: Record<string, { note: string; isBlack: boolean } | null> = 
   F: { note: 'G',  isBlack: false },
   G: { note: 'A',  isBlack: false },
   A: { note: 'B',  isBlack: false },
-  B: null,                             // B + whole = C♯5 — no C♯5 on this keyboard
-  C5: null,                            // C5 + whole = D5 — out of range
+  B: null,                             // B + whole = C♯5 · no C♯5 on this keyboard
+  C5: null,                            // C5 + whole = D5 · out of range
 }
 
 // Half step above each black key (= the next white key, no black between)
@@ -111,7 +111,7 @@ const WHOLE_TARGET_BK: Record<string, { note: string; isBlack: boolean } | null>
 
 // Whole step below each white key
 const WHOLE_TARGET_DOWN: Record<string, { note: string; isBlack: boolean } | null> = {
-  C: null,                              // C - 2 = A# in prev octave — out of range
+  C: null,                              // C - 2 = A# in prev octave · out of range
   D: { note: 'C',  isBlack: false },   // D - 2 = C
   E: { note: 'D',  isBlack: false },   // E - 2 = D
   F: { note: 'D#', isBlack: true  },   // F - 2 = D#
@@ -132,7 +132,7 @@ const HALF_TARGET_BK_DOWN: Record<string, { note: string; isBlack: boolean }> = 
 
 // Whole step below each black key
 const WHOLE_TARGET_BK_DOWN: Record<string, { note: string; isBlack: boolean } | null> = {
-  'C#': null,                             // C# - 2 = B in prev octave — out of range
+  'C#': null,                             // C# - 2 = B in prev octave · out of range
   'D#': { note: 'C#', isBlack: true  },  // D# - 2 = C#
   'F#': { note: 'E',  isBlack: false },  // F# - 2 = E
   'G#': { note: 'F#', isBlack: true  },  // G# - 2 = F#
@@ -263,8 +263,8 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
     mode === 'flats'    ? '♭ lowers by a half step' :
     mode === 'naturals' ? '♮ cancels any sharp or flat' :
     mode === 'half-steps'
-      ? (direction === 'up' ? 'H — adjacent keys going up' : 'H — adjacent keys going down')
-      : (direction === 'up' ? 'W — skips one key going up'  : 'W — skips one key going down')
+      ? (direction === 'up' ? 'H · adjacent keys going up' : 'H · adjacent keys going down')
+      : (direction === 'up' ? 'W · skips one key going up'  : 'W · skips one key going down')
 
   // Result label e.g. "E → E♯", "C → D", "C♯ → D"
   const plain = (n: string) => n === 'C5' ? 'C' : n
@@ -399,7 +399,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
             <stop offset="100%" stopColor="#88C060" />
           </linearGradient>
 
-          {/* Black key — standard dark */}
+          {/* Black key · standard dark */}
           <linearGradient id={`bDark-${uid}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%"   stopColor="#2a2420" />
             <stop offset="6%"   stopColor="#0a0805" />
@@ -479,10 +479,10 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
               onClick={() => !isInactive && setSelected(note)}
               style={{ cursor: isInactive ? 'not-allowed' : 'pointer' }}
             >
-              {/* Main body — extends to FACE_B so it owns the rounded bottom corners */}
+              {/* Main body · extends to FACE_B so it owns the rounded bottom corners */}
               <rect x={x} y={KEY_Y} width={WK_W} height={FACE_B - KEY_Y}
                 fill={wFill(note)} rx={5} />
-              {/* Left-edge shadow strip (3D depth) — runs full key height */}
+              {/* Left-edge shadow strip (3D depth) · runs full key height */}
               <rect x={x} y={KEY_Y + 6} width={14} height={FACE_B - KEY_Y - 6}
                 fill={`url(#lEdge-${uid})`} />
               {/* Top surface gloss */}
@@ -535,7 +535,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
                 <rect x={x} y={KEY_Y} width={BK_W} height={BK_H}
                   fill="rgba(0,0,0,0.35)" rx={7} />
               )}
-              {/* Label — single line for sharps/flats lesson; dual for step modes */}
+              {/* Label · single line for sharps/flats lesson; dual for step modes */}
               {label && (
                 <text
                   x={x + BK_W / 2} y={isStepMode ? BK_END - 20 : BK_END - 9}
@@ -567,7 +567,7 @@ export function PianoKeyboard({ mode }: { mode: PianoMode }) {
         <rect x={0} y={FACE_B} width={VW} height={VH - FACE_B}
           fill={`url(#wood-${uid})`} />
 
-        {/* ── Arrow (sharps / flats) — dynamic, white line on dark wood ─── */}
+        {/* ── Arrow (sharps / flats) · dynamic, white line on dark wood ─── */}
         {showArrow && (
           <line
             x1={fromX} y1={arrowY}

@@ -8,8 +8,8 @@ const SERIF  = 'var(--font-cormorant), serif'
 const DARK   = '#1A1A18'
 const GREY   = '#7A7060'
 const ACCENT = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry ────────────────────────────────────────────────────────────
@@ -111,7 +111,7 @@ function ProgressBar({ done, total, color = ACCENT }: { done: number; total: num
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: DARK, color: 'white', border: 'none', borderRadius: 10,
+      background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
       padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
     }}>
       {label}
@@ -120,7 +120,7 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
 }
 
 // Intro visuals live in visuals/PitchDiagrams.tsx (IntervalsDiagram).
-// The lesson starts directly at Exercise 1 — all teaching content is on the landing page.
+// The lesson starts directly at Exercise 1 · all teaching content is on the landing page.
 
 // ── Ex 1: Name the interval ───────────────────────────────────────────────────
 interface IntervalItem {
@@ -238,7 +238,7 @@ function NameIntervalEx({
       <div>
         <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
           textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-          Exercise 1 — Name these intervals
+          Exercise 1 · Name these intervals
         </p>
         <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
           The first one is given: this is a <strong style={{ color: ACCENT }}>5th</strong>.
@@ -270,13 +270,13 @@ function NameIntervalEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Name these intervals
+        Exercise 1 · Name these intervals
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — name this interval
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · name this interval
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -422,13 +422,13 @@ function BuildIntervalEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 2 — Build the interval
+        Exercise 2 · Build the interval
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place a note a{' '}
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · place a note a{' '}
         <strong style={{ color: ACCENT }}>{sizeLabel(item.size)}</strong>{' '}
         {item.direction === 'up' ? 'above' : 'below'}
       </p>
@@ -508,8 +508,7 @@ function BuildIntervalEx({
         {submitted && isCorrect  && '✓ Correct'}
         {submitted && !isCorrect && (
           <>The correct note is a <strong style={{ color: CORRECT }}>
-            {sizeLabel(item.size)}</strong>{' '}{item.direction === 'up' ? 'above' : 'below'} —
-            shown in green</>
+            {sizeLabel(item.size)}</strong>{' '}{item.direction === 'up' ? 'above' : 'below'}, shown in green</>
         )}
       </p>
     </div>
@@ -667,13 +666,13 @@ function ReadBuildEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 3 — Read and build intervals
+        Exercise 3 · Read and build intervals
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} —{' '}
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} ·{' '}
         <strong style={{ color: ACCENT }}>
           {item.direction === 'up' ? 'up a ' : 'down a '}{sizeLabel(item.size)}
         </strong>
@@ -737,11 +736,11 @@ function ReadBuildEx({
 
       {/* Step indicator */}
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 10 }}>
-        {subStep === 'name1' && <>Step 1 — Name the <strong>given</strong> note</>}
-        {subStep === 'place' && <>Step 2 — Place the second note{' '}
+        {subStep === 'name1' && <>Step 1 · Name the <strong>given</strong> note</>}
+        {subStep === 'place' && <>Step 2 · Place the second note{' '}
           <strong style={{ color: ACCENT }}>{item.direction === 'up' ? 'up' : 'down'} a {sizeLabel(item.size)}</strong>
         </>}
-        {subStep === 'name2' && <>Step 3 — Name the <strong>second</strong> note</>}
+        {subStep === 'name2' && <>Step 3 · Name the <strong>second</strong> note</>}
       </p>
 
       {/* Letter picker (for name1 and name2) */}
@@ -980,7 +979,7 @@ function PhraseStaff({ item }: { item: Ex4Item }) {
       <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE} />
       {item.clef === 'treble' ? <TrebleClef /> : <BassClef />}
 
-      {/* Beams — drawn before noteheads so heads sit above the bar */}
+      {/* Beams · drawn before noteheads so heads sit above the bar */}
       {item.beamPairs.map(([a, b], i) => {
         const ax = noteX(a), bx = noteX(b)
         const ay = posToY(item.notes[a].pos), by = posToY(item.notes[b].pos)
@@ -1061,13 +1060,13 @@ function PhraseIntervalEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 4 — Identify the interval used
+        Exercise 4 · Identify the interval used
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — what interval connects the notes?
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · what interval connects the notes?
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,

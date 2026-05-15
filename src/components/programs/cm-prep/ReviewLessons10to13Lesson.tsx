@@ -11,8 +11,8 @@ const BRAVURA = 'Bravura, serif'
 const DARK    = '#1A1A18'
 const GREY    = '#7A7060'
 const ACCENT  = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 
 // Bravura glyphs (SMuFL codepoints)
 const G_TREBLE   = ''
@@ -111,7 +111,7 @@ function CountsAccentsEx({ onDone }: { onDone: (correct: number, total: number) 
     <WriteCountsEx
       onDone={onDone}
       pool={EX1_POOL}
-      title="Exercise 1 — Write the counts on each rhythm"
+      title="Exercise 1 · Write the counts on each rhythm"
     />
   )
 }
@@ -147,7 +147,7 @@ function MatchDefEx({ onDone }: { onDone: (correct: number, total: number) => vo
 
   return (
     <div>
-      <ExerciseLabel>Exercise 2 — Match the sign with its definition</ExerciseLabel>
+      <ExerciseLabel>Exercise 2 · Match the sign with its definition</ExerciseLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
@@ -204,7 +204,7 @@ export const SCALES: Scale[] = [
     expected: ['natural','natural','natural','natural','natural','natural','sharp','natural'] },
 ]
 
-export function CompleteScaleEx({ onDone, scales = SCALES, title = 'Exercise 3 — Complete each scale by adding sharps or flats' }: { onDone: (correct: number, total: number) => void; scales?: Scale[]; title?: string }) {
+export function CompleteScaleEx({ onDone, scales = SCALES, title = 'Exercise 3 · Complete each scale by adding sharps or flats' }: { onDone: (correct: number, total: number) => void; scales?: Scale[]; title?: string }) {
   // State: one array of 8 AccType per scale.
   const [accs,      setAccs]      = useState<AccType[][]>(
     () => scales.map(s => s.letters.map((): AccType => 'natural'))
@@ -256,7 +256,7 @@ export function CompleteScaleEx({ onDone, scales = SCALES, title = 'Exercise 3 �
 
       {!submitted ? (
         <button onClick={submit}
-          style={{ background: DARK, color: 'white', border: 'none', borderRadius: 10,
+          style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
             padding: '12px 28px', fontFamily: F, fontSize: 14, cursor: 'pointer', marginTop: 6 }}>
           Check answers
         </button>
@@ -338,18 +338,18 @@ function ScaleRow({ scale, accs, submitted, onCycle }: {
                   {accGlyph(acc)}
                 </text>
               )}
-              {/* Whole-note head (unstemmed — SMuFL noteheadWhole) */}
+              {/* Whole-note head (unstemmed · SMuFL noteheadWhole) */}
               <text x={cx} y={cy} fontFamily={BRAVURA} fontSize={60}
                 fill={noteTint} textAnchor="middle" dominantBaseline="central">
                 {''}
               </text>
-              {/* Tap target — slightly bigger than the notehead */}
+              {/* Tap target · slightly bigger than the notehead */}
               <rect x={cx - 18} y={cy - 14} width={36} height={28}
                 fill="transparent"
                 style={{ cursor: submitted ? 'default' : 'pointer' }}
                 onClick={() => onCycle(i)}
               />
-              {/* Letter name below — updates live with the student's accidental.
+              {/* Letter name below · updates live with the student's accidental.
                   C major sits lower because its first note (C4) hangs below
                   the staff on a ledger line, so the label needs to clear it. */}
               <text x={cx} y={LINE_Y(1) + (scale.name === 'C major' ? 38 : 36)}
@@ -411,7 +411,7 @@ function KeySigIdEx({ onDone }: { onDone: (correct: number, total: number) => vo
 
   return (
     <div>
-      <ExerciseLabel>Exercise 4 — Name the key from its key signature</ExerciseLabel>
+      <ExerciseLabel>Exercise 4 · Name the key from its key signature</ExerciseLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
@@ -495,7 +495,7 @@ function IdentifySymbolEx({ onDone }: { onDone: (correct: number, total: number)
 
   return (
     <div>
-      <ExerciseLabel>Exercise 5 — Identify the sign</ExerciseLabel>
+      <ExerciseLabel>Exercise 5 · Identify the sign</ExerciseLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,

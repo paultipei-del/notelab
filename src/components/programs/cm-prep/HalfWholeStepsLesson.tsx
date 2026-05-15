@@ -9,8 +9,8 @@ const DARK   = '#1A1A18'
 const GREY   = '#7A7060'
 const ACCENT  = '#BA7517'
 const ACCENT2 = '#3B6DB5'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry ────────────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ function ProgressBar({ done, total, color }: { done: number; total: number; colo
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: DARK, color: 'white', border: 'none', borderRadius: 10,
+      background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
       padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
     }}>
       {label}
@@ -153,7 +153,7 @@ const WHOLE_POOL: StepQuestion[] = [
 ]
 
 const LETTER_POOL: { from: string; to: string; type: 'H' | 'W' }[] = [
-  { from: 'E',  to: 'F',  type: 'H' },  // given — ascending natural H
+  { from: 'E',  to: 'F',  type: 'H' },  // given · ascending natural H
   // Ascending
   { from: 'F',  to: 'G',  type: 'W' },
   { from: 'B',  to: 'C',  type: 'H' },
@@ -236,15 +236,15 @@ function StepsIntro({ onNext }: { onNext: () => void }) {
       <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
         <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10, padding: '12px 16px' }}>
           <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT, margin: '0 0 6px' }}>
-            H — Half Step
+            H · Half Step
           </p>
           <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
-            Adjacent keys — no key between. Examples: C to C♯, or E to F.
+            Adjacent keys · no key between. Examples: C to C♯, or E to F.
           </p>
         </div>
         <div style={{ flex: 1, background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10, padding: '12px 16px' }}>
           <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: ACCENT2, margin: '0 0 6px' }}>
-            W — Whole Step
+            W · Whole Step
           </p>
           <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
             Skips exactly one key. Examples: C to D, or E to F♯.
@@ -362,7 +362,7 @@ function StepKeyboard({
           <stop offset="100%" stopColor="#7098D0" />
         </linearGradient>
 
-        {/* Black key — standard dark */}
+        {/* Black key · standard dark */}
         <linearGradient id={`bDark-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%"   stopColor="#2a2420" />
           <stop offset="6%"   stopColor="#0a0805" />
@@ -555,8 +555,8 @@ function StepKeyboardEx({
   const feedbackText = (() => {
     if (kbState === 'wrong') {
       return stepType === 'half'
-        ? 'Try again — look for the adjacent key'
-        : 'Try again — skip exactly one key'
+        ? 'Try again · look for the adjacent key'
+        : 'Try again · skip exactly one key'
     }
     if (kbState === 'correct') {
       return `✓ ${item.fromLabel} → ${item.toLabel}`
@@ -572,7 +572,7 @@ function StepKeyboardEx({
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 12, lineHeight: 1.7 }}>
         Starting from{' '}
         <strong style={{ color: accentColor }}>{item.fromLabel}</strong>
-        {' '}— click the key one <strong>{stepType === 'half' ? 'half' : 'whole'} step</strong>{' '}
+        , click the key one <strong>{stepType === 'half' ? 'half' : 'whole'} step</strong>{' '}
         <span style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
           background: direction === 'up' ? '#EAF3DE' : '#E4ECF6',
@@ -668,10 +668,10 @@ function LetterPairEx({
             border: `1px solid ${ACCENT}55`, borderRadius: 8,
             padding: '6px 18px', fontFamily: F, fontSize: 15, fontWeight: 700, color: ACCENT,
             marginBottom: 12 }}>
-            H — Half Step
+            H · Half Step
           </div>
           <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
-            E and F are adjacent white keys — no black key between them.
+            E and F are adjacent white keys · no black key between them.
           </p>
         </div>
 
@@ -716,17 +716,17 @@ function LetterPairEx({
 
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 16 }}>
         <button style={btnStyle('H')} onClick={() => handleAnswer('H')}>
-          H — Half Step
+          H · Half Step
         </button>
         <button style={btnStyle('W')} onClick={() => handleAnswer('W')}>
-          W — Whole Step
+          W · Whole Step
         </button>
       </div>
 
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: answered === null ? '#B0ACA4' : answered === item.type ? CORRECT : WRONG }}>
         {answered !== null && answered !== item.type && (
-          <>Correct answer: <strong style={{ color: CORRECT }}>{item.type === 'H' ? 'H — Half Step' : 'W — Whole Step'}</strong></>
+          <>Correct answer: <strong style={{ color: CORRECT }}>{item.type === 'H' ? 'H · Half Step' : 'W · Whole Step'}</strong></>
         )}
         {answered !== null && answered === item.type && '✓ Correct'}
       </p>
@@ -830,10 +830,10 @@ function StaffPairEx({
           border: `1px solid ${ACCENT}55`, borderRadius: 8,
           padding: '6px 18px', fontFamily: F, fontSize: 15, fontWeight: 700, color: ACCENT,
           marginBottom: 12 }}>
-          H — Half Step
+          H · Half Step
         </div>
         <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
-          E and F are adjacent white notes — no black key between them.
+          E and F are adjacent white notes · no black key between them.
         </p>
 
         <PrimaryBtn label="Exercise 4 →" onClick={() => setShowExample(false)} />
@@ -872,17 +872,17 @@ function StaffPairEx({
 
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 16 }}>
         <button style={btnStyle('H')} onClick={() => handleAnswer('H')}>
-          H — Half Step
+          H · Half Step
         </button>
         <button style={btnStyle('W')} onClick={() => handleAnswer('W')}>
-          W — Whole Step
+          W · Whole Step
         </button>
       </div>
 
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: answered === null ? '#B0ACA4' : answered === item.type ? CORRECT : WRONG }}>
         {answered !== null && answered !== item.type && (
-          <>Correct answer: <strong style={{ color: CORRECT }}>{item.type === 'H' ? 'H — Half Step' : 'W — Whole Step'}</strong></>
+          <>Correct answer: <strong style={{ color: CORRECT }}>{item.type === 'H' ? 'H · Half Step' : 'W · Whole Step'}</strong></>
         )}
         {answered !== null && answered === item.type && '✓ Correct'}
       </p>
@@ -958,7 +958,7 @@ export default function HalfWholeStepsLesson({
           pool={HALF_POOL}
           total={12}
           stepType="half"
-          exLabel="Exercise 1 — Half steps on the keyboard"
+          exLabel="Exercise 1 · Half steps on the keyboard"
           onDone={next}
         />
       )}
@@ -968,7 +968,7 @@ export default function HalfWholeStepsLesson({
           pool={WHOLE_POOL}
           total={6}
           stepType="whole"
-          exLabel="Exercise 2 — Whole steps on the keyboard"
+          exLabel="Exercise 2 · Whole steps on the keyboard"
           onDone={next}
         />
       )}
@@ -976,7 +976,7 @@ export default function HalfWholeStepsLesson({
         <LetterPairEx
           key={key}
           total={14}
-          exLabel="Exercise 3 — Half or whole step?"
+          exLabel="Exercise 3 · Half or whole step?"
           onDone={scored}
         />
       )}
@@ -984,7 +984,7 @@ export default function HalfWholeStepsLesson({
         <StaffPairEx
           key={key}
           total={12}
-          exLabel="Exercise 4 — Steps on the staff"
+          exLabel="Exercise 4 · Steps on the staff"
           onDone={scored}
         />
       )}

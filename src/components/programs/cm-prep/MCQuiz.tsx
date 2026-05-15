@@ -79,10 +79,11 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
       <div style={{ textAlign: 'center', padding: '40px 0' }}>
         <div style={{
           width: '80px', height: '80px', borderRadius: '50%',
-          background: passed ? '#EAF3DE' : '#FDF3ED',
-          border: `2px solid ${passed ? '#C0DD97' : '#F0C4A8'}`,
+          background: passed ? 'var(--forest-soft)' : '#FDF3ED',
+          border: `2px solid ${passed ? 'rgba(45, 90, 62, 0.32)' : '#F0C4A8'}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           margin: '0 auto 20px', fontSize: '32px',
+          color: passed ? 'var(--forest)' : '#B5402A',
         }}>
           {passed ? '✓' : '→'}
         </div>
@@ -90,12 +91,12 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
           {passed ? 'Well done' : 'Keep going'}
         </p>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '6px' }}>
-          {correct} / {total} correct — {pct}%
+          {correct} / {total} correct · {pct}%
         </p>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', marginBottom: '28px' }}>
           {passed
             ? `Passing score: ${Math.round(passingScore * 100)}% ✓`
-            : `Passing score: ${Math.round(passingScore * 100)}% — try again to improve`}
+            : `Passing score: ${Math.round(passingScore * 100)}% · try again to improve`}
         </p>
         {!passed && (
           <button
@@ -108,7 +109,7 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
               setDone(false)
             }}
             style={{
-              background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px',
+              background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
               padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
             }}
           >
@@ -146,8 +147,8 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
           let color = '#2A2318'
 
           if (confirmed) {
-            if (isAnswer) { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
-            else if (isSelected && !isAnswer) { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
+            if (isAnswer) { bg = 'var(--forest-soft)'; border = 'var(--forest)'; color = 'var(--forest)' }
+            else if (isSelected && !isAnswer) { bg = 'var(--oxblood-tint)'; border = 'var(--oxblood)'; color = 'var(--oxblood)' }
           } else if (isSelected) {
             bg = '#F7F4ED'; border = '#1A1A18'
           }
@@ -172,15 +173,24 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
         })}
       </div>
 
+      {/* Explanation slot — always rendered to keep card height stable */}
+      <div style={{ minHeight: '24px', marginBottom: '12px' }}>
+        {confirmed && selected !== q.answer && (
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: 'var(--oxblood)', margin: 0 }}>
+            ✗ Correct: <strong>{q.answer}</strong>
+          </p>
+        )}
+      </div>
+
       {/* Action */}
       {!confirmed ? (
         <button
           onClick={handleConfirm}
           disabled={!selected}
           style={{
-            background: selected ? '#1A1A18' : '#EDE8DF',
-            color: selected ? 'white' : '#B0ACA4',
-            border: 'none', borderRadius: '10px',
+            background: selected ? 'var(--oxblood)' : '#EDE8DF',
+            color: selected ? '#fff' : '#B0ACA4',
+            border: selected ? '1px solid var(--oxblood)' : 'none', borderRadius: '10px',
             padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)',
             cursor: selected ? 'pointer' : 'default', transition: 'background 0.15s',
           }}
@@ -188,22 +198,15 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
           Check answer
         </button>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {selected !== q.answer && (
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060', margin: 0 }}>
-              Correct: <strong style={{ color: '#2A5C0A' }}>{q.answer}</strong>
-            </p>
-          )}
-          <button
-            onClick={handleNextWithScore}
-            style={{
-              background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px',
-              padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
-            }}
-          >
-            {idx + 1 >= total ? 'See results' : 'Next →'}
-          </button>
-        </div>
+        <button
+          onClick={handleNextWithScore}
+          style={{
+            background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
+            padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
+          }}
+        >
+          {idx + 1 >= total ? 'See results' : 'Next →'}
+        </button>
       )}
     </div>
   )

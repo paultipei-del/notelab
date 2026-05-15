@@ -108,7 +108,7 @@ export function MajorPatternDiagram() {
 
       <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: '14px 0 10px', lineHeight: 1.7 }}>
         Stack the <strong>1st, 3rd, and 5th</strong> notes of the pattern to form a{' '}
-        <strong style={{ color: DARK }}>triad</strong> — the chord that gives the key its sound.
+        <strong style={{ color: DARK }}>triad</strong> · the chord that gives the key its sound.
         <br />On the staff, a five-finger pattern walks from a line note to a space note
         and back without skipping any line or space.
       </p>
@@ -401,10 +401,10 @@ function StaffExamples() {
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 20px',
         marginBottom: 4, gap: 20 }}>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0 }}>
-          <strong style={{ color: MAJ_C }}>C major</strong> — treble
+          <strong style={{ color: MAJ_C }}>C major</strong> · treble
         </p>
         <p style={{ fontFamily: F, fontSize: 12, color: GREY, margin: 0 }}>
-          <strong style={{ color: MAJ_C }}>D major</strong> — bass
+          <strong style={{ color: MAJ_C }}>D major</strong> · bass
         </p>
       </div>
 
@@ -431,7 +431,7 @@ function StaffExamples() {
         <text x={clefChangeX} y={tTop + 2 * step + 2} fontFamily="Bravura, serif" fontSize={48}
           fill={DARK} textAnchor="middle" dominantBaseline="auto">{'\uD834\uDD22'}</text>
 
-        {/* Treble notes (C major) — labels above each note */}
+        {/* Treble notes (C major) · labels above each note */}
         {trebleNotes.map((n, i) => {
           const cx = trebleXs[i]
           const cy = posToY(n.pos)
@@ -449,7 +449,7 @@ function StaffExamples() {
           )
         })}
 
-        {/* Bass notes (D major) — labels above each note */}
+        {/* Bass notes (D major) · labels above each note */}
         {bassNotes.map((n, i) => {
           const cx = bassXs[i]
           const cy = posToY(n.pos)
@@ -488,7 +488,7 @@ export function MinorPatternDiagram() {
         To turn a <strong style={{ color: DARK }}>major</strong> pattern into a{' '}
         <strong style={{ color: MIN_C }}>minor</strong> pattern, lower the <strong>3rd note</strong>{' '}
         by one half step. Minor patterns follow <strong style={{ color: MIN_C }}>W–H–W–W</strong>{' '}
-        — whole steps everywhere except between keys 2 and 3.
+        · whole steps everywhere except between keys 2 and 3.
       </p>
 
       {/* Pattern tabs */}
@@ -692,11 +692,11 @@ export function KeySignatureDiagram() {
       <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
       <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
 
-      {/* Treble clef — standard size */}
+      {/* Treble clef · standard size */}
       <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={62}
         fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
 
-      {/* Key-signature accidentals — positioned just after the clef */}
+      {/* Key-signature accidentals · positioned just after the clef */}
       {ks.accidentals.map((a, i) => {
         const cx = sL + 60 + i * 14
         const cy = posToY(a.pos)
@@ -801,7 +801,7 @@ export function MajorScaleDiagram() {
         )
       })}
 
-      {/* Step badges between notes (W/H) — placed well below the staff so
+      {/* Step badges between notes (W/H) · placed well below the staff so
           they never share a horizontal line with a notehead */}
       {showSteps && scaleSteps.map((s, i) => {
         const midX = (xs[i] + xs[i + 1]) / 2
@@ -824,8 +824,8 @@ export function MajorScaleDiagram() {
     <div>
       <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 12, lineHeight: 1.75 }}>
         Every <strong style={{ color: DARK }}>major scale</strong> is built from{' '}
-        <strong style={{ color: DARK }}>eight notes</strong>. It begins and ends on the same letter name —
-        its tonic — and it borrows its sharps or flats from the major key signature of the same name.
+        <strong style={{ color: DARK }}>eight notes</strong>. It begins and ends on the same letter name,
+        its tonic, and it borrows its sharps or flats from the major key signature of the same name.
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -844,7 +844,7 @@ export function MajorScaleDiagram() {
         {renderScale(true)}
       </div>
       {/* The per-key summary cards (C / F / G) are rendered by the lesson page,
-          below the lesson description — see page.tsx. */}
+          below the lesson description · see page.tsx. */}
     </div>
   )
 }
@@ -941,7 +941,7 @@ export function TimeSignatureDiagram() {
           <text x={gSL - 10} y={gBB} fontSize={gBB - gTT}
             fontFamily="Bravura, serif" fill={DARK} textAnchor="middle" dominantBaseline="auto">{'\uE000'}</text>
           <line x1={gSR} y1={gTT} x2={gSR} y2={gBB} stroke={DARK} strokeWidth={STROKE_W} />
-          {/* Clefs — sized to match Lesson 1's MissingStaff (gStep=6, fontSize=50) */}
+          {/* Clefs · sized to match Lesson 1's MissingStaff (gStep=6, fontSize=50) */}
           <text x={gSL + 5} y={gTT + 6 * step} fontFamily="Bravura, serif" fontSize={50}
             fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
           <text x={gSL + 5} y={gBT + 2 * step + 2} fontFamily="Bravura, serif" fontSize={50}
@@ -1031,7 +1031,7 @@ export function TimeSignatureDiagram() {
       {/* ── Counting example: 4/4 with quarters, then 4/4 with eighths ── */}
       <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', marginBottom: 8, lineHeight: 1.75 }}>
         <strong style={{ color: DARK }}>Counting 4/4.</strong> Every measure starts again at 1.
-        Quarter notes get each number; eighth notes split the beat — say <strong>1 + 2 + 3 + 4 +</strong>.
+        Quarter notes get each number; eighth notes split the beat · say <strong>1 + 2 + 3 + 4 +</strong>.
         Beats <strong style={{ color: ACCENT }}>1</strong> and <strong style={{ color: ACCENT }}>3</strong> carry the
         strongest stress in 4/4.
       </p>
@@ -1050,7 +1050,7 @@ export function TimeSignatureDiagram() {
           {/* End double bar */}
           <line x1={sR - 5} y1={tTop} x2={sR - 5} y2={lineY(1)} stroke={DARK} strokeWidth={STROKE_W} />
           <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={2.5} />
-          {/* Treble clef — matches Lesson 1 sizing for step=6 */}
+          {/* Treble clef · matches Lesson 1 sizing for step=6 */}
           <text x={sL + 4} y={tTop + 6 * step} fontFamily="Bravura, serif" fontSize={50}
             fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
           {/* 4/4 time signature */}
@@ -1064,7 +1064,7 @@ export function TimeSignatureDiagram() {
             <text key={'q' + cx} x={cx} y={NOTE_Y} fontFamily="Bravura, serif" fontSize={36}
               fill={DARK} textAnchor="middle" dominantBaseline="alphabetic">{NOTE_QTR_U}</text>
           ))}
-          {/* Measure 1 count labels — 1 + 2 + 3 + 4 + under each subdivision */}
+          {/* Measure 1 count labels · 1 + 2 + 3 + 4 + under each subdivision */}
           {(() => {
             const subdiv = (m1Xs[1] - m1Xs[0]) / 2
             const labels = ['1', '+', '2', '+', '3', '+', '4', '+']
@@ -1162,13 +1162,13 @@ export function ReviewPatternsDiagram() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.08em', textTransform: 'uppercase', color: MAJ_C, marginBottom: '8px' }}>
-          Major — W W H W
+          Major · W W H W
         </p>
         <MajorPatternDiagram />
       </div>
       <div>
         <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.08em', textTransform: 'uppercase', color: MIN_C, marginBottom: '8px' }}>
-          Minor — W H W W
+          Minor · W H W W
         </p>
         <MinorPatternDiagram />
       </div>

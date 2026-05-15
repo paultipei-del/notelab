@@ -9,8 +9,8 @@ const SERIF = 'var(--font-cormorant), serif'
 const DARK = '#1A1A18'
 const GREY = '#7A7060'
 const ACCENT = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG = '#a0381c'
 const LINE_C = '#2A5C9A'
 const SPACE_C = '#2A6B1E'
 const STROKE = 1.3
@@ -27,7 +27,7 @@ function lineY(n: number) { return tTop + (5 - n) * 2 * step }
 function spaceY(n: number) { return tTop + (4 - n) * 2 * step + step }
 
 const svgW = sR + 16
-const svgH = tTop + 8 * step + 54  // 172 — extra room for treble clef tail
+const svgH = tTop + 8 * step + 54  // 172 · extra room for treble clef tail
 
 function shuffled<T>(arr: T[]): T[] { return [...arr].sort(() => Math.random() - 0.5) }
 
@@ -117,7 +117,7 @@ function ExLabel({ children }: { children: string }) {
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: DARK, color: 'white', border: 'none', borderRadius: 10,
+      background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
       padding: '11px 26px', fontFamily: F, fontSize: 14, cursor: 'pointer',
     }}>{label}</button>
   )
@@ -163,7 +163,7 @@ function StaffIntro({ onNext }: { onNext: () => void }) {
       <SectionTag>The Staff</SectionTag>
       <SectionTitle>Five lines and four spaces</SectionTitle>
       <ConceptBox>
-        Music is written on a <strong>staff</strong> — five horizontal lines with four spaces between them.<br />
+        Music is written on a <strong>staff</strong> · five horizontal lines with four spaces between them.<br />
         Lines are numbered <strong>1 to 5</strong> from the bottom up. Spaces are numbered <strong>1 to 4</strong> from the bottom up.
       </ConceptBox>
 
@@ -199,7 +199,7 @@ function StaffIntro({ onNext }: { onNext: () => void }) {
         </svg>
       </div>
 
-      <PrimaryBtn label="Exercise 1 — Number the lines →" onClick={onNext} />
+      <PrimaryBtn label="Exercise 1 · Number the lines →" onClick={onNext} />
     </div>
   )
 }
@@ -247,7 +247,7 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
 
   return (
     <div>
-      <ExLabel>Exercise 1 — Number the lines and spaces</ExLabel>
+      <ExLabel>Exercise 1 · Number the lines and spaces</ExLabel>
       <ProgressDots total={total} idx={idx} results={results} />
 
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 16 }}>
@@ -257,7 +257,7 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
       <div style={{ overflowX: 'auto', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
-          {/* Space highlight — full width, rendered first so staff lines and clef draw on top */}
+          {/* Space highlight · full width, rendered first so staff lines and clef draw on top */}
           {q.type === 'space' && (
             <rect x={sL} y={spaceY(q.n) - 9} width={sR - sL} height={18}
               fill="rgba(186,117,23,0.18)" />
@@ -320,10 +320,10 @@ function TrebleIntro({ onNext }: { onNext: () => void }) {
       <SectionTag>The Treble Clef</SectionTag>
       <SectionTitle>Also called the G clef</SectionTitle>
       <ConceptBox>
-        The <strong>treble clef</strong> (𝄞) is also called the <strong>G clef</strong>. Its spiral wraps around the second line of the staff — permanently naming that line <strong>G</strong>. Every other note on the staff is counted from that anchor.
+        The <strong>treble clef</strong> (𝄞) is also called the <strong>G clef</strong>. Its spiral wraps around the second line of the staff, permanently naming that line <strong>G</strong>. Every other note on the staff is counted from that anchor.
         <br /><br />
         <span style={{ color: GREY }}>
-          Historically, this symbol evolved from the letter <em>G</em>. Early musicians wrote the letter G directly on whichever line they wished to call G — over centuries it became the ornate clef sign we use today.
+          Historically, this symbol evolved from the letter <em>G</em>. Early musicians wrote the letter G directly on whichever line they wished to call G. Over centuries it became the ornate clef sign we use today.
         </span>
       </ConceptBox>
 
@@ -340,14 +340,14 @@ function TrebleIntro({ onNext }: { onNext: () => void }) {
           {/* Bravura whole note on line 2, close to clef */}
           <BravuraWhole cx={sL + 78} cy={lineY(2)} size={60} color={ACCENT} />
 
-          {/* Label near line 3 — no arrow, white bg so text is clear */}
+          {/* Label near line 3 · no arrow, white bg so text is clear */}
           <rect x={sL + 120} y={lineY(3) - 9} width={72} height={16} rx={3} fill="white" opacity={0.60} />
           <text x={sL + 156} y={lineY(3) + 4} fontFamily={F} fontSize={13} fill={ACCENT}
             fontWeight="700" textAnchor="middle">Line 2 = G</text>
         </svg>
       </div>
 
-      <PrimaryBtn label="Exercise 2 — Circle line 2 →" onClick={onNext} />
+      <PrimaryBtn label="Exercise 2 · Circle line 2 →" onClick={onNext} />
     </div>
   )
 }
@@ -380,14 +380,14 @@ function TrebleEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
 
   return (
     <div>
-      <ExLabel>Exercise 2 — Mark the G line</ExLabel>
+      <ExLabel>Exercise 2 · Mark the G line</ExLabel>
       <ProgressDots total={ROUNDS} idx={round} results={results} />
 
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 6 }}>
         The treble clef's spiral anchors to the second line.
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20 }}>
-        Tap <strong>line 2</strong> — the G line — on this staff.
+        Tap <strong>line 2</strong> · the G line · on this staff.
       </p>
 
       <div style={{ overflowX: 'auto', marginBottom: 20 }}>
@@ -420,7 +420,7 @@ function TrebleEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
               textAnchor="middle">{n}</text>
           ))}
 
-          {/* Hit zones — always active until answered */}
+          {/* Hit zones · always active until answered */}
           {chosen === null && [1, 2, 3, 4, 5].map(n => (
             <LineHitZone key={n} n={n} x1={sL + 66} x2={sR}
               onClick={() => tap(n)}
@@ -433,7 +433,7 @@ function TrebleEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       {chosen !== null && (
         <FeedbackRow
           result={correct}
-          correctLabel="Line 2 is the G line — the treble clef anchors there"
+          correctLabel="Line 2 is the G line · the treble clef anchors there"
           onNext={next}
           nextLabel={round + 1 >= ROUNDS ? 'Finish →' : `Next (${round + 1}/${ROUNDS}) →`}
         />
@@ -451,7 +451,7 @@ function TrebleEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
 // CY = lineY(2) = tTop+60 = 114 (G line); CFS=62 (prevents tail from clipping at svgH=180)
 const CX = sL + 4         // 36
 const CY = lineY(2)       // 114
-const CFS = 62            // fontSize — matches LabeledTrebleStaff; tail fits in svgH=180
+const CFS = 62            // fontSize · matches LabeledTrebleStaff; tail fits in svgH=180
 
 // Vertical clip bands. At CY=114 (G line), CFS=62: ascender top≈y52; loop≈y92–128; tail≈y128–178.
 type TreblePieceId = 'top' | 'mid' | 'bot'
@@ -675,7 +675,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
 
   return (
     <div style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}>
-      <ExLabel>Exercise 3 — Assemble the treble clef</ExLabel>
+      <ExLabel>Exercise 3 · Assemble the treble clef</ExLabel>
       {calibrating && <TrebleClefCalibrator onClose={() => setCalibrating(false)} />}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <button onClick={() => setCalibrating(c => !c)} style={{
@@ -700,7 +700,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.6 }}>
         {allPlaced
-          ? 'Complete. The loop circles line 2 — that is what makes it a G clef.'
+          ? 'Complete. The loop circles line 2 · that is what makes it a G clef.'
           : 'Drag each piece onto the staff to build the treble clef.'}
       </p>
 
@@ -723,7 +723,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
           <line x1={sL} y1={tTop} x2={sL} y2={lineY(1)} stroke={DARK} strokeWidth={1.5} />
           <line x1={sR} y1={tTop} x2={sR} y2={lineY(1)} stroke={DARK} strokeWidth={3} />
 
-          {/* Ghost target — faint full clef so student can see where pieces go */}
+          {/* Ghost target · faint full clef so student can see where pieces go */}
           {!allPlaced && (
             <text x={CX} y={CY} fontFamily="Bravura, serif" fontSize={CFS}
               fill="rgba(26,26,24,0.09)" dominantBaseline="auto">𝄞</text>
@@ -736,7 +736,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
               strokeWidth={2} strokeDasharray="6 3" rx={8} />
           )}
 
-          {/* Placed pieces — each clips the identical Bravura glyph to its region */}
+          {/* Placed pieces · each clips the identical Bravura glyph to its region */}
           {allPieceIds.map(id =>
             placed.has(id) ? (
               <text key={id} x={CX} y={CY} fontFamily="Bravura, serif" fontSize={CFS}
@@ -758,7 +758,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
         </svg>
       </div>
 
-      {/* Piece palette — shuffled order, equal fixed-size boxes */}
+      {/* Piece palette · shuffled order, equal fixed-size boxes */}
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
         {chipOrder.map(id => {
           const done = placed.has(id)
@@ -816,7 +816,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
         </div>
       )}
 
-      {/* Drag ghost — portalled to body so it's never clipped */}
+      {/* Drag ghost · portalled to body so it's never clipped */}
       {dragging && typeof document !== 'undefined' && createPortal(
         <div style={{
           position: 'fixed',
@@ -849,7 +849,7 @@ function BassIntro({ onNext }: { onNext: () => void }) {
       <SectionTag>The Bass Clef</SectionTag>
       <SectionTitle>Also called the F clef</SectionTitle>
       <ConceptBox>
-        The <strong>bass clef</strong> (𝄢) is also called the <strong>F clef</strong>. Its two dots sit above and below the <strong>fourth line</strong> of the staff — permanently naming that line <strong>F</strong>. All other bass staff notes are counted from this anchor.
+        The <strong>bass clef</strong> (𝄢) is also called the <strong>F clef</strong>. Its two dots sit above and below the <strong>fourth line</strong> of the staff, permanently naming that line <strong>F</strong>. All other bass staff notes are counted from this anchor.
       </ConceptBox>
 
       <div style={{ overflowX: 'auto', marginBottom: 24 }}>
@@ -864,14 +864,14 @@ function BassIntro({ onNext }: { onNext: () => void }) {
           {/* Whole note on line 4, close to clef */}
           <BravuraWhole cx={sL + 88} cy={lineY(4)} size={60} color={ACCENT} />
 
-          {/* Label near line 3 — no arrow, white bg */}
+          {/* Label near line 3 · no arrow, white bg */}
           <rect x={sL + 106} y={lineY(3) - 10} width={120} height={18} rx={3} fill="white" opacity={0.90} />
           <text x={sL + 166} y={lineY(3) + 4} fontFamily={F} fontSize={13} fill={ACCENT}
             fontWeight="700" textAnchor="middle">Line 4 = F</text>
         </svg>
       </div>
 
-      <PrimaryBtn label="Exercise 4 — Place the dots →" onClick={onNext} />
+      <PrimaryBtn label="Exercise 4 · Place the dots →" onClick={onNext} />
     </div>
   )
 }
@@ -904,14 +904,14 @@ function BassEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
 
   return (
     <div>
-      <ExLabel>Exercise 4 — Identify the F line</ExLabel>
+      <ExLabel>Exercise 4 · Identify the F line</ExLabel>
       <ProgressDots total={ROUNDS} idx={round} results={results} />
 
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 6 }}>
         The bass clef's dots bracket the fourth line.
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20 }}>
-        Hover to explore, then tap <strong>line 4</strong> — the F line.
+        Hover to explore, then tap <strong>line 4</strong> · the F line.
       </p>
 
       <div style={{ overflowX: 'auto', marginBottom: 20 }}>
@@ -960,7 +960,7 @@ function BassEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       {chosen !== null && (
         <FeedbackRow
           result={correct}
-          correctLabel="Line 4 is the F line — the bass clef dots bracket it"
+          correctLabel="Line 4 is the F line · the bass clef dots bracket it"
           onNext={next}
           nextLabel={round + 1 >= ROUNDS ? 'Finish →' : `Next (${round + 1}/${ROUNDS}) →`}
         />
@@ -1068,7 +1068,7 @@ function BassClefCalibrator({ onClose }: { onClose: () => void }) {
         </button>
       </div>
       <p style={{ fontFamily: F, fontSize: 13, color: GREY, marginBottom: 12, lineHeight: 1.5 }}>
-        Drag the boxes — or drag their corner handles to resize.
+        Drag the boxes · or drag their corner handles to resize.
         {' '}<span style={{ color: ACCENT, fontWeight: 600 }}>Orange</span> = Curve
         {' · '}<span style={{ color: '#2A5C9A', fontWeight: 600 }}>Blue</span> = Dots
       </p>
@@ -1188,7 +1188,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
 
   return (
     <div style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}>
-      <ExLabel>Exercise 5 — Assemble the bass clef</ExLabel>
+      <ExLabel>Exercise 5 · Assemble the bass clef</ExLabel>
       {calibrating && <BassClefCalibrator onClose={() => setCalibrating(false)} />}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
         <button onClick={() => setCalibrating(c => !c)} style={{
@@ -1211,7 +1211,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
         Build {round + 1} of {ROUNDS}
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.6 }}>
-        {allPlaced ? 'Complete. The dots bracket line 4 — that is what makes it an F clef.'
+        {allPlaced ? 'Complete. The dots bracket line 4 · that is what makes it an F clef.'
           : 'Drag each piece onto the staff.'}
       </p>
 
@@ -1400,7 +1400,7 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
 
   return (
     <div>
-      <ExLabel>Exercise 6 — Complete the grand staff</ExLabel>
+      <ExLabel>Exercise 6 · Complete the grand staff</ExLabel>
       <ProgressDots total={total} idx={idx} results={results} />
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 300, color: DARK, marginBottom: 16 }}>
         What is missing from this grand staff?
@@ -1442,8 +1442,8 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
 // ── GRAND EX 2: Build the grand staff ────────────────────────────────────────
 
 const BUILD_PARTS = [
-  { key: 'treble', label: 'Treble Clef', desc: 'G clef — anchors G on line 2 of the upper staff' },
-  { key: 'bass',   label: 'Bass Clef',   desc: 'F clef — anchors F on line 4 of the lower staff' },
+  { key: 'treble', label: 'Treble Clef', desc: 'G clef · anchors G on line 2 of the upper staff' },
+  { key: 'bass',   label: 'Bass Clef',   desc: 'F clef · anchors F on line 4 of the lower staff' },
   { key: 'brace',  label: 'Brace',       desc: 'Curved bracket joining both staves on the left' },
   { key: 'dbar',   label: 'Double Bar',  desc: 'Two bar lines on the right side to close the system' },
 ] as const
@@ -1487,7 +1487,7 @@ function BuildPreview({ placed }: { placed: Set<BuildKey> }) {
 }
 
 // Chip symbol renderers for GrandEx2 — no staff behind clefs for cleaner display
-const GRAND_CHIP = 88  // px square — slightly larger than assembly chips
+const GRAND_CHIP = 88  // px square · slightly larger than assembly chips
 function GrandChip({ k, dim }: { k: BuildKey; dim?: boolean }) {
   const c = dim ? 'rgba(186,117,23,0.25)' : ACCENT
   if (k === 'treble') return (
@@ -1554,7 +1554,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
 
   return (
     <div style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}>
-      <ExLabel>Exercise 7 — Build the grand staff</ExLabel>
+      <ExLabel>Exercise 7 · Build the grand staff</ExLabel>
       <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
         {[0,1,2,3].map(i => (
           <span key={i} style={{ width: 8, height: 8, borderRadius: '50%', display: 'inline-block',
@@ -1562,7 +1562,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
         ))}
       </div>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16 }}>
-        Round {round + 1} of 4 — drag each part onto the staff.
+        Round {round + 1} of 4 · drag each part onto the staff.
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
@@ -1657,7 +1657,7 @@ function MatchSymbol({ k, dim }: { k: MatchKey; dim?: boolean }) {
   // Single-staff layout: gTT=30 centers content; sH covers treble tail
   const gs = 6, gL = 12, gR = 78, gTT = 30
   const gLY = (n: number) => gTT + (5 - n) * 2 * gs  // gLY(5)=30, gLY(1)=86
-  const sH = gLY(1) + 40  // 126 — covers treble tail at larger font size
+  const sH = gLY(1) + 40  // 126 · covers treble tail at larger font size
 
   const sLines = (x1: number, x2: number) =>
     [1,2,3,4,5].map(n => <line key={n} x1={x1} y1={gLY(n)} x2={x2} y2={gLY(n)} stroke={c} strokeWidth={1} />)
@@ -1752,7 +1752,7 @@ function GrandEx3({ onDone }: { onDone: (s: number, t: number) => void }) {
 
   return (
     <div>
-      <ExLabel>Exercise 8 — Match symbols to names</ExLabel>
+      <ExLabel>Exercise 8 · Match symbols to names</ExLabel>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.6 }}>
         Tap a name, then tap its matching symbol.
         {selectedName && <strong style={{ color: ACCENT }}> Now find: {MATCH_ITEMS.find(m => m.key === selectedName)?.label}</strong>}

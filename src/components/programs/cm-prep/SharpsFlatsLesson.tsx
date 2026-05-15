@@ -9,8 +9,8 @@ const SERIF  = 'var(--font-cormorant), serif'
 const DARK   = '#1A1A18'
 const GREY   = '#7A7060'
 const ACCENT  = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry ────────────────────────────────────────────────────────────
@@ -225,7 +225,7 @@ function ProgressBar({ done, total, color }: { done: number; total: number; colo
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: DARK, color: 'white', border: 'none', borderRadius: 10,
+      background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
       padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
     }}>
       {label}
@@ -242,7 +242,7 @@ function SharpsIntro({ onNext }: { onNext: () => void }) {
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
         A <strong style={{ color: DARK }}>sharp (♯)</strong> raises a note by one half step.
-        On the piano, play the key to the <strong>right</strong> of the white key — that is always a black key.
+        On the piano, play the key to the <strong>right</strong> of the white key · that is always a black key.
       </p>
       <PianoKeyboard mode="sharps" />
       <div style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10,
@@ -265,7 +265,7 @@ function FlatsIntro({ onNext }: { onNext: () => void }) {
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 16, lineHeight: 1.7 }}>
         A <strong style={{ color: DARK }}>flat (♭)</strong> lowers a note by one half step.
-        On the piano, play the key to the <strong>left</strong> of the white key — also a black key.
+        On the piano, play the key to the <strong>left</strong> of the white key · also a black key.
       </p>
       <PianoKeyboard mode="flats" />
       <div style={{ background: '#F7F4ED', border: '1px solid #D9CFAE', borderRadius: 10,
@@ -296,7 +296,7 @@ function NaturalsIntro({ onNext }: { onNext: () => void }) {
         padding: '12px 16px', marginBottom: 20 }}>
         <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, lineHeight: 1.7 }}>
           The natural sign is written to the <strong>left</strong> of the note head,
-          on the same line or space. C♮ is the same key as C — the natural just cancels a previous accidental.
+          on the same line or space. C♮ is the same key as C · the natural just cancels a previous accidental.
         </p>
       </div>
       <PrimaryBtn label="Exercise 5 →" onClick={onNext} />
@@ -402,18 +402,18 @@ function DrawAccidentalEx({
           {ledger && <LedgerLine cx={noteX} cy={noteCy} />}
           <BravuraNote cx={noteX} cy={noteCy} />
 
-          {/* Staged ghost — amber if on left side, grey if on right */}
+          {/* Staged ghost · amber if on left side, grey if on right */}
           {state === 'idle' && stagedX !== null && stagedPos !== null && (
             <BravuraAcc cx={stagedX} cy={stagedCy} acc={acc}
               color={stagedIsLeft ? ACCENT : '#C8C4BA'} />
           )}
 
-          {/* Correct result — snap to canonical accX */}
+          {/* Correct result · snap to canonical accX */}
           {state === 'correct' && (
             <BravuraAcc cx={accX} cy={noteCy} acc={acc} color={CORRECT} />
           )}
 
-          {/* Wrong placement — show what the student chose */}
+          {/* Wrong placement · show what the student chose */}
           {(state === 'wrong-side' || state === 'wrong-pos') && stagedX !== null && stagedPos !== null && (
             <BravuraAcc cx={stagedX} cy={stagedCy} acc={acc} color={WRONG} />
           )}
@@ -440,8 +440,8 @@ function DrawAccidentalEx({
         color: state === 'idle' ? '#B0ACA4' : state === 'correct' ? CORRECT : WRONG }}>
         {state === 'idle'       && (stagedX === null
           ? `Tap the staff to position the ${accSymbol(acc)}`
-          : `Press Place to confirm — or tap elsewhere to re-position`)}
-        {state === 'correct'    && `✓ Correct — ${accSymbol(acc)} is to the left, on the same line/space`}
+          : `Press Place to confirm · or tap elsewhere to re-position`)}
+        {state === 'correct'    && `✓ Correct · ${accSymbol(acc)} is to the left, on the same line/space`}
         {state === 'wrong-side' && `✗ The ${accSymbol(acc)} goes to the LEFT of the note`}
         {state === 'wrong-pos'  && `✗ The ${accSymbol(acc)} must be on the SAME line or space as the note`}
       </p>
@@ -495,7 +495,7 @@ function NameAccidentalEx({
       <ProgressBar done={idx} total={total_} color={ACCENT} />
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — name this note
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · name this note
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -590,7 +590,7 @@ function GrandNameEx({
       <ProgressBar done={idx} total={total_} color={ACCENT} />
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        Grand staff — name this note
+        Grand staff · name this note
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -719,7 +719,7 @@ function WriteAccidentalEx({
       <ProgressBar done={idx} total={total_} color={ACCENT} />
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — write this note
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · write this note
       </p>
 
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
@@ -728,8 +728,8 @@ function WriteAccidentalEx({
         </span>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
           <strong>{octaveLabel(item)}</strong>
-          {!step2 && !submitted && ' — tap the staff to position the note'}
-          {step2 && ' — pick the accidental below to confirm'}
+          {!step2 && !submitted && ' · tap the staff to position the note'}
+          {step2 && ' · pick the accidental below to confirm'}
         </p>
       </div>
 
@@ -873,16 +873,16 @@ export default function SharpsFlatsLesson({
       <ExerciseNavBar canBack={canGoBack} canForward={canGoForward}
         onBack={back} onForward={forward} />
       {phase === 'sharps-intro'   && <SharpsIntro onNext={next} />}
-      {phase === 'draw-sharps'    && <DrawAccidentalEx key={key} pool={shuffled(ALL_SHARPS)} acc="#" exLabel="Exercise 1 — Draw the sharp" onDone={next} noteXOffset={-5} />}
-      {phase === 'name-sharps'    && <NameAccidentalEx key={key} pool={ALL_SHARPS} exLabel="Exercise 2 — Name the note" onDone={scored} />}
+      {phase === 'draw-sharps'    && <DrawAccidentalEx key={key} pool={shuffled(ALL_SHARPS)} acc="#" exLabel="Exercise 1 · Draw the sharp" onDone={next} noteXOffset={-5} />}
+      {phase === 'name-sharps'    && <NameAccidentalEx key={key} pool={ALL_SHARPS} exLabel="Exercise 2 · Name the note" onDone={scored} />}
       {phase === 'flats-intro'    && <FlatsIntro onNext={next} />}
-      {phase === 'draw-flats'     && <DrawAccidentalEx key={key} pool={shuffled(ALL_FLATS)} acc="b" exLabel="Exercise 3 — Draw the flat" onDone={next} />}
-      {phase === 'name-flats'     && <NameAccidentalEx key={key} pool={ALL_FLATS} exLabel="Exercise 4 — Name the note" onDone={scored} />}
+      {phase === 'draw-flats'     && <DrawAccidentalEx key={key} pool={shuffled(ALL_FLATS)} acc="b" exLabel="Exercise 3 · Draw the flat" onDone={next} />}
+      {phase === 'name-flats'     && <NameAccidentalEx key={key} pool={ALL_FLATS} exLabel="Exercise 4 · Name the note" onDone={scored} />}
       {phase === 'naturals-intro' && <NaturalsIntro onNext={next} />}
-      {phase === 'draw-naturals'  && <DrawAccidentalEx key={key} pool={shuffled(ALL_NATURALS)} acc="n" exLabel="Exercise 5 — Draw the natural" onDone={next} />}
-      {phase === 'name-naturals'  && <NameAccidentalEx key={key} pool={ALL_NATURALS} exLabel="Exercise 6 — Name the note" onDone={scored} />}
-      {phase === 'name-mixed'     && <GrandNameEx key={key} pool={MIXED_ALL} exLabel="Exercise 7 — Name the note" onDone={scored} />}
-      {phase === 'write-mixed'    && <WriteAccidentalEx key={key} pool={MIXED_ALL} exLabel="Exercise 8 — Write the note" onDone={scored} />}
+      {phase === 'draw-naturals'  && <DrawAccidentalEx key={key} pool={shuffled(ALL_NATURALS)} acc="n" exLabel="Exercise 5 · Draw the natural" onDone={next} />}
+      {phase === 'name-naturals'  && <NameAccidentalEx key={key} pool={ALL_NATURALS} exLabel="Exercise 6 · Name the note" onDone={scored} />}
+      {phase === 'name-mixed'     && <GrandNameEx key={key} pool={MIXED_ALL} exLabel="Exercise 7 · Name the note" onDone={scored} />}
+      {phase === 'write-mixed'    && <WriteAccidentalEx key={key} pool={MIXED_ALL} exLabel="Exercise 8 · Write the note" onDone={scored} />}
     </div>
   )
 }

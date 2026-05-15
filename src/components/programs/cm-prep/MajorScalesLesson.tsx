@@ -9,8 +9,8 @@ const GREY    = '#B0ACA4'
 const ACCENT  = '#BA7517'
 const MAJ_C   = '#2A5C0A'
 const HALF_C  = '#B5402A'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry (wider than other lessons — 8 notes need room) ──────────
@@ -198,13 +198,13 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Mark the whole and half steps
+        Exercise 1 · Mark the whole and half steps
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '4px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — {item.key} major scale
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · {item.key} major scale
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 10px', lineHeight: 1.6 }}>
         Tap each circle to cycle between <strong style={{ color: MAJ_C }}>W</strong> and{' '}
@@ -237,7 +237,7 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
             )
           })}
 
-          {/* W/H toggle badges between notes — placed below the staff with
+          {/* W/H toggle badges between notes · placed below the staff with
               enough clearance that they never line up with a notehead */}
           {SCALE_STEPS.map((_, i) => {
             const midX = (NOTE_XS[i] + NOTE_XS[i + 1]) / 2
@@ -295,8 +295,8 @@ function MarkStepsEx({ onDone }: { onDone: (correct: number, total: number) => v
 
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
-        {feedback !== null && feedback.ok && '✓ Correct — W W H W W W H'}
-        {feedback !== null && !feedback.ok && 'Not quite — every major scale follows W W H W W W H.'}
+        {feedback !== null && feedback.ok && '✓ Correct · W W H W W W H'}
+        {feedback !== null && !feedback.ok && 'Not quite · every major scale follows W W H W W W H.'}
       </p>
     </div>
   )
@@ -447,13 +447,13 @@ function WriteScaleEx({ onDone }: { onDone: (correct: number, total: number) => 
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 2 — Write the scale
+        Exercise 2 · Write the scale
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '10px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — write the{' '}
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · write the{' '}
         <strong style={{ color: ACCENT }}>{item.key} major scale</strong>
       </p>
 
@@ -528,7 +528,7 @@ function WriteScaleEx({ onDone }: { onDone: (correct: number, total: number) => 
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
-        {feedback !== null && !feedback.ok && 'Not quite — the correct scale is shown in green.'}
+        {feedback !== null && !feedback.ok && 'Not quite · the correct scale is shown in green.'}
       </p>
     </div>
   )

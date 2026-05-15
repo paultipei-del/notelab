@@ -8,8 +8,8 @@ const SERIF   = 'var(--font-cormorant), serif'
 const DARK    = '#1A1A18'
 const GREY    = '#7A7060'
 const ACCENT  = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 
 // Matches the preparatory.ts card ids 101–119.
 export interface SignCard { id: number; term: string; def: string }
@@ -18,22 +18,22 @@ export const SIGN_CARDS: SignCard[] = [
   { id: 101, term: 'a tempo',                def: 'Return to the original tempo' },
   { id: 102, term: 'Accent',                 def: 'With emphasis or stress on a note' },
   { id: 103, term: 'Bar line',               def: 'A vertical line that separates notes on the staff into measures' },
-  { id: 104, term: 'Bass clef (F clef)',     def: 'Names the fourth line of the bass staff — used for lower notes' },
+  { id: 104, term: 'Bass clef (F clef)',     def: 'Names the fourth line of the bass staff, used for lower notes' },
   { id: 105, term: 'Brace',                  def: 'A wavy line that joins the treble and bass staves of a grand staff' },
   { id: 106, term: 'Da Capo al Fine',        def: 'Return to the beginning, play to Fine (the end)' },
-  { id: 107, term: 'Dynamics',               def: 'Symbols or terms that indicate loud or soft — variations in volume' },
-  { id: 108, term: 'Fermata',                def: 'Hold longer — sustain the note beyond its normal value' },
+  { id: 107, term: 'Dynamics',               def: 'Symbols or terms that indicate loud or soft · variations in volume' },
+  { id: 108, term: 'Fermata',                def: 'Hold longer · sustain the note beyond its normal value' },
   { id: 109, term: 'Fine',                   def: 'The end' },
   { id: 110, term: 'Forte (f)',              def: 'Loud' },
-  { id: 111, term: 'Grand staff',            def: 'Two staves joined together by a brace — treble and bass clef combined' },
+  { id: 111, term: 'Grand staff',            def: 'Two staves joined together by a brace · treble and bass clef combined' },
   { id: 112, term: 'Measure',                def: 'The space between two bar lines' },
   { id: 113, term: 'Piano',                  def: 'Soft' },
   { id: 114, term: 'Repeat sign',            def: 'A sign with two dots that indicates a section of music should be repeated' },
   { id: 115, term: 'Ritardando / rit.',      def: 'Gradually slower' },
-  { id: 116, term: 'Slur',                   def: 'A curved line connecting two or more different pitches — play smoothly (legato)' },
+  { id: 116, term: 'Slur',                   def: 'A curved line connecting two or more different pitches · play smoothly (legato)' },
   { id: 117, term: 'Staccato',               def: 'Separated, detached, not connected' },
-  { id: 118, term: 'Tie',                    def: 'A curved line connecting notes of the same pitch — hold for full value, do not re-strike' },
-  { id: 119, term: 'Treble clef (G clef)',   def: 'Names the second line of the treble staff — used for higher notes' },
+  { id: 118, term: 'Tie',                    def: 'A curved line connecting notes of the same pitch · hold for full value, do not re-strike' },
+  { id: 119, term: 'Treble clef (G clef)',   def: 'Names the second line of the treble staff, used for higher notes' },
 ]
 
 // Category mapping for Ex 4
@@ -120,7 +120,7 @@ function MatchEx({ onDone }: { onDone: (correct: number, total: number) => void 
 
   return (
     <div>
-      <ExerciseLabel>Exercise 1 — Match the sign with its definition</ExerciseLabel>
+      <ExerciseLabel>Exercise 1 · Match the sign with its definition</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
@@ -181,7 +181,7 @@ function IdentifyEx({ onDone }: { onDone: (correct: number, total: number) => vo
 
   return (
     <div>
-      <ExerciseLabel>Exercise 2 — Identify the sign</ExerciseLabel>
+      <ExerciseLabel>Exercise 2 · Identify the sign</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
@@ -263,7 +263,7 @@ function MemoryMatchEx({ onDone }: { onDone: (correct: number, total: number) =>
 
   return (
     <div>
-      <ExerciseLabel>Exercise 3 — Memory match</ExerciseLabel>
+      <ExerciseLabel>Exercise 3 · Memory match</ExerciseLabel>
 
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, lineHeight: 1.6, margin: '0 0 14px' }}>
         Tap two cards at a time to flip them. When a <strong style={{ color: DARK }}>symbol</strong>
@@ -364,7 +364,7 @@ function CategoryEx({ onDone }: { onDone: (correct: number, total: number) => vo
 
   return (
     <div>
-      <ExerciseLabel>Exercise 4 — Which category?</ExerciseLabel>
+      <ExerciseLabel>Exercise 4 · Which category?</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,

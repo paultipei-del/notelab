@@ -9,9 +9,9 @@ const F       = 'var(--font-jost), sans-serif'
 const SERIF   = 'var(--font-cormorant), serif'
 const DARK    = '#1A1A18'
 const GREY    = '#7A7060'
-const ACCENT  = '#2A5C0A'   // green — matches MAJ_C in PatternDiagrams
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const ACCENT  = '#2A5C0A'   // green · matches MAJ_C in PatternDiagrams
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Staff geometry — same as every other CM Prep lesson ──────────────────────
@@ -127,11 +127,11 @@ const EX1_POOL: Ex1Item[] = [
 
   // Invalid treble — skips between notes:
   { clef: 'treble', isFivePattern: false,
-    notes: [{ pos: 0 }, { pos: 2 }, { pos: 4 }, { pos: 6 }, { pos: 8 }] },                             // C E G B D — all thirds
+    notes: [{ pos: 0 }, { pos: 2 }, { pos: 4 }, { pos: 6 }, { pos: 8 }] },                             // C E G B D · all thirds
   { clef: 'treble', isFivePattern: false,
     notes: [{ pos: 2 }, { pos: 3 }, { pos: 4 }, { pos: 6 }, { pos: 7 }] },                             // E F G skip B C
   { clef: 'treble', isFivePattern: false,
-    notes: [{ pos: 5 }, { pos: 4 }, { pos: 3 }, { pos: 1 }, { pos: 0 }] },                             // A G F D C — desc, skips E
+    notes: [{ pos: 5 }, { pos: 4 }, { pos: 3 }, { pos: 1 }, { pos: 0 }] },                             // A G F D C · desc, skips E
 
   // Bass — pos 0 = E2, 2 = G2, 6 = D3, 8 = F3, 10 = A3, 12 = C4
   // Valid ascending:
@@ -151,7 +151,7 @@ const EX1_POOL: Ex1Item[] = [
   { clef: 'bass', isFivePattern: false,
     notes: [{ pos: 5 }, { pos: 6 }, { pos: 8 }, { pos: 9 }, { pos: 11 }] },                            // two gaps
   { clef: 'bass', isFivePattern: false,
-    notes: [{ pos: 6 }, { pos: 5 }, { pos: 4 }, { pos: 2 }, { pos: 1 }] },                             // D C B G F — desc, skips A
+    notes: [{ pos: 6 }, { pos: 5 }, { pos: 4 }, { pos: 2 }, { pos: 1 }] },                             // D C B G F · desc, skips A
 ]
 
 // Notes are placed with equal gaps: clef-to-first, each pair, last-to-right-border
@@ -235,18 +235,18 @@ function IdentifyPatternEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Is this a five-finger pattern?
+        Exercise 1 · Is this a five-finger pattern?
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '4px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — do these five notes form a
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · do these five notes form a
         five-finger pattern?
       </p>
       <p style={{ fontFamily: F, fontSize: 13, color: GREY, fontStyle: 'italic',
         margin: '0 0 10px', lineHeight: 1.6 }}>
-        Look for five <strong>adjacent</strong> lines and spaces — don&apos;t worry about the
+        Look for five <strong>adjacent</strong> lines and spaces · don&apos;t worry about the
         W–W–H–W formula here. Any unbroken 5-note run counts, major or not.
       </p>
 
@@ -263,10 +263,10 @@ function IdentifyPatternEx({
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && !feedback.ok && !item.isFivePattern && (
-          <>Not a five-finger pattern — there&apos;s a skip between at least two notes.</>
+          <>Not a five-finger pattern · there&apos;s a skip between at least two notes.</>
         )}
         {feedback !== null && !feedback.ok && item.isFivePattern && (
-          <>Actually yes — these five notes are on adjacent lines and spaces.</>
+          <>Actually yes · these five notes are on adjacent lines and spaces.</>
         )}
         {feedback !== null && feedback.ok && '✓ Correct'}
       </p>
@@ -485,7 +485,7 @@ function BuildKeyboardEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 4 — Build the pattern and triad
+        Exercise 4 · Build the pattern and triad
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -521,7 +521,7 @@ function BuildKeyboardEx({
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok  && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
-          <>Not quite — take another look and try again.</>
+          <>Not quite · take another look and try again.</>
         )}
       </p>
     </div>
@@ -679,13 +679,13 @@ function PlaceTriadEx({
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 5 — Place the triad
+        Exercise 5 · Place the triad
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '10px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place the{' '}
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · place the{' '}
         <strong style={{ color: ACCENT }}>{item.rootKey} major triad</strong>
       </p>
 
@@ -760,7 +760,7 @@ function PlaceTriadEx({
         color: !submitted ? '#B0ACA4' : isCorrect ? CORRECT : WRONG }}>
         {submitted && isCorrect && '✓ Correct'}
         {submitted && !isCorrect && (
-          <>Correct triad shown in green — tap again on the next one.</>
+          <>Correct triad shown in green · tap again on the next one.</>
         )}
       </p>
     </div>
@@ -830,10 +830,10 @@ export default function MajorPatternsLesson({
         onBack={back} onForward={forward} />
       {phase === 'ex1' && <IdentifyPatternEx key={key} onDone={scored} />}
       {phase === 'ex2' && <MatchEx key={key} mode="pattern"
-        exLabel="Exercise 2 — Match the five-finger pattern"
+        exLabel="Exercise 2 · Match the five-finger pattern"
         onDone={scored} />}
       {phase === 'ex3' && <MatchEx key={key} mode="triad"
-        exLabel="Exercise 3 — Match the triad"
+        exLabel="Exercise 3 · Match the triad"
         onDone={scored} />}
       {phase === 'ex4' && <BuildKeyboardEx key={key} onDone={scored} />}
       {phase === 'ex5' && <PlaceTriadEx    key={key} onDone={scored} />}

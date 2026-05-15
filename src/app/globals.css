@@ -85,6 +85,9 @@ body {
   --hairline: rgba(90, 64, 40, 0.18);
   --oxblood: #a0381c;
   --oxblood-soft: rgba(160, 56, 28, 0.10);
+  --oxblood-tint: rgba(160, 56, 28, 0.08);
+  --forest: #2d5a3e;
+  --forest-soft: rgba(45, 90, 62, 0.12);
   --cream-card: rgba(248, 240, 216, 0.55);
   --cream-card-strong: rgba(248, 240, 216, 0.85);
   --cream-key: #fdf8ea;

@@ -9,8 +9,8 @@ const F       = 'var(--font-jost), sans-serif'
 const DARK    = '#1A1A18'
 const GREY    = '#B0ACA4'
 const ACCENT  = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Bravura note / rest glyphs ────────────────────────────────────────────
@@ -148,7 +148,7 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 2 — How many beats?
+        Exercise 2 · How many beats?
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -326,7 +326,7 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Time-signature facts
+        Exercise 1 · Time-signature facts
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -559,7 +559,7 @@ function normalized(s: string): string {
 export function WriteCountsEx({
   onDone,
   pool = EX3_POOL,
-  title = 'Exercise 3 — Write the counts',
+  title = 'Exercise 3 · Write the counts',
 }: {
   onDone: (correct: number, total: number) => void
   pool?: RhythmItem[]
@@ -879,7 +879,7 @@ export function WriteCountsEx({
         </svg>
       </div>
 
-      {/* Count palette — taps insert into the focused input */}
+      {/* Count palette · taps insert into the focused input */}
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
         textTransform: 'uppercase', color: '#7A7060', margin: '0 0 6px' }}>
         Count palette
@@ -931,7 +931,7 @@ export function WriteCountsEx({
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
-          'Some notes don\u2019t add up — notes shown in red need another look. Counts run 1 + 2 + 3 + 4 + continuously across each measure.'
+          'Some notes don\u2019t add up · notes shown in red need another look. Counts run 1 + 2 + 3 + 4 + continuously across each measure.'
         )}
       </p>
 
@@ -944,7 +944,7 @@ export function WriteCountsEx({
           <a href="/rhythm" style={{ color: ACCENT, fontWeight: 600, textDecoration: 'none' }}>
             rhythm trainer ↗
           </a>{' '}
-          — it plays a metronome and asks you to tap along on each beat.
+          · it plays a metronome and asks you to tap along on each beat.
         </p>
       </div>
     </div>
@@ -1209,7 +1209,7 @@ function WriteCountsMxlEx({ onDone }: { onDone: (correct: number, total: number)
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 4 — Write the counts on real rhythms
+        Exercise 4 · Write the counts on real rhythms
       </p>
       <ProgressBar done={idx} total={pool.length} color={ACCENT} />
 
@@ -1236,7 +1236,7 @@ function WriteCountsMxlEx({ onDone }: { onDone: (correct: number, total: number)
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button onClick={check} disabled={feedback !== null}
-          style={{ background: DARK, color: 'white', border: 'none', borderRadius: 10,
+          style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
             padding: '12px 28px', fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer', opacity: feedback !== null ? 0.6 : 1 }}>
           Check answers

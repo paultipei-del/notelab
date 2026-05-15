@@ -9,8 +9,8 @@ const DARK    = '#1A1A18'
 const GREY    = '#B0ACA4'
 const ACCENT  = '#BA7517'
 const MAJ_C   = '#2A5C0A'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // ── Grand staff geometry ──────────────────────────────────────────────────
@@ -212,7 +212,7 @@ function GrandStaff({
       <text x={gSL + 5} y={bassClefY} fontFamily="Bravura, serif" fontSize={56}
         fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>
 
-      {/* Key signature accidentals — treble and bass share the same slot (column) */}
+      {/* Key signature accidentals · treble and bass share the same slot (column) */}
       {trebleKeySigAccs.map((p, i) => (
         <AccGlyph key={'kst' + i} cx={accStartX + i * accSpacing} cy={trebleY(p.pos)} acc={p.acc} />
       ))}
@@ -220,7 +220,7 @@ function GrandStaff({
         <AccGlyph key={'ksb' + i} cx={accStartX + i * accSpacing} cy={bassY(p.pos)} acc={p.acc} />
       ))}
 
-      {/* Student-placed accidentals (for Ex 3) — same slot-based layout */}
+      {/* Student-placed accidentals (for Ex 3) · same slot-based layout */}
       {studentTrebleAccs.map((p, i) => (
         <AccGlyph key={'sat' + i} cx={accStartX + i * accSpacing} cy={trebleY(p.pos)}
           acc={p.acc} color={studentAccColor} />
@@ -347,7 +347,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 1 — Match the key signature
+        Exercise 1 · Match the key signature
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -472,7 +472,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 2 — Name the accidental and the key
+        Exercise 2 · Name the accidental and the key
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -609,7 +609,7 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 3 — Write the key signature
+        Exercise 3 · Write the key signature
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
@@ -661,7 +661,7 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
 
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: '0 0 8px', lineHeight: 1.6 }}>
         {item === 'C'
-          ? 'C major uses no sharps or flats — just press Check.'
+          ? 'C major uses no sharps or flats · just press Check.'
           : 'Pick the accidental, then tap the correct line or space on each staff (treble and bass).'}
       </p>
 
@@ -669,7 +669,7 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         color: feedback === null ? '#B0ACA4' : feedback.ok ? CORRECT : WRONG }}>
         {feedback !== null && feedback.ok && '✓ Correct'}
         {feedback !== null && !feedback.ok && (
-          <>Not quite — the correct key signature for <strong style={{ color: CORRECT }}>{KEY_SIGS[item].label}</strong>
+          <>Not quite · the correct key signature for <strong style={{ color: CORRECT }}>{KEY_SIGS[item].label}</strong>
           {' '}uses <strong style={{ color: CORRECT }}>{KEY_SIGS[item].accidentalName}</strong> on both staves.</>
         )}
       </p>
@@ -722,7 +722,7 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
     <div>
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>
-        Exercise 4 — Name the key of this piece
+        Exercise 4 · Name the key of this piece
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 

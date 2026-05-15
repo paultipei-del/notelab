@@ -22,8 +22,8 @@ const BRAVURA = 'Bravura, serif'
 const DARK    = '#1A1A18'
 const GREY    = '#7A7060'
 const ACCENT  = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG   = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG   = '#a0381c'
 const STROKE  = 1.3
 
 // SMuFL / Bravura codepoints
@@ -196,7 +196,7 @@ function Q1_NoteNames({ onDone }: { onDone: (correct: number, total: number) => 
 
   return (
     <div>
-      <SectionLabel>Question 1 — Name the note</SectionLabel>
+      <SectionLabel>Question 1 · Name the note</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -242,7 +242,7 @@ function Q9_CompleteScales({ onDone }: { onDone: (correct: number, total: number
     <CompleteScaleEx
       onDone={onDone}
       scales={Q9_SCALES}
-      title={'Question 9 — Add the correct ♯ or ♭ to make these Major scales'}
+      title={'Question 9 · Add the correct ♯ or ♭ to make these Major scales'}
     />
   )
 }
@@ -310,7 +310,7 @@ function Q10_KeySigNames({ onDone }: { onDone: (correct: number, total: number) 
 
   return (
     <div>
-      <SectionLabel>Question 10 — Check the correct name for each key signature</SectionLabel>
+      <SectionLabel>Question 10 · Check the correct name for each key signature</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -401,7 +401,7 @@ function Q11_NoteRestNames({ onDone }: { onDone: (correct: number, total: number
 
   return (
     <div>
-      <SectionLabel>Question 11 — Name each note or rest</SectionLabel>
+      <SectionLabel>Question 11 · Name each note or rest</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -472,7 +472,7 @@ function Q13_Terms({ onDone }: { onDone: (correct: number, total: number) => voi
 
   return (
     <div>
-      <SectionLabel>Question 13 — What does each term or symbol mean?</SectionLabel>
+      <SectionLabel>Question 13 · What does each term or symbol mean?</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -535,7 +535,7 @@ function Q14_BoxedParts({ onDone }: { onDone: (correct: number, total: number) =
 
   return (
     <div>
-      <SectionLabel>Question 14 — Name each boxed part of the grand staff</SectionLabel>
+      <SectionLabel>Question 14 · Name each boxed part of the grand staff</SectionLabel>
       <ProgressBar done={idx} total={total} />
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,

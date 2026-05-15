@@ -11,8 +11,8 @@ const DARK  = '#1A1A18'
 const GREY  = '#7A7060'
 const STROKE = 1.3
 
-const CORRECT_C = '#2A5C0A'
-const WRONG_C   = '#B5402A'
+const CORRECT_C = '#2d5a3e'
+const WRONG_C   = '#a0381c'
 const ACCENT_C  = '#BA7517'
 
 // ── Single-staff geometry (Parts 1 & 2) ───────────────────────────────────────
@@ -126,10 +126,10 @@ function GrandStaffBase() {
       <line x1={sR} y1={tTop_G} x2={sR} y2={barBot} stroke={DARK} strokeWidth={STROKE} />
       <text x={sL - 8} y={tTop_G + braceH} fontFamily="Bravura, serif" fontSize={braceH}
         fill={DARK} textAnchor="middle" dominantBaseline="auto">{'\uE000'}</text>
-      {/* Treble clef — anchor at G line = tTop_G + 6*step_G */}
+      {/* Treble clef · anchor at G line = tTop_G + 6*step_G */}
       <text x={sL + 4} y={tTop_G + 6 * step_G} fontFamily="Bravura, serif" fontSize={72}
         fill={DARK} dominantBaseline="auto">{'\uD834\uDD1E'}</text>
-      {/* Bass clef — anchor at F line = bTop_G + 2*step_G */}
+      {/* Bass clef · anchor at F line = bTop_G + 2*step_G */}
       <text x={sL + 4} y={bTop_G + 2 * step_G + 2} fontFamily="Bravura, serif" fontSize={78}
         fill={DARK} dominantBaseline="auto">{'\uD834\uDD22'}</text>
     </>
@@ -158,10 +158,10 @@ type ExType = 'name' | 'place'
 interface PhaseConfig { type: ExType; label: string; grand: boolean }
 
 const PHASES: PhaseConfig[] = [
-  { type: 'name',  label: 'Part 1 — Name the note',  grand: false },
-  { type: 'place', label: 'Part 2 — Place the note',  grand: false },
-  { type: 'name',  label: 'Part 3 — Name the note',  grand: true  },
-  { type: 'place', label: 'Part 4 — Place the note',  grand: true  },
+  { type: 'name',  label: 'Part 1 · Name the note',  grand: false },
+  { type: 'place', label: 'Part 2 · Place the note',  grand: false },
+  { type: 'name',  label: 'Part 3 · Name the note',  grand: true  },
+  { type: 'place', label: 'Part 4 · Place the note',  grand: true  },
 ]
 
 // ── Name exercise (single staff) ──────────────────────────────────────────────
@@ -216,7 +216,7 @@ function NameExercise({
       <ProgressBar done={idx} total={total} color={accentColor} />
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — name this note
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · name this note
       </p>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <StaffCard note={item.note} clef={item.clef} />
@@ -285,7 +285,7 @@ function NameExerciseGrand({
       <ProgressBar done={idx} total={total} color={accentColor} />
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        Grand staff — name this note
+        Grand staff · name this note
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -381,14 +381,14 @@ function PlaceExercise({
       <ProgressBar done={idx} total={total} color={accentColor} />
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} — place this note
+        {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · place this note
       </p>
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
         <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
           {item.answer}
         </span>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
-          <strong>{octaveLabel(item)}</strong> — tap the staff, then press Place to confirm
+          <strong>{octaveLabel(item)}</strong> · tap the staff, then press Place to confirm
         </p>
       </div>
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
@@ -534,14 +534,14 @@ function PlaceExerciseGrand({
       <ProgressBar done={idx} total={total} color={accentColor} />
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', letterSpacing: '0.1em',
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: '8px' }}>
-        Grand staff — place this note
+        Grand staff · place this note
       </p>
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
         <span style={{ fontFamily: SERIF, fontSize: 52, fontWeight: 300, color: DARK, lineHeight: 1 }}>
           {item.answer}
         </span>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
-          <strong>{octaveLabel(item)}</strong> — tap the staff, then press Place to confirm
+          <strong>{octaveLabel(item)}</strong> · tap the staff, then press Place to confirm
           {itemIsMiddleC && <span style={{ color: '#B0ACA4' }}> (either staff accepted)</span>}
         </p>
       </div>
@@ -603,8 +603,8 @@ function NameButtons({
           const isAnswer = name === answer
           let bg = 'white', border = '#D9CFAE', color = '#2A2318'
           if (feedback) {
-            if (isAnswer)      { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
-            else if (isChosen) { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
+            if (isAnswer)      { bg = 'var(--forest-soft)'; border = 'var(--forest)'; color = 'var(--forest)' }
+            else if (isChosen) { bg = 'var(--oxblood-tint)'; border = 'var(--oxblood)'; color = 'var(--oxblood)' }
           }
           return (
             <button key={name} onClick={() => onPick(name)} style={{
@@ -616,10 +616,10 @@ function NameButtons({
           )
         })}
       </div>
-      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060',
+      <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: 'var(--oxblood)',
         margin: 0, minHeight: '1.5em' }}>
         {feedback && !feedback.ok && (
-          <>Correct answer: <strong style={{ color: '#2A5C0A' }}>{answer}</strong></>
+          <>✗ Correct answer: <strong>{answer}</strong></>
         )}
       </p>
     </>
@@ -654,7 +654,7 @@ function TransitionCard({
       <p style={{ fontFamily: F, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
         color: '#B0ACA4', marginBottom: 8 }}>{completedLabel} complete</p>
       <p style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 300, color: DARK, marginBottom: 4 }}>
-        {correct} / {total} — {pct}%
+        {correct} / {total} · {pct}%
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 32 }}>
         {nextType === 'place'
@@ -662,7 +662,7 @@ function TransitionCard({
           : `Next: name each note on the ${nextGrand ? 'grand staff' : 'staff'}.`}
       </p>
       <button onClick={onNext} style={{
-        background: '#1A1A18', color: 'white', border: 'none', borderRadius: '10px',
+        background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
         padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
       }}>
         Start {nextLabel} →
@@ -688,10 +688,11 @@ function ResultsCard({
     <div style={{ textAlign: 'center', padding: '40px 0' }}>
       <div style={{
         width: '80px', height: '80px', borderRadius: '50%',
-        background: passed ? '#EAF3DE' : '#FDF3ED',
-        border: `2px solid ${passed ? '#C0DD97' : '#F0C4A8'}`,
+        background: passed ? 'var(--forest-soft)' : '#FDF3ED',
+        border: `2px solid ${passed ? 'rgba(45, 90, 62, 0.32)' : '#F0C4A8'}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         margin: '0 auto 20px', fontSize: '32px',
+        color: passed ? 'var(--forest)' : '#B5402A',
       }}>
         {passed ? '✓' : '→'}
       </div>
@@ -717,18 +718,18 @@ function ResultsCard({
       </div>
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#7A7060', marginBottom: '6px' }}>
-        {totalCorrect} / {total} — {pct}%
+        {totalCorrect} / {total} · {pct}%
       </p>
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', marginBottom: '28px' }}>
         {passed
           ? `Passing score: ${Math.round(passingScore * 100)}% ✓`
-          : `Passing score: ${Math.round(passingScore * 100)}% — practice more`}
+          : `Passing score: ${Math.round(passingScore * 100)}% · practice more`}
       </p>
 
       <button onClick={onRestart} style={{
-        background: passed ? 'transparent' : '#1A1A18',
-        color: passed ? '#7A7060' : 'white',
-        border: passed ? '1px solid #D9CFAE' : 'none',
+        background: passed ? 'transparent' : 'var(--oxblood)',
+        color: passed ? '#7A7060' : '#fff',
+        border: passed ? '1px solid #D9CFAE' : '1px solid var(--oxblood)',
         borderRadius: '10px',
         padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
       }}>

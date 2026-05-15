@@ -8,8 +8,8 @@ const SERIF = 'var(--font-cormorant), serif'
 const DARK = '#1A1A18'
 const GREY = '#7A7060'
 const ACCENT = '#BA7517'
-const CORRECT = '#2A6B1E'
-const WRONG = '#B5402A'
+const CORRECT = '#2d5a3e'
+const WRONG = '#a0381c'
 const SPACE_C = '#8B3A8B'
 const LINE_C  = '#2A5C9A'
 const STROKE  = 1.3
@@ -93,9 +93,9 @@ function LedgerLine({ cx, cy, color = DARK, hw = 14, sw = STROKE }: {
 function PrimaryBtn({ label, onClick, disabled = false }: { label: string; onClick: () => void; disabled?: boolean }) {
   return (
     <button onClick={onClick} disabled={disabled} style={{
-      background: disabled ? '#EDE8DF' : DARK,
-      color: disabled ? '#B0ACA4' : 'white',
-      border: 'none', borderRadius: 10,
+      background: disabled ? '#EDE8DF' : 'var(--oxblood)',
+      color: disabled ? '#B0ACA4' : '#fff',
+      border: disabled ? 'none' : '1px solid var(--oxblood)', borderRadius: 10,
       padding: '10px 24px', fontFamily: F, fontSize: 14,
       cursor: disabled ? 'default' : 'pointer',
     }}>{label}</button>
@@ -186,7 +186,7 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
         Space notes
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
-        The bass staff has <strong>six space notes</strong> — four inside the staff, plus one space
+        The bass staff has <strong>six space notes</strong> · four inside the staff, plus one space
         just below line 1 and one space just above line 5.
         Every space note spells part of <strong style={{ color: SPACE_C }}>F A C E G B</strong>.
       </p>
@@ -233,10 +233,10 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
           F A C E G B
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px' }}>
-          "Fat Alligators Can Eat Giant Bugs" — all six space notes, bottom to top
+          "Fat Alligators Can Eat Giant Bugs" · all six space notes, bottom to top
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0 }}>
-          The four inner spaces spell <strong style={{ color: SPACE_C }}>ACEG</strong> — "All Cows Eat Grass"
+          The four inner spaces spell <strong style={{ color: SPACE_C }}>ACEG</strong> · "All Cows Eat Grass"
         </p>
       </div>
 
@@ -259,8 +259,8 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
         Line notes
       </p>
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, marginBottom: 20, lineHeight: 1.7 }}>
-        Five lines, five line notes — <strong style={{ color: LINE_C }}>G B D F A</strong> from bottom to top.
-        Add E2 below on a ledger line and Middle C above on another — seven line notes in all.
+        Five lines, five line notes · <strong style={{ color: LINE_C }}>G B D F A</strong> from bottom to top.
+        Add E2 below on a ledger line and Middle C above on another · seven line notes in all.
       </p>
 
       <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '12px 0 16px', marginBottom: 20 }}>
@@ -301,7 +301,7 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
           Watch out: E2 and Middle C
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0, lineHeight: 1.6 }}>
-          Both sit on a ledger line — E2 below the staff, Middle C above. Middle C is the same pitch as the C on a ledger line below the treble staff.
+          Both sit on a ledger line · E2 below the staff, Middle C above. Middle C is the same pitch as the C on a ledger line below the treble staff.
         </p>
       </div>
 
@@ -314,10 +314,10 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
           E G B D F A C
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '0 0 8px' }}>
-          "Every Good Boy Deserves Fudge And Candy" — all 7 line notes, bottom to top
+          "Every Good Boy Deserves Fudge And Candy" · all 7 line notes, bottom to top
         </p>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: 0 }}>
-          The five staff lines spell <strong style={{ color: LINE_C }}>G B D F A</strong> — "Good Boys Do Fine Always"
+          The five staff lines spell <strong style={{ color: LINE_C }}>G B D F A</strong> · "Good Boys Do Fine Always"
         </p>
       </div>
 
@@ -515,8 +515,8 @@ function PlaceNoteEx({
 
       <p style={{ fontFamily: F, fontSize: 11, color: '#B0ACA4', marginBottom: 8, fontStyle: 'italic' }}>
         {spaceOnly
-          ? 'Focusing on space notes — click anywhere on the staff.'
-          : 'Focusing on line notes — click anywhere on the staff.'}
+          ? 'Focusing on space notes · click anywhere on the staff.'
+          : 'Focusing on line notes · click anywhere on the staff.'}
       </p>
 
       <div style={{ textAlign: 'center', marginBottom: 12 }}>
@@ -524,7 +524,7 @@ function PlaceNoteEx({
           {item.letter}
         </span>
         <p style={{ fontFamily: F, fontSize: 13, color: GREY, margin: '4px 0 0' }}>
-          <strong>{octaveLabel(item.pos)}</strong> — place <strong>{item.name}</strong> on the staff
+          <strong>{octaveLabel(item.pos)}</strong> · place <strong>{item.name}</strong> on the staff
         </p>
       </div>
 
@@ -727,7 +727,7 @@ function WordRound({
         }}>Submit</button>
       </div>
 
-      {/* Letter pad — tap to append, backspace to remove. Useful on mobile. */}
+      {/* Letter pad · tap to append, backspace to remove. Useful on mobile. */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 6,
         maxWidth: 440, margin: '0 auto 16px' }}>
         {NOTE_LETTERS.map(letter => (
@@ -866,23 +866,23 @@ export default function BassClefLesson({ passingScore, previouslyCompleted = fal
       {phase === 'space-intro' && <SpaceNotesIntro key={key} onNext={next} />}
       {phase === 'ex1' && (
         <NameNoteEx key={key} pool={SPACE_NOTE_POOL} total={18}
-          label="Exercise 1 — Name the space note" color={SPACE_C}
+          label="Exercise 1 · Name the space note" color={SPACE_C}
           onDone={scored} />
       )}
       {phase === 'ex2' && (
         <PlaceNoteEx key={key} pool={SPACE_NOTE_POOL} total={12}
-          label="Exercise 2 — Place the space note" color={SPACE_C} spaceOnly
+          label="Exercise 2 · Place the space note" color={SPACE_C} spaceOnly
           onDone={scored} />
       )}
       {phase === 'line-intro' && <LineNotesIntro key={key} onNext={next} />}
       {phase === 'ex3' && (
         <NameNoteEx key={key} pool={LINE_NOTE_POOL} total={18}
-          label="Exercise 3 — Name the line note" color={LINE_C}
+          label="Exercise 3 · Name the line note" color={LINE_C}
           onDone={scored} />
       )}
       {phase === 'ex4' && (
         <PlaceNoteEx key={key} pool={LINE_NOTE_POOL} total={12}
-          label="Exercise 4 — Place the line note" color={LINE_C} spaceOnly={false}
+          label="Exercise 4 · Place the line note" color={LINE_C} spaceOnly={false}
           onDone={scored} />
       )}
       {phase === 'word-game' && <WordGame key={key} onDone={scored} />}
