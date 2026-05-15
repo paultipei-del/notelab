@@ -40,7 +40,7 @@ export const CM_LEVELS: CMLevel[] = [
     tier: 'elementary',
     price: 29,
     topicKeywords: 'signs & terms · note reading · five-finger · basic chords',
-    whoFor: 'For first-time CM students. No prior theory experience required.',
+    whoFor: 'For students new to Certificate of Merit® theory exam preparation. No prior theory experience required.',
     topics: [
       { name: 'Signs & Terms', blurb: 'Essential dynamic, tempo, and articulation markings.' },
       { name: 'Note Reading', blurb: 'Treble and bass clef within the staff.' },
@@ -59,7 +59,7 @@ export const CM_LEVELS: CMLevel[] = [
     topics: [
       { name: 'Signs & Terms', blurb: 'Expanding the basic terminology set.' },
       { name: 'Intervals', blurb: 'Recognizing melodic and harmonic 2nds through 5ths.' },
-      { name: 'Scales', blurb: 'C, G, F major — scale degrees and spelling.' },
+      { name: 'Scales', blurb: 'C, G, F major: scale degrees and spelling.' },
       { name: 'Rhythm', blurb: 'Simple meters in 2/4, 3/4, 4/4.' },
       { name: 'Ear Training', blurb: 'Hearing major vs. minor triads by ear.' },
     ],
@@ -71,7 +71,7 @@ export const CM_LEVELS: CMLevel[] = [
     tier: 'elementary',
     price: 29,
     topicKeywords: 'cadences · minor scales · new keys · sequences',
-    whoFor: 'Builds on Level 1 — adds cadences, minor scales, and more keys.',
+    whoFor: 'Builds on Level 1: adds cadences, minor scales, and more keys.',
     topics: [
       { name: 'Cadences', blurb: 'Authentic and plagal cadences.' },
       { name: 'Minor Scales', blurb: 'A natural minor and its relative major.' },
@@ -160,9 +160,9 @@ export const CM_LEVELS: CMLevel[] = [
     tier: 'advanced',
     price: 29,
     topicKeywords: 'seven modes · secondary dominants · pivot chords · polyphony',
-    whoFor: 'Advanced harmonic analysis — secondary dominants and modulation by pivot.',
+    whoFor: 'Advanced harmonic analysis: secondary dominants and modulation by pivot.',
     topics: [
-      { name: 'Modes', blurb: 'Deeper mode work — transposition and identification.' },
+      { name: 'Modes', blurb: 'Deeper mode work: transposition and identification.' },
       { name: 'Secondary Dominants', blurb: 'V/V, V/vi, V/IV and resolutions.' },
       { name: 'Pivot Chords', blurb: 'Common-chord modulation technique.' },
       { name: 'Polyphonic Texture', blurb: 'Reading multiple independent voices.' },
@@ -180,7 +180,7 @@ export const CM_LEVELS: CMLevel[] = [
       { name: 'Baroque Suite', blurb: 'Allemande, courante, sarabande, gigue.' },
       { name: 'Fugue', blurb: 'Subject, answer, countersubject, stretto.' },
       { name: '7th Chords', blurb: 'All five qualities and their contexts.' },
-      { name: 'Impressionism', blurb: 'Debussy, Ravel — harmonic and textural features.' },
+      { name: 'Impressionism', blurb: 'Debussy, Ravel: harmonic and textural features.' },
     ],
   },
   {
@@ -190,7 +190,7 @@ export const CM_LEVELS: CMLevel[] = [
     tier: 'advanced',
     price: 29,
     topicKeywords: 'fugue analysis · non-harmonic tones · serialism · composition',
-    whoFor: 'The capstone level — fugue analysis and 20th-century techniques.',
+    whoFor: 'The capstone level: fugue analysis and 20th-century techniques.',
     topics: [
       { name: 'Fugue Analysis', blurb: 'Complete fugue structural analysis.' },
       { name: 'Non-Harmonic Tones', blurb: 'Passing, neighbor, suspension, appoggiatura, and more.' },
@@ -280,9 +280,9 @@ export const TIER_LABEL: Record<CMTier, string> = {
 }
 export const TIER_DESCRIPTION: Record<CMTier, string> = {
   elementary:
-    'Foundation levels for first-time CM students and early musicians. Basic notation, rhythm, and simple keys.',
+    'Foundation levels for first-time exam candidates and early musicians. Basic notation, rhythm, and simple keys.',
   intermediate:
-    'Expanding theory — major and minor keys, intervals, triads, and introductory analysis. For students with a year or more of foundational training.',
+    'Expanding theory: major and minor keys, intervals, triads, and introductory analysis. For students with a year or more of foundational training.',
   advanced:
     'Sophisticated harmonic analysis, advanced aural skills, and historical period identification. For upper-intermediate through exam-ready students.',
 }

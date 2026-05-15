@@ -20,42 +20,51 @@ export default function SiteFooter() {
       background: 'transparent',
       borderTop: 'none',
       padding: '20px 24px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      flexWrap: 'wrap' as const,
-      gap: '12px',
     }}>
-      <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)' }}>
-        © {new Date().getFullYear()} NoteLab
-      </span>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap' as const,
+        gap: '12px',
+      }}>
+        <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)' }}>
+          © {new Date().getFullYear()} NoteLab
+        </span>
 
-      <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-        <Link href="/pricing" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
-          >
-            Pricing
-          </span>
-        </Link>
-        <Link href="/feedback" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
-          >
-            Feedback
-          </span>
-        </Link>
-        <Link href="/privacy" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
-          >
-            Privacy Policy
-          </span>
-        </Link>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+          <Link href="/pricing" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
+            >
+              Pricing
+            </span>
+          </Link>
+          <Link href="/feedback" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
+            >
+              Feedback
+            </span>
+          </Link>
+          <Link href="/privacy" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: F, fontSize: 12, letterSpacing: '0.04em', fontWeight: 400, color: 'rgba(42,35,24,0.55)', cursor: 'pointer', transition: 'color 150ms ease' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.9)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(42,35,24,0.55)')}
+            >
+              Privacy Policy
+            </span>
+          </Link>
+        </div>
       </div>
+      <p style={{
+        fontFamily: F, fontSize: 11, fontWeight: 400, color: 'rgba(42,35,24,0.45)',
+        lineHeight: 1.5, margin: '14px 0 0', maxWidth: 720,
+      }}>
+        NoteLab is an independent study tool. Not affiliated with, endorsed by, or sponsored by the Music Teachers&apos; Association of California® or its Certificate of Merit® program. Certificate of Merit® and MTAC® are registered trademarks of the Music Teachers&apos; Association of California, Inc.
+      </p>
     </footer>
   )
 }

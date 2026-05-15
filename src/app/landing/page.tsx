@@ -158,7 +158,7 @@ export default function LandingPage() {
               maxWidth: '480px',
             }}
           >
-            A comprehensive reference library, curriculum-aligned programs, spaced-repetition flashcards, and real-time ear training — built for Certificate of Merit students, college music majors, and anyone who wants to understand music deeply.
+            A comprehensive reference library, curriculum-aligned programs, spaced-repetition flashcards, and real-time ear training, built for students preparing for the Certificate of Merit® exam, college music majors, and anyone who wants to understand music deeply.
           </p>
           <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
@@ -335,9 +335,9 @@ export default function LandingPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
             <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #D9CFAE', borderRadius: '16px', background: '#ECE3CC' }}>
-              <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Certificate of Merit students</h3>
+              <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Certificate of Merit® exam prep</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
-                Every level, every topic on the syllabus. Theory, terms, rhythm, aural skills — aligned to MTAC’s Level 1 through 10 requirements.
+                Every level, every topic on the syllabus. Theory, terms, rhythm, aural skills, covering the scope of the Certificate of Merit® theory exam, Preparatory through Level 10.
               </p>
             </ScrollReveal>
             <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #D9CFAE', borderRadius: '16px', background: '#ECE3CC' }}>
@@ -533,31 +533,40 @@ export default function LandingPage() {
           maxWidth: '1100px',
           margin: '0 auto',
           padding: 'clamp(24px,4vw,48px)',
+        }}
+      >
+        <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '12px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <img src="/logo-dark.png" alt="NoteLab" style={{ height: '24px', width: 'auto', display: 'block' }} />
-          <span style={{ fontFamily: F, fontSize: '15px', fontWeight: 400, letterSpacing: '0.08em', color: '#2A2318' }}>
-            Note<span style={{ fontWeight: 500 }}>Lab</span>
-          </span>
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img src="/logo-dark.png" alt="NoteLab" style={{ height: '24px', width: 'auto', display: 'block' }} />
+            <span style={{ fontFamily: F, fontSize: '15px', fontWeight: 400, letterSpacing: '0.08em', color: '#2A2318' }}>
+              Note<span style={{ fontWeight: 500 }}>Lab</span>
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <Link href="/pricing" style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>
+              Pricing
+            </Link>
+            <Link href="/feedback" style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>
+              Feedback
+            </Link>
+            <Link href="/privacy" style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>
+              Privacy Policy
+            </Link>
+            <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#B8B5AD' }}>© {new Date().getFullYear()}</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          <Link href="/pricing" style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>
-            Pricing
-          </Link>
-          <Link href="/feedback" style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>
-            Feedback
-          </Link>
-          <Link href="/privacy" style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#7A7060', textDecoration: 'none' }}>
-            Privacy Policy
-          </Link>
-          <span style={{ fontFamily: F, fontSize: '13px', fontWeight: 400, color: '#B8B5AD' }}>© {new Date().getFullYear()}</span>
-        </div>
+        <p style={{
+          fontFamily: F, fontSize: '11px', fontWeight: 400, color: '#8A8378',
+          lineHeight: 1.5, margin: '24px 0 0', maxWidth: '720px',
+        }}>
+          NoteLab is an independent study tool. Not affiliated with, endorsed by, or sponsored by the Music Teachers&apos; Association of California® or its Certificate of Merit® program. Certificate of Merit® and MTAC® are registered trademarks of the Music Teachers&apos; Association of California, Inc.
+        </p>
       </footer>
 
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} onSuccess={() => { setShowAuth(false); window.location.href = '/' }} />}

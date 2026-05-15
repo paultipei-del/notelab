@@ -116,7 +116,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
   {
     kind: 'program',
     id: 'cm',
-    title: 'Certificate of Merit',
+    title: 'Certificate of Merit® exam prep',
     href: '/programs/cm',
     category: 'theory',
     typeTag: 'Curriculum',
@@ -125,7 +125,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
     priceFrom: '$29',
     priceFull: '$199',
     pitch:
-      'Complete theory exam preparation from Preparatory through Advanced. Covers signs & terms, scales, intervals, chords, history, and ear training, aligned to the May 2026 MTAC exam.',
+      'Complete theory exam preparation from Preparatory through Advanced. Covers signs and terms, scales, intervals, chords, history, and ear training, aligned to the May 2026 Certificate of Merit® theory exam.',
     includes: '11 levels · 168 decks · ~6 mo to complete',
     features: [
       'Signs, terms, intervals, scales, chords across all 11 CM levels',
@@ -133,7 +133,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
       'Per-level progress tracking and exam-style mixed quizzes',
     ],
     author:
-      'Built by <b>Paul Voia-Tipei</b>, for the students who actually have to play the exam.',
+      'Built by <b>Paul Voia-Tipei</b>, for the students who actually have to play the exam. An independent project, not an MTAC publication.',
     previewLabel: "What's inside · Pre-Level 1",
     preview: CM_PREP_PREVIEW,
     previewMoreHref: '/programs/cm/prep',

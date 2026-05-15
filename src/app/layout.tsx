@@ -45,7 +45,7 @@ export const viewport: Viewport = {
 // metadata needed.
 export const metadata: Metadata = {
   title: 'NoteLab',
-  description: 'Music theory flashcards for CM students and musicians',
+  description: 'Music theory flashcards, ear training, and curriculum-aligned programs for piano students, college music majors, and serious adult learners.',
   appleWebApp: {
     capable: true,
     title: 'NoteLab',
