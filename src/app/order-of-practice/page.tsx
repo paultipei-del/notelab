@@ -16,6 +16,16 @@ const PATTERN_OPTIONS: { id: PatternId; label: string }[] = [
   { id: 'fifths',      label: '5ths'       },
 ]
 
+const PATTERN_CALLOUTS: Record<PatternId, string> = {
+  chromatic:   'Twelve keys, ascending by half-step. The most exhaustive cycle.',
+  'whole-tone': 'Six keys per cycle, ascending by whole step. Two cycles cover all twelve.',
+  'minor-3rds': 'Four keys per cycle, ascending by minor third. Three cycles cover all twelve.',
+  'major-3rds': 'Three keys per cycle, ascending by major third. Four cycles cover all twelve.',
+  fourths:     'Twelve keys, ascending by perfect fourth. Equivalent to descending by fifth.',
+  tritone:     'Two keys per cycle, separated by the tritone. Six cycles cover all twelve.',
+  fifths:      'Twelve keys, ascending by perfect fifth. Equivalent to descending by fourth.',
+}
+
 const START_NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
 
 const SHARP_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
@@ -196,7 +206,7 @@ export default function OrderOfPracticePage() {
 
   const patternLabel = PATTERN_OPTIONS.find(p => p.id === pattern)?.label ?? ''
   const stepCount = cycle.length - 1
-  const arrow = direction === 'forward' ? '→' : '←'
+  const calloutCopy = PATTERN_CALLOUTS[pattern]
 
   return (
     <div className="nl-order-of-practice-page">
@@ -307,22 +317,17 @@ export default function OrderOfPracticePage() {
               ))}
             </select>
           </label>
-          <label className="nl-order-of-practice-summary__row">
+          <button
+            type="button"
+            className="nl-order-of-practice-summary__row nl-order-of-practice-summary__row--toggle"
+            onClick={() => setDirection(direction === 'forward' ? 'reverse' : 'forward')}
+            aria-label={`Direction: ${direction === 'forward' ? 'Forward' : 'Reverse'}. Tap to switch.`}
+          >
             <span className="nl-order-of-practice-summary__label">Direction</span>
             <span className="nl-order-of-practice-summary__value">
               {direction === 'forward' ? '↑ Forward' : '↓ Reverse'}
-              <span className="nl-order-of-practice-summary__chev" aria-hidden>▾</span>
             </span>
-            <select
-              className="nl-order-of-practice-summary__native"
-              value={direction}
-              onChange={e => setDirection(e.target.value as 'forward' | 'reverse')}
-              aria-label="Direction"
-            >
-              <option value="forward">↑ Forward</option>
-              <option value="reverse">↓ Reverse</option>
-            </select>
-          </label>
+          </button>
         </div>
 
         {/* Desktop horizontal sequence */}
@@ -331,16 +336,20 @@ export default function OrderOfPracticePage() {
             const isAnchor = i === 0 || i === displayed.length - 1
             return (
               <React.Fragment key={`${note}-${i}`}>
-                <span className={'nl-order-of-practice-sequence__note' + (isAnchor ? ' is-anchor' : '')}>
-                  {renderNote(note)}
+                <span className="nl-order-of-practice-sequence__cell">
+                  <span className={'nl-order-of-practice-sequence__note' + (isAnchor ? ' is-anchor' : '')}>
+                    {renderNote(note)}
+                  </span>
                 </span>
                 {i < displayed.length - 1 && (
-                  <span className="nl-order-of-practice-sequence__sep" aria-hidden>{arrow}</span>
+                  <span className="nl-order-of-practice-sequence__sep" aria-hidden>→</span>
                 )}
               </React.Fragment>
             )
           })}
         </div>
+
+        <p className="nl-order-of-practice-callout">{calloutCopy}</p>
 
         {/* Mobile vertical numbered list */}
         <section className="nl-order-of-practice-vlist" aria-label="Practice sequence">
@@ -367,6 +376,8 @@ export default function OrderOfPracticePage() {
             })}
           </ol>
         </section>
+
+        <p className="nl-order-of-practice-callout nl-order-of-practice-callout--mobile">{calloutCopy}</p>
       </div>
     </div>
   )
