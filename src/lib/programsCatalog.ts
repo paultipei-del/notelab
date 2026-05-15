@@ -133,7 +133,7 @@ export const PROGRAMS_CATALOG: ProgramCatalogEntry[] = [
       'Per-level progress tracking and exam-style mixed quizzes',
     ],
     author:
-      'Built by <b>Paul Voiatipei</b>, founder of PVT Studio — a working CM teacher with students placing in the program every year.',
+      'Built by <b>Paul Voia-Tipei</b>, for the students who actually have to play the exam.',
     previewLabel: "What's inside · Pre-Level 1",
     preview: CM_PREP_PREVIEW,
     previewMoreHref: '/programs/cm/prep',
