@@ -2724,9 +2724,9 @@ body:has(.nl-study-viewport) {
   .nl-order-of-practice-hero__sub { font-size: 14px; }
 
   .nl-order-of-practice-hero { margin-bottom: 18px; }
-  .nl-order-of-practice-hero__title { font-size: 26px; margin: 0 0 6px; }
+  .nl-order-of-practice-hero__title { font-size: 30px; margin: 0 0 6px; }
   .nl-order-of-practice-hero__title em { font-style: normal; }
-  .nl-order-of-practice-hero__sub { font-size: 13px; max-width: 320px; font-style: normal; }
+  .nl-order-of-practice-hero__sub { font-size: 15px; max-width: 360px; font-style: normal; }
   .nl-order-of-practice-vseq__title em { font-style: normal; }
   .nl-order-of-practice-callout--mobile { font-style: normal; }
 
@@ -2735,7 +2735,7 @@ body:has(.nl-study-viewport) {
   .nl-order-of-practice-callout { display: none; }
   .nl-order-of-practice-callout--mobile {
     display: block;
-    font-size: 13px;
+    font-size: 15px;
     margin-top: 14px;
     padding: 0 12px;
   }
@@ -2761,7 +2761,7 @@ body:has(.nl-study-viewport) {
   }
   .nl-order-of-practice-controls__label {
     font-family: var(--font-jost), system-ui, sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -2780,14 +2780,14 @@ body:has(.nl-study-viewport) {
     position: relative;
   }
   .nl-order-of-practice-stepper__btn {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: transparent;
     border: 1px solid var(--brown-faint);
     color: var(--brown);
     font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1;
     cursor: pointer;
     display: inline-flex;
@@ -2805,10 +2805,10 @@ body:has(.nl-study-viewport) {
     color: #fff;
     border: none;
     border-radius: 100px;
-    padding: 4px 14px;
+    padding: 5px 16px;
     font-family: var(--font-cormorant), serif;
-    font-size: 15px;
-    min-width: 50px;
+    font-size: 17px;
+    min-width: 56px;
     text-align: center;
     cursor: pointer;
     display: inline-flex;
@@ -2879,18 +2879,18 @@ body:has(.nl-study-viewport) {
   }
   .nl-order-of-practice-popover__patterns-list .nl-order-of-practice-popover__option {
     text-align: left;
-    padding: 7px 12px;
+    padding: 8px 14px;
     font-family: var(--font-jost), system-ui, sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.09em;
     border-radius: 6px;
   }
   .nl-order-of-practice-popover__notes-grid .nl-order-of-practice-popover__option {
     text-align: center;
-    padding: 6px 0;
+    padding: 7px 0;
     font-family: var(--font-cormorant), serif;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--ink);
     border-radius: 6px;
   }
@@ -2905,21 +2905,21 @@ body:has(.nl-study-viewport) {
 
   /* Mobile direction toggle compacts */
   .nl-order-of-practice-direction--mobile .nl-order-of-practice-direction__pill {
-    width: 80px;
-    height: 22px;
+    width: 88px;
+    height: 24px;
     top: 2px;
     left: 2px;
   }
   .nl-order-of-practice-direction--mobile[data-direction="reverse"] .nl-order-of-practice-direction__pill {
-    left: 82px;
+    left: 90px;
   }
   .nl-order-of-practice-direction--mobile {
     padding: 2px;
   }
   .nl-order-of-practice-direction--mobile .nl-order-of-practice-direction__btn {
-    width: 80px;
-    padding: 3px 12px;
-    font-size: 10px;
+    width: 88px;
+    padding: 4px 12px;
+    font-size: 11px;
   }
 
   /* Wrapped-horizontal sequence */
@@ -2941,7 +2941,7 @@ body:has(.nl-study-viewport) {
   }
   .nl-order-of-practice-vseq__title {
     font-family: var(--font-cormorant), serif;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 400;
     color: var(--ink);
     margin: 0;
@@ -2953,7 +2953,7 @@ body:has(.nl-study-viewport) {
   }
   .nl-order-of-practice-vseq__meta {
     font-family: var(--font-jost), system-ui, sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     color: var(--brown-muted);
     margin: 0;
     text-transform: lowercase;
@@ -2965,7 +2965,7 @@ body:has(.nl-study-viewport) {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    row-gap: 6px;
+    row-gap: 8px;
     column-gap: 4px;
     padding: 4px 0;
   }
@@ -2973,10 +2973,10 @@ body:has(.nl-study-viewport) {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    min-width: 36px;
-    height: 38px;
+    min-width: 40px;
+    height: 42px;
     font-family: var(--font-cormorant), serif;
-    font-size: 26px;
+    font-size: 30px;
     font-weight: 400;
     color: var(--ink);
     line-height: 1;
@@ -2984,7 +2984,7 @@ body:has(.nl-study-viewport) {
   .nl-order-of-practice-vseq__cell.is-anchor { color: var(--oxblood); }
   .nl-order-of-practice-vseq__sep {
     font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--brown-muted);
     padding: 0 1px;
   }
