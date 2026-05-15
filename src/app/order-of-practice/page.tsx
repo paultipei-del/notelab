@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 
 // ── Pattern data ─────────────────────────────────────────────────────────────
@@ -18,11 +18,11 @@ const PATTERN_OPTIONS: { id: PatternId; label: string }[] = [
 
 const PATTERN_CALLOUTS: Record<PatternId, string> = {
   chromatic:   'Twelve keys, ascending by half-step. The most exhaustive cycle.',
-  'whole-tone': 'Six keys per cycle, ascending by whole step. Two cycles cover all twelve.',
-  'minor-3rds': 'Four keys per cycle, ascending by minor third. Three cycles cover all twelve.',
-  'major-3rds': 'Three keys per cycle, ascending by major third. Four cycles cover all twelve.',
+  'whole-tone': 'Six keys per loop, ascending by whole step. Two non-overlapping loops cover all twelve.',
+  'minor-3rds': 'Four keys per loop, ascending by minor third. Three non-overlapping loops cover all twelve.',
+  'major-3rds': 'Three keys per loop, ascending by major third. Four non-overlapping loops cover all twelve.',
   fourths:     'Twelve keys, ascending by perfect fourth. Equivalent to descending by fifth.',
-  tritone:     'Two keys per cycle, separated by the tritone. Six cycles cover all twelve.',
+  tritone:     'Two keys per loop, separated by six half-steps. Six non-overlapping loops cover all twelve.',
   fifths:      'Twelve keys, ascending by perfect fifth. Equivalent to descending by fourth.',
 }
 
@@ -200,13 +200,48 @@ export default function OrderOfPracticePage() {
   const [pattern, setPattern] = useState<PatternId>('chromatic')
   const [start, setStart] = useState<string>('C')
   const [direction, setDirection] = useState<'forward' | 'reverse'>('forward')
+  const [openPopover, setOpenPopover] = useState<null | 'pattern' | 'start'>(null)
+  const controlsRef = useRef<HTMLDivElement | null>(null)
+
+  // Click-outside / Escape dismissal for popovers
+  useEffect(() => {
+    if (!openPopover) return
+    function onDocPointer(e: MouseEvent | TouchEvent) {
+      const target = e.target as Node | null
+      if (controlsRef.current && target && !controlsRef.current.contains(target)) {
+        setOpenPopover(null)
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpenPopover(null)
+    }
+    document.addEventListener('mousedown', onDocPointer)
+    document.addEventListener('touchstart', onDocPointer)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDocPointer)
+      document.removeEventListener('touchstart', onDocPointer)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [openPopover])
 
   const cycle = useMemo(() => generateCycle(pattern, start), [pattern, start])
   const displayed = useMemo(() => (direction === 'reverse' ? [...cycle].reverse() : cycle), [cycle, direction])
 
   const patternLabel = PATTERN_OPTIONS.find(p => p.id === pattern)?.label ?? ''
+  const patternIdx = PATTERN_OPTIONS.findIndex(p => p.id === pattern)
+  const startIdx = START_NOTES.indexOf(start)
   const stepCount = cycle.length - 1
   const calloutCopy = PATTERN_CALLOUTS[pattern]
+
+  function stepPattern(delta: 1 | -1) {
+    const next = (patternIdx + delta + PATTERN_OPTIONS.length) % PATTERN_OPTIONS.length
+    setPattern(PATTERN_OPTIONS[next].id)
+  }
+  function stepStart(delta: 1 | -1) {
+    const next = (startIdx + delta + START_NOTES.length) % START_NOTES.length
+    setStart(START_NOTES[next])
+  }
 
   return (
     <div className="nl-order-of-practice-page">
@@ -281,53 +316,135 @@ export default function OrderOfPracticePage() {
           </div>
         </div>
 
-        {/* Mobile summary card */}
-        <div className="nl-order-of-practice-summary">
-          <label className="nl-order-of-practice-summary__row">
-            <span className="nl-order-of-practice-summary__label">Pattern</span>
-            <span className="nl-order-of-practice-summary__value">
-              {patternLabel}
-              <span className="nl-order-of-practice-summary__chev" aria-hidden>▾</span>
-            </span>
-            <select
-              className="nl-order-of-practice-summary__native"
-              value={pattern}
-              onChange={e => setPattern(e.target.value as PatternId)}
-              aria-label="Pattern"
+        {/* Mobile stacked controls */}
+        <div className="nl-order-of-practice-controls" ref={controlsRef}>
+          <div className="nl-order-of-practice-controls__row">
+            <span className="nl-order-of-practice-controls__label">Pattern</span>
+            <div className="nl-order-of-practice-stepper">
+              <button
+                type="button"
+                className="nl-order-of-practice-stepper__btn"
+                onClick={() => stepPattern(-1)}
+                aria-label="Previous pattern"
+              >−</button>
+              <button
+                type="button"
+                className="nl-order-of-practice-stepper__value is-wide"
+                onClick={() => setOpenPopover(openPopover === 'pattern' ? null : 'pattern')}
+                aria-haspopup="listbox"
+                aria-expanded={openPopover === 'pattern'}
+              >
+                {patternLabel}
+                <span className="nl-order-of-practice-stepper__chev" aria-hidden>▾</span>
+              </button>
+              <button
+                type="button"
+                className="nl-order-of-practice-stepper__btn"
+                onClick={() => stepPattern(1)}
+                aria-label="Next pattern"
+              >+</button>
+              {openPopover === 'pattern' && (
+                <div className="nl-order-of-practice-popover" role="listbox">
+                  <div className="nl-order-of-practice-popover__patterns-list">
+                    {PATTERN_OPTIONS.map(p => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        role="option"
+                        aria-selected={pattern === p.id}
+                        className={'nl-order-of-practice-popover__option' + (pattern === p.id ? ' is-active' : '')}
+                        onClick={() => {
+                          setPattern(p.id)
+                          setOpenPopover(null)
+                        }}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="nl-order-of-practice-controls__row">
+            <span className="nl-order-of-practice-controls__label">Start</span>
+            <div className="nl-order-of-practice-stepper">
+              <button
+                type="button"
+                className="nl-order-of-practice-stepper__btn"
+                onClick={() => stepStart(-1)}
+                aria-label="Previous starting note"
+              >−</button>
+              <button
+                type="button"
+                className="nl-order-of-practice-stepper__value"
+                onClick={() => setOpenPopover(openPopover === 'start' ? null : 'start')}
+                aria-haspopup="listbox"
+                aria-expanded={openPopover === 'start'}
+              >
+                {renderNote(start)}
+                <span className="nl-order-of-practice-stepper__chev" aria-hidden>▾</span>
+              </button>
+              <button
+                type="button"
+                className="nl-order-of-practice-stepper__btn"
+                onClick={() => stepStart(1)}
+                aria-label="Next starting note"
+              >+</button>
+              {openPopover === 'start' && (
+                <div className="nl-order-of-practice-popover nl-order-of-practice-popover--notes" role="listbox">
+                  <div className="nl-order-of-practice-popover__notes-grid">
+                    {START_NOTES.map(n => (
+                      <button
+                        key={n}
+                        type="button"
+                        role="option"
+                        aria-selected={start === n}
+                        className={'nl-order-of-practice-popover__option' + (start === n ? ' is-active' : '')}
+                        onClick={() => {
+                          setStart(n)
+                          setOpenPopover(null)
+                        }}
+                      >
+                        {renderNote(n)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="nl-order-of-practice-controls__row">
+            <span className="nl-order-of-practice-controls__label">Direction</span>
+            <div
+              className="nl-order-of-practice-direction nl-order-of-practice-direction--mobile"
+              role="group"
+              aria-label="Direction"
+              data-direction={direction}
             >
-              {PATTERN_OPTIONS.map(p => (
-                <option key={p.id} value={p.id}>{p.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="nl-order-of-practice-summary__row">
-            <span className="nl-order-of-practice-summary__label">Starting note</span>
-            <span className="nl-order-of-practice-summary__value">
-              {start}
-              <span className="nl-order-of-practice-summary__chev" aria-hidden>▾</span>
-            </span>
-            <select
-              className="nl-order-of-practice-summary__native"
-              value={start}
-              onChange={e => setStart(e.target.value)}
-              aria-label="Starting note"
-            >
-              {START_NOTES.map(n => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="button"
-            className="nl-order-of-practice-summary__row nl-order-of-practice-summary__row--toggle"
-            onClick={() => setDirection(direction === 'forward' ? 'reverse' : 'forward')}
-            aria-label={`Direction: ${direction === 'forward' ? 'Forward' : 'Reverse'}. Tap to switch.`}
-          >
-            <span className="nl-order-of-practice-summary__label">Direction</span>
-            <span className="nl-order-of-practice-summary__value">
-              {direction === 'forward' ? '↑ Forward' : '↓ Reverse'}
-            </span>
-          </button>
+              <span className="nl-order-of-practice-direction__pill" aria-hidden />
+              <button
+                type="button"
+                className={'nl-order-of-practice-direction__btn' + (direction === 'forward' ? ' is-active' : '')}
+                aria-pressed={direction === 'forward'}
+                onClick={() => setDirection('forward')}
+              >
+                <span className="nl-order-of-practice-direction__arrow" aria-hidden>↑</span>
+                Forward
+              </button>
+              <button
+                type="button"
+                className={'nl-order-of-practice-direction__btn' + (direction === 'reverse' ? ' is-active' : '')}
+                aria-pressed={direction === 'reverse'}
+                onClick={() => setDirection('reverse')}
+              >
+                <span className="nl-order-of-practice-direction__arrow" aria-hidden>↓</span>
+                Reverse
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Desktop horizontal sequence */}
@@ -351,30 +468,31 @@ export default function OrderOfPracticePage() {
 
         <p className="nl-order-of-practice-callout">{calloutCopy}</p>
 
-        {/* Mobile vertical numbered list */}
-        <section className="nl-order-of-practice-vlist" aria-label="Practice sequence">
-          <header className="nl-order-of-practice-vlist__head">
-            <h2 className="nl-order-of-practice-vlist__title">
+        {/* Mobile wrapped-horizontal sequence */}
+        <section className="nl-order-of-practice-vseq" aria-label="Practice sequence">
+          <header className="nl-order-of-practice-vseq__head">
+            <h2 className="nl-order-of-practice-vseq__title">
               {renderNote(start)} <em>{patternLabel.toLowerCase()}.</em>
             </h2>
-            <p className="nl-order-of-practice-vlist__meta">
+            <p className="nl-order-of-practice-vseq__meta">
               {stepCount} step{stepCount === 1 ? '' : 's'} · {direction}
             </p>
           </header>
-          <ol className="nl-order-of-practice-vlist__rows">
+          <div className="nl-order-of-practice-vseq__flow">
             {displayed.map((note, i) => {
               const isAnchor = i === 0 || i === displayed.length - 1
               return (
-                <li
-                  key={`${note}-${i}`}
-                  className={'nl-order-of-practice-vlist__row' + (isAnchor ? ' is-anchor' : '')}
-                >
-                  <span className="nl-order-of-practice-vlist__num">{i + 1}</span>
-                  <span className="nl-order-of-practice-vlist__note">{renderNote(note)}</span>
-                </li>
+                <React.Fragment key={`${note}-${i}`}>
+                  <span className={'nl-order-of-practice-vseq__cell' + (isAnchor ? ' is-anchor' : '')}>
+                    {renderNote(note)}
+                  </span>
+                  {i < displayed.length - 1 && (
+                    <span className="nl-order-of-practice-vseq__sep" aria-hidden>→</span>
+                  )}
+                </React.Fragment>
               )
             })}
-          </ol>
+          </div>
         </section>
 
         <p className="nl-order-of-practice-callout nl-order-of-practice-callout--mobile">{calloutCopy}</p>
