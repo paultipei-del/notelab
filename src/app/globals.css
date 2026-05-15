@@ -2479,6 +2479,680 @@ body:has(.nl-study-viewport) {
 .nl-scale-builder-key-black.is-played { background: #276840; }
 .nl-scale-builder-key-black.is-next { background: #c87a64; }
 
+/* ── Note & chord generator (/note-chord-generator) ─ */
+
+.nl-note-chord-generator-page {
+  min-height: calc(var(--nl-viewport-h) - var(--nl-site-header-h));
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.nl-note-chord-generator-inner {
+  flex: 1;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 32px) clamp(16px, 4vw, 32px) max(40px, env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.nl-note-chord-generator-back {
+  display: inline-block;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  color: var(--brown);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+.nl-note-chord-generator-back:hover { color: var(--oxblood); }
+
+.nl-note-chord-generator-hero {
+  margin-top: 14px;
+  margin-bottom: 24px;
+}
+.nl-note-chord-generator-hero__eyebrow {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  margin: 0 0 8px;
+}
+.nl-note-chord-generator-hero__title {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.nl-note-chord-generator-hero__title em {
+  font-style: italic;
+  color: var(--oxblood);
+}
+.nl-note-chord-generator-hero__sub {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--brown);
+  max-width: 600px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Display zone */
+.nl-note-chord-generator-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 18px;
+}
+.nl-note-chord-generator-display__circle {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  color: var(--brown-muted);
+  border: 1px solid var(--brown-faint);
+  font-family: var(--font-cormorant), serif;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.nl-note-chord-generator-display__circle.is-active {
+  background: var(--oxblood);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 22px rgba(160, 56, 28, 0.20);
+}
+.nl-note-chord-generator-display__circle.is-active .nl-note-chord-generator-display__letter {
+  font-size: 76px;
+}
+.nl-note-chord-generator-display__inner {
+  display: inline-flex;
+  align-items: baseline;
+}
+.nl-note-chord-generator-display__letter {
+  font-family: var(--font-cormorant), serif;
+  line-height: 1;
+}
+.nl-note-chord-generator-display__mod {
+  font-family: var(--font-cormorant), serif;
+  font-size: 0.6em;
+  margin-left: 2px;
+  position: relative;
+  top: -0.15em;
+}
+.nl-note-chord-generator-display__chord {
+  font-family: var(--font-cormorant), serif;
+  font-size: 0.4em;
+  margin-left: 4px;
+  position: relative;
+  top: -0.18em;
+}
+.nl-note-chord-generator-display__dots {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 14px;
+  min-height: 8px;
+}
+.nl-note-chord-generator-display__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brown-faint);
+  transition: background 0.15s ease;
+}
+.nl-note-chord-generator-display__dot.is-on { background: var(--oxblood); }
+.nl-note-chord-generator-display__history {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--brown-muted);
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+/* Transport */
+.nl-note-chord-generator-transport {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
+.nl-note-chord-generator-transport__group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.nl-note-chord-generator-transport__btn {
+  background: var(--cream-card-strong);
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  padding: 7px 18px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brown);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.nl-note-chord-generator-transport__btn:hover {
+  border-color: var(--oxblood);
+  color: var(--oxblood);
+}
+.nl-note-chord-generator-transport__btn.is-primary {
+  background: var(--oxblood);
+  color: #fff;
+  border-color: var(--oxblood);
+}
+.nl-note-chord-generator-transport__btn.is-primary:hover {
+  background: #8a2f17;
+  color: #fff;
+  border-color: #8a2f17;
+}
+.nl-note-chord-generator-transport__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+}
+
+/* Pill toggle (Sound, Timing unit, Notation, Accidentals) */
+.nl-note-chord-generator-pill-toggle {
+  display: inline-flex;
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  background: rgba(248, 240, 216, 0.5);
+  padding: 2px;
+}
+.nl-note-chord-generator-pill-toggle__btn {
+  background: transparent;
+  border: none;
+  padding: 3px 12px;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--brown);
+  border-radius: 100px;
+  min-width: 50px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.nl-note-chord-generator-pill-toggle__btn:hover { color: var(--ink); }
+.nl-note-chord-generator-pill-toggle__btn.is-active {
+  background: var(--oxblood);
+  color: #fff;
+}
+
+/* Desktop 2-column config grid */
+.nl-note-chord-generator-config {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 24px;
+}
+
+/* Generic card */
+.nl-note-chord-generator-card {
+  background: var(--cream-card);
+  border: 1px solid var(--brown-faint);
+  border-radius: 14px;
+  padding: 22px 24px;
+  align-self: start;
+}
+.nl-note-chord-generator-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.nl-note-chord-generator-card__title {
+  font-family: var(--font-cormorant), serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.2;
+}
+.nl-note-chord-generator-card__title em {
+  font-style: italic;
+  color: var(--oxblood);
+}
+.nl-note-chord-generator-card__count {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--brown-muted);
+}
+
+/* Section divider inside a card */
+.nl-note-chord-generator-sec {
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid var(--hairline);
+}
+.nl-note-chord-generator-sec:first-of-type {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: none;
+}
+.nl-note-chord-generator-sec__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.nl-note-chord-generator-sec__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+}
+
+/* Bulk select buttons */
+.nl-note-chord-generator-bulk {
+  display: inline-flex;
+  gap: 6px;
+}
+.nl-note-chord-generator-bulk--row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.nl-note-chord-generator-bulk__btn {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  padding: 3px 10px;
+  color: var(--brown);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.nl-note-chord-generator-bulk__btn:hover {
+  border-color: var(--oxblood);
+  color: var(--oxblood);
+}
+
+/* Note chip grid */
+.nl-note-chord-generator-note-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.nl-note-chord-generator-note-chip {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cream-card-strong);
+  border: 1px solid var(--brown-faint);
+  color: var(--ink);
+  font-family: var(--font-cormorant), serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.nl-note-chord-generator-note-chip:hover { border-color: var(--brown-muted); }
+.nl-note-chord-generator-note-chip.is-active {
+  background: var(--oxblood);
+  color: #fff;
+  border-color: var(--oxblood);
+}
+
+/* Display section sub-rows */
+.nl-note-chord-generator-sub-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.nl-note-chord-generator-sub-row__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+}
+
+/* Slider */
+.nl-note-chord-generator-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--brown-faint);
+  border-radius: 2px;
+  outline: none;
+  margin: 4px 0 0;
+}
+.nl-note-chord-generator-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--oxblood);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--oxblood);
+  border: none;
+}
+.nl-note-chord-generator-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--oxblood);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--oxblood);
+  border: none;
+}
+.nl-note-chord-generator-slider__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 6px 0 4px;
+}
+.nl-note-chord-generator-slider__caption {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--brown);
+}
+.nl-note-chord-generator-slider__value {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+/* Chord subsection grid */
+.nl-note-chord-generator-chord-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+.nl-note-chord-generator-chord-group__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.nl-note-chord-generator-chord-group__label {
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brown-muted);
+}
+.nl-note-chord-generator-chord-group__count {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--brown-muted);
+}
+.nl-note-chord-generator-chord-group__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.nl-note-chord-generator-chip {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--cream-card-strong);
+  border: 1px solid var(--brown-faint);
+  border-radius: 100px;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-cormorant), serif;
+  font-size: 12px;
+  padding: 4px 12px;
+  min-width: 32px;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.nl-note-chord-generator-chip:hover { border-color: var(--brown-muted); }
+.nl-note-chord-generator-chip.is-active {
+  background: var(--oxblood);
+  color: #fff;
+  border-color: var(--oxblood);
+}
+.nl-note-chord-generator-chip--mono {
+  font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  padding: 5px 12px;
+}
+
+/* Mobile-only cards/accordion — hidden on desktop */
+.nl-note-chord-generator-card--mobile { display: none; }
+.nl-note-chord-generator-accordion { display: none; }
+
+/* Status strip */
+.nl-note-chord-generator-status {
+  margin-top: 18px;
+  text-align: center;
+  font-family: var(--font-jost), system-ui, sans-serif;
+  font-size: 11px;
+  color: var(--brown-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+@media (max-width: 768px) {
+  .nl-note-chord-generator-hero { margin-bottom: 14px; }
+  .nl-note-chord-generator-hero__title { font-size: 22px; }
+  .nl-note-chord-generator-hero__sub { font-size: 12px; max-width: 320px; }
+
+  /* Compress display */
+  .nl-note-chord-generator-display__circle {
+    width: 130px;
+    height: 130px;
+    font-size: 24px;
+  }
+  .nl-note-chord-generator-display__circle.is-active .nl-note-chord-generator-display__letter {
+    font-size: 58px;
+  }
+  .nl-note-chord-generator-display__circle.is-active {
+    box-shadow: 0 4px 16px rgba(160, 56, 28, 0.20);
+  }
+  .nl-note-chord-generator-display__dots {
+    gap: 5px;
+    margin-top: 10px;
+  }
+  .nl-note-chord-generator-display__dot { width: 4px; height: 4px; }
+  .nl-note-chord-generator-display__history { font-size: 9px; margin-top: 6px; }
+
+  /* Compress transport */
+  .nl-note-chord-generator-transport { margin-bottom: 16px; }
+  .nl-note-chord-generator-transport__btn { font-size: 9px; padding: 5px 12px; }
+
+  /* Hide desktop config grid, show mobile cards/accordion */
+  .nl-note-chord-generator-config { display: none; }
+
+  .nl-note-chord-generator-card--mobile {
+    display: block;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .nl-note-chord-generator-card--mobile .nl-note-chord-generator-card__head {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nl-note-chord-generator-card--mobile .nl-note-chord-generator-note-chip {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+  .nl-note-chord-generator-card--mobile .nl-note-chord-generator-sub-row { margin-top: 6px; }
+  .nl-note-chord-generator-card--mobile .nl-note-chord-generator-sub-row__label { font-size: 9px; }
+
+  /* Accordion */
+  .nl-note-chord-generator-accordion {
+    display: block;
+    background: var(--cream-card);
+    border: 1px solid var(--brown-faint);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .nl-note-chord-generator-accordion__head-card {
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .nl-note-chord-generator-accordion__title {
+    font-family: var(--font-cormorant), serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink);
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .nl-note-chord-generator-accordion__title em {
+    font-style: italic;
+    color: var(--oxblood);
+  }
+  .nl-note-chord-generator-accordion__total {
+    font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--brown-muted);
+    margin-right: 6px;
+  }
+  .nl-note-chord-generator-accordion__row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border: none;
+    border-top: 1px solid var(--hairline);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease;
+    font: inherit;
+  }
+  .nl-note-chord-generator-accordion__row:first-of-type { border-top: none; }
+  .nl-note-chord-generator-accordion__row.is-open {
+    background: var(--cream-card-strong);
+  }
+  .nl-note-chord-generator-accordion__label {
+    font-family: var(--font-jost), system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brown-muted);
+    transition: color 0.12s ease;
+  }
+  .nl-note-chord-generator-accordion__row.is-open .nl-note-chord-generator-accordion__label {
+    color: var(--oxblood);
+  }
+  .nl-note-chord-generator-accordion__right {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nl-note-chord-generator-accordion__count {
+    font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 100px;
+    color: var(--brown-muted);
+    background: transparent;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .nl-note-chord-generator-accordion__count.has-active {
+    background: var(--oxblood);
+    color: #fff;
+  }
+  .nl-note-chord-generator-accordion__chev {
+    font-family: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--brown-muted);
+    transition: transform 0.2s ease;
+    display: inline-block;
+  }
+  .nl-note-chord-generator-accordion__row.is-open .nl-note-chord-generator-accordion__chev {
+    transform: rotate(180deg);
+  }
+  .nl-note-chord-generator-accordion__body {
+    padding: 4px 14px 14px;
+    background: var(--cream-card-strong);
+    border-top: 1px solid var(--hairline);
+  }
+  .nl-note-chord-generator-accordion__body .nl-note-chord-generator-chord-group__chips {
+    padding-top: 8px;
+  }
+  .nl-note-chord-generator-accordion__body .nl-note-chord-generator-chip--mono {
+    font-size: 10px;
+    padding: 3px 9px;
+  }
+  .nl-note-chord-generator-accordion__bulk {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .nl-note-chord-generator-accordion__bulk-btn {
+    font-family: var(--font-jost), system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--brown-faint);
+    border-radius: 100px;
+    padding: 2px 10px;
+    color: var(--brown);
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .nl-note-chord-generator-accordion__bulk-btn:hover {
+    border-color: var(--oxblood);
+    color: var(--oxblood);
+  }
+}
+
 /* ── Order of practice (/order-of-practice) ─ */
 
 .nl-order-of-practice-page {
