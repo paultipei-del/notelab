@@ -147,24 +147,28 @@ function AnswerPill({
   let transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
 
   if (settled) {
-    // Keep the raised-paper drop so the answer pill still reads as a
-    // physical button even after a choice is locked in. Tint the
-    // under-rule a touch toward the feedback color so the 3D edge
-    // doesn't fight the new border.
-    transform = 'translateY(0)'
-    if (isCorrect) {
+    // The pill the user picked stays "pressed down" — collapsed
+    // shadow + 2px translate — so the click feels committed. The
+    // correct option (if different) stays raised with a forest border
+    // so the contrast is visible. Other options sit raised neutral.
+    const wasPicked = opt === chosen
+    if (wasPicked) {
+      const isRight = isCorrect
+      bg = isRight ? 'rgba(42,107,30,0.08)' : 'rgba(181,64,42,0.08)'
+      border = `1px solid ${isRight ? CORRECT : WRONG}`
+      color = isRight ? CORRECT : WRONG
+      const tint = isRight ? 'rgba(45, 90, 62, 0.35)' : 'rgba(160, 56, 28, 0.35)'
+      shadow = `0 1px 0 ${tint}, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.06)`
+      transform = 'translateY(2px)'
+    } else if (isCorrect) {
       bg = 'rgba(42,107,30,0.08)'
       border = `1px solid ${CORRECT}`
       color = CORRECT
       shadow = '0 2px 0 rgba(45, 90, 62, 0.35), 0 2px 4px rgba(0,0,0,0.04)'
-    } else if (opt === chosen) {
-      bg = 'rgba(181,64,42,0.08)'
-      border = `1px solid ${WRONG}`
-      color = WRONG
-      shadow = '0 2px 0 rgba(160, 56, 28, 0.35), 0 2px 4px rgba(0,0,0,0.04)'
+      transform = 'translateY(0)'
     } else {
-      // Non-picked, non-correct pills: stay neutral but keep the rest.
       shadow = '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+      transform = 'translateY(0)'
     }
   } else if (hover) {
     bg = '#f8f4ea'
