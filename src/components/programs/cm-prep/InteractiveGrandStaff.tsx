@@ -10,6 +10,56 @@ const LIGHT_BG = '#F7F4ED'
 const ACCENT = '#BA7517'
 const CORRECT = '#2d5a3e'
 const WRONG = '#a0381c'
+
+/**
+ * Pill toggle used by the Visual Guide for Explore / Quiz me. Mirrors
+ * the AnswerPill family: inactive pill is a raised cream paper button
+ * (hover lifts -1px, mouse-down sinks +2px), active pill stays in the
+ * pressed-down state with oxblood fill so "selected" reads as "committed."
+ */
+function ModeToggleBtn({
+  active, onClick, children,
+}: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+
+  let bg: string, color: string, border: string, shadow: string, transform: string
+  if (active) {
+    bg = 'var(--oxblood)'
+    color = '#FDFBF5'
+    border = '1px solid var(--oxblood)'
+    shadow = '0 1px 0 rgba(160, 56, 28, 0.45), inset 0 1px 1px rgba(0,0,0,0.10)'
+    transform = 'translateY(2px)'
+  } else {
+    bg = hover ? '#f8f4ea' : '#f3eee3'
+    color = '#4a4540'
+    border = '1px solid #E0DBCF'
+    shadow = pressed
+      ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+      : hover
+        ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+        : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+    transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        padding: '9px 22px', borderRadius: 20,
+        fontFamily: F, fontSize: 14, fontWeight: active ? 600 : 500,
+        background: bg, color, border,
+        boxShadow: shadow, transform,
+        cursor: 'pointer',
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >{children}</button>
+  )
+}
 const STROKE_W = 1.3
 
 const ELEMENTS = [
@@ -212,20 +262,13 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
       {showModeToggle && (
         <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
           {(['explore', 'quiz'] as const).map(m => (
-            <button
+            <ModeToggleBtn
               key={m}
+              active={mode === m}
               onClick={() => m === 'quiz' ? startQuiz() : (setMode('explore'), setActive(null), setActiveLine(null))}
-              style={{
-                padding: '9px 22px', borderRadius: '20px', cursor: 'pointer',
-                fontFamily: F, fontSize: 14, fontWeight: mode === m ? 600 : 400,
-                background: mode === m ? 'var(--oxblood)' : 'var(--cream-card-strong)',
-                color: mode === m ? '#FDFBF5' : 'var(--brown)',
-                border: mode === m ? '1px solid var(--oxblood)' : '1px solid var(--brown-faint)',
-                transition: 'background 0.15s',
-              }}
             >
               {m === 'explore' ? 'Explore' : 'Quiz me'}
-            </button>
+            </ModeToggleBtn>
           ))}
         </div>
       )}
