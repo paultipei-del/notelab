@@ -211,7 +211,7 @@ export default function CMPrepLessonPage({ params }: Props) {
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
               <div style={{
-                background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 10,
+                background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 10,
                 padding: '10px 12px',
               }}>
                 <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
@@ -246,7 +246,11 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {/* Concept mnemonics for note-reading lessons */}
         {!practicing && (lessonSlug === 'treble-clef-notes' || lessonSlug === 'review-letter-names') && (
-          <div style={{ background: ACCENT_BG, border: `1px solid ${ACCENT_BORDER}`, borderRadius: '14px', padding: '20px 24px', marginBottom: '20px' }}>
+          <div style={{
+            background: 'linear-gradient(to bottom, rgba(160, 56, 28, 0.05), rgba(160, 56, 28, 0.14)), linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
+            border: '1px solid rgba(160, 56, 28, 0.22)',
+            borderRadius: '14px', padding: '20px 24px', marginBottom: '20px',
+          }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: ACCENT, marginBottom: '12px' }}>
               Treble Staff
             </p>
@@ -284,7 +288,11 @@ export default function CMPrepLessonPage({ params }: Props) {
         )}
 
         {!practicing && (lessonSlug === 'bass-clef-notes' || lessonSlug === 'review-letter-names') && (
-          <div style={{ background: ACCENT_BG, border: `1px solid ${ACCENT_BORDER}`, borderRadius: '14px', padding: '20px 24px', marginBottom: '20px' }}>
+          <div style={{
+            background: 'linear-gradient(to bottom, rgba(160, 56, 28, 0.05), rgba(160, 56, 28, 0.14)), linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
+            border: '1px solid rgba(160, 56, 28, 0.22)',
+            borderRadius: '14px', padding: '20px 24px', marginBottom: '20px',
+          }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: ACCENT, marginBottom: '12px' }}>
               Bass Staff
             </p>
@@ -503,7 +511,7 @@ export default function CMPrepLessonPage({ params }: Props) {
         )}
 
         {!unlocked && (
-          <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '24px' }}>
+          <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: '14px', padding: '24px' }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#B0ACA4', margin: 0 }}>
               🔒 Complete the previous lesson to unlock this one.
             </p>

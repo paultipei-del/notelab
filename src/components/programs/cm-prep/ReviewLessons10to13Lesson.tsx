@@ -150,7 +150,7 @@ function MatchDefEx({ onDone }: { onDone: (correct: number, total: number) => vo
       <ExerciseLabel>Exercise 2 · Match the sign with its definition</ExerciseLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 14,
         padding: '18px 20px 12px', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
           minHeight: 120, marginBottom: 4 }}>
@@ -293,7 +293,7 @@ function ScaleRow({ scale, accs, submitted, onCycle }: {
   const accGlyph = (a: AccType) => a === 'sharp' ? G_SHARP : a === 'flat' ? G_FLAT : ''
 
   return (
-    <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+    <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
       padding: '10px 12px 12px', marginBottom: 14 }}>
       <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 500, color: DARK,
         margin: '0 0 4px', textAlign: 'center' }}>{scale.name}</p>
@@ -414,7 +414,7 @@ function KeySigIdEx({ onDone }: { onDone: (correct: number, total: number) => vo
       <ExerciseLabel>Exercise 4 · Name the key from its key signature</ExerciseLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 14,
         padding: '18px 20px', marginBottom: 14,
         display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 130 }}>
         <KeySigStaff kind={item.kind} />
@@ -498,7 +498,7 @@ function IdentifySymbolEx({ onDone }: { onDone: (correct: number, total: number)
       <ExerciseLabel>Exercise 5 · Identify the sign</ExerciseLabel>
       <ProgressBar done={idx} total={total} />
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 14,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 14,
         padding: '22px 20px', marginBottom: 14, minHeight: 140,
         display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <NotationSymbol cardId={item.id} />

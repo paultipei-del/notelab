@@ -355,7 +355,7 @@ function MatchKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         Look at the key signature at the start of the grand staff. Which major key is it?
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <GrandStaff width={320} keyName={item} />
       </div>
@@ -480,7 +480,7 @@ function IdentifyKeyEx({ onDone }: { onDone: (correct: number, total: number) =>
         Pick the accidental that is used in the key signature, then pick the name of the major key.
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <GrandStaff width={320} keyName={item} />
       </div>
@@ -619,7 +619,7 @@ function WriteKeySignatureEx({ onDone }: { onDone: (correct: number, total: numb
         <strong style={{ color: ACCENT }}>{KEY_SIGS[item].label}</strong>
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <GrandStaff
           width={320}
@@ -730,7 +730,7 @@ function IdentifyInPieceEx({ onDone }: { onDone: (correct: number, total: number
         Look at the key signature at the start of this example. Which major key is the piece in?
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '12px 0', marginBottom: 14 }}>
         <ScoreFromXml key={piece.xmlSrc} src={piece.xmlSrc} />
       </div>

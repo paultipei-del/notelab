@@ -200,7 +200,7 @@ function CompleteStaffEx({ onDone }: { onDone: (correct: number, total: number) 
         One element is missing from the grand staff below. What is it?
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '20px 0', marginBottom: 14 }}>
         <MissingStaff missing={item.id}
           revealColor={feedback !== null ? (feedback.ok ? CORRECT : WRONG) : undefined} />
@@ -339,7 +339,7 @@ function NameNoteEx({ onDone }: { onDone: (correct: number, total: number) => vo
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'}
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -472,7 +472,7 @@ function StepsEx({ onDone }: { onDone: (correct: number, total: number) => void 
         <strong style={{ color: DARK }}>half step</strong>?
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -598,7 +598,7 @@ function IntervalEx({ onDone }: { onDone: (correct: number, total: number) => vo
         Count from the lower note up to the higher one, including both. Pick the matching interval.
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -745,7 +745,7 @@ function PatternNameEx({ onDone }: { onDone: (correct: number, total: number) =>
         <strong style={{ color: DARK }}>major</strong> or <strong style={{ color: DARK }}>minor</strong>.
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -802,7 +802,7 @@ function PatternNameEx({ onDone }: { onDone: (correct: number, total: number) =>
 
       {/* Keyboard reveal when correct */}
       {feedback !== null && feedback.ok && (
-        <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+        <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
           padding: '10px 12px', marginTop: 4, marginBottom: 10 }}>
           <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
             textTransform: 'uppercase', color: GREY, margin: '0 0 6px' }}>

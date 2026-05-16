@@ -250,7 +250,7 @@ function IdentifyPatternEx({
         W–W–H–W formula here. Any unbroken 5-note run counts, major or not.
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <Ex1Staff item={item} />
       </div>
@@ -689,7 +689,7 @@ function PlaceTriadEx({
         <strong style={{ color: ACCENT }}>{item.rootKey} major triad</strong>
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg
           ref={r => { svgRef.current = r }}

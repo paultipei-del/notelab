@@ -76,7 +76,7 @@ export default function CMPrepHubPage() {
             if (!unlocked) {
               return (
                 <div key={lesson.slug} style={{
-                  background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px',
+                  background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: '14px',
                   padding: '16px 20px', opacity: 0.5, display: 'flex', alignItems: 'center', gap: '14px',
                 }}>
                   <div style={{
