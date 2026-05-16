@@ -47,6 +47,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'NoteLab',
   description: 'Music theory flashcards, ear training, and curriculum-aligned programs for piano students, college music majors, and serious adult learners.',
+  manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     title: 'NoteLab',
@@ -70,6 +71,22 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        {/* iOS PWA splash screens. Apple matches by device-width/height
+            and pixel-ratio, so each home-screen launch on a known
+            device picks the right cream-padded splash and the brief
+            white flash is gone. */}
+        <link rel="apple-touch-startup-image" href="/splash/splash-1290x2796.png"
+          media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/splash/splash-1179x2556.png"
+          media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/splash/splash-1170x2532.png"
+          media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/splash/splash-750x1334.png"
+          media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/splash/splash-2048x2732.png"
+          media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/splash/splash-1668x2388.png"
+          media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
         <style>{`
           @font-face {
             font-family: 'Bravura';
