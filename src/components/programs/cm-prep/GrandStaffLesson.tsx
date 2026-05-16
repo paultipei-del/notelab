@@ -297,7 +297,7 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
               background: bg, border, borderRadius: 10,
               height: 52,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: F, fontSize: 20, fontWeight: 500, lineHeight: 1, color,
+              fontFamily: F, fontSize: 20, fontWeight: 400, lineHeight: 1, color,
               cursor: chosen !== null ? 'default' : 'pointer',
             }}>{opt}</button>
           )
