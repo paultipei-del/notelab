@@ -265,6 +265,63 @@ function MCAnswerPill({
     >{opt}</button>
   )
 }
+/**
+ * Generic raised-paper button used for non-pill surfaces (Ex8 Match
+ * grid, etc.). Caller decides bg / border / color; this component
+ * adds the three-state motion (idle / hover / pressed) without
+ * changing any of those colors.
+ */
+function Paper3DBtn({
+  children, onClick, disabled = false, baseBg, baseBorder, baseColor,
+  padding = '12px 14px', textAlign = 'left', justifyContent = 'flex-start',
+}: {
+  children: React.ReactNode
+  onClick?: () => void
+  disabled?: boolean
+  baseBg: string
+  baseBorder: string
+  baseColor: string
+  padding?: string
+  textAlign?: 'left' | 'center' | 'right'
+  justifyContent?: 'flex-start' | 'center' | 'space-between'
+}) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+  const live = !disabled
+  const shadow = pressed && live
+    ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    : hover && live
+      ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+      : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+  const transform = pressed && live ? 'translateY(2px)' : hover && live ? 'translateY(-1px)' : 'translateY(0)'
+  return (
+    <button
+      onClick={() => { if (live) onClick?.() }}
+      onMouseDown={() => { if (live) setPressed(true) }}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        width: '100%',
+        background: baseBg,
+        border: baseBorder,
+        color: baseColor,
+        borderRadius: 10,
+        padding,
+        fontFamily: F, fontSize: 14,
+        cursor: live ? 'pointer' : 'default',
+        textAlign,
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease',
+        display: 'flex', alignItems: 'center', gap: 8, justifyContent,
+        marginBottom: 8,
+      }}
+    >
+      {children}
+    </button>
+  )
+}
 function ProgressDots({ total, idx, results }: { total: number; idx: number; results: boolean[] }) {
   return (
     <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
@@ -1920,15 +1977,15 @@ function GrandEx3({ onDone }: { onDone: (s: number, t: number) => void }) {
             else if (isMatched && isCorrect) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
             else if (isMatched && !isCorrect) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
             return (
-              <button key={item.key} onClick={() => handleName(item.key)} style={{
-                width: '100%', background: bg, border, borderRadius: 10, padding: '12px 14px',
-                fontFamily: F, fontSize: 14, color, cursor: isMatched ? 'default' : 'pointer',
-                textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
-                marginBottom: 8, transition: 'border 0.15s',
-              }}>
+              <Paper3DBtn
+                key={item.key}
+                onClick={() => handleName(item.key)}
+                disabled={isMatched}
+                baseBg={bg} baseBorder={border} baseColor={color}
+              >
                 {isMatched && <span>{isCorrect ? '✓' : '✗'}</span>}
                 {item.label}
-              </button>
+              </Paper3DBtn>
             )
           })}
         </div>
@@ -1938,18 +1995,22 @@ function GrandEx3({ onDone }: { onDone: (s: number, t: number) => void }) {
           <p style={{ fontFamily: F, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#B0ACA4', margin: '0 0 8px' }}>Symbols</p>
           {symbolOrder.map(k => {
             const isCorrectlyMatched = matched.get(k) === true
-            let border = '1px solid #E0DBCF', bg = 'white'
+            let border = '1px solid #E0DBCF', bg = '#FDFBF5'
             if (isCorrectlyMatched) { border = `1px solid ${CORRECT}`; bg = 'rgba(42,107,30,0.06)' }
             else if (selectedName) { border = `1px solid rgba(186,117,23,0.35)`; bg = 'rgba(186,117,23,0.03)' }
+            const inactive = isCorrectlyMatched || !selectedName
             return (
-              <button key={k} onClick={() => !isCorrectlyMatched && handleSymbol(k)} style={{
-                width: '100%', background: bg, border, borderRadius: 10, padding: '8px',
-                cursor: isCorrectlyMatched ? 'default' : (selectedName ? 'pointer' : 'default'),
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: 8, transition: 'border 0.15s',
-              }}>
+              <Paper3DBtn
+                key={k}
+                onClick={() => { if (!isCorrectlyMatched) handleSymbol(k) }}
+                disabled={inactive}
+                baseBg={bg} baseBorder={border} baseColor="#4a4540"
+                padding="8px"
+                textAlign="center"
+                justifyContent="center"
+              >
                 <MatchSymbol k={k} dim={!isCorrectlyMatched && !selectedName} />
-              </button>
+              </Paper3DBtn>
             )
           })}
         </div>
