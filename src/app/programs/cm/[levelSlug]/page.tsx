@@ -11,6 +11,7 @@ import {
   TIER_LABEL,
   type CMLevel,
 } from '@/lib/cmProgram'
+import { renderWithRMark } from '@/lib/rMark'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
@@ -80,7 +81,7 @@ export default function CMLevelPage({ params }: Props) {
               {level.label}
             </h1>
             <p style={{ fontFamily: F, fontSize: '16px', fontWeight: 400, color: '#4A4540', lineHeight: 1.7, margin: 0, maxWidth: '540px' }}>
-              {level.whoFor}
+              {renderWithRMark(level.whoFor)}
             </p>
           </div>
 

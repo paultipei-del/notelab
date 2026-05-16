@@ -308,7 +308,7 @@ export default function CMProgramPage() {
         {/* Header */}
         <div style={{ marginBottom: '48px' }}>
           <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '12px' }}>
-            Certificate of Merit® · California
+            Certificate of Merit<sup className="r-mark">®</sup> · California
           </p>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(32px, 4.5vw, 48px)', color: '#2A2318', marginBottom: '14px', letterSpacing: '-0.01em' }}>
             CM Theory Prep

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { ProgramEntry, ProgramCategory } from '@/lib/programsCatalog'
+import { renderWithRMark } from '@/lib/rMark'
 
 interface ProgramCardProps {
   program: ProgramEntry
@@ -36,8 +37,8 @@ export default function ProgramCard({ program, statusLabel, statusVariant }: Pro
             {statusLabel}
           </span>
         </div>
-        <h3 className="nl-program-card__title">{program.title}</h3>
-        <p className="nl-program-card__pitch">{program.pitch}</p>
+        <h3 className="nl-program-card__title">{renderWithRMark(program.title)}</h3>
+        <p className="nl-program-card__pitch">{renderWithRMark(program.pitch)}</p>
         <div className="nl-program-card__includes">
           <span className="nl-program-card__includes-label">Includes:</span>{' '}
           {program.includes}

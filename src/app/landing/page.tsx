@@ -158,7 +158,7 @@ export default function LandingPage() {
               maxWidth: '480px',
             }}
           >
-            A comprehensive reference library, curriculum-aligned programs, spaced-repetition flashcards, and real-time ear training, built for students preparing for the Certificate of Merit® exam, college music majors, and anyone who wants to understand music deeply.
+            A comprehensive reference library, curriculum-aligned programs, spaced-repetition flashcards, and real-time ear training, built for students preparing for the Certificate of Merit<sup className="r-mark">®</sup> exam, college music majors, and anyone who wants to understand music deeply.
           </p>
           <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
@@ -335,9 +335,9 @@ export default function LandingPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
             <ScrollReveal delayMs={0} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #D9CFAE', borderRadius: '16px', background: '#ECE3CC' }}>
-              <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Certificate of Merit® exam prep</h3>
+              <h3 style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '20px', color: '#2A2318', margin: '0 0 10px 0' }}>Certificate of Merit<sup className="r-mark">®</sup> exam prep</h3>
               <p style={{ fontFamily: F, fontWeight: 300, fontSize: '14px', color: '#4A4540', lineHeight: 1.65, margin: 0 }}>
-                Every level, every topic on the syllabus. Theory, terms, rhythm, aural skills, covering the scope of the Certificate of Merit® theory exam, Preparatory through Level 10.
+                Every level, every topic on the syllabus. Theory, terms, rhythm, aural skills, covering the scope of the Certificate of Merit<sup className="r-mark">®</sup> theory exam, Preparatory through Level 10.
               </p>
             </ScrollReveal>
             <ScrollReveal delayMs={80} className="nl-tile-hover" style={{ padding: '28px', border: '1px solid #D9CFAE', borderRadius: '16px', background: '#ECE3CC' }}>

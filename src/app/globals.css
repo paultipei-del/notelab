@@ -94,6 +94,16 @@ body {
   --scale-key-tint: rgba(154, 124, 80, 0.14);
 }
 
+/* Registered-trademark superscript: smaller and raised so it doesn't
+ * dominate the wordmark it qualifies. */
+.r-mark {
+  font-size: 0.55em;
+  vertical-align: super;
+  line-height: 0;
+  margin-left: 1px;
+  font-weight: inherit;
+}
+
 /* ── Study / quiz — fill viewport *below* global SiteHeader (footer hidden on /study) ─ */
 .nl-study-viewport {
   background: transparent;

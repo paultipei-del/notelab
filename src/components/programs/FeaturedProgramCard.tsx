@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { ProgramEntry } from '@/lib/programsCatalog'
+import { renderWithRMark } from '@/lib/rMark'
 
 interface FeaturedProgramCardProps {
   program: ProgramEntry
@@ -40,8 +41,8 @@ export default function FeaturedProgramCard({
           </span>
         </div>
 
-        <h2 className="nl-program-hero__title">{program.title}</h2>
-        <p className="nl-program-hero__pitch">{program.pitch}</p>
+        <h2 className="nl-program-hero__title">{renderWithRMark(program.title)}</h2>
+        <p className="nl-program-hero__pitch">{renderWithRMark(program.pitch)}</p>
 
         {program.features && (
           <ul className="nl-program-hero__bullets">
