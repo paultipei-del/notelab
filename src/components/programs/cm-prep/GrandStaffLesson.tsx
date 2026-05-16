@@ -1483,7 +1483,7 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       </p>
 
       {/* Staff: after answer, MissingStaff shows the missing part filled in green/red */}
-      <div style={{ background: '#ECE3CC', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
         <MissingStaff missing={q.id} revealColor={chosen !== null ? (isCorrect ? CORRECT : WRONG) : undefined} />
       </div>
 
