@@ -1778,7 +1778,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
       <div style={{ minHeight: 52, display: 'flex', alignItems: 'center' }}>
         {complete ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, flex: 1 }}>
-            <p style={{ fontFamily: SERIF, fontSize: 18, color: CORRECT, margin: 0 }}>Grand staff complete!</p>
+            <p style={{ fontFamily: SERIF, fontSize: 18, fontWeight: 500, color: CORRECT, margin: 0 }}>Grand staff complete!</p>
             <PrimaryBtn label={round + 1 >= 4 ? 'Finish →' : 'Next round →'} onClick={nextRound} />
           </div>
         ) : (
