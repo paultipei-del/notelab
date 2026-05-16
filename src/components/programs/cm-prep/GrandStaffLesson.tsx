@@ -106,7 +106,12 @@ function SectionTitle({ children }: { children: string }) {
 }
 function ConceptBox({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 20px', marginBottom: 20, fontFamily: F, fontSize: 14, color: '#4A4540', lineHeight: 1.8 }}>
+    <div style={{
+      background: 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
+      border: '1px solid #D7D1C0',
+      borderRadius: 12, padding: '16px 20px', marginBottom: 20,
+      fontFamily: F, fontSize: 14, color: '#4A4540', lineHeight: 1.8,
+    }}>
       {children}
     </div>
   )
