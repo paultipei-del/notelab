@@ -252,8 +252,9 @@ function BundleCard({ bundle }: { bundle: (typeof CM_BUNDLES)[number] }) {
             textAlign: 'center',
             padding: '10px',
             borderRadius: '10px',
-            background: '#1A1A18',
-            color: 'white',
+            background: 'var(--oxblood)',
+            color: '#fff',
+            border: '1px solid var(--oxblood)',
             textDecoration: 'none',
             fontFamily: F,
             fontSize: '14px',
@@ -307,14 +308,11 @@ export default function CMProgramPage() {
 
         {/* Header */}
         <div style={{ marginBottom: '48px' }}>
-          <p style={{ fontFamily: F, fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7A7060', marginBottom: '12px' }}>
-            Certificate of Merit<sup className="r-mark">®</sup> · California
-          </p>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(32px, 4.5vw, 48px)', color: '#2A2318', marginBottom: '14px', letterSpacing: '-0.01em' }}>
-            CM Theory Prep
+            Certificate of Merit<sup className="r-mark">®</sup> Theory Prep
           </h1>
-          <p style={{ fontFamily: F, fontSize: '16px', fontWeight: 400, color: '#4A4540', maxWidth: '620px', lineHeight: 1.7, margin: 0 }}>
-            Complete flashcard collections for every CM level, Preparatory through Advanced. Covers signs and terms, scales, intervals, chords, history, and ear training.
+          <p style={{ fontFamily: F, fontSize: '16px', fontWeight: 400, color: '#4A4540', maxWidth: '640px', lineHeight: 1.7, margin: 0 }}>
+            A complete program for every level, Preparatory through Advanced. Covers everything tested on the theory exam: signs and terms, scales, intervals, chords, history, and ear training.
           </p>
         </div>
 
@@ -379,7 +377,7 @@ export default function CMProgramPage() {
             }}
           >
             <p style={{ fontFamily: F, fontSize: '14px', fontWeight: 300, color: '#2A2318', lineHeight: 1.6, margin: 0, maxWidth: '520px' }}>
-              Already have NoteLab Plus? All CM levels are included in your subscription — open any level to start studying.
+              Already have NoteLab Plus? All CM levels are included in your subscription. Open any level to start studying.
             </p>
             <Link
               href="/pricing"
