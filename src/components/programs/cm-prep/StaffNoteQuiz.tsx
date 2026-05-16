@@ -662,7 +662,7 @@ function TransitionCard({
           : `Next: name each note on the ${nextGrand ? 'grand staff' : 'staff'}.`}
       </p>
       <button onClick={onNext} style={{
-        background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
+        background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
         padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
       }}>
         Start {nextLabel} →
@@ -728,7 +728,7 @@ function ResultsCard({
 
       <button onClick={onRestart} style={{
         background: passed ? 'transparent' : 'var(--oxblood)',
-        color: passed ? '#7A7060' : '#fff',
+        color: passed ? '#7A7060' : '#FDFBF5',
         border: passed ? '1px solid #D9CFAE' : '1px solid var(--oxblood)',
         borderRadius: '10px',
         padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',

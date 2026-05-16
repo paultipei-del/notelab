@@ -165,7 +165,7 @@ export default function CMPrepLessonPage({ params }: Props) {
               <Link href={`/programs/cm/prep/${next.slug}`} style={{ textDecoration: 'none' }}>
                 <span style={{
                   display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-compact)',
-                  background: 'var(--oxblood)', color: '#fff', borderRadius: '10px', padding: '10px 20px',
+                  background: 'var(--oxblood)', color: '#FDFBF5', borderRadius: '10px', padding: '10px 20px',
                 }}>
                   Next: {next.title} →
                 </span>
@@ -175,7 +175,7 @@ export default function CMPrepLessonPage({ params }: Props) {
               <Link href="/programs/cm/prep" style={{ textDecoration: 'none' }}>
                 <span style={{
                   display: 'inline-block', fontFamily: F, fontSize: 'var(--nl-text-compact)',
-                  background: 'var(--oxblood)', color: '#fff', borderRadius: '10px', padding: '10px 20px',
+                  background: 'var(--oxblood)', color: '#FDFBF5', borderRadius: '10px', padding: '10px 20px',
                 }}>
                   Back to program →
                 </span>
@@ -352,7 +352,7 @@ export default function CMPrepLessonPage({ params }: Props) {
                 <button
                   onClick={() => { setPracticing(true); setSessionDone(false) }}
                   style={{
-                    background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
+                    background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
                     padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
                   }}
                 >

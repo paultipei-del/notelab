@@ -257,7 +257,7 @@ function BundleCard({ bundle }: { bundle: (typeof CM_BUNDLES)[number] }) {
             padding: '10px',
             borderRadius: '10px',
             background: 'var(--oxblood)',
-            color: '#fff',
+            color: '#FDFBF5',
             border: '1px solid var(--oxblood)',
             textDecoration: 'none',
             fontFamily: F,

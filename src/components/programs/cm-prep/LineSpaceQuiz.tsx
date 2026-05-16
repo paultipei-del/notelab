@@ -88,7 +88,7 @@ export default function LineSpaceQuiz({
         {!passed && (
           <button
             onClick={() => { setItems(buildItems()); setIdx(0); setSelected(null); setConfirmed(false); setCorrect(0); setDone(false) }}
-            style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+            style={{ background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
           >Try again →</button>
         )}
       </div>
@@ -169,7 +169,7 @@ export default function LineSpaceQuiz({
           onClick={handleConfirm}
           disabled={!selected}
           style={{
-            background: selected ? 'var(--oxblood)' : '#EDE8DF', color: selected ? '#fff' : '#B0ACA4',
+            background: selected ? 'var(--oxblood)' : '#EDE8DF', color: selected ? '#FDFBF5' : '#B0ACA4',
             border: selected ? '1px solid var(--oxblood)' : 'none', borderRadius: '10px', padding: '12px 28px',
             fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: selected ? 'pointer' : 'default',
           }}
@@ -177,7 +177,7 @@ export default function LineSpaceQuiz({
       ) : (
         <button
           onClick={handleNext}
-          style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
+          style={{ background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px', padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer' }}
         >
           {idx + 1 >= total ? 'See results' : 'Next →'}
         </button>

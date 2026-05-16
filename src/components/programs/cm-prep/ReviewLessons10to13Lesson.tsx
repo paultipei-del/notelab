@@ -256,7 +256,7 @@ export function CompleteScaleEx({ onDone, scales = SCALES, title = 'Exercise 3 Â
 
       {!submitted ? (
         <button onClick={submit}
-          style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
+          style={{ background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: 10,
             padding: '12px 28px', fontFamily: F, fontSize: 14, cursor: 'pointer', marginTop: 6 }}>
           Check answers
         </button>

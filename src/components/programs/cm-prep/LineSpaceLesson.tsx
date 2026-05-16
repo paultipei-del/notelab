@@ -158,7 +158,7 @@ function ExLabel({ children }: { children: React.ReactNode }) {
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
+      background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: 10,
       padding: '11px 26px', fontFamily: F, fontSize: 14, cursor: 'pointer',
     }}>{label}</button>
   )

@@ -219,7 +219,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
                 padding: '9px 22px', borderRadius: '20px', cursor: 'pointer',
                 fontFamily: F, fontSize: 14, fontWeight: mode === m ? 600 : 400,
                 background: mode === m ? 'var(--oxblood)' : 'var(--cream-card-strong)',
-                color: mode === m ? '#fff' : 'var(--brown)',
+                color: mode === m ? '#FDFBF5' : 'var(--brown)',
                 border: mode === m ? '1px solid var(--oxblood)' : '1px solid var(--brown-faint)',
                 transition: 'background 0.15s',
               }}
@@ -273,7 +273,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
               <button
                 onClick={nextQuestion}
                 style={{
-                  background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
+                  background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
                   padding: '10px 22px', fontFamily: F, fontSize: 14, cursor: 'pointer',
                 }}
               >
@@ -568,7 +568,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
           </p>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={startQuiz} style={{
-              background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
+              background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
               padding: '11px 24px', fontFamily: F, fontSize: 14, cursor: 'pointer',
             }}>
               Try again →

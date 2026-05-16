@@ -225,7 +225,7 @@ function ProgressBar({ done, total, color }: { done: number; total: number; colo
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
-      background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
+      background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: 10,
       padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
     }}>
       {label}

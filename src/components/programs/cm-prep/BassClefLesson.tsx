@@ -94,7 +94,7 @@ function PrimaryBtn({ label, onClick, disabled = false }: { label: string; onCli
   return (
     <button onClick={onClick} disabled={disabled} style={{
       background: disabled ? '#EDE8DF' : 'var(--oxblood)',
-      color: disabled ? '#B0ACA4' : '#fff',
+      color: disabled ? '#B0ACA4' : '#FDFBF5',
       border: disabled ? 'none' : '1px solid var(--oxblood)', borderRadius: 10,
       padding: '10px 24px', fontFamily: F, fontSize: 14,
       cursor: disabled ? 'default' : 'pointer',

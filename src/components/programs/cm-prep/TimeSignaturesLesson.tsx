@@ -1236,7 +1236,7 @@ function WriteCountsMxlEx({ onDone }: { onDone: (correct: number, total: number)
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button onClick={check} disabled={feedback !== null}
-          style={{ background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: 10,
+          style={{ background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: 10,
             padding: '12px 28px', fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer', opacity: feedback !== null ? 0.6 : 1 }}>
           Check answers

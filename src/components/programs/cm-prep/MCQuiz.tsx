@@ -109,7 +109,7 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
               setDone(false)
             }}
             style={{
-              background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
+              background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
               padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
             }}
           >
@@ -189,7 +189,7 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
           disabled={!selected}
           style={{
             background: selected ? 'var(--oxblood)' : '#EDE8DF',
-            color: selected ? '#fff' : '#B0ACA4',
+            color: selected ? '#FDFBF5' : '#B0ACA4',
             border: selected ? '1px solid var(--oxblood)' : 'none', borderRadius: '10px',
             padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)',
             cursor: selected ? 'pointer' : 'default', transition: 'background 0.15s',
@@ -201,7 +201,7 @@ export default function MCQuiz({ questions, passingScore, accentColor = '#B5402A
         <button
           onClick={handleNextWithScore}
           style={{
-            background: 'var(--oxblood)', color: '#fff', border: '1px solid var(--oxblood)', borderRadius: '10px',
+            background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
             padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
           }}
         >
