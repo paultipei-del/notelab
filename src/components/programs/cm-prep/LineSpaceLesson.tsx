@@ -164,6 +164,69 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
   )
 }
 
+/**
+ * Raised-paper Line / Space pill for Ex3. Same three-state motion as
+ * the AnswerPill family: idle flat with 2px under-rule, hover lifts
+ * -1px, mouse-down sinks +2px. Once chosen the picked button stays
+ * pressed-down in forest or oxblood; the other option flattens.
+ */
+function LineSpacePill({
+  label, isPicked, isCorrect, settled, disabled, onClick,
+}: {
+  label: string
+  isPicked: boolean
+  isCorrect: boolean
+  settled: boolean
+  disabled: boolean
+  onClick: () => void
+}) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+
+  let bg = '#f3eee3', border = '1px solid #E0DBCF', color = '#4a4540'
+  let shadow: string | undefined = pressed && !disabled
+    ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    : hover && !disabled
+      ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+      : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+  let transform = pressed && !disabled ? 'translateY(2px)' : hover && !disabled ? 'translateY(-1px)' : 'translateY(0)'
+
+  if (settled && isPicked) {
+    const isRight = isCorrect
+    bg = isRight ? 'rgba(42,107,30,0.12)' : 'rgba(181,64,42,0.12)'
+    border = `1px solid ${isRight ? CORRECT : WRONG}`
+    color = isRight ? CORRECT : WRONG
+    const tint = isRight ? 'rgba(45, 90, 62, 0.35)' : 'rgba(160, 56, 28, 0.35)'
+    shadow = `0 1px 0 ${tint}, inset 0 1px 1px rgba(0,0,0,0.06)`
+    transform = 'translateY(2px)'
+  } else if (settled && !isPicked) {
+    color = '#B0ACA4'
+    shadow = '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+    transform = 'translateY(0)'
+  } else if (hover && !disabled) {
+    bg = '#f8f4ea'
+  }
+
+  return (
+    <button
+      onClick={() => { if (!disabled) onClick() }}
+      onMouseDown={() => { if (!disabled) setPressed(true) }}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        padding: '10px 24px', borderRadius: 10,
+        border, background: bg, color,
+        cursor: disabled ? 'default' : 'pointer',
+        fontFamily: F, fontSize: 15, fontWeight: 600,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: shadow, transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >{label}</button>
+  )
+}
+
 function ProgressDots({ total, current, results }: { total: number; current: number; results: boolean[] }) {
   return (
     <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
@@ -582,25 +645,17 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
       </div>
 
       <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 16 }}>
-        {(['L', 'S'] as const).map(opt => {
-          const label  = opt === 'L' ? 'Line' : 'Space'
-          const picked = chosen === opt
-          const bg     = chosen === null ? 'white'
-            : picked ? (isCorrect ? 'rgba(42,107,30,0.12)' : 'rgba(181,64,42,0.12)') : 'white'
-          const border = chosen === null ? '#D9CFAE'
-            : picked ? (isCorrect ? CORRECT : WRONG) : '#D9CFAE'
-          const textCol = chosen === null ? DARK
-            : picked ? (isCorrect ? CORRECT : WRONG) : '#B0ACA4'
-          return (
-            <button key={opt} onClick={() => pick(opt)} style={{
-              padding: '10px 20px', borderRadius: 10,
-              border: `2px solid ${border}`, background: bg,
-              cursor: chosen ? 'default' : 'pointer',
-              fontFamily: F, fontSize: 15, fontWeight: 600, color: textCol,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>{label}</button>
-          )
-        })}
+        {(['L', 'S'] as const).map(opt => (
+          <LineSpacePill
+            key={opt}
+            label={opt === 'L' ? 'Line' : 'Space'}
+            isPicked={chosen === opt}
+            isCorrect={isCorrect === true}
+            settled={chosen !== null}
+            disabled={chosen !== null}
+            onClick={() => pick(opt)}
+          />
+        ))}
       </div>
 
       {chosen !== null && (
