@@ -189,7 +189,11 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {/* Concept section */}
         {!practicing && (
-          <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '20px 24px', marginBottom: '16px' }}>
+          <div style={{
+            background: 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
+            border: '1px solid #D7D1C0',
+            borderRadius: '14px', padding: '20px 24px', marginBottom: '16px',
+          }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', lineHeight: 1.75, marginBottom: 0 }}>
               {lesson.description}
             </p>
