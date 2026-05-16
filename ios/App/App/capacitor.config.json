@@ -1,10 +1,14 @@
 {
 	"appId": "studio.notelab.app",
 	"appName": "NoteLab",
-	"webDir": "out",
+	"webDir": "public",
 	"server": {
 		"url": "https://notelab.studio",
 		"cleartext": false
+	},
+	"ios": {
+		"contentInset": "always",
+		"backgroundColor": "#dbd3be"
 	},
 	"packageClassList": []
 }
