@@ -107,8 +107,8 @@ function PagerCard({
       <span style={{
         fontFamily: SERIF,
         fontSize: 17,
-        fontWeight: 400,
-        color: '#4A4540',
+        fontWeight: 500,
+        color: '#2A2318',
       }}>
         {title}
       </span>
