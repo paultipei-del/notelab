@@ -100,14 +100,14 @@ export default function CMPrepHubPage() {
               <Link key={lesson.slug} href={`/programs/cm/prep/${lesson.slug}`} style={{ textDecoration: 'none' }}>
                 <div
                   style={{
-                    background: 'var(--cream-card-strong)',
-                    border: '1px solid var(--brown-faint)',
+                    background: completed ? '#FDFBF5' : 'white',
+                    border: `1px solid ${completed ? '#D9CFAE' : '#E8E4DC'}`,
                     borderRadius: '14px', padding: '16px 20px',
                     display: 'flex', alignItems: 'center', gap: '14px',
                     cursor: 'pointer', transition: 'border-color 0.15s',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(154, 124, 80, 0.32)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = completed ? '#D9CFAE' : '#E8E4DC' }}
                 >
                   <div style={{
                     width: '28px', height: '28px', borderRadius: '50%',

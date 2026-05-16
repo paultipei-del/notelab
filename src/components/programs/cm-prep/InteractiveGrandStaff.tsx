@@ -496,9 +496,9 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
       {/* Explore: description panel */}
       {mode === 'explore' && (
         <div style={{
-          background: 'var(--cream-card)',
-          border: '1px solid var(--brown-faint)',
-          borderRadius: '12px', padding: '20px 24px',
+          background: (activeEl || activeLineEl) ? 'white' : LIGHT_BG,
+          border: `1px solid ${(activeEl || activeLineEl) ? '#D9CFAE' : '#EDE8DF'}`,
+          borderRadius: '14px', padding: '20px 24px',
           minHeight: 80, transition: 'background 0.15s',
         }}>
           {activeEl ? (

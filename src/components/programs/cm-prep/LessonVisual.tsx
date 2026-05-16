@@ -35,8 +35,8 @@ export default function LessonVisual({ lessonSlug }: Props) {
 
   return (
     <div style={{
-      background: 'var(--cream-card-strong)',
-      border: '1px solid var(--brown-faint)',
+      background: 'white',
+      border: '1px solid #E8E4DC',
       borderRadius: '16px',
       padding: '24px',
       marginBottom: '16px',
