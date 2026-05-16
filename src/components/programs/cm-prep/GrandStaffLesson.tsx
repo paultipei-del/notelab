@@ -349,12 +349,17 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
         ))}
       </div>
 
-      {chosen !== null && (
-        <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0,
-          color: chosen === q.n ? CORRECT : WRONG }}>
-          {chosen === q.n ? '✓ Correct' : `✗ This is ${q.type} ${q.n}`}
-        </p>
-      )}
+      {/* Feedback slot is always rendered so the card height stays
+          constant across "nothing picked" → "answer locked in". */}
+      <p style={{
+        fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0,
+        minHeight: 20, lineHeight: '20px',
+        color: chosen === null ? 'transparent' : chosen === q.n ? CORRECT : WRONG,
+      }}>
+        {chosen === null
+          ? ' '
+          : chosen === q.n ? '✓ Correct' : `✗ This is ${q.type} ${q.n}`}
+      </p>
     </div>
   )
 }
