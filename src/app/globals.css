@@ -6415,7 +6415,14 @@ svg:not(.nl-notation-staff) {
 .nl-cm-bundle {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+}
+/* Let __content grow to push __cta to the bottom of every narrow
+   card. This way the price + Buy button line up across the row even
+   when one subtitle (e.g. "Preparatory + Level 1 + Level 2") wraps
+   to two lines and another ("Levels 3–6") fits on one. */
+.nl-cm-bundle:not(.is-wide) .nl-cm-bundle__content {
+  flex: 1;
 }
 /* The wide variant (Full CM Program) spans every column of its row
    and arranges its content + price/CTA block in a 2-col layout. On
@@ -6428,9 +6435,22 @@ svg:not(.nl-notation-staff) {
   .nl-cm-bundle.is-wide {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
-    gap: 28px;
-    align-items: center;
-    padding: 28px 32px;
+    gap: 32px;
+    /* Stretch both columns to the same height. Inner align rules
+       below position the content at the top and the CTA at the
+       bottom so the wide card reads with the same top-content,
+       bottom-CTA rhythm as the narrow cards above. */
+    align-items: stretch;
+  }
+  /* In the wide card the CTA column already sits in its own grid
+     cell, so no flex-grow trick is needed; reset the narrow rule
+     in case ordering changes. */
+  .nl-cm-bundle.is-wide .nl-cm-bundle__content {
+    flex: initial;
+    align-self: start;
+  }
+  .nl-cm-bundle.is-wide .nl-cm-bundle__cta {
+    justify-content: flex-end;
   }
 }
 .nl-cm-bundle__cta {
