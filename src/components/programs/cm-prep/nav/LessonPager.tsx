@@ -59,15 +59,15 @@ function PagerCard({
       style={{
         display: 'flex', flexDirection: 'column',
         padding: '16px 20px',
-        border: '1px solid #E8E4DC',
+        border: '1px solid var(--brown-faint)',
         borderRadius: 14,
-        background: 'white',
+        background: 'var(--cream-card)',
         textAlign: direction === 'prev' ? 'left' : 'right',
         cursor: 'pointer',
         transition: 'border-color 0.15s',
       }}
       onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = '#E8E4DC' }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(154, 124, 80, 0.32)' }}
     >
       <span style={{
         fontFamily: F,

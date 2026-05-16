@@ -189,7 +189,12 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {/* Concept section */}
         {!practicing && (
-          <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: '14px', padding: '20px 24px', marginBottom: '16px' }}>
+          <div style={{
+            background: 'var(--cream-warm)',
+            border: '1px solid var(--cream-warm-border)',
+            borderLeft: '3px solid var(--cream-warm-rule)',
+            borderRadius: '14px', padding: '20px 24px', marginBottom: '16px',
+          }}>
             <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', lineHeight: 1.75, marginBottom: 0 }}>
               {lesson.description}
             </p>
@@ -319,7 +324,7 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {/* Practice section */}
         {unlocked && (
-          <div style={{ background: 'white', border: '1px solid #E8E4DC', borderRadius: '16px', padding: '28px' }}>
+          <div style={{ background: 'var(--cream-card-strong)', border: '1px solid var(--brown-faint)', borderRadius: '16px', padding: '28px' }}>
             {!practicing ? (
               <>
                 <p style={{ fontFamily: SERIF, fontSize: '19px', fontWeight: 400, color: '#2A2318', marginBottom: '8px' }}>

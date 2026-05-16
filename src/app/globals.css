@@ -90,6 +90,9 @@ body {
   --forest-soft: rgba(45, 90, 62, 0.12);
   --cream-card: rgba(248, 240, 216, 0.55);
   --cream-card-strong: rgba(248, 240, 216, 0.85);
+  --cream-warm: #ece3cc;
+  --cream-warm-rule: rgba(154, 124, 80, 0.65);
+  --cream-warm-border: rgba(154, 124, 80, 0.42);
   --cream-key: #fdf8ea;
   --scale-key-tint: rgba(154, 124, 80, 0.14);
 }
@@ -5755,8 +5758,8 @@ svg:not(.nl-notation-staff) {
 .nl-program-hero {
   position: relative;
   margin-bottom: 32px;
-  background: rgba(255, 250, 238, 0.85);
-  border: 1px solid rgba(139, 105, 20, 0.18);
+  background: var(--cream-card-strong);
+  border: 1px solid var(--brown-faint);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(139, 105, 20, 0.08);
@@ -5999,8 +6002,10 @@ svg:not(.nl-notation-staff) {
 /* ── Featured preview pane ── */
 .nl-program-hero__preview {
   padding: 22px;
-  background: rgba(245, 239, 223, 0.5);
-  border-top: 1px solid rgba(139, 105, 20, 0.1);
+  background: var(--cream-card);
+  border: 1px solid var(--brown-faint);
+  border-radius: 10px;
+  margin: 0 22px 22px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -6008,8 +6013,10 @@ svg:not(.nl-notation-staff) {
 @media (min-width: 768px) {
   .nl-program-hero__preview {
     padding: 36px 32px;
-    border-top: none;
-    border-left: 1px solid rgba(139, 105, 20, 0.1);
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid var(--brown-faint);
   }
 }
 .nl-program-hero__preview-label {
@@ -6197,8 +6204,8 @@ svg:not(.nl-notation-staff) {
 }
 .nl-program-card {
   position: relative;
-  background: rgba(255, 250, 238, 0.85);
-  border: 1px solid rgba(139, 105, 20, 0.18);
+  background: var(--cream-card-strong);
+  border: 1px solid var(--brown-faint);
   border-radius: 10px;
   overflow: hidden;
   padding: 22px 22px 0 26px;
