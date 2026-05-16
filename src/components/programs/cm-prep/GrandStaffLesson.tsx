@@ -287,7 +287,7 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${q.opts.length}, 1fr)`, gap: 8, marginBottom: 16 }}>
         {q.opts.map(opt => {
           const isCorrect = opt === q.n
-          let bg = 'white', border = '1px solid #E0DBCF', color = DARK
+          let bg = '#f3eee3', border = '1px solid #E0DBCF', color = '#4a4540'
           if (chosen !== null) {
             if (isCorrect) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
             else if (opt === chosen) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
@@ -1415,7 +1415,7 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
         {q.opts.map(opt => {
-          let bg = 'white', border = '1px solid #E0DBCF', color = DARK
+          let bg = '#f3eee3', border = '1px solid #E0DBCF', color = '#4a4540'
           if (chosen !== null) {
             if (opt === q.answer) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
             else if (opt === chosen) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
@@ -1768,7 +1768,7 @@ function GrandEx3({ onDone }: { onDone: (s: number, t: number) => void }) {
             const isMatched = matched.has(item.key)
             const isCorrect = matched.get(item.key) === true
             const isSelected = selectedName === item.key
-            let bg = 'white', border = '1px solid #E0DBCF', color = DARK
+            let bg = '#f3eee3', border = '1px solid #E0DBCF', color = '#4a4540'
             if (isSelected) { bg = 'rgba(186,117,23,0.10)'; border = `1px solid ${ACCENT}`; color = ACCENT }
             else if (isMatched && isCorrect) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
             else if (isMatched && !isCorrect) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
