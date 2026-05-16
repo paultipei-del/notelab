@@ -1354,13 +1354,18 @@ function BassEx2({ onDone }: { onDone: () => void }) {
         })}
       </div>
 
-      {!allPlaced && <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center', margin: '0 0 16px' }}>Drag a piece onto the staff above</p>}
-      {allPlaced && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontFamily: F, fontSize: 14, color: CORRECT, fontWeight: 600, margin: 0 }}>✓ Bass clef assembled</p>
-          <PrimaryBtn label={round + 1 >= ROUNDS ? 'Continue →' : `Again (${round + 1}/${ROUNDS}) →`} onClick={nextRound} />
-        </div>
-      )}
+      {/* Bottom slot reserves the completion-row height so the card
+          doesn't grow when the bass clef is fully assembled. */}
+      <div style={{ minHeight: 52, display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+        {allPlaced ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, flex: 1 }}>
+            <p style={{ fontFamily: F, fontSize: 14, color: CORRECT, fontWeight: 600, margin: 0 }}>✓ Bass clef assembled</p>
+            <PrimaryBtn label={round + 1 >= ROUNDS ? 'Continue →' : `Again (${round + 1}/${ROUNDS}) →`} onClick={nextRound} />
+          </div>
+        ) : (
+          <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center', margin: 0, width: '100%' }}>Drag a piece onto the staff above</p>
+        )}
+      </div>
 
       {dragging && typeof document !== 'undefined' && createPortal(
         <div style={{ position: 'fixed', left: dragClient.x, top: dragClient.y, transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 9999, opacity: 0.88, filter: 'drop-shadow(0 3px 10px rgba(0,0,0,0.22))' }}>
