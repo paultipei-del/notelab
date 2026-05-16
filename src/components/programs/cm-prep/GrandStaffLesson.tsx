@@ -1709,7 +1709,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
         Round {round + 1} of 4 · drag each part onto the staff.
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${220} ${180}`} width="100%"
           style={{ maxWidth: 260, display: 'block', margin: '0 auto' }}>
           {/* Grand staff preview */}
@@ -1758,7 +1758,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
                 style={{
                   width: GRAND_CHIP, height: GRAND_CHIP, margin: '0 auto',
                   border: `1.5px ${done ? 'solid rgba(42,107,30,0.35)' : 'dashed rgba(186,117,23,0.55)'}`,
-                  borderRadius: 10, background: done ? 'rgba(42,107,30,0.05)' : 'white',
+                  borderRadius: 10, background: done ? 'rgba(42,107,30,0.05)' : '#FDFBF5',
                   cursor: done ? 'default' : 'grab', opacity: done ? 0.3 : dragging === k ? 0.4 : 1,
                   touchAction: 'none', userSelect: 'none',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
@@ -1773,13 +1773,18 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
         })}
       </div>
 
-      {complete && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <p style={{ fontFamily: SERIF, fontSize: 18, color: CORRECT, margin: 0 }}>Grand staff complete!</p>
-          <PrimaryBtn label={round + 1 >= 4 ? 'Finish →' : 'Next round →'} onClick={nextRound} />
-        </div>
-      )}
-      {!complete && <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center' }}>Drag a piece onto the staff above</p>}
+      {/* Bottom slot reserves the completion-row height so the card
+          doesn't grow when the grand staff is fully built. */}
+      <div style={{ minHeight: 52, display: 'flex', alignItems: 'center' }}>
+        {complete ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, flex: 1 }}>
+            <p style={{ fontFamily: SERIF, fontSize: 18, color: CORRECT, margin: 0 }}>Grand staff complete!</p>
+            <PrimaryBtn label={round + 1 >= 4 ? 'Finish →' : 'Next round →'} onClick={nextRound} />
+          </div>
+        ) : (
+          <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center', margin: 0, width: '100%' }}>Drag a piece onto the staff above</p>
+        )}
+      </div>
 
       {dragging && typeof document !== 'undefined' && createPortal(
         <div style={{ position: 'fixed', left: dragClient.x, top: dragClient.y, transform: 'translate(-50%,-50%)', pointerEvents: 'none', zIndex: 9999, opacity: 0.9, filter: 'drop-shadow(0 3px 10px rgba(0,0,0,0.22))' }}>
