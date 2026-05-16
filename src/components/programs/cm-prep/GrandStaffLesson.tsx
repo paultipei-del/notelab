@@ -754,15 +754,6 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
     <div style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}>
       <ExLabel>Exercise 3 · Assemble the treble clef</ExLabel>
       {calibrating && <TrebleClefCalibrator onClose={() => setCalibrating(false)} />}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-        <button onClick={() => setCalibrating(c => !c)} style={{
-          fontFamily: F, fontSize: 11, color: calibrating ? ACCENT : '#B0ACA4',
-          background: 'none', border: `1px solid ${calibrating ? ACCENT : '#D9CFAE'}`,
-          borderRadius: 6, padding: '3px 10px', cursor: 'pointer',
-        }}>
-          {calibrating ? '✕ close calibrator' : 'calibrate'}
-        </button>
-      </div>
       <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
         {Array.from({ length: ROUNDS }, (_, i) => (
           <span key={i} style={{
@@ -782,7 +773,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       </p>
 
       {/* Staff */}
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
+      <div style={{ background: 'var(--bg)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           <defs>
@@ -850,7 +841,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
                   width: CHIP_BOX, height: CHIP_BOX,
                   border: `1.5px ${done ? 'solid rgba(42,107,30,0.35)' : 'dashed rgba(186,117,23,0.55)'}`,
                   borderRadius: 10,
-                  background: done ? 'rgba(42,107,30,0.05)' : 'white',
+                  background: done ? 'rgba(42,107,30,0.05)' : '#FDFBF5',
                   cursor: done ? 'default' : 'grab',
                   opacity: done ? 0.3 : isBeingDragged ? 0.4 : 1,
                   touchAction: 'none',
