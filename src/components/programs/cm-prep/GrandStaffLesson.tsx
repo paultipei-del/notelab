@@ -1565,14 +1565,20 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
         ))}
       </div>
 
-      {chosen !== null && (
-        <FeedbackRow
-          result={isCorrect}
-          correctLabel={`The missing part is the ${q.answer}`}
-          onNext={next}
-          nextLabel={idx + 1 >= total ? 'Finish →' : 'Next →'}
-        />
-      )}
+      {/* Bottom slot reserves FeedbackRow height so the card stays
+          the same size before and after an answer is locked in. */}
+      <div style={{ minHeight: 52, display: 'flex', alignItems: 'center' }}>
+        {chosen !== null && (
+          <div style={{ flex: 1 }}>
+            <FeedbackRow
+              result={isCorrect}
+              correctLabel={`The missing part is the ${q.answer}`}
+              onNext={next}
+              nextLabel={idx + 1 >= total ? 'Finish →' : 'Next →'}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }
