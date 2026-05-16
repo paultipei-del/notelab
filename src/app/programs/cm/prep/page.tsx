@@ -45,14 +45,11 @@ export default function CMPrepHubPage() {
 
         {/* Header */}
         <div style={{ marginTop: '28px', marginBottom: '36px' }}>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#7A7060', marginBottom: '10px' }}>
-            Certificate of Merit · Preparatory Level
-          </p>
           <h1 style={{ fontFamily: SERIF, fontWeight: 300, fontSize: 'clamp(26px, 4vw, 40px)', color: '#2A2318', marginBottom: '14px', letterSpacing: '0.02em' }}>
-            Fundamentals of Music Theory
+            Preparatory Level
           </h1>
-          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', color: '#7A7060', lineHeight: 1.7, maxWidth: '500px', marginBottom: '20px' }}>
-            Thirteen lessons, from reading notes on the grand staff through major scales, key signatures, and musical vocabulary. Each lesson introduces concepts and ends with interactive practice.
+          <p style={{ fontFamily: F, fontSize: 'var(--nl-text-body)', color: '#7A7060', lineHeight: 1.7, maxWidth: '560px', marginBottom: '20px' }}>
+            The foundation level. Covers staff reading on both clefs, accidentals, intervals, five-finger patterns and triads, key signatures, major scales, time signatures, and signs and terms.
           </p>
 
           {/* Overall progress */}
