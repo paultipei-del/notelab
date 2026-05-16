@@ -1355,8 +1355,10 @@ function BassEx2({ onDone }: { onDone: () => void }) {
       </div>
 
       {/* Bottom slot reserves the completion-row height so the card
-          doesn't grow when the bass clef is fully assembled. */}
-      <div style={{ minHeight: 52, display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+          doesn't grow when the bass clef is fully assembled. No
+          marginBottom so the bottom gap equals the card's top
+          padding. */}
+      <div style={{ minHeight: 52, display: 'flex', alignItems: 'center' }}>
         {allPlaced ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, flex: 1 }}>
             <p style={{ fontFamily: F, fontSize: 14, color: CORRECT, fontWeight: 600, margin: 0 }}>✓ Bass clef assembled</p>
