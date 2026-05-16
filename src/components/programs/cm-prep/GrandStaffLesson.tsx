@@ -141,8 +141,10 @@ function AnswerPill({
   let color = '#4a4540'
   let shadow: string | undefined = pressed
     ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
-    : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
-  let transform = pressed ? 'translateY(2px)' : 'translateY(0)'
+    : hover
+      ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+      : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+  let transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
 
   if (settled) {
     shadow = undefined
