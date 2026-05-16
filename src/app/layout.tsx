@@ -4,6 +4,7 @@ import './globals.css'
 import SiteHeader from '@/components/SiteHeader'
 import SiteFooter from '@/components/SiteFooter'
 import { Analytics } from '@vercel/analytics/next'
+import ColorLabMount from '@/components/ColorLab/Mount'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -107,6 +108,7 @@ export default function RootLayout({
           <SiteFooter />
         </div>
         <Analytics />
+        <ColorLabMount />
       </body>
     </html>
   )
