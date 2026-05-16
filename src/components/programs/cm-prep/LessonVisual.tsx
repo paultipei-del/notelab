@@ -35,7 +35,7 @@ export default function LessonVisual({ lessonSlug }: Props) {
 
   return (
     <div style={{
-      background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)',
+      background: '#FDFBF5',
       border: '1px solid var(--brown-faint)',
       borderRadius: '16px',
       padding: '24px',
