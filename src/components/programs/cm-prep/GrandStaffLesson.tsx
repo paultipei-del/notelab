@@ -120,28 +120,11 @@ function ExLabel({ children }: { children: string }) {
   return <p style={{ fontFamily: F, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: ACCENT, fontWeight: 600, margin: '0 0 14px' }}>{children}</p>
 }
 function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) {
-  const [hover, setHover] = useState(false)
-  const [pressed, setPressed] = useState(false)
-  const shadow = pressed
-    ? '0 1px 0 #5c1f0e, 0 1px 1px rgba(0,0,0,0.10), inset 0 1px 2px rgba(0,0,0,0.18)'
-    : hover
-      ? '0 3px 0 #5c1f0e, 0 5px 10px rgba(160,56,28,0.22)'
-      : '0 2px 0 #5c1f0e, 0 2px 4px rgba(160,56,28,0.15)'
-  const transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
   return (
-    <button
-      onClick={onClick}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => { setHover(false); setPressed(false) }}
-      style={{
-        background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: 10,
-        padding: '11px 26px', fontFamily: F, fontSize: 14, cursor: 'pointer',
-        boxShadow: shadow, transform,
-        transition: 'transform 0.08s ease, box-shadow 0.08s ease',
-      }}
-    >{label}</button>
+    <button onClick={onClick} style={{
+      background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: 10,
+      padding: '11px 26px', fontFamily: F, fontSize: 14, cursor: 'pointer',
+    }}>{label}</button>
   )
 }
 /**
