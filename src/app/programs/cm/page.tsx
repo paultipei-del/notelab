@@ -237,11 +237,15 @@ function BundleCard({ bundle }: { bundle: (typeof CM_BUNDLES)[number] }) {
       </div>
 
       <div className="nl-cm-bundle__cta">
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-          <span style={{ fontFamily: SERIF, fontWeight: 300, fontSize: '28px', color: '#2A2318', letterSpacing: '-0.01em' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', flexWrap: 'wrap' }}>
+          <span style={{ fontFamily: SERIF, fontWeight: 500, fontSize: '38px', color: '#2A2318', letterSpacing: '-0.015em', lineHeight: 1 }}>
             ${bundle.price}
           </span>
-          <span style={{ fontFamily: F, fontSize: '12px', fontWeight: 400, color: ACCENT }}>
+          <span style={{
+            fontFamily: F, fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase',
+            color: 'var(--oxblood)', background: 'var(--oxblood-tint)',
+            padding: '3px 8px', borderRadius: '4px',
+          }}>
             save ${bundle.savings}
           </span>
         </div>
