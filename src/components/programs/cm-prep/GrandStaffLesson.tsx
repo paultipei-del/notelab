@@ -294,9 +294,11 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
           }
           return (
             <button key={opt} onClick={() => pick(opt)} style={{
-              background: bg, border, borderRadius: 10, padding: '14px 0',
-              fontFamily: SERIF, fontSize: 22, fontWeight: 300, color,
-              cursor: chosen !== null ? 'default' : 'pointer', textAlign: 'center',
+              background: bg, border, borderRadius: 10,
+              height: 52,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: F, fontSize: 20, fontWeight: 500, lineHeight: 1, color,
+              cursor: chosen !== null ? 'default' : 'pointer',
             }}>{opt}</button>
           )
         })}
