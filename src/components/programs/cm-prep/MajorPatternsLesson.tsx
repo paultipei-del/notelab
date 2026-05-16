@@ -733,7 +733,7 @@ function PlaceTriadEx({
           disabled={submitted}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #D9CFAE', background: 'white',
+            border: '1.5px solid #D9CFAE', background: '#FDFBF5',
             color: '#7A7060', fontFamily: F, fontSize: 14,
             cursor: submitted ? 'default' : 'pointer',
           }}>

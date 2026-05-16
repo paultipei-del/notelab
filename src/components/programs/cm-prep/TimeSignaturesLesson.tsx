@@ -896,7 +896,7 @@ export function WriteCountsEx({
               minWidth: p.wide ? 56 : 44,
               height: 44, borderRadius: 8,
               border: `1.5px solid #D9CFAE`,
-              background: 'white', color: DARK,
+              background: '#FDFBF5', color: DARK,
               fontFamily: F, fontSize: 18, fontWeight: 700,
               padding: '0 10px',
               cursor: feedback !== null ? 'default' : 'pointer',
@@ -912,7 +912,7 @@ export function WriteCountsEx({
           disabled={feedback !== null}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #D9CFAE', background: 'white',
+            border: '1.5px solid #D9CFAE', background: '#FDFBF5',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>Reset</button>

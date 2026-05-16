@@ -742,7 +742,7 @@ function WordRound({
           placeholder="Type or tap letters"
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: `1.5px solid ${borderColor}`, background: 'white',
+            border: `1.5px solid ${borderColor}`, background: '#FDFBF5',
             fontFamily: SERIF, fontSize: 22, fontWeight: 400,
             color: inputColor, minWidth: 140, textAlign: 'center',
             letterSpacing: '0.15em', outline: 'none',
@@ -770,7 +770,7 @@ function WordRound({
             disabled={submitted !== null || typed.length >= item.word.length}
             style={{
               padding: '10px 0', borderRadius: 8, border: '1.5px solid #D9CFAE',
-              background: 'white', fontFamily: SERIF, fontSize: 18, fontWeight: 400,
+              background: '#FDFBF5', fontFamily: SERIF, fontSize: 18, fontWeight: 400,
               color: submitted !== null || typed.length >= item.word.length ? '#B0ACA4' : DARK,
               cursor: submitted !== null || typed.length >= item.word.length ? 'default' : 'pointer',
             }}>
@@ -783,7 +783,7 @@ function WordRound({
           aria-label="Backspace"
           style={{
             padding: '10px 0', borderRadius: 8, border: '1.5px solid #D9CFAE',
-            background: 'white', fontFamily: F, fontSize: 15,
+            background: '#FDFBF5', fontFamily: F, fontSize: 15,
             color: submitted !== null || typed.length === 0 ? '#B0ACA4' : DARK,
             cursor: submitted !== null || typed.length === 0 ? 'default' : 'pointer',
           }}>

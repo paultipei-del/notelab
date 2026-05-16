@@ -611,7 +611,7 @@ function TrebleClefCalibrator({ onClose }: { onClose: () => void }) {
           const b = bands[id]
           const color = COLORS[id]
           return (
-            <div key={id} style={{ background: 'white', border: `1px solid ${color}`, borderRadius: 8, padding: '8px 10px' }}>
+            <div key={id} style={{ background: '#FDFBF5', border: `1px solid ${color}`, borderRadius: 8, padding: '8px 10px' }}>
               <p style={{ fontFamily: F, fontSize: 10, color, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', margin: '0 0 4px' }}>
                 {TPIECES[id].label}
               </p>
@@ -1104,7 +1104,7 @@ function BassClefCalibrator({ onClose }: { onClose: () => void }) {
       {/* Live coordinate readout */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
         {layers.map(({ name, r, color }) => (
-          <div key={name} style={{ background: 'white', border: `1px solid ${color}`, borderRadius: 8, padding: '8px 12px' }}>
+          <div key={name} style={{ background: '#FDFBF5', border: `1px solid ${color}`, borderRadius: 8, padding: '8px 12px' }}>
             <p style={{ fontFamily: F, fontSize: 10, color, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', margin: '0 0 4px' }}>{name}</p>
             <p style={{ fontFamily: 'monospace', fontSize: 11, color: DARK, margin: 0, lineHeight: 1.9 }}>
               rx:{fmt(r.rx)}  ry:{fmt(r.ry)}<br />

@@ -319,7 +319,7 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {/* Practice section */}
         {unlocked && (
-          <div style={{ background: 'white', border: '1px solid #E8E4DC', borderRadius: '16px', padding: '28px' }}>
+          <div style={{ background: '#FDFBF5', border: '1px solid #E8E4DC', borderRadius: '16px', padding: '28px' }}>
             {!practicing ? (
               <>
                 <p style={{ fontFamily: SERIF, fontSize: '19px', fontWeight: 400, color: '#2A2318', marginBottom: '8px' }}>

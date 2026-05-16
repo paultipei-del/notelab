@@ -35,7 +35,7 @@ export default function LessonVisual({ lessonSlug }: Props) {
 
   return (
     <div style={{
-      background: 'white',
+      background: '#FDFBF5',
       border: '1px solid #E8E4DC',
       borderRadius: '16px',
       padding: '24px',

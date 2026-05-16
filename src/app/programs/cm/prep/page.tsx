@@ -100,7 +100,7 @@ export default function CMPrepHubPage() {
               <Link key={lesson.slug} href={`/programs/cm/prep/${lesson.slug}`} style={{ textDecoration: 'none' }}>
                 <div
                   style={{
-                    background: completed ? '#FDFBF5' : 'white',
+                    background: '#FDFBF5',
                     border: `1px solid ${completed ? '#D9CFAE' : '#E8E4DC'}`,
                     borderRadius: '14px', padding: '16px 20px',
                     display: 'flex', alignItems: 'center', gap: '14px',

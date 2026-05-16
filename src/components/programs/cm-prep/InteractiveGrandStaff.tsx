@@ -233,7 +233,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
       {/* Quiz prompt */}
       {mode === 'quiz' && !quizDone && quizTarget && (
         <div style={{
-          background: 'white', border: '1px solid #E8E4DC',
+          background: '#FDFBF5', border: '1px solid #E8E4DC',
           borderRadius: '14px', padding: '18px 22px', marginBottom: '16px',
           minHeight: '110px',
         }}>
@@ -549,7 +549,7 @@ export default function InteractiveGrandStaff({ showModeToggle = true }: Props) 
       {/* Quiz done */}
       {quizDone && (
         <div style={{
-          background: 'white', border: '1px solid #D9CFAE', borderRadius: '16px',
+          background: '#FDFBF5', border: '1px solid #D9CFAE', borderRadius: '16px',
           padding: '28px', textAlign: 'center',
         }}>
           <div style={{

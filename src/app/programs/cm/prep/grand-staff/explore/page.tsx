@@ -33,7 +33,7 @@ export default function GrandStaffExplorePage() {
         </div>
 
         {/* Interactive component */}
-        <div style={{ background: 'white', border: '1px solid #E8E4DC', borderRadius: '20px', padding: '28px' }}>
+        <div style={{ background: '#FDFBF5', border: '1px solid #E8E4DC', borderRadius: '20px', padding: '28px' }}>
           <InteractiveGrandStaff showModeToggle={true} />
         </div>
 
@@ -51,7 +51,7 @@ export default function GrandStaffExplorePage() {
               { n: 5, label: 'Measure', desc: 'Space between bar lines' },
             ].map(item => (
               <div key={item.n} style={{
-                background: 'white', border: '1px solid #EDE8DF', borderRadius: '12px',
+                background: '#FDFBF5', border: '1px solid #EDE8DF', borderRadius: '12px',
                 padding: '14px 16px', display: 'flex', gap: '12px', alignItems: 'flex-start',
               }}>
                 <span style={{
@@ -70,7 +70,7 @@ export default function GrandStaffExplorePage() {
         </div>
 
         {/* Back to lesson CTA */}
-        <div style={{ marginTop: '32px', padding: '20px 24px', background: 'white', borderRadius: '14px', border: '1px solid #E8E4DC', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ marginTop: '32px', padding: '20px 24px', background: '#FDFBF5', borderRadius: '14px', border: '1px solid #E8E4DC', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <p style={{ fontFamily: F, fontSize: 13, color: '#7A7060', margin: 0 }}>
             Ready to test your knowledge on the full lesson?
           </p>

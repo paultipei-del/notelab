@@ -61,7 +61,7 @@ function PagerCard({
         padding: '16px 20px',
         border: '1px solid #E8E4DC',
         borderRadius: 14,
-        background: 'white',
+        background: '#FDFBF5',
         textAlign: direction === 'prev' ? 'left' : 'right',
         cursor: 'pointer',
         transition: 'border-color 0.15s',

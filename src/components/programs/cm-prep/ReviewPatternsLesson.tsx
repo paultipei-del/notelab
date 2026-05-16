@@ -562,7 +562,7 @@ function WritePatternEx({
           disabled={feedback !== null}
           style={{
             padding: '10px 16px', borderRadius: 10,
-            border: '1.5px solid #D9CFAE', background: 'white',
+            border: '1.5px solid #D9CFAE', background: '#FDFBF5',
             color: GREY, fontFamily: F, fontSize: 14,
             cursor: feedback !== null ? 'default' : 'pointer',
           }}>
