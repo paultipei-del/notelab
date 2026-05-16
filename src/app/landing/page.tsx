@@ -563,7 +563,7 @@ export default function LandingPage() {
         </div>
         <p style={{
           fontFamily: F, fontSize: '11px', fontWeight: 400, color: '#8A8378',
-          lineHeight: 1.5, margin: '24px 0 0', maxWidth: '720px',
+          lineHeight: 1.5, margin: '24px 0 0', textAlign: 'center',
         }}>
           NoteLab is an independent study tool, not affiliated with or endorsed by any examination board or music education organization. All trademarks are the property of their respective owners.
         </p>

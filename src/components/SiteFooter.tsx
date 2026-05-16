@@ -61,7 +61,7 @@ export default function SiteFooter() {
       </div>
       <p style={{
         fontFamily: F, fontSize: 11, fontWeight: 400, color: 'rgba(42,35,24,0.45)',
-        lineHeight: 1.5, margin: '14px 0 0', maxWidth: 720,
+        lineHeight: 1.5, margin: '14px 0 0', textAlign: 'center',
       }}>
         NoteLab is an independent study tool, not affiliated with or endorsed by any examination board or music education organization. All trademarks are the property of their respective owners.
       </p>
