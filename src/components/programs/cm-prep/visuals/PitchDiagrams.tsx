@@ -199,7 +199,7 @@ export function IntervalsDiagram() {
         When counting intervals on the staff, count the line or space on which each note sits,
         and all the lines or spaces between the two notes.
       </p>
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0', marginBottom: 14 }}>
         <IntervalsAscendingStaff />
       </div>
