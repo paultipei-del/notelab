@@ -501,17 +501,23 @@ function TrebleEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
         </svg>
       </div>
 
-      {chosen !== null && (
-        <FeedbackRow
-          result={correct}
-          correctLabel="Line 2 is the G line · the treble clef anchors there"
-          onNext={next}
-          nextLabel={round + 1 >= ROUNDS ? 'Finish →' : `Next (${round + 1}/${ROUNDS}) →`}
-        />
-      )}
-      {chosen === null && (
-        <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center' }}>Tap a line</p>
-      )}
+      {/* Bottom slot reserves the FeedbackRow height so the card
+          doesn't grow when an answer is locked in. The hint and the
+          feedback row both render inside this fixed-height box. */}
+      <div style={{ minHeight: 52, display: 'flex', alignItems: 'center' }}>
+        {chosen !== null ? (
+          <div style={{ flex: 1 }}>
+            <FeedbackRow
+              result={correct}
+              correctLabel="Line 2 is the G line · the treble clef anchors there"
+              onNext={next}
+              nextLabel={round + 1 >= ROUNDS ? 'Finish →' : `Next (${round + 1}/${ROUNDS}) →`}
+            />
+          </div>
+        ) : (
+          <p style={{ fontFamily: F, fontSize: 13, color: '#B0ACA4', textAlign: 'center', margin: 0, width: '100%' }}>Tap a line</p>
+        )}
+      </div>
     </div>
   )
 }
