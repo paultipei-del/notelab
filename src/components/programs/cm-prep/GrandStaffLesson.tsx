@@ -147,10 +147,25 @@ function AnswerPill({
   let transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
 
   if (settled) {
-    shadow = undefined
+    // Keep the raised-paper drop so the answer pill still reads as a
+    // physical button even after a choice is locked in. Tint the
+    // under-rule a touch toward the feedback color so the 3D edge
+    // doesn't fight the new border.
     transform = 'translateY(0)'
-    if (isCorrect) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
-    else if (opt === chosen) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
+    if (isCorrect) {
+      bg = 'rgba(42,107,30,0.08)'
+      border = `1px solid ${CORRECT}`
+      color = CORRECT
+      shadow = '0 2px 0 rgba(45, 90, 62, 0.35), 0 2px 4px rgba(0,0,0,0.04)'
+    } else if (opt === chosen) {
+      bg = 'rgba(181,64,42,0.08)'
+      border = `1px solid ${WRONG}`
+      color = WRONG
+      shadow = '0 2px 0 rgba(160, 56, 28, 0.35), 0 2px 4px rgba(0,0,0,0.04)'
+    } else {
+      // Non-picked, non-correct pills: stay neutral but keep the rest.
+      shadow = '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+    }
   } else if (hover) {
     bg = '#f8f4ea'
   }
