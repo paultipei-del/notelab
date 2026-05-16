@@ -48,6 +48,38 @@ const ACCENT_BORDER = 'rgba(186,117,23,0.25)'
 // Signs & Terms cards only (ids 101–119)
 const SIGNS_TERMS_CARDS = CM_PREP_CARDS.filter(c => c.id >= 101 && c.id <= 119)
 
+/**
+ * Oxblood primary CTA with the same 3D paper-press treatment used on
+ * GrandStaffLesson PrimaryBtn: idle 2px under-rule in dark oxblood,
+ * hover lifts -1px with a richer shadow, mouse-down translates +2px
+ * and collapses to an inset.
+ */
+function OxbloodCTA({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+  const shadow = pressed
+    ? '0 1px 0 #5c1f0e, 0 1px 1px rgba(0,0,0,0.10), inset 0 1px 2px rgba(0,0,0,0.18)'
+    : hover
+      ? '0 3px 0 #5c1f0e, 0 5px 10px rgba(160,56,28,0.22)'
+      : '0 2px 0 #5c1f0e, 0 2px 4px rgba(160,56,28,0.15)'
+  const transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
+  return (
+    <button
+      onClick={onClick}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
+        padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
+        boxShadow: shadow, transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease',
+      }}
+    >{children}</button>
+  )
+}
+
 interface Props { params: Promise<{ lessonSlug: string }> }
 
 export default function CMPrepLessonPage({ params }: Props) {
@@ -353,15 +385,9 @@ export default function CMPrepLessonPage({ params }: Props) {
                   {lesson.tool === 'flash-session' && 'Flip through each term and rate whether you knew it. Review the ones you missed.'}
                   {' '}Pass {Math.round(lesson.passingScore * 100)}% to complete the lesson.
                 </p>
-                <button
-                  onClick={() => { setPracticing(true); setSessionDone(false) }}
-                  style={{
-                    background: 'var(--oxblood)', color: '#FDFBF5', border: '1px solid var(--oxblood)', borderRadius: '10px',
-                    padding: '12px 28px', fontFamily: F, fontSize: 'var(--nl-text-meta)', cursor: 'pointer',
-                  }}
-                >
+                <OxbloodCTA onClick={() => { setPracticing(true); setSessionDone(false) }}>
                   {completed ? 'Practice again →' : sessionDone ? 'Try again →' : (progress?.sessions.length ?? 0) > 0 ? 'Continue →' : 'Begin →'}
-                </button>
+                </OxbloodCTA>
               </>
             ) : (
               <>
