@@ -657,7 +657,7 @@ function LetterPairEx({
           <strong>whole step (W)</strong> apart.
         </p>
 
-        <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+        <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
           padding: '20px', marginBottom: 16, textAlign: 'center' }}>
           <div style={{ fontFamily: SERIF, fontSize: 42, color: DARK, lineHeight: 1.2, marginBottom: 16 }}>
             <span>{ex.from}</span>
@@ -705,7 +705,7 @@ function LetterPairEx({
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
       <ProgressBar done={idx} total={scoredItems.length} color={ACCENT} />
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '20px', marginBottom: 16, textAlign: 'center' }}>
         <div style={{ fontFamily: SERIF, fontSize: 42, color: DARK, lineHeight: 1.2 }}>
           <span>{item.from}</span>
@@ -821,7 +821,7 @@ function StaffPairEx({
           Now identify half and whole steps on the staff. The letter names will help you.
         </p>
 
-        <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+        <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
           padding: '8px 0', marginBottom: 12 }}>
           <StaffPairSVG item={ex} />
         </div>
@@ -865,7 +865,7 @@ function StaffPairEx({
         textTransform: 'uppercase', color: '#B0ACA4', marginBottom: 16 }}>{exLabel}</p>
       <ProgressBar done={idx} total={scoredItems.length} color={ACCENT} />
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <StaffPairSVG item={item} />
       </div>

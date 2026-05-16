@@ -415,7 +415,7 @@ function GrandStaffEx({
         Focus on the note head, not the stem.
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '12px 0', marginBottom: 16, overflowX: 'auto' }}>
         <svg ref={svgRef} viewBox={`0 0 ${EX_W} ${gSvgH}`} width="100%"
           style={{ maxWidth: EX_W, display: 'block', margin: '0 auto', cursor: 'pointer' }}
@@ -576,7 +576,7 @@ function Ex3({ onDone }: { onDone: (s: number, t: number) => void }) {
         Is this a <strong>Line</strong> note or a <strong>Space</strong> note?
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '16px', marginBottom: 20 }}>
         <CardStaff note={card} revealed={chosen !== null} />
       </div>
@@ -684,7 +684,7 @@ function DrawNotes({
           : `Click anywhere on the staff to place a note. ${total - placed.length} remaining.`}
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '16px 0', marginBottom: 16 }}>
         <svg ref={svgRef}
           viewBox={`0 0 ${svgW + 6} ${svgH}`} width="100%"
@@ -763,7 +763,7 @@ function NoteShapesIntro({ onNext }: { onNext: () => void }) {
         A <strong>quarter note</strong> fills the oval in, same stem, darker head.
         You will learn what each of these means soon.
       </p>
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '24px 16px', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '24px 16px', marginBottom: 20 }}>
         <NoteShapesVisual />
       </div>
       <PrimaryBtn label="Next →" onClick={onNext} />
@@ -779,7 +779,7 @@ function LineNoteIntro({ onNext }: { onNext: () => void }) {
         A <strong style={{ color: LINE_C }}>line note</strong> has a staff line running directly through its head.
         Any note value can sit on a line · look at the head position, not the stem.
       </p>
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <LineNoteStaff />
       </div>
       <PrimaryBtn label="Next →" onClick={onNext} />
@@ -795,7 +795,7 @@ function SpaceNoteIntro({ onNext }: { onNext: () => void }) {
         A <strong style={{ color: SPACE_C }}>space note</strong> has its head between two staff lines:
         no line passes through it. Space notes can also appear above the top line or below the bottom line.
       </p>
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <SpaceNoteStaff />
       </div>
       <PrimaryBtn label="Start exercises →" onClick={onNext} />

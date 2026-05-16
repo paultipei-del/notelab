@@ -901,7 +901,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       </p>
 
       {/* Staff */}
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           <defs>
@@ -1407,7 +1407,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
           : 'Drag each piece onto the staff.'}
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           {/* clef shifted 2px right vs global BX; clipPath rects follow */}
@@ -1606,7 +1606,7 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       </p>
 
       {/* Staff: after answer, MissingStaff shows the missing part filled in green/red */}
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
         <MissingStaff missing={q.id} revealColor={chosen !== null ? (isCorrect ? CORRECT : WRONG) : undefined} />
       </div>
 
@@ -1766,7 +1766,7 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
         Round {round + 1} of 4 · drag each part onto the staff.
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${220} ${180}`} width="100%"
           style={{ maxWidth: 260, display: 'block', margin: '0 auto' }}>
           {/* Grand staff preview */}

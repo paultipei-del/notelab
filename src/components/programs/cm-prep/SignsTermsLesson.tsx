@@ -123,7 +123,7 @@ function MatchEx({ onDone }: { onDone: (correct: number, total: number) => void 
       <ExerciseLabel>Exercise 1 · Match the sign with its definition</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 14,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 14,
         padding: '18px 20px 12px', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
           minHeight: 120, marginBottom: 4 }}>
@@ -184,7 +184,7 @@ function IdentifyEx({ onDone }: { onDone: (correct: number, total: number) => vo
       <ExerciseLabel>Exercise 2 · Identify the sign</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 14,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 14,
         padding: '22px 20px', marginBottom: 14, minHeight: 140,
         display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <NotationSymbol cardId={item.id} />
@@ -367,7 +367,7 @@ function CategoryEx({ onDone }: { onDone: (correct: number, total: number) => vo
       <ExerciseLabel>Exercise 4 · Which category?</ExerciseLabel>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 14,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 14,
         padding: '18px 20px 12px', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
           minHeight: 120, marginBottom: 4 }}>

@@ -113,7 +113,7 @@ export function MajorPatternDiagram() {
         and back without skipping any line or space.
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0', marginBottom: 4 }}>
         <StaffExamples />
       </div>
@@ -521,7 +521,7 @@ export function MinorPatternDiagram() {
         sits a half step lower than in the matching major triad.
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0', marginBottom: 4 }}>
         <MinorStaffExamples />
       </div>
@@ -727,7 +727,7 @@ export function KeySignatureDiagram() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {keySigs.map(ks => (
           <div key={ks.name} style={{
-            background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+            background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
             padding: '8px 0',
           }}>
             {renderStaff(ks)}
@@ -828,7 +828,7 @@ export function MajorScaleDiagram() {
         its tonic, and it borrows its sharps or flats from the major key signature of the same name.
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0', marginBottom: 14 }}>
         {renderScale(false)}
       </div>
@@ -839,7 +839,7 @@ export function MajorScaleDiagram() {
         {' '}and <strong>7–8</strong>.
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0 28px' }}>
         {renderScale(true)}
       </div>
@@ -924,7 +924,7 @@ export function TimeSignatureDiagram() {
       </p>
 
       {/* Grand staff showing 4/4 */}
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0', marginBottom: 14 }}>
         <svg viewBox={`0 0 ${gW} ${gH}`} width="100%"
           style={{ maxWidth: gW, display: 'block', margin: '0 auto' }}>
@@ -994,7 +994,7 @@ export function TimeSignatureDiagram() {
         beat and the rest of the note values scale from there:
       </p>
       <div style={{
-        background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+        background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '14px 12px 12px', marginBottom: 14,
       }}>
         <svg viewBox="0 0 560 110" width="100%" style={{ maxWidth: 560, display: 'block', margin: '0 auto' }}>
@@ -1035,7 +1035,7 @@ export function TimeSignatureDiagram() {
         Beats <strong style={{ color: ACCENT }}>1</strong> and <strong style={{ color: ACCENT }}>3</strong> carry the
         strongest stress in 4/4.
       </p>
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0 14px', marginBottom: 14 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>

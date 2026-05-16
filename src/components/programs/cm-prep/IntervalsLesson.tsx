@@ -246,7 +246,7 @@ function NameIntervalEx({
           <strong>{letterAt(item.clef, Math.max(item.pos1, item.pos2))}</strong> to verify.
         </p>
 
-        <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+        <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
           padding: '8px 0', marginBottom: 16 }}>
           <IntervalStaffCard item={item} />
         </div>
@@ -279,7 +279,7 @@ function NameIntervalEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · name this interval
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <IntervalStaffCard item={item} />
       </div>
@@ -433,7 +433,7 @@ function BuildIntervalEx({
         {item.direction === 'up' ? 'above' : 'below'}
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg
           ref={r => { svgRef.current = r }}
@@ -678,7 +678,7 @@ function ReadBuildEx({
         </strong>
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg
           ref={r => { svgRef.current = r }}
@@ -1069,7 +1069,7 @@ function PhraseIntervalEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · what interval connects the notes?
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <PhraseStaff item={item} />
       </div>

@@ -288,7 +288,7 @@ function NameExerciseGrand({
         Grand staff · name this note
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
           style={{ maxWidth: gsW, display: 'block', margin: '0 auto' }}>
@@ -391,7 +391,7 @@ function PlaceExercise({
           <strong>{octaveLabel(item)}</strong> · tap the staff, then press Place to confirm
         </p>
       </div>
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -545,7 +545,7 @@ function PlaceExerciseGrand({
           {itemIsMiddleC && <span style={{ color: '#B0ACA4' }}> (either staff accepted)</span>}
         </p>
       </div>
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${gsW} ${gsH}`} width="100%"
           style={{ maxWidth: gsW, display: 'block', margin: '0 auto',

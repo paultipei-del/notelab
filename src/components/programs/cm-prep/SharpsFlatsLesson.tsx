@@ -387,7 +387,7 @@ function DrawAccidentalEx({
         Tap to the <strong>left</strong> of the note, on the <strong>same line or space</strong>, then press Place to confirm the {accWord(acc)} ({accSymbol(acc)}).
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -498,7 +498,7 @@ function NameAccidentalEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · name this note
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -593,7 +593,7 @@ function GrandNameEx({
         Grand staff · name this note
       </p>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${gsH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -733,7 +733,7 @@ function WriteAccidentalEx({
         </p>
       </div>
 
-      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
