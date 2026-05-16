@@ -146,7 +146,7 @@ function KeyboardReference({ keyProp, modeProp, faded = false, label }:
   const triad = [p.notes[0], p.notes[2], p.notes[4]]
   return (
     <div style={{
-      background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
       padding: '10px 12px', marginTop: 14,
       opacity: faded ? 0.55 : 1,
     }}>
@@ -230,7 +230,7 @@ function NamePatternEx({
         <strong style={{ color: MIN_C }}>minor</strong>.
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{
@@ -499,7 +499,7 @@ function WritePatternEx({
         {subStep === 'pattern' ? 'pattern (5 notes)' : 'triad (3 notes, stacked)'}</strong>
       </p>
 
-      <div style={{ background: '#ECE3CC', border: '1px solid #EDE8DF', borderRadius: 12,
+      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg
           ref={r => { svgRef.current = r }}
