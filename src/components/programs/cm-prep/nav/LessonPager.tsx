@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import type { CMPrepLesson } from '@/lib/programs/cm-prep/lessons'
 
@@ -51,23 +52,47 @@ export function LessonPager({ prev, next }: LessonPagerProps) {
   )
 }
 
+/**
+ * Raised, paper-toned prev/next pager card. Three-state motion mirrors
+ * the in-lesson Back / Forward NavButton and the Ex1 AnswerPill: idle
+ * sits flat with a 2px under-rule, hover translates -1px and grows the
+ * shadow to 3px + 4px softness, mouse-down sinks 2px and collapses to
+ * the pressed-in inset.
+ */
 function PagerCard({
   direction, badge, title,
 }: { direction: 'prev' | 'next'; badge: string; title: string }) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+
+  const bg = hover
+    ? 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+    : 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)'
+  const shadow = pressed
+    ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    : hover
+      ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+      : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+  const transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
+
   return (
     <div
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
       style={{
         display: 'flex', flexDirection: 'column',
         padding: '16px 20px',
-        border: '1px solid #E8E4DC',
+        border: '1px solid #D7D1C0',
         borderRadius: 14,
-        background: '#FDFBF5',
+        background: bg,
         textAlign: direction === 'prev' ? 'left' : 'right',
         cursor: 'pointer',
-        transition: 'border-color 0.15s',
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
       }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = '#1A1A18' }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = '#E8E4DC' }}
     >
       <span style={{
         fontFamily: F,
@@ -83,7 +108,7 @@ function PagerCard({
         fontFamily: SERIF,
         fontSize: 17,
         fontWeight: 400,
-        color: '#2A2318',
+        color: '#4A4540',
       }}>
         {title}
       </span>
