@@ -122,6 +122,57 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
     }}>{label}</button>
   )
 }
+/**
+ * Raised, paper-toned answer pill used by Ex1-style numbered grids
+ * (line/space, treble, bass). Mirrors the 3D treatment on the Back /
+ * Forward NavButton: subtle gradient face, 2px under-rule, hover
+ * lightens, press translates down 2px. In feedback state (chosen !==
+ * null) the 3D drops away in favour of the flat correct/wrong tint.
+ */
+function AnswerPill({
+  opt, chosen, isCorrect, onPick,
+}: { opt: number; chosen: number | null; isCorrect: boolean; onPick: () => void }) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+  const settled = chosen !== null
+
+  let bg: string = '#f3eee3'
+  let border = '1px solid #E0DBCF'
+  let color = '#4a4540'
+  let shadow: string | undefined = pressed
+    ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+  let transform = pressed ? 'translateY(2px)' : 'translateY(0)'
+
+  if (settled) {
+    shadow = undefined
+    transform = 'translateY(0)'
+    if (isCorrect) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
+    else if (opt === chosen) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
+  } else if (hover) {
+    bg = '#f8f4ea'
+  }
+
+  return (
+    <button
+      onClick={() => { if (!settled) onPick() }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        background: bg, border, borderRadius: 10,
+        height: 52,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontFamily: F, fontSize: 20, fontWeight: 400, lineHeight: 1, color,
+        cursor: settled ? 'default' : 'pointer',
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >{opt}</button>
+  )
+}
 function ProgressDots({ total, idx, results }: { total: number; idx: number; results: boolean[] }) {
   return (
     <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
@@ -285,23 +336,15 @@ function StaffEx({ onDone }: { onDone: (s: number, t: number) => void }) {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${q.opts.length}, 1fr)`, gap: 8, marginBottom: 16 }}>
-        {q.opts.map(opt => {
-          const isCorrect = opt === q.n
-          let bg = '#f3eee3', border = '1px solid #E0DBCF', color = '#4a4540'
-          if (chosen !== null) {
-            if (isCorrect) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
-            else if (opt === chosen) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
-          }
-          return (
-            <button key={opt} onClick={() => pick(opt)} style={{
-              background: bg, border, borderRadius: 10,
-              height: 52,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: F, fontSize: 20, fontWeight: 400, lineHeight: 1, color,
-              cursor: chosen !== null ? 'default' : 'pointer',
-            }}>{opt}</button>
-          )
-        })}
+        {q.opts.map(opt => (
+          <AnswerPill
+            key={opt}
+            opt={opt}
+            chosen={chosen}
+            isCorrect={opt === q.n}
+            onPick={() => pick(opt)}
+          />
+        ))}
       </div>
 
       {chosen !== null && (
