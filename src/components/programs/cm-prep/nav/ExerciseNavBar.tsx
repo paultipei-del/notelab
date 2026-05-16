@@ -29,8 +29,10 @@ function NavButton({ children, onClick }: { children: React.ReactNode; onClick: 
         letterSpacing: '0.02em',
         boxShadow: pressed
           ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
-          : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)',
-        transform: pressed ? 'translateY(2px)' : 'translateY(0)',
+          : hover
+            ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+            : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)',
+        transform: pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)',
         transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
       }}
     >
