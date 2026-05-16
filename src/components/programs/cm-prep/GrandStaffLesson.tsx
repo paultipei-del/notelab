@@ -199,6 +199,72 @@ function AnswerPill({
     >{opt}</button>
   )
 }
+/**
+ * Same 3D treatment as AnswerPill, but for multi-choice text answers
+ * (Ex6 grand-staff MCQ, anywhere else with string options). Padding +
+ * left-aligned label instead of a fixed-height centered glyph.
+ */
+function MCAnswerPill({
+  opt, chosen, isAnswer, onPick,
+}: { opt: string; chosen: string | null; isAnswer: boolean; onPick: () => void }) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+  const settled = chosen !== null
+
+  let bg: string = '#f3eee3'
+  let border = '1px solid #E0DBCF'
+  let color = '#4a4540'
+  let shadow: string | undefined = pressed
+    ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    : hover
+      ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+      : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+  let transform = pressed ? 'translateY(2px)' : hover ? 'translateY(-1px)' : 'translateY(0)'
+
+  if (settled) {
+    const wasPicked = opt === chosen
+    if (wasPicked) {
+      const isRight = isAnswer
+      bg = isRight ? 'rgba(42,107,30,0.08)' : 'rgba(181,64,42,0.08)'
+      border = `1px solid ${isRight ? CORRECT : WRONG}`
+      color = isRight ? CORRECT : WRONG
+      const tint = isRight ? 'rgba(45, 90, 62, 0.35)' : 'rgba(160, 56, 28, 0.35)'
+      shadow = `0 1px 0 ${tint}, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.06)`
+      transform = 'translateY(2px)'
+    } else if (isAnswer) {
+      bg = 'rgba(42,107,30,0.08)'
+      border = `1px solid ${CORRECT}`
+      color = CORRECT
+      shadow = '0 2px 0 rgba(45, 90, 62, 0.35), 0 2px 4px rgba(0,0,0,0.04)'
+      transform = 'translateY(0)'
+    } else {
+      shadow = '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+      transform = 'translateY(0)'
+    }
+  } else if (hover) {
+    bg = '#f8f4ea'
+  }
+
+  return (
+    <button
+      onClick={() => { if (!settled) onPick() }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        background: bg, border, borderRadius: 10,
+        padding: '12px 16px',
+        fontFamily: F, fontSize: 14, color,
+        cursor: settled ? 'default' : 'pointer',
+        textAlign: 'left',
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >{opt}</button>
+  )
+}
 function ProgressDots({ total, idx, results }: { total: number; idx: number; results: boolean[] }) {
   return (
     <div style={{ display: 'flex', gap: 5, marginBottom: 14 }}>
@@ -1488,19 +1554,15 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
-        {q.opts.map(opt => {
-          let bg = '#f3eee3', border = '1px solid #E0DBCF', color = '#4a4540'
-          if (chosen !== null) {
-            if (opt === q.answer) { bg = 'rgba(42,107,30,0.08)'; border = `1px solid ${CORRECT}`; color = CORRECT }
-            else if (opt === chosen) { bg = 'rgba(181,64,42,0.08)'; border = `1px solid ${WRONG}`; color = WRONG }
-          }
-          return (
-            <button key={opt} onClick={() => pick(opt)} style={{
-              background: bg, border, borderRadius: 10, padding: '12px 16px',
-              fontFamily: F, fontSize: 14, color, cursor: chosen ? 'default' : 'pointer', textAlign: 'left',
-            }}>{opt}</button>
-          )
-        })}
+        {q.opts.map(opt => (
+          <MCAnswerPill
+            key={opt}
+            opt={opt}
+            chosen={chosen}
+            isAnswer={opt === q.answer}
+            onPick={() => pick(opt)}
+          />
+        ))}
       </div>
 
       {chosen !== null && (
