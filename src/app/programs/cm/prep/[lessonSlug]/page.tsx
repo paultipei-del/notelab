@@ -105,12 +105,34 @@ export default function CMPrepLessonPage({ params }: Props) {
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 32px 80px' }}>
        <div style={{ maxWidth: '760px', margin: '0 auto' }}>
 
-        {/* Breadcrumb trail */}
-        <Breadcrumb crumbs={[
-          { label: 'Certificate of Merit', href: '/programs/cm' },
-          { label: 'Preparatory Level', href: '/programs/cm/prep' },
-          { label: lesson.title },
-        ]} />
+        {/* Breadcrumb trail with optional completed pill */}
+        <div style={{
+          display: 'flex', alignItems: 'center', flexWrap: 'wrap',
+          rowGap: '8px', columnGap: '14px',
+        }}>
+          <Breadcrumb crumbs={[
+            { label: 'Certificate of Merit', href: '/programs/cm' },
+            { label: 'Preparatory Level', href: '/programs/cm/prep' },
+            { label: lesson.title },
+          ]} />
+          {!practicing && (completed || (progress?.sessions.length ?? 0) > 0) && !sessionDone && (
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: '4px',
+              padding: '4px 12px 4px 10px',
+              background: 'var(--forest-soft)',
+              border: '1px solid rgba(45, 90, 62, 0.24)',
+              borderRadius: '100px',
+              fontFamily: F, fontSize: '11px', color: 'var(--forest)',
+            }}>
+              {completed && <span aria-hidden="true">✓</span>}
+              <span>{completed ? 'Completed' : 'In progress'}</span>
+              <span style={{ color: 'rgba(45, 90, 62, 0.5)' }}>·</span>
+              <span>Best <span style={{ fontWeight: 500, color: 'var(--ink)' }}>{Math.round((progress?.bestScore ?? 0) * 100)}%</span></span>
+              <span style={{ color: 'rgba(45, 90, 62, 0.5)' }}>·</span>
+              <span>{progress?.sessions.length ?? 0} session{(progress?.sessions.length ?? 0) !== 1 ? 's' : ''}</span>
+            </span>
+          )}
+        </div>
 
         {/* Header */}
         <div style={{ marginTop: '28px', marginBottom: '28px' }}>
@@ -124,27 +146,6 @@ export default function CMPrepLessonPage({ params }: Props) {
             {lesson.subtitle}
           </p>
         </div>
-
-        {/* Previous session summary */}
-        {!practicing && (completed || (progress?.sessions.length ?? 0) > 0) && !sessionDone && (
-          <div style={{
-            background: completed ? 'var(--forest-soft)' : '#ECE3CC',
-            border: `1px solid ${completed ? 'rgba(45, 90, 62, 0.24)' : '#D9CFAE'}`,
-            borderRadius: '14px', padding: '16px 20px', marginBottom: '24px',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              {completed && <span style={{ color: 'var(--forest)', fontSize: '13px' }}>✓</span>}
-              <p style={{ fontFamily: SERIF, fontSize: '16px', fontWeight: 500, color: completed ? 'var(--forest)' : '#2A2318', margin: 0 }}>
-                {completed ? 'Completed' : 'In progress'}
-              </p>
-            </div>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: 'var(--brown)', margin: 0 }}>
-              Best score: <strong style={{ color: 'var(--ink)' }}>{Math.round((progress?.bestScore ?? 0) * 100)}%</strong>
-              {' · '}
-              {progress?.sessions.length ?? 0} session{(progress?.sessions.length ?? 0) !== 1 ? 's' : ''}
-            </p>
-          </div>
-        )}
 
         {/* Session result */}
         {sessionDone && (
@@ -190,11 +191,22 @@ export default function CMPrepLessonPage({ params }: Props) {
         {/* Concept section */}
         {!practicing && (
           <div style={{
-            background: 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
-            border: '1px solid #D7D1C0',
-            borderRadius: '14px', padding: '20px 24px', marginBottom: '16px',
+            background: 'var(--cream-key)',
+            border: '1px solid var(--brown-faint)',
+            borderRadius: '14px', padding: '22px 28px', marginBottom: '16px',
           }}>
-            <p style={{ fontFamily: F, fontSize: 'var(--nl-text-meta)', color: '#4A4540', lineHeight: 1.75, marginBottom: 0 }}>
+            <p style={{
+              fontFamily: F, fontSize: '11px', fontWeight: 500,
+              letterSpacing: '1.5px', textTransform: 'uppercase' as const,
+              color: 'var(--oxblood)', marginBottom: '10px',
+            }}>
+              Lesson notes
+            </p>
+            <p style={{
+              fontFamily: SERIF, fontStyle: 'italic',
+              fontSize: '16px', lineHeight: 1.55,
+              color: 'var(--brown)', margin: 0,
+            }}>
               {lesson.description}
             </p>
           </div>
@@ -331,7 +343,7 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {/* Practice section */}
         {unlocked && (
-          <div style={{ background: '#FDFBF5', border: '1px solid #E8E4DC', borderRadius: '16px', padding: '28px' }}>
+          <div style={{ background: 'var(--cream-key)', border: '1px solid var(--brown-faint)', borderRadius: '16px', padding: '28px' }}>
             {!practicing ? (
               <>
                 <p style={{ fontFamily: SERIF, fontSize: '19px', fontWeight: 400, color: '#2A2318', marginBottom: '8px' }}>
