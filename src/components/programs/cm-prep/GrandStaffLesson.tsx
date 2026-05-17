@@ -839,27 +839,41 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
   const [dragClient, setDragClient] = useState({ x: 0, y: 0 })
   const [calibrating, setCalibrating] = useState(false)
   const staffRef = useRef<SVGSVGElement>(null)
+  // Ref mirrors `dragging` synchronously so end-of-drag handlers never see
+  // stale closure state when events arrive faster than React can re-render.
+  const dragRef = useRef<TreblePieceId | null>(null)
   const allPieceIds: TreblePieceId[] = ['top', 'mid', 'bot']
   // Shuffle chip order each round so student must search
   const [chipOrder, setChipOrder] = useState<TreblePieceId[]>(() => shuffled(allPieceIds))
 
   const allPlaced = placed.size === 3
 
+  function resetDrag(el: HTMLElement | null, pointerId: number | null) {
+    if (el && pointerId !== null && el.hasPointerCapture(pointerId)) {
+      el.releasePointerCapture(pointerId)
+    }
+    dragRef.current = null
+    setDragging(null)
+  }
+
   function startDrag(id: TreblePieceId, e: React.PointerEvent<HTMLDivElement>) {
     if (placed.has(id)) return
     e.currentTarget.setPointerCapture(e.pointerId)
+    dragRef.current = id
     setDragging(id)
     setDragClient({ x: e.clientX, y: e.clientY })
   }
   function moveDrag(e: React.PointerEvent<HTMLDivElement>) {
-    if (!dragging) return
+    if (!dragRef.current) return
     setDragClient({ x: e.clientX, y: e.clientY })
   }
   function endDrag(e: React.PointerEvent<HTMLDivElement>, id: TreblePieceId) {
-    if (!dragging || dragging !== id) return
-    // Release pointer capture immediately so the element resets cleanly
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId)
+    const active = dragRef.current
+    // Always release capture and clear state, even if guard fails — leaving
+    // capture attached is what makes the piece "stick" to the cursor.
+    if (active !== id) {
+      resetDrag(e.currentTarget, e.pointerId)
+      return
     }
     const svg = staffRef.current
     if (svg) {
@@ -869,7 +883,10 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
         setPlaced(prev => new Set([...prev, id]))
       }
     }
-    setDragging(null)
+    resetDrag(e.currentTarget, e.pointerId)
+  }
+  function cancelDrag(e: React.PointerEvent<HTMLDivElement>) {
+    resetDrag(e.currentTarget, e.pointerId)
   }
   function nextRound() {
     if (round + 1 >= ROUNDS) { onDone(); return }
@@ -901,7 +918,7 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
       </p>
 
       {/* Staff */}
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           <defs>
@@ -965,6 +982,8 @@ function TrebleEx2({ onDone }: { onDone: () => void }) {
                 onPointerDown={e => startDrag(id, e)}
                 onPointerMove={moveDrag}
                 onPointerUp={e => endDrag(e, id)}
+                onPointerCancel={cancelDrag}
+                onLostPointerCapture={cancelDrag}
                 style={{
                   width: CHIP_BOX, height: CHIP_BOX,
                   border: `1.5px ${done ? 'solid rgba(42,107,30,0.35)' : 'dashed rgba(186,117,23,0.55)'}`,
@@ -1354,22 +1373,35 @@ function BassEx2({ onDone }: { onDone: () => void }) {
   const [dragClient, setDragClient] = useState({ x: 0, y: 0 })
   const [calibrating, setCalibrating] = useState(false)
   const staffRef = useRef<SVGSVGElement>(null)
+  // Ref mirrors `dragging` synchronously so end-of-drag handlers never see
+  // stale closure state when events arrive faster than React can re-render.
+  const dragRefB = useRef<BassPieceId | null>(null)
   const allPieceIdsB: BassPieceId[] = ['body', 'dots']
   const [chipOrderB, setChipOrderB] = useState<BassPieceId[]>(() => shuffled(allPieceIdsB))
   const allPlaced = placed.size === 2
 
+  function resetDragB(el: HTMLElement | null, pointerId: number | null) {
+    if (el && pointerId !== null && el.hasPointerCapture(pointerId)) {
+      el.releasePointerCapture(pointerId)
+    }
+    dragRefB.current = null
+    setDragging(null)
+  }
+
   function startDragB(id: BassPieceId, e: React.PointerEvent<HTMLDivElement>) {
     if (placed.has(id)) return
     e.currentTarget.setPointerCapture(e.pointerId)
+    dragRefB.current = id
     setDragging(id); setDragClient({ x: e.clientX, y: e.clientY })
   }
   function moveDragB(e: React.PointerEvent<HTMLDivElement>) {
-    if (!dragging) return; setDragClient({ x: e.clientX, y: e.clientY })
+    if (!dragRefB.current) return; setDragClient({ x: e.clientX, y: e.clientY })
   }
   function endDragB(e: React.PointerEvent<HTMLDivElement>, id: BassPieceId) {
-    if (!dragging || dragging !== id) return
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId)
+    const active = dragRefB.current
+    if (active !== id) {
+      resetDragB(e.currentTarget, e.pointerId)
+      return
     }
     const svg = staffRef.current
     if (svg) {
@@ -1379,7 +1411,10 @@ function BassEx2({ onDone }: { onDone: () => void }) {
         setPlaced(prev => new Set([...prev, id]))
       }
     }
-    setDragging(null)
+    resetDragB(e.currentTarget, e.pointerId)
+  }
+  function cancelDragB(e: React.PointerEvent<HTMLDivElement>) {
+    resetDragB(e.currentTarget, e.pointerId)
   }
   function nextRound() {
     if (round + 1 >= ROUNDS) { onDone(); return }
@@ -1407,7 +1442,7 @@ function BassEx2({ onDone }: { onDone: () => void }) {
           : 'Drag each piece onto the staff.'}
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px 0', marginBottom: 20 }}>
         <svg ref={staffRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
           {/* clef shifted 2px right vs global BX; clipPath rects follow */}
@@ -1459,6 +1494,8 @@ function BassEx2({ onDone }: { onDone: () => void }) {
             <div key={id} style={{ textAlign: 'center' }}>
               <div onPointerDown={e => startDragB(id, e)}
                 onPointerMove={moveDragB} onPointerUp={e => endDragB(e, id)}
+                onPointerCancel={cancelDragB}
+                onLostPointerCapture={cancelDragB}
                 style={{
                   width: CHIP_BOX, height: CHIP_BOX,
                   border: `1.5px ${done ? 'solid rgba(42,107,30,0.35)' : 'dashed rgba(186,117,23,0.55)'}`,
@@ -1606,7 +1643,7 @@ function GrandEx1({ onDone }: { onDone: (s: number, t: number) => void }) {
       </p>
 
       {/* Staff: after answer, MissingStaff shows the missing part filled in green/red */}
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '20px 0', marginBottom: 20 }}>
         <MissingStaff missing={q.id} revealColor={chosen !== null ? (isCorrect ? CORRECT : WRONG) : undefined} />
       </div>
 
@@ -1717,35 +1754,80 @@ function GrandChip({ k, dim }: { k: BuildKey; dim?: boolean }) {
   )
 }
 
+// ── GrandEx2 staff geometry & per-piece drop zones (viewBox units) ────────
+// viewBox is "0 0 220 180". Zones below define where each piece must be
+// dropped to count — bass clef won't snap if dropped on the treble staff.
+const G_VB_W = 220, G_VB_H = 180
+const G_S   = 5.5
+const G_SL  = 32
+const G_SR  = 212
+const G_TT  = 20
+const G_BT  = G_TT + 8 * G_S + 42
+const G_BB  = G_BT + 8 * G_S
+const G_TB  = G_TT + 8 * G_S          // bottom of treble staff
+
+const GRAND_DROP_ZONES: Record<BuildKey, { x1: number; y1: number; x2: number; y2: number }> = {
+  // Brace lives in a narrow strip just left of the staff system
+  brace:  { x1: 0,         y1: G_TT - 6,  x2: G_SL + 10, y2: G_BB + 6 },
+  // Treble clef covers the upper staff (left of the dbar zone)
+  treble: { x1: G_SL + 4,  y1: G_TT - 8,  x2: G_SR - 24, y2: G_TB + 8 },
+  // Bass clef covers the lower staff
+  bass:   { x1: G_SL + 4,  y1: G_BT - 8,  x2: G_SR - 24, y2: G_BB + 8 },
+  // Double bar lives at the right edge of the system
+  dbar:   { x1: G_SR - 18, y1: G_TT - 6,  x2: G_VB_W,    y2: G_BB + 6 },
+}
+
 function GrandEx2({ onDone }: { onDone: () => void }) {
   const [round, setRound] = useState(0)
   const [placed, setPlaced] = useState<Set<BuildKey>>(new Set())
   const [dragging, setDragging] = useState<BuildKey | null>(null)
   const [dragClient, setDragClient] = useState({ x: 0, y: 0 })
   const staffRef = useRef<SVGSVGElement>(null)
+  // Ref mirrors `dragging` synchronously so end-of-drag handlers never see
+  // stale closure state when events arrive faster than React can re-render.
+  const dragRefG = useRef<BuildKey | null>(null)
   const [chipOrderG, setChipOrderG] = useState<BuildKey[]>(() => shuffled(BUILD_PARTS.map(p => p.key) as BuildKey[]))
   const complete = placed.size === BUILD_PARTS.length
+
+  function resetDragG(el: HTMLElement | null, pointerId: number | null) {
+    if (el && pointerId !== null && el.hasPointerCapture(pointerId)) {
+      el.releasePointerCapture(pointerId)
+    }
+    dragRefG.current = null
+    setDragging(null)
+  }
 
   function startDragG(k: BuildKey, e: React.PointerEvent<HTMLDivElement>) {
     if (placed.has(k)) return
     e.currentTarget.setPointerCapture(e.pointerId)
+    dragRefG.current = k
     setDragging(k); setDragClient({ x: e.clientX, y: e.clientY })
   }
   function moveDragG(e: React.PointerEvent<HTMLDivElement>) {
-    if (!dragging) return; setDragClient({ x: e.clientX, y: e.clientY })
+    if (!dragRefG.current) return; setDragClient({ x: e.clientX, y: e.clientY })
   }
   function endDragG(e: React.PointerEvent<HTMLDivElement>, k: BuildKey) {
-    if (!dragging || dragging !== k) return
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId)
+    const active = dragRefG.current
+    if (active !== k) {
+      resetDragG(e.currentTarget, e.pointerId)
+      return
     }
     const svg = staffRef.current
     if (svg) {
       const r = svg.getBoundingClientRect()
-      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom)
+      // Map client coords into the SVG's viewBox so per-piece zones stay
+      // accurate regardless of how the SVG was sized on the page.
+      const xSvg = ((e.clientX - r.left) / r.width)  * G_VB_W
+      const ySvg = ((e.clientY - r.top)  / r.height) * G_VB_H
+      const z = GRAND_DROP_ZONES[k]
+      if (xSvg >= z.x1 && xSvg <= z.x2 && ySvg >= z.y1 && ySvg <= z.y2) {
         setPlaced(prev => new Set([...prev, k]))
+      }
     }
-    setDragging(null)
+    resetDragG(e.currentTarget, e.pointerId)
+  }
+  function cancelDragG(e: React.PointerEvent<HTMLDivElement>) {
+    resetDragG(e.currentTarget, e.pointerId)
   }
   function nextRound() {
     if (round + 1 >= 4) { onDone(); return }
@@ -1766,12 +1848,12 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
         Round {round + 1} of 4 · drag each part onto the staff.
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
-        <svg ref={staffRef} viewBox={`0 0 ${220} ${180}`} width="100%"
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+        <svg ref={staffRef} viewBox={`0 0 ${G_VB_W} ${G_VB_H}`} width="100%"
           style={{ maxWidth: 260, display: 'block', margin: '0 auto' }}>
           {/* Grand staff preview */}
           {(() => {
-            const gs = 5.5, gsl = 32, gsr = 212, gtt = 20, gbt = gtt + 8*gs + 42, gbb = gbt + 8*gs
+            const gs = G_S, gsl = G_SL, gsr = G_SR, gtt = G_TT, gbt = G_BT, gbb = G_BB
             const gly = (n: number) => gtt + (5-n)*2*gs
             const gbly = (n: number) => gbt + (5-n)*2*gs
             return (
@@ -1794,6 +1876,9 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
                     <line x1={gsr} y1={gtt} x2={gsr} y2={gbb} stroke={ACCENT} strokeWidth={4} />
                   </>
                 )}
+                {/* Generic full-system highlight while dragging — student
+                    must figure out where their specific piece belongs;
+                    the per-piece zones in GRAND_DROP_ZONES gate the snap. */}
                 {dragging && (
                   <rect x={gsl} y={gtt-10} width={gsr-gsl} height={gbb-gtt+20}
                     fill="rgba(186,117,23,0.05)" stroke="rgba(186,117,23,0.3)"
@@ -1812,6 +1897,8 @@ function GrandEx2({ onDone }: { onDone: () => void }) {
           return (
             <div key={k} style={{ textAlign: 'center' }}>
               <div onPointerDown={e => startDragG(k, e)} onPointerMove={moveDragG} onPointerUp={e => endDragG(e, k)}
+                onPointerCancel={cancelDragG}
+                onLostPointerCapture={cancelDragG}
                 style={{
                   width: GRAND_CHIP, height: GRAND_CHIP, margin: '0 auto',
                   border: `1.5px ${done ? 'solid rgba(42,107,30,0.35)' : 'dashed rgba(186,117,23,0.55)'}`,

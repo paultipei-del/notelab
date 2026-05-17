@@ -157,7 +157,7 @@ function HowManyBeatsEx({ onDone }: { onDone: (correct: number, total: number) =
         <strong style={{ color: DARK }}>this {item.kind === 'rest' ? 'rest' : 'note'}</strong> get?
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '18px 0', marginBottom: 14 }}>
         <NoteOrRestGlyph item={item} />
       </div>
@@ -330,7 +330,7 @@ function FactsEx({ onDone }: { onDone: (correct: number, total: number) => void 
       </p>
       <ProgressBar done={idx} total={total} color={ACCENT} />
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '18px 22px', marginBottom: 14 }}>
         {item.visual && (
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
@@ -710,7 +710,7 @@ export function WriteCountsEx({
         resetting each measure.
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0 18px', marginBottom: 14, overflowX: 'auto',
         // Extend past the practice card's 28px padding so rhythms with eighths
         // have room without squishing.
@@ -763,7 +763,7 @@ export function WriteCountsEx({
             })
             if (!inputRefs.current[mIdx]) inputRefs.current[mIdx] = []
 
-            const STEM_LEN = 31
+            const STEM_LEN = 42          // one octave = 3.5 staff spaces (Gould standard): 7 * EX3_STEP
             const STEM_W = 1.4           // matches strokeWidth of the stem <line>
             const BEAM_H = 4
 
@@ -1221,7 +1221,7 @@ function WriteCountsMxlEx({ onDone }: { onDone: (correct: number, total: number)
         resetting each measure. Rests don’t need a count.
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '12px 0', marginBottom: 16 }}>
         <OsmdRhythmCounts
           key={piece.src}

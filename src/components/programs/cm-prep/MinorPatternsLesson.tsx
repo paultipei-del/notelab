@@ -542,7 +542,7 @@ function PlaceTriadEx({
         <strong style={{ color: ACCENT }}>{item.rootKey} minor triad</strong>
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 14 }}>
         <svg
           ref={r => { svgRef.current = r }}
@@ -799,7 +799,7 @@ function ConvertEx({
         tap the note you want it on. Tap again to clear.
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{

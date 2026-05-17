@@ -79,6 +79,99 @@ function PianoOctave({
   )
 }
 
+/**
+ * Raised paper-tone tab toggle. Three-state motion mirrors the Back/Forward
+ * NavButton: idle flat with 2px under-rule, hover lifts -1px with stronger
+ * shadow, mouse-down sinks 2px. Active tab stays sunken with a stronger
+ * inset shadow and a dark fill so the current selection is unmistakable.
+ */
+export function RaisedTabBtn({
+  active, onClick, accentColor, symbol, label, symbolFont = 'Bravura, serif',
+  activeBg = DARK, padding = '7px 16px',
+}: {
+  active: boolean
+  onClick: () => void
+  accentColor?: string
+  symbol?: string
+  label: string
+  symbolFont?: string
+  activeBg?: string
+  padding?: string
+}) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+
+  let bg: string
+  let border: string
+  let shadow: string
+  let transform: string
+  let textColor: string
+  let symbolColor: string
+
+  if (active) {
+    bg = activeBg
+    border = activeBg
+    shadow = '0 1px 0 rgba(0,0,0,0.35), inset 0 1px 2px rgba(0,0,0,0.30)'
+    transform = 'translateY(2px)'
+    textColor = 'white'
+    symbolColor = 'white'
+  } else if (pressed) {
+    bg = 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+    border = '#D7D1C0'
+    shadow = '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    transform = 'translateY(2px)'
+    textColor = '#7A7060'
+    symbolColor = accentColor ?? textColor
+  } else if (hover) {
+    bg = 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+    border = '#D7D1C0'
+    shadow = '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+    transform = 'translateY(-1px)'
+    textColor = '#7A7060'
+    symbolColor = accentColor ?? textColor
+  } else {
+    bg = 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)'
+    border = '#D7D1C0'
+    shadow = '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+    transform = 'translateY(0)'
+    textColor = '#7A7060'
+    symbolColor = accentColor ?? textColor
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        display: 'flex', alignItems: 'center', gap: symbol ? 6 : 0,
+        padding,
+        background: bg,
+        border: `1px solid ${border}`,
+        borderRadius: 10,
+        fontFamily: F, fontSize: 13, fontWeight: active ? 600 : 400,
+        color: textColor,
+        cursor: 'pointer',
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >
+      {symbol && (
+        <span style={{
+          fontFamily: symbolFont, fontSize: 18, lineHeight: 1,
+          color: symbolColor,
+        }}>
+          {symbol}
+        </span>
+      )}
+      {label}
+    </button>
+  )
+}
+
 // ── Lesson 5: Sharps, Flats, Naturals ─────────────────────────────────────
 export function AccidentalsDiagram() {
   const [mode, setMode] = useState<PianoMode>('sharps')
@@ -95,31 +188,16 @@ export function AccidentalsDiagram() {
     <div>
       {/* Toggle buttons */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        {tabs.map(t => {
-          const isActive = t.mode === mode
-          return (
-            <button
-              key={t.mode}
-              onClick={() => setMode(t.mode)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '7px 16px',
-                background: isActive ? DARK : 'transparent',
-                border: `1px solid ${isActive ? DARK : '#D9CFAE'}`,
-                borderRadius: 10,
-                fontFamily: F, fontSize: 13, fontWeight: isActive ? 600 : 400,
-                color: isActive ? 'white' : '#7A7060',
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-              }}
-            >
-              <span style={{ fontFamily: 'Bravura, serif', fontSize: 18, lineHeight: 1, color: isActive ? 'white' : t.color }}>
-                {t.symbol}
-              </span>
-              {t.label}
-            </button>
-          )
-        })}
+        {tabs.map(t => (
+          <RaisedTabBtn
+            key={t.mode}
+            active={t.mode === mode}
+            onClick={() => setMode(t.mode)}
+            accentColor={t.color}
+            symbol={t.symbol}
+            label={t.label}
+          />
+        ))}
       </div>
 
       {/* Description */}
@@ -148,31 +226,17 @@ export function StepsDiagram() {
     <div>
       {/* Toggle buttons */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        {tabs.map(t => {
-          const isActive = t.mode === mode
-          return (
-            <button
-              key={t.mode}
-              onClick={() => setMode(t.mode)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '7px 16px',
-                background: isActive ? DARK : 'transparent',
-                border: `1px solid ${isActive ? DARK : '#D9CFAE'}`,
-                borderRadius: 10,
-                fontFamily: F, fontSize: 13, fontWeight: isActive ? 600 : 400,
-                color: isActive ? 'white' : '#7A7060',
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-              }}
-            >
-              <span style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: 18, lineHeight: 1, color: isActive ? 'white' : t.color }}>
-                {t.symbol}
-              </span>
-              {t.label}
-            </button>
-          )
-        })}
+        {tabs.map(t => (
+          <RaisedTabBtn
+            key={t.mode}
+            active={t.mode === mode}
+            onClick={() => setMode(t.mode)}
+            accentColor={t.color}
+            symbol={t.symbol}
+            label={t.label}
+            symbolFont={SERIF}
+          />
+        ))}
       </div>
 
       {/* Description */}
@@ -199,7 +263,7 @@ export function IntervalsDiagram() {
         When counting intervals on the staff, count the line or space on which each note sits,
         and all the lines or spaces between the two notes.
       </p>
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '10px 0', marginBottom: 14 }}>
         <IntervalsAscendingStaff />
       </div>
@@ -287,47 +351,33 @@ function IntervalsKeyboardVisual() {
     <div>
       {/* Interval size tabs + direction toggle */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-        {sizes.map(s => {
-          const isActive = s === size
-          return (
-            <button key={s} onClick={() => setSize(s)}
-              style={{
-                padding: '6px 14px', borderRadius: 8,
-                background: isActive ? SIZE_COLOR[s] : 'transparent',
-                border: `1px solid ${isActive ? SIZE_COLOR[s] : '#D9CFAE'}`,
-                fontFamily: F, fontSize: 13, fontWeight: isActive ? 700 : 500,
-                color: isActive ? 'white' : '#7A7060',
-                cursor: 'pointer', transition: 'all 0.15s',
-              }}>
-              {sizeLabel(s)}
-            </button>
-          )
-        })}
+        {sizes.map(s => (
+          <RaisedTabBtn
+            key={s}
+            active={s === size}
+            onClick={() => setSize(s)}
+            label={sizeLabel(s)}
+            activeBg={SIZE_COLOR[s]}
+            padding="6px 14px"
+          />
+        ))}
 
         {/* Direction toggle */}
         <div style={{ display: 'flex', gap: 4, marginLeft: 8 }}>
-          {(['up', 'down'] as const).map(dir => {
-            const isActive = direction === dir
-            return (
-              <button key={dir}
-                onClick={() => {
-                  setDirection(dir)
-                  // Reset to a starting note that keeps the interval in range
-                  if (dir === 'down') setFromIdx(9)    // E5 · room below for 5ths
-                  else                setFromIdx(2)    // E4 · room above
-                }}
-                style={{
-                  padding: '6px 10px', borderRadius: 8,
-                  background: isActive ? '#1A1A18' : 'transparent',
-                  border: `1px solid ${isActive ? '#1A1A18' : '#D9CFAE'}`,
-                  fontFamily: F, fontSize: 13, fontWeight: isActive ? 700 : 500,
-                  color: isActive ? 'white' : '#7A7060',
-                  cursor: 'pointer', transition: 'all 0.15s',
-                }}>
-                {dir === 'up' ? '↑ up' : '↓ down'}
-              </button>
-            )
-          })}
+          {(['up', 'down'] as const).map(dir => (
+            <RaisedTabBtn
+              key={dir}
+              active={direction === dir}
+              onClick={() => {
+                setDirection(dir)
+                // Reset to a starting note that keeps the interval in range
+                if (dir === 'down') setFromIdx(9)    // E5 · room below for 5ths
+                else                setFromIdx(2)    // E4 · room above
+              }}
+              label={dir === 'up' ? '↑ up' : '↓ down'}
+              padding="6px 10px"
+            />
+          ))}
         </div>
 
         <span style={{ flex: 1 }} />

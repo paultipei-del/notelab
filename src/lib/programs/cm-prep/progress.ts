@@ -13,6 +13,10 @@ export interface CMPrepLessonProgress {
   sessions: CMPrepSessionRecord[]
   completed: boolean
   bestScore: number
+  // Set the first time the completion marquee renders for this lesson. Once
+  // set, the marquee never renders again. Local-only field (not synced to
+  // Supabase by design — a UX moment, not a record worth persisting remotely).
+  celebratedAt?: number
 }
 
 export type CMPrepProgressStore = Record<string, CMPrepLessonProgress>
@@ -51,6 +55,19 @@ export function recordCMPrepSession(slug: string, score: number, total: number) 
     completed,
     bestScore: newBest,
   }
+  saveCMPrepProgress(store)
+}
+
+// Set or update the celebratedAt timestamp for a lesson. Idempotent: calling
+// with the same value (or any value) keeps the field present so the marquee
+// suppression sticks across page loads.
+export function markCMPrepCelebrated(slug: string, timestamp: number = Date.now()) {
+  if (typeof window === 'undefined') return
+  const store = loadCMPrepProgress()
+  const prev = store[slug]
+  if (!prev) return
+  if (prev.celebratedAt) return  // already marked; do not overwrite
+  store[slug] = { ...prev, celebratedAt: timestamp }
   saveCMPrepProgress(store)
 }
 

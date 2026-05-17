@@ -201,7 +201,7 @@ function SpaceNotesIntro({ onNext }: { onNext: () => void }) {
         just below line 1 and one space just above line 5. Every space note spells part of <strong style={{ color: SPACE_C }}>D F A C E G</strong>.
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${W} ${H}`} width="100%"
           style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
 
@@ -278,7 +278,7 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
         Add middle C below on its own ledger line, and A5 above on another · seven line notes in all.
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '12px 0 16px', marginBottom: 20 }}>
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12, padding: '12px 0 16px', marginBottom: 20 }}>
         <svg viewBox={`0 0 ${W} ${H}`} width="100%"
           style={{ maxWidth: W, display: 'block', margin: '0 auto' }}>
 
@@ -347,6 +347,159 @@ function LineNotesIntro({ onNext }: { onNext: () => void }) {
 // ── Ex 1 & 3: Name the note ───────────────────────────────────────────────────
 const NOTE_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
+/**
+ * Raised paper-tone letter button for the Name-the-note exercises.
+ * Mirrors the three-state motion of the Back/Forward NavButton and the
+ * Ex1 AnswerPill in GrandStaffLesson: idle flat with 2px under-rule, hover
+ * lifts -1px and grows the shadow, mouse-down sinks 2px with an inset
+ * pressed-in shadow. After the answer is confirmed the picked pill stays
+ * sunken with a forest (correct) or oxblood (wrong) under-rule.
+ */
+function NoteLetterPill({
+  letter, onPick, confirmed, isSelected, isAnswer,
+}: {
+  letter: string
+  onPick: () => void
+  confirmed: boolean
+  isSelected: boolean
+  isAnswer: boolean
+}) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+
+  const showCorrect = confirmed && isAnswer
+  const showWrong   = confirmed && isSelected && !isAnswer
+
+  let bg: string
+  let border: string
+  let shadow: string
+  let transform: string
+  let textColor: string = DARK
+
+  if (showCorrect) {
+    bg = 'linear-gradient(to bottom, #EEF3E5, #DCE5C9)'
+    border = 'rgba(45, 90, 62, 0.45)'
+    shadow = '0 1px 0 rgba(45, 90, 62, 0.45), inset 0 1px 1px rgba(45, 90, 62, 0.10)'
+    transform = 'translateY(2px)'
+    textColor = CORRECT
+  } else if (showWrong) {
+    bg = 'linear-gradient(to bottom, #F6E5DC, #ECCEBE)'
+    border = 'rgba(160, 56, 28, 0.45)'
+    shadow = '0 1px 0 rgba(160, 56, 28, 0.45), inset 0 1px 1px rgba(160, 56, 28, 0.10)'
+    transform = 'translateY(2px)'
+    textColor = WRONG
+  } else if (pressed) {
+    bg = 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+    border = '#D7D1C0'
+    shadow = '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    transform = 'translateY(2px)'
+  } else if (hover) {
+    bg = 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+    border = '#D7D1C0'
+    shadow = '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+    transform = 'translateY(-1px)'
+  } else {
+    bg = 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)'
+    border = '#D7D1C0'
+    shadow = '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+    transform = 'translateY(0)'
+  }
+
+  return (
+    <button
+      onClick={onPick}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      disabled={confirmed}
+      style={{
+        background: bg,
+        border: `1px solid ${border}`,
+        borderRadius: 10,
+        padding: '14px 4px',
+        fontFamily: SERIF, fontSize: 22, fontWeight: 400,
+        color: textColor,
+        cursor: confirmed ? 'default' : 'pointer',
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >
+      {letter}
+    </button>
+  )
+}
+
+/**
+ * Generic raised paper-tone key for input pads (letter pad + backspace in
+ * the word-spelling exercise). Three-state motion only — no answer
+ * feedback, since these keys just append/remove text.
+ */
+function RaisedPadKey({
+  children, onClick, disabled, ariaLabel, fontFamily = SERIF, fontSize = 18, fontWeight = 400,
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  disabled: boolean
+  ariaLabel?: string
+  fontFamily?: string
+  fontSize?: number
+  fontWeight?: number
+}) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+
+  const isDimmed = disabled
+  const bg = isDimmed
+    ? 'linear-gradient(to bottom, #F4F1E8, #ECE7D6)'
+    : pressed
+      ? 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+      : hover
+        ? 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+        : 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)'
+  const shadow = isDimmed
+    ? '0 1px 0 #CAC3B0'
+    : pressed
+      ? '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+      : hover
+        ? '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+        : '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+  const transform = isDimmed
+    ? 'translateY(0)'
+    : pressed
+      ? 'translateY(2px)'
+      : hover
+        ? 'translateY(-1px)'
+        : 'translateY(0)'
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        background: bg,
+        border: '1px solid #D7D1C0',
+        borderRadius: 8,
+        padding: '10px 0',
+        fontFamily, fontSize, fontWeight,
+        color: isDimmed ? '#B0ACA4' : DARK,
+        cursor: isDimmed ? 'default' : 'pointer',
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
 function NameNoteEx({
   pool, total = 20, label, color, onDone,
 }: {
@@ -407,7 +560,7 @@ function NameNoteEx({
       <p style={{ fontFamily: F, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
         textTransform: 'uppercase' as const, color, marginBottom: 12 }}>{label}</p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 20 }}>
         <SingleNoteStaff pos={item.pos} color={DARK} />
       </div>
@@ -417,23 +570,16 @@ function NameNoteEx({
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8, marginBottom: 20 }}>
-        {NOTE_LETTERS.map(letter => {
-          const isSelected = selected === letter
-          const isAnswer   = letter === item.letter
-          let bg = 'white', border = '#D9CFAE', textColor = DARK
-          if (confirmed) {
-            if (isAnswer)                    { bg = '#EAF3DE'; border = '#C0DD97'; textColor = CORRECT }
-            else if (isSelected && !isAnswer){ bg = '#FDF3ED'; border = '#F0C4A8'; textColor = WRONG }
-          } else if (isSelected) { bg = '#F7F4ED'; border = DARK }
-
-          return (
-            <button key={letter} onClick={() => pick(letter)} style={{
-              background: bg, border: `1.5px solid ${border}`, borderRadius: 10,
-              padding: '14px 4px', fontFamily: SERIF, fontSize: 22, fontWeight: 400,
-              color: textColor, cursor: confirmed ? 'default' : 'pointer',
-            }}>{letter}</button>
-          )
-        })}
+        {NOTE_LETTERS.map(letter => (
+          <NoteLetterPill
+            key={letter}
+            letter={letter}
+            onPick={() => pick(letter)}
+            confirmed={confirmed}
+            isSelected={selected === letter}
+            isAnswer={letter === item.letter}
+          />
+        ))}
       </div>
 
       <p style={{ fontFamily: F, fontSize: 14, color: GREY, margin: 0, minHeight: '1.5em' }}>
@@ -551,7 +697,7 @@ function PlaceNoteEx({
         </p>
       </div>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg ref={svgRef}
           viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
@@ -729,7 +875,7 @@ function WordRound({
         What word do these notes spell?
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 20 }}>
         <WordStaff notes={item.notes} />
       </div>
@@ -761,34 +907,27 @@ function WordRound({
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 6,
         maxWidth: 440, margin: '0 auto 16px' }}>
         {NOTE_LETTERS.map(letter => (
-          <button key={letter}
+          <RaisedPadKey
+            key={letter}
             onClick={() => {
               if (submitted !== null) return
               if (typed.length >= item.word.length) return
               setTyped(t => t + letter)
             }}
             disabled={submitted !== null || typed.length >= item.word.length}
-            style={{
-              padding: '10px 0', borderRadius: 8, border: '1.5px solid #D9CFAE',
-              background: '#FDFBF5', fontFamily: SERIF, fontSize: 18, fontWeight: 400,
-              color: submitted !== null || typed.length >= item.word.length ? '#B0ACA4' : DARK,
-              cursor: submitted !== null || typed.length >= item.word.length ? 'default' : 'pointer',
-            }}>
+          >
             {letter}
-          </button>
+          </RaisedPadKey>
         ))}
-        <button
+        <RaisedPadKey
           onClick={() => { if (submitted === null) setTyped(t => t.slice(0, -1)) }}
           disabled={submitted !== null || typed.length === 0}
-          aria-label="Backspace"
-          style={{
-            padding: '10px 0', borderRadius: 8, border: '1.5px solid #D9CFAE',
-            background: '#FDFBF5', fontFamily: F, fontSize: 15,
-            color: submitted !== null || typed.length === 0 ? '#B0ACA4' : DARK,
-            cursor: submitted !== null || typed.length === 0 ? 'default' : 'pointer',
-          }}>
+          ariaLabel="Backspace"
+          fontFamily={F}
+          fontSize={15}
+        >
           ⌫
-        </button>
+        </RaisedPadKey>
       </div>
 
       <p style={{ fontFamily: F, fontSize: 14, fontWeight: 600, margin: 0, minHeight: '1.5em',

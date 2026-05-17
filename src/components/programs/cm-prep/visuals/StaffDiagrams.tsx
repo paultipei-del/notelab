@@ -199,9 +199,9 @@ export function LineSpaceDiagram() {
                 fill={LINE_C} textAnchor="middle" dominantBaseline="central">
                 {'\uE0A2'}
               </text>
-              <rect x={cx - 8} y={labelY - 11} width={16} height={14} rx={2}
+              <rect x={cx - 10} y={labelY - 13} width={20} height={17} rx={3}
                 fill="white" opacity={0.6} />
-              <text x={cx} y={labelY} fontFamily={F} fontSize={11} fill={LINE_C}
+              <text x={cx} y={labelY} fontFamily={F} fontSize={14} fill={LINE_C}
                 textAnchor="middle" fontWeight="700">{n.name}</text>
             </g>
           )
@@ -222,7 +222,7 @@ export function LineSpaceDiagram() {
                 fill={SPACE_C} textAnchor="middle" dominantBaseline="central">
                 {'\uE0A2'}
               </text>
-              <text x={cx} y={labelY} fontFamily={F} fontSize={11} fill={SPACE_C}
+              <text x={cx} y={labelY} fontFamily={F} fontSize={14} fill={SPACE_C}
                 textAnchor="middle" fontWeight="700">{n.name}</text>
             </g>
           )
@@ -239,7 +239,7 @@ export function LabeledTrebleStaff() {
   const sL    = 32
   const sR    = 700
   const tTop  = 54    // y of line 5 (top staff line)
-  const NH_FS = 44    // Bravura whole-note size for diagrams
+  const NH_FS = 60    // Bravura whole-note size — matches lesson staff (step=8 → 1 space = 16px, so head fills its space)
 
   // pos system: pos=10 → line 5 (F5), pos=0 → C4 ledger below
   // y(pos) = tTop + (10 - pos) * step
@@ -318,9 +318,9 @@ export function LabeledTrebleStaff() {
               </text>
 
               {/* Label with white backing for readability */}
-              <rect x={cx - 8} y={labelY - 11} width={16} height={14} rx={2}
+              <rect x={cx - 10} y={labelY - 13} width={20} height={17} rx={3}
                 fill="white" opacity={0.75} />
-              <text x={cx} y={labelY} fontFamily={F} fontSize={11} fontWeight="700"
+              <text x={cx} y={labelY} fontFamily={F} fontSize={14} fontWeight="700"
                 fill={color} textAnchor="middle">{n.name}</text>
             </g>
           )
@@ -352,7 +352,7 @@ export function LabeledBassStaff() {
   const sL    = 32
   const sR    = 700
   const tTop  = 54    // y of line 5 (top staff line)
-  const NH_FS = 44    // Bravura whole-note size for diagrams
+  const NH_FS = 60    // Bravura whole-note size — matches lesson staff (step=8 → 1 space = 16px, so head fills its space)
 
   // Ascending pos system (same as BassClefLesson):
   //   pos=12 → C4  ledger above  (y = tTop - 2*step)
@@ -438,9 +438,9 @@ export function LabeledBassStaff() {
               </text>
 
               {/* Label with white backing */}
-              <rect x={cx - 8} y={labelY - 11} width={16} height={14} rx={2}
+              <rect x={cx - 10} y={labelY - 13} width={20} height={17} rx={3}
                 fill="white" opacity={0.75} />
-              <text x={cx} y={labelY} fontFamily={F} fontSize={11} fontWeight="700"
+              <text x={cx} y={labelY} fontFamily={F} fontSize={14} fontWeight="700"
                 fill={color} textAnchor="middle">{n.name}</text>
             </g>
           )

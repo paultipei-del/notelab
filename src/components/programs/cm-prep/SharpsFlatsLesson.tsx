@@ -233,6 +233,103 @@ function PrimaryBtn({ label, onClick }: { label: string; onClick: () => void }) 
   )
 }
 
+/**
+ * Raised paper-tone answer pill — shared between the Name-the-note choice
+ * buttons (Ex 2 / 4 / 6 / 7) and the Sharp/Flat/Natural picker (Ex 8).
+ * Three-state motion mirrors the Back/Forward NavButton: idle flat with a
+ * 2px under-rule, hover lifts -1px with a stronger drop shadow, mouse-down
+ * sinks 2px with an inset pressed-in shadow. After feedback locks in, the
+ * picked pill stays sunken with a forest (correct) or oxblood (wrong)
+ * under-rule. Caller controls fontSize / minWidth via `size`.
+ */
+function AccPill({
+  children, onClick, locked, isPicked, isCorrect, size = 'md',
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  locked: boolean
+  isPicked: boolean
+  isCorrect: boolean
+  size?: 'md' | 'lg'
+}) {
+  const [hover, setHover] = useState(false)
+  const [pressed, setPressed] = useState(false)
+
+  const showCorrect = locked && isCorrect
+  const showWrong   = locked && isPicked && !isCorrect
+
+  let bg: string
+  let border: string
+  let shadow: string
+  let transform: string
+  let textColor: string = '#2A2318'
+
+  if (showCorrect) {
+    bg = 'linear-gradient(to bottom, #EEF3E5, #DCE5C9)'
+    border = 'rgba(45, 90, 62, 0.45)'
+    shadow = '0 1px 0 rgba(45, 90, 62, 0.45), inset 0 1px 1px rgba(45, 90, 62, 0.10)'
+    transform = 'translateY(2px)'
+    textColor = CORRECT
+  } else if (showWrong) {
+    bg = 'linear-gradient(to bottom, #F6E5DC, #ECCEBE)'
+    border = 'rgba(160, 56, 28, 0.45)'
+    shadow = '0 1px 0 rgba(160, 56, 28, 0.45), inset 0 1px 1px rgba(160, 56, 28, 0.10)'
+    transform = 'translateY(2px)'
+    textColor = WRONG
+  } else if (locked) {
+    // Other pills after feedback locks: dim them slightly so the answer pops
+    bg = 'linear-gradient(to bottom, #F4F1E8, #ECE7D6)'
+    border = '#D7D1C0'
+    shadow = '0 1px 0 #CAC3B0'
+    transform = 'translateY(0)'
+    textColor = '#7A7060'
+  } else if (pressed) {
+    bg = 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+    border = '#D7D1C0'
+    shadow = '0 1px 0 #CAC3B0, 0 1px 1px rgba(0,0,0,0.04), inset 0 1px 1px rgba(0,0,0,0.04)'
+    transform = 'translateY(2px)'
+  } else if (hover) {
+    bg = 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)'
+    border = '#D7D1C0'
+    shadow = '0 3px 0 #CAC3B0, 0 4px 8px rgba(0,0,0,0.06)'
+    transform = 'translateY(-1px)'
+  } else {
+    bg = 'linear-gradient(to bottom, #F9F6F0, #EFEBDE)'
+    border = '#D7D1C0'
+    shadow = '0 2px 0 #CAC3B0, 0 2px 4px rgba(0,0,0,0.04)'
+    transform = 'translateY(0)'
+  }
+
+  const padding = size === 'lg' ? '12px 20px' : '12px 18px'
+  const fontSize = size === 'lg' ? 24 : 20
+  const minWidth = size === 'lg' ? 64 : 56
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={locked}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false) }}
+      style={{
+        background: bg,
+        border: `1px solid ${border}`,
+        borderRadius: 10,
+        padding, fontFamily: SERIF, fontSize, fontWeight: 400,
+        color: textColor,
+        minWidth,
+        cursor: locked ? 'default' : 'pointer',
+        boxShadow: shadow,
+        transform,
+        transition: 'transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
 // ── Intro cards ───────────────────────────────────────────────────────────────
 function SharpsIntro({ onNext }: { onNext: () => void }) {
   return (
@@ -387,7 +484,7 @@ function DrawAccidentalEx({
         Tap to the <strong>left</strong> of the note, on the <strong>same line or space</strong>, then press Place to confirm the {accWord(acc)} ({accSymbol(acc)}).
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -498,7 +595,7 @@ function NameAccidentalEx({
         {item.clef === 'treble' ? 'Treble clef' : 'Bass clef'} · name this note
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -513,25 +610,17 @@ function NameAccidentalEx({
       </div>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16, justifyContent: 'center' }}>
-        {choices.map(choice => {
-          const isChosen  = feedback?.chosen === choice
-          const isCorrect = feedback ? isCorrectAnswer(choice, item) : false
-          let bg = 'white', border = '#D9CFAE', color = '#2A2318'
-          if (feedback) {
-            if (isCorrect)                { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
-            else if (isChosen)            { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
-          }
-          return (
-            <button key={choice} onClick={() => handlePick(choice)} style={{
-              background: bg, border: `1px solid ${border}`, borderRadius: 10,
-              padding: '12px 18px', fontFamily: SERIF, fontSize: '20px', fontWeight: 400,
-              color, cursor: feedback ? 'default' : 'pointer',
-              transition: 'border-color 0.12s, background 0.12s', minWidth: 56,
-            }}>
-              {choice}
-            </button>
-          )
-        })}
+        {choices.map(choice => (
+          <AccPill
+            key={choice}
+            onClick={() => handlePick(choice)}
+            locked={feedback !== null}
+            isPicked={feedback?.chosen === choice}
+            isCorrect={feedback ? isCorrectAnswer(choice, item) : false}
+          >
+            {choice}
+          </AccPill>
+        ))}
       </div>
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060',
@@ -593,7 +682,7 @@ function GrandNameEx({
         Grand staff · name this note
       </p>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 16 }}>
         <svg viewBox={`0 0 ${svgW} ${gsH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto' }}>
@@ -607,25 +696,17 @@ function GrandNameEx({
       </div>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16, justifyContent: 'center' }}>
-        {choices.map(choice => {
-          const isChosen  = feedback?.chosen === choice
-          const isCor     = feedback ? isCorrectAnswer(choice, item) : false
-          let bg = 'white', border = '#D9CFAE', color = '#2A2318'
-          if (feedback) {
-            if (isCor)       { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
-            else if (isChosen) { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
-          }
-          return (
-            <button key={choice} onClick={() => handlePick(choice)} style={{
-              background: bg, border: `1px solid ${border}`, borderRadius: 10,
-              padding: '12px 18px', fontFamily: SERIF, fontSize: '20px', fontWeight: 400,
-              color, cursor: feedback ? 'default' : 'pointer',
-              transition: 'border-color 0.12s, background 0.12s', minWidth: 56,
-            }}>
-              {choice}
-            </button>
-          )
-        })}
+        {choices.map(choice => (
+          <AccPill
+            key={choice}
+            onClick={() => handlePick(choice)}
+            locked={feedback !== null}
+            isPicked={feedback?.chosen === choice}
+            isCorrect={feedback ? isCorrectAnswer(choice, item) : false}
+          >
+            {choice}
+          </AccPill>
+        ))}
       </div>
 
       <p style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060',
@@ -733,7 +814,7 @@ function WriteAccidentalEx({
         </p>
       </div>
 
-      <div style={{ background: 'linear-gradient(to bottom, #FBF9F4, #F4F1E8)', border: '1px solid var(--brown-faint)', borderRadius: 12,
+      <div style={{ background: '#FDFBF5', border: '1px solid var(--brown-faint)', borderRadius: 12,
         padding: '8px 0', marginBottom: 12 }}>
         <svg ref={svgRef} viewBox={`0 0 ${svgW} ${svgH}`} width="100%"
           style={{ maxWidth: svgW, display: 'block', margin: '0 auto',
@@ -762,27 +843,18 @@ function WriteAccidentalEx({
       {/* Step 2: pick accidental */}
       {(step2 || submitted) && (
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 12 }}>
-          {(['#', 'b', 'n'] as AccType[]).map(a => {
-            const isPicked  = pickedAcc === a
-            const isCorrectAcc = a === item.acc
-            let bg = 'white', border = '#D9CFAE', color = '#2A2318'
-            if (submitted) {
-              if (isCorrectAcc)        { bg = '#EAF3DE'; border = '#C0DD97'; color = '#2A5C0A' }
-              else if (isPicked)       { bg = '#FDF3ED'; border = '#F0C4A8'; color = '#B5402A' }
-            }
-            return (
-              <button key={a} onClick={() => onPickAcc(a)}
-                disabled={submitted}
-                style={{
-                  background: bg, border: `1px solid ${border}`, borderRadius: 10,
-                  padding: '12px 20px', fontFamily: SERIF, fontSize: '24px',
-                  color, cursor: submitted ? 'default' : 'pointer',
-                  transition: 'border-color 0.12s, background 0.12s',
-                }}>
-                {accSymbol(a)}
-              </button>
-            )
-          })}
+          {(['#', 'b', 'n'] as AccType[]).map(a => (
+            <AccPill
+              key={a}
+              onClick={() => onPickAcc(a)}
+              locked={submitted}
+              isPicked={pickedAcc === a}
+              isCorrect={a === item.acc}
+              size="lg"
+            >
+              {accSymbol(a)}
+            </AccPill>
+          ))}
         </div>
       )}
 

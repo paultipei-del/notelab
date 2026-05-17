@@ -2,14 +2,16 @@
 
 import Link from 'next/link'
 import { useState, useEffect, use } from 'react'
-import { getCMPrepLesson, nextCMPrepLesson, prevCMPrepLesson } from '@/lib/programs/cm-prep/lessons'
+import { getCMPrepLesson, nextCMPrepLesson, prevCMPrepLesson, CM_PREP_LESSONS } from '@/lib/programs/cm-prep/lessons'
 import { Breadcrumb } from '@/components/programs/cm-prep/nav/Breadcrumb'
 import { LessonPager } from '@/components/programs/cm-prep/nav/LessonPager'
 import {
   loadCMPrepProgress, loadCMPrepProgressRemote,
   isCMPrepLessonUnlocked, recordCMPrepSession, recordCMPrepSessionRemote,
+  markCMPrepCelebrated,
   type CMPrepProgressStore,
 } from '@/lib/programs/cm-prep/progress'
+import LessonCompletionMarquee from '@/components/programs/cm-prep/LessonCompletionMarquee'
 import { useAuth } from '@/hooks/useAuth'
 import {
   getQuestionsForLesson, getNotePoolForLesson,
@@ -48,6 +50,51 @@ const ACCENT_BORDER = 'rgba(186,117,23,0.25)'
 // Signs & Terms cards only (ids 101–119)
 const SIGNS_TERMS_CARDS = CM_PREP_CARDS.filter(c => c.id >= 101 && c.id <= 119)
 
+// Exercise totals per multi-exercise lesson tool. Used by the completion
+// marquee's stats row. Tools not listed (mc-quiz, staff-note-quiz, etc.)
+// omit the exercises stat.
+const EXERCISES_BY_SLUG: Record<string, number> = {
+  'grand-staff': 8,
+  'line-space-notes': 5,
+  'treble-clef-notes': 6,
+  'bass-clef-notes': 6,
+  'sharps-flats-naturals': 4,
+  'half-whole-steps': 4,
+  'intervals': 4,
+  'major-patterns': 5,
+  'minor-patterns': 6,
+  'review-patterns': 2,
+  'key-signatures': 4,
+  'major-scales': 2,
+  'time-signatures': 4,
+  'signs-terms': 4,
+}
+
+// Per-lesson celebration lead copy. Each line names what the student just
+// internalized so the moment lands on the thing they actually built, not a
+// generic congratulation. New lessons fall back to DEFAULT_LEAD until they
+// earn their own voice.
+const LESSON_LEAD_COPY: Record<string, string> = {
+  'grand-staff': 'Both clefs, lines and spaces, every symbol to its name. The foundation is set.',
+  'line-space-notes': 'Line or space — two ways a note can sit on the staff. You can spot them at a glance now.',
+  'treble-clef-notes': 'Every line and space from C4 up through F5. The treble clef reads itself.',
+  'bass-clef-notes': 'Lower staff named. The full grand staff is within reach.',
+  'sharps-flats-naturals': 'Sharps raise, flats lower, naturals cancel. The half-step language is yours.',
+  'half-whole-steps': 'Half steps and whole steps — the two distances that build every scale and pattern.',
+  'intervals': 'Counting up the staff from one note to the next. Seconds through fifths, line and space.',
+  'major-patterns': 'Whole-Whole-Half-Whole. Four major patterns, four bright triads.',
+  'minor-patterns': 'Whole-Half-Whole-Whole. One half-step shift turns major into minor.',
+  'key-signatures': 'C, F, and G major — the three signatures every Preparatory piece is written in.',
+  'major-scales': 'W W H W W W H — the formula that builds every major scale.',
+  'time-signatures': 'Top number for beats per measure, bottom for which note gets the beat.',
+  'signs-terms': 'Tempo, dynamics, articulation, structure. The vocabulary of expression is in place.',
+}
+const DEFAULT_LEAD = "You've completed this lesson. On to the next one."
+
+// Total ordered lessons (type === 'lesson') in the Preparatory level — used
+// for the "1/18 lessons in Preparatory" stat. Recomputed once at module load.
+const PREP_LESSONS_ORDERED = CM_PREP_LESSONS.filter(l => l.type === 'lesson')
+
 interface Props { params: Promise<{ lessonSlug: string }> }
 
 export default function CMPrepLessonPage({ params }: Props) {
@@ -85,6 +132,16 @@ export default function CMPrepLessonPage({ params }: Props) {
   const unlocked = isCMPrepLessonUnlocked(lessonSlug, store)
   const progress = store[lessonSlug]
   const completed = progress?.completed ?? false
+  const celebratedAt = progress?.celebratedAt
+
+  // Suppress retroactive marquees for lessons that were completed before
+  // celebratedAt existed. Silently mark them so subsequent loads stay quiet.
+  useEffect(() => {
+    if (completed && !celebratedAt && !sessionDone) {
+      markCMPrepCelebrated(lessonSlug)
+      setStore(loadCMPrepProgress())
+    }
+  }, [completed, celebratedAt, sessionDone, lessonSlug])
 
   async function handleComplete(score: number, total: number) {
     setSessionScore(score)
@@ -99,6 +156,11 @@ export default function CMPrepLessonPage({ params }: Props) {
   }
 
   const nowCompleted = sessionDone && sessionScore >= lesson.passingScore
+  // The new completion marquee owns the celebration moment for first-time
+  // passes on lesson pages. When it renders, suppress the older inline
+  // "Lesson complete / Session finished" card to avoid duplicate UI.
+  const showMarquee =
+    !practicing && lesson.type === 'lesson' && sessionDone && nowCompleted && !celebratedAt
 
   return (
     <div style={{ minHeight: '100vh', background: 'transparent' }}>
@@ -147,8 +209,15 @@ export default function CMPrepLessonPage({ params }: Props) {
           </p>
         </div>
 
-        {/* Session result */}
-        {sessionDone && (
+        {/* Session result card. Shows only for outcomes the marquee does
+            NOT handle:
+            - failed attempts (sessionDone but not nowCompleted) — student
+              needs the score + try-again feedback
+            - review-page passes (lesson.type === 'review')
+            For lesson-type re-passes (already celebrated), suppress entirely:
+            the completed pill in the breadcrumb already conveys state and
+            the student doesn't need a duplicate celebration card. */}
+        {sessionDone && !showMarquee && (lesson.type === 'review' || !nowCompleted) && (
           <div style={{
             background: nowCompleted ? 'var(--forest-soft)' : '#ECE3CC',
             border: `1px solid ${nowCompleted ? 'rgba(45, 90, 62, 0.24)' : '#D9CFAE'}`,
@@ -185,6 +254,31 @@ export default function CMPrepLessonPage({ params }: Props) {
           </div>
         )}
 
+        {/* First-time-pass celebration marquee. Only fires when the student
+            just transitioned this lesson from incomplete → complete in the
+            current page session, and only for lesson-type pages. */}
+        {showMarquee && (
+          <LessonCompletionMarquee
+            lessonSlug={lessonSlug}
+            lessonNumber={parseInt(lesson.number, 10) || 1}
+            lessonTitle={lesson.title}
+            lessonLead={LESSON_LEAD_COPY[lessonSlug] ?? DEFAULT_LEAD}
+            bestScore={progress?.bestScore ?? sessionScore}
+            exerciseCount={EXERCISES_BY_SLUG[lessonSlug] ? {
+              completed: EXERCISES_BY_SLUG[lessonSlug],
+              total: EXERCISES_BY_SLUG[lessonSlug],
+            } : undefined}
+            lessonPosition={{
+              current: PREP_LESSONS_ORDERED.findIndex(l => l.slug === lessonSlug) + 1,
+              total: PREP_LESSONS_ORDERED.length,
+              levelName: 'Preparatory',
+            }}
+            nextLessonNumber={next && next.type === 'lesson' ? parseInt(next.number, 10) : undefined}
+            nextLessonTitle={next && next.type === 'lesson' ? next.title : undefined}
+            nextLessonHref={next && next.type === 'lesson' ? `/programs/cm/prep/${next.slug}` : undefined}
+          />
+        )}
+
         {/* Visual teaching section */}
         {!practicing && <LessonVisual lessonSlug={lessonSlug} />}
 
@@ -203,7 +297,7 @@ export default function CMPrepLessonPage({ params }: Props) {
               Lesson notes
             </p>
             <p style={{
-              fontFamily: SERIF, fontStyle: 'italic',
+              fontFamily: SERIF,
               fontSize: '16px', lineHeight: 1.55,
               color: 'var(--brown)', margin: 0,
             }}>
