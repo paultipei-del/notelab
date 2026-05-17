@@ -247,7 +247,7 @@ export default function CMPrepLessonPage({ params }: Props) {
         {/* Concept mnemonics for note-reading lessons */}
         {!practicing && (lessonSlug === 'treble-clef-notes' || lessonSlug === 'review-letter-names') && (
           <div style={{
-            background: 'linear-gradient(to bottom, rgba(160, 56, 28, 0.05), rgba(160, 56, 28, 0.14)), linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
+            background: '#eadacf',
             border: '1px solid rgba(160, 56, 28, 0.22)',
             borderRadius: '14px', padding: '20px 24px', marginBottom: '20px',
           }}>
@@ -289,7 +289,7 @@ export default function CMPrepLessonPage({ params }: Props) {
 
         {!practicing && (lessonSlug === 'bass-clef-notes' || lessonSlug === 'review-letter-names') && (
           <div style={{
-            background: 'linear-gradient(to bottom, rgba(160, 56, 28, 0.05), rgba(160, 56, 28, 0.14)), linear-gradient(to bottom, #F9F6F0, #EFEBDE)',
+            background: '#eadacf',
             border: '1px solid rgba(160, 56, 28, 0.22)',
             borderRadius: '14px', padding: '20px 24px', marginBottom: '20px',
           }}>
