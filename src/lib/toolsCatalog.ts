@@ -107,6 +107,15 @@ export const TOOLS: Tool[] = [
     pitch: 'Build major and minor scales from any root using whole and half steps.',
     ctaVerb: 'Build',
   },
+  {
+    id: 'chord-id',
+    href: '/tools/chord-id',
+    category: 'theory',
+    status: 'free',
+    name: 'Chord Identifier',
+    pitch: 'Play any chord on a MIDI or computer keyboard. See its name, Roman numeral, and grand-staff spelling in any key.',
+    ctaVerb: 'Identify',
+  },
 
   // ─────────────── PRACTICE ───────────────
   {

@@ -5,21 +5,21 @@ const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 
 export const metadata = {
-  title: 'Harmony Reading — NoteLab',
+  title: 'Chord Identifier — NoteLab',
   description:
-    'Play any chord on your MIDI keyboard. See the chord name, Roman numeral analysis, ' +
-    'and grand-staff spelling in real time. Free-play playground for harmonic ear training.',
+    'Real-time chord identification from any MIDI keyboard. See chord names, ' +
+    'Roman numeral analysis, and proper enharmonic spelling. Free, runs in your browser.',
 }
 
-export default function HarmonyProgramPage() {
+export default function ChordIdToolPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }} className="nl-harmony-page">
+    <div className="nl-tool-page">
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 24px 80px' }}>
 
         {/* Breadcrumb */}
-        <Link href="/programs" style={{ textDecoration: 'none' }}>
+        <Link href="/tools" style={{ textDecoration: 'none' }}>
           <span style={{ fontFamily: F, fontSize: 'var(--nl-text-compact)', color: '#7A7060' }}>
-            ← Programs
+            ← Tools
           </span>
         </Link>
 
@@ -30,23 +30,21 @@ export default function HarmonyProgramPage() {
             letterSpacing: '0.12em', textTransform: 'uppercase' as const,
             color: '#7A7060', marginBottom: 10,
           }}>
-            Harmony Reading
+            Tool
           </p>
           <h1 style={{
             fontFamily: SERIF, fontWeight: 300,
             fontSize: 'clamp(28px,4vw,44px)',
             color: '#2A2318', marginBottom: 12, letterSpacing: '0.02em',
           }}>
-            Play any chord. See what it is, what it&apos;s called, and what it does in the key.
+            Chord Identifier
           </h1>
           <p style={{
             fontFamily: F, fontSize: 'var(--nl-text-body)',
             color: '#7A7060', maxWidth: 600, lineHeight: 1.7,
           }}>
-            Plug in a MIDI controller — or use your computer keyboard
-            (<code>A S D F G H J K L ;</code> for white keys, the row above
-            for blacks). The chord name, roman numeral, grand staff, and
-            piano roll all update in real time.
+            Play any chord on your MIDI keyboard or computer keyboard. See
+            the chord name, how it&apos;s spelled, and what it does in any key.
           </p>
         </div>
 
