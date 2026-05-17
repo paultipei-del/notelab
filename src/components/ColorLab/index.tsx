@@ -31,6 +31,13 @@ type ElementOverride = {
   selector: string
   label: string
   props: ElementProps
+  /** Computed-style snapshot captured the first time this element was
+   *  picked. Used to power the "was:" readout + per-property revert. */
+  originals?: ElementProps
+  /** Raw rgba/rgb strings keyed by prop, so the text input can show
+   *  the canonical computed value (with alpha) even though the swatch
+   *  is hex-only. */
+  liveStrings?: Partial<Record<keyof ElementProps, string>>
 }
 
 type State = {
@@ -66,6 +73,79 @@ function saveState(state: State) {
 
 function shortId() {
   return Math.random().toString(36).slice(2, 10)
+}
+
+function rgbToHex(rgb: string): string {
+  const m = rgb.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
+  if (!m) return '#ffffff'
+  const r = parseInt(m[1]).toString(16).padStart(2, '0')
+  const g = parseInt(m[2]).toString(16).padStart(2, '0')
+  const b = parseInt(m[3]).toString(16).padStart(2, '0')
+  return `#${r}${g}${b}`
+}
+
+function extractAlpha(rgb: string): number | null {
+  const m = rgb.match(/rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([\d.]+)\s*\)/)
+  return m ? parseFloat(m[1]) : null
+}
+
+/** Swap the rgb portion of an rgba string with a new hex, preserving alpha.
+ *  If the source has no alpha, returns the hex (or rgb string). */
+function swapHexInRgba(source: string | undefined, newHex: string): string {
+  const alpha = source ? extractAlpha(source) : null
+  if (alpha === null || alpha >= 1) return newHex
+  const r = parseInt(newHex.slice(1, 3), 16)
+  const g = parseInt(newHex.slice(3, 5), 16)
+  const b = parseInt(newHex.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+function isTransparent(v: string | undefined): boolean {
+  if (!v) return true
+  if (v === 'transparent') return true
+  const a = extractAlpha(v)
+  return a === 0
+}
+
+/** Read the element's current computed style and return a normalized
+ *  ElementProps + raw string map suitable for seeding overrides + the
+ *  "was:" readouts. */
+function captureComputedStyles(el: Element): { props: ElementProps; strings: Partial<Record<keyof ElementProps, string>> } {
+  const cs = window.getComputedStyle(el)
+  const strings: Partial<Record<keyof ElementProps, string>> = {}
+  const props: ElementProps = {}
+
+  const bg = cs.backgroundColor
+  if (!isTransparent(bg)) {
+    props.background = bg
+    strings.background = bg
+  }
+
+  const color = cs.color
+  if (color) {
+    props.color = color
+    strings.color = color
+  }
+
+  const bw = parseFloat(cs.borderTopWidth || '0')
+  const bs = cs.borderTopStyle
+  if (bw > 0 && bs && bs !== 'none') {
+    props.borderColor = cs.borderTopColor
+    strings.borderColor = cs.borderTopColor
+    props.borderWidth = Math.round(bw)
+  }
+
+  const br = parseFloat(cs.borderTopLeftRadius || '0')
+  if (br > 0) {
+    props.borderRadius = Math.round(br)
+  }
+
+  const op = parseFloat(cs.opacity || '1')
+  if (op < 1) {
+    props.opacity = op
+  }
+
+  return { props, strings }
 }
 
 function describeElement(el: Element): string {
@@ -358,18 +438,42 @@ function ColorLabPanel() {
     }
     const label = describeElement(el)
     const selector = buildSelector(el)
+    // Capture the element's current computed style. Used both to seed
+    // overrides on a fresh pick (so inputs reflect the live state) and
+    // to populate the "was:" readout on every subsequent pick.
+    const { props: capturedProps, strings: capturedStrings } = captureComputedStyles(el)
     setState(s => {
       const existing = s.elementOverrides[id!]
+      // First-ever pick of this element: seed props from the computed
+      // style so toggles start ON for any non-default property and the
+      // inputs already reflect what's rendering. originals snapshot is
+      // captured once and never overwritten.
+      const isFirstPick = !existing
       const entry: ElementOverride = existing || {
         id: id!,
         selector,
         label,
-        props: {},
+        props: capturedProps,
+        originals: capturedProps,
+        liveStrings: capturedStrings,
       }
+      const next: ElementOverride = {
+        ...entry,
+        label,
+        selector,
+        // On re-pick, refresh liveStrings (raw rgba) so the text input
+        // can echo the current computed value with alpha, but keep
+        // originals frozen at the first capture.
+        liveStrings: { ...(entry.liveStrings || {}), ...capturedStrings },
+        originals: entry.originals || capturedProps,
+      }
+      // If existing element gets re-picked AND has no recorded originals
+      // (shouldn't happen for new picks but guards old state), snapshot now.
+      if (!isFirstPick && !entry.originals) next.originals = capturedProps
       const history = [id!, ...s.history.filter(h => h !== id)].slice(0, 5)
       return {
         ...s,
-        elementOverrides: { ...s.elementOverrides, [id!]: { ...entry, label, selector } },
+        elementOverrides: { ...s.elementOverrides, [id!]: next },
         history,
       }
     })
@@ -716,40 +820,52 @@ function PickTab({
           <PropColor
             label="Background"
             value={selected.props.background}
+            original={selected.originals?.background}
             onChange={(v) => onUpdate(selected.id, { background: v })}
             onClear={() => onUpdate(selected.id, { background: undefined })}
+            onRevert={() => onUpdate(selected.id, { background: selected.originals?.background })}
           />
           <PropColor
             label="Text"
             value={selected.props.color}
+            original={selected.originals?.color}
             onChange={(v) => onUpdate(selected.id, { color: v })}
             onClear={() => onUpdate(selected.id, { color: undefined })}
+            onRevert={() => onUpdate(selected.id, { color: selected.originals?.color })}
           />
           <PropColor
             label="Border"
             value={selected.props.borderColor}
+            original={selected.originals?.borderColor}
             onChange={(v) => onUpdate(selected.id, { borderColor: v })}
             onClear={() => onUpdate(selected.id, { borderColor: undefined })}
+            onRevert={() => onUpdate(selected.id, { borderColor: selected.originals?.borderColor })}
           />
           <PropNumber
             label="Border width"
             value={selected.props.borderWidth}
+            original={selected.originals?.borderWidth}
             min={0} max={8} step={1} suffix="px"
             onChange={(v) => onUpdate(selected.id, { borderWidth: v })}
             onClear={() => onUpdate(selected.id, { borderWidth: undefined })}
+            onRevert={() => onUpdate(selected.id, { borderWidth: selected.originals?.borderWidth })}
           />
           <PropNumber
             label="Border radius"
             value={selected.props.borderRadius}
+            original={selected.originals?.borderRadius}
             min={0} max={40} step={1} suffix="px"
             onChange={(v) => onUpdate(selected.id, { borderRadius: v })}
             onClear={() => onUpdate(selected.id, { borderRadius: undefined })}
+            onRevert={() => onUpdate(selected.id, { borderRadius: selected.originals?.borderRadius })}
           />
           <PropRange
             label="Opacity"
             value={selected.props.opacity}
+            original={selected.originals?.opacity}
             onChange={(v) => onUpdate(selected.id, { opacity: v })}
             onClear={() => onUpdate(selected.id, { opacity: undefined })}
+            onRevert={() => onUpdate(selected.id, { opacity: selected.originals?.opacity })}
           />
 
           <button
@@ -811,96 +927,136 @@ function PickTab({
   )
 }
 
-function PropColor({ label, value, onChange, onClear }: {
+function PropColor({ label, value, original, onChange, onClear, onRevert }: {
   label: string
   value: string | undefined
+  original?: string
   onChange: (v: string) => void
   onClear: () => void
+  onRevert?: () => void
 }) {
   const enabled = value !== undefined
   return (
-    <Row label={label} enabled={enabled} onToggle={() => enabled ? onClear() : onChange('#ffffff')}>
-      <input
-        type="color"
-        value={normalizeColor(value)}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={!enabled}
-        style={{ width: 32, height: 26, border: 'none', background: 'transparent', padding: 0, cursor: enabled ? 'pointer' : 'default' }}
-      />
-      <input
-        type="text"
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={!enabled}
-        placeholder="#hex or rgba()"
-        style={{
-          flex: 1,
-          background: PANEL_INPUT_BG,
-          color: PANEL_FG,
-          border: `1px solid ${PANEL_BORDER}`,
-          borderRadius: 4,
-          padding: '4px 6px',
-          fontFamily: 'ui-monospace, Menlo, monospace',
-          fontSize: 11,
-          minWidth: 0,
-        }}
-      />
-    </Row>
+    <div style={{ marginBottom: 8 }}>
+      <Row label={label} enabled={enabled} onToggle={() => enabled ? onClear() : onChange(original ?? '#ffffff')}>
+        <input
+          type="color"
+          value={normalizeColor(value)}
+          onChange={(e) => onChange(swapHexInRgba(value, e.target.value))}
+          disabled={!enabled}
+          style={{ width: 32, height: 26, border: 'none', background: 'transparent', padding: 0, cursor: enabled ? 'pointer' : 'default' }}
+        />
+        <input
+          type="text"
+          value={value ?? ''}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={!enabled}
+          placeholder="#hex or rgba()"
+          style={{
+            flex: 1,
+            background: PANEL_INPUT_BG,
+            color: PANEL_FG,
+            border: `1px solid ${PANEL_BORDER}`,
+            borderRadius: 4,
+            padding: '4px 6px',
+            fontFamily: 'ui-monospace, Menlo, monospace',
+            fontSize: 11,
+            minWidth: 0,
+          }}
+        />
+      </Row>
+      <WasRow original={original} canRevert={enabled && original !== undefined && value !== original} onRevert={onRevert} />
+    </div>
   )
 }
 
-function PropNumber({ label, value, min, max, step, suffix, onChange, onClear }: {
+function WasRow({ original, canRevert, onRevert }: { original: string | number | undefined; canRevert: boolean; onRevert?: () => void }) {
+  if (original === undefined) return null
+  return (
+    <div style={{
+      marginLeft: 90, marginTop: 2,
+      display: 'flex', alignItems: 'center', gap: 6,
+      fontFamily: 'ui-monospace, Menlo, monospace',
+      fontSize: 10, color: '#666',
+    }}>
+      <span>was: {String(original)}</span>
+      {canRevert && onRevert && (
+        <button onClick={onRevert} title="Revert to original"
+          style={{
+            background: 'transparent', border: 'none', color: PANEL_MUTED,
+            fontSize: 11, cursor: 'pointer', padding: '0 4px', lineHeight: 1,
+          }}>↺</button>
+      )}
+    </div>
+  )
+}
+
+function PropNumber({ label, value, original, min, max, step, suffix, onChange, onClear, onRevert }: {
   label: string
   value: number | undefined
+  original?: number
   min: number; max: number; step: number; suffix: string
   onChange: (v: number) => void
   onClear: () => void
+  onRevert?: () => void
 }) {
   const enabled = value !== undefined
   return (
-    <Row label={label} enabled={enabled} onToggle={() => enabled ? onClear() : onChange(1)}>
-      <input
-        type="number"
-        value={value ?? ''}
-        min={min} max={max} step={step}
-        onChange={(e) => onChange(Number(e.target.value))}
-        disabled={!enabled}
-        style={{
-          width: 70,
-          background: PANEL_INPUT_BG,
-          color: PANEL_FG,
-          border: `1px solid ${PANEL_BORDER}`,
-          borderRadius: 4,
-          padding: '4px 6px',
-          fontSize: 12,
-        }}
-      />
-      <span style={{ color: PANEL_MUTED, fontSize: 11 }}>{suffix}</span>
-    </Row>
+    <div style={{ marginBottom: 8 }}>
+      <Row label={label} enabled={enabled} onToggle={() => enabled ? onClear() : onChange(original ?? 1)}>
+        <input
+          type="number"
+          value={value ?? ''}
+          min={min} max={max} step={step}
+          onChange={(e) => onChange(Number(e.target.value))}
+          disabled={!enabled}
+          style={{
+            width: 70,
+            background: PANEL_INPUT_BG,
+            color: PANEL_FG,
+            border: `1px solid ${PANEL_BORDER}`,
+            borderRadius: 4,
+            padding: '4px 6px',
+            fontSize: 12,
+          }}
+        />
+        <span style={{ color: PANEL_MUTED, fontSize: 11 }}>{suffix}</span>
+      </Row>
+      <WasRow original={original !== undefined ? `${original}${suffix}` : undefined}
+        canRevert={enabled && original !== undefined && value !== original}
+        onRevert={onRevert} />
+    </div>
   )
 }
 
-function PropRange({ label, value, onChange, onClear }: {
+function PropRange({ label, value, original, onChange, onClear, onRevert }: {
   label: string
   value: number | undefined
+  original?: number
   onChange: (v: number) => void
   onClear: () => void
+  onRevert?: () => void
 }) {
   const enabled = value !== undefined
   return (
-    <Row label={label} enabled={enabled} onToggle={() => enabled ? onClear() : onChange(1)}>
-      <input
-        type="range"
-        value={value ?? 1}
-        min={0} max={1} step={0.05}
-        onChange={(e) => onChange(Number(e.target.value))}
-        disabled={!enabled}
-        style={{ flex: 1, accentColor: PANEL_ACCENT }}
-      />
-      <span style={{ color: PANEL_MUTED, fontSize: 11, width: 36, textAlign: 'right' }}>
-        {Math.round((value ?? 1) * 100)}%
-      </span>
-    </Row>
+    <div style={{ marginBottom: 8 }}>
+      <Row label={label} enabled={enabled} onToggle={() => enabled ? onClear() : onChange(original ?? 1)}>
+        <input
+          type="range"
+          value={value ?? 1}
+          min={0} max={1} step={0.05}
+          onChange={(e) => onChange(Number(e.target.value))}
+          disabled={!enabled}
+          style={{ flex: 1, accentColor: PANEL_ACCENT }}
+        />
+        <span style={{ color: PANEL_MUTED, fontSize: 11, width: 36, textAlign: 'right' }}>
+          {Math.round((value ?? 1) * 100)}%
+        </span>
+      </Row>
+      <WasRow original={original !== undefined ? `${Math.round(original * 100)}%` : undefined}
+        canRevert={enabled && original !== undefined && value !== original}
+        onRevert={onRevert} />
+    </div>
   )
 }
 
