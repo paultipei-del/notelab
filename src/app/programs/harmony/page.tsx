@@ -1,41 +1,89 @@
 'use client'
 
+/**
+ * Harmony Reading Program — integrated playground.
+ *
+ * Wires together useMidiInput (MIDI + QWERTY noteOn/noteOff), detectChord
+ * (chord name + roman numeral + spelled notes), and three visualisations
+ * (ChordReadout, GrandStaff, PianoRoll) along with the DeviceControls
+ * toolbar.
+ *
+ * QWERTY fallback maps one octave starting at C4 onto the home row:
+ *   A S D F G H J K L ;  → C4 D4 E4 F4 G4 A4 B4 C5 D5 E5  (whites)
+ *   W E   T Y U   O P    → C#4 D#4 F#4 G#4 A#4 C#5 D#5    (blacks)
+ * Repeat events are suppressed via a held-keys ref so a long press fires
+ * exactly one noteOn / noteOff pair.
+ */
+
 import Link from 'next/link'
-import { useState } from 'react'
-import PianoRoll from '@/components/programs/harmony/PianoRoll'
-import GrandStaff from '@/components/programs/harmony/GrandStaff'
-import ChordReadout from '@/components/programs/harmony/ChordReadout'
-import { useMidiInput, type MidiStatus } from '@/hooks/useMidiInput'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMidiInput } from '@/lib/useMidiInput'
+import { detectChord } from '@/lib/chordDetection'
+import { PianoRoll } from '@/components/PianoRoll'
+import { GrandStaff } from '@/components/GrandStaff'
+import { ChordReadout } from '@/components/ChordReadout'
+import { DeviceControls } from '@/components/DeviceControls'
 
 const F = 'var(--font-jost), sans-serif'
 const SERIF = 'var(--font-cormorant), serif'
 
-// Twelve major + twelve minor keys for the picker. Kept inline to avoid a
-// trivial extra import; can be moved to a tonal-driven helper later.
-const KEYS: string[] = [
-  'C major', 'G major', 'D major', 'A major', 'E major', 'B major', 'F♯ major',
-  'F major', 'B♭ major', 'E♭ major', 'A♭ major', 'D♭ major', 'G♭ major',
-  'A minor', 'E minor', 'B minor', 'F♯ minor', 'C♯ minor', 'G♯ minor', 'D♯ minor',
-  'D minor', 'G minor', 'C minor', 'F minor', 'B♭ minor', 'E♭ minor',
-]
-
-function statusLabel(status: MidiStatus, inputNames: string[]): string {
-  switch (status) {
-    case 'idle':         return 'Requesting MIDI access…'
-    case 'unsupported':  return 'Web MIDI is not supported in this browser'
-    case 'denied':       return 'MIDI permission denied'
-    case 'no-inputs':    return 'MIDI access granted · no inputs connected'
-    case 'connected':    return `Connected · ${inputNames.join(', ')}`
-  }
+// One-octave QWERTY → MIDI mapping starting at C4 = 60.
+const QWERTY_TO_MIDI: Record<string, number> = {
+  a: 60, w: 61, s: 62, e: 63, d: 64, f: 65,
+  t: 66, g: 67, y: 68, h: 69, u: 70, j: 71,
+  k: 72, o: 73, l: 74, p: 75, ';': 76,
 }
 
 export default function HarmonyPage() {
-  const { heldNotes, status, inputNames } = useMidiInput()
+  const midi = useMidiInput()
   const [currentKey, setCurrentKey] = useState<string>('C major')
 
+  // Sorted MIDI numbers — feeds both detectChord and the visualizations
+  // expecting a parallel `spelledNotes` array.
+  const sortedMidi = useMemo(
+    () => [...midi.heldNotes].sort((a, b) => a - b),
+    [midi.heldNotes],
+  )
+
+  const chordResult = useMemo(
+    () => detectChord({ midiNotes: sortedMidi, currentKey }),
+    [sortedMidi, currentKey],
+  )
+
+  // QWERTY fallback. Always live so users without a controller can still
+  // play; per-key Set ref prevents auto-repeat from re-firing noteOn.
+  const qwertyHeldRef = useRef<Set<string>>(new Set())
+  useEffect(() => {
+    function down(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const key = e.key.toLowerCase()
+      const midiNum = QWERTY_TO_MIDI[key]
+      if (midiNum === undefined) return
+      if (qwertyHeldRef.current.has(key)) return
+      qwertyHeldRef.current.add(key)
+      midi.noteOn(midiNum)
+      // Prevent the page from scrolling on spacebar etc. — only consume
+      // keys we mapped to notes.
+      e.preventDefault()
+    }
+    function up(e: KeyboardEvent) {
+      const key = e.key.toLowerCase()
+      const midiNum = QWERTY_TO_MIDI[key]
+      if (midiNum === undefined) return
+      qwertyHeldRef.current.delete(key)
+      midi.noteOff(midiNum)
+    }
+    window.addEventListener('keydown', down)
+    window.addEventListener('keyup', up)
+    return () => {
+      window.removeEventListener('keydown', down)
+      window.removeEventListener('keyup', up)
+    }
+  }, [midi])
+
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
-      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 24px 80px' }}>
+    <div style={{ minHeight: '100vh', background: 'transparent' }} className="nl-harmony-page">
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '40px 24px 80px' }}>
 
         {/* Breadcrumb */}
         <Link href="/programs" style={{ textDecoration: 'none' }}>
@@ -45,77 +93,84 @@ export default function HarmonyPage() {
         </Link>
 
         {/* Header */}
-        <div style={{ marginTop: '28px', marginBottom: '32px' }}>
+        <div style={{ marginTop: 28, marginBottom: 32 }}>
           <p style={{
             fontFamily: F, fontSize: 'var(--nl-text-compact)', fontWeight: 400,
             letterSpacing: '0.12em', textTransform: 'uppercase' as const,
-            color: '#7A7060', marginBottom: '10px',
+            color: '#7A7060', marginBottom: 10,
           }}>
-            Harmony Playground
+            Harmony Reading
           </p>
           <h1 style={{
             fontFamily: SERIF, fontWeight: 300,
             fontSize: 'clamp(28px,4vw,44px)',
-            color: '#2A2318', marginBottom: '12px', letterSpacing: '0.02em',
+            color: '#2A2318', marginBottom: 12, letterSpacing: '0.02em',
           }}>
-            Play It and See It
+            Play any chord. See what it is, what it&apos;s called, and what it does in the key.
           </h1>
           <p style={{
-            fontFamily: F, fontSize: 'var(--nl-text-body)', fontWeight: 400,
-            color: '#7A7060', maxWidth: '560px', lineHeight: 1.7,
+            fontFamily: F, fontSize: 'var(--nl-text-body)',
+            color: '#7A7060', maxWidth: 600, lineHeight: 1.7,
           }}>
-            Plug in a MIDI controller. As you play, the piano roll, grand staff,
-            and chord readout will all update in real time. Pick a key to anchor
-            scale-degree and Roman-numeral analysis.
+            Plug in a MIDI controller — or use your computer keyboard
+            (<code>A S D F G H J K L ;</code> for white keys, the row above
+            for blacks). The chord name, roman numeral, grand staff, and
+            piano roll all update in real time.
           </p>
         </div>
 
-        {/* Toolbar: key picker + MIDI status */}
+        {/* Toolbar */}
+        <div style={{ marginBottom: 24 }}>
+          <DeviceControls
+            devices={midi.devices}
+            activeDeviceId={midi.activeDeviceId}
+            onDeviceChange={midi.setActiveDevice}
+            currentKey={currentKey}
+            onKeyChange={setCurrentKey}
+            isSupported={midi.isSupported}
+            permissionState={midi.permissionState}
+            onRequestAccess={midi.requestAccess}
+          />
+        </div>
+
+        {/* Chord readout — the visual anchor */}
+        <ChordReadout result={chordResult} currentKey={currentKey} />
+
+        {/* Grand staff */}
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap',
-          padding: '14px 18px', marginBottom: '20px',
-          background: 'var(--cream-card-strong)',
+          background: 'var(--cream-key)',
           border: '1px solid var(--brown-faint)',
-          borderRadius: 14,
+          borderRadius: 16,
+          padding: 16,
+          marginBottom: 16,
         }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{
-              fontFamily: F, fontSize: 11, fontWeight: 500,
-              letterSpacing: '1.5px', textTransform: 'uppercase' as const,
-              color: 'var(--brown-muted)',
-            }}>
-              Key
-            </span>
-            <select
-              value={currentKey}
-              onChange={e => setCurrentKey(e.target.value)}
-              style={{
-                fontFamily: SERIF, fontSize: 16, color: 'var(--ink)',
-                background: 'var(--cream-key)',
-                border: '1px solid var(--brown-faint)',
-                borderRadius: 8, padding: '6px 10px', cursor: 'pointer',
-              }}
-            >
-              {KEYS.map(k => <option key={k} value={k}>{k}</option>)}
-            </select>
-          </label>
+          <GrandStaff
+            heldNotes={midi.heldNotes}
+            spelledNotes={chordResult.spelledNotes}
+            currentKey={currentKey}
+            width={840}
+            height={240}
+          />
+        </div>
 
-          <span aria-hidden="true" style={{ color: 'var(--brown-faint)' }}>·</span>
+        {/* Piano roll */}
+        <div style={{
+          background: 'var(--cream-key)',
+          border: '1px solid var(--brown-faint)',
+          borderRadius: 16,
+          padding: 16,
+        }}>
+          <PianoRoll heldNotes={midi.heldNotes} width={840} height={120} />
+        </div>
 
-          <span style={{
-            fontFamily: F, fontSize: 12,
-            color: status === 'connected' ? 'var(--forest)' : '#7A7060',
+        {midi.error && (
+          <p style={{
+            marginTop: 16, fontFamily: F, fontSize: 12,
+            color: 'var(--oxblood)',
           }}>
-            {statusLabel(status, inputNames)}
-          </span>
-        </div>
-
-        {/* Stub visualizations */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <PianoRoll   heldNotes={heldNotes} currentKey={currentKey} />
-          <GrandStaff  heldNotes={heldNotes} currentKey={currentKey} />
-          <ChordReadout heldNotes={heldNotes} currentKey={currentKey} />
-        </div>
+            {midi.error}
+          </p>
+        )}
 
       </div>
     </div>
